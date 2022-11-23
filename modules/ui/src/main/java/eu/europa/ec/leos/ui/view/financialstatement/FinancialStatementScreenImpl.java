@@ -80,10 +80,13 @@ import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
+import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.OptionsType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
@@ -98,7 +101,6 @@ import eu.europa.ec.leos.web.ui.component.SearchDelegate;
 import eu.europa.ec.leos.web.ui.component.actions.FinancialstatementActionsMenuBar;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import eu.europa.ec.leos.web.ui.themes.LeosTheme;
-import eu.europa.ec.leos.web.ui.window.TimeLineWindow;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -106,6 +108,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.sliderpanel.SliderPanel;
 import org.vaadin.sliderpanel.SliderPanelBuilder;
 import org.vaadin.sliderpanel.client.SliderMode;
@@ -113,7 +116,9 @@ import org.vaadin.sliderpanel.client.SliderTabPosition;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Provider;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,27 +138,24 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementScreenImpl.class);
 
-    protected TimeLineWindow<FinancialStatement> timeLineWindow;
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
     protected HorizontalSplitPanel financialStatementSplit;
     protected HorizontalSplitPanel contentSplit;
     protected Label financialStatementTitle;
-
     // dummy init to avoid design exception
     protected ScreenLayoutHelper screenLayoutHelper = new ScreenLayoutHelper(null, null);
     protected SliderPanel leftSlider = new SliderPanelBuilder(new VerticalLayout()).build();
-
     protected ComparisonComponent<FinancialStatement> comparisonComponent;
     protected FinancialstatementComponent financialStatementDoc;
     protected HorizontalLayout mainLayout;
     protected VerticalLayout financialStatementLayout;
-    protected HorizontalLayout financialStatementToolBar;
     protected LeosDisplayField financialStatementContent;
 
     protected TableOfContentComponent tableOfContentComponent = new TableOfContentComponent();
     protected AccordionPane accordionPane;
     protected Accordion accordion;
     protected VersionsTab<FinancialStatement> versionsTab;
-
     protected FinancialstatementActionsMenuBar actionsMenuBar;
     protected Label versionInfoLabel;
     protected Button refreshNoteButton;
@@ -171,6 +173,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     protected final UserHelper userHelper;
     protected final SecurityContext securityContext;
     protected final XmlContentProcessor xmlContentProcessor;
+    protected LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final TableOfContentProcessor tableOfContentProcessor;
     private static final String CHECKED = "\u2611";
     private static final String UNCHECKED = "\u2610";
@@ -188,14 +191,10 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     private boolean searchAndReplaceEnabled;
 
     @Autowired
-    LeosPermissionAuthorityMapHelper authorityMapHelper;
-
-
-    @Autowired
     FinancialStatementScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
                                  ConfigurationHelper cfgHelper, TocEditor tocEditor, InstanceTypeResolver instanceTypeResolver, VersionsTab<FinancialStatement> versionsTab,
                                  Provider<StructureContext> structureContextProvider, TableOfContentProcessor tableOfContentProcessor,
-                                 XmlContentProcessor xmlContentProcessor) {
+                                 XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper) {
         LOG.trace("Initializing explanatory screen...");
         Validate.notNull(messageHelper, "MessageHelper must not be null!");
         this.messageHelper = messageHelper;
@@ -218,7 +217,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         Validate.notNull(tableOfContentProcessor, "tableOfContentProcessor must not be null!");
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
-        timeLineWindow = new TimeLineWindow<>(messageHelper, eventBus);
+        this.authorityMapHelper = authorityMapHelper;
         Design.read(this);
         init();
     }
@@ -289,10 +288,6 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     @Override
-    public void refreshElementEditor(String elementId, String elementTagName, String elementContent) {
-    }
-
-    @Override
     public void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO) {
     }
 
@@ -355,7 +350,8 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
                 eventBus.post(new InitLeosEditorEvent(documentVO));
             }
             if(actionManagerExtension == null) {
-                actionManagerExtension = new ActionManagerExtension<>(financialStatementContent, instanceTypeResolver.getInstanceType(), eventBus, structureContextProvider.get().getTocItems());
+                actionManagerExtension = new ActionManagerExtension<>(financialStatementContent,
+                        instanceTypeResolver.getInstanceType(), eventBus, structureContextProvider.get().getTocItems());
             }
         }
     }
@@ -401,7 +397,54 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void checkElementCoEdition(List<CoEditionVO> coEditionVos, User user, String elementId, String elementTagName, CheckElementCoEditionEvent.Action action, Object actionEvent) {
+        StringBuilder coEditorsList = new StringBuilder();
+        coEditionVos.stream().filter((x) -> InfoType.ELEMENT_INFO.equals(x.getInfoType()) && x.getElementId().equals(elementId))
+                .sorted(Comparator.comparing(CoEditionVO::getUserName).thenComparingLong(CoEditionVO::getEditionTime)).forEach(x -> {
+                    StringBuilder userDescription = new StringBuilder();
+                    if (!x.getUserLoginName().equals(user.getLogin())) {
+                        userDescription.append("<a href=\"")
+                                .append(StringUtils.isEmpty(x.getUserEmail()) ? "" : (coEditionSipEnabled ? new StringBuilder("sip:").append(x.getUserEmail().replaceFirst("@.*", "@" + coEditionSipDomain)).toString()
+                                        : new StringBuilder("mailto:").append(x.getUserEmail()).toString()))
+                                .append("\">").append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity())
+                                .append(")</a>");
+                    } else {
+                        userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
+                    }
+                    coEditorsList.append("&nbsp;&nbsp;-&nbsp;")
+                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dateFormat.format(new Date(x.getEditionTime()))))
+                            .append("<br>");
+                });
+        if (!StringUtils.isEmpty(coEditorsList)) {
+            confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
+        } else {
+            if (action == CheckElementCoEditionEvent.Action.DELETE) {
+                eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, actionEvent));
+            } else {
+                eventBus.post(actionEvent);
+            }
+        }
+    }
 
+    private void confirmCoEdition(String coEditorsList, String elementId, CheckElementCoEditionEvent.Action action, Object actionEvent) {
+        ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
+                messageHelper.getMessage("coedition." + action.getValue() + ".element.confirmation.title"),
+                messageHelper.getMessage("coedition." + action.getValue() + ".element.confirmation.message", coEditorsList),
+                messageHelper.getMessage("coedition." + action.getValue() + ".element.confirmation.confirm"),
+                messageHelper.getMessage("coedition." + action.getValue() + ".element.confirmation.cancel"), null);
+        confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
+        confirmDialog.getContent().setHeightUndefined();
+        confirmDialog.setHeightUndefined();
+        confirmDialog.show(getUI(), dialog -> {
+            if (dialog.isConfirmed()) {
+                if (action == CheckElementCoEditionEvent.Action.DELETE) {
+                    eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, actionEvent));
+                } else {
+                    eventBus.post(actionEvent);
+                }
+            } else {
+                eventBus.post(new CancelActionElementRequestEvent(elementId));
+            }
+        }, true);
     }
 
     @Override

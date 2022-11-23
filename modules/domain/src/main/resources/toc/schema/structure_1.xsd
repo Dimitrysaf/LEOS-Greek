@@ -246,6 +246,7 @@
             <xs:enumeration value="coverPage"/>
             <xs:enumeration value="longTitle"/>
             <xs:enumeration value="docPurpose"/>
+            <xs:enumeration value="inline"/>
         </xs:restriction>
     </xs:simpleType>
 

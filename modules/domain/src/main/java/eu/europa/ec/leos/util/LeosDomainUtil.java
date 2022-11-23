@@ -27,7 +27,8 @@ public class LeosDomainUtil {
 
     public static final String CMIS_PROPERTY_SPLITTER = "::";
 
-    private final static String WRAP_FRAGMENT_START = "<aknFragment xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">";
+    private final static String WRAP_FRAGMENT_START = "<aknFragment xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" " +
+            "xmlns:leos=\"urn:eu:europa:ec:leos\" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\">";
 
     private final static String WRAP_FRAGMENT_END = "</aknFragment>";
 

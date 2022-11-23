@@ -66,20 +66,10 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
             </level>
             <level>
                 <num>1.2.</num>
                 <heading>Policy area(s) concerned</heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
                         <p>[...]</p>
@@ -127,7 +117,7 @@
             <level>
                 <num>1.4.1.</num>
                 <heading>General objective(s)</heading>
-                <content>
+                <content leos:editable="true">
                     <p xml:id="_141__p">[...]</p>
                 </content>
             </level>
@@ -162,16 +152,6 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
             </level>
             <level>
                 <num>1.4.4.</num>
@@ -183,7 +163,7 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <p xml:id="_144__p">[...]</p>
                     </content>
@@ -198,11 +178,6 @@
                 <heading>Requirement(s) to be met in the short or long term including a detailed timeline for roll-out
                     of the implementation of the initiative
                 </heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
                         <p>[...]</p>
@@ -235,11 +210,6 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
             </level>
             <level>
                 <num>1.5.4.</num>
@@ -251,21 +221,11 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
             </level>
             <level>
                 <num>1.5.5.</num>
                 <heading>Assessment of the different available financing options, including scope for redeployment
                 </heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
                         <p>[...]</p>
@@ -447,7 +407,7 @@
                         <p>Comments</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <p>[...]</p>
                     </content>
@@ -472,11 +432,6 @@
                         <p>[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
             </level>
             <level>
                 <num>2.2.</num>
@@ -487,7 +442,7 @@
                 <heading>Justification of the management mode(s), the funding implementation mechanism(s), the payment
                     modalities and the control strategy proposed
                 </heading>
-                <content>
+                <content leos:editable="true">
                     <p xml:id="_221__p">[...]</p>
                 </content>
             </level>
@@ -496,7 +451,7 @@
                 <heading>Information concerning the risks identified and the internal control system(s) set up to
                     mitigate them
                 </heading>
-                <content>
+                <content leos:editable="true">
                     <p xml:id="_222__p">[...]</p>
                 </content>
 
@@ -507,7 +462,7 @@
                     ÷ value of the related funds managed"), and assessment of the expected levels of risk of error (at
                     payment &amp; at closure)
                 </heading>
-                <content>
+                <content leos:editable="true">
                     <p xml:id="_223__p">[...]</p>
                 </content>
             </level>
@@ -521,11 +476,6 @@
                                 Anti-Fraud Strategy.
                             </i>
                         </p>
-                    </content>
-                </subparagraph>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true">
@@ -555,7 +505,7 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
                         <table style="border-collapse:collapse;">
@@ -654,7 +604,7 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
                         <table style="border-collapse:collapse;">
@@ -748,7 +698,7 @@
                         </content>
                     </indent>
                 </list>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
                         <!-- sorry for all the inline styles, surely need cleanup I got to redo it all from word -->
@@ -773,7 +723,7 @@
                         <!-- end of rotated table (landscape) -->
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
                         <table style="border-collapse:collapse;">
@@ -1572,7 +1522,7 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;">
@@ -1754,7 +1704,7 @@
                         <!-- end of rotated table -->
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;">
@@ -1780,7 +1730,7 @@
                         <!-- end of rotated table-->
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- Guidance ?-->
                         <p>This section should be filled in using the 'budget data of an administrative nature' to be
@@ -1890,7 +1840,7 @@
                         <!-- end of rotated table-->
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;">
@@ -1941,7 +1891,7 @@
                         <p>EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;">
@@ -2081,7 +2031,7 @@
                         <p>Commitment appropriations in EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
                         <table style="text-align:center;border-collapse:collapse;">
@@ -2558,7 +2508,7 @@
                     </indent>
                 </list>
 
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <!-- nouveau tableaux de 2em partie 3.2.3 -->
                         <table style="text-align:center;border-collapse:collapse;">
@@ -2936,7 +2886,7 @@
                         <p>Estimates to be expressed in full time equivalent units</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <table style="text-align:center;border-collapse:collapse;">
                             <tr>
@@ -3427,7 +3377,7 @@
                         <p>Description of tasks to be carried out:</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <table style="border-collapse:collapse; text-align:left;">
                             <tr>
@@ -3538,7 +3488,7 @@
                         <p>Appropriations in EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <table style="border-collapse:collapse; text-align:left;">
                             <tr>
@@ -3684,7 +3634,7 @@
                         <p>EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <table style="border-collapse:collapse; text-align:center;vertical-align:middle;">
                             <tr>
@@ -3773,7 +3723,7 @@
                         <p>For assigned revenue, specify the budget expenditure line(s) affected.</p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <p>[...]</p>
                     </content>
@@ -3785,7 +3735,7 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph leos:editable="true">
                     <content>
                         <p>[...]</p>
                     </content>

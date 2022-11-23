@@ -15,6 +15,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.security.LeosPermission;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -25,6 +26,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.component.doubleCompare.DoubleComparisonComponent;
+import eu.europa.ec.leos.ui.component.toc.TableOfContentComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
@@ -65,14 +67,14 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     private static final Logger LOG = LoggerFactory.getLogger(MandateFinancialStatementScreenImpl.class);
 
     private final DoubleComparisonComponent<FinancialStatement> doubleComparisonComponent;
-    
+
     MandateFinancialStatementScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
                                         ConfigurationHelper cfgHelper, TocEditor numberEditor, InstanceTypeResolver instanceTypeResolver,
                                         VersionsTab<FinancialStatement> versionsTab, Provider<StructureContext> structureContextProvider,
                                         TableOfContentProcessor tableOfContentProcessor,
-                                        XmlContentProcessor xmlContentProcessor) {
+                                        XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper) {
         super(messageHelper, eventBus, securityContext, userHelper, cfgHelper, numberEditor, instanceTypeResolver,
-                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor);
+                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor, authorityMapHelper);
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, FinancialStatement.class, false);
         doubleComparisonComponent = new DoubleComparisonComponent<>(exportOptions, eventBus, messageHelper, securityContext);
     }
@@ -104,7 +106,7 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
         doubleComparisonComponent.populateDoubleComparisonContent(comparedContent, LeosCategory.FINANCIAL_STATEMENT, comparedInfo, exportVersions);
         doubleComparisonComponent.setDoubleComparison();
     }
-    
+
     @Override
     public void showVersion(String content, String versionInfo) {
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, doubleComparisonComponent));
@@ -169,15 +171,15 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     public void setDownloadStreamResourceForExport(StreamResource streamResource) {
         doubleComparisonComponent.setDownloadStreamResourceForExport(streamResource);
     }
-    
+
     @Override
     public void setDownloadStreamResourceForMenu(DownloadStreamResource streamResource){
         actionsMenuBar.setDownloadStreamResource(streamResource);
     }
-    
+
     @Override
     public void setDownloadStreamResourceForXmlFiles(FinancialStatement original, FinancialStatement intermediate, FinancialStatement current, String language, String comparedInfo,
-            String leosComparedContent, String docuWriteComparedContent) {
+                                                     String leosComparedContent, String docuWriteComparedContent) {
         File zipFile = null;
         try {
             final Map<String, Object> contentToZip = new HashMap<>();
@@ -207,7 +209,7 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
             }
         }
     }
-    
+
     @Override
     public void enableTocEdition(List<TableOfContentItemVO> tableOfContent) {
         tableOfContentComponent.handleEditTocRequest(tocEditor);

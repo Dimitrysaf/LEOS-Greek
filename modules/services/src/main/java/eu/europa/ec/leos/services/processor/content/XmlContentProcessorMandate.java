@@ -761,30 +761,10 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
 
         if (!isProposalElement(attributes)) {
-            Element parentElement = getParentElement(xmlContent, mergeOnElement.getElementId());
-            if (Arrays.asList(PARAGRAPH, POINT, INDENT).contains(parentElement.getElementTagName())
-                    && getChildElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(), Arrays.asList(SUBPARAGRAPH, SUBPOINT, LIST), 3) == null) {
-                return parentElement;
-            } else if (Arrays.asList(LEVEL).contains(parentElement.getElementTagName())
-                    && countChildren(xmlContent, parentElement.getElementId(), Arrays.asList(SUBPARAGRAPH)) == 2) {
-                //is the last subparagraph of a Level. Unwrap it and return the <content> tag.
-                String contentXml = mergeOnElement.getElementFragment().replaceAll("<subparagraph.*?>", "").replaceAll("</subparagraph>", "");
-                String wrappedContentXml = "<root xmlns:leos=\"urn:eu:europa:ec:leos\" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\">" + contentXml + "</root>"; //for correct xml structure
-
-                Document document = createXercesDocument(wrappedContentXml.getBytes(UTF_8));
-                Node node = XercesUtils.getFirstElementByName(document, CONTENT);
-                String contentId = XercesUtils.getId(node);
-                mergeOnElement = new Element(contentId, CONTENT, contentXml);
-            }
+            mergeOnElement = getMergedOnElement(mergeOnElement, xmlContent);
         }
 
         return mergeOnElement;
-    }
-
-    public int countChildren(byte[] xmlContent, String elementId, List<String> childrenNames) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
-        return XercesUtils.countChildren(node, childrenNames);
     }
 
     @Override
@@ -838,10 +818,6 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     protected boolean isSoftTransformed(final Map<String, String> attributes) {
         return ((attributes.get(LEOS_SOFT_ACTION_ATTR) != null) && attributes.get(LEOS_SOFT_ACTION_ATTR).equals(SoftActionType.TRANSFORM.getSoftAction()));
-    }
-
-    private boolean isPContent(String content, String tagName) {
-        return getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false) != null;
     }
 
     @Override

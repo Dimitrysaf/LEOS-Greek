@@ -67,7 +67,6 @@
         @extend %elementActions;
         @extend %elementUserCoEdition;
         @extend %xmlLevel;
-        @extend %xmlParagraph;
         @extend %editorLevelNumber;
         @extend %xmlLongTitle;
         @extend %xmlPreface;
@@ -78,6 +77,7 @@
         @extend %xmlHigherElements;
         @extend %xmlImage;
         @extend %documentFooter;
+        @extend %xmlInline;
 
         @extend %xmlArticle;
         @extend %xmlArticleParagraph;

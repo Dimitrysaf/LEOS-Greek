@@ -312,7 +312,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     
     @Override
     public boolean isAnnexFromCouncil(XmlDocument xmlDocument) {
-    	return xmlContentProcessor.isAnnexFromCouncil(xmlDocument.getContent().get().getSource().getBytes());
+    	return xmlContentProcessor.isRevisionAnnex(xmlDocument.getContent().get().getSource().getBytes());
     }
 
 }
