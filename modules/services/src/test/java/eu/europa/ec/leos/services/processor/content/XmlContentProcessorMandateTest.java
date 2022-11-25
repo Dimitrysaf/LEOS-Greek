@@ -32,7 +32,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
 import static org.junit.Assert.assertEquals;
@@ -297,7 +296,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_back_splitted_point_ec_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, SUBPOINT, "imp_art_d1e1221_qiqjdt_ajnCHE");
+        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, SUBPARAGRAPH, "imp_art_d1e1221_qiqjdt_ajnCHE");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(result, UTF_8)));
     }
@@ -349,7 +348,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_getSplittedElement_point_expected.xml");
         Node expectedNode = XercesUtils.createNodeFromXmlFragment(xmlExpected);
         String expectedElement = XercesUtils.nodeToString(expectedNode);
-        Pair<byte[], Element> result = xercesXmlContentProcessor.getSplittedElement(xmlInput, expectedElement, SUBPOINT, "transformed_imp_art_d1e1221_qiqjdt_GEj1jJ");
+        Pair<byte[], Element> result = xercesXmlContentProcessor.getSplittedElement(xmlInput, expectedElement, SUBPARAGRAPH, "transformed_imp_art_d1e1221_qiqjdt_GEj1jJ");
         assertEquals(new String(xmlInput), new String(result.left()));
         assertEquals(trimAndRemoveNS(new String(xmlExpected)), trimAndRemoveNS(new String(result.right().getElementFragment())));
     }

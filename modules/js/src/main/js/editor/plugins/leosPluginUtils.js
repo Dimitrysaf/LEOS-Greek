@@ -32,6 +32,7 @@ define(function leosPluginUtilsModule(require) {
     var CROSSHEADING_LIST_ATTR = "data-akn-crossheading-type";
     var DATA_INDENT_LEVEL_ATTR = "data-indent-level";
     var AKN_ORDERED_ANNEX_LIST = "aknAnnexOrderedList";
+    var AKN_ORDERED_LIST = "aknOrderedList";
     var INDENT_LEVEL_ATTR = "--indent-level"
     var INLINE_NUM_ATTR = "--inline-num"
     var ORDER_LIST_ELEMENT = "ol";
@@ -139,7 +140,11 @@ define(function leosPluginUtilsModule(require) {
         return !!element && AKN_ORDERED_ANNEX_LIST === element.getAttribute(DATA_AKN_NAME);
     }
 
-	function _isUnnumberedCNParagraph(el) {
+    function _isOrderedList(element) {
+        return !!element && AKN_ORDERED_LIST === element.getAttribute(DATA_AKN_NAME);
+    }
+
+    function _isUnnumberedCNParagraph(el) {
 		return el && (!el.getAttribute(DATA_ORIGIN) || el.getAttribute(DATA_ORIGIN).toLowerCase() === 'cn') 
 			&& el.getAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT).toLowerCase() === PARAGRAPH 
 			&& !el.getAttribute(DATA_AKN_NUM);
@@ -172,9 +177,17 @@ define(function leosPluginUtilsModule(require) {
             && (element.getAttribute(DATA_AKN_ELEMENT) == POINT || element.getAttribute(DATA_AKN_ELEMENT) == INDENT));
     }
 
+    function _isListIntroAndFirstSubparaOfPointOrPara(element) {
+        return _isListIntro(element) && !(element.getParent().getPrevious());
+    }
+
+    function _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara(element) {
+        return _isSubparagraph(element) && (!_isListIntroAndFirstSubparaOfPointOrPara(element) || !(element.getPrevious()));
+    }
+
     function _isListIntro(element) {
         if (!!element
-            && _isOrderedAnnexList(element.getParent())
+            && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
             && element.getParent().getFirst().equals(element)) {
             return _isSubparagraph(element);
         }
@@ -182,7 +195,7 @@ define(function leosPluginUtilsModule(require) {
 
     function _isListEnding(element) {
         if (!!element
-            && _isOrderedAnnexList(element.getParent())
+            && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
             && element.getParent().getLast().equals(element)
             && !element.getParent().getFirst().equals(element)) {
             return _isSubparagraph(element);
@@ -311,7 +324,7 @@ define(function leosPluginUtilsModule(require) {
         var lists = editor.element.find('ol');
         for (var i = 0; i < lists.count(); i++) {
             var list = lists.getItem(i);
-            if (_isOrderedAnnexList(list) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
+            if ((_isOrderedAnnexList(list) || _isOrderedList(list)) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
                 _moveChildrenToParent(list);
             }
         }
@@ -360,6 +373,51 @@ define(function leosPluginUtilsModule(require) {
                 }
             }
         }
+    }
+
+    function _isListIntroAndFirstSubelement(element) {
+        if (element.type == CKEDITOR.NODE_TEXT) {
+            var tmpElement = element;
+            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
+                tmpElement = tmpElement.getParent();
+            }
+            element = !!tmpElement ? tmpElement : element;
+        }
+        return (_isListIntro(element) && !element.getParent().$.previousSibling);
+    }
+
+    function _isFirstSubelement(element) {
+        if (element.type == CKEDITOR.NODE_TEXT) {
+            var tmpElement = element;
+            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
+                tmpElement = tmpElement.getParent();
+            }
+            element = !!tmpElement ? tmpElement : element;
+        }
+        return (_isSubparagraph(element) && element.getParent().getName().toLowerCase() != 'ol' && !element.$.previousSibling);
+    }
+
+    function _manageListIntro(element) {
+        if (element.type == CKEDITOR.NODE_TEXT) {
+            var tmpElement = element;
+            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
+                tmpElement = tmpElement.getParent();
+            }
+            element = !!tmpElement ? tmpElement : element;
+        }
+        if (_isListIntroAndFirstSubelement(element)) {
+            return element.getParent().getParent();
+        }
+        if (_isFirstSubelement(element)) {
+            return element.getParent();
+        }
+        return element;
+    }
+
+    function _manageSubparagraphs(range) {
+        range.startContainer = _manageListIntro(range.startContainer);
+        range.endContainer = _manageListIntro(range.endContainer);
+        return range.startPath();
     }
 
     // Check crossheadings:
@@ -519,15 +577,15 @@ define(function leosPluginUtilsModule(require) {
     function _isSubpoint(editor) {
         var div = $(editor.element.$);
         if (div.length) {
-            return (div.nextAll(ITEMS_SELECTOR).length > 0 && div.nextAll(NUMBERED_ITEM).length == 0) ||
-                (div.prevAll(ITEMS_SELECTOR).length > 0 && div.prevAll(NUMBERED_ITEM).length == 0) ||
-                (div.parent(NUMBERED_ITEM).length > 0);
+            var olChild = div.children('ol');
+            return (olChild.length && !!olChild.attr(DATA_AKN_NAME) && olChild.attr(DATA_AKN_NAME).toLowerCase().includes(SUBPARAGRAPH));
         }
         return false;
     }
 
     function _isFirstChild(editor) {
-        return ($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() != LEVEL);
+        return (($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() != LEVEL && $(editor.element.$).parent().prop("tagName").toLowerCase() != LIST)
+            || ($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() == LIST && $(editor.element.$).parent().prevAll(ITEMS_SELECTOR).length == 0));
     }
 
     function _getCurrentNumValue(editor) {
@@ -554,8 +612,6 @@ define(function leosPluginUtilsModule(require) {
             var children = item.children(ITEMS_SELECTOR);
             if (children.length) {
                 item = children.eq(children.length-1);
-            } else {
-                return 1;
             }
         }
         if (item.prop("tagName").toLowerCase() == POINT) {
@@ -666,7 +722,7 @@ define(function leosPluginUtilsModule(require) {
         if (_isSubpoint(editor) && _isFirstChild(editor) && !isIndent) {
             var list = source.children(LIST).first();
             if (list.length) {
-                var children = list.children(NUMBERED_ITEM);
+                var children = list.children(ITEMS_SELECTOR);
                 $.each(children, function(key, child){
                     $(child).css({'margin-left': -5});
                 });
@@ -686,7 +742,7 @@ define(function leosPluginUtilsModule(require) {
             });
             var list = source.nextAll(LIST);
             if (list.length) {
-                var children = list.children(NUMBERED_ITEM);
+                var children = list.children(ITEMS_SELECTOR);
                 $.each(children, function(key, child){
                     $(child).css({'margin-left': -5});
                 });
@@ -920,6 +976,8 @@ define(function leosPluginUtilsModule(require) {
 		isAnnexSubparagraphElement: _isAnnexSubparagraphElement,
         isSubparagraph: _isSubparagraph,
         isPointOrIndent: _isPointOrIndent,
+        isListIntroAndFirstSubparaOfPointOrPara: _isListIntroAndFirstSubparaOfPointOrPara,
+        isSubParaButNotListIntroOrFirstSubparaOfPointOrPara: _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara,
         isListIntro: _isListIntro,
         isListEnding: _isListEnding,
         getNestingLevelForOl: _getNestingLevelForOl,
@@ -951,6 +1009,8 @@ define(function leosPluginUtilsModule(require) {
         manageEmptyLists: _manageEmptyLists,
         manageEmptySubparagraphs: _manageEmptySubparagraphs,
         manageSiblingLists: _manageSiblingLists,
+        manageSubparagraphs: _manageSubparagraphs,
+        manageListIntro: _manageListIntro,
         manageCrossheadings: _manageCrossheadings,
         copyContentAndMpAttributeToElement: _copyContentAndMpAttributeToElement,
         hasPointAttribute: _hasPointAttribute,

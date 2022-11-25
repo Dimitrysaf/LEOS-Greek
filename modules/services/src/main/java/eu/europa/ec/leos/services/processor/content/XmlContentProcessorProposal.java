@@ -269,6 +269,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             updateNewElements(node, RECITAL, null, LS);
             updateNewElements(node, ARTICLE, null, LS);
             updateNewElements(node, PARAGRAPH, SUBPARAGRAPH, LS);
+            updateNewElements(node, POINT, SUBPARAGRAPH, LS);
+            updateNewElements(node, INDENT, SUBPARAGRAPH, LS);
+            updateNewElements(node, LIST, SUBPARAGRAPH, LS);
             updateNewElements(node, POINT, SUBPOINT, LS);
             updateNewElements(node, INDENT, SUBPOINT, LS);
             updateNewElements(node, PREFACE, null, LS);

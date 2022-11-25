@@ -1,36 +1,24 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <body leos:origin="ec" xml:id="body">
-            <article leos:origin="ec" xml:id="art_1" leos:editable="false" leos:deletable="false">
-                <num leos:origin="ec" leos:editable="false" xml:id="art_1__num">Article 1</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_1">
+                <num leos:editable="false" leos:origin="ec" xml:id="art_1__num">Article 1</num>
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
-                <paragraph leos:origin="ec" xml:id="deleted_art_1__para_1" leos:editable="false" leos:deletable="false"
-                           leos:softaction="del" leos:softactionroot="true" leos:softuser="jane"
-                           leos:softdate="2019-04-26T11:05:54.006+02:00">
+                <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-26T11:05:54.006+02:00" leos:softuser="jane" xml:id="deleted_art_1__para_1">
                     <num leos:origin="ec" xml:id="deleted_art_1__para_1__num">1.</num>
-                    <subparagraph leos:origin="ec" xml:id="deleted_art_1_ftJWXT" leos:editable="false"
-                                  leos:deletable="false" leos:softaction="del" leos:softactionroot="false"
-                                  leos:softuser="jane" leos:softdate="2019-04-26T11:05:54.006+02:00">
+                    
+                    <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-26T11:05:54.006+02:00" leos:softuser="jane" xml:id="deleted_art_1_1w6KRX"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-26T11:05:54.006+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deleted_art_1_ftJWXT">
                         <content leos:origin="ec" xml:id="deleted_art_1__para_1__content">
                             <p leos:origin="ec" xml:id="deleted_art_1__para_1__content__p">art1-par1 (sub) </p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="ec" xml:id="deleted_art_1_1w6KRX" leos:editable="false" leos:deletable="false"
-                          leos:softaction="del" leos:softactionroot="false" leos:softuser="jane"
-                          leos:softdate="2019-04-26T11:05:54.006+02:00">
-                        <point leos:origin="ec" xml:id="deleted_art_1_06zx3M" leos:editable="false"
-                               leos:deletable="false" leos:softaction="del" leos:softactionroot="false"
-                               leos:softuser="jane" leos:softdate="2019-04-26T11:05:54.006+02:00">
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-26T11:05:54.006+02:00" leos:softuser="jane" xml:id="deleted_art_1_06zx3M">
                             <num leos:origin="ec" xml:id="deleted_art_1_uUP9rw">(a)</num>
                             <content leos:origin="ec" xml:id="deleted_art_1_CXRzLe">
                                 <p leos:origin="ec" xml:id="deleted_art_1_KiKmdt">point a</p>
                             </content>
                         </point>
-                        <point leos:softmove_label="MOVED to Article 2, first paragraph, point (-a)" leos:origin="ec"
-                               xml:id="moved_art_1_wLjAPO" leos:editable="false" leos:deletable="false"
-                               leos:softaction="move_to" leos:softactionroot="true" leos:softmove_to="art_1_wLjAPO"
-                               leos:softuser="jane" leos:softdate="2019-04-26T11:05:54.006+02:00">
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2019-04-26T11:05:54.006+02:00" leos:softmove_label="MOVED to Article 2, first paragraph, point (-a)" leos:softmove_to="art_1_wLjAPO" leos:softuser="jane" xml:id="moved_art_1_wLjAPO">
                             <num leos:origin="ec" xml:id="moved_art_1_K7mffV">(b)</num>
                             <content leos:origin="ec" xml:id="moved_art_1_qeHeVe">
                                 <p leos:origin="ec" xml:id="moved_art_1_QthCUl">point blast subparagraph</p>
@@ -39,24 +27,20 @@
                     </list>
                 </paragraph>
             </article>
-            <article leos:origin="ec" xml:id="art_2" leos:editable="false" leos:deletable="false">
-                <num leos:origin="ec" leos:editable="false" xml:id="art_2__num">Article 2</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_2">
+                <num leos:editable="false" leos:origin="ec" xml:id="art_2__num">Article 2</num>
                 <heading leos:origin="ec" xml:id="art_2__heading">Entry into force</heading>
                 <paragraph leos:origin="ec" xml:id="art_2__para_1">
-                    <subparagraph leos:origin="ec" xml:id="art_2_SNi868">
+                    
+                    <list leos:origin="ec" xml:id="art_2_lKHtUF"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_2_SNi868">
                         <content leos:origin="ec" xml:id="art_2__para_1__content">
                             <p leos:origin="ec" xml:id="art_2__para_1__content__p">This Regulation shall enter into
-                                force on the [...] day following that of its publication in the <i leos:origin="ec"
-                                                                                                   xml:id="art_2__para_1__content__p__i">
+                                force on the [...] day following that of its publication in the <i leos:origin="ec" xml:id="art_2__para_1__content__p__i">
                                     Official Journal of the European Union</i>.
                             </p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="ec" xml:id="art_2_lKHtUF">
-                        <point leos:softmove_label="MOVED from Article 1(1), point (b)" leos:origin="ec"
-                               xml:id="art_1_wLjAPO" leos:softaction="move_from" leos:softactionroot="true"
-                               leos:softmove_from="moved_art_1_wLjAPO" leos:softuser="jane"
-                               leos:softdate="2019-04-26T11:05:54.006+02:00">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2019-04-26T11:05:54.006+02:00" leos:softmove_from="moved_art_1_wLjAPO" leos:softmove_label="MOVED from Article 1(1), point (b)" leos:softuser="jane" xml:id="art_1_wLjAPO">
                             <num leos:origin="cn" xml:id="art_1_K7mffV">(-a)</num>
                             <content leos:origin="ec" xml:id="art_1_qeHeVe">
                                 <p leos:origin="ec" xml:id="art_1_QthCUl">point blast subparagraph</p>
@@ -82,25 +66,25 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:origin="ec" xml:id="akn_art_B6BGPx" leos:editable="false" leos:deletable="false">
-                <num leos:origin="ec" leos:editable="false" xml:id="akn_art_B6BGPx_Kf5Fo6">Article 3</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="akn_art_B6BGPx">
+                <num leos:editable="false" leos:origin="ec" xml:id="akn_art_B6BGPx_Kf5Fo6">Article 3</num>
                 <heading leos:origin="ec" xml:id="akn_art_B6BGPx_EXuYU0">Article heading...</heading>
                 <paragraph leos:origin="ec" xml:id="akn_art_B6BGPx-par1">
                     <num leos:origin="ec" xml:id="akn_art_B6BGPx_CEEgdz">1.</num>
-                    <subparagraph leos:origin="ec" xml:id="akn_art_B6BGPx_LjgRwY">
+                    
+                    <list leos:origin="ec" xml:id="akn_art_B6BGPx_patRZP"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_B6BGPx_LjgRwY">
                         <content leos:origin="ec" xml:id="akn_art_B6BGPx_tAYgzk">
                             <p leos:origin="ec" xml:id="akn_art_B6BGPx_S6dVOu">art 3 - par1 (sub)</p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="ec" xml:id="akn_art_B6BGPx_patRZP">
                         <point leos:origin="ec" xml:id="akn_art_B6BGPx_EFkmBp">
                             <num leos:origin="ec" xml:id="akn_art_B6BGPx_55WP4L">(a)</num>
-                            <alinea leos:origin="ec" xml:id="akn_art_B6BGPx_dS0ZVD">
+                            
+                            <list leos:origin="ec" xml:id="akn_art_B6BGPx_CKBXAf"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_B6BGPx_dS0ZVD">
                                 <content leos:origin="ec" xml:id="akn_art_B6BGPx_LD9GxL">
                                     <p leos:origin="ec" xml:id="akn_art_B6BGPx_GzpWwi">art3- point a</p>
                                 </content>
-                            </alinea>
-                            <list leos:origin="ec" xml:id="akn_art_B6BGPx_CKBXAf">
+                            </subparagraph>
                                 <point leos:origin="ec" xml:id="akn_art_B6BGPx_oHLYyx">
                                     <num leos:origin="ec" xml:id="akn_art_B6BGPx_APMWlv">(1)</num>
                                     <content leos:origin="ec" xml:id="akn_art_B6BGPx_YoyUYX">

@@ -40,6 +40,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
+import static eu.europa.ec.leos.model.action.SoftActionType.DELETE_TRANSFORM;
+import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
@@ -123,30 +126,60 @@ public class XmlContentProcessorHelper {
         return itemVOList;
     }
 
+
+    public static boolean isSoftDeletedOrMovedTo(Node node) {
+        return node != null && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
+                && (XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(DELETE.getSoftAction()) || XercesUtils.getAttributeValue(node,
+                LEOS_SOFT_ACTION_ATTR).equals(DELETE_TRANSFORM.getSoftAction()) || XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(MOVE_TO.getSoftAction()));
+    }
+
     private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node, List<TableOfContentItemVO> itemVOList, TocMode mode) {
         TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node);
         if (tableOfContentItemVO != null) {
+            boolean isList = getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST);
             List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode);
             if ((!TocMode.SIMPLIFIED_CLEAN.equals(mode) || (TocMode.SIMPLIFIED_CLEAN.equals(mode) && tableOfContentItemVO.getTocItem().isDisplay()))
                     && shouldItemBeAddedToToc(tocItems, tocRules, node, tableOfContentItemVO.getTocItem())) {
                 if (TocMode.SIMPLIFIED.equals(mode) || TocMode.SIMPLIFIED_CLEAN.equals(mode)) {
-                    if (getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST) && !itemVOList.isEmpty()) {
-                        tableOfContentItemVO = itemVOList.get(itemVOList.size() - 1);
-                        tableOfContentItemVO.addAllChildItems(itemVOChildrenList);
-                        return;
+                    if (isList) {
+                        if (!itemVOList.isEmpty()) {
+                            tableOfContentItemVO = itemVOList.get(itemVOList.size() - 1);
+                        }
+                        if (!itemVOChildrenList.isEmpty() && SUBPARAGRAPH.equalsIgnoreCase(getTagValueFromTocItemVo(itemVOChildrenList.get(0)))) {
+                            tableOfContentItemVO = itemVOChildrenList.get(0);
+                            itemVOChildrenList.remove(0);
+                        }
                     } else if (Arrays.asList(PARAGRAPH, POINT, INDENT, LEVEL).contains(getTagValueFromTocItemVo(tableOfContentItemVO))) {
                         boolean isFirstCrossHeading  = !itemVOChildrenList.isEmpty() && CROSSHEADING.equalsIgnoreCase(getTagValueFromTocItemVo(itemVOChildrenList.get(0)));
                         if ((itemVOChildrenList.size() > 1) && (itemVOChildrenList.get(0).getChildItems().isEmpty())) {
                             tableOfContentItemVO.setId(itemVOChildrenList.get(0).getId());
                             if(!isFirstCrossHeading) itemVOChildrenList.remove(0);
-                        } else if (itemVOChildrenList.size() == 1) {
+                        } else if (itemVOChildrenList.size() == 1 && !getTagValueFromTocItemVo(itemVOChildrenList.get(0)).equals(LIST)) {
                             tableOfContentItemVO.setId(itemVOChildrenList.get(0).getId());
                             if(!isFirstCrossHeading) itemVOChildrenList = itemVOChildrenList.get(0).getChildItems();
                         }
                     }
                 }
-                itemVOList.add(tableOfContentItemVO);
-                tableOfContentItemVO.addAllChildItems(itemVOChildrenList);
+                if (isList && !TocMode.RAW.equals(mode)) {
+                    boolean foundNumbered = false;
+                    for (int i = 0; i< itemVOChildrenList.size(); i++ ) {
+                        TableOfContentItemVO child = itemVOChildrenList.get(i);
+                        boolean isSubparagraph = SUBPARAGRAPH.equalsIgnoreCase(getTagValueFromTocItemVo(child));
+                        if (!isSubparagraph && !foundNumbered) {
+                            foundNumbered = true;
+                            itemVOList.add(tableOfContentItemVO);
+                        }
+                        if (!isSubparagraph) {
+                            tableOfContentItemVO.addChildItem(child);
+                        }
+                        if (isSubparagraph) {
+                            itemVOList.add(child);
+                        }
+                    }
+                } else {
+                    itemVOList.add(tableOfContentItemVO);
+                    tableOfContentItemVO.addAllChildItems(itemVOChildrenList);
+                }
             } else if (tableOfContentItemVO.getParentItem() != null) {
                 tableOfContentItemVO.getParentItem().addAllChildItems(itemVOChildrenList);
             } else {
@@ -399,7 +432,7 @@ public class XmlContentProcessorHelper {
                 } else if (tableOfContentItemVO.getParentItem().getChildItemsView().size() > 1) {
                     paragraphToCompare = tableOfContentItemVO.getParentItem().getChildItemsView().get(1);
                 }
-                if (paragraphToCompare != null && TableOfContentProcessor.getTagValueFromTocItemVo(paragraphToCompare).equals(PARAGRAPH) && !StringUtils.isEmpty(paragraphToCompare.getNumber()) && (paragraphToCompare.getNumSoftActionAttr() == null || !paragraphToCompare.getNumSoftActionAttr().equals(SoftActionType.DELETE)) && tableOfContentItemVO.isIndentedOrRestored()) {
+                if (paragraphToCompare != null && TableOfContentProcessor.getTagValueFromTocItemVo(paragraphToCompare).equals(PARAGRAPH) && !StringUtils.isEmpty(paragraphToCompare.getNumber()) && (paragraphToCompare.getNumSoftActionAttr() == null || !paragraphToCompare.getNumSoftActionAttr().equals(DELETE)) && tableOfContentItemVO.isIndentedOrRestored()) {
                     return true;
                 }
             }
@@ -427,10 +460,10 @@ public class XmlContentProcessorHelper {
                 XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, EMPTY_STRING, true);
             }
         } else if (tocVo.getTocItem().getItemHeading().equals(OptionsType.OPTIONAL)
-                && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && SoftActionType.DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
+                && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
             headingNode = extractOrBuildHeaderElement(node, EMPTY_STRING);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
-            updateSoftInfo(headingNode, SoftActionType.DELETE, null, user, CN, null, null, null);
+            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
         }
         return headingNode;
     }

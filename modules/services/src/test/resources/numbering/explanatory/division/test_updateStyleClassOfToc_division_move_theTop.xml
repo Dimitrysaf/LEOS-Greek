@@ -7,15 +7,15 @@
         </preface>
 
         <mainBody xml:id="body">
-            <division xml:id="body_division_2" class="type_2">
+            <division class="type_2" xml:id="body_division_2">
                 <num>#</num>
                 <heading>Was A. Will be numbered to I.</heading>
             </division>
-            <division xml:id="body_division_1" class="type_1">
+            <division class="type_1" xml:id="body_division_1">
                 <num>#</num>
                 <heading>Was I. Will be numbered to II.</heading>
             </division>
-            <division xml:id="body_division_3" class="type_1">
+            <division class="type_1" xml:id="body_division_3">
                 <num>#</num>
                 <heading>Was II. Will be numbered to III.</heading>
             </division>

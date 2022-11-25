@@ -14,11 +14,11 @@
                     <list leos:origin="ec" xml:id="_art_1_VqBxls">
                         <point leos:affected="true" leos:origin="ec" xml:id="_art_1_d5lxNW">
                             <num leos:origin="ec" xml:id="_art_1_T1FuHf">(b)</num>
-                            <alinea leos:origin="ec" xml:id="_art_1_BmSjxA">
+                            <subparagraph leos:origin="ec" xml:id="_art_1_BmSjxA">
                                 <content leos:origin="ec" xml:id="_art_1_liLUFO">
                                     <p leos:origin="ec" xml:id="_art_1_ckf6MW">Point b of Article 1</p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                             <list leos:origin="ec" xml:id="_art_1_Avh2dF">
                                 <point leos:origin="ec" xml:id="_art_1_DoFXZB">
                                     <num leos:origin="ec" xml:id="_art_1_QUO4dw">(i)</num>

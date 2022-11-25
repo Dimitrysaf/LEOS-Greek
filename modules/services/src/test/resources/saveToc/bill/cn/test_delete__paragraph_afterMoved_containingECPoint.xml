@@ -37,7 +37,7 @@
                                leos:softmove_label="MOVED to Article 1(2a), point (b)" leos:softmove_to="_art_1_d5lxNW"
                                leos:softuser="jane(DIGIT)" xml:id="moved__art_1_d5lxNW">
                             <num leos:origin="ec" xml:id="moved__art_1_T1FuHf">(b)</num>
-                            <alinea leos:deletable="false" leos:editable="false" leos:origin="ec"
+                            <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec"
                                     leos:softaction="move_to" leos:softactionroot="false"
                                     leos:softdate="2022-06-10T13:22:35.200+02:00"
                                     leos:softmove_label="MOVED to Article 1(2a), point (b), first subparagraph"
@@ -45,7 +45,7 @@
                                 <content leos:origin="ec" xml:id="moved__art_1_liLUFO">
                                     <p leos:origin="ec" xml:id="moved__art_1_ckf6MW">Point b of Article 1</p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                             <list leos:deletable="false" leos:editable="false" leos:origin="ec"
                                   leos:softaction="move_to" leos:softactionroot="false"
                                   leos:softdate="2022-06-10T13:22:35.202+02:00"
@@ -69,7 +69,7 @@
                                        leos:softmove_to="_art_1_aaR4gr" leos:softuser="jane(DIGIT)"
                                        xml:id="moved__art_1_aaR4gr">
                                     <num leos:origin="ec" xml:id="moved__art_1_dNa5T0">(ii)</num>
-                                    <alinea leos:deletable="false" leos:editable="false" leos:origin="ec"
+                                    <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec"
                                             leos:softaction="move_to" leos:softactionroot="false"
                                             leos:softdate="2022-06-10T13:22:35.201+02:00"
                                             leos:softmove_label="MOVED to Article 1(2a), point (b)(ii), first subparagraph"
@@ -78,7 +78,7 @@
                                         <content leos:origin="ec" xml:id="moved__art_1_quPSYX">
                                             <p leos:origin="ec" xml:id="moved__art_1_oWvJOZ">Point ii of Article 1</p>
                                         </content>
-                                    </alinea>
+                                    </subparagraph>
                                     <list leos:deletable="false" leos:editable="false" leos:origin="ec"
                                           leos:softaction="move_to" leos:softactionroot="false"
                                           leos:softdate="2022-06-10T13:22:35.202+02:00"
@@ -92,7 +92,7 @@
                                                leos:softmove_to="_art_1_pIHzSs" leos:softuser="jane(DIGIT)"
                                                xml:id="moved__art_1_pIHzSs">
                                             <num leos:origin="ec" xml:id="moved__art_1_ohvAsE">(1)</num>
-                                            <alinea leos:deletable="false" leos:editable="false" leos:origin="ec"
+                                            <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec"
                                                     leos:softaction="move_to" leos:softactionroot="false"
                                                     leos:softdate="2022-06-10T13:22:35.201+02:00"
                                                     leos:softmove_label="MOVED to Article 1(2a), point (b)(ii)(1), first subparagraph"
@@ -101,7 +101,7 @@
                                                 <content leos:origin="ec" xml:id="moved__art_1_wSIm58">
                                                     <p leos:origin="ec" xml:id="moved__art_1_t9aSqn">Point 1 of Article 1</p>
                                                 </content>
-                                            </alinea>
+                                            </subparagraph>
                                             <list leos:deletable="false" leos:editable="false" leos:origin="ec"
                                                   leos:softaction="move_to" leos:softactionroot="false"
                                                   leos:softdate="2022-06-10T13:22:35.202+02:00"
@@ -162,7 +162,7 @@
                                leos:softmove_label="MOVED from Article 1(1), point (b)" leos:softuser="jane(DIGIT)"
                                xml:id="_art_1_d5lxNW">
                             <num leos:origin="ec" xml:id="_art_1_T1FuHf">(b)</num>
-                            <alinea leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false"
+                            <subparagraph leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false"
                                     leos:softdate="2022-06-10T13:22:35.204+02:00"
                                     leos:softmove_from="moved__art_1_BmSjxA"
                                     leos:softmove_label="MOVED from Article 1(1), point (b), first subparagraph"
@@ -170,7 +170,7 @@
                                 <content leos:origin="ec" xml:id="_art_1_liLUFO">
                                     <p leos:origin="ec" xml:id="_art_1_ckf6MW">Point b of Article 1</p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                             <list leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false"
                                   leos:softdate="2022-06-10T13:22:35.206+02:00" leos:softmove_from="moved__art_1_Avh2dF"
                                   leos:softmove_label="MOVED from Article 1(1), point (b)" leos:softuser="jane(DIGIT)"
@@ -201,7 +201,7 @@
                                        leos:softmove_label="MOVED from Article 1(1), point (b)(ii)" leos:softuser="jane(DIGIT)"
                                        xml:id="_art_1_aaR4gr">
                                     <num leos:origin="ec" xml:id="_art_1_dNa5T0">(ii)</num>
-                                    <alinea leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false"
+                                    <subparagraph leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false"
                                             leos:softdate="2022-06-10T13:22:35.205+02:00"
                                             leos:softmove_from="moved__art_1_8YVMWK"
                                             leos:softmove_label="MOVED from Article 1(1), point (b)(ii), first subparagraph"
@@ -209,7 +209,7 @@
                                         <content leos:origin="ec" xml:id="_art_1_quPSYX">
                                             <p leos:origin="ec" xml:id="_art_1_oWvJOZ">Point ii of Article 1</p>
                                         </content>
-                                    </alinea>
+                                    </subparagraph>
                                     <list leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false"
                                           leos:softdate="2022-06-10T13:22:35.206+02:00"
                                           leos:softmove_from="moved__art_1_4WConn"
@@ -221,7 +221,7 @@
                                                leos:softmove_label="MOVED from Article 1(1), point (b)(ii)(1)"
                                                leos:softuser="jane(DIGIT)" xml:id="_art_1_pIHzSs">
                                             <num leos:origin="ec" xml:id="_art_1_ohvAsE">(1)</num>
-                                            <alinea leos:origin="ec" leos:softaction="move_from"
+                                            <subparagraph leos:origin="ec" leos:softaction="move_from"
                                                     leos:softactionroot="false"
                                                     leos:softdate="2022-06-10T13:22:35.205+02:00"
                                                     leos:softmove_from="moved__art_1_36mOBa"
@@ -230,7 +230,7 @@
                                                 <content leos:origin="ec" xml:id="_art_1_wSIm58">
                                                     <p leos:origin="ec" xml:id="_art_1_t9aSqn">Point 1 of Article 1</p>
                                                 </content>
-                                            </alinea>
+                                            </subparagraph>
                                             <list leos:origin="ec" leos:softaction="move_from"
                                                   leos:softactionroot="false"
                                                   leos:softdate="2022-06-10T13:22:35.205+02:00"
@@ -295,11 +295,11 @@
                         </point>
                         <point leos:origin="ec" xml:id="_art_2_XZ1wQb">
                             <num leos:origin="ec" xml:id="_art_2_AdnE11">(b)</num>
-                            <alinea leos:origin="ec" xml:id="_art_2_btTLSv">
+                            <subparagraph leos:origin="ec" xml:id="_art_2_btTLSv">
                                 <content leos:origin="ec" xml:id="_art_2_1pKPOW">
                                     <p leos:origin="ec" xml:id="_art_2_9kttFq">Point b of Article 3</p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                             <list leos:origin="ec" xml:id="_art_2_y10Jke">
                                 <point leos:origin="ec" xml:id="_art_2_NeS3N1">
                                     <num leos:origin="ec" xml:id="_art_2_grHAdE">(i)</num>
@@ -309,11 +309,11 @@
                                 </point>
                                 <point leos:origin="ec" xml:id="_art_2_tmKcQk">
                                     <num leos:origin="ec" xml:id="_art_2_xQwZ5S">(ii)</num>
-                                    <alinea leos:origin="ec" xml:id="_art_2_AdFPm1">
+                                    <subparagraph leos:origin="ec" xml:id="_art_2_AdFPm1">
                                         <content leos:origin="ec" xml:id="_art_2_CqPdpZ">
                                             <p leos:origin="ec" xml:id="_art_2_QP4XSE">Point ii of Article 3</p>
                                         </content>
-                                    </alinea>
+                                    </subparagraph>
                                     <list leos:origin="ec" xml:id="_art_2_5za4Jn">
                                         <point leos:origin="ec" xml:id="_art_2__para_1">
                                             <num leos:origin="ec" xml:id="_art_2_FhlcFc">(1)</num>

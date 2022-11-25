@@ -28,35 +28,35 @@ define(function transformationsConfigUtilModule(require) {
                     "to": [{
                         "attrs": [{
                             "to": "data-akn-name",
-                            "toValue": "alinea",
+                            "toValue": "subparagraph",
                             "action": "addAttributeTransformer"
                         }],
-                        "fromPath": "alinea",
-                        "fromParentPath": "alinea",
-                        "from": "alinea",
+                        "fromPath": "subparagraph",
+                        "fromParentPath": "subparagraph",
+                        "from": "subparagraph",
                         "toPath": "p",
                         "toParentPath": "p",
                         "to": "p"
                     }, {
                         "attrs": [],
-                        "fromPath": "alinea/content",
-                        "fromParentPath": "alinea",
+                        "fromPath": "subparagraph/content",
+                        "fromParentPath": "subparagraph",
                         "from": "content",
                         "toPath": "p",
                         "toParentPath": "p",
                         "to": "p"
                     }, {
                         "attrs": [],
-                        "fromPath": "alinea/content/mp",
-                        "fromParentPath": "alinea/content",
+                        "fromPath": "subparagraph/content/mp",
+                        "fromParentPath": "subparagraph/content",
                         "from": "mp",
                         "toPath": "p",
                         "toParentPath": "p",
                         "to": "p"
                     }, {
                         "attrs": [],
-                        "fromPath": "alinea/content/mp/text",
-                        "fromParentPath": "alinea/content/mp",
+                        "fromPath": "subparagraph/content/mp/text",
+                        "fromParentPath": "subparagraph/content/mp",
                         "from": "text",
                         "toPath": "p/text",
                         "toParentPath": "p",
@@ -65,45 +65,45 @@ define(function transformationsConfigUtilModule(require) {
                     "from": [{
                         "attrs": [{
                             "from": "data-akn-name",
-                            "fromValue": "alinea"
+                            "fromValue": "subparagraph"
                         }],
                         "fromPath": "p",
                         "fromParentPath": "p",
                         "from": "p",
-                        "toPath": "alinea",
-                        "toParentPath": "alinea",
-                        "to": "alinea"
+                        "toPath": "subparagraph",
+                        "toParentPath": "subparagraph",
+                        "to": "subparagraph"
                     }, {
                         "attrs": [],
                         "fromPath": "p",
                         "fromParentPath": "p",
                         "from": "p",
-                        "toPath": "alinea/content",
-                        "toParentPath": "alinea",
+                        "toPath": "subparagraph/content",
+                        "toParentPath": "subparagraph",
                         "to": "content"
                     }, {
                         "attrs": [],
                         "fromPath": "p",
                         "fromParentPath": "p",
                         "from": "p",
-                        "toPath": "alinea/content/mp",
-                        "toParentPath": "alinea/content",
+                        "toPath": "subparagraph/content/mp",
+                        "toParentPath": "subparagraph/content",
                         "to": "mp"
                     }, {
                         "attrs": [],
                         "fromPath": "p/text",
                         "fromParentPath": "p",
                         "from": "text",
-                        "toPath": "alinea/content/mp/text",
-                        "toParentPath": "alinea/content/mp",
+                        "toPath": "subparagraph/content/mp/text",
+                        "toParentPath": "subparagraph/content/mp",
                         "to": "text"
                     }]
                 },
                 rawConfig: {
-                    akn: "alinea",
+                    akn: "subparagraph",
                     html: 'p',
                     attr: [{
-                        html: ["data-akn-name", "alinea"].join("=")
+                        html: ["data-akn-name", "subparagraph"].join("=")
                     }],
                     sub: {
                         akn: "content",

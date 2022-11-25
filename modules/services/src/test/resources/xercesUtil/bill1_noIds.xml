@@ -26,22 +26,15 @@
             </identification>
             <references source="~COM">
                 <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType"
-                              showAs="Regulation"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation"/>
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
-                              showAs="en"/>
-                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/2012_227" name="procedureReference"
-                              shortForm="2012/227/COD" showAs="2012/0227 (COD)"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/identifier/COMnumber"
-                              name="identifier" shortForm="COM/2012/466" showAs="COM(2012) 466"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
+                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/2012_227" name="procedureReference" shortForm="2012/227/COD" showAs="2012/0227 (COD)"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/identifier/COMnumber" name="identifier" shortForm="COM/2012/466" showAs="COM(2012) 466"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -59,8 +52,7 @@
         <coverPage>
             <container name="logo">
                 <p>
-                    <img alt="European Commission" src="data:image/png;base64,iVBORw0KG..."
-                         title="European Commission"/>
+                    <img alt="European Commission" src="data:image/png;base64,iVBORw0KG..." title="European Commission"/>
                 </p>
             </container>
             <container name="mainDoc">
@@ -252,7 +244,8 @@
                     <num>Article 1</num>
                     <heading>Scope</heading>
                     <paragraph>
-                        <subparagraph>
+                        
+                        <list><subparagraph refersTo="~_INP">
                             <content>
                                 <p>This Regulation lays down uniform rules
                                     concerning general prudential requirements that institutions supervised under
@@ -260,7 +253,6 @@
                                 </p>
                             </content>
                         </subparagraph>
-                        <list>
                             <point>
                                 <num>(a)</num>
                                 <content>
@@ -346,14 +338,14 @@
                         <heading>Definitions</heading>
                         <paragraph>
                             <num>1.</num>
-                            <subparagraph>
+                            
+                            <list><subparagraph refersTo="~_INP">
                                 <content>
                                     <p>For the purposes of this Regulation, the
                                         following definitions shall apply:
                                     </p>
                                 </content>
                             </subparagraph>
-                            <list>
                                 <point>
                                     <num>(a)</num>
                                     <content>
@@ -366,7 +358,8 @@
                                 </point>
                                 <point>
                                     <num>(b)</num>
-                                    <alinea>
+                                    
+                                    <list><subparagraph refersTo="~_INP">
                                         <content>
                                             <p>'investment firm' means a
                                                 person as defined in point (1) of Article 4(1) of Directive 2004/39/EC,
@@ -375,8 +368,7 @@
                                                 the following:
                                             </p>
                                         </content>
-                                    </alinea>
-                                    <list>
+                                    </subparagraph>
                                         <point>
                                             <num>(a)</num>
                                             <content>
@@ -544,14 +536,14 @@
                                 </point>
                                 <point>
                                     <num>(m)</num>
-                                    <alinea>
+                                    
+                                    <list><subparagraph refersTo="~_INP">
                                         <content>
                                             <p>'originator' means an
                                                 entity which:
                                             </p>
                                         </content>
-                                    </alinea>
-                                    <list>
+                                    </subparagraph>
                                         <point>
                                             <num>(a)</num>
                                             <content>
@@ -586,14 +578,14 @@
                                 </point>
                                 <point>
                                     <num>(o)</num>
-                                    <alinea>
+                                    
+                                    <list><subparagraph refersTo="~_INP">
                                         <content>
                                             <p>'parent undertaking'
                                                 means:
                                             </p>
                                         </content>
-                                    </alinea>
-                                    <list>
+                                    </subparagraph>
                                         <point>
                                             <num>(a)</num>
                                             <content>
@@ -619,12 +611,12 @@
                                 </point>
                                 <point>
                                     <num>(p)</num>
-                                    <alinea>
+                                    
+                                    <list><subparagraph refersTo="~_INP">
                                         <content>
                                             <p>'subsidiary' means:</p>
                                         </content>
-                                    </alinea>
-                                    <list>
+                                    </subparagraph>
                                         <point>
                                             <num>(a)</num>
                                             <content>
@@ -644,15 +636,15 @@
                                                 </p>
                                             </content>
                                         </point>
-                                    </list>
-                                    <alinea>
+                                    <subparagraph refersTo="~_WRP">
                                         <content>
                                             <p>Subsidiaries of subsidiaries shall
                                                 also be considered to be subsidiaries of the undertaking that is their
                                                 original parent undertaking;
                                             </p>
                                         </content>
-                                    </alinea>
+                                    </subparagraph></list>
+                                    
                                 </point>
                             </list>
                         </paragraph>
@@ -696,8 +688,7 @@
                 </chapter>
             </part>
 
-            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1"
-                    leos:selectedoption="1">
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1">
                 <content>
                     <p>This Regulation shall be binding in its entirety and directly
                         applicable in all Member States.

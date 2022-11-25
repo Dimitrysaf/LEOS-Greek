@@ -18,6 +18,7 @@ define(function leosElementSplitHandlerPluginModule(require) {
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var $ = require("jquery");
 
     var pluginName = "leosElementSplitHandler";

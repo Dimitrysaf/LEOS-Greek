@@ -14,7 +14,7 @@
                 </content>
             </level>
             <paragraph xml:id="body_level_1_1_p">
-                <num xml:id="body_level_1_1_num"></num>
+                <num xml:id="body_level_1_1_num"/>
                 <content xml:id="body_level_1_1_content">
                     <p xml:id="body_level_1_1_content_p">Text...</p>
                 </content>
@@ -32,7 +32,7 @@
                 </content>
             </level>
             <paragraph xml:id="body_level_1_2_p">
-                <num xml:id="body_level_1_2_num"></num>
+                <num xml:id="body_level_1_2_num"/>
                 <content xml:id="body_level_1_2_content">
                     <p xml:id="body_level_1_2_content_p">Text...</p>
                 </content>

@@ -266,25 +266,6 @@
             <numberingType>POINT_NUM</numberingType>
             <editable>false</editable>
         </tocItem>
-
-        <tocItem>
-            <aknTag>alinea</aknTag>
-            <root>false</root>
-            <draggable>false</draggable>
-            <childrenAllowed>false</childrenAllowed>
-            <display>false</display>
-            <itemNumber>none</itemNumber>
-            <itemHeading>none</itemHeading>
-            <itemDescription>false</itemDescription>
-            <numberEditable>false</numberEditable>
-            <contentDisplayed>true</contentDisplayed>
-            <deletable>true</deletable>
-            <numWithType>false</numWithType>
-            <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
-            <editable>false</editable>
-        </tocItem>
     </tocItems>
 
     <numberingConfigs>
@@ -325,7 +306,7 @@
             <suffix>)</suffix>
             <sequence>a</sequence>
             <description>(a), (b), etc</description>
-            <regex></regex>
+            <regex>[a-z]+$|#</regex>
             <msgValidationError></msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -335,8 +316,8 @@
             <suffix>)</suffix>
             <sequence>i</sequence>
             <description>(i), (ii), etc</description>
-            <regex></regex>
-            <msgValidationError></msgValidationError>
+            <regex>m{0,4}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})$|#</regex>
+            <msgValidationError>roman.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
             <type>ROMAN_UPPER</type>

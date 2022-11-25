@@ -79,12 +79,12 @@ public abstract class AbstractTocEditor implements TocEditor {
         TableOfContentItemVO tempDeletedItem = copyDeletedItemToTempForUndelete(tableOfContentItemVO);
         dropItemAtOriginalPosition(tableOfContentItemVO, tempDeletedItem, treeData);
         treeData.removeItem(tableOfContentItemVO);
-        tableOfContentItemVO.getParentItem().removeChildItem(tableOfContentItemVO);
+        TableOfContentHelper.removeChildItem(tableOfContentItemVO.getParentItem(), tableOfContentItemVO);
 
         TableOfContentItemVO softDeletedItem = copyTempItemToFinalItem(tempDeletedItem);
         dropItemAtOriginalPosition(tempDeletedItem, softDeletedItem, treeData);
         treeData.removeItem(tempDeletedItem);
-        tempDeletedItem.getParentItem().removeChildItem(tempDeletedItem);
+        TableOfContentHelper.removeChildItem(tempDeletedItem.getParentItem(), tempDeletedItem);
 
         tocTree.getDataProvider().refreshAll();
         tocTree.deselectAll();
@@ -126,7 +126,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         tempDeletedItem.setContent(originalItem.getContent());
         tempDeletedItem.setItemDepth(originalItem.getItemDepth());
         tempDeletedItem.setOriginalDepth(originalItem.getItemDepth());
-        originalItem.getChildItems().forEach(child -> tempDeletedItem.addChildItem(copyDeletedItemToTempForUndelete(child)));
+        originalItem.getChildItems().forEach(child -> TableOfContentHelper.addChildItem(tempDeletedItem, copyDeletedItemToTempForUndelete(child)));
         return tempDeletedItem;
     }
 
@@ -256,7 +256,7 @@ public abstract class AbstractTocEditor implements TocEditor {
                 sourceItem.setItemDepth(1);
             }
         } else if (sourceItem.getParentItem() != null) {
-            sourceItem.getParentItem().removeChildItem(sourceItem);
+            TableOfContentHelper.removeChildItem(sourceItem.getParentItem(), sourceItem);
             sourceItem.setOriginalDepth(sourceItem.getItemDepth());
         }
 
@@ -466,7 +466,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         temp.setContent(originalItem.getContent());
         temp.setItemDepth(originalItem.getItemDepth());
         temp.setOriginalDepth(originalItem.getOriginalDepth());
-        originalItem.getChildItems().forEach(child -> temp.addChildItem(copyItemToTemp(child)));
+        originalItem.getChildItems().forEach(child -> TableOfContentHelper.addChildItem(temp, copyItemToTemp(child)));
         return temp;
     }
 
@@ -521,17 +521,17 @@ public abstract class AbstractTocEditor implements TocEditor {
         if (isPlaceholderForDroppedItem(newPosition, droppedItem)) {
             restoreOriginal(droppedItem, newPosition, tocTree);
             if (newPosition.getParentItem() != null) {
-                newPosition.getParentItem().removeChildItem(newPosition);
+                TableOfContentHelper.removeChildItem(newPosition.getParentItem(), newPosition);
             }
         } else if (isPlaceholderForDroppedItem(previousSibling, droppedItem)) {
             restoreOriginal(droppedItem, previousSibling, tocTree);
             if (newPosition.getParentItem() != null) {
-                newPosition.getParentItem().removeChildItem(previousSibling);
+                TableOfContentHelper.removeChildItem(newPosition.getParentItem(), previousSibling);
             }
         } else if (isPlaceholderForDroppedItem(nextSibling, droppedItem)) {
             restoreOriginal(droppedItem, nextSibling, tocTree);
             if (newPosition.getParentItem() != null) {
-                newPosition.getParentItem().removeChildItem(nextSibling);
+                TableOfContentHelper.removeChildItem(newPosition.getParentItem(), nextSibling);
             }
         } else {
             setNumber(droppedItem, newPosition);
@@ -598,7 +598,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         container.removeItem(item);
         container.addItem(parent, tempDeletedItem);
         if (item.getParentItem() != null) {
-            item.getParentItem().removeChildItem(item);
+            TableOfContentHelper.removeChildItem(item.getParentItem(), item);
         }
 
         TableOfContentItemVO finalItem = copyTempItemToFinalItem(tempDeletedItem);
@@ -653,14 +653,14 @@ public abstract class AbstractTocEditor implements TocEditor {
         dropItemAtOriginalPosition(moveBefore, tempDeletedItem, treeData);
         treeData.removeItem(item);
         if (item.getParentItem() != null) {
-            item.getParentItem().removeChildItem(item);
+            TableOfContentHelper.removeChildItem(item.getParentItem(), item);
         }
 
         TableOfContentItemVO finalItem = copyTempItemToFinalItem(tempDeletedItem);
         dropItemAtOriginalPosition(tempDeletedItem, finalItem, treeData);
         treeData.removeItem(tempDeletedItem);
         if (tempDeletedItem.getParentItem() != null) {
-            tempDeletedItem.getParentItem().removeChildItem(tempDeletedItem);
+            TableOfContentHelper.removeChildItem(tempDeletedItem.getParentItem(), tempDeletedItem);
         }
         return finalItem;
     }
@@ -760,9 +760,9 @@ public abstract class AbstractTocEditor implements TocEditor {
         if (elementOrigin.equals(item.getOriginAttr())) {
             if (movedTableOfContentItemVO != null) {
                 tocTree.getTreeData().removeItem(movedTableOfContentItemVO);
-                item.getParentItem().removeChildItem(movedTableOfContentItemVO);
+                TableOfContentHelper.removeChildItem(item.getParentItem(), movedTableOfContentItemVO);
             }
-            item.getParentItem().removeChildItem(item);
+            TableOfContentHelper.removeChildItem(item.getParentItem(), item);
             tocTree.getDataProvider().refreshAll();
         }
         return movedTableOfContentItemVO;
@@ -771,7 +771,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     protected ActionType hardDeleteFromTree(TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO tableOfContentItemVO) {
         tocTree.getTreeData().removeItem(tableOfContentItemVO);
         if (tableOfContentItemVO.getParentItem() != null) {
-            tableOfContentItemVO.getParentItem().removeChildItem(tableOfContentItemVO);
+            TableOfContentHelper.removeChildItem(tableOfContentItemVO.getParentItem(), tableOfContentItemVO);
         }
         return ActionType.DELETED;
     }
@@ -786,7 +786,7 @@ public abstract class AbstractTocEditor implements TocEditor {
             return 0;
         } else if (CN.equals(item.getOriginAttr()) && item.getSoftActionAttr() == null) {
             tocTree.getTreeData().removeItem(item);
-            item.getParentItem().removeChildItem(item);
+            TableOfContentHelper.removeChildItem(item.getParentItem(), item);
             return 0;
         }
         return 1;
@@ -798,7 +798,7 @@ public abstract class AbstractTocEditor implements TocEditor {
             TableOfContentItemVO movedItem = moveItem(item, originalItem, tocTree.getTreeData());
             restoreOriginal(movedItem, originalItem, tocTree);
             if (originalItem.getParentItem() != null) {
-                originalItem.getParentItem().removeChildItem(originalItem);
+                TableOfContentHelper.removeChildItem(originalItem.getParentItem(), originalItem);
             }
             transformToSoftDeleted(tocTree.getTreeData(), movedItem);
         } else {

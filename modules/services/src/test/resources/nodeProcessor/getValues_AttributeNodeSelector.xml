@@ -1,5 +1,5 @@
 <akomaNtoso>
-    <meta xml:id="test"></meta>
+    <meta xml:id="test"/>
     <coverPage xml:id="testCover">
         <container name="x">
             <p>Dummuy</p>

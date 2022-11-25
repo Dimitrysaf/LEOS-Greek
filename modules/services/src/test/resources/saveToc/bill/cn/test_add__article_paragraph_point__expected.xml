@@ -11,28 +11,18 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                     leos:softdate="2022-06-17T11:05:17.036+02:00" leos:softuser="demo jane(Ext)"
-                     xml:id="_akn_article_AzrTMD">
+            <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:11:03.172+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_article_tD9Aez">
                 <num leos:editable="false" leos:origin="cn">#</num>
                 <heading>Article heading...</heading>
-                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                           leos:softdate="2022-06-17T11:05:17.036+02:00" leos:softuser="demo jane(Ext)"
-                           xml:id="_akn_paragraph_S1l8as">
+                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:11:03.171+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_paragraph_i5qWjp">
                     <num leos:editable="false" leos:origin="cn">#</num>
-                    <subparagraph leos:softaction="add" leos:softactionroot="true"
-                                  leos:softdate="2022-06-17T11:05:17.036+02:00" leos:softuser="demo jane(Ext)"
-                                  xml:id="_akn_subparagraph_DbmRuL">
+                    <subparagraph leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:11:03.170+02:00" leos:softuser="demo jane (Ext)" xml:id="_akn_subparagraph_i5CkAp">
                         <content>
                             <p>Text...</p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                          leos:softdate="2022-06-17T11:05:17.020+02:00" leos:softuser="demo jane(Ext)"
-                          xml:id="_lis_QOQwIR">
-                        <point leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                               leos:softdate="2022-06-17T11:05:17.020+02:00" leos:softuser="demo jane(Ext)"
-                               xml:id="new_point_1">
+                    <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:11:03.166+02:00" leos:softuser="demo jane (Ext)" xml:id="_lis_JkvwxS">
+                        <point leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-05-13T09:11:03.160+02:00" leos:softuser="demo jane (Ext)" xml:id="new_point_1">
                             <num leos:editable="false" leos:origin="cn">#</num>
                             <content>
                                 <p>Text...</p>

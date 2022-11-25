@@ -28,7 +28,7 @@
     </article>
     <article xml:id="art486">
         <num class="ArticleNumber" xml:id="n3">Article 486</num>
-        <alinea xml:id="art486-aln1">
+        <subparagraph xml:id="art486-aln1">
             <content xml:id="c3">
                 <p class="Paragraph(unnumbered)" xml:id="p3">This Regulation shall enter into force on the day following
                     that of its publication in the
@@ -41,6 +41,6 @@
                     .
                 </p>
             </content>
-        </alinea>
+        </subparagraph>
     </article>
 </part>

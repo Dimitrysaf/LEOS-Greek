@@ -28,6 +28,7 @@ define(function leosPreventElementDeletionPluginModule(require) {
         init: function init(editor) {
             editor.on("toHtml", addPreventElementDeletionWidgetToFirstChild, null, null, 14);
             editor.on("toHtml", addEmptyElement, null, null, 7);
+            editor.on("toHtml", removeEmptySpaces, null, null, 6);
             editor.on("toDataFormat", removeEmptyElement, null, null, 13);
 
             editor.widgets.add(leosNonEditableEmptyWidget.name, leosNonEditableEmptyWidget.definition);
@@ -64,6 +65,17 @@ define(function leosPreventElementDeletionPluginModule(require) {
         if(topEditorElement && topEditorElement.children.length > 0){
             topEditorElement.find(function(child){
                 return child.hasClass && child.hasClass(leosNonEditableEmptyWidget.elementClass);
+            }, true).forEach(function (emptyElement) {
+                emptyElement.remove();
+            });
+        }
+    }
+
+    function removeEmptySpaces(event) {
+        var topEditorElement = event.data.dataValue;
+        if(topEditorElement && topEditorElement.children.length > 0){
+            topEditorElement.find(function(child){
+                return child.type == CKEDITOR.NODE_TEXT && (!!child.previous || !!child.next) && !child.value.replace(/\s/g, "").length;
             }, true).forEach(function (emptyElement) {
                 emptyElement.remove();
             });

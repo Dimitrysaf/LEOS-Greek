@@ -1,13 +1,10 @@
-<article xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
-             xmlns:fmx="http://formex.publications.europa.eu/schema/formex-05.21-20110601.xd"
-             xmlns:xs="http://www.w3.org/2001/XMLSchema"
-             xmlns:leos="urn:eu:europa:ec:leos"
-             xml:id="art_d1e5242">
+<article xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:fmx="http://formex.publications.europa.eu/schema/formex-05.21-20110601.xd" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xml:id="art_d1e5242">
     <num>Article 64</num>
     <heading>Support for PPP operations</heading>
     <paragraph>
-        <num/>
-        <subparagraph>
+        <num></num>
+        
+        <list><subparagraph refersTo="~_INP">
             <content>
                 <p>In the case of a PPP operation where the beneficiary is a public law body, expenditure under a PPP
                     operation which has been incurred and paid by the private partner may, by way of derogation from
@@ -16,7 +13,6 @@
                 </p>
             </content>
         </subparagraph>
-        <list>
             <point>
                 <num>(a)</num>
                 <content>

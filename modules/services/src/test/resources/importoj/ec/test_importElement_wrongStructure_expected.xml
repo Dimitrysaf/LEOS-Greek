@@ -28,22 +28,14 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"
-                             xml:id="_BEL_BRU"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union" xml:id="CONSIL"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament" xml:id="EP"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission" xml:id="COM"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"
-                         xml:id="PRESID"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType"
-                              showAs="Regulation" xml:id="REG"/>
-                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"
-                              xml:id="legalBasis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
-                              showAs="en" xml:id="language"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -61,8 +53,7 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img alt="European Commission" src="data:image/png;base64" title="European Commission"
-                         xml:id="coverpage__container_1__p__img"/>
+                    <img alt="European Commission" src="data:image/png;base64" title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
             <longTitle xml:id="coverpage__longtitle">
@@ -183,46 +174,46 @@
                 </paragraph>
                 <paragraph xml:id="imp_art_23_P99mof_58pYPx">
                     <num xml:id="imp_art_23_P99mof_h0d1hy">2.</num>
-                    <subparagraph xml:id="imp_art_23_P99mof_Qk0CtG">
-                        <content xml:id="imp_art_23_P99mof_prZB8Z">
-                            <p xml:id="imp_art_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
-                        </content>
-                    </subparagraph>
                     <list xml:id="imp_art_23_P99mof_u93htc">
+                        <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_Qk0CtG">
+                            <content xml:id="imp_art_23_P99mof_prZB8Z">
+                                <p xml:id="imp_art_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
+                            </content>
+                        </subparagraph>
                         <point xml:id="imp_art_23_P99mof_zfNq9s">
                             <num xml:id="imp_art_23_P99mof_FC1tcm">(a)</num>
-                            <alinea xml:id="imp_art_23_P99mof_C0cyPH">
+                            <subparagraph xml:id="imp_art_23_P99mof_C0cyPH">
                                 <content xml:id="imp_art_23_P99mof_bwovMa">
                                     <p xml:id="imp_art_23_P99mof_CCX9D5">Article 25, paragraph 2, Point (a), first
                                         alinea
                                     </p>
                                 </content>
-                            </alinea>
-                            <alinea xml:id="imp_art_23_P99mof_kUIIeV">
+                            </subparagraph>
+                            <subparagraph xml:id="imp_art_23_P99mof_kUIIeV">
                                 <content xml:id="imp_art_23_P99mof_ThoMVz">
                                     <p xml:id="imp_art_23_P99mof_0615td">Article 25, paragraph 2, Point (b), second
                                         alinea
                                     </p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                         </point>
                         <point xml:id="imp_art_23_P99mof_fD6PFK">
                             <num xml:id="imp_art_23_P99mof_g7iGYJ">(b)</num>
-                            <alinea xml:id="imp_art_23_P99mof_i4rCY2">
+                            <subparagraph xml:id="imp_art_23_P99mof_i4rCY2">
                                 <content xml:id="imp_art_23_P99mof_DJx4Q8">
                                     <p xml:id="imp_art_23_P99mof_8fYIul">Article 25, paragraph 2, Point (b), first
                                         alinea
                                     </p>
                                 </content>
-                            </alinea>
-                            <alinea xml:id="imp_art_23_P99mof_LYUT0e">
-                                <content xml:id="imp_art_23_P99mof_znCsOX">
-                                    <p xml:id="imp_art_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second
-                                        alinea
-                                    </p>
-                                </content>
-                            </alinea>
+                            </subparagraph>
                             <list xml:id="imp_art_23_P99mof_SQ8BMd">
+                                <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_LYUT0e">
+                                    <content xml:id="imp_art_23_P99mof_znCsOX">
+                                        <p xml:id="imp_art_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second
+                                            alinea
+                                        </p>
+                                    </content>
+                                </subparagraph>
                                 <indent xml:id="imp_art_23_P99mof_ydKJie">
                                     <num xml:id="imp_art_23_P99mof_hERt8s">(i)</num>
                                     <content xml:id="imp_art_23_P99mof_QQsneg">
@@ -243,20 +234,20 @@
                         </point>
                         <point xml:id="imp_art_23_P99mof_lHSKlW">
                             <num xml:id="imp_art_23_P99mof_pHLgiE">(c)</num>
-                            <alinea xml:id="imp_art_23_P99mof_aVESKN">
+                            <subparagraph xml:id="imp_art_23_P99mof_aVESKN">
                                 <content xml:id="imp_art_23_P99mof_NdRXK8">
                                     <p xml:id="imp_art_23_P99mof_NEWqze">Article 25, paragraph 2, Point (c), first
                                         alinea
                                     </p>
                                 </content>
-                            </alinea>
-                            <alinea xml:id="imp_art_23_P99mof_m5xD3y">
+                            </subparagraph>
+                            <subparagraph xml:id="imp_art_23_P99mof_m5xD3y">
                                 <content xml:id="imp_art_23_P99mof_0u6LpQ">
                                     <p xml:id="imp_art_23_P99mof_pPg6PJ">Article 25, paragraph 2, Point (c), second
                                         alinea
                                     </p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                         </point>
                     </list>
                 </paragraph>
@@ -267,8 +258,7 @@
                     </content>
                 </paragraph>
             </article>
-            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1"
-                    leos:selectedoption="1" xml:id="clause_1">
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
                 <content xml:id="clause_1__content">
                     <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly
                         applicable in all Member States.

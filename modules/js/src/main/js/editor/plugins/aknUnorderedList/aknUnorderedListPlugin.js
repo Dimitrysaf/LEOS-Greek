@@ -91,8 +91,8 @@ define(function aknUnorderedListPluginModule(require) {
                 html : "data-akn-name=aknUnorderedList"
             } ]
         },
-        rootElementsForFrom : [ "list", "indent" ],
-        contentWrapperForFrom : "alinea",
+        rootElementsForFrom : [ "indent", "list" ],
+        contentWrapperForFrom : "subparagraph",
         rootElementsForTo : [ "ul", "li" ]
     });
 

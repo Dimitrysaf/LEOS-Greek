@@ -1,5 +1,4 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="ANNEX">
         <meta>
             <identification source="~COM">
@@ -29,22 +28,14 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"
-                             xml:id="_BEL_BRU"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union" xml:id="CONSIL"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament" xml:id="EP"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission" xml:id="COM"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"
-                         xml:id="PRESID"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/ANNEX" name="docType"
-                              showAs="Annex" xml:id="ANNEX"/>
-                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"
-                              xml:id="legalBasis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
-                              showAs="en" xml:id="language"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/ANNEX" name="docType" showAs="Annex" xml:id="ANNEX"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -99,20 +90,20 @@
                 </level>
                 <level xml:id="akn_level_biIuvM">
                     <num xml:id="akn_hv7AMt">1.1.1.</num>
-                    <subparagraph xml:id="akn_81XGRl">
-                        <content xml:id="akn_ULX2GT">
-                            <p xml:id="akn_Col53V">Level 1.1.1</p>
-                        </content>
-                    </subparagraph>
                     <list xml:id="akn_OKrsPP">
+                        <subparagraph refersTo="~_INP" xml:id="akn_81XGRl">
+                            <content xml:id="akn_ULX2GT">
+                                <p xml:id="akn_Col53V">Level 1.1.1</p>
+                            </content>
+                        </subparagraph>
                         <point xml:id="akn_2wkgF4">
                             <num leos:origin="cn" xml:id="akn_LN7wn2">(-a)</num>
-                            <alinea xml:id="akn_l4nug5">
-                                <content xml:id="akn_KL87za">
-                                    <p xml:id="akn_m5tEWi">Point b</p>
-                                </content>
-                            </alinea>
                             <list xml:id="akn_NVXoge">
+                                <subparagraph refersTo="~_INP" xml:id="akn_l4nug5">
+                                    <content xml:id="akn_KL87za">
+                                        <p xml:id="akn_m5tEWi">Point b</p>
+                                    </content>
+                                </subparagraph>
                                 <point xml:id="akn_qEKrHf">
                                     <num xml:id="akn_gqREnj">(i)</num>
                                     <content xml:id="akn_7eYIBG">

@@ -51,9 +51,7 @@
                         </p>
                     </content>
                 </point>
-                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
-                       leos:softactionroot="true" leos:softdate="2022-06-17T09:25:39.816+02:00"
-                       leos:softuser="demo(DIGIT)" xml:id="deleted_imp_art_d1e1221_qiqjdt_GEj1jJ">
+                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T09:25:39.816+02:00" leos:softuser="demo(DIGIT)" xml:id="deleted_imp_art_d1e1221_qiqjdt_GEj1jJ">
                     <num leos:origin="ec" xml:id="deleted_imp_art_d1e1221_qiqjdt_rlOyG4">(e)</num>
                     <content leos:origin="ec" xml:id="deleted_imp_art_d1e1221_qiqjdt_iF4nRP">
                         <p leos:origin="ec" xml:id="deleted_imp_art_d1e1221_qiqjdt_64XI6K">public disclosure

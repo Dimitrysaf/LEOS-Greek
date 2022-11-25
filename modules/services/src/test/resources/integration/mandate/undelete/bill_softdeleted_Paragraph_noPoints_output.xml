@@ -1,10 +1,9 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
 
         <body leos:origin="ec" xml:id="body">
-            <article leos:origin="ec" xml:id="art_1" leos:editable="false" leos:deletable="false">
-                <num leos:origin="ec" xml:id="art_1__num" leos:editable="false">Article 1</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_1">
+                <num leos:editable="false" leos:origin="ec" xml:id="art_1__num">Article 1</num>
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
                 <paragraph leos:origin="ec" xml:id="art_1__para_1">
                     <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
@@ -13,21 +12,20 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:origin="ec" xml:id="art_2" leos:editable="false" leos:deletable="false">
-                <num leos:origin="ec" xml:id="art_2__num" leos:editable="false">Article 2</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_2">
+                <num leos:editable="false" leos:origin="ec" xml:id="art_2__num">Article 2</num>
                 <heading leos:origin="ec" xml:id="art_2__heading">Entry into force</heading>
                 <paragraph leos:origin="ec" xml:id="art_2__para_1">
                     <content leos:origin="ec" xml:id="art_2__para_1__content">
                         <p leos:origin="ec" xml:id="art_2__para_1__content__p">This Regulation shall enter into force on
-                            the [...] day following that of its publication in the <i leos:origin="ec"
-                                                                                      xml:id="art_2__para_1__content__p__i">
+                            the [...] day following that of its publication in the <i leos:origin="ec" xml:id="art_2__para_1__content__p__i">
                                 Official Journal of the European Union</i>.
                         </p>
                     </content>
                 </paragraph>
             </article>
-            <article leos:origin="ec" xml:id="akn_art_oes0AX" leos:editable="false" leos:deletable="false">
-                <num leos:origin="ec" xml:id="akn_art_oes0AX_LDY3i1" leos:editable="false">Article 3</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="akn_art_oes0AX">
+                <num leos:editable="false" leos:origin="ec" xml:id="akn_art_oes0AX_LDY3i1">Article 3</num>
                 <heading leos:origin="ec" xml:id="akn_art_oes0AX_h4EPLj">Article heading...</heading>
                 <paragraph leos:origin="ec" xml:id="akn_art_oes0AX-par1">
                     <num leos:origin="ec" xml:id="akn_art_oes0AX_Bhti40">1.</num>

@@ -1,9 +1,4 @@
-
-
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill1.css"?>
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill2.css"?>
-<?xml-stylesheet type="text/css" href="renditions/html/css/billn.txt"?>
-<article xml:id="art_1">
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill1.css"?><?xml-stylesheet type="text/css" href="renditions/html/css/bill2.css"?><?xml-stylesheet type="text/css" href="renditions/html/css/billn.txt"?><article xml:id="art_1">
     <num xml:id="art_1_num">Article 4</num>
     <heading xml:id="art_1_heading">Definitions</heading>
     <paragraph xml:id="art_1_par">
@@ -20,6 +15,4 @@
             </p>
         </content>
     </paragraph>
-</article>
-<?xml-stylesheet type="text/css" href="renditions/html/css/billAfer.txt"?>
-<?xml-stylesheet type="text/css" href="renditions/html/css/billAfer2.txt"?>
+</article><?xml-stylesheet type="text/css" href="renditions/html/css/billAfer.txt"?><?xml-stylesheet type="text/css" href="renditions/html/css/billAfer2.txt"?>

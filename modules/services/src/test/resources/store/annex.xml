@@ -28,24 +28,14 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU"
-                             showAs="Brussels"/>
-                <TLCOrganization xml:id="CONSIL"
-                                 href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament"/>
-                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission"/>
-                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID"
-                         showAs="President"/>
-                <TLCReference xml:id="ANNEX" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/ANNEX"
-                              showAs="Annex"/>
-                <TLCReference xml:id="legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456"
-                              showAs="Legal basis"/>
-                <TLCReference xml:id="language" name="language"
-                              href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/ANNEX" name="docType" showAs="Annex" xml:id="ANNEX"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -60,25 +50,23 @@
                 <leos:docType xml:id="proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL
                 </leos:docType>
                 <leos:annexIndex xml:id="proprietary__annexIndex">1</leos:annexIndex>
-                <leos:annexTitle xml:id="proprietary__annexTitle"></leos:annexTitle>
+                <leos:annexTitle xml:id="proprietary__annexTitle"/>
                 <leos:objectId>257</leos:objectId>
             </proprietary>
         </meta>
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img xml:id="coverpage__container_1__p__img"
-                         src="data:image/png;base64"
-                         alt="European Commission" title="European Commission"/>
+                    <img alt="European Commission" src="data:image/png;base64" title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
             <container name="actingEntity" xml:id="_coverpage__container_4">
-                <p xml:id="_coverpage__container_4__p"><organization xml:id="_coverpage__container_4__p__organization" refersTo="~COM">EUROPEAN COMMISSION</organization></p>
+                <p xml:id="_coverpage__container_4__p"><organization refersTo="~COM" xml:id="_coverpage__container_4__p__organization">EUROPEAN COMMISSION</organization></p>
             </container>
             <container name="annexNumber" xml:id="coverpage__container_2">
                 <p xml:id="coverpage__container_2__p">Annex</p>
             </container>
-            <longTitle xml:id="coverpage__longtitle" refersTo="#bill">
+            <longTitle refersTo="#bill" xml:id="coverpage__longtitle">
                 <p xml:id="coverpage__longtitle__p">
                     <docStage xml:id="coverpage__longtitle__p__docstage">Proposal for a</docStage>
                     <docType refersTo="~ANNEX" xml:id="coverpage__longtitle__p__doctype">REGULATION OF THE EUROPEAN
@@ -94,14 +82,14 @@
         <preface xml:id="preface">
         </preface>
         <mainBody xml:id="mainBody">
-            <level xml:id="level_1" leos:depth="1">
+            <level leos:depth="1" xml:id="level_1">
                 <num xml:id="level_1_num">1.</num>
 
                 <content xml:id="akn_fv4V0G">
                     <p xml:id="akn_MAv3gl">Without heading - only short content</p>
                 </content>
             </level>
-            <level xml:id="level_2" leos:depth="1">
+            <level leos:depth="1" xml:id="level_2">
                 <num xml:id="level_2_num">2.</num>
                 <heading xml:id="akn_oSzqrI">Level with List</heading>
                 <subparagraph xml:id="akn_I4Hgz1">
@@ -110,13 +98,13 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="akn_F7Y8oo">
+                
+                <list xml:id="akn_TkF8FL"><subparagraph refersTo="~_INP" xml:id="akn_F7Y8oo">
                     <content xml:id="akn_UCkOtZ">
                         <p xml:id="akn_q9SPfF">Level 2 second sub
                         </p>
                     </content>
                 </subparagraph>
-                <list xml:id="akn_TkF8FL">
                     <point xml:id="akn_7WABKB">
                         <num xml:id="akn_qumwto">(a)</num>
                         <content xml:id="akn_x047iP">
@@ -133,12 +121,12 @@
                     </point>
                     <point xml:id="akn_UHfYUM">
                         <num xml:id="akn_DmW8sW">(c)</num>
-                        <alinea xml:id="akn_qe9dVP">
+                        <subparagraph xml:id="akn_qe9dVP">
                             <content xml:id="akn_aPdJei">
                                 <p xml:id="akn_DzUrQq">Point (c)
                                 </p>
                             </content>
-                        </alinea>
+                        </subparagraph>
                         <list xml:id="akn_Wnr1Vo">
                             <point xml:id="akn_DrHg7T">
                                 <num xml:id="akn_Lns3oY">(i)</num>
@@ -148,12 +136,12 @@
                             </point>
                             <point xml:id="akn_oKzLzv">
                                 <num xml:id="akn_dROzvZ">(ii)</num>
-                                <alinea xml:id="akn_wDyHSL">
+                                <subparagraph xml:id="akn_wDyHSL">
                                     <content xml:id="akn_Zg9JHF">
                                         <p xml:id="akn_9ICU81">Point (ii)
                                         </p>
                                     </content>
-                                </alinea>
+                                </subparagraph>
                                 <list xml:id="akn_9fC0PY">
                                     <point xml:id="akn_DEc54c">
                                         <num xml:id="akn_BXTqos">(1)</num>
@@ -164,12 +152,12 @@
                                     </point>
                                     <point xml:id="akn_Ow9nYB">
                                         <num xml:id="akn_FvVOCJ">(2)</num>
-                                        <alinea xml:id="akn_GHR4zl">
+                                        <subparagraph xml:id="akn_GHR4zl">
                                             <content xml:id="akn_q3F3M1">
                                                 <p xml:id="akn_ikMSPS">Point (2)
                                                 </p>
                                             </content>
-                                        </alinea>
+                                        </subparagraph>
                                         <list xml:id="akn_RngOKV">
                                             <indent xml:id="akn_i3eb2o">
                                                 <num xml:id="akn_Suvqo4">-</num>
@@ -209,7 +197,7 @@
                 </list>
             </level>
 
-            <part xml:id="part_1" leos:depth="1">
+            <part leos:depth="1" xml:id="part_1">
                 <num xml:id="part_1_num">Part I</num>
                 <heading xml:id="akn_d8Qv9Y">Part heading.</heading>
                 <paragraph xml:id="par_1">
@@ -219,21 +207,21 @@
                             </p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="akn_YhypGg">
+                    
+                    <list xml:id="akn_PaYaaw"><subparagraph refersTo="~_INP" xml:id="akn_YhypGg">
                         <content xml:id="akn_uAEvEh">
                             <p xml:id="akn_P23JFw">Paragraph1, sub2 content
                             </p>
                         </content>
                     </subparagraph>
-                    <list xml:id="akn_PaYaaw">
                         <point xml:id="akn_vMNCUo">
                             <num xml:id="akn_mK95SV">(a)</num>
-                            <alinea xml:id="akn_yH0GoP">
+                            <subparagraph xml:id="akn_yH0GoP">
                                 <content xml:id="akn_utKeSZ">
                                     <p xml:id="akn_ckls4Y">Point (a) content
                                     </p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                             <list xml:id="akn_r0DG1y">
                                 <point xml:id="akn_oaXI4p">
                                     <num xml:id="akn_jCAaIr">(i)</num>
@@ -247,7 +235,7 @@
                     </list>
                 </paragraph>
 
-                <level xml:id="level_3" leos:depth="1">
+                <level leos:depth="1" xml:id="level_3">
                     <num xml:id="level_3_num">3.</num>
                     <heading xml:id="akn_PhNJd7">Heading for 3.</heading>
                     <content xml:id="akn_zVAkFm">
@@ -255,21 +243,21 @@
                         </p>
                     </content>
                 </level>
-                <level xml:id="level_3_1" leos:depth="2">
+                <level leos:depth="2" xml:id="level_3_1">
                     <num xml:id="level_3_1_num">3.1.</num>
                     <content xml:id="akn_DfGWVx">
                         <p xml:id="akn_YSdZ66">Content for 3.1
                         </p>
                     </content>
                 </level>
-                <level xml:id="level_3_1_1" leos:depth="3">
+                <level leos:depth="3" xml:id="level_3_1_1">
                     <num xml:id="level_3_1_1_num">3.1.1.</num>
                     <content xml:id="akn_NY8gxr">
                         <p xml:id="akn_TRLjYi">Content for 3.1.1
                         </p>
                     </content>
                 </level>
-                <level xml:id="level_3_1_2" leos:depth="3">
+                <level leos:depth="3" xml:id="level_3_1_2">
                     <num xml:id="level_3_1_2_num">3.1.2.</num>
                     <content xml:id="akn_wNdBjO">
                         <p xml:id="akn_UrSq5t">Content for 3.1.2

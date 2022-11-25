@@ -18,6 +18,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Node;
 
 import java.util.GregorianCalendar;
@@ -32,7 +33,11 @@ import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 public interface TableOfContentProcessor {
 
     static String getTagValueFromTocItemVo(TableOfContentItemVO tableOfContentItemVO) {
-        return tableOfContentItemVO.getTocItem().getAknTag().value();
+        if (tableOfContentItemVO.getTocItem() != null && tableOfContentItemVO.getTocItem().getAknTag() != null) {
+            return tableOfContentItemVO.getTocItem().getAknTag().value();
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
 
     static Boolean checkIfParagraphNumberingIsToggled(TableOfContentItemVO tableOfContentItemVO) {

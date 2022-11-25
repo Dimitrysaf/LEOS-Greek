@@ -19,12 +19,12 @@
                         <num xml:id="imp_art_d179e1221_P9kEii_l5sIk5">Article 1</num>
                         <heading xml:id="imp_art_d179e1221_P9kEii_QVmXB0">Scope</heading>
                         <paragraph xml:id="imp_art_d179e1221_P9kEii_oHxHh8">
-                            <subparagraph xml:id="imp_art_d179e1221_P9kEii_DV2icu">
-                                <content xml:id="imp_art_d179e1221_P9kEii_THG15B">
-                                    <p xml:id="imp_art_d179e1221_P9kEii_LTEPGI">This R</p>
-                                </content>
-                            </subparagraph>
                             <list xml:id="imp_art_d179e1221_P9kEii_z694nQ">
+                                <subparagraph refersTo="~_INP" xml:id="imp_art_d179e1221_P9kEii_DV2icu">
+                                    <content xml:id="imp_art_d179e1221_P9kEii_THG15B">
+                                        <p xml:id="imp_art_d179e1221_P9kEii_LTEPGI">This R</p>
+                                    </content>
+                                </subparagraph>
                                 <point xml:id="imp_art_d179e1221_P9kEii_7vqFIG">
                                     <num xml:id="imp_art_d179e1221_P9kEii_BDRJur">(a)</num>
                                     <content xml:id="imp_art_d179e1221_P9kEii_DZpz46">
@@ -68,9 +68,7 @@
                     </article>
                 </chapter>
                 <chapter leos:depth="1" xml:id="chapter2">
-                    <article leos:deletable="true"
-                             leos:editable="true"
-                             xml:id="imp_art_d179e1262_nWKVTv">
+                    <article leos:deletable="true" leos:editable="true" xml:id="imp_art_d179e1262_nWKVTv">
                         <num xml:id="imp_art_d179e1262_nWKVTv_5w3GqY">Article 2</num>
                         <heading xml:id="imp_art_d179e1262_nWKVTv_lylMhW">Supervisory powers</heading>
                         <paragraph xml:id="imp_art_d179e1262_nWKVTv_XInC3R">

@@ -249,7 +249,6 @@ define(function leosIndentMandatePluginModule(require) {
                 source = $(editor.element.$).parents(NUMBERED_ITEM).first();
             }
             indentationStatus.original.realPosition = source.index();
-            indentationStatus.original.position = source.prevAll(ITEMS_SELECTOR).length;
             indentationStatus.original.parent = source.parent().attr('id');
             indentationStatus.current.level = indentationStatus.original.level;
             indentationStatus.original.num = leosPluginUtils.getCurrentNumValue(editor);
@@ -258,6 +257,17 @@ define(function leosIndentMandatePluginModule(require) {
                 indentationStatus.original.numbered = false;
             }
             indentationStatus.current.numbered = indentationStatus.original.numbered;
+            if (indentationStatus.original.numbered) {
+                indentationStatus.original.position = source.prevAll(NUMBERED_ITEM).length;
+            } else {
+                indentationStatus.original.position = source.prevAll(ITEMS_SELECTOR).length;
+            }
+            if (!indentationStatus.original.position
+                && source.parent().prop("tagName").toLowerCase() == leosPluginUtils.LIST
+                && !indentationStatus.current.numbered) {
+                indentationStatus.original.parent = source.parent().parent().attr('id');
+                indentationStatus.original.position = source.parent().prevAll(ITEMS_SELECTOR).length;
+            }
         }
     }
 
@@ -291,7 +301,7 @@ define(function leosIndentMandatePluginModule(require) {
     function _checkParentAndPosition() {
         let prevSibling = undefined;
 
-        const currentParent = $('#' + indentationStatus.original.parent);
+        let currentParent = $('#' + indentationStatus.original.parent);
         if (!indentationStatus.original.position && currentParent.prop("tagName").toLowerCase() != LEVEL) {
             return false;
         }

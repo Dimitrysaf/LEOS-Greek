@@ -29,8 +29,8 @@
                         </content>
                     </paragraph>
                 </article>
-                <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true"
-                         leos:softdate="2022-08-09T14:36:05.755+02:00" leos:softuser="demo(DIGIT)" xml:id="deleted_art486">
+
+                <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T09:31:31.006+02:00" leos:softuser="demo(DIGIT)" xml:id="deleted_art486">
                     <num leos:origin="ec" xml:id="deleted_art_2_n">Article 486</num>
                     <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-08-09T14:36:05.761+02:00"
                                leos:softuser="demo(DIGIT)" xml:id="deleted_art_2_par">

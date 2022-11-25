@@ -67,6 +67,9 @@ $DARK_BLUE: #0066a5;
         point {
             @extend %elementEditable;
             padding: 0 5px 0px 45px;
+            & > subparagraph {
+                @extend %elementEditable;
+            }
         }
         indent {
             @extend %elementEditable;
@@ -132,6 +135,9 @@ $DARK_BLUE: #0066a5;
         }
         point {
             @extend %elementEditable;
+            & > subparagraph{
+                @extend %elementEditable;
+            }
             & > list > point{
                 padding-left: 45px;
             }
@@ -139,13 +145,16 @@ $DARK_BLUE: #0066a5;
         indent {
             @extend %elementEditable;
             padding-left: 45px;
-        }
-        alinea{
-            @extend %elementEditable;
+            & > subparagraph{
+                @extend %elementEditable;
+            }
         }
         heading {
             @extend %elementEditable;
             padding: 7px 0 0 5px;
+        }
+        alinea {
+             @extend %elementEditable;
         }
     }
 
@@ -180,10 +189,16 @@ $DARK_BLUE: #0066a5;
         point {
             @extend %elementEditable;
             padding: 0 5px 0px 45px;
+            subparagraph{
+                @extend %elementEditable;
+            }
         }
         indent {
             @extend %elementEditable;
             padding: 0 5px 0px 45px;
+            subparagraph{
+                @extend %elementEditable;
+            }
         }
         alinea, heading {
             @extend %elementEditable;

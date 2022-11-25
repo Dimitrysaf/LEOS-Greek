@@ -316,11 +316,14 @@ define(function aknOrderedListPluginModule(require) {
             var orderedList = orderedLists[ii];
             var currentNestingLevel = getNestingLevelForOl(orderedList);
             if (currentNestingLevel > 0) {
-                orderedList.setAttribute("data-akn-name", "aknOrderedList");
+                orderedList.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknOrderedList");
                 var listItems = orderedList.children;
                 for (var jj = 0; jj < listItems.length; jj++) {
-                    listItems[jj].removeAttribute("data-akn-name");
-                    listItems[jj].setAttribute("data-akn-element", "point");
+                    var dataAknElementValue = listItems[jj].getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
+                    if (!dataAknElementValue || dataAknElementValue != leosPluginUtils.SUBPARAGRAPH) {
+                        listItems[jj].removeAttribute(leosPluginUtils.DATA_AKN_NAME);
+                        listItems[jj].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
+                    }
                 }
             }
 
@@ -329,7 +332,14 @@ define(function aknOrderedListPluginModule(require) {
     }
 
     function elementTagIndexProvider(element) {
-        return leosPluginUtils.calculateListLevel(element) >= leosPluginUtils.MAX_LIST_LEVEL ? 1 : 0;
+        if (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.INDENT) {
+            return 1;
+        } else if ((element.name.toLowerCase() == leosPluginUtils.SUBPARAGRAPH.toLowerCase()) || (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT]
+            && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.SUBPARAGRAPH)) {
+            return 2;
+        } else {
+            return leosPluginUtils.calculateListLevel(element) >= leosPluginUtils.MAX_LIST_LEVEL ? 1 : 0;
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
@@ -357,8 +367,8 @@ define(function aknOrderedListPluginModule(require) {
                 html : "data-akn-name=aknOrderedList"
             } ]
         },
-        rootElementsForFrom : [ "list", { elementTags : ["point", "indent"], elementTagIndexProvider : elementTagIndexProvider }],
-        contentWrapperForFrom : "alinea",
+        rootElementsForFrom : [ "list", { elementTags : ["point", "indent", "subparagraph"], elementTagIndexProvider : elementTagIndexProvider }],
+        contentWrapperForFrom : "subparagraph",
         rootElementsForTo : [ "ol", "li" ]
     });
 

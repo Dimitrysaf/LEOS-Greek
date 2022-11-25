@@ -86,6 +86,9 @@ define(function leosPointCrossHeadingPluginModule(require) {
         if (cmd.state != TRISTATE_DISABLED) {
             _updateEditor(cmd, editor, elt);
         }
+        leosPluginUtils.manageEmptyLists(editor);
+        leosPluginUtils.manageCrossheadings(editor);
+        leosPluginUtils.manageSiblingLists(editor);
     }
 
     function _refresh(cmd, editor, path) {

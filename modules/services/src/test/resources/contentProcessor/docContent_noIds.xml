@@ -28,7 +28,7 @@
     </article>
     <article>
         <num class="ArticleNumber">Article 486</num>
-        <alinea>
+        <subparagraph>
             <content>
                 <p class="Paragraph(unnumbered)">This Regulation shall enter into force on the day following
                     that of its publication in the
@@ -41,6 +41,6 @@
                     .
                 </p>
             </content>
-        </alinea>
+        </subparagraph>
     </article>
 </part>

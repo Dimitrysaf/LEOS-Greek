@@ -162,7 +162,7 @@ define(function leosListCrossHeadingPluginModule(require) {
 
     function isIndent(element) {
         if (element && element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)) {
-            if (element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT).toLowerCase() === leosPluginUtils.ALINEA.toLowerCase()) {
+            if (element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT).toLowerCase() === leosPluginUtils.SUBPARAGRAPH.toLowerCase()) {
                 element = element.getAscendant(leosPluginUtils.HTML_POINT);
             }
             return (element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT).toLowerCase() === leosPluginUtils.INDENT.toLowerCase()

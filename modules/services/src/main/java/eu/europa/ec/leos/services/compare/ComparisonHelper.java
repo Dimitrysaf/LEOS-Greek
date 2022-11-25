@@ -21,22 +21,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.AKNBODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.AKOMANTOSO;
-import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
-import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONCLUSIONS;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasChildTextNode;
 
 public class ComparisonHelper {
@@ -78,8 +69,38 @@ public class ComparisonHelper {
             if (context.getThreeWayDiff() && (context.getIntermediateElement() != null)) {
                 isElementContentEqual = isElementContentEqual && (context.getIntermediateElement().getNode()).isEqualNode(context.getNewElement().getNode());
             }
+            if (isElementContentEqual
+                    && (isListIntroAndFirstSubpoint(context.getOldElement()) && isListIntroAndFirstSubpoint(context.getNewElement()))) {
+                isElementContentEqual = (context.getOldElement().getParent().getParent().getNode()).isEqualNode(context.getNewElement().getParent().getParent().getNode());
+                if (context.getThreeWayDiff() && (context.getIntermediateElement() != null)) {
+                    isElementContentEqual = isElementContentEqual && (context.getIntermediateElement().getParent().getParent().getNode()).isEqualNode(context.getNewElement().getParent().getParent().getNode());
+                }
+            }
         }
         return isElementContentEqual;
+    }
+
+    public static boolean isListIntro(Element element) {
+        return (element != null
+                && element.getTagName().equals(XmlHelper.SUBPARAGRAPH)
+                && element.getParent().getTagName().equals(LIST)
+                && element.getParent().getChildren().indexOf(element) == 0);
+    }
+
+    public static boolean isListEnding(Element element) {
+        return (element != null
+                && element.getTagName().equals(XmlHelper.SUBPARAGRAPH)
+                && element.getParent().getTagName().equals(LIST)
+                && element.getParent().getChildren().indexOf(element) == element.getParent().getChildren().size()-1);
+    }
+
+    public static boolean isListIntroAndFirstSubpoint(Element element) {
+        if (isListIntro(element)) {
+            int indexOfList = element.getParent().getParent().getChildren().indexOf(element.getParent());
+            Element firstChild = element.getParent().getParent().getChildren().get(0);
+            return (indexOfList == 0 || (indexOfList == 1 && firstChild.getTagName().equals(XmlHelper.NUM)));
+        }
+        return false;
     }
 
     public static boolean withPlaceholderPrefix(Node node, String placeholderPrefix) {

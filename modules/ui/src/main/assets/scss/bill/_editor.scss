@@ -21,7 +21,7 @@
         @extend %editorArticle;
         @extend %editorArticleParagraph;
         @extend %editorSubParagraph;
-        @extend %editorArticleAlinea;
+        @extend %editorArticlePointSubParagraph;
         @extend %editorClause;
         @extend %editorList;
         @extend %editorTable;
@@ -42,7 +42,7 @@
         @extend %showblockArticle;
         @extend %showblockArticleParagraph;
         @extend %showblockSubParagraph;
-        @extend %showblockArticleAlinea;
+        @extend %showblockArticlePointSubParagraph;
         @extend %showblockList;
     }
 }

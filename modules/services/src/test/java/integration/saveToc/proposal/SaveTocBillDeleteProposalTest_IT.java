@@ -1,5 +1,6 @@
 package integration.saveToc.proposal;
 
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class SaveTocBillDeleteProposalTest_IT extends SaveTocBillProposalTest_IT
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO body = getElementById(toc, "body");
-        body.removeChildItem(getElementById(toc, "new_art_1"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "new_art_1"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -45,9 +46,9 @@ public class SaveTocBillDeleteProposalTest_IT extends SaveTocBillProposalTest_IT
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO body = getElementById(toc, "body");
-        body.removeChildItem(getElementById(toc, "art_2"));
-        body.removeChildItem(getElementById(toc, "art_3"));
-        body.removeChildItem(getElementById(toc, "art_4"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_2"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_3"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_4"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -68,19 +69,19 @@ public class SaveTocBillDeleteProposalTest_IT extends SaveTocBillProposalTest_IT
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO cits = getElementById(toc, "cits");
-        cits.removeChildItem(getElementById(toc, "cit_2"));
-        cits.removeChildItem(getElementById(toc, "cit_3"));
-        cits.removeChildItem(getElementById(toc, "cit_4"));
-        cits.removeChildItem(getElementById(toc, "cit_5"));
-        cits.removeChildItem(getElementById(toc, "cit_6"));
+        TableOfContentHelper.removeChildItem(cits, getElementById(toc, "cit_2"));
+        TableOfContentHelper.removeChildItem(cits, getElementById(toc, "cit_3"));
+        TableOfContentHelper.removeChildItem(cits, getElementById(toc, "cit_4"));
+        TableOfContentHelper.removeChildItem(cits, getElementById(toc, "cit_5"));
+        TableOfContentHelper.removeChildItem(cits, getElementById(toc, "cit_6"));
 
         TableOfContentItemVO recs = getElementById(toc, "recs");
-        recs.removeChildItem(getElementById(toc, "rec_2"));
-        recs.removeChildItem(getElementById(toc, "rec_3"));
+        TableOfContentHelper.removeChildItem(recs, getElementById(toc, "rec_2"));
+        TableOfContentHelper.removeChildItem(recs, getElementById(toc, "rec_3"));
 
         TableOfContentItemVO body = getElementById(toc, "body");
-        body.removeChildItem(getElementById(toc, "art_2"));
-        body.removeChildItem(getElementById(toc, "art_3"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_2"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_3"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);

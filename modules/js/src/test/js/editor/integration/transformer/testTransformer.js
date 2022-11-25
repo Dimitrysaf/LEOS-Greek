@@ -121,10 +121,10 @@ define(function testTransformerModule(require) {
                                                             });
                                                 });
 
-                                        describe("Test akn alinea.", function() {
-                                            var aknFragmentInHtml = "<alinea><content><mp>text content1</mp></content></alinea>";
-                                            var htmlFragmentInHtml = '<p data-akn-name="alinea">text content1</p>';
-                                            describe("Expects to transform akn alinea back and forth correctly.", function() {
+                                        describe("Test akn subparagraph.", function() {
+                                            var aknFragmentInHtml = "<subparagraph><content><mp>text content1</mp></content></subparagraph>";
+                                            var htmlFragmentInHtml = '<p data-akn-name="subparagraph">text content1</p>';
+                                            describe("Expects to transform akn subparagraph back and forth correctly.", function() {
                                                 expectFragmentToBeTransformedCorrectly(aknFragmentInHtml, htmlFragmentInHtml, allConfigs);
                                             });
                                         });
@@ -138,8 +138,12 @@ define(function testTransformerModule(require) {
                                                 expectFragmentToBeTransformedCorrectly(aknFragmentInHtml, htmlFragmentInHtml, allConfigs);
                                             });
                                             describe("Expects to transform akn ordered list with alinea back and forth correctly.", function() {
-                                                var aknFragmentInHtml = "<list><point><num>1.</num><alinea><content><mp>content 1</mp></content></alinea><list><point><num>11.</num><content><mp>nested content 1</mp></content></point></list></point></list>";
-                                                var htmlFragmentInHtml = '<ol data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point" data-akn-num="1."><p data-akn-element="alinea">content 1</p><ol data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point" data-akn-num="11.">nested content 1</li></ol></li></ol>';
+                                                var aknFragmentInHtml = "<list><point><num>1.</num><subparagraph><content><mp>content" +
+                                                    " 1</mp></content></subparagraph><list><point><num>11.</num><content><mp>nested content" +
+                                                    " 1</mp></content></point></list></point></list>";
+                                                var htmlFragmentInHtml = '<ol data-akn-name="aknOrderedList"><li data-akn-element="point"' +
+                                                    ' data-akn-name="point" data-akn-num="1."><p data-akn-element="subparagraph">content 1</p><ol' +
+                                                    ' data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point" data-akn-num="11.">nested content 1</li></ol></li></ol>';
                                                 expectFragmentToBeTransformedCorrectly(aknFragmentInHtml, htmlFragmentInHtml, allConfigs);
                                             });
                                         });
@@ -185,8 +189,18 @@ define(function testTransformerModule(require) {
                                         describe(
                                                 "Test mixture of:  akn paragraph, akn alinea, akn authorial note, akn ordered list, akn unordered list, akn html bold, akn html italic and akn html anchor .",
                                                 function() {
-                                                    var aknFragmentInHtml = '<paragraph xml:id="art_n1__para_1"><num>1.</num><subparagraph><content><mp>Member States<i><b> shall bring i</b></i>nto force the laws...</mp></content></subparagraph><subparagraph><content><mp>When Member States adopt those provisions...</mp></content></subparagraph><list><point><num>(a)</num><alinea><content><mp>fdasfdsafsdafdsafsdafds</mp></content></alinea><list><point><num>(a)</num><content><mp>fdsafsdafdsa</mp></content></point></list></point></list></paragraph>';
-                                                    var htmlFragmentInHtml = '<li id="art_n1__para_1" data-akn-name="aknNumberedParagraph" data-akn-element="paragraph" data-akn-num="1."><p data-akn-element="subparagraph">Member States<em><strong> shall bring i</strong></em>nto force the laws...</p><p data-akn-element="subparagraph">When Member States adopt those provisions...</p><ol data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point" data-akn-num="(a)"><p data-akn-element="alinea">fdasfdsafsdafdsafsdafds</p><ol data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point" data-akn-num="(a)">fdsafsdafdsa</li></ol></li></ol></li>';
+                                                    var aknFragmentInHtml = '<paragraph' +
+                                                        ' xml:id="art_n1__para_1"><num>1.</num><subparagraph><content><mp>Member States<i><b> shall bring' +
+                                                        ' i</b></i>nto force the laws...</mp></content></subparagraph><subparagraph><content><mp>When Member' +
+                                                        ' States adopt those' +
+                                                        ' provisions...</mp></content></subparagraph><list><point><num>(a)</num><subparagraph><content><mp>fdasfdsafsdafdsafsdafds</mp></content></subparagraph><list><point><num>(a)</num><content><mp>fdsafsdafdsa</mp></content></point></list></point></list></paragraph>';
+                                                    var htmlFragmentInHtml = '<li id="art_n1__para_1" data-akn-name="aknNumberedParagraph"' +
+                                                        ' data-akn-element="paragraph" data-akn-num="1."><p data-akn-element="subparagraph">Member' +
+                                                        ' States<em><strong> shall bring i</strong></em>nto force the laws...</p><p' +
+                                                        ' data-akn-element="subparagraph">When Member States adopt those provisions...</p><ol' +
+                                                        ' data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point"' +
+                                                        ' data-akn-num="(a)"><p data-akn-element="subparagraph">fdasfdsafsdafdsafsdafds</p><ol' +
+                                                        ' data-akn-name="aknOrderedList"><li data-akn-element="point" data-akn-name="point" data-akn-num="(a)">fdsafsdafdsa</li></ol></li></ol></li>';
                                                     describe("Expects to transform mix of elements back and forth correctly.", function() {
                                                         expectFragmentToBeTransformedCorrectly(aknFragmentInHtml, htmlFragmentInHtml, allConfigs);
                                                     });

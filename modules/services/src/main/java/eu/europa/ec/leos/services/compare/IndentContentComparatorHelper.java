@@ -309,9 +309,12 @@ class IndentContentComparatorHelper {
                     || element.getTagName().equalsIgnoreCase(SUBPARAGRAPH))
                     && isECOrigin(element)
                     && (!isSoftAction(element.getNode(), SoftActionType.ADD)
-                    && !isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))
-                    && (hasIndentedChild(element.getParent())
-                    || isElementIndented(element.getParent()))) {
+                    && !isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
+                return false;
+            } else if (element.getTagName().equalsIgnoreCase(LIST)
+                    && isECOrigin(element)
+                    && (!isSoftAction(element.getNode(), SoftActionType.ADD)
+                    && !isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
                 return false;
             }
         } else if (attrValue != null && attrValue.equalsIgnoreCase(CONTENT_ADDED_CLASS)) {
@@ -387,5 +390,38 @@ class IndentContentComparatorHelper {
             }
         }
         return parentInOtherContext;
+    }
+
+    public static boolean isRemovedSubparagraphPartOfIndentedFirstElement(Element element, Map<String, Element> contentElements) {
+        if (isSoftAction(element.getNode(), SoftActionType.DELETE) || isSoftAction(element.getNode(), SoftActionType.MOVE_TO)) {
+            return false;
+        }
+        boolean isSubparagraph = element.getTagName().equals(SUBPARAGRAPH);
+        if (!isSubparagraph) {
+            return false;
+        }
+        Element parent = element.getParent();
+        boolean isPartOfList = parent != null && parent.getTagName().equals(LIST);
+        if (!isPartOfList) {
+            return false;
+        }
+        Element grandParent = parent != null ? parent.getParent() : null;
+        boolean isFirstElementIndented = grandParent != null
+                && isElementIndentedInOtherContext(contentElements, grandParent);
+        if (!isFirstElementIndented) {
+            return false;
+        }
+        Element grandParentInOtherContext = grandParent != null ? contentElements.get(grandParent.getTagId()) : null;
+        if (grandParentInOtherContext == null) {
+            grandParentInOtherContext = grandParent != null ? contentElements.get(XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + grandParent.getTagId()) :
+                    null;
+        }
+        String softTransAttr = grandParentInOtherContext != null && grandParentInOtherContext.getNode() != null
+                ? XercesUtils.getAttributeValue(grandParentInOtherContext.getNode(), XmlHelper.LEOS_SOFT_TRANS_FROM) : null;
+        boolean isFirstElementTransformed = softTransAttr != null && softTransAttr.equals(element.getTagId());
+        if (!isFirstElementTransformed) {
+            return false;
+        }
+        return true;
     }
 }

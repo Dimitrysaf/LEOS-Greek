@@ -69,7 +69,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String xml = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486 <placeholder>[…]</placeholder></num>" +
                 "<heading><content><p>1ste article</p></content></heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</body></bill></akomaNtoso>";
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
         List<TableOfContentItemVO> articleVOs = new ArrayList<TableOfContentItemVO>();
@@ -93,7 +93,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String xml = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486 <placeholder>[…]</placeholder></num>" +
                 "<heading><content><p>1ste article</p></content></heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla amounts and L &lt; K bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla amounts and L &lt; K bla</subparagraph>" +
                 "</article>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -119,12 +119,12 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String xml = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading><content><p>1ste article</p></content></heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" +
                 "<article xml:id=\"art489\">" +
                 "<num>Article 489</num>" +
                 "<heading>4th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla 4</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla 4</subparagraph>" +
                 "</article>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -146,13 +146,13 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
 
         String expected = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" + "<num>Article 486</num>" + "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" + "</article>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" + "</article>" +
                 "<article xml:id=\".+\"><num leos:editable=\"false\">Article 487 added</num>" +
                 "<heading>2de article added</heading><paragraph xml:id=\".+-par1\"><num>1.</num>" + "<content><p>Text...</p></content></paragraph></article>" +
                 "<article xml:id=\".+\"><num leos:editable=\"false\">Article 488 added</num>" +
                 "<heading>3th article added</heading><paragraph xml:id=\".+-par1\"><num>1.</num>" + "<content><p>Text...</p></content></paragraph></article>" +
                 "<article xml:id=\"art489\">" + "<num>Article 489</num>" + "<heading>4th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla 4</alinea>" + "</article>" + "</body></bill></akomaNtoso>";
+                "<subparagraph xml:id=\"art488-aln1\">bla bla 4</subparagraph>" + "</article>" + "</body></bill></akomaNtoso>";
         Pattern pattern = Pattern.compile(expected);
         Matcher matcher = pattern.matcher(new String(result));
 
@@ -165,15 +165,15 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String xml = "<akomaNtoso><bill><preface id =\"1\"><p>preface</p></preface>" + "<body><article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art488\">" +
                 "<num>Article 488</num>" +
                 "<heading>3th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -195,11 +195,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String expected = "<akomaNtoso><bill><preface id =\"1\"><p>preface</p></preface>" + "<body><article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article became 1the</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art488\">" +
                 "<num>Article 488</num>" +
                 "<heading>3th article became 2the</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</body></bill></akomaNtoso>";
         assertThat(new String(result), is(expected));
     }
@@ -233,16 +233,16 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\"sect2\">" + "<num>Section 2</num>" + "<heading >Paragraphs</heading>" +
                 "<article xml:id=\"art488\">" +
                 "<num>Article 488</num>" +
                 "<heading>3th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -267,16 +267,16 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\"sect2\">" + "<num>Section 2</num>" + "<heading>Paragraphs</heading>" +
                 "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art488\">" +
                 "<num>Article 488</num>" +
                 "<heading>3th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
         assertThat(new String(result), is(expected));
     }
@@ -288,16 +288,16 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num class=\"ArticleNumber\">Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\"sect2\">" + "<num>Section 2</num>" + "<heading>Paragraphs</heading>" +
                 "<article xml:id=\"art488\">" +
                 "<num class=\"ArticleNumber\">Article 488</num>" +
                 "<heading>3th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -320,11 +320,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<section xml:id=\"sect2\">" + "<num>Section 2</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art488\">" +
                 "<num>Article 488</num>" +
                 "<heading>3th article</heading>" +
-                "<alinea xml:id=\"art488-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art488-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
         assertThat(new String(result), is(expected));
     }
@@ -336,11 +336,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -364,11 +364,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String expected = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" + "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\".+\">" + "<num>Section 2</num>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" +
                 "<article xml:id=\".+\"><num leos:editable=\"false\">Article 488</num>" +
                 "<heading>3th article</heading><paragraph xml:id=\".+-par1\"><num>1.</num>" +
@@ -387,11 +387,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
                 "<num class=\"numClass\">Article 486</num>" +
                 "<heading class=\"hdgClass\">1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num class=\"ArticleNumber\">Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -415,11 +415,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
                 "<num class=\"numClass\">Article 486</num>" +
                 "<heading class=\"hdgClass\">1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\".+\">" + "<num>Section 2</num>" + "<article xml:id=\"art487\">" +
                 "<num class=\"ArticleNumber\">Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\".+\"><num leos:editable=\"false\">Article 488</num>" +
                 "<heading>3th article</heading><paragraph xml:id=\".+-par1\"><num>1.</num>" +
                 "<content><p>Text...</p></content></paragraph></article>" + "</section>" + "</body></bill></akomaNtoso>";
@@ -436,7 +436,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
                 "<bill><body>" + "<article xml:id=\"art486\"> <num leos:editable=\"false\">Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<hcontainer><content><p>test</p></content>" + "</hcontainer>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -458,7 +458,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<content><p>Text...</p></content></paragraph></article>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<hcontainer><content><p>test</p></content>" + "</hcontainer>" + "</body></bill></akomaNtoso>";
         Pattern pattern = Pattern.compile(expected);
         Matcher matcher = pattern.matcher(new String(result));
@@ -473,11 +473,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\"Section 2\">" + "<num>Section 2</num>" + "<article xml:id=\"art487\">" +
                 "<num class=\"ArticleNumber\">Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -501,11 +501,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>"
 
                 + "</body></bill></akomaNtoso>";
@@ -518,11 +518,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String xml = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -546,12 +546,12 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         String expected = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "<section xml:id=\".+\">" + "<num>Section 2</num>" + "<heading>Paragraphs</heading>" +
                 "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\".+\"><num leos:editable=\"false\">Article 488</num>" +
                 "<heading>3th article</heading><paragraph xml:id=\".+-par1\"><num>1.</num>" +
                 "<content><p>Text...</p></content></paragraph></article>" + "</section>" + "</body></bill></akomaNtoso>";
@@ -568,11 +568,11 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\"art487\">" +
                 "<num class=\"ArticleNumber\">Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</part>" + "</body></bill></akomaNtoso>";
 
         List<TableOfContentItemVO> tableOfContentItemVOList = new ArrayList<TableOfContentItemVO>();
@@ -601,12 +601,12 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "</section>" + "</part>" + "<part xml:id=\".+\">" + "<num>Part 2</num>" + "<heading>part2</heading>" +
                 "<section xml:id=\".+\">" + "<num>Section 2</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
                 "<heading>2de article</heading>" +
-                "<alinea xml:id=\"art487-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art487-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<article xml:id=\".+\"><num leos:editable=\"false\">Article 488</num>" +
                 "<heading>3th article</heading><paragraph xml:id=\".+-par1\"><num>1.</num>" +
                 "<content><p>Text...</p></content></paragraph></article>" + "</section>" + "</part>" + "</body></bill></akomaNtoso>";
@@ -685,7 +685,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "<blabla>" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
                 "<heading>1ste article</heading>" +
-                "<alinea xml:id=\"art486-aln1\">bla bla</alinea>" +
+                "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" +
                 "</article>" + "<hcontainer><content><p>test</p></content>" + "</hcontainer>" + "</blabla></akomaNtoso>";
 
         byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(Collections.<TableOfContentItemVO>emptyList(), xml.getBytes(),

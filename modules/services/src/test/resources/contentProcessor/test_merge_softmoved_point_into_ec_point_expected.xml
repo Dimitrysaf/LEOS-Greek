@@ -1,19 +1,18 @@
 <root xmlns:leos="urn:eu:europa:ec:leos" xml:id="akn_f2ejkO">
-    <article leos:affected="true" leos:deletable="false" leos:editable="false" leos:origin="ec"
-             xml:id="imp_art_d1e1276_XAPlpX">
+    <article leos:affected="true" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX">
         <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_PCoY8I">Article 5</num>
         <heading leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_yDHX83">Definitions</heading>
         <paragraph leos:affected="true" leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_494qUn">
             <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_gxZ46e">1.</num>
-            <subparagraph leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_KyB4qy">
-                <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_nBJK4i">
-                    <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_aW9qa6">For the purposes of this Regulation, the
-                        following definitions shall
-                        apply:
-                    </p>
-                </content>
-            </subparagraph>
             <list leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_J7TbDh">
+                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e1276_XAPlpX_KyB4qy">
+                    <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_nBJK4i">
+                        <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_aW9qa6">For the purposes of this Regulation, the
+                            following definitions shall
+                            apply:
+                        </p>
+                    </content>
+                </subparagraph>
                 <point leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_VKPtnz">
                     <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_bx6xKW">(1)</num>
                     <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_syrXR4">
@@ -26,18 +25,17 @@
                 </point>
                 <point leos:affected="true" leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_HMwJok">
                     <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_TD9PRk">(2)</num>
-                    <alinea leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_vPsN8G">
-                        <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Atnkut">
-                            <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Z5vpZD">'investment firm' means a person
-                                as defined in point (1) of
-                                Article 4(1) of Directive 2004/39/EC, which is subject to the requirements imposed by
-                                that Directive, excluding the
-                                following:
-                            </p>
-                        </content>
-                    </alinea>
                     <list leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_aZi7xk">
-
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e1276_XAPlpX_vPsN8G">
+                            <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Atnkut">
+                                <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Z5vpZD">'investment firm' means a person
+                                    as defined in point (1) of
+                                    Article 4(1) of Directive 2004/39/EC, which is subject to the requirements imposed by
+                                    that Directive, excluding the
+                                    following:
+                                </p>
+                            </content>
+                        </subparagraph>
                         <point leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_X9uQs2">
                             <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_G73ZDv">(a)</num>
                             <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_HMkDsZ">
@@ -59,9 +57,7 @@
                             </content>
                         </point>
 
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
-                               leos:softactionroot="true" leos:softdate="2022-06-16T17:40:11.193+02:00"
-                               leos:softuser="demo(DIGIT)" xml:id="deleted_imp_art_d1e1276_XAPlpX_4K2GdA">
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-16T17:40:11.193+02:00" leos:softuser="demo(DIGIT)" xml:id="deleted_imp_art_d1e1276_XAPlpX_4K2GdA">
                             <num leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_jh6oZJ">(c)</num>
                             <content leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_fYqac8">
                                 <p leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_Eif3cN">firms which are not

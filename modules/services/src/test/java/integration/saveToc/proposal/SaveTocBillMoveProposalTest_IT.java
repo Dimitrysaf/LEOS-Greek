@@ -1,5 +1,6 @@
 package integration.saveToc.proposal;
 
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class SaveTocBillMoveProposalTest_IT extends SaveTocBillProposalTest_IT {
         assertTrue(toc.size() > 0);
         TableOfContentItemVO body = getElementById(toc, "body");
         TableOfContentItemVO section = getElementById(toc, "section");
-        section.getParentItem().removeChildItem(section);
+        TableOfContentHelper.removeChildItem(section.getParentItem(), section);
         body.addChildItem(2, section);
 
         // When

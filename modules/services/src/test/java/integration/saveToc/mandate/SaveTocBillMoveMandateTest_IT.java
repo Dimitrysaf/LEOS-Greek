@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveToArticle = TocVOCreateMandateUtils.createMoveToElement(originalArticle);
         TableOfContentItemVO moveFromArticle = TocVOCreateMandateUtils.createMoveFromElement(originalArticle);
 
-        chapter.removeChildItem(originalArticle);
+        TableOfContentHelper.removeChildItem(chapter, originalArticle);
         chapter.addChildItem(moveToArticle);
         body.addChildItem(0, moveFromArticle);
 
@@ -81,7 +82,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveToArticle = TocVOCreateMandateUtils.createMoveToElement(originalArticle);
         TableOfContentItemVO moveFromArticle = TocVOCreateMandateUtils.createMoveFromElement(originalArticle);
 
-        body.removeChildItem(originalArticle);
+        TableOfContentHelper.removeChildItem(body, originalArticle);
         body.addChildItem(0, moveToArticle);
         body.addChildItem(moveFromArticle);
 
@@ -141,11 +142,11 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveToPoint = TocVOCreateMandateUtils.createMoveToPoint(pointB);
         TableOfContentItemVO moveFromPoint = TocVOCreateMandateUtils.createMoveFromElement(pointB);
 
-        list.removeChildItem(pointB);
-        list.addChildItem(0, moveFromPoint);
+        TableOfContentHelper.removeChildItem(list, pointB);
+        TableOfContentHelper.addChildItem(list, 0, moveFromPoint);
         list.getParentItem().setAffected(true); //paragraph
         list.getParentItem().getParentItem().setAffected(true); //article
-        list.addChildItem(moveToPoint);
+        TableOfContentHelper.addChildItem(list, moveToPoint);
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -169,12 +170,12 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO list = getElementById(toc, "list");
 
         TableOfContentItemVO moveFromB = getElementById(toc, "point_b");
-        list.removeChildItem(moveFromB);
+        TableOfContentHelper.removeChildItem(list, moveFromB);
         TableOfContentItemVO moveToB = getElementById(toc, "moved_point_b");
-        list.removeChildItem(moveToB);
+        TableOfContentHelper.removeChildItem(list, moveToB);
 
         moveFromB = TocVOCreateMandateUtils.restorePointToPreviousPosition(moveFromB, moveToB);
-        list.addChildItem(moveFromB);
+        TableOfContentHelper.addChildItem(list, moveFromB);
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -203,9 +204,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveToPoint = TocVOCreateMandateUtils.createMoveToPoint(pointA);
         TableOfContentItemVO moveFromPoint = TocVOCreateMandateUtils.createMoveFromElement(pointA);
 
-        list.removeChildItem(pointA); //remove original point A
-        list.addChildItem(0, moveToPoint); //put movedTo point A
-        pointB.addChildItem(moveFromPoint);
+        TableOfContentHelper.removeChildItem(list, pointA); //remove original point A
+
+        TableOfContentHelper.addChildItem(list,0, moveToPoint); //put movedTo point A
+        TableOfContentHelper.addChildItem(pointB, moveFromPoint);
 
         list.setAffected(true);
         list.getParentItem().setAffected(true);//paragraph
@@ -236,7 +238,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveToPar = TocVOCreateMandateUtils.createMoveToPoint(par1);
         TableOfContentItemVO moveFromPar = TocVOCreateMandateUtils.createMoveFromElement(par1);
 
-        article.removeChildItem(par1);
+        TableOfContentHelper.removeChildItem(article, par1);
         article.addChildItem(0, moveToPar);
         article.setAffected(true);
         article.addChildItem(moveFromPar);
@@ -268,7 +270,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveFromPar = TocVOCreateMandateUtils.createMoveFromElement(par1);
 
         //source
-        article1Source.removeChildItem(par1); //chapter
+        TableOfContentHelper.removeChildItem(article1Source, par1); //chapter
         article1Source.addChildItem(0, moveToPar);
         //target
         article2Target.setAffected(true);
@@ -300,7 +302,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         TableOfContentItemVO moveToPoint = TocVOCreateMandateUtils.createMoveToPoint(originalAlinea);
         TableOfContentItemVO moveFromPoint = TocVOCreateMandateUtils.createMoveFromElement(originalAlinea);
 
-        list.removeChildItem(originalAlinea);
+        TableOfContentHelper.removeChildItem(list, originalAlinea);
         list.addChildItem(1, moveToPoint);
         destinationPoint.getParentItem().getParentItem().getParentItem().getParentItem().getParentItem().setAffected(true); //article
         destinationPoint.getParentItem().getParentItem().getParentItem().getParentItem().setAffected(true); //paragraph

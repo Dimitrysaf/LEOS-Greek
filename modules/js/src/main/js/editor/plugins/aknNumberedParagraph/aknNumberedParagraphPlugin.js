@@ -295,7 +295,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                         // Default behavior: when this is a subparagraph converts it to a paragraph
                         else if ((leosPluginUtils.getElementName(currentNode) === HTML_SUB_PARAGRAPH) && (!LIST_FROM_MATCH.test(leosPluginUtils.getElementName(nextNode)))) {
                             currentNode.renameNode(HTML_PARAGRAPH);
-                            currentNode.setAttribute("data-akn-name", "aknNumberedParagraph");
+                            currentNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
                             if (childNodeIndex>0) {
                                 currentNode.insertAfter(paragraphNodes.getItem(paragraphNodeIndex));childNodeIndex--;paragraphNodeIndex++;
                             }
@@ -306,6 +306,24 @@ define(function aknNumberedParagraphPluginModule(require) {
                                     currentParagraphNodeToBeDeleted = true;
                                 }
                                 currentNode.insertBefore(paragraphNode);childNodeIndex--;paragraphNodeIndex++;
+                            }
+                        }
+                        // When this is a list converts intro and conclusion to a paragraph
+                        else if (LIST_FROM_MATCH.test(leosPluginUtils.getElementName(currentNode))) {
+                            var grandChildNodes = currentNode.getChildren();
+                            if (grandChildNodes.count() > 0) {
+                                var firstListNode = grandChildNodes.getItem(0);
+                                var lastListNode = grandChildNodes.getItem(grandChildNodes.count() - 1);
+                                if (leosPluginUtils.isSubparagraph(firstListNode)) {
+                                    firstListNode.renameNode(HTML_PARAGRAPH);
+                                    firstListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
+                                    firstListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
+                                }
+                                if (leosPluginUtils.isSubparagraph(lastListNode)) {
+                                    lastListNode.renameNode(HTML_PARAGRAPH);
+                                    lastListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
+                                    lastListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
+                                }
                             }
                         }
                         // All other cases (except empty texts)

@@ -87,7 +87,9 @@ public class CheckDeleteLastEditingTypeConsumer implements BiConsumer<String, Ru
     }
 
     private Optional<TableOfContentItemVO> findRoot(TableOfContentItemVO item) {
-        if (item.getParentItem().getTocItem().isRoot()) {
+        if (item.getTocItem().isRoot()) {
+            return Optional.of(item);
+        } else if (item.getParentItem().getTocItem().isRoot()) {
             return Optional.of(item.getParentItem());
         } else {
             return findRoot(item.getParentItem());

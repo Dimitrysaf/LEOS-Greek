@@ -28,10 +28,10 @@
     </article>
     <article xml:id="artnew">
         <num class="ArticleNumber" xml:id="num1">Article new</num>
-        <alinea xml:id="artnew-aln1">
+        <subparagraph xml:id="artnew-aln1">
             <content xml:id="c">
                 <p class="Paragraph(unnumbered)" xml:id="p">new content</p>
             </content>
-        </alinea>
+        </subparagraph>
     </article>
 </part>

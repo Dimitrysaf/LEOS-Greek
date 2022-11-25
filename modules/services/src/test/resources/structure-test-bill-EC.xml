@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
-           xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
+        <structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
+                   xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
 
     <name>structure_01.xml</name>
     <description>Structure used for test Bill EC</description>
@@ -436,25 +436,6 @@
             <numberingType>POINT_NUM_DEF</numberingType>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
             <editable>true</editable>
-        </tocItem>
-
-        <tocItem>
-            <aknTag>alinea</aknTag>
-            <root>false</root>
-            <draggable>false</draggable>
-            <childrenAllowed>false</childrenAllowed>
-            <display>false</display>
-            <itemNumber>none</itemNumber>
-            <itemHeading>none</itemHeading>
-            <itemDescription>false</itemDescription>
-            <numberEditable>false</numberEditable>
-            <contentDisplayed>true</contentDisplayed>
-            <deletable>true</deletable>
-            <numWithType>false</numWithType>
-            <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
-            <editable>false</editable>
         </tocItem>
 
         <tocItem>

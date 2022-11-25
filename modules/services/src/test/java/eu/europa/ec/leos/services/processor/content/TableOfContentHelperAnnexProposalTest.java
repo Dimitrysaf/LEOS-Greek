@@ -73,7 +73,7 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
                                 .withHeading("Level with List")
                                 .withNumber("2.")
                                 .withElementNumberId("level_2_num")
-                                .withList("(a) Point (a) (b) Point (b) (c) Point (c) (i) Point (i) (ii) Point (ii) (1) Point (1) (2) Point (2) - first indent - second indent - third indent (4) Point (4)")
+                                .withList("Level 2 second sub (a) Point (a) (b) Point (b) (c) Point (c) (i) Point (i) (ii) Point (ii) (1) Point (1) (2) Point (2) - first indent - second indent - third indent (4) Point (4)")
                                 .withItemDepth(1)
                                 .withContent("Level 2 first sub")
                                 .build()
@@ -91,7 +91,7 @@ public class TableOfContentHelperAnnexProposalTest extends TableOfXmlContentProc
                                 .withContent("Paragraph1, sub1 content Paragraph1, sub2 content (a) Point (a) content (i) Point (i) content")
                                 .withItemDepth(1)
                                 .withChild(
-                                        buildSingleTOCVo("par_1", PARAGRAPH, null, null, null, null, 0, "(a) Point (a) content (i) Point (i) content", "Paragraph1, sub1 content")
+                                        buildSingleTOCVo("par_1", PARAGRAPH, null, null, null, null, 0, "Paragraph1, sub2 content (a) Point (a) content (i) Point (i) content", "Paragraph1, sub1 content")
                                 )
                                 .withChild(
                                         buildSingleTOCVo("level_3", LEVEL, "Heading for 3.", "3.", "level_3_num", null, 1, null, "Content for 3.")

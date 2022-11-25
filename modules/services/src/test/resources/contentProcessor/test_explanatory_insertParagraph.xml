@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-            xmlns:xml="http://www.w3.org/XML/1998/namespace">
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="EXPL_COUNCIL">
         <mainBody xml:id="body">
             <paragraph xml:id="body_para_1">

@@ -120,6 +120,9 @@ public class XmlHelper {
     public static final String INLINE_NUM_PROPERTY = "--inline-num";
     public static final String STYLE = "style";
     public static final String WHITESPACE = " ";
+    public static final String REFERS_TO_ATTR = "refersTo";
+    public static final String INTRODUCTORY_PART = "~_INP";
+    public static final String ENDING_PART = "~_WRP";
 
     public static final String LEOS_ORIGIN_ATTR = "leos:origin";
     public static final String LEOS_INITIAL_NUM = "leos:initial-num";

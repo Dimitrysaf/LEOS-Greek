@@ -12,7 +12,7 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-define(function aknAlineaMandatePluginModule(require) {
+define(function aknSubParagraphPluginModule(require) {
     "use strict";
 
     // load module dependencies
@@ -20,10 +20,11 @@ define(function aknAlineaMandatePluginModule(require) {
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
 
-    var pluginName = "aknAlineaMandate";
+    var pluginName = "aknSubParagraph";
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var UNDERLINE = CKEDITOR.CTRL + 85;
+    var TRISTATE_DISABLED = CKEDITOR.TRISTATE_DISABLED, TRISTATE_OFF = CKEDITOR.TRISTATE_OFF;
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -45,7 +46,13 @@ define(function aknAlineaMandatePluginModule(require) {
                 key : UNDERLINE,
                 action : _onCtrlUKey
             });
-            editor.on("toDataFormat", _transformAlinea, null, null, 15);
+            editor.on("toDataFormat", _transformSubParagraph, null, null, 15);
+            editor.on('selectionChange', function(event) {
+                var tableCommand = event.editor.getCommand('table');
+                if (tableCommand) {
+                    tableCommand.setState(_isElementInsideUnNumberedPar(editor) ? TRISTATE_DISABLED : TRISTATE_OFF);
+                }
+            }, null, null, 100);
         }
     };
 
@@ -60,25 +67,42 @@ define(function aknAlineaMandatePluginModule(require) {
     function _onCtrlUKey(context) {
         context.event.cancel();
     }
-    
-    function _transformAlinea(event) {
-    	if (event.data.dataValue.includes("<alinea>")) {
-    		event.data.dataValue = (event.data.dataValue + '?').replace("<alinea>", "").replace("</alinea>?", "");
-    	}
+
+    function _transformSubParagraph(event) {
+        if (event.data.dataValue.includes("<subparagraph>")) {
+            event.data.dataValue = (event.data.dataValue + '?').replace("<subparagraph>", "").
+            replace("</subparagraph>?", "");
+        }
+    }
+
+    function _isElementInsideUnNumberedPar(editor) {
+        var selection = editor.getSelection();
+        if (!selection) {
+            return false;
+        }
+
+        var currentElement = leosKeyHandler.getSelectedElement(selection);
+        if (!currentElement) {
+            return false;
+        }
+
+        var paragraphElement = currentElement.getAscendant('paragraph');
+        var firstChildElementName = paragraphElement && paragraphElement.getFirst().getName && paragraphElement.getFirst().getName();
+        return (firstChildElementName && firstChildElementName !== 'num');
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     var leosHierarchicalElementTransformer = leosHierarchicalElementTransformerStamp({
         firstLevelConfig: {
-            akn: 'alinea',
-            html: 'ol[data-akn-name=aknAlineaMandate]',
+            akn: 'subparagraph',
+            html: 'ol[data-akn-name=aknSubParagraph]',
             attr: [{
-                html: "data-akn-name=aknAlineaMandate"
+                html: "data-akn-name=aknSubParagraph"
             }]
         },
-        rootElementsForFrom: ["alinea"],
-        contentWrapperForFrom: "alinea",
+        rootElementsForFrom: ["subparagraph"],
+        contentWrapperForFrom: "subparagraph",
         rootElementsForTo: ["ol", "li"]
     });
 

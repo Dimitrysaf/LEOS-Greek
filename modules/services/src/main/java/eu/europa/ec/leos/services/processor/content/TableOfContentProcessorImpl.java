@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -39,7 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
+import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
@@ -66,7 +67,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_AND_LEVEL_ITEMS;
 import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_ITEMS;
 import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.UNUMBERED_ITEMS;
@@ -139,7 +139,12 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
     }
 
     public boolean containsElement(TableOfContentItemVO tableOfContentItemVO, String elementName) {
-        return XercesUtils.getFirstChild(tableOfContentItemVO.getNode(), elementName) != null;
+        Node firstList = XercesUtils.getFirstChild(tableOfContentItemVO.getNode(), LIST);
+        if (firstList == null) {
+            return XercesUtils.getFirstChild(tableOfContentItemVO.getNode(), elementName) != null;
+        } else {
+            return XercesUtils.getFirstChild(firstList, elementName) != null;
+        }
     }
 
     public void convertTocItemContent(TableOfContentItemVO item, TableOfContentItemVO subelement, IndentedItemType beforeIndentedType, IndentedItemType afterIndentedType, boolean restored) {
@@ -182,7 +187,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
         switch (beforeIndentItemType) {
             case FIRST_SUBPOINT:
             case FIRST_SUBPARAGRAPH:
-                originalItem = changeTagName(originalItem, SUBPOINT, false);
+                originalItem = changeTagName(originalItem, SUBPARAGRAPH, false);
                 break;
             case POINT:
             case PARAGRAPH:
@@ -190,7 +195,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 if (!children.isEmpty()) {
                     return;
                 }
-                originalItem = changeTagName(originalItem, SUBPOINT, false);
+                originalItem = changeTagName(originalItem, SUBPARAGRAPH, false);
                 break;
         }
         copyAttributesAndSetId(item, originalItem);
@@ -208,7 +213,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 if (children.isEmpty()) {
                     return;
                 } else {
-                    firstSubelement = children.get(0);
+                    firstSubelement = getSubelementFromFirstElement(children);
                 }
 
                 Node content = XercesUtils.getFirstChild(firstSubelement, CONTENT);
@@ -233,6 +238,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 break;
         }
         copyAttributesAndSetId(item, originalItem);
+        removeAttribute(originalItem, XmlHelper.REFERS_TO_ATTR);
         item.setNode(originalItem);
     }
 
@@ -247,30 +253,31 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 if (children.isEmpty()) {
                     return;
                 } else {
-                    firstSubelement = children.get(0);
+                    firstSubelement = getSubelementFromFirstElement(children);
                 }
 
-                firstSubpoint = changeTagName(firstSubelement, SUBPOINT, false);
-                originalItem.replaceChild(firstSubpoint, firstSubelement);
+                firstSubpoint = changeTagName(firstSubelement, SUBPARAGRAPH, false);
+                firstSubelement.getParentNode().replaceChild(firstSubpoint, firstSubelement);
                 originalItem = changeTagName(originalItem, TableOfContentProcessor.getTagValueFromTocItemVo(item), true);
                 updateNumTag(originalItem, num);
                 break;
             case OTHER_SUBPOINT:
             case OTHER_SUBPARAGRAPH:
-                firstSubpoint = changeTagName(originalItem, SUBPOINT, false);
+                firstSubpoint = changeTagName(originalItem, SUBPARAGRAPH, false);
                 originalItem.appendChild(firstSubpoint);
                 originalItem = changeTagName(originalItem, TableOfContentProcessor.getTagValueFromTocItemVo(item), true);
                 createNumTag(originalItem, num);
                 break;
             case PARAGRAPH:
             case POINT:
-                firstSubpoint = changeTagName(originalItem, SUBPOINT, false);
+                firstSubpoint = changeTagName(originalItem, SUBPARAGRAPH, false);
                 originalItem.appendChild(firstSubpoint);
                 originalItem = changeTagName(originalItem, TableOfContentProcessor.getTagValueFromTocItemVo(item), true);
                 updateNumTag(originalItem, num);
                 break;
         }
         copyAttributesAndSetId(item, originalItem);
+        removeAttribute(originalItem, XmlHelper.REFERS_TO_ATTR);
         item.setNode(originalItem);
         copyAttributesAndSetId(subelement, firstSubpoint);
         subelement.setNode(firstSubpoint);
@@ -309,7 +316,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 if (children.isEmpty()) {
                     return;
                 } else {
-                    firstSubelement = children.get(0);
+                    firstSubelement = getSubelementFromFirstElement(children);
                 }
 
                 Node content = XercesUtils.getFirstChild(firstSubelement, CONTENT);
@@ -334,6 +341,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 break;
         }
         copyAttributesAndSetId(item, originalItem);
+        removeAttribute(originalItem, XmlHelper.REFERS_TO_ATTR);
         item.setNode(originalItem);
     }
 
@@ -348,11 +356,11 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 if (children.isEmpty()) {
                     return;
                 } else {
-                    firstSubelement = children.get(0);
+                    firstSubelement = getSubelementFromFirstElement(children);
                 }
 
                 firstSubpoint = changeTagName(firstSubelement, SUBPARAGRAPH, false);
-                originalItem.replaceChild(firstSubpoint, firstSubelement);
+                firstSubelement.getParentNode().replaceChild(firstSubpoint, firstSubelement);
                 originalItem = changeTagName(originalItem, PARAGRAPH, true);
                 updateNumTag(originalItem, num);
                 break;
@@ -372,6 +380,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 break;
         }
         copyAttributesAndSetId(item, originalItem);
+        removeAttribute(originalItem, XmlHelper.REFERS_TO_ATTR);
         item.setNode(originalItem);
         copyAttributesAndSetId(subelement, firstSubpoint);
         subelement.setNode(firstSubpoint);
@@ -403,10 +412,15 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
     public void moveToParent(Node node, boolean copy) {
         Node parent = node.getParentNode();
         Node next = parent.getNextSibling();
+        Node grandParent = parent.getParentNode();
+        if (grandParent.getNodeName().equalsIgnoreCase(LIST)) {
+            next = grandParent;
+            grandParent = grandParent.getParentNode();
+        }
         if (next != null) {
-            parent.getParentNode().insertBefore(node, next);
+            grandParent.insertBefore(node, next);
         } else {
-            parent.getParentNode().appendChild(node);
+            grandParent.appendChild(node);
         }
         if (copy) {
             copyAttributes(node, parent, XercesUtils.getId(node), XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR));
@@ -488,13 +502,25 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             node.appendChild(content);
         }
         if ((node.getNodeName().equalsIgnoreCase(POINT) || node.getNodeName().equalsIgnoreCase(INDENT)) && hasList) {
-            Node subpoint = XercesUtils.getFirstChild(oldNode, SUBPOINT);
+            Node subpoint = XercesUtils.getFirstChild(oldNode, SUBPARAGRAPH);
+            if (subpoint == null) {
+                Node list = XercesUtils.getFirstChild(oldNode, LIST);
+                if (list != null) {
+                    subpoint = XercesUtils.getFirstChild(list, SUBPARAGRAPH);
+                }
+            }
             if (subpoint != null) {
                 node.appendChild(subpoint);
             }
         }
         if (node.getNodeName().equalsIgnoreCase(PARAGRAPH) && hasList) {
             Node subparagraph = XercesUtils.getFirstChild(oldNode, SUBPARAGRAPH);
+            if (subparagraph == null) {
+                Node list = XercesUtils.getFirstChild(oldNode, LIST);
+                if (list != null) {
+                    subparagraph = XercesUtils.getFirstChild(list, SUBPARAGRAPH);
+                }
+            }
             if (subparagraph != null) {
                 node.appendChild(subparagraph);
             }
@@ -597,5 +623,14 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 childNode.setTextContent(tocItem.getContent());
             }
         }
+    }
+
+    private Node getSubelementFromFirstElement(List<Node> children) {
+        Node firstSubelement = children.get(0);
+        if (firstSubelement.getNodeName().equalsIgnoreCase(LIST)) {
+            List<Node> grandchildren = getChildren(firstSubelement);
+            firstSubelement = grandchildren.get(0);
+        }
+        return firstSubelement;
     }
 }

@@ -73,7 +73,7 @@ define(function aknPointMandatePluginModule(require) {
             }]
         },
         rootElementsForFrom: ["point"],
-        contentWrapperForFrom: "alinea",
+        contentWrapperForFrom: "subparagraph",
         rootElementsForTo: ["ol", "li"]
     });
 

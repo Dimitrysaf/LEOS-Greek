@@ -39,10 +39,7 @@
                         </content>
                     </subparagraph>
                 </paragraph>
-                <paragraph leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true"
-                           leos:softdate="2022-06-17T11:58:49.558+02:00"
-                           leos:softmove_to="imp_art_d1e9661_OJ8Bry_oLdEBi" leos:softuser="demo(DIGIT)"
-                           xml:id="moved_imp_art_d1e9661_OJ8Bry_oLdEBi">
+                <paragraph leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:58:49.558+02:00" leos:softmove_to="imp_art_d1e9661_OJ8Bry_oLdEBi" leos:softuser="demo(DIGIT)" xml:id="moved_imp_art_d1e9661_OJ8Bry_oLdEBi">
                     <num leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_dQWgUg">3.</num>
                     <content leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_rxN56R">
                         <p leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_izKfol">Exposures to churches or religious
@@ -129,7 +126,8 @@
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_9g9vYg">
                     <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_tZc0Dj">4.</num>
-                    <subparagraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_wqNpGu">
+                    
+                    <list leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_22HE8L"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e9946_jmGg54_wqNpGu">
                         <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_DYCJJo">
                             <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_4WZUJs">Exposure to an institution in the
                                 form of minimum reserves required by the ECB or by the central bank of a Member State to
@@ -138,15 +136,13 @@
                             </p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_22HE8L">
                         <point leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_fjUjL3">
                             <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_RrKazy">(a)</num>
                             <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_imBsp2">
                                 <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_ECCKjK">the reserves are held in
                                     accordance with Regulation (EC) No 1745/2003 of the European Central Bank of 12
                                     September 2003 on the application of minimum reserves
-                                    <authorialNote leos:origin="ec" marker="3" placement="bottom"
-                                                   xml:id="imp_art_d1e9946_jmGg54_oDcYFh">
+                                    <authorialNote leos:origin="ec" marker="3" placement="bottom" xml:id="imp_art_d1e9946_jmGg54_oDcYFh">
                                         <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_HZ9eaG">OJ L 250, 2.10.2003,
                                             p. 10.
                                         </p>

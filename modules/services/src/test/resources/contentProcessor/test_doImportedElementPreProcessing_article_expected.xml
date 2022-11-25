@@ -3,7 +3,8 @@
     <heading>Support for PPP operations</heading>
     <paragraph>
         <num></num>
-        <subparagraph>
+        
+        <list><subparagraph refersTo="~_INP">
             <content>
                 <p>In the case of a PPP operation where the beneficiary is a public law body, expenditure under a PPP
                     operation which has been incurred and paid by the private partner may, by way of derogation from
@@ -12,7 +13,6 @@
                 </p>
             </content>
         </subparagraph>
-        <list>
             <point>
                 <num>(a)</num>
                 <content>

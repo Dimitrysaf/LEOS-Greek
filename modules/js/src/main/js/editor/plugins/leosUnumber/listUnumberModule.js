@@ -95,9 +95,18 @@ define(function listUnumberModule(require) {
     function _identifyNumberingConfig(listItems, currentNestingLevel) {
         if (!!listItems && listItems.length > 0) {
             var firstListItem = listItems[0];
+            if (!firstListItem.attributes[leosPluginUtils.DATA_AKN_NUM] && listItems.length > 1) {
+                firstListItem = listItems[1];
+            }
             if (!!firstListItem.attributes[leosPluginUtils.DATA_AKN_NUM]) {
                 var numValue = firstListItem.attributes[leosPluginUtils.DATA_AKN_NUM].value;
                 if (!!numValue) {
+                    var numberingConfig = _getOverallNumberingConfigFromSequence(firstListItem, numValue, currentNestingLevel);
+                    if (!!numberingConfig.levels && !!numberingConfig.levels.levels && currentNestingLevel>0) {
+                        var foundNumberingType = numberingConfig.levels.levels[currentNestingLevel-1];
+                        var foundNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
+                        return foundNumberingConfig;
+                    }
                     return _getNumberingConfigFromSequence(numValue, currentNestingLevel);
                 }
             } else if (currentNestingLevel > 0) {
@@ -208,8 +217,21 @@ define(function listUnumberModule(require) {
     function _isPoint(element) {
         var isLi = leosPluginUtils.getElementName(element) === leosPluginUtils.HTML_POINT;
         var crossheadingAttr = element.getAttribute(leosPluginUtils.CROSSHEADING_LIST_ATTR);
+        var dataAknElementAttr = element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
 
-        if (element && isLi && (crossheadingAttr == null || crossheadingAttr != leosPluginUtils.LIST)) {
+        if (element && isLi && (dataAknElementAttr == null || dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase()) && (crossheadingAttr == null || crossheadingAttr != leosPluginUtils.LIST)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function _isCrossheading(element) {
+        var isLi = leosPluginUtils.getElementName(element) === leosPluginUtils.HTML_POINT;
+        var crossheadingAttr = element.getAttribute(leosPluginUtils.CROSSHEADING_LIST_ATTR);
+        var dataAknElementAttr = element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
+
+        if (element && isLi && (dataAknElementAttr == null || dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase()) && crossheadingAttr != null && crossheadingAttr == leosPluginUtils.LIST) {
             return true;
         } else {
             return false;
@@ -224,6 +246,9 @@ define(function listUnumberModule(require) {
     function _identifyOverallNumberingConfig(listItems, currentNestingLevel) {
         if (!!listItems && listItems.length > 0) {
             var firstListItem = listItems[0];
+            if (!firstListItem.attributes[leosPluginUtils.DATA_AKN_NUM] && listItems.length > 1) {
+                firstListItem = listItems[1];
+            }
             if (!!firstListItem.attributes[leosPluginUtils.DATA_AKN_NUM]) {
                 var numValue = firstListItem.attributes[leosPluginUtils.DATA_AKN_NUM].value;
                 if (!!numValue) {
@@ -276,6 +301,23 @@ define(function listUnumberModule(require) {
                         return numberingConfig;
                     }
                 }
+                // Check for indent
+                if (currentNestingLevel > 1) {
+                    foundNumberingType = numberingConfig.levels.levels[currentNestingLevel - 2];
+                    var indentNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
+                    if (!!indentNumberingConfig.sequence && numValue == indentNumberingConfig.sequence) {
+                        return numberingConfig;
+                    }
+                }
+                // Check for outdent
+                if (currentNestingLevel < numberingConfig.levels.levels.length) {
+                    foundNumberingType = numberingConfig.levels.levels[currentNestingLevel];
+                    var indentNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
+                    if (!!indentNumberingConfig.sequence && numValue == indentNumberingConfig.sequence) {
+                        return numberingConfig;
+                    }
+                }
+
             }
         }
         return null;
@@ -297,7 +339,10 @@ define(function listUnumberModule(require) {
                 if (olParent.getAttribute(leosPluginUtils.DATA_AKN_NAME).toLowerCase() != leosPluginUtils.AKN_ORDERED_ANNEX_LIST.toLowerCase()) {
                     olParent = list.parentElement;
                     for (var child of list.children) {
-                        leosPluginUtils.convertToCrossheading(child, list);
+                        var dataAknElementAttr = child.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
+                        if (dataAknElementAttr == null || dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase()) {
+                            leosPluginUtils.convertToCrossheading(child, list);
+                        }
                     }
                 }
                 var listChildren = Array.from(list.children);
@@ -327,7 +372,7 @@ define(function listUnumberModule(require) {
 
     function _containsOnlyCrossHeadings(list) {
         for (var child of list.children) {
-            if (_isPoint(child)) {
+            if (!_isCrossheading(child)) {
                 return false;
             }
         }

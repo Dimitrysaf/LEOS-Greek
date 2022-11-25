@@ -18,12 +18,12 @@
 				<heading leos:origin="ec" xml:id="akn_article_ebFhaW_oJhPz3">Points-Subpoints</heading>
 				<paragraph leos:origin="ec" xml:id="akn_article_ebFhaW_S1g3RO">
 					<num leos:origin="ec" xml:id="akn_article_ebFhaW_SkSGPr">1.</num>
-					<subparagraph leos:origin="ec" xml:id="akn_article_ebFhaW_8vWzbq">
-						<content leos:origin="ec" xml:id="akn_article_ebFhaW_oNWhzj">
-							<p leos:origin="ec" xml:id="akn_article_ebFhaW_iMglHR">Par 1</p>
-						</content>
-					</subparagraph>
 					<list leos:origin="ec" xml:id="akn_article_ebFhaW_11DoqG">
+						<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_8vWzbq">
+							<content leos:origin="ec" xml:id="akn_article_ebFhaW_oNWhzj">
+								<p leos:origin="ec" xml:id="akn_article_ebFhaW_iMglHR">Par 1</p>
+							</content>
+						</subparagraph>
 						<point leos:origin="ec" xml:id="akn_article_ebFhaW_65b9hw">
 							<num leos:origin="ec" xml:id="akn_article_ebFhaW_4R6fnK">(a)</num>
 							<content leos:origin="ec" xml:id="akn_article_ebFhaW_0hAjIK">
@@ -32,12 +32,12 @@
 						</point>
 						<point leos:origin="ec" xml:id="akn_article_ebFhaW_SoxNh2">
 							<num leos:origin="ec" xml:id="akn_article_ebFhaW_bkypwY">(b)</num>
-							<alinea leos:origin="ec" xml:id="akn_article_ebFhaW_PyPpzx">
-								<content leos:origin="ec" xml:id="akn_article_ebFhaW_XouBdl">
-									<p leos:origin="ec" xml:id="akn_article_ebFhaW_rjaPnu">This is point (b)</p>
-								</content>
-							</alinea>
 							<list leos:origin="ec" xml:id="List2">
+								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_PyPpzx">
+									<content leos:origin="ec" xml:id="akn_article_ebFhaW_XouBdl">
+										<p leos:origin="ec" xml:id="akn_article_ebFhaW_rjaPnu">This is point (b)</p>
+									</content>
+								</subparagraph>
 								<point leos:origin="ec" leos:softaction="trans" xml:id="List2_akn_article_ebFhaW_aUUWQA">
 									<num leos:origin="cn" xml:id="List2_num_yKpvdY">(i)</num>
 									<content leos:origin="ec" xml:id="List2akn_article_ebFhaW_t90Wf8">
@@ -46,16 +46,16 @@
 								</point>
 								<point leos:origin="ec" leos:softaction="trans" xml:id="List2_transformed_akn_article_ebFhaW_ThsuKo">
 									<num leos:origin="cn" xml:id="List2_num_U7Qqx1">(ii)</num>
-									<alinea leos:origin="ec" xml:id="List2akn_article_ebFhaW_ThsuKo">
+									<subparagraph leos:origin="ec" xml:id="List2akn_article_ebFhaW_ThsuKo">
 										<content leos:origin="ec" xml:id="List2akn_article_ebFhaW_CWnY1r">
 											<p leos:origin="ec" xml:id="List2akn_article_ebFhaW_T65D5r">(ii)</p>
 										</content>
-									</alinea>
-									<alinea leos:origin="ec" leos:softaction="trans" xml:id="List2_akn_article_ebFhaW_qh2TDU">
+									</subparagraph>
+									<subparagraph leos:origin="ec" leos:softaction="trans" xml:id="List2_akn_article_ebFhaW_qh2TDU">
 										<content leos:origin="ec" xml:id="List2akn_article_ebFhaW_vsZajN">
 											<p leos:origin="ec" xml:id="List2akn_article_ebFhaW_aJnhFF">Point(ii) - alinea</p>
 										</content>
-									</alinea>
+									</subparagraph>
 								</point>
 								<point leos:origin="ec" leos:softaction="trans" xml:id="List2_akn_article_ebFhaW_EXRv7x">
 									<num leos:origin="cn" xml:id="List2_num_sChS4s">(iii)</num>
@@ -64,12 +64,12 @@
 									</content>
 								</point>
 							</list>
-							<alinea leos:origin="ec" xml:id="akn_article_ebFhaW_4pEtYJ">
-								<content leos:origin="ec" xml:id="akn_article_ebFhaW_Nbt0HT">
-									<p leos:origin="ec" xml:id="akn_article_ebFhaW_v4RAaY">aliena splitting 2 lists</p>
-								</content>
-							</alinea>
 							<list leos:origin="ec" xml:id="akn_article_ebFhaW_kzC5GS">
+								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_4pEtYJ">
+									<content leos:origin="ec" xml:id="akn_article_ebFhaW_Nbt0HT">
+										<p leos:origin="ec" xml:id="akn_article_ebFhaW_v4RAaY">aliena splitting 2 lists</p>
+									</content>
+								</subparagraph>
 								<point leos:origin="ec" xml:id="akn_article_ebFhaW_pSN9qt">
 									<num leos:origin="ec" xml:id="akn_article_ebFhaW_jQFUjo">(i)</num>
 									<content leos:origin="ec" xml:id="akn_article_ebFhaW_JTPdGP">
@@ -78,12 +78,12 @@
 								</point>
 								<point leos:origin="ec" xml:id="akn_article_ebFhaW_j9tG0S">
 									<num leos:origin="ec" xml:id="akn_article_ebFhaW_mTzYq4">(ii)</num>
-									<alinea leos:origin="ec" xml:id="akn_article_ebFhaW_rK96jy">
-										<content leos:origin="ec" xml:id="akn_article_ebFhaW_YmdMUd">
-											<p leos:origin="ec" xml:id="akn_article_ebFhaW_Umdr5x">Point(ii)</p>
-										</content>
-									</alinea>
 									<list leos:origin="ec" xml:id="akn_article_ebFhaW_HtO6lo">
+										<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_rK96jy">
+											<content leos:origin="ec" xml:id="akn_article_ebFhaW_YmdMUd">
+												<p leos:origin="ec" xml:id="akn_article_ebFhaW_Umdr5x">Point(ii)</p>
+											</content>
+										</subparagraph>
 										<point leos:origin="ec" leos:softaction="trans" xml:id="akn_article_ebFhaW_aUUWQA">
 											<num leos:origin="cn" xml:id="_num_yKpvdY">(-3)</num>
 											<content leos:origin="ec" xml:id="akn_article_ebFhaW_t90Wf8">
@@ -92,16 +92,16 @@
 										</point>
 										<point leos:origin="ec" leos:softaction="trans" xml:id="transformed_akn_article_ebFhaW_ThsuKo">
 											<num leos:origin="cn" xml:id="_num_U7Qqx1">(-3a)</num>
-											<alinea leos:origin="ec" xml:id="akn_article_ebFhaW_ThsuKo">
+											<subparagraph leos:origin="ec" xml:id="akn_article_ebFhaW_ThsuKo">
 												<content leos:origin="ec" xml:id="akn_article_ebFhaW_CWnY1r">
 													<p leos:origin="ec" xml:id="akn_article_ebFhaW_T65D5r">Point(-3a)</p>
 												</content>
-											</alinea>
-											<alinea leos:origin="ec" leos:softaction="trans" xml:id="akn_article_ebFhaW_qh2TDU">
+											</subparagraph>
+											<subparagraph leos:origin="ec" leos:softaction="trans" xml:id="akn_article_ebFhaW_qh2TDU">
 												<content leos:origin="ec" xml:id="akn_article_ebFhaW_vsZajN">
 													<p leos:origin="ec" xml:id="akn_article_ebFhaW_aJnhFF">Point(-3a) second alinea</p>
 												</content>
-											</alinea>
+											</subparagraph>
 										</point>
 										<point leos:origin="ec" leos:softaction="trans" xml:id="akn_article_ebFhaW_EXRv7x">
 											<num leos:origin="cn" xml:id="_num_sChS4s">(-3b)</num>
@@ -116,12 +116,12 @@
 											</content>
 										</point>
 									</list>
-									<alinea leos:origin="ec" leos:softaction="trans" xml:id="akn_article_ebFhaW_zpT8yJ">
-										<content leos:origin="ec" xml:id="akn_article_ebFhaW_7CY6ew">
-											<p leos:origin="ec" xml:id="akn_article_ebFhaW_Bsi83y">aliena splitting 2 lists (inner)</p>
-										</content>
-									</alinea>
 									<list leos:origin="cn" xml:id="_lis_cYOs4T">
+										<subparagraph leos:origin="ec" leos:softaction="trans" refersTo="~_INP" xml:id="akn_article_ebFhaW_zpT8yJ">
+											<content leos:origin="ec" xml:id="akn_article_ebFhaW_7CY6ew">
+												<p leos:origin="ec" xml:id="akn_article_ebFhaW_Bsi83y">aliena splitting 2 lists (inner)</p>
+											</content>
+										</subparagraph>
 										<point leos:origin="ec" leos:softaction="trans" xml:id="akn_article_ebFhaW_UEnmZd">
 											<num leos:origin="cn" xml:id="_num_zFEMqA">(1)</num>
 											<content leos:origin="ec" xml:id="akn_article_ebFhaW_hW1d9s">
@@ -145,12 +145,12 @@
 							</content>
 						</point>
 					</list>
-					<subparagraph leos:origin="ec" xml:id="second_sub">
-						<content leos:origin="ec" xml:id="second_sub_oNWhzj">
-							<p leos:origin="ec" xml:id="second_subiMglHR">sub to split lists</p>
-						</content>
-					</subparagraph>
 					<list leos:origin="ec" xml:id="second_sub_ebFhaW_11DoqG">
+						<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="second_sub">
+							<content leos:origin="ec" xml:id="second_sub_oNWhzj">
+								<p leos:origin="ec" xml:id="second_subiMglHR">sub to split lists</p>
+							</content>
+						</subparagraph>
 						<point leos:origin="ec" xml:id="second_sub_ebFhaW_65b9hw">
 							<num leos:origin="ec" xml:id="second_sub_ebFhaW_4R6fnK">(a)</num>
 							<content leos:origin="ec" xml:id="second_sub_ebFhaW_0hAjIK">
@@ -159,12 +159,12 @@
 						</point>
 						<point leos:origin="ec" xml:id="second_sub_ebFhaW_SoxNh2">
 							<num leos:origin="ec" xml:id="second_sub_ebFhaW_bkypwY">(b)</num>
-							<alinea leos:origin="ec" xml:id="second_sub_ebFhaW_PyPpzx">
-								<content leos:origin="ec" xml:id="second_sub_ebFhaW_XouBdl">
-									<p leos:origin="ec" xml:id="second_sub_ebFhaW_rjaPnu">This is point (b)</p>
-								</content>
-							</alinea>
 							<list leos:origin="ec" xml:id="second_sub_List2">
+								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="second_sub_ebFhaW_PyPpzx">
+									<content leos:origin="ec" xml:id="second_sub_ebFhaW_XouBdl">
+										<p leos:origin="ec" xml:id="second_sub_ebFhaW_rjaPnu">This is point (b)</p>
+									</content>
+								</subparagraph>
 								<point leos:origin="ec" leos:softaction="trans" xml:id="List2_second_sub_ebFhaW_aUUWQA">
 									<num leos:origin="cn" xml:id="second_sub_List2_num_yKpvdY">(i)</num>
 									<content leos:origin="ec" xml:id="second_sub_List2akn_article_ebFhaW_t90Wf8">
@@ -172,12 +172,12 @@
 									</content>
 								</point>
 							</list>
-							<alinea leos:origin="ec" xml:id="second_sub_ebFhaW_4pEtYJ">
-								<content leos:origin="ec" xml:id="second_sub_ebFhaW_Nbt0HT">
-									<p leos:origin="ec" xml:id="second_sub_ebFhaW_v4RAaY">aliena splitting 2 lists</p>
-								</content>
-							</alinea>
 							<list leos:origin="cn" xml:id="s_lis_cYOs4T">
+								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="second_sub_ebFhaW_4pEtYJ">
+									<content leos:origin="ec" xml:id="second_sub_ebFhaW_Nbt0HT">
+										<p leos:origin="ec" xml:id="second_sub_ebFhaW_v4RAaY">aliena splitting 2 lists</p>
+									</content>
+								</subparagraph>
 								<point leos:origin="ec" leos:softaction="trans" xml:id="second_sub_ebFhaW_UEnmZd">
 									<num leos:origin="cn" xml:id="s_num_zFEMqA">(i)</num>
 									<content leos:origin="ec" xml:id="second_sub_ebFhaW_hW1d9s">

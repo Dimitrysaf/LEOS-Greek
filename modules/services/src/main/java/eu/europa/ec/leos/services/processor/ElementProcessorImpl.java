@@ -70,7 +70,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
     public String getElement(XmlDocument document, String elementName, String elementId) {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
-    
+
         final byte[] contentBytes = document.getContent().get().getSource().getBytes();
         return xmlContentProcessor.getElementByNameAndId(contentBytes, elementName, elementId);
     }

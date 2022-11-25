@@ -25,9 +25,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,14 +37,21 @@ import static eu.europa.ec.leos.model.action.SoftActionType.ADD;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_FROM;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
+import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_ITEMS;
+import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.UNUMBERED_ITEMS;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
+import static eu.europa.ec.leos.services.support.XmlHelper.CN;
+import static eu.europa.ec.leos.services.support.XmlHelper.EC;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.TBLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeTag;
@@ -171,7 +180,18 @@ public class TableOfContentHelper {
     }
 
     public static boolean isTocItemFirstChild(TableOfContentItemVO item, TableOfContentItemVO child) {
-        return item.getChildItems().indexOf(child) == 0;
+        return getTagValueFromTocItemVo(item).equals(LIST) && getTagValueFromTocItemVo(child).equals(SUBPARAGRAPH) && item.getChildItems().indexOf(child) == 0 ?
+                item.getParentItem().getChildItemsView().indexOf(child.getParentItem()) == 0 : item.getChildItems().indexOf(child) == 0;
+    }
+
+    public static boolean isFirstSubParagraph(TableOfContentItemVO item) {
+        return item.getParentItem() != null
+                && Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(getTagValueFromTocItemVo(item))
+                && isTocItemFirstChild(item.getParentItem(), item);
+    }
+
+    public static boolean hasSameSoftAction(final TableOfContentItemVO item, final TableOfContentItemVO item2) {
+        return item != null && item2 != null && Objects.equals(item.getSoftActionAttr(), item2.getSoftActionAttr());
     }
 
     public static int getTocItemChildPosition(TableOfContentItemVO item, TableOfContentItemVO child) {
@@ -258,4 +278,154 @@ public class TableOfContentHelper {
         }
     }
 
+    public static List<TableOfContentItemVO> getSiblings(TableOfContentItemVO item, String tagName) {
+        List<TableOfContentItemVO> siblings = new ArrayList<>();
+        TableOfContentItemVO parent = item.getParentItem();
+        int index = parent != null ? parent.getChildItemsView().indexOf(item) : -1;
+        if (index > -1) {
+            for (int i = 0; i < parent.getChildItemsView().size(); i++) {
+                TableOfContentItemVO sibling = parent.getChildItemsView().get(i);
+                if (i != index && getTagValueFromTocItemVo(sibling).equalsIgnoreCase(tagName)) {
+                    siblings.add(sibling);
+                }
+            }
+        }
+        return siblings;
+    }
+
+    public static boolean containsOnlySubpoints(TableOfContentItemVO item) {
+        boolean containsOnlySubpoints = getTagValueFromTocItemVo(item).equals(LIST);
+        if (containsOnlySubpoints) {
+            for (TableOfContentItemVO child : item.getChildItemsView()) {
+                if (Arrays.asList(NUMBERED_ITEMS).contains(getTagValueFromTocItemVo(child))) {
+                    return false;
+                }
+            }
+        }
+        return containsOnlySubpoints;
+    }
+
+    public static void moveChildren(TableOfContentItemVO source, TableOfContentItemVO target) {
+        List<TableOfContentItemVO> children = new ArrayList<>();
+        children.addAll(source.getChildItems());
+
+        int index = source.getParentItem().getChildItemsView().indexOf(source);
+        if (source.getParentItem().equals(target) && index != -1 && !Arrays.asList(UNUMBERED_ITEMS).contains(getTagValueFromTocItemVo(source))) {
+            for (TableOfContentItemVO child : children) {
+                source.removeChildItem(child);
+                target.addChildItem(index, child);
+                index++;
+            }
+        } else {
+            for (TableOfContentItemVO child : children) {
+                source.removeChildItem(child);
+                target.addChildItem(child);
+            }
+        }
+    }
+
+    public static void manageListContainingOnlySubpoints(TableOfContentItemVO item) {
+        if (TableOfContentHelper.containsOnlySubpoints(item)) {
+            checkSiblingList(item);
+            moveChildren(item, item.getParentItem());
+            item.getParentItem().removeChildItem(item);
+        }
+    }
+
+    private static void checkSiblingList(TableOfContentItemVO item) {
+        if (hasTocItemSoftOrigin(item, EC) || item.getSoftActionAttr() != null) {
+            List<TableOfContentItemVO> siblings = TableOfContentHelper.getSiblings(item, LIST);
+            for (TableOfContentItemVO sibling : siblings) {
+                if (hasTocItemSoftOrigin(sibling, CN) && sibling.getSoftActionAttr() == null) {
+                    copyListAttributes(item, sibling);
+                    return;
+                }
+            }
+        }
+    }
+
+    private static void copyListAttributes(TableOfContentItemVO source, TableOfContentItemVO target) {
+        target.setId(source.getId());
+        target.setOriginAttr(source.getOriginAttr());
+        target.setSoftActionAttr(source.getSoftActionAttr());
+        target.setSoftUserAttr(source.getSoftUserAttr());
+        target.setSoftDateAttr(source.getSoftDateAttr());
+        target.setSoftActionRoot(source.isSoftActionRoot());
+        if (hasTocItemSoftAction(source, MOVE_FROM)) {
+            target.setSoftMoveFrom(source.getSoftMoveFrom());
+        }
+    }
+
+    public static void removeChildItem(TableOfContentItemVO parent, TableOfContentItemVO child) {
+        if (parent != null && child != null) {
+            if (listHasAnIntro(child)) {
+                TableOfContentItemVO subpara = child.getChildItemsView().get(0);
+                int index = child.getParentItem().getChildItemsView().indexOf(child);
+                child.removeChildItem(subpara);
+                child.getParentItem().addChildItem(index, subpara);
+            }
+            if (listHasAConclusion(child)) {
+                TableOfContentItemVO subpara = child.getChildItemsView().get(child.getChildItemsView().size()-1);
+                int index = child.getParentItem().getChildItemsView().indexOf(child);
+                child.removeChildItem(subpara);
+                child.getParentItem().addChildItem(index + 1, subpara);
+            }
+            parent.removeChildItem(child);
+        }
+    }
+
+    public static void addChildItem(TableOfContentItemVO parent, int index, TableOfContentItemVO child) {
+        if (parent != null && child != null) {
+            if (listHasAnIntro(parent) && index == 0 && Arrays.asList(NUMBERED_ITEMS).contains(getTagValueFromTocItemVo(child))) {
+                parent.addChildItem(1, child);
+            } else if (listHasAnIntro(parent) && index == 0 && SUBPARAGRAPH.equals(getTagValueFromTocItemVo(child))) {
+                int parentIndex = parent.getParentItem().getChildItemsView().indexOf(parent);
+                if (parentIndex > -1) {
+                    parent.getParentItem().addChildItem(parentIndex, child);
+                }
+            } else if (listHasAConclusion(parent) && index == parent.getChildItemsView().size()) {
+                addChildItem(parent, child);
+            } else {
+                parent.addChildItem(index, child);
+            }
+        }
+    }
+
+    public static void addChildItem(TableOfContentItemVO parent, TableOfContentItemVO child) {
+        if (parent != null && child != null) {
+            if (listHasAConclusion(parent) && Arrays.asList(NUMBERED_ITEMS).contains(getTagValueFromTocItemVo(child))) {
+                parent.addChildItem(parent.getChildItemsView().size() - 1, child);
+            } else if (listHasAConclusion(parent) && SUBPARAGRAPH.equals(getTagValueFromTocItemVo(child))) {
+                int index = parent.getParentItem().getChildItemsView().indexOf(parent) + 1;
+                if (index < parent.getParentItem().getChildItemsView().size()) {
+                    parent.getParentItem().addChildItem(index, child);
+                } else {
+                    parent.getParentItem().addChildItem(child);
+                }
+            } else {
+                parent.addChildItem(child);
+            }
+        }
+    }
+
+    public static boolean listHasAnIntro(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(LIST)
+                && !item.getChildItemsView().isEmpty()
+                && getTagValueFromTocItemVo(item.getChildItemsView().get(0)).equals(SUBPARAGRAPH);
+    }
+
+    public static boolean listHasAConclusion(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(LIST)
+                && !item.getChildItemsView().isEmpty() && item.getChildItemsView().size() > 1
+                && getTagValueFromTocItemVo(item.getChildItemsView().get(item.getChildItemsView().size()-1)).equals(SUBPARAGRAPH);
+    }
+
+    public static TableOfContentItemVO getFirstChildWithTagName(TableOfContentItemVO item, List<String> tagNames) {
+        for (TableOfContentItemVO child: item.getChildItemsView()) {
+            if (tagNames.contains(getTagValueFromTocItemVo(child))) {
+                return child;
+            }
+        }
+        return null;
+    }
 }

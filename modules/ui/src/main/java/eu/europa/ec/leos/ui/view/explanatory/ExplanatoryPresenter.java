@@ -630,17 +630,18 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         String proposalId = context.getProposalId();
         final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".zip";
 
-        ExportDocument exportDocument = null;
         LeosExportStatus processedStatus = LeosExportStatus.PROCESSED_ERROR;
         if (exportOptions.isWithFilteredAnnotations()) {
             exportOptions.setFilteredAnnotations(filteredAnnotations);
         }
+        String exportDocumentId = "";
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             exportOptions.setComments(getCommentsForExportPackage(title, exportOptions));
             exportOptions.setPrintStyle(printStyle);
             byte[] exportedBytes = exportService.createExportPackage(jobFileName, proposalId, exportOptions);
-            exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
+            ExportDocument exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
+            exportDocumentId = exportDocument.getId();
             exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
@@ -651,12 +652,10 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LogUtil.logError(LOG, eventBus, "Unexpected error occurred while generating Export Package", e);
         } finally {
-            if (exportDocument != null) {
-                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
-                if (exportDocument != null && !exportDocument.getStatus().equals(LeosExportStatus.FILE_READY)) {
-                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
-                    leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
-                }
+            ExportDocument exportDocument = exportPackageService.findExportDocumentById(exportDocumentId, false);
+            if (exportDocument != null && !exportDocument.getStatus().equals(LeosExportStatus.FILE_READY)) {
+                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
             }
         }
     }
@@ -1009,15 +1008,14 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             case SUBPARAGRAPH:
             case CONTENT:
             case SUBPOINT:
-                return elementContent.contains("<" + elementTagName);
+                return elementContent.contains("<" + elementTagName + ">") || StringUtils.countMatches(elementContent, "<" + elementTagName) > 1;
             case PARAGRAPH:
                 return elementContent.contains("<paragraph") || elementContent.contains("<subparagraph");
             case LEVEL:
                 return elementContent.contains("<level") || elementContent.contains("<subparagraph");
             case POINT:
-                return elementContent.contains("<alinea");
             case INDENT:
-                return elementContent.contains("<alinea");
+                return elementContent.contains("<subparagraph>");
             default:
                 return false;
         }
