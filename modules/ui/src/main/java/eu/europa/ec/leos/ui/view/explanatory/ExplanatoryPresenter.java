@@ -47,31 +47,28 @@ import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.event.ExportPackageCreatedEvent;
 import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
 import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
-import eu.europa.ec.leos.ui.event.CreateExportPackageActualVersionRequestEvent;
-import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
-import eu.europa.ec.leos.web.event.view.document.ResponseFilteredAnnotations;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.export.ExportOptions;
-import eu.europa.ec.leos.services.export.ExportDW;
-import eu.europa.ec.leos.services.export.ExportVersions;
-import eu.europa.ec.leos.services.export.ZipPackageUtil;
-import eu.europa.ec.leos.services.export.FileHelper;
-import eu.europa.ec.leos.services.label.ReferenceLabelService;
-import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
-import eu.europa.ec.leos.services.processor.ElementProcessor;
-import eu.europa.ec.leos.services.processor.ExplanatoryProcessor;
-import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
+import eu.europa.ec.leos.services.export.ExportDW;
+import eu.europa.ec.leos.services.export.ExportOptions;
+import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.export.FileHelper;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.notification.NotificationService;
+import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.processor.ExplanatoryProcessor;
+import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -87,6 +84,7 @@ import eu.europa.ec.leos.ui.event.DownloadActualVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.DownloadCleanVersion;
 import eu.europa.ec.leos.ui.event.DownloadXmlVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.FetchMilestoneByVersionedReferenceEvent;
+import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
 import eu.europa.ec.leos.ui.event.ToggleLiveDiffingRequiredEvent;
 import eu.europa.ec.leos.ui.event.doubleCompare.DocuWriteExportRequestEvent;
@@ -159,6 +157,7 @@ import eu.europa.ec.leos.web.event.view.document.ReferenceLabelRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.ReferenceLabelResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
+import eu.europa.ec.leos.web.event.view.document.ResponseFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
 import eu.europa.ec.leos.web.event.view.document.ShowIntermediateVersionWindowEvent;
@@ -259,17 +258,17 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     @Autowired
     ExplanatoryPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
-                         ExplanatoryScreen explanatoryScreen,
-                         ExplanatoryService explanatoryService, PackageService packageService, ExportService exportService,
-                         Provider<BillContext> billContextProvider, Provider<ExplanatoryContext> explanatoryContextProvider, ElementProcessor<Explanatory> elementProcessor,
-                         ExplanatoryProcessor explanatoryProcessor, DocumentContentService documentContentService, UrlBuilder urlBuilder,
-                         ComparisonDelegate<Explanatory> comparisonDelegate, UserHelper userHelper,
-                         MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider,
-                         CoEditionHelper coEditionHelper, EventBus leosApplicationEventBus, UuidHelper uuidHelper,
-                         Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
-                         UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
-                         ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
-                         NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate) {
+            ExplanatoryScreen explanatoryScreen,
+            ExplanatoryService explanatoryService, PackageService packageService, ExportService exportService,
+            Provider<BillContext> billContextProvider, Provider<ExplanatoryContext> explanatoryContextProvider, ElementProcessor<Explanatory> elementProcessor,
+            ExplanatoryProcessor explanatoryProcessor, DocumentContentService documentContentService, UrlBuilder urlBuilder,
+            ComparisonDelegate<Explanatory> comparisonDelegate, UserHelper userHelper,
+            MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider,
+            CoEditionHelper coEditionHelper, EventBus leosApplicationEventBus, UuidHelper uuidHelper,
+            Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
+            UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
+            ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
+            NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         LOG.trace("Initializing explanatory presenter...");
         this.explanatoryScreen = explanatoryScreen;
@@ -350,7 +349,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     private void populateViewData(TocMode mode) {
-        try{
+        try {
             Explanatory explanatory = getDocument();
             Option<ExplanatoryMetadata> explanatoryMetadata = explanatory.getMetadata();
             if (explanatoryMetadata.isDefined()) {
@@ -362,8 +361,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             explanatoryScreen.setPermissions(explanatoryVO);
             updateView(explanatory);
             explanatoryScreen.initAnnotations(explanatoryVO, proposalRef, connectedEntity);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error("Error while processing document", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
@@ -440,7 +438,12 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Explanatory currentDocument = getDocument();
             ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Explanatory.class, false);
-            exportOptions.setExportVersions(new ExportVersions(currentDocument, currentDocument));
+            boolean isLiveDiffing = getDocument().isLiveDiffingRequired();
+            XmlDocument original = currentDocument; // For NO Diffing
+            if (isLiveDiffing) {
+                original = documentContentService.getOriginalExplanatory(getDocument());
+            }
+            exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
             exportOptions.setWithCoverPage(false);
@@ -454,7 +457,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             byte[] exportedBytes = exportService.createDocuWritePackage(jobFileName + ".zip", proposalId, exportOptions);
             DownloadStreamResource downloadStreamResource = new DownloadStreamResource(jobFileName + ".docx", new ByteArrayInputStream(exportedBytes));
             explanatoryScreen.setDownloadStreamResourceForMenu(downloadStreamResource);
-            LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName(),
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "export.docuwrite.error.message", e.getMessage()));
@@ -478,8 +482,9 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             final String comparedInfo;
             String language = original.getMetadata().get().getLanguage();
 
-            if(intermediate != null){
-                comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
+            if (intermediate != null) {
+                comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(),
+                        current.getVersionLabel());
                 contentToZip.put(intermediate.getMetadata().get().getRef() + "_v" + intermediate.getVersionLabel() + ".xml",
                         intermediate.getContent().get().getSource().getBytes());
                 leosComparedContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
@@ -491,20 +496,23 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             }
             final String zipFileName = original.getMetadata().get().getRef() + "_" + comparedInfo + ".zip";
 
-            contentToZip.put(current.getMetadata().get().getRef() + "_v" + current.getVersionLabel() + ".xml", current.getContent().get().getSource().getBytes());
-            contentToZip.put(original.getMetadata().get().getRef() + "_v" + original.getVersionLabel() + ".xml", original.getContent().get().getSource().getBytes());
+            contentToZip.put(current.getMetadata().get().getRef() + "_v" + current.getVersionLabel() + ".xml",
+                    current.getContent().get().getSource().getBytes());
+            contentToZip.put(original.getMetadata().get().getRef() + "_v" + original.getVersionLabel() + ".xml",
+                    original.getContent().get().getSource().getBytes());
             contentToZip.put("comparedContent_export.xml", docuWriteComparedContent);
             zipFile = ZipPackageUtil.zipFiles(zipFileName, contentToZip, language);
 
             final byte[] zipBytes = FileUtils.readFileToByteArray(zipFile);
             DownloadStreamResource downloadStreamResource = new DownloadStreamResource(zipFile.getName(), new ByteArrayInputStream(zipBytes));
             explanatoryScreen.setDownloadStreamResourceForXmlFiles(downloadStreamResource);
-            LOG.info("Xml files for Explanatory {}, downloaded in {} milliseconds ({} sec)", current.getName(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("Xml files for Explanatory {}, downloaded in {} milliseconds ({} sec)", current.getName(), stopwatch.elapsed(TimeUnit.MILLISECONDS),
+                    stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloadXmlFiles", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "error.message", e.getMessage()));
-        }  finally {
-            if(zipFile != null) {
+        } finally {
+            if (zipFile != null) {
                 zipFile.delete();
             }
         }
@@ -516,7 +524,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             final Explanatory chosenDocument = explanatoryService.findExplanatoryVersion(event.getVersionId());
             final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
 
-            DownloadStreamResource downloadStreamResource = new DownloadStreamResource(fileName, new ByteArrayInputStream(chosenDocument.getContent().get().getSource().getBytes()));
+            DownloadStreamResource downloadStreamResource = new DownloadStreamResource(fileName,
+                    new ByteArrayInputStream(chosenDocument.getContent().get().getSource().getBytes()));
             explanatoryScreen.setDownloadStreamResourceForVersion(downloadStreamResource, chosenDocument.getId());
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloadXmlVersion", e);
@@ -552,10 +561,11 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Explanatory.class, false, true);
             exportOptions.setExportVersions(new ExportVersions<Explanatory>(null, getDocument()));
-            byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName,"zip"), proposalId, exportOptions);
+            byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             DownloadStreamResource downloadStreamResource = new DownloadStreamResource(jobFileName, new ByteArrayInputStream(exportedBytes));
             explanatoryScreen.setDownloadStreamResourceForMenu(downloadStreamResource);
-            LOG.info("The actual version of CLEANED Bill for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("The actual version of CLEANED Bill for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId,
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "export.docuwrite.error.message", e.getMessage()));
@@ -563,24 +573,23 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void createExportPackageForActualVersion(CreateExportPackageActualVersionRequestEvent event) {
-        final Explanatory currentDocument = getDocument();
-        XmlDocument original = documentContentService.getOriginalExplanatory(currentDocument);
-        ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Explanatory.class, false);
-        exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
-        exportOptions.setRelevantElements(event.getRelevantElements());
-        exportOptions.setWithFilteredAnnotations(event.isWithAnnotations());
-
-        requestFilteredAnnotationsForExport(event.getTitle(), false, exportOptions);
-    }
-
-    @Subscribe
     void createExportPackageCleanVersion(CreateExportPackageCleanVersionRequestEvent event) {
+
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Explanatory.class, false, true);
+
+        boolean isLiveDiffing = getDocument().isLiveDiffingRequired();
+        final Explanatory currentDocument = getDocument();
+        XmlDocument original = currentDocument; // For NO Diffing
+        if (isLiveDiffing) {
+            original = documentContentService.getOriginalExplanatory(currentDocument);
+        }
+        exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
+
         exportOptions.setRelevantElements(event.getRelevantElements());
         exportOptions.setWithFilteredAnnotations(event.isWithAnnotations());
-
+        exportOptions.setPrintStyle(event.getPrintStyle());
         requestFilteredAnnotationsForExport(event.getTitle(), true, exportOptions);
+
     }
 
     private void requestFilteredAnnotationsForExport(final String title, final Boolean isExportCleanVersion, ExportOptions exportOptions) {
@@ -631,8 +640,10 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
-            eventBus.post(new NotificationEvent("document.export.package.window.title", "document.export.package.creation.success", NotificationEvent.Type.TRAY));
-            LOG.info("Export Package {} for proposal {} created in {} milliseconds ({} sec)", exportDocument.getName(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            eventBus.post(
+                    new NotificationEvent("document.export.package.window.title", "document.export.package.creation.success", NotificationEvent.Type.TRAY));
+            LOG.info("Export Package {} for proposal {} created in {} milliseconds ({} sec)", exportDocument.getName(), proposalRef,
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LogUtil.logError(LOG, eventBus, "Unexpected error occurred while generating Export Package", e);
         } finally {
@@ -652,9 +663,14 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         comments.add(messageHelper.getMessage("document.export.package.creation.comment.legal.act"));
         if (exportOptions.isComparisonMode()) {
             StringBuilder versionsComment = new StringBuilder();
-            versionsComment.append(exportOptions.getExportVersions().getOriginal() != null ? getCommentForVersion(exportOptions.getExportVersions().getOriginal()) : "");
-            versionsComment.append(exportOptions.getExportVersions().getIntermediate() != null ? " vs " + getCommentForVersion(exportOptions.getExportVersions().getIntermediate()) : "");
-            versionsComment.append(exportOptions.getExportVersions().getCurrent() != null ? " vs " + getCommentForVersion(exportOptions.getExportVersions().getCurrent()) : "");
+            versionsComment.append(
+                    exportOptions.getExportVersions().getOriginal() != null ? getCommentForVersion(exportOptions.getExportVersions().getOriginal()) : "");
+            versionsComment.append(exportOptions.getExportVersions().getIntermediate() != null ?
+                    " vs " + getCommentForVersion(exportOptions.getExportVersions().getIntermediate()) :
+                    "");
+            versionsComment.append(exportOptions.getExportVersions().getCurrent() != null ?
+                    " vs " + getCommentForVersion(exportOptions.getExportVersions().getCurrent()) :
+                    "");
             comments.add(versionsComment.toString());
         } else {
             comments.add(getCommentForVersion(getDocument()));
@@ -693,7 +709,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         LOG.trace("Handling close document request...");
 
         //if unsaved changes remain in the session, first ask for confirmation
-        if(isExplanatoryUnsaved() || this.isHasOpenElementEditors()){
+        if (isExplanatoryUnsaved() || this.isHasOpenElementEditors()) {
             eventBus.post(new ShowConfirmDialogEvent(new CloseDocumentConfirmationEvent(), null));
             return;
         }
@@ -703,21 +719,23 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     @Subscribe
     void handleNavigationRequest(DocumentNavigationRequest event) {
         LOG.trace("Handling document navigation request...");
-        if (event.getNavigationEvent() != null) event.getNavigationEvent().setForwardToDocument(false);
-        if(isExplanatoryUnsaved() || this.isHasOpenElementEditors()) {
+        if (event.getNavigationEvent() != null)
+            event.getNavigationEvent().setForwardToDocument(false);
+        if (isExplanatoryUnsaved() || this.isHasOpenElementEditors()) {
             eventBus.post(new ShowConfirmDialogEvent(event.getNavigationEvent(), null));
             return;
         }
         eventBus.post(event.getNavigationEvent());
     }
 
-    private boolean isExplanatoryUnsaved(){
+    private boolean isExplanatoryUnsaved() {
         return getExplanatoryFromSession() != null;
     }
 
     private Explanatory getExplanatoryFromSession() {
         return (Explanatory) httpSession.getAttribute("explanatory#" + getDocumentRef());
     }
+
     private boolean isHasOpenElementEditors() {
         return this.openElementEditors.size() > 0;
     }
@@ -766,24 +784,25 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
     }
-    
+
     private String generateLabel(String reference, XmlDocument sourceDocument) {
         final byte[] sourceXmlContent = sourceDocument.getContent().get().getSource().getBytes();
-        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(reference), sourceDocument.getMetadata().get().getRef(), sourceXmlContent);
+        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(reference), sourceDocument.getMetadata().get().getRef(),
+                sourceXmlContent);
         return updatedLabel.get();
     }
-    
+
     @Subscribe
-    void deleteElement(DeleteElementRequestEvent event){
+    void deleteElement(DeleteElementRequestEvent event) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Explanatory explanatory = getDocument();
             String tagName = event.getElementTagName();
             byte[] updatedXmlContent = explanatoryProcessor.deleteElement(explanatory, event.getElementId(), tagName);
-            
+
             final String updatedLabel = generateLabel(event.getElementId(), explanatory);
-            final String comment =  messageHelper.getMessage("operation.element.deleted", updatedLabel);
-            
+            final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
+
             // save document into repository
             explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, comment);
             if (explanatory != null) {
@@ -793,9 +812,9 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
                 updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
             }
-            LOG.info("Element '{}' in Explanatory {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        }
-        catch (Exception ex){
+            LOG.info("Element '{}' in Explanatory {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), explanatory.getName(),
+                    explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception ex) {
             LOG.error("Exception while deleting element operation for ", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
@@ -806,12 +825,14 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String tagName = event.getElementTagName();
         Explanatory explanatory = getDocument();
-        byte[] updatedXmlContent = explanatoryProcessor.insertNewElement(explanatory, event.getElementId(), tagName, InsertElementRequestEvent.POSITION.BEFORE.equals(event.getPosition()));
+        byte[] updatedXmlContent = explanatoryProcessor.insertNewElement(explanatory, event.getElementId(), tagName,
+                InsertElementRequestEvent.POSITION.BEFORE.equals(event.getPosition()));
 
         final String title = messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(tagName));
         final String description = messageHelper.getMessage("operation.checkin.minor");
         final String elementLabel = "";
-        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, event.getElementId(), tagName, elementLabel));
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
+                new CheckinElement(ActionType.INSERTED, event.getElementId(), tagName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
@@ -822,7 +843,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
         }
-        LOG.info("New Element of type '{}' inserted in Explanatory {} id {}, in {} milliseconds ({} sec)", tagName, explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        LOG.info("New Element of type '{}' inserted in Explanatory {} id {}, in {} milliseconds ({} sec)", tagName, explanatory.getName(), explanatory.getId(),
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @Subscribe
@@ -837,7 +859,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             Element mergeOnElement = explanatoryProcessor.getMergeOnElement(explanatory, elementContent, tagName, elementId);
             if (mergeOnElement != null) {
                 byte[] newXmlContent = explanatoryProcessor.mergeElement(explanatory, elementContent, tagName, elementId);
-                explanatory = explanatoryService.updateExplanatory(explanatory, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(tagName)));
+                explanatory = explanatoryService.updateExplanatory(explanatory, newXmlContent, VersionType.MINOR,
+                        messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(tagName)));
                 if (explanatory != null) {
                     elementToEditAfterClose = mergeOnElement;
                     eventBus.post(new CloseElementEvent());
@@ -847,7 +870,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             } else {
                 explanatoryScreen.showAlertDialog("operation.element.not.performed");
             }
-            LOG.info("Element '{}' merged into '{}' in Explanatory {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("Element '{}' merged into '{}' in Explanatory {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
+                    explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error in mergeElement", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "unknown.error.message"));
@@ -859,7 +883,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         try {
             if (event.getAction().equals(CheckElementCoEditionEvent.Action.MERGE)) {
                 Explanatory explanatory = getDocument();
-                Element mergeOnElement = explanatoryProcessor.getMergeOnElement(explanatory, event.getElementContent(), event.getElementTagName(), event.getElementId());
+                Element mergeOnElement = explanatoryProcessor.getMergeOnElement(explanatory, event.getElementContent(), event.getElementTagName(),
+                        event.getElementId());
                 if (mergeOnElement != null) {
                     explanatoryScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
                             mergeOnElement.getElementId(), mergeOnElement.getElementTagName(), event.getAction(), event.getActionEvent());
@@ -885,26 +910,25 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
         //load content from session if exists
         Explanatory explanatoryFromSession = getExplanatoryFromSession();
-        if(explanatoryFromSession != null) {
-        	updateView(explanatoryFromSession);
-        }else{
+        if (explanatoryFromSession != null) {
+            updateView(explanatoryFromSession);
+        } else {
             eventBus.post(new RefreshDocumentEvent());
         }
         LOG.debug("User edit information removed");
     }
 
-
     @Subscribe
-    void editElement(EditElementRequestEvent event){
+    void editElement(EditElementRequestEvent event) {
         String elementId = event.getElementId();
         String elementTagName = event.getElementTagName();
         elementToEditAfterClose = null;
-        LOG.trace("Handling edit element request... for {},id={}",elementTagName , elementId );
+        LOG.trace("Handling edit element request... for {},id={}", elementTagName, elementId);
         try {
             //show confirm dialog if there is any unsaved replaced text
             //it can be detected from the session attribute
-            if(isExplanatoryUnsaved()){
-                eventBus.post(new ShowConfirmDialogEvent(event, new CancelElementEditorEvent(event.getElementId(),event.getElementTagName())));
+            if (isExplanatoryUnsaved()) {
+                eventBus.post(new ShowConfirmDialogEvent(event, new CancelElementEditorEvent(event.getElementId(), event.getElementTagName())));
                 return;
             }
 
@@ -918,21 +942,20 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
             explanatoryScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
             openElementEditors.add(elementId);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
     }
 
     @Subscribe
-    void saveElement(SaveElementRequestEvent event){
+    void saveElement(SaveElementRequestEvent event) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String elementId = event.getElementId();
         String elementTagName = event.getElementTagName();
         String elementContent = event.getElementContent();
         elementToEditAfterClose = null;
-        LOG.trace("Handling save element request... for {},id={}",elementTagName , elementId );
+        LOG.trace("Handling save element request... for {},id={}", elementTagName, elementId);
 
         try {
             Explanatory explanatory = getDocument();
@@ -941,20 +964,21 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 explanatoryScreen.showAlertDialog("operation.element.not.performed");
                 return;
             }
-            
+
             final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementTagName));
             final String description = messageHelper.getMessage("operation.checkin.minor");
             final String updatedLabel = generateLabel(event.getElementId(), explanatory);
-            final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementTagName, updatedLabel));
+            final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
+                    new CheckinElement(ActionType.UPDATED, elementId, elementTagName, updatedLabel));
             final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-            
+
             if (explanatory != null) {
                 Pair<byte[], Element> splittedContent = null;
                 if (event.isSplit() && checkIfCloseElementEditor(elementTagName, event.getElementContent())) {
                     splittedContent = explanatoryProcessor.getSplittedElement(updatedXmlContent, event.getElementContent(), elementTagName, elementId);
                     if (splittedContent != null) {
                         elementToEditAfterClose = splittedContent.right();
-                        if(splittedContent.left() != null){
+                        if (splittedContent.left() != null) {
                             updatedXmlContent = splittedContent.left();
                         }
                         eventBus.post(new CloseElementEvent());
@@ -968,7 +992,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
-            LOG.info("Element '{}' in Explanatory {} id {}, saved in {} milliseconds ({} sec)", elementId, explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("Element '{}' in Explanatory {} id {}, saved in {} milliseconds ({} sec)", elementId, explanatory.getName(), explanatory.getId(),
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception ex) {
             LOG.error("Exception while save explanatory operation", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
@@ -995,7 +1020,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void closeExplanatoryBlock(CloseElementEditorEvent event){
+    void closeExplanatoryBlock(CloseElementEditorEvent event) {
         String elementId = event.getElementId();
         coEditionHelper.removeUserEditInfo(id, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
         openElementEditors.remove(elementId);
@@ -1021,7 +1046,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     @Subscribe
     void showVersion(ShowVersionRequestEvent event) {
         final Explanatory version = explanatoryService.findExplanatoryVersion(event.getVersionId());
-        final String versionContent = documentContentService.getDocumentAsHtml(version, urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+        final String versionContent = documentContentService.getDocumentAsHtml(version,
+                urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
                 securityContext.getPermissions(version));
         final String versionInfo = getVersionInfoAsString(version);
         explanatoryScreen.showVersion(versionContent, versionInfo);
@@ -1059,7 +1085,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         final Explanatory intermediate = explanatoryService.findExplanatoryVersion(event.getIntermediateMajorId());
         final Explanatory current = explanatoryService.findExplanatoryVersion(event.getCurrentId());
         String resultContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
-        final String comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
+        final String comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(),
+                current.getVersionLabel());
         explanatoryScreen.populateDoubleComparisonContent(resultContent, comparedInfo, original, intermediate, current);
     }
 
@@ -1067,7 +1094,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     void versionRestore(RestoreVersionRequestEvent event) {
         final Explanatory version = explanatoryService.findExplanatoryVersion(event.getVersionId());
         final byte[] resultXmlContent = getContent(version);
-        explanatoryService.updateExplanatory(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+        explanatoryService.updateExplanatory(getDocument(), resultXmlContent, VersionType.MINOR,
+                messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
 
         List<Explanatory> documentVersions = explanatoryService.findVersions(documentId);
         explanatoryScreen.updateTimeLineWindow(documentVersions);
@@ -1124,13 +1152,15 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Explanatory explanatory = getDocument();
         ExplanatoryStructureType explanatoryStructureType = getStructureType();
-        explanatory = explanatoryService.saveTableOfContent(explanatory, event.getTableOfContentItemVOs(), explanatoryStructureType, messageHelper.getMessage("operation.toc.updated"), user);
+        explanatory = explanatoryService.saveTableOfContent(explanatory, event.getTableOfContentItemVOs(), explanatoryStructureType,
+                messageHelper.getMessage("operation.toc.updated"), user);
 
         eventBus.post(new NotificationEvent(Type.INFO, "toc.edit.saved"));
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
-        LOG.info("Toc saved in Explanatory {} id {}, in {} milliseconds ({} sec)", explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        LOG.info("Toc saved in Explanatory {} id {}, in {} milliseconds ({} sec)", explanatory.getName(), explanatory.getId(),
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @Subscribe
@@ -1141,7 +1171,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    public void fetchSearchMetadata(SearchMetadataRequest event){
+    public void fetchSearchMetadata(SearchMetadataRequest event) {
         if (!milestoneExplorerOpened) {
             List<AnnotateMetadata> metadataList = new ArrayList<>();
             AnnotateMetadata metadata = new AnnotateMetadata();
@@ -1154,7 +1184,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    public void fetchMetadata(DocumentMetadataRequest event){
+    public void fetchMetadata(DocumentMetadataRequest event) {
         AnnotateMetadata metadata = new AnnotateMetadata();
         Explanatory explanatory = getDocument();
         metadata.setVersion(explanatory.getVersionLabel());
@@ -1166,7 +1196,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     @Subscribe
     void mergeSuggestion(MergeSuggestionRequest event) {
         Explanatory document = getDocument();
-        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset());
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(),
+                event.getStartOffset(), event.getEndOffset());
         if (resultXmlContent == null) {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
             return;
@@ -1177,8 +1208,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.success"), MergeSuggestionResponse.Result.SUCCESS));
-        }
-        else {
+        } else {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
         }
     }
@@ -1195,7 +1225,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         String versionLabel = null;
         String versionComment = null;
         String baseRevisionId = document.getBaseRevisionId();
-        if(StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+        if (StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
             versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
             versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
         }
@@ -1218,7 +1248,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             ExplanatoryMetadata metadata = explanatory.getMetadata().get();
             explanatoryVO.getMetadata().setInternalRef(metadata.getRef());
         }
-        if(!explanatory.getCollaborators().isEmpty()) {
+        if (!explanatory.getCollaborators().isEmpty()) {
             explanatoryVO.addCollaborators(explanatory.getCollaborators());
         }
         return explanatoryVO;
@@ -1235,9 +1265,10 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void onInfoUpdate(UpdateUserInfoEvent updateUserInfoEvent) {
-        if(isCurrentInfoId(updateUserInfoEvent.getActionInfo().getInfo().getDocumentId())) {
+        if (isCurrentInfoId(updateUserInfoEvent.getActionInfo().getInfo().getDocumentId())) {
             if (!id.equals(updateUserInfoEvent.getActionInfo().getInfo().getPresenterId())) {
-                eventBus.post(new NotificationEvent(leosUI, "coedition.caption", "coedition.operation." + updateUserInfoEvent.getActionInfo().getOperation().getValue(),
+                eventBus.post(new NotificationEvent(leosUI, "coedition.caption",
+                        "coedition.operation." + updateUserInfoEvent.getActionInfo().getOperation().getValue(),
                         Type.TRAY, updateUserInfoEvent.getActionInfo().getInfo().getUserName()));
             }
             LOG.debug("Explanatory Presenter updated the edit info -" + updateUserInfoEvent.getActionInfo().getOperation().name());
@@ -1258,7 +1289,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             explanatoryScreen.displayDocumentUpdatedByCoEditorWarning();
         }
     }
-    
+
     @Subscribe
     void editInlineToc(InlineTocEditRequestEvent event) {
         Explanatory explanatory = getDocument();
@@ -1285,7 +1316,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         }
         // we are combining two operations (get toc + get selected element ancestors)
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory.getId(), TocMode.SIMPLIFIED_CLEAN);
-        eventBus.post(new FetchCrossRefTocResponseEvent(new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));
+        eventBus.post(new FetchCrossRefTocResponseEvent(
+                new TocAndAncestorsVO(tocItemList, elementAncestorsIds, messageHelper, structureContextProvider.get().getNumberingConfigs())));
     }
 
     @Subscribe
@@ -1310,7 +1342,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         }
 
         final byte[] sourceXmlContent = getDocument().getContent().get().getSource().getBytes();
-        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(event.getReferences(), getDocumentRef(), event.getCurrentElementID(), sourceXmlContent, event.getDocumentRef(), event.isCapital());
+        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(event.getReferences(), getDocumentRef(), event.getCurrentElementID(),
+                sourceXmlContent, event.getDocumentRef(), event.isCapital());
         eventBus.post(new ReferenceLabelResponseEvent(updatedLabel.get(), event.getDocumentRef()));
     }
 
@@ -1337,7 +1370,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void saveAndCloseAfterReplace(SaveAndCloseAfterReplaceEvent event){
+    void saveAndCloseAfterReplace(SaveAndCloseAfterReplaceEvent event) {
         // save document into repository
         Explanatory explanatory = getDocument();
 
@@ -1407,7 +1440,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void saveAfterReplace(SaveAfterReplaceEvent event){
+    void saveAfterReplace(SaveAfterReplaceEvent event) {
         // save document into repository
         Explanatory explanatory = getDocument();
 
@@ -1416,7 +1449,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         explanatory = explanatoryService.updateExplanatory(explanatory, explanatoryFromSession.getContent().get().getSource().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         if (explanatory != null) {
-            httpSession.setAttribute("explanatory#"+getDocumentRef(), explanatory);
+            httpSession.setAttribute("explanatory#" + getDocumentRef(), explanatory);
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             eventBus.post(new NotificationEvent(Type.INFO, "document.replace.success"));
@@ -1445,56 +1478,57 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             explanatoryScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), false);
         }
     }
-    
+
     @Subscribe
     void changeBaseVersion(ChangeBaseVersionEvent event) {
-    	 String documentId = event.getVersionId();
-         String versionLabel = event.getVersionLabel();
-         String versionTitle = event.getBaseVersionTitle();
-         
-         Explanatory updatedExplanatory = updateBaseVersion(documentId, versionLabel, versionTitle);
-         
-         NotificationEvent notification;
-         if(!updatedExplanatory.isLiveDiffingRequired()) {
-        	 updatedExplanatory = updateLiveDiffingRequired(true);
-        	 notification = new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.warning", versionLabel);
-         } else {
-        	 notification = new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.info", versionLabel);
-         }
-         
-         updateView(updatedExplanatory);
-         eventBus.post(notification);
+        String documentId = event.getVersionId();
+        String versionLabel = event.getVersionLabel();
+        String versionTitle = event.getBaseVersionTitle();
+
+        Explanatory updatedExplanatory = updateBaseVersion(documentId, versionLabel, versionTitle);
+
+        NotificationEvent notification;
+        if (!updatedExplanatory.isLiveDiffingRequired()) {
+            updatedExplanatory = updateLiveDiffingRequired(true);
+            notification = new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.warning", versionLabel);
+        } else {
+            notification = new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.info", versionLabel);
+        }
+
+        updateView(updatedExplanatory);
+        eventBus.post(notification);
     }
-    
+
     @Subscribe
     void toggleLiveDiffingRequired(ToggleLiveDiffingRequiredEvent event) {
-    	boolean liveDiffingRequired = event.isLiveDiffingRequired();
-    	
-    	Explanatory updatedExplanatory = updateLiveDiffingRequired(liveDiffingRequired);
-    	
-    	NotificationEvent notification;
-    	if(liveDiffingRequired) {
-    		String baseRevisionId = updatedExplanatory.getBaseRevisionId();
-        	if(StringUtils.isEmpty(baseRevisionId)) {
-        		VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(updatedExplanatory), messageHelper).get(0);
-        		updatedExplanatory = updateBaseVersion(versionVO.getDocumentId(), versionVO.getVersionNumber().toString(), versionVO.getCheckinCommentVO().getTitle());
-        		notification = new NotificationEvent(Type.INFO, "document.live.diffing.on.warning", versionVO.getVersionNumber().toString());
-        	} else {
-        		notification = new NotificationEvent(Type.INFO, "document.live.diffing.on");
-        	}
-    	} else {
-    		notification = new NotificationEvent(Type.INFO, "document.live.diffing.off");
-    	}
-    	
-    	updateView(updatedExplanatory);
-    	eventBus.post(notification);
+        boolean liveDiffingRequired = event.isLiveDiffingRequired();
+
+        Explanatory updatedExplanatory = updateLiveDiffingRequired(liveDiffingRequired);
+
+        NotificationEvent notification;
+        if (liveDiffingRequired) {
+            String baseRevisionId = updatedExplanatory.getBaseRevisionId();
+            if (StringUtils.isEmpty(baseRevisionId)) {
+                VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(updatedExplanatory), messageHelper).get(0);
+                updatedExplanatory = updateBaseVersion(versionVO.getDocumentId(), versionVO.getVersionNumber().toString(),
+                        versionVO.getCheckinCommentVO().getTitle());
+                notification = new NotificationEvent(Type.INFO, "document.live.diffing.on.warning", versionVO.getVersionNumber().toString());
+            } else {
+                notification = new NotificationEvent(Type.INFO, "document.live.diffing.on");
+            }
+        } else {
+            notification = new NotificationEvent(Type.INFO, "document.live.diffing.off");
+        }
+
+        updateView(updatedExplanatory);
+        eventBus.post(notification);
     }
 
     @Subscribe
     void closeSearchBar(SearchBarClosedEvent event) {
         //Cleanup the session etc
         explanatoryScreen.closeSearchBar();
-        httpSession.removeAttribute("explanatory#"+getDocumentRef());
+        httpSession.removeAttribute("explanatory#" + getDocumentRef());
         eventBus.post(new RefreshDocumentEvent());
     }
 
@@ -1508,24 +1542,24 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(ExplanatoryStructureType.LEVEL.getType()))).collect(Collectors.toList());
         return tocItems.size() > 0 ? ExplanatoryStructureType.valueOf(tocItems.get(0).getAknTag().value().toUpperCase()) : null;
     }
-    
+
     private Explanatory updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
-    	 Map<String, Object> properties = new HashMap<>();
-         properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
-         Explanatory updatedExplanatory =  explanatoryService.updateExplanatory(documentId, properties, true);
-         return updatedExplanatory;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
+        Explanatory updatedExplanatory = explanatoryService.updateExplanatory(documentId, properties, true);
+        return updatedExplanatory;
     }
-    
+
     private Explanatory updateLiveDiffingRequired(boolean liveDiffingRequired) {
-    	Map<String, Object> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), liveDiffingRequired);
         Explanatory updatedExplanatory = explanatoryService.updateExplanatory(documentId, properties, true);
         return updatedExplanatory;
     }
-    
+
     private void updateView(Explanatory explanatory) {
-    	explanatoryScreen.setLiveDiffingRequired(explanatory.isLiveDiffingRequired());
-    	explanatoryScreen.setDocumentVersionInfo(getVersionInfo(explanatory));
+        explanatoryScreen.setLiveDiffingRequired(explanatory.isLiveDiffingRequired());
+        explanatoryScreen.setDocumentVersionInfo(getVersionInfo(explanatory));
         explanatoryScreen.setContent(getEditableXml(explanatory));
     }
 
