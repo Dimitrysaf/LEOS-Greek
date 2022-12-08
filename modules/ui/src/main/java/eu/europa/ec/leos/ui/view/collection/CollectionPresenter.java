@@ -612,10 +612,13 @@ class CollectionPresenter extends AbstractLeosPresenter {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Map<String, byte[]> exportPackageContent = exportService.getExportPackageContent(previewExportPackageEvent.getId(), ".docx");
-            DownloadStreamResource downloadStreamResource = new DownloadStreamResource(exportPackageContent.keySet().stream().findFirst().get(),
-                    new ByteArrayInputStream(exportPackageContent.values().stream().findFirst().get()));
-            collectionScreen.setExportPackageStreamResource(downloadStreamResource);
-            LOG.info("Export Package {} for proposal {} downloaded in {} milliseconds ({} sec)", previewExportPackageEvent.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            Optional<Map.Entry<String, byte[]>> first = exportPackageContent.entrySet().stream().findFirst();
+            if(first.isPresent()){
+                DownloadStreamResource downloadStreamResource = new DownloadStreamResource(first.get().getKey(),
+                        new ByteArrayInputStream(first.get().getValue()));
+                collectionScreen.setExportPackageStreamResource(downloadStreamResource);
+                LOG.info("Export Package {} for proposal {} downloaded in {} milliseconds ({} sec)", previewExportPackageEvent.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading Export Package", e);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.block.export.package.action.download.error", e.getMessage()));
@@ -754,7 +757,10 @@ class CollectionPresenter extends AbstractLeosPresenter {
         // 1. get Annex
         Annex annex = annexService.findAnnex(event.getAnnex().getId(), true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
-        AnnexMetadata updatedMetadata = metadata.withTitle(event.getAnnex().getTitle());
+        AnnexMetadata updatedMetadata = metadata
+                .builder()
+                .withTitle(event.getAnnex().getTitle())
+                .build();
 
         String baseRevisionId = annex.getBaseRevisionId();
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
@@ -932,7 +938,10 @@ class CollectionPresenter extends AbstractLeosPresenter {
         // 1. get explanatory
         Explanatory explanatory = explanatoryService.findExplanatory(event.getExplanatory().getId());
         ExplanatoryMetadata metadata = explanatory.getMetadata().getOrError(() -> "Explanatory metadata not found!");
-        ExplanatoryMetadata updatedMetadata = metadata.withTitle(event.getExplanatory().getTitle());
+        ExplanatoryMetadata updatedMetadata = metadata
+                .builder()
+                .withTitle(event.getExplanatory().getTitle())
+                .build();
 
         // 2. save metadata
         explanatoryService.updateExplanatory(explanatory, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
@@ -1268,7 +1277,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void exportProposal(ExportProposalEvent event) {
-        File downloadFile = null;
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             ExportOptions exportOptions = event.getExportOptions();
@@ -1292,10 +1300,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LOG.error("Unexpected error occured while sending job to ToolBox: {}", e.getMessage());
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.export.error", e.getMessage()));
-        } finally {
-            if (downloadFile != null) {
-                downloadFile.delete();
-            }
         }
     }
 
@@ -1351,7 +1355,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.downloaded.error", e.getMessage()));
         } finally {
             if (packageFile != null && packageFile.exists()) {
-                packageFile.delete();
+                if(!packageFile.delete()){
+                    LOG.info("File was not deleted {}", packageFile.toPath());
+                }
             }
         }
     }
@@ -1368,7 +1374,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.downloaded.error", e.getMessage()));
         } finally {
             if (packageFile != null && packageFile.exists()) {
-                packageFile.delete();
+                if(!packageFile.delete()){
+                    LOG.info("File was not deleted {}", packageFile.toPath());
+                }
             }
         }
     }
@@ -1531,7 +1539,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 "clone.proposal.contribution.done.success.notification",
                 NotificationEvent.Type.TRAY) :
                 new NotificationEvent(NotificationEvent.Type.ERROR,
-                        "clone.proposal.contribution.done.error.notification", result.getErrorCode().get(),
+                        "clone.proposal.contribution.done.error.notification", result.getErrorCode().orElse(null),
                         resultFiles.left());
         eventBus.post(notificationEvent);
     }

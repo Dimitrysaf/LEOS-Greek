@@ -28,6 +28,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -234,8 +235,10 @@ public abstract class AbstractTocEditor implements TocEditor {
                 if (targetItem.containsItem(CLAUSE)) {
                     TableOfContentItemVO clauseItem = targetItem.getChildItems().stream()
                             .filter(x -> x.getTocItem().getAknTag().value().equals(CLAUSE)).findFirst().orElse(null);
-                    TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, clauseItem, clauseItem.getParentItem(), ItemPosition.BEFORE, true);
-                    addOrMoveItem(isAdd, sourceItem, clauseItem, tocTree, actualTargetItem, ItemPosition.BEFORE);
+                    if(clauseItem != null) {
+                        TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, clauseItem, clauseItem.getParentItem(), ItemPosition.BEFORE, true);
+                        addOrMoveItem(isAdd, sourceItem, clauseItem, tocTree, actualTargetItem, ItemPosition.BEFORE);
+                    }
                 } else {
                     addOrMoveItem(isAdd, sourceItem, targetItem, tocTree, targetItem, ItemPosition.AS_CHILDREN);
                 }
@@ -421,7 +424,7 @@ public abstract class AbstractTocEditor implements TocEditor {
         while (parent != null && !parent.getTocItem().getAknTag().equals(AknTag.MAIN_BODY)) {
             parent = parent.getParentItem();
         }
-        return parent.flattened().collect(Collectors.toList());
+        return parent != null ? parent.flattened().collect(Collectors.toList()) : Collections.emptyList();
     }
 
     private TableOfContentItemVO getTargetPosition(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem, List<TableOfContentItemVO> list, int sourceItemIndex) {

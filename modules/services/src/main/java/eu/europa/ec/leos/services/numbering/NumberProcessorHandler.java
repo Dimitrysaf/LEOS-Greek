@@ -196,8 +196,7 @@ public abstract class NumberProcessorHandler {
                     numberProcessorsDepthBased.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .get()
-                            .renumberDepthBased(parentChildNode, numberConfig, elementName, depth);
+                            .ifPresent(val -> val.renumberDepthBased(parentChildNode, numberConfig, elementName, depth));
                     removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
                 }
             }
@@ -228,8 +227,7 @@ public abstract class NumberProcessorHandler {
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .get()
-                            .renumber(node, numberConfig, renumberChildren);
+                            .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren));
                 }
                 removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
             }

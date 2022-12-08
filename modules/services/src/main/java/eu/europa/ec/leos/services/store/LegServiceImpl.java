@@ -286,7 +286,11 @@ public class LegServiceImpl implements LegService {
     
     private byte[] addMetadataToProposal(Proposal proposal, byte[] xmlContent) {
         ProposalMetadata metadata = proposal.getMetadata().get();
-        metadata = metadata.withObjectId(proposal.getId()).withDocVersion(proposal.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(proposal.getId())
+                .withDocVersion(proposal.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata)
                 , xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         return xmlContent;
@@ -294,7 +298,11 @@ public class LegServiceImpl implements LegService {
 
     private byte[] addMetadataToProposalWithoutEEARelevanceMetadata(Proposal proposal, byte[] xmlContent) {
         ProposalMetadata metadata = proposal.getMetadata().get();
-        metadata = metadata.withObjectId(proposal.getId()).withDocVersion(proposal.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(proposal.getId())
+                .withDocVersion(proposal.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMapWithoutCoverpageEEARelevance(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()),
                 xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         return xmlContent;
@@ -310,21 +318,33 @@ public class LegServiceImpl implements LegService {
 
     private byte[] addMetadataToMemorandum(Memorandum memorandum, byte[] xmlContent) {
         MemorandumMetadata metadata = memorandum.getMetadata().get();
-        metadata = metadata.withObjectId(memorandum.getId()).withDocVersion(memorandum.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(memorandum.getId())
+                .withDocVersion(memorandum.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         return xmlContent;
     }
     
     private byte[] addMetadataToBill(Bill bill, byte[] xmlContent) {
         BillMetadata metadata = bill.getMetadata().get();
-        metadata = metadata.withObjectId(bill.getId()).withDocVersion(bill.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(bill.getId())
+                .withDocVersion(bill.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         return xmlContent;
     }
 
     private byte[] addMetadataToAnnex(Annex annex, byte[] xmlContent) {
         AnnexMetadata metadata = annex.getMetadata().get();
-        metadata = metadata.withObjectId(annex.getId()).withDocVersion(annex.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(annex.getId())
+                .withDocVersion(annex.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()),
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
         return xmlContent;
@@ -332,7 +352,11 @@ public class LegServiceImpl implements LegService {
 
     private byte[] addMetadataToFinancialStatement(FinancialStatement financialStatement, byte[] xmlContent) {
         FinancialStatementMetadata metadata = financialStatement.getMetadata().get();
-        metadata = metadata.withObjectId(financialStatement.getId()).withDocVersion(financialStatement.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(financialStatement.getId())
+                .withDocVersion(financialStatement.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()),
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
         return xmlContent;
@@ -340,7 +364,11 @@ public class LegServiceImpl implements LegService {
 
     private byte[] addPrefaceMetadataToAnnex(Annex annex, byte[] xmlContent) {
         AnnexMetadata metadata = annex.getMetadata().get();
-        metadata = metadata.withObjectId(annex.getId()).withDocVersion(annex.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(annex.getId())
+                .withDocVersion(annex.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createPrefaceValueMap(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()),
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
         return xmlContent;
@@ -348,7 +376,11 @@ public class LegServiceImpl implements LegService {
 
     private byte[] addMetadataToAnnexWithoutPreface(Annex annex, byte[] xmlContent) {
         AnnexMetadata metadata = annex.getMetadata().get();
-        metadata = metadata.withObjectId(annex.getId()).withDocVersion(annex.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(annex.getId())
+                .withDocVersion(annex.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMapWithoutPreface(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()),
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
         return xmlContent;
@@ -356,7 +388,11 @@ public class LegServiceImpl implements LegService {
 
     private byte[] addMetadataToExplanatory(Explanatory explanatory, byte[] xmlContent) {
         ExplanatoryMetadata metadata = explanatory.getMetadata().get();
-        metadata = metadata.withObjectId(explanatory.getId()).withDocVersion(explanatory.getVersionLabel());
+        metadata = metadata
+                .builder()
+                .withObjectId(explanatory.getId())
+                .withDocVersion(explanatory.getVersionLabel())
+                .build();
         xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, createValueMap(metadata), xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         return xmlContent;
     }
@@ -1164,7 +1200,10 @@ public class LegServiceImpl implements LegService {
     private byte[] getFileContent(File file) throws IOException {
         try (InputStream is = new FileInputStream(file)) {
             byte[] content = new byte[(int) file.length()];
-            is.read(content);
+            int bytesRead = is.read(content);
+            if(bytesRead == 0){
+                LOG.debug("Zero bytes read!");
+            }
             return content;
         }
     }
@@ -1346,8 +1385,10 @@ public class LegServiceImpl implements LegService {
             legPackageZipFile = ZipPackageUtil.zipFiles(System.currentTimeMillis() + ".zip", legPackageZipContent, "");
             return FileUtils.readFileToByteArray(legPackageZipFile);
         } finally {
-            if ((legPackageZipFile != null) && (legPackageZipFile.exists())) {
-                legPackageZipFile.delete();
+            if (legPackageZipFile != null && legPackageZipFile.exists()) {
+                if(!legPackageZipFile.delete()){
+                    LOG.info("File not deleted {}", legPackageZipFile.toPath());
+                }
             }
         }
     }

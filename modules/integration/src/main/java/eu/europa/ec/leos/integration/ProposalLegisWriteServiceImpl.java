@@ -48,8 +48,9 @@ public class ProposalLegisWriteServiceImpl implements LegisWriteService {
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
             ResponseEntity<ByteArrayResource> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, ByteArrayResource.class);
 
-            if (response.getBody() != null) {
-                return response.getBody().getByteArray();
+            ByteArrayResource body = response.getBody();
+            if (body != null) {
+                return body.getByteArray();
             }
 
             LOG.error("Empty response from the external service LegisWrite");
@@ -64,9 +65,12 @@ public class ProposalLegisWriteServiceImpl implements LegisWriteService {
     private ByteArrayResource convertFileToByteArray(File legFile) throws IOException {
         byte[] bytesArray = new byte[(int) legFile.length()];
 
-        FileInputStream fis = new FileInputStream(legFile);
-        fis.read(bytesArray); //read file into bytes[]
-        fis.close();
+        try(FileInputStream fis = new FileInputStream(legFile)) {
+            int bytesRead = fis.read(bytesArray); //read file into bytes[]
+            if(bytesRead == 0 && LOG.isWarnEnabled()){
+                LOG.warn("No bytes were red from the file");
+            }
+        }
 
         return new ByteArrayResource(bytesArray);
     }

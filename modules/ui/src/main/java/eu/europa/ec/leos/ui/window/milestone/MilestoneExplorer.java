@@ -75,6 +75,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,7 +91,7 @@ public class MilestoneExplorer extends AbstractWindow {
     private static final long serialVersionUID = -4472838309232070251L;
     private static final Logger LOG = LoggerFactory.getLogger(MilestoneExplorer.class);
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public static final String LEOS_CONTENT_PROCESSED = "leos-content-processed";
     public static final String LEOS_CONTENT_REMOVED = "leos-content-removed";
@@ -300,7 +302,7 @@ public class MilestoneExplorer extends AbstractWindow {
         titleLayout.setSizeFull();
 
         User user = userHelper.getUser(legDocument.getInitialCreatedBy());
-        Label description = new Label(messageHelper.getMessage("milestone.explorer.window.description", dateFormat.format(Date.from(legDocument.getInitialCreationInstant())),
+        Label description = new Label(messageHelper.getMessage("milestone.explorer.window.description", dateFormat.format(legDocument.getInitialCreationInstant()),
                 user.getName(), milestoneTitle), ContentMode.HTML);
         titleLayout.addComponent(description);
         if(isContributionMilestone) {
@@ -387,7 +389,7 @@ public class MilestoneExplorer extends AbstractWindow {
         HashMap<String, Boolean> annexesComparaison = new HashMap();
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
-            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().get();
+            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
             String version = docVersionMap.get(contentFileName);
             boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
@@ -461,7 +463,7 @@ public class MilestoneExplorer extends AbstractWindow {
         }
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
-            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().get();
+            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
             String version = docVersionMap.get(contentFileName);
 

@@ -157,7 +157,13 @@ public class ExplanatoryContext {
         Validate.isTrue(metadataOption.isDefined(), "Explanatory metadata is required!");
 
         Validate.notNull(purpose, "Explanatory purpose is required!");
-        ExplanatoryMetadata metadata = metadataOption.get().withPurpose(purpose).withType(type).withTemplate(template).withTitle(title);
+        ExplanatoryMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withType(type)
+                .withTemplate(template)
+                .withTitle(title)
+                .build();
 
         explanatory = explanatoryService.createExplanatory(explanatory.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), null);
         explanatory = securityService.updateCollaborators(explanatory.getId(), collaborators, Explanatory.class);
@@ -190,7 +196,10 @@ public class ExplanatoryContext {
         Validate.isTrue(metadataOption.isDefined(), "Explanatory metadata is required!");
 
         // Updating only purpose at this time. other metadata needs to be set, if needed
-        ExplanatoryMetadata explanatoryMetadata = metadataOption.get().withPurpose(purpose);
+        ExplanatoryMetadata explanatoryMetadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .build();
         explanatoryService.updateExplanatory(explanatory, explanatoryMetadata, VersionType.MINOR, actionMsgMap.get(ContextAction.METADATA_UPDATED));
     }
 
@@ -202,11 +211,13 @@ public class ExplanatoryContext {
         Validate.isTrue(metadataOption.isDefined(), "Explanatory metadata is required!");
         ExplanatoryMetadata metadata = metadataOption.get();
         ExplanatoryMetadata explanatoryMetadata = metadata
+                .builder()
                 .withPurpose(metadata.getPurpose())
                 .withType(metadata.getType())
                 .withTemplate(template)
                 .withDocVersion(metadata.getDocVersion())
-                .withDocTemplate(template);
+                .withDocTemplate(template)
+                .build();
 
         explanatory = explanatoryService.updateExplanatory(explanatory, xmlContent, explanatoryMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.ANNEX_STRUCTURE_UPDATED));
     }

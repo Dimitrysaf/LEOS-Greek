@@ -239,7 +239,11 @@ public class CollectionContextService {
         purpose = propMeta.getDocPurpose();
         Validate.notNull(purpose, "Proposal purpose is required!");
         eeaRelevance = propMeta.getEeaRelevance();
-        ProposalMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
         if(cloneProposal) {
             setConnectedEntity();
             proposal = proposalService.createClonedProposalFromContent(leosPackage.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
@@ -336,7 +340,11 @@ public class CollectionContextService {
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
 
         Validate.notNull(purpose, "Proposal purpose is required!");
-        ProposalMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
 
@@ -373,7 +381,11 @@ public class CollectionContextService {
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
 
         Validate.notNull(purpose, "Proposal purpose is required!");
-        ProposalMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
 

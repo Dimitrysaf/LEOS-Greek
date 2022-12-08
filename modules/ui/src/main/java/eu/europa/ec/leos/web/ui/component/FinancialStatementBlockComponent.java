@@ -44,6 +44,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +55,7 @@ import java.util.List;
 @ViewScope
 @DesignRoot("SupportingDocumentsBlockDesign.html")
 public class FinancialStatementBlockComponent extends VerticalLayout {
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final int TITLE_MAX_LEGTH  = 2000;
 
     protected HeadingComponent heading;
@@ -161,7 +164,7 @@ public class FinancialStatementBlockComponent extends VerticalLayout {
     }
 
     public void setLastUpdated(String lastUpdatedBy, Date lastUpdatedOn) {
-        supportDocLastUpdated.setValue(messageHelper.getMessage("collection.caption.document.lastupdated", dataFormat.format(lastUpdatedOn),
+        supportDocLastUpdated.setValue(messageHelper.getMessage("collection.caption.document.lastupdated", dataFormat.format(lastUpdatedOn.toInstant()),
                 userHelper.convertToPresentation(lastUpdatedBy)));
     }
 
@@ -187,7 +190,7 @@ public class FinancialStatementBlockComponent extends VerticalLayout {
                     }
                     docUserCoEdition.setDescription(
                             docUserCoEdition.getDescription() +
-                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))) +
+                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))) +
                                     "<br>",
                             ContentMode.HTML);
                 });

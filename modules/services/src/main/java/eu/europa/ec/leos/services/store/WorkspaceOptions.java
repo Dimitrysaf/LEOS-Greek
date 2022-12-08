@@ -82,8 +82,9 @@ public class WorkspaceOptions {
                 values.add("CN-001");
             }
             if(id.equalsIgnoreCase(FilterType.role.name())) {
-                List<Role> appRoles = authorityMap.getAllRoles().stream()
+                List<String> appRoles = authorityMap.getAllRoles().stream()
                         .filter(Role::isApplicationRole)
+                        .map(role->role.getName())
                         .collect(Collectors.toList());
                 boolean appRoleSelected = values.stream()
                         .anyMatch(role -> appRoles.contains(role));

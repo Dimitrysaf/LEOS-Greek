@@ -75,7 +75,9 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
             LOG.error("An exception occurred while using the Docuwrite service: ", e);
             throw e;
         } finally {
-            FileHelper.deleteFile(legPackage.getFile());
+            if(legPackage != null){
+                FileHelper.deleteFile(legPackage.getFile());
+            }
             FileHelper.deleteFile(zipFile);
             FileHelper.deleteFile(exportedZipFile);
             LOG.trace("createDocuWritePackage() end....");
@@ -104,7 +106,9 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
             }
             throw e;
         } finally {
-            FileHelper.deleteFile(legPackage.getFile());
+            if(legPackage != null) {
+                FileHelper.deleteFile(legPackage.getFile());
+            }
             FileHelper.deleteFile(zipFile);
             FileHelper.deleteFile(exportPackageZipFile);
             LOG.trace("createExportPackage() end....");
@@ -139,7 +143,9 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
             throw e;
         } finally {
             if ((exportPackageZipFile != null) && (exportPackageZipFile.exists())) {
-                exportPackageZipFile.delete();
+                if(!exportPackageZipFile.delete()){
+                    LOG.info("File not deleted {}", exportPackageZipFile.toPath());
+                }
             }
             LOG.trace("updateExportPackageWithComments() end....");
         }

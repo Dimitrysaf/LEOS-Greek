@@ -6,8 +6,6 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.parser.Parser;
 import org.jsoup.parser.Tag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

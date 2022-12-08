@@ -213,20 +213,22 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                         String fileType = containedFile.substring(0, containedFile.indexOf("-"));
                         return BILL_DOC_TYPES.contains(fileType);
                     }).findFirst();
-            Bill clonedBill = findVersionByVersionedReference(billFile.get(), Bill.class);
-            clonedProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
-                    ContributionVO.ContributionStatus.RECEIVED.getValue());
-            billService.updateBill(clonedBill.getId(), clonedProperties, true);
-
+            if(billFile.isPresent()) {
+                Bill clonedBill = findVersionByVersionedReference(billFile.get(), Bill.class);
+                clonedProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
+                        ContributionVO.ContributionStatus.RECEIVED.getValue());
+                billService.updateBill(clonedBill.getId(), clonedProperties, true);
+            }
             //update Memorandum metadata
             clonedProperties = new HashMap<>();
             Optional<String> memorandumFile = containedDocuments.stream()
                     .filter(containedFile-> containedFile.startsWith(MEMORANDUM_DOC_TYPE)).findFirst();
-            Memorandum clonedMemo = findVersionByVersionedReference(memorandumFile.get(), Memorandum.class);
-            clonedProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
-                    ContributionVO.ContributionStatus.RECEIVED.getValue());
-            memorandumService.updateMemorandum(clonedMemo.getId(), clonedProperties, true);
-
+            if(memorandumFile.isPresent()) {
+                Memorandum clonedMemo = findVersionByVersionedReference(memorandumFile.get(), Memorandum.class);
+                clonedProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
+                        ContributionVO.ContributionStatus.RECEIVED.getValue());
+                memorandumService.updateMemorandum(clonedMemo.getId(), clonedProperties, true);
+            }
             //update Annex metadata
             Stream<String> annexFile = containedDocuments.stream()
                     .filter(containedFile -> containedFile.startsWith(ANNEX_DOC_TYPE));

@@ -9,7 +9,6 @@ import io.atlassian.fugue.Option;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 public final class Memorandum extends XmlDocument {
     private final Option<MemorandumMetadata> metadata;

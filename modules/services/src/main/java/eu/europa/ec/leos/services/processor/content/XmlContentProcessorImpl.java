@@ -1539,7 +1539,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String originalId = XercesUtils.getAttributeValue(node, LEOS_SOFT_MOVE_FROM);
         Boolean originalActionRoot = XercesUtils.getAttributeValueAsBoolean(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         LOG.debug("Setting original node {} as MOVED. Actual node {}", originalId, getId(node));
-        if (originalId != null && Boolean.valueOf(originalActionRoot)) {
+        if (originalId != null && Boolean.TRUE.equals(originalActionRoot)) {
             Node originalNode = XercesUtils.getElementById(node.getOwnerDocument(), originalId);
             if (originalNode != null) {
                 softDeleteElementForNode(originalNode);

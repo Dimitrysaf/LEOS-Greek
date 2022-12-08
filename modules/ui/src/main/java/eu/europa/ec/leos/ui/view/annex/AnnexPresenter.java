@@ -222,7 +222,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -292,7 +293,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private boolean milestoneExplorerOpened = false;
     private InstanceTypeResolver instanceTypeResolver;
 
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     private MergeContributionHelper mergeContributionHelper;
     private NumberService numberService;
     private XmlContentProcessor xmlContentProcessor;
@@ -997,8 +998,9 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
                 updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
+                LOG.info("Element '{}' in Annex {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+
             }
-            LOG.info("Element '{}' in Annex {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         }
         catch (Exception ex){
             LOG.error("Exception while deleting element operation for ", ex);
@@ -1020,8 +1022,9 @@ class AnnexPresenter extends AbstractLeosPresenter {
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
+            LOG.info("New Element of type '{}' inserted in Annex {} id {}, in {} milliseconds ({} sec)", tagName,  annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+
         }
-        LOG.info("New Element of type '{}' inserted in Annex {} id {}, in {} milliseconds ({} sec)", tagName, annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @Subscribe
@@ -1042,11 +1045,12 @@ class AnnexPresenter extends AbstractLeosPresenter {
                     eventBus.post(new CloseElementEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+                    LOG.info("Element '{}' merged into '{}' in Annex {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), annex.getName(),annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
                 }
             } else {
                 annexScreen.showAlertDialog("operation.element.not.performed");
             }
-            LOG.info("Element '{}' merged into '{}' in Annex {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+
         } catch (Exception e) {
             LOG.error("Unexpected error in mergeElement", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "unknown.error.message"));
@@ -1566,7 +1570,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
-                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType());
     }
 

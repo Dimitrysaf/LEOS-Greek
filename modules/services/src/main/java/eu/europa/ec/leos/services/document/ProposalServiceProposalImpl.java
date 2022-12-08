@@ -56,7 +56,10 @@ public class ProposalServiceProposalImpl extends ProposalServiceImpl {
                                                     CloneProposalMetadataVO cloneProposalMetadataVO, byte[] content) {
         LOG.trace("Creating Proposal From Content... [path={}, metadata={}]", path, metadata);
         String ref = generateProposalReference(metadata.getLanguage());
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         return proposalRepository.createClonedProposalFromContent(path, ref + XML_DOC_EXT, metadata, cloneProposalMetadataVO,
                 updateDataInXml(content, metadata));
 

@@ -138,7 +138,11 @@ public class CollectionContextMandate extends CollectionContext {
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
         Validate.notNull(purpose, "Proposal purpose is required!");
-        ProposalMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         String explanatoryTemplate = categoryTemplateMap.get(COUNCIL_EXPLANATORY).getName();
         ExplanatoryContext explanatoryContext = explanatoryContextProvider.get();

@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -87,7 +88,7 @@ public class NumberServiceProposal implements NumberService {
     public String renumberImportedArticle(String xmlContentAsString, String language) {
         byte[] initialContent = xmlContentAsString.getBytes(UTF_8);
         byte[] renumberedContent = renumberDocument(initialContent, ARTICLE, false, true);
-        if (!initialContent.equals(renumberedContent)) {
+        if (!Arrays.equals(initialContent, renumberedContent)) {
             return new String(renumberedContent);
         }
         return xmlContentAsString;

@@ -329,7 +329,10 @@ public abstract class BillServiceImpl implements BillService {
     public Bill createBill(String templateId, String path, BillMetadata metadata, String actionMsg, byte[] content) {
         LOG.trace("Creating Bill... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         String ref = generateBillReference(templateId, content, metadata.getLanguage());
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         Bill bill = billRepository.createBill(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Bill with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(bill) : content, metadata);
