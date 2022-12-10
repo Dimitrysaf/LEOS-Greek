@@ -84,13 +84,6 @@
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
-            <profiles>
-                <profile>
-                    <elementSelector>level:not(:has(subparagraph)):not(:has(point)) content[leos\:editable='true']
-                    </elementSelector>
-                    <profileName>inlineAknLevelContentMandate</profileName>
-                </profile>
-            </profiles>
             <editable>true</editable>
         </tocItem>
 
@@ -110,12 +103,6 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
-            <profiles>
-                <profile>
-                    <elementSelector>level subparagraph[leos\:editable='true']</elementSelector>
-                    <profileName>inlineAknSubParagraphMandate</profileName>
-                </profile>
-            </profiles>
             <editable>true</editable>
         </tocItem>
 
@@ -213,12 +200,6 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
-            <profiles>
-                <profile>
-                    <elementSelector>level inline[name='date']</elementSelector>
-                    <profileName>inlineAknInlineElement</profileName>
-                </profile>
-            </profiles>
             <editable>true</editable>
         </tocItem>
 
