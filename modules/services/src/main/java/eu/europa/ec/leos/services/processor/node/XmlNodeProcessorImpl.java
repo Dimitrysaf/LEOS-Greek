@@ -63,7 +63,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
         for (Map.Entry<String, String> entry : keyValue.entrySet()) {
             String key = entry.getKey();
             if (config.get(key) == null) {
-                LOG.warn("Configuration not found for:{}, ignoring and continuing", key);
+                LOG.debug("Configuration not found for:{}, ignoring and continuing", key);
                 continue;
             }
 
