@@ -100,7 +100,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             Query query = queryStr.asQuery();
             QueryEngineHTTP qexec = QueryExecutionFactory.createServiceRequest(uri, query);
             try {
-                LOG.debug("OJ Sparql URL: "+ uri);
+                LOG.info("Calling OJ with Sparql query at URL: "+ uri);
                 qexec.addDefaultGraph("");
                 qexec.addParam("debug", PARAM_DEBUG_VALUE);
                 qexec.addParam("timeout", String.valueOf(PARAM_TIMEOUT_VALUE));
@@ -112,7 +112,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
                 ResultSetFormatter.outputAsJSON(outputStream, results);
                 String json = new String(outputStream.toByteArray());
                 LOG.debug("OJ Sparql Response: {}", json);                
-                LOG.trace("OJ Sparql query executed in {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                LOG.info("OJ Sparql query OK,  executed in {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
                 unsetProxy();
                 
                 return getDocumentUrl(json);
@@ -123,7 +123,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             throw new RuntimeException("Unable to perform the getOJFormexDocumentUrl operation. Failed calling: " + uri, e);
         }
     }
-    
+
     String getDocumentUrl(String json) {
         String uriDocument = null;
         try {
