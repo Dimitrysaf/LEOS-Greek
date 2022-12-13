@@ -112,7 +112,7 @@
             <profiles>
                 <profile>
                     <elementSelector>level subparagraph[leos\:editable='true']</elementSelector>
-                    <profileName>inlineAknSubParagraphMandate</profileName>
+                    <profileName>inlineAknSubParagraph</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
@@ -384,6 +384,16 @@
             <tocItem>level</tocItem>
             <list>
                 <tocItem>level</tocItem>
+                <tocItem>subparagraph</tocItem>
+                <tocItem>list</tocItem>
+                <tocItem>point</tocItem>
+                <tocItem>indent</tocItem>
+            </list>
+        </entry>
+        <entry>
+            <tocItem>subparagraph</tocItem>
+            <list>
+                <tocItem>subparagraph</tocItem>
             </list>
         </entry>
     </tocRules>

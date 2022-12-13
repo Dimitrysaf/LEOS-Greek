@@ -34,7 +34,7 @@ define(function leosElementMergeHandlerPluginModule(require) {
         init: function init(editor) {
         	
             editor.ui.addButton('leosElementMerge', {
-                label: 'Merge',
+                label: 'Merge with previous',
                 command: MERGE_CMD_NAME,
                 toolbar: 'splitmerge',
                 icon: this.path + iconMerge

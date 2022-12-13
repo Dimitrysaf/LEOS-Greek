@@ -45,7 +45,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         icons: pluginName.toLowerCase(),
         init : function init(editor) {
             editor.ui.addButton(pluginName, {
-                label: 'Soft enter',
+                label: 'Add new element',
                 command: CMD_NAME,
                 toolbar: 'shiftenter'
             });
