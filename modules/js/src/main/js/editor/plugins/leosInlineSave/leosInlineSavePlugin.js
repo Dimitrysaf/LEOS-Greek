@@ -61,7 +61,7 @@ define(function leosInlineSavePluginModule(require) {
                         editor.fire("save", {
                                 data: editor.getData()
                         });
-                        editor.once("receiveData",_doClose);
+                        editor.once("receiveData", _doClose);
                     }
                 }
             });

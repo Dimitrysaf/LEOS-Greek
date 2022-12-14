@@ -17,6 +17,7 @@ package eu.europa.ec.leos.services.validation.chains;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
+import eu.europa.ec.leos.services.validation.handlers.ChildrenValidator;
 import eu.europa.ec.leos.services.validation.handlers.GeneralDocumentValidator;
 import eu.europa.ec.leos.services.validation.handlers.MetadataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,16 @@ public class FinancialStatementValidationChain extends ValidationChain {
     @Autowired
     FinancialStatementValidationChain(MetadataValidator metadataValidator,
                                       GeneralDocumentValidator generalDocumentValidator,
-                                      AkomantosoXsdValidator akomantosoXsdValidator) {
+                                      AkomantosoXsdValidator akomantosoXsdValidator,
+                                      ChildrenValidator childrenValidator){
         chain.clear();
         chain.add(metadataValidator);
         chain.add(generalDocumentValidator);
         chain.add(akomantosoXsdValidator);
+        chain.add(childrenValidator);
     }
 
-    public boolean supports(DocumentVO documentVO) {
+    public boolean supports(DocumentVO documentVO){
         return LeosCategory.FINANCIAL_STATEMENT.equals(documentVO.getDocumentType());
     }
 }

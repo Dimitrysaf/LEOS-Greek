@@ -133,6 +133,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Provider;
 
+import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import org.apache.commons.lang.ArrayUtils;
@@ -1904,17 +1905,47 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 		}
 		return nodeToByteArray(document);
     }
-    
+
     @Override
-    public boolean isAnnexFromCouncil(byte[] contentBytes) {
-    	boolean isAnnexFromCouncil = false;
+    public boolean isRevisionAnnex(byte[] contentBytes) {
+    	boolean isRevisionAnnex = false;
         Document document = createXercesDocument(contentBytes);
         NodeList nodes = document.getElementsByTagName(DOC);
         if(nodes != null && nodes.getLength() > 0) {
             Node node = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
             String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
-            isAnnexFromCouncil = CN.equals(origin);
+            isRevisionAnnex = CN.equals(origin);
         }
-        return isAnnexFromCouncil;
+        return isRevisionAnnex;
     }
+
+    protected boolean isPContent(String content, String tagName) {
+        return getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false) != null;
+    }
+
+    protected int countChildren(byte[] xmlContent, String elementId, List<String> childrenNames) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, elementId);
+        return XercesUtils.countChildren(node, childrenNames);
+    }
+
+    protected Element getMergedOnElement(Element mergeOnElement, byte[] xmlContent) {
+        Element parentElement = getParentElement(xmlContent, mergeOnElement.getElementId());
+        if (Arrays.asList(PARAGRAPH, POINT, INDENT).contains(parentElement.getElementTagName())
+                && getChildElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(), Arrays.asList(SUBPARAGRAPH, SUBPOINT, LIST), 3) == null) {
+            return parentElement;
+        } else if (Arrays.asList(LEVEL).contains(parentElement.getElementTagName())
+                && countChildren(xmlContent, parentElement.getElementId(), Arrays.asList(SUBPARAGRAPH)) == 2) {
+            //is the last subparagraph of a Level. Unwrap it and return the <content> tag.
+            String contentXml = mergeOnElement.getElementFragment().replaceAll("<subparagraph.*?>", "").replaceAll("</subparagraph>", "");
+            String wrappedContentXml = LeosDomainUtil.wrapXmlFragment(contentXml);
+
+            Document document = createXercesDocument(wrappedContentXml.getBytes(UTF_8));
+            Node node = XercesUtils.getFirstElementByName(document, CONTENT);
+            String contentId = XercesUtils.getId(node);
+            mergeOnElement = new Element(contentId, CONTENT, contentXml);
+        }
+        return mergeOnElement;
+    }
+
 }

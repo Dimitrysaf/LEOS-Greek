@@ -21,6 +21,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -74,6 +75,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLD
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
@@ -95,10 +97,10 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Autowired
     private CloneContext cloneContext;
-    
+
     @Autowired
     private NumberProcessorHandler numberProcessorHandler;
-    
+
     public Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
                                     Document document, Node parentNode, TableOfContentItemVO tocVo, User user) {
 
@@ -186,12 +188,44 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
-        throw new IllegalStateException("Operation non implemented for this instance");
+        if (!isPContent(content, tagName)) {
+            return null;
+        }
+
+        Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+        if ((mergeOnElement == null) || ((mergeOnElement != null) &&
+                (!isPContent(mergeOnElement.getElementFragment(), mergeOnElement.getElementTagName())))) {
+            return null;
+        }
+
+        return getMergedOnElement(mergeOnElement, xmlContent);
     }
 
     @Override
     public byte[] mergeElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
-        throw new IllegalStateException("Operation non implemented for this instance");
+        Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+        String contentFragment = getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false);
+        String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8),
+                "/" + mergeOnElement.getElementTagName() + "/content/p", false);
+        final String replace = mergeOnElement.getElementFragment().replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
+        byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
+
+        updatedXmlContent = replaceElementById(updatedXmlContent, content, idAttributeValue);
+        updatedXmlContent = deleteElementById(updatedXmlContent, idAttributeValue);
+        Element parentElement = getParentElement(updatedXmlContent, mergeOnElement.getElementId());
+        if (Arrays.asList(LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) &&
+                getChildElement(updatedXmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
+                        Arrays.asList(SUBPARAGRAPH, SUBPOINT, LIST), 2) == null) {
+            final String xPath = "/" + parentElement.getElementTagName() + "/" + mergeOnElement.getElementTagName();
+            String mergedElementFragment = getElementFragmentByPath(parentElement.getElementFragment().getBytes(UTF_8), xPath, false);
+            String mergedContentFragment = getElementFragmentByPath(parentElement.getElementFragment().getBytes(UTF_8), xPath + "/content", false);
+            mergedElementFragment = XmlHelper.removeAllNameSpaces(mergedElementFragment);
+            mergedContentFragment = XmlHelper.removeAllNameSpaces(mergedContentFragment);
+            String parentElementFragment = parentElement.getElementFragment().replace(mergedElementFragment, mergedContentFragment);
+            updatedXmlContent = replaceElementById(updatedXmlContent, parentElementFragment, parentElement.getElementId());
+        }
+
+        return updatedXmlContent;
     }
 
     @Override
@@ -272,35 +306,34 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         return result;
     }
 
+    private void insertSoftMovedAttributesAndRenumber(String idAttrVal, Node sourceNode, Node document) {
+        Validate.notNull(idAttrVal, "Id attribute should not be null");
+        Validate.notNull(sourceNode, "source node should not be null");
 
-        private void insertSoftMovedAttributesAndRenumber (String idAttrVal, Node sourceNode, Node document) {
-            Validate.notNull(idAttrVal, "Id attribute should not be null");
-            Validate.notNull(sourceNode, "source node should not be null");
-
-            Node parentNode = sourceNode.getParentNode();
-            String tagName = sourceNode.getNodeName();
-            String xPath = "//*[@xml:id = '" + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + idAttrVal + "']";
-            NodeList movedNodes = XercesUtils.getElementsByXPath(document, xPath);
-            if (movedNodes == null || movedNodes.getLength() == 0) {
-                updateSoftAtrributes(idAttrVal, sourceNode, SOFT_MOVE_PLACEHOLDER_ID_PREFIX);
-            } else if (!containsSoftActionAttributes(movedNodes.item(0))) {
-                updateNodeWithChildren(movedNodes.item(0), XMLID, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, idAttrVal);
-                updateSoftAtrributes(idAttrVal, sourceNode, SOFT_MOVE_PLACEHOLDER_ID_PREFIX);
-            } else { //Node was already moved so delete the intermediate node to avoid duplicate soft moved nodes
-                XercesUtils.deleteElement(sourceNode);
-                XercesUtils.addAttribute(movedNodes.item(0), LEOS_SOFT_DATE_ATTR, getDateAsXml());
-            }
-            while (parentNode != null && !POINT_PARENT_ELEMENTS.contains(parentNode.getNodeName())) {
-                parentNode = parentNode.getParentNode();
-            }
-            try {
-                if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
-                    numberProcessorHandler.renumberElement(parentNode, tagName, true);
-                }
-            } catch (Exception e) {
-                LOG.error("Unable to renumber element", e);
-            }
+        Node parentNode = sourceNode.getParentNode();
+        String tagName = sourceNode.getNodeName();
+        String xPath = "//*[@xml:id = '" + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + idAttrVal + "']";
+        NodeList movedNodes = XercesUtils.getElementsByXPath(document, xPath);
+        if (movedNodes == null || movedNodes.getLength() == 0) {
+            updateSoftAtrributes(idAttrVal, sourceNode, SOFT_MOVE_PLACEHOLDER_ID_PREFIX);
+        } else if (!containsSoftActionAttributes(movedNodes.item(0))) {
+            updateNodeWithChildren(movedNodes.item(0), XMLID, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, idAttrVal);
+            updateSoftAtrributes(idAttrVal, sourceNode, SOFT_MOVE_PLACEHOLDER_ID_PREFIX);
+        } else { //Node was already moved so delete the intermediate node to avoid duplicate soft moved nodes
+            XercesUtils.deleteElement(sourceNode);
+            XercesUtils.addAttribute(movedNodes.item(0), LEOS_SOFT_DATE_ATTR, getDateAsXml());
         }
+        while (parentNode != null && !POINT_PARENT_ELEMENTS.contains(parentNode.getNodeName())) {
+            parentNode = parentNode.getParentNode();
+        }
+        try {
+            if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
+                numberProcessorHandler.renumberElement(parentNode, tagName, true);
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to renumber element", e);
+        }
+    }
 
     private void updateNodeWithChildren(Node item, String attr, String prefix, String idAttrVal) {
         addAttribute(item, attr, StringUtils.isNotEmpty(prefix) ? prefix + idAttrVal : idAttrVal);

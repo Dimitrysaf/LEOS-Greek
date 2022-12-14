@@ -164,6 +164,7 @@ define(function elementEditorModule(require) {
             editor.on("requestToc", _requestToc.bind(undefined, connector));
             editor.on("requestRefLabel", _requestRefLabel.bind(undefined, connector));
             editor.on("merge", _mergeElement.bind(undefined, connector, params.elementId, params.elementType));
+            editor.on('focus', _removeZeroWidthSpacesOnFocus.bind(undefined, connector, params.elementId));
             editor.on('selectionChange', _removeZeroWidthSpacesOnFocus.bind(undefined, connector, params.elementId));
 
             // load XML fragment in editor

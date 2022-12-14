@@ -8,8 +8,8 @@ import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.FinancialStatement.FinancialStatementStructureType;
+import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.FinancialStatementRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
@@ -80,7 +80,8 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement createFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content) {
+    public FinancialStatement createFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata,
+                                                       String actionMessage, byte[] content) {
         LOG.trace("Creating FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String FinancialStatementUid = Cuid.createCuid();
         final String language = metadata.getLanguage();
@@ -93,16 +94,17 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content, String name) {
+    public FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage,
+                                                                  byte[] content, String name) {
         LOG.trace("Creating FinancialStatement From Content... [path={}, metadata={}]", path, metadata);
         FinancialStatement FinancialStatement = financialStatementRepository.createFinancialStatementFromContent(path, name, metadata, content);
         return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, content, VersionType.MINOR, actionMessage);
     }
 
     @Override
-    public void deleteFinancialStatement(FinancialStatement FinancialStatement) {
-        LOG.trace("Deleting FinancialStatement... [id={}]", FinancialStatement.getId());
-        financialStatementRepository.deleteFinancialStatement(FinancialStatement.getId());
+    public void deleteFinancialStatement(FinancialStatement financialStatement) {
+        LOG.trace("Deleting FinancialStatement... [id={}]", financialStatement.getId());
+        financialStatementRepository.deleteFinancialStatement(financialStatement.getId());
     }
 
     @Override
@@ -119,68 +121,71 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, VersionType versionType, String comment) {
-        LOG.trace("Updating FinancialStatement Xml Content... [id={}]", FinancialStatement.getId());
+    public FinancialStatement updateFinancialStatement(FinancialStatement financialStatement, byte[] updatedFinancialStatementContent,
+                                                       VersionType versionType, String comment) {
+        LOG.trace("Updating FinancialStatement Xml Content... [id={}]", financialStatement.getId());
 
-        FinancialStatement = financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), updatedFinancialStatementContent, versionType, comment);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedFinancialStatementContent, versionType, comment);
 
         //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(FinancialStatement, updatedFinancialStatementContent));
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedFinancialStatementContent));
 
-        return FinancialStatement;
+        return financialStatement;
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, FinancialStatementMetadata updatedMetadata, VersionType versionType, String comment) {
-        LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={}, versionType={}, comment={}]", FinancialStatement.getId(), updatedMetadata, versionType, comment);
+    public FinancialStatement updateFinancialStatement(FinancialStatement financialStatement, FinancialStatementMetadata updatedMetadata,
+                                                       VersionType versionType, String comment) {
+        LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={}, versionType={}, comment={}]", financialStatement.getId(), updatedMetadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        byte[] updatedBytes = updateDataInXml(getContent(FinancialStatement), updatedMetadata);
+        byte[] updatedBytes = updateDataInXml(getContent(financialStatement), updatedMetadata);
 
-        FinancialStatement = financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedMetadata, updatedBytes, versionType, comment);
 
         //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(FinancialStatement, updatedBytes));
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedBytes));
 
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return FinancialStatement;
+        return financialStatement;
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, FinancialStatementMetadata metadata, VersionType versionType, String comment) {
-        LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={}, versionType={}, comment={}]", FinancialStatement.getId(), metadata, versionType, comment);
+    public FinancialStatement updateFinancialStatement(FinancialStatement financialStatement, byte[] updatedFinancialStatementContent,
+                                                       FinancialStatementMetadata metadata, VersionType versionType, String comment) {
+        LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={}, versionType={}, comment={}]", financialStatement.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         updatedFinancialStatementContent = updateDataInXml(updatedFinancialStatementContent, metadata);
 
-        FinancialStatement = financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedFinancialStatementContent, versionType, comment);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, updatedFinancialStatementContent, versionType, comment);
 
         //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(FinancialStatement, updatedFinancialStatementContent));
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedFinancialStatementContent));
 
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return FinancialStatement;
+        return financialStatement;
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, String comment) {
-        LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={} , comment={}]", FinancialStatement.getId(), updatedFinancialStatementContent, comment);
+    public FinancialStatement updateFinancialStatement(FinancialStatement financialStatement, byte[] updatedFinancialStatementContent, String comment) {
+        LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={} , comment={}]", financialStatement.getId(), updatedFinancialStatementContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        FinancialStatement = financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), updatedFinancialStatementContent, VersionType.MINOR, comment);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedFinancialStatementContent, VersionType.MINOR, comment);
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return FinancialStatement;
+        return financialStatement;
     }
 
     @Override
-    public FinancialStatement updateFinancialStatementWithMilestoneComments(FinancialStatement FinancialStatement, List<String> milestoneComments, VersionType versionType, String comment){
-        LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}, versionType={}, comment={}]", FinancialStatement.getId(), milestoneComments, versionType, comment);
-        final byte[] updatedBytes = getContent(FinancialStatement);
-        FinancialStatement = financialStatementRepository.updateMilestoneComments(FinancialStatement.getId(), milestoneComments, updatedBytes, versionType, comment);
-        return FinancialStatement;
+    public FinancialStatement updateFinancialStatementWithMilestoneComments(FinancialStatement financialStatement, List<String> milestoneComments, VersionType versionType, String comment){
+        LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}, versionType={}, comment={}]", financialStatement.getId(), milestoneComments, versionType, comment);
+        final byte[] updatedBytes = getContent(financialStatement);
+        financialStatement = financialStatementRepository.updateMilestoneComments(financialStatement.getId(), milestoneComments, updatedBytes, versionType, comment);
+        return financialStatement;
     }
 
     @Override
-    public FinancialStatement updateFinancialStatementWithMilestoneComments(String FinancialStatementId, List<String> milestoneComments){
-        LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}]", FinancialStatementId, milestoneComments);
-        return financialStatementRepository.updateMilestoneComments(FinancialStatementId, milestoneComments);
+    public FinancialStatement updateFinancialStatementWithMilestoneComments(String financialStatementId, List<String> milestoneComments){
+        LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}]", financialStatementId, milestoneComments);
+        return financialStatementRepository.updateMilestoneComments(financialStatementId, milestoneComments);
     }
 
     @Override
@@ -201,32 +206,33 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public List<TableOfContentItemVO> getTableOfContent(FinancialStatement FinancialStatement, TocMode mode) {
-        Validate.notNull(FinancialStatement, "FinancialStatement is required");
-        final Content content = FinancialStatement.getContent().getOrError(() -> "FinancialStatement content is required!");
-        final byte[] FinancialStatementContent = content.getSource().getBytes();
-        return tableOfContentProcessor.buildTableOfContent(DOC, FinancialStatementContent, mode);
+    public List<TableOfContentItemVO> getTableOfContent(FinancialStatement financialStatement, TocMode mode) {
+        Validate.notNull(financialStatement, "financialStatement is required");
+        final Content content = financialStatement.getContent().getOrError(() -> "financialStatement content is required!");
+        final byte[] financialStatementContent = content.getSource().getBytes();
+        return tableOfContentProcessor.buildTableOfContent(DOC, financialStatementContent, mode);
     }
 
     @Override
-    public FinancialStatement saveTableOfContent(FinancialStatement FinancialStatement, List<TableOfContentItemVO> tocList, FinancialStatementStructureType FinancialStatementStructureType, String actionMsg, User user) {
-        Validate.notNull(FinancialStatement, "FinancialStatement is required");
+    public FinancialStatement saveTableOfContent(FinancialStatement financialStatement, List<TableOfContentItemVO> tocList,
+                                                 FinancialStatementStructureType financialStatementStructureType, String actionMsg, User user) {
+        Validate.notNull(financialStatement, "FinancialStatement is required");
         Validate.notNull(tocList, "Table of content list is required");
         byte[] newXmlContent;
 
-        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(FinancialStatement), user);
-        if (FinancialStatementStructureType != null && LEVEL.equals(FinancialStatementStructureType.getType())) {
+        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user);
+        if (financialStatementStructureType != null && LEVEL.equals(financialStatementStructureType.getType())) {
             newXmlContent = numberService.renumberLevel(newXmlContent);
         }
         newXmlContent = numberService.renumberParagraph(newXmlContent);
         newXmlContent = numberService.renumberDivisions(newXmlContent);
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
-        return updateFinancialStatement(FinancialStatement, newXmlContent, VersionType.MINOR, actionMsg);
+        return updateFinancialStatement(financialStatement, newXmlContent, VersionType.MINOR, actionMsg);
     }
 
-    private byte[] getContent(FinancialStatement FinancialStatement) {
-        final Content content = FinancialStatement.getContent().getOrError(() -> "FinancialStatement content is required!");
+    private byte[] getContent(FinancialStatement financialStatement) {
+        final Content content = financialStatement.getContent().getOrError(() -> "FinancialStatement content is required!");
         return content.getSource().getBytes();
     }
 
@@ -282,11 +288,11 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public List<String> getAncestorsIdsForElementId(FinancialStatement FinancialStatement, List<String> elementIds) {
-        Validate.notNull(FinancialStatement, "FinancialStatement is required");
+    public List<String> getAncestorsIdsForElementId(FinancialStatement financialStatement, List<String> elementIds) {
+        Validate.notNull(financialStatement, "FinancialStatement is required");
         Validate.notNull(elementIds, "Element id is required");
         List<String> ancestorIds = new ArrayList<String>();
-        byte[] content = getContent(FinancialStatement);
+        byte[] content = getContent(financialStatement);
         for (String elementId : elementIds) {
             ancestorIds.addAll(xmlContentProcessor.getAncestorsIdsForElementId(content, elementId));
         }

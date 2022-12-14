@@ -309,5 +309,5 @@ public interface XmlContentProcessor {
     
     public byte[] insertSoftAddedClassAttribute(byte[] contentBytes);
     
-    boolean isAnnexFromCouncil(byte[] contentBytes);
+    boolean isRevisionAnnex(byte[] contentBytes);
 }

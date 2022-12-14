@@ -293,10 +293,9 @@ public class BillProcessorImpl implements BillProcessor {
         Validate.notNull(elementId, "ElementId is required.");
     
         final byte[] contentBytes = getContent(document);
-        byte[] updatedContent = xmlContentProcessor.mergeElement(contentBytes, elementContent, elementName, elementId);
+        byte[] updatedContent = xmlContentProcessor.mergeElement(contentBytes, elementContent, elementName, elementId
+        );
         if (updatedContent != null) {
-//            final BillMetadata metadata = document.getMetadata().getOrError(() -> "Document metadata is required!");
-         //   updatedContent = numberService.renumberArticles(updatedContent, metadata.getLanguage());
             updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         }
         return updatedContent;

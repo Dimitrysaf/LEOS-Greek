@@ -46,8 +46,6 @@ public interface FinancialStatementScreen {
 
     void setContent(String content);
 
-    void refreshElementEditor(String elementId, String elementTagName, String elementContent);
-
     void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO);
 
     void populateComparisonContent(String comparedContent, String comparedInfo, FinancialStatement original, FinancialStatement current);

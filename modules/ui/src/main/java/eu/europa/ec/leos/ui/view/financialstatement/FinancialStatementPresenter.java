@@ -17,24 +17,26 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
+import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.action.ActionType;
-import eu.europa.ec.leos.model.action.CheckinCommentVO;
-import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
@@ -43,14 +45,13 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
-import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
-import eu.europa.ec.leos.services.processor.FinancialStatementProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
@@ -59,6 +60,8 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
+import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
+import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
 import eu.europa.ec.leos.ui.event.revision.OpenRevisionDocumentEvent;
 import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
 import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;
@@ -73,10 +76,17 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.NavigationRequestEvent;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
+import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.EditElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
+import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
+import eu.europa.ec.leos.web.event.window.CancelElementEditorEvent;
+import eu.europa.ec.leos.web.event.window.CloseElementEditorEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
@@ -85,6 +95,7 @@ import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import io.atlassian.fugue.Option;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -103,6 +114,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Component
@@ -115,7 +134,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private final FinancialStatementService financialStatementService;
     private final ContributionService contributionService;
     private final ElementProcessor<FinancialStatement> elementProcessor;
-    private final FinancialStatementProcessor financialStatementProcessor;
+
+    private final XmlContentProcessor xmlContentProcessor;
     private final DocumentContentService documentContentService;
     private final UrlBuilder urlBuilder;
     private final ComparisonDelegate<FinancialStatement> comparisonDelegate;
@@ -146,14 +166,29 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private String proposalRef;
     private String connectedEntity;
     private final List<String> openElementEditors;
+    private Element elementToEditAfterClose;
 
-    protected FinancialStatementPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus, EventBus leosApplicationEventBus, UuidHelper uuidHelper, PackageService packageService, WorkspaceService workspaceService, FinancialStatementScreen financialStatementScreen, FinancialStatementService financialStatementService, ContributionService contributionService, ElementProcessor<FinancialStatement> elementProcessor, FinancialStatementProcessor financialStatementProcessor, DocumentContentService documentContentService, UrlBuilder urlBuilder, ComparisonDelegate<FinancialStatement> comparisonDelegate, UserHelper userHelper, MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider, CoEditionHelper coEditionHelper, ExportService exportService, Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, Provider<FinancialStatementContextService> financialStatementContextProvider, UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService, ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService, NotificationService notificationService, CloneContext cloneContext, AttachmentProcessor attachmentProcessor) {
+    protected FinancialStatementPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
+                                          EventBus leosApplicationEventBus, UuidHelper uuidHelper, PackageService packageService,
+                                          WorkspaceService workspaceService, FinancialStatementScreen financialStatementScreen,
+                                          FinancialStatementService financialStatementService, ContributionService contributionService,
+                                          ElementProcessor<FinancialStatement> elementProcessor, XmlContentProcessor xmlContentProcessor,
+                                          DocumentContentService documentContentService,
+                                          UrlBuilder urlBuilder, ComparisonDelegate<FinancialStatement> comparisonDelegate,
+                                          UserHelper userHelper, MessageHelper messageHelper, ConfigurationHelper cfgHelper,
+                                          Provider<CollectionContext> proposalContextProvider, CoEditionHelper coEditionHelper,
+                                          ExportService exportService, Provider<StructureContext> structureContextProvider,
+                                          ReferenceLabelService referenceLabelService, Provider<FinancialStatementContextService> financialStatementContextProvider,
+                                          UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService,
+                                          LegService legService, ProposalService proposalService, SearchService searchService,
+                                          ExportPackageService exportPackageService, NotificationService notificationService,
+                                          CloneContext cloneContext, AttachmentProcessor attachmentProcessor) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.financialStatementScreen = financialStatementScreen;
         this.financialStatementService = financialStatementService;
         this.contributionService = contributionService;
         this.elementProcessor = elementProcessor;
-        this.financialStatementProcessor = financialStatementProcessor;
+        this.xmlContentProcessor = xmlContentProcessor;
         this.documentContentService = documentContentService;
         this.urlBuilder = urlBuilder;
         this.comparisonDelegate = comparisonDelegate;
@@ -189,6 +224,12 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         super.detach();
         coEditionHelper.removeUserEditInfo(id, strDocumentVersionSeriesId, null, InfoType.DOCUMENT_INFO);
         resetCloneProposalMetadataVO();
+    }
+
+    @Subscribe
+    void refreshDocument(RefreshDocumentEvent event) {
+        FinancialStatement financialStatement = getDocument();
+        populateViewData(financialStatement, event.getTocMode());
     }
 
     private boolean isFinancialStatementUnsaved(){
@@ -368,40 +409,173 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         financialStatementScreen.enableTocEdition(getTableOfContent(financialStatement, TocMode.NOT_SIMPLIFIED));
     }
 
+    @Subscribe
+    public void initLeosEditor(InitLeosEditorEvent event) {
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        financialStatementScreen.initLeosEditor(event.getDocument(), documentsMetadata);
+    }
 
     @Subscribe
-    void saveElement(SaveElementRequestEvent event) {
+    void checkElementCoEdition(CheckElementCoEditionEvent event) {
         try {
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            final String elementId = event.getElementId();
-            final String elementType = event.getElementTagName();
-            final String elementFragment = event.getElementContent();
+            FinancialStatement financialStatement = getDocument();
+            final byte[] contentBytes = getContent(financialStatement);
+            Element tocElement = xmlContentProcessor.getTocElement(contentBytes, event.getElementId(),
+                    getListOfTableOfContent(financialStatement, TocMode.SIMPLIFIED), Arrays.asList(SUBPARAGRAPH));
+            financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
+                    tocElement.getElementId(), tocElement.getElementTagName(), event.getAction(), event.getActionEvent());
+        } catch (Exception e) {
+            LOG.error("Unexpected error in checkElementCoEdition", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "unknown.error.message"));
+        }
+    }
+
+    private List<TableOfContentItemVO> getListOfTableOfContent(FinancialStatement financialStatement, TocMode mode) {
+        return financialStatementService.getTableOfContent(financialStatement, mode);
+    }
+
+    private byte[] getContent(FinancialStatement financialStatement) {
+        final Content content = financialStatement.getContent().getOrError(() -> "Financial statement content is required!");
+        return content.getSource().getBytes();
+    }
+
+    @Subscribe
+    void editElement(EditElementRequestEvent event){
+        String elementId = event.getElementId();
+        String elementTagName = event.getElementTagName();
+        elementToEditAfterClose = null;
+        LOG.trace("Handling edit element request... for {},id={}",elementTagName , elementId );
+        try {
+            //show confirm dialog if there is any unsaved replaced text
+            //it can be detected from the session attribute
+            if(isFinancialStatementUnsaved()){
+                eventBus.post(new ShowConfirmDialogEvent(event, new CancelElementEditorEvent(event.getElementId(),event.getElementTagName())));
+                return;
+            }
 
             FinancialStatement financialStatement = getDocument();
-            byte[] newXmlContent = financialStatementProcessor.updateElement(financialStatement, elementType, elementId, elementFragment);
-            if (newXmlContent == null) {
+            LevelItemVO levelItemVO = new LevelItemVO();
+            String element = elementProcessor.getElement(financialStatement, elementTagName, elementId);
+            coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
+            financialStatementScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
+            openElementEditors.add(elementId);
+        }
+        catch (Exception ex){
+            LOG.error("Exception while edit element operation for ", ex);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "error.message", ex.getMessage()));
+        }
+    }
+
+    @Subscribe
+    void saveElement(SaveElementRequestEvent event){
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        String elementId = event.getElementId();
+        String elementTagName = event.getElementTagName();
+        String elementContent = event.getElementContent();
+        elementToEditAfterClose = null;
+        LOG.trace("Handling save element request... for {},id={}",elementTagName , elementId );
+
+        try {
+            FinancialStatement financialStatement = getDocument();
+            byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId);
+            updatedXmlContent = xmlContentProcessor.doXMLPostProcessing(updatedXmlContent);
+            if (updatedXmlContent == null) {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
                 return;
             }
 
-            final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementType));
-            final String description = messageHelper.getMessage("operation.checkin.minor");
-            final String elementLabel = generateLabel(elementId, financialStatement);
-            final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementType,
-                    elementLabel));
-            final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-
             if (financialStatement != null) {
-                financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent, checkinCommentJson);
+                Pair<byte[], Element> splittedContent;
+                if (event.isSplit() && checkIfCloseElementEditor(elementTagName, event.getElementContent())) {
+                    splittedContent = xmlContentProcessor.getSplittedElement(updatedXmlContent, elementContent, elementTagName, elementId);
+                    if (splittedContent != null) {
+                        elementToEditAfterClose = splittedContent.right();
+                        if(splittedContent.left() != null) {
+                            updatedXmlContent = splittedContent.left();
+                            updatedXmlContent = xmlContentProcessor.insertAttributeToElement(updatedXmlContent,
+                                    elementToEditAfterClose.getElementTagName(), elementToEditAfterClose.getElementId(),
+                                    LEOS_EDITABLE_ATTR, "true");
+                        }
+                        eventBus.post(new CloseElementEvent());
+                    }
+                }
+                financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
+                        VersionType.MINOR, messageHelper.getMessage("operation.financial.statement.block.updated"));
+                String newElementContent = elementProcessor.getElement(financialStatement, elementTagName, elementId);
+                eventBus.post(new RefreshElementEvent(elementId, elementTagName, newElementContent));
+
                 eventBus.post(new DocumentUpdatedEvent());
-                financialStatementScreen.scrollToMarkedChange(elementId);
+                eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "operation.financial.statement.block.updated"));
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
-            LOG.info("Element '{}' in Financial Statement {} id {}, saved in {} milliseconds ({} sec)", elementId, financialStatement.getName(),
+            LOG.info("Element '{}' in FinancialStatement {} id {}, saved in {} milliseconds ({} sec)", elementId, financialStatement.getName(),
                     financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception ex) {
-            LOG.error("Exception while saving element operation for ", ex);
-            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "error.message", ex.getMessage()));
+            LOG.error("Exception while save FinancialStatement operation", ex);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "error.message", ex.getMessage()));
+        }
+    }
+
+    boolean checkIfCloseElementEditor(String elementTagName, String elementContent) {
+        switch (elementTagName) {
+            case SUBPARAGRAPH:
+            case CONTENT:
+            case SUBPOINT:
+                return elementContent.contains("<" + elementTagName);
+            case PARAGRAPH:
+                return elementContent.contains("<paragraph") || elementContent.contains("<subparagraph");
+            case LEVEL:
+                return elementContent.contains("<level") || elementContent.contains("<subparagraph");
+            case POINT:
+            case INDENT:
+                return elementContent.contains("<alinea");
+            default:
+                return false;
+        }
+    }
+
+    @Subscribe
+    void closeEditorBlock(CloseElementEditorEvent event){
+        String elementId = event.getElementId();
+        coEditionHelper.removeUserEditInfo(id, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
+        openElementEditors.remove(elementId);
+        LOG.debug("User edit information removed");
+        eventBus.post(new RefreshDocumentEvent());
+        if (elementToEditAfterClose != null) {
+            financialStatementScreen.scrollTo(elementToEditAfterClose.getElementId());
+            eventBus.post(new EditElementRequestEvent(elementToEditAfterClose.getElementId(), elementToEditAfterClose.getElementTagName()));
+        }
+    }
+
+    @Subscribe
+    void mergeElement(MergeElementRequestEvent event) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        try {
+            String elementId = event.getElementId();
+            String tagName = event.getElementTagName();
+            String elementContent = event.getElementContent();
+
+            FinancialStatement financialStatement = getDocument();
+            byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
+            Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId);
+            if (mergeOnElement != null) {
+                byte[] newXmlContent = xmlContentProcessor.mergeElement(xmlContent, elementContent, tagName, elementId);
+                financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,
+                        VersionType.MINOR, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
+                if (financialStatement != null) {
+                    elementToEditAfterClose = mergeOnElement;
+                    eventBus.post(new CloseElementEvent());
+                    eventBus.post(new DocumentUpdatedEvent());
+                    leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+                }
+            } else {
+                financialStatementScreen.showAlertDialog("operation.element.not.performed");
+            }
+            LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
+                    financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error in mergeElement", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "unknown.error.message"));
         }
     }
 

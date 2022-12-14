@@ -115,7 +115,7 @@ define(function actionManagerExtensionModule(require) {
             }
         });
 
-        EDITABLE_ELEMENTS = EDITABLE_ELEMENTS.substr(0, EDITABLE_ELEMENTS.length - 2);
+        EDITABLE_ELEMENTS = EDITABLE_ELEMENTS.substring(0, EDITABLE_ELEMENTS.length - 2);
 
         $rootElement.on("mouseenter.actions", EDITABLE_ELEMENTS, _attachActions.bind(undefined, connector));
         $rootElement.on("mouseleave.actions", EDITABLE_ELEMENTS, _detachActions.bind(undefined, connector));

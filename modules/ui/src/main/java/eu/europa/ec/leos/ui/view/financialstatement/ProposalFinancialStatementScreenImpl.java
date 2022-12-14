@@ -15,6 +15,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -29,6 +30,7 @@ import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.component.contributions.ContributionsTab;
 import eu.europa.ec.leos.ui.component.markedText.MarkedTextComponent;
 import eu.europa.ec.leos.ui.component.revision.RevisionComponent;
+import eu.europa.ec.leos.ui.component.toc.TableOfContentComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
@@ -82,9 +84,9 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
                                          ConfigurationHelper cfgHelper, TocEditor tocEditor, InstanceTypeResolver instanceTypeResolver,
                                          VersionsTab<FinancialStatement> versionsTab, ContributionsTab<FinancialStatement> contributionsTab, Provider<StructureContext> structureContextProvider,
                                          MarkedTextComponent<FinancialStatement> markedTextComponent, TableOfContentProcessor tableOfContentProcessor,
-                                         CloneContext cloneContext, XmlContentProcessor xmlContentProcessor) {
+                                         CloneContext cloneContext, XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper) {
         super(messageHelper, eventBus, securityContext, userHelper, cfgHelper, tocEditor, instanceTypeResolver,
-                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor);
+                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor, authorityMapHelper);
         ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false);
         markedTextComponent.setExportOptions(exportOptions);
         this.markedTextComponent = markedTextComponent;
@@ -200,13 +202,13 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     public void scrollToMarkedChange(String elementId) {
         markedTextComponent.scrollToMarkedChange(elementId);
     }
-    
+
     @Override
     public void enableTocEdition(List<TableOfContentItemVO> tableOfContent) {
         tableOfContentComponent.handleEditTocRequest(tocEditor);
         tableOfContentComponent.setTableOfContent(TableOfContentItemConverter.buildTocData(tableOfContent));
     }
-    
+
     @Override
     public void setDownloadStreamResourceForExport(StreamResource streamResource) {
         markedTextComponent.setDownloadStreamResourceForExport(streamResource);
@@ -220,10 +222,10 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public void setDownloadStreamResourceForMenu(DownloadStreamResource streamResource) {
     }
-    
+
     @Override
     public void setDownloadStreamResourceForXmlFiles(FinancialStatement original, FinancialStatement intermediate, FinancialStatement current, String language, String comparedInfo,
-            String leosComparedContent, String docuWriteComparedContent) {
+                                                     String leosComparedContent, String docuWriteComparedContent) {
         File zipFile = null;
         try {
             final Map<String, Object> contentToZip = new HashMap<>();
