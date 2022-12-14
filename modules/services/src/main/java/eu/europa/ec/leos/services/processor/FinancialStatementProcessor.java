@@ -18,14 +18,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface FinancialStatementProcessor {
 
-    /** This method updates the attribute of an element
-     * @param document
-     * @param elementName: tag name of the element where attribute should be updated
-     * @param elementId: id of the element where attribute should be updated
-     * @param elementFragment: updated content of the element
-     * @return udpated xml content
-     */
     @PreAuthorize("hasPermission(#document, 'CAN_UPDATE')")
     byte[] updateElement(FinancialStatement document, String elementName, String elementId, String elementFragment) throws Exception;
 
+    byte[] insertNewElement(FinancialStatement document, String elementId, String tagName, boolean before);
+
+    byte[] deleteElement(FinancialStatement document, String elementId, String tagName) throws Exception;
 }

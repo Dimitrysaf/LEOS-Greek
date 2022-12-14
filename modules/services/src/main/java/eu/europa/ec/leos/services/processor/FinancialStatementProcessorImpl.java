@@ -16,15 +16,24 @@ package eu.europa.ec.leos.services.processor;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.util.List;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 @Service
 public class FinancialStatementProcessorImpl implements FinancialStatementProcessor {
@@ -59,8 +68,59 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         return updateFinancialStatementContent(elementId, elementName, updatedContent);
     }
 
+    @Override
+    public byte[] insertNewElement(FinancialStatement financialStatement, String elementId, String tagName, boolean before) {
+        String template;byte[] updatedContent;
+        List<TocItem> items = structureContextProvider.get().getTocItems();
+        switch (tagName) {
+            case SUBPARAGRAPH:
+                template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
+                template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.FINANCIAL_STATEMENT);
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(financialStatement), template,
+                        tagName, elementId, before);
+                break;
+            case CONTENT:
+                Element contentElement = xmlContentProcessor.getElementById(getContent(financialStatement), elementId);
+                template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
+                template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.FINANCIAL_STATEMENT);
+                String updatedElementContent = convertToSubparagraph(contentElement, template);
+                try {
+                    updatedContent = xmlContentProcessor.replaceElementById(getContent(financialStatement), updatedElementContent,
+                            elementId);
+                } catch (Exception e) {
+                    throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
+        }
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+    }
+
+    @Override
+    public byte[] deleteElement(FinancialStatement financialStatement, String elementId, String tagName) throws Exception {
+        Validate.notNull(financialStatement, "Document is required.");
+        Validate.notNull(elementId, "Element id is required.");
+        Validate.notNull(tagName, "Tag name is required.");
+        byte[] updatedContent;
+        if(tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
+            //TODO: Check for last element deletion
+            updatedContent = elementProcessor.deleteElement(financialStatement, elementId, tagName);
+        } else {
+            throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
+        }
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+    }
+
     private byte[] updateFinancialStatementContent(String elementId, String tagName, byte[] xmlContent) {
         return xmlContentProcessor.doXMLPostProcessing(xmlContent);
+    }
+
+    private String convertToSubparagraph(Element contentElement, String template) {
+        String wrappedContent = new StringBuilder("<" + SUBPARAGRAPH.toLowerCase() + " xml:id=\"transformed_" + contentElement.getElementId() + "\" " +
+                LEOS_EDITABLE_ATTR+"=\"true\">").append(contentElement.getElementFragment().replaceAll("leos:editable=\"true\"", "")).
+                append("</" + SUBPARAGRAPH.toLowerCase() + ">").append(template).toString();
+        return wrappedContent;
     }
 
     private byte[] getContent(FinancialStatement financialStatement) {
