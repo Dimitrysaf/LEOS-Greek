@@ -34,12 +34,6 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
         super(messageHelper, eventBus);
     }
 
-    @Override
-    protected void buildViewActions() {
-        LOG.debug("Building View actions group...");
-        addCustomSeparator(messageHelper.getMessage("menu.actions.separator.view"));
-    }
-    
     @Subscribe
     public void buildStructureChangeAction(AddStructureChangeMenuEvent event) {
         LOG.debug("Building annex actions menu item...");
@@ -69,7 +63,7 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
     }
     
     private AnnexStructureType getSwitchStructureType(AnnexStructureType structureType) {
-        return (structureType.getType() == AnnexStructureType.LEVEL.getType()) ? AnnexStructureType.ARTICLE : AnnexStructureType.LEVEL;
+        return AnnexStructureType.LEVEL.getType().equals(structureType.getType()) ? AnnexStructureType.ARTICLE : AnnexStructureType.LEVEL;
     }
     
     @Override
@@ -77,7 +71,6 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
         buildVersionActions();
         buildExportPackageActions();
         buildRenumberingActions();
-        //buildStructureChangeAction();
         buildViewActions();
     }
 

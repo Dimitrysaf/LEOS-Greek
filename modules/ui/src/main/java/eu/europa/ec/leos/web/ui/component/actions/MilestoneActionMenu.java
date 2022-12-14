@@ -14,6 +14,6 @@ public class MilestoneActionMenu extends ActionsMenuBarComponent {
 
     @Override
     void initDropDownMenu() {
-
+        // do nothing here for the moment
     }
 }

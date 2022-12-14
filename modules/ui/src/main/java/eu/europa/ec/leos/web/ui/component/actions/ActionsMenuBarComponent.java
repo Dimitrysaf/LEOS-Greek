@@ -27,12 +27,12 @@ public abstract class ActionsMenuBarComponent extends MenuBar {
     private static final long serialVersionUID = -1111730147519706141L;
     private static final Logger LOG = LoggerFactory.getLogger(ActionsMenuBarComponent.class);
 
-    protected MessageHelper messageHelper;
-    protected EventBus eventBus;
+    protected transient MessageHelper messageHelper;
+    protected transient EventBus eventBus;
     protected MenuItem mainMenuItem;
     protected ThemeResource theme;
     
-    public ActionsMenuBarComponent(final MessageHelper messageHelper, final EventBus eventBus, ThemeResource theme) {
+    protected ActionsMenuBarComponent(final MessageHelper messageHelper, final EventBus eventBus, ThemeResource theme) {
         this.messageHelper = messageHelper;
         this.eventBus = eventBus;
         this.theme = theme;

@@ -14,7 +14,7 @@ public class VersionsActionsMenuBar extends ActionsMenuBarComponent {
     
     @Override
     protected void initDropDownMenu() {
-    
+        // do nothing here for the moment
     }
     
 }
