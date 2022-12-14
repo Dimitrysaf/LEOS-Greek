@@ -13,6 +13,58 @@
  */
 package eu.europa.ec.leos.services.processor.content;
 
+import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.model.annex.LevelItemVO;
+import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.label.ref.Ref;
+import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
+import eu.europa.ec.leos.services.support.EditableAttributeValue;
+import eu.europa.ec.leos.services.support.IdGenerator;
+import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.util.LeosDomainUtil;
+import eu.europa.ec.leos.vo.toc.Attribute;
+import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.toc.TocItemTypeName;
+import io.atlassian.fugue.Pair;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.inject.Provider;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_SOFT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.isElementInToc;
@@ -37,8 +89,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToStringSimple;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.AUTHORIAL_NOTE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
@@ -117,62 +169,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.wrapXPathWithQuotes;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.inject.Provider;
-
-import eu.europa.ec.leos.util.LeosDomainUtil;
-import eu.europa.ec.leos.vo.toc.Attribute;
-import eu.europa.ec.leos.vo.toc.TocItemTypeName;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.jgroups.util.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.google.common.base.Stopwatch;
-
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.common.Result;
-import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.action.SoftActionType;
-import eu.europa.ec.leos.model.annex.LevelItemVO;
-import eu.europa.ec.leos.model.user.User;
-import eu.europa.ec.leos.model.xml.Element;
-import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.label.ReferenceLabelService;
-import eu.europa.ec.leos.services.label.ref.Ref;
-import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
-import eu.europa.ec.leos.services.support.EditableAttributeValue;
-import eu.europa.ec.leos.services.support.IdGenerator;
-import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.toc.StructureContext;
-import eu.europa.ec.leos.services.user.UserService;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
-import io.atlassian.fugue.Pair;
 
 public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
@@ -1947,5 +1943,4 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
         return mergeOnElement;
     }
-
 }

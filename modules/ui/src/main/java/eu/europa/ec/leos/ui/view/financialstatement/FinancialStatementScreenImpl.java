@@ -88,6 +88,7 @@ import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
+import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
@@ -418,7 +419,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
             confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
         } else {
             if (action == CheckElementCoEditionEvent.Action.DELETE) {
-                eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, actionEvent));
+                eventBus.post(new CheckDeleteLastEditingTypeEvent(((DeleteElementRequestEvent)actionEvent).getElementId(), actionEvent));
             } else {
                 eventBus.post(actionEvent);
             }
