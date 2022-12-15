@@ -57,7 +57,7 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.COUNCIL_EXPLANATORY;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.FINANCIAL_STATEMENT;
+import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
 
@@ -289,7 +289,7 @@ public class CollectionContextService {
                 if(cloneProposal) {
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(billRef, docChild.getRef());
                 }
-            } else if (docChild.getCategory() == FINANCIAL_STATEMENT) {
+            } else if (docChild.getCategory() == STAT_FINANC_LEGIS) {
                 executeCreateFinancialStatement();
             }
         }
@@ -309,7 +309,7 @@ public class CollectionContextService {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
         financialStatementContext.usePackage(leosPackage);
-        String template = categoryTemplateMap.get(FINANCIAL_STATEMENT).getName();
+        String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
         financialStatementContext.useTemplate(template);
         financialStatementContext.usePurpose(purpose);
         financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
@@ -320,7 +320,7 @@ public class CollectionContextService {
         financialStatementContext.useActionMessageMap(actionMsgMap);
         financialStatementContext.useCollaborators(proposal.getCollaborators());
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
-        proposalService.addComponentRef(proposal, financialStatement.getName(), FINANCIAL_STATEMENT);
+        proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

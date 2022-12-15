@@ -375,7 +375,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         populateDetailsData(proposalVO.getMetadata());
         populateMemorandumData(proposalVO.getChildDocument(LeosCategory.MEMORANDUM));
         populateLegalTextData(proposalVO.getChildDocument(LeosCategory.BILL));
-        populateFinancialStatementData(proposalVO.getChildDocument(LeosCategory.FINANCIAL_STATEMENT));
+        populateFinancialStatementData(proposalVO.getChildDocument(LeosCategory.STAT_FINANC_LEGIS));
         populateExplanatory(proposalVO);
         this.cloneProposalMetadataVO = proposalVO.getCloneProposalMetadataVO();
         populateCloneProposalMetadata(cloneProposalMetadataVO);

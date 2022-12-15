@@ -97,7 +97,7 @@ public interface XmlNodeConfigProcessor {
             case COUNCIL_EXPLANATORY:
                 showAs = "Council Explanatory";
                 break;
-            case FINANCIAL_STATEMENT:
+            case STAT_FINANC_LEGIS:
                 showAs = "Financial Statement";
                 break;
             default:

@@ -135,6 +135,7 @@ import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementPresenter.class);
+    private static final String STATFINANCLEGIS = "statfinanclegis#";
 
     private final FinancialStatementScreen financialStatementScreen;
 
@@ -249,7 +250,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     }
 
     private FinancialStatement getFinancialStatementFromSession() {
-        return (FinancialStatement) httpSession.getAttribute("financialstatement#" + getDocumentRef());
+        return (FinancialStatement) httpSession.getAttribute(STATFINANCLEGIS + getDocumentRef());
     }
 
     private boolean isHasOpenElementEditors() {
@@ -341,7 +342,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     }
 
     private String getDocumentRef() {
-        return (String) httpSession.getAttribute(id + "." + SessionAttribute.FINANCIAL_STATEMENT.name());
+        return (String) httpSession.getAttribute(id + "." + SessionAttribute.STAT_FINANC_LEGIS.name());
     }
 
     private String getRevisionRef() {
@@ -672,7 +673,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         DocumentVO financialStatementVO =
                 new DocumentVO(financialStatement.getId(),
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
-                        LeosCategory.FINANCIAL_STATEMENT,
+                        LeosCategory.STAT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()));
 

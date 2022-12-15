@@ -20,7 +20,7 @@ public interface FinancialStatementView extends LeosView {
     /**
      * Financial Statement view identifier.
      */
-    String VIEW_ID = "financialstatement";
+    String VIEW_ID = "statfinanclegis";
 
     @Override
     default String getViewId() {

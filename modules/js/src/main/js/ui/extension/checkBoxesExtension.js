@@ -21,7 +21,12 @@ define(function checkBoxesExtensionModule(require) {
     let UNCHECKED;
     let CHECKED;
     let CHECKBOX_TAGNAME;
+    let NAME_ATTR;
+    let NAME_ATTR_CHECKED;
+    let NAME_ATTR_UNCHECKED;
     const NUM = "num";
+    const INLINE = "inline";
+
 
     function _initExtension(connector) {
         log.debug("Initializing checkBoxes extension...");
@@ -55,8 +60,8 @@ define(function checkBoxesExtensionModule(require) {
 
     function _toggleCheckBox(connector, event) {
         event.stopImmediatePropagation();
-        let checkBoxValue = this.text();
-        checkBoxValue == UNCHECKED ? this.text(CHECKED) : this.text(UNCHECKED);
+        (this.text() == UNCHECKED) ? this.text(CHECKED) : this.text(UNCHECKED);
+        (this.attr(NAME_ATTR) == NAME_ATTR_UNCHECKED) ? this.attr(NAME_ATTR, NAME_ATTR_CHECKED) : this.attr(NAME_ATTR,NAME_ATTR_UNCHECKED);
         let data = {
             elementId: this.attr("id"),
             elementType: this.prop("tagName").toLowerCase(),
@@ -66,20 +71,32 @@ define(function checkBoxesExtensionModule(require) {
     }
 
     function _initAndAddListenersToCheckBoxes(connector) {
-        CHECKBOX_TAGNAME = connector.getState().checkBoxTagName;
-        CHECKED = connector.getState().checkedBoxValue;
-        UNCHECKED = connector.getState().uncheckedBoxValue;
+        let state = connector.getState();
+        CHECKBOX_TAGNAME = state.checkBoxTagName;
+        CHECKED = state.checkedBoxValue;
+        UNCHECKED = state.uncheckedBoxValue;
+        NAME_ATTR = state.checkBoxAttributeName;
+        NAME_ATTR_CHECKED = state.checkedBoxAttribute;
+        NAME_ATTR_UNCHECKED = state.uncheckedBoxAttribute;
         _addListeners(connector, CHECKBOX_TAGNAME, CHECKED);
         _addListeners(connector, CHECKBOX_TAGNAME, UNCHECKED);
     }
 
+/*
+the tag that needs evaluated
+<num><inline name="checked">☑</inline></num>
+<num><inline name="unchecked">☐</inline></num>
+*/
     function _addListeners(connector, tagName, value) {
         let target = connector.target;
         $(target).find(tagName).each(function( index ) {
             if ($(this).children(NUM).length > 0) {
                 let num = $($(this).children(NUM)[0]);
-                if (!!num && num.text() == value) {
-                    num[0].addEventListener("click", _toggleCheckBox.bind(num, connector));
+                if(!!num && num.children(INLINE).length > 0){
+                    let inline = $(num.children(INLINE)[0]);
+                    if (!!inline && inline.text() == value) {
+                        inline[0].addEventListener("click", _toggleCheckBox.bind(inline, connector));
+                    }
                 }
             }
         });

@@ -30,7 +30,6 @@ import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.component.contributions.ContributionsTab;
 import eu.europa.ec.leos.ui.component.markedText.MarkedTextComponent;
 import eu.europa.ec.leos.ui.component.revision.RevisionComponent;
-import eu.europa.ec.leos.ui.component.toc.TableOfContentComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
@@ -118,7 +117,7 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public void cleanComparedContent() {
         final String versionInfo = messageHelper.getMessage("document.compare.version.caption.simple");
-        markedTextComponent.populateMarkedContent("", LeosCategory.FINANCIAL_STATEMENT, versionInfo, null);
+        markedTextComponent.populateMarkedContent("", LeosCategory.STAT_FINANC_LEGIS, versionInfo, null);
         markedTextComponent.hideCompareButtons();
     }
 
@@ -135,7 +134,7 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public void showVersion(String content, String versionInfo) {
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, markedTextComponent));
-        markedTextComponent.populateMarkedContent(content, LeosCategory.FINANCIAL_STATEMENT, versionInfo, null);
+        markedTextComponent.populateMarkedContent(content, LeosCategory.STAT_FINANC_LEGIS, versionInfo, null);
         markedTextComponent.hideCompareButtons();
 
     }
@@ -143,13 +142,13 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList) {
         initRevisionComponent();
-        revisionComponent.populateRevisionContent(content, LeosCategory.FINANCIAL_STATEMENT, contributionVO);
+        revisionComponent.populateRevisionContent(content, LeosCategory.STAT_FINANC_LEGIS, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
     }
 
     @Override
     public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, LevelItemVO levelItemVO) {
-        CreateEventParameter eventParameterObject = new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.FINANCIAL_STATEMENT.name(), securityContext.getUser(),
+        CreateEventParameter eventParameterObject = new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.STAT_FINANC_LEGIS.name(), securityContext.getUser(),
                 authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()));
         eventParameterObject.setLevelItemVo(levelItemVO);
         eventParameterObject.setCloneProposal(cloneContext.isClonedProposal());
@@ -176,7 +175,7 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public void showCleanVersion(String content, String versionInfo) {
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, markedTextComponent));
-        markedTextComponent.populateMarkedWithCleanContent(content, LeosCategory.FINANCIAL_STATEMENT, versionInfo);
+        markedTextComponent.populateMarkedWithCleanContent(content, LeosCategory.STAT_FINANC_LEGIS, versionInfo);
         markedTextComponent.hideCompareButtons();
     }
 
@@ -189,7 +188,7 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     public void populateComparisonContent(String comparedContent, String comparedInfo, FinancialStatement original, FinancialStatement current) {
         ExportVersions<FinancialStatement> exportVersions = new ExportVersions(original, current);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, markedTextComponent));
-        markedTextComponent.populateMarkedContent(comparedContent, LeosCategory.FINANCIAL_STATEMENT, comparedInfo, exportVersions);
+        markedTextComponent.populateMarkedContent(comparedContent, LeosCategory.STAT_FINANC_LEGIS, comparedInfo, exportVersions);
         markedTextComponent.showCompareButtons();
     }
 

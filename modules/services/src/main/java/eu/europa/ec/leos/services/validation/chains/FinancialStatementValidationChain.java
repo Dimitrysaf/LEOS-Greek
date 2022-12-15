@@ -39,6 +39,6 @@ public class FinancialStatementValidationChain extends ValidationChain {
     }
 
     public boolean supports(DocumentVO documentVO){
-        return LeosCategory.FINANCIAL_STATEMENT.equals(documentVO.getDocumentType());
+        return LeosCategory.STAT_FINANC_LEGIS.equals(documentVO.getDocumentType());
     }
 }

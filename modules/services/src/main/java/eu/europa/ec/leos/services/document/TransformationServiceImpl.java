@@ -73,7 +73,7 @@ public class TransformationServiceImpl implements TransformationService {
             case BILL:
             case COVERPAGE:
             case PROPOSAL:
-            case FINANCIAL_STATEMENT:
+            case STAT_FINANC_LEGIS:
                 template = editableXHtmlTemplate;
                 break;
             default:

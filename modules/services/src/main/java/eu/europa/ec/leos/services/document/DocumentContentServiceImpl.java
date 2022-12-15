@@ -41,7 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.FINANCIAL_STATEMENT;
+import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
 
 @Service
 public abstract class DocumentContentServiceImpl implements DocumentContentService {
@@ -85,7 +85,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 	            return isAnnexComparisonRequired(contentBytes);
 	        case BILL:
 	            return true;
-            case FINANCIAL_STATEMENT:
+            case STAT_FINANC_LEGIS:
                 return isFinancialStatementComparisonRequired(contentBytes);
 	        case PROPOSAL:
 	        	return true;
@@ -166,7 +166,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                                     byte[] coverPageContent) {
         String content = transformationService.toEditableXml(getContentInputStream(xmlDocument), contextPath, xmlDocument.getCategory(),
                 securityContext.getPermissions(xmlDocument), getContentInputStream(coverPageContent));
-        if(FINANCIAL_STATEMENT.equals(xmlDocument.getCategory())){
+        if(STAT_FINANC_LEGIS.equals(xmlDocument.getCategory())){
             final Document document = XercesUtils.createXercesDocument(content.getBytes(XmlHelper.UTF_8));
             final byte[] node = LeosXercesUtils.wrapWithPageOrientationDivs(document);
             content = new String(node, XmlHelper.UTF_8);
