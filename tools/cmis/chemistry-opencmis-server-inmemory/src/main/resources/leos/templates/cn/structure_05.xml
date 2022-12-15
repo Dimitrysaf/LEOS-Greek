@@ -112,7 +112,7 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>HIGHER_ELEMENT_NUM</numberingType>
-            <editable>true</editable>
+            <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
             <template><![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
