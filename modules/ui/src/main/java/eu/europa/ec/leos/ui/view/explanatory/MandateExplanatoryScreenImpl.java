@@ -20,10 +20,13 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
+import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.component.doubleCompare.DoubleComparisonComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
+import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.ToggleLiveDiffingRequiredEvent;
+import eu.europa.ec.leos.ui.extension.ActionManagerExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -135,6 +138,19 @@ public class MandateExplanatoryScreenImpl extends ExplanatoryScreenImpl {
         doubleComparisonComponent.enableExportPackage(enableExportPackage);
         boolean enableLiveDiffing = securityContext.hasPermission(explanatory, LeosPermission.CAN_TOGGLE_LIVE_DIFFING);
         toggleLiveDiffingButton.setVisible(enableLiveDiffing);
+
+        // add extensions only if the user has the permission.
+        boolean enableUpdate = securityContext.hasPermission(explanatory, LeosPermission.CAN_UPDATE);
+        if(enableUpdate) {
+            if(leosEditorExtension == null) {
+                eventBus.post(new InitLeosEditorEvent(explanatory));
+            }
+            if(actionManagerExtension == null) {
+                actionManagerExtension = new ActionManagerExtension<LeosDisplayField>(explanatoryContent, instanceTypeResolver.getInstanceType(), eventBus, structureContextProvider.get().getTocItems());
+            }
+        }
+        explanatoryActionsMenuBar.setExportPackageVisible(enableExportPackage);
+
     }
 
     @Override

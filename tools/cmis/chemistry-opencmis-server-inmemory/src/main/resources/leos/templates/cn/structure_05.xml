@@ -112,7 +112,7 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>HIGHER_ELEMENT_NUM</numberingType>
-            <editable>false</editable>
+            <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
             <template><![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
@@ -209,6 +209,10 @@
                 <profile>
                     <elementSelector>division heading</elementSelector>
                     <profileName>inlineAknDivisionHeading</profileName>
+                </profile>
+                <profile>
+                    <elementSelector>heading:not(level[leos\:origin='cn'] heading)</elementSelector>
+                    <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
