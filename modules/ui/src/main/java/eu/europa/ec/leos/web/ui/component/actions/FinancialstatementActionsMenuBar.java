@@ -18,7 +18,6 @@ public class FinancialstatementActionsMenuBar extends CommonActionsMenuBar {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(FinancialstatementActionsMenuBar.class);
     
-    private MenuItem financialStatementActionSeparator;
     private MenuItem createExportPackageItem;
 
     @Autowired
@@ -26,12 +25,6 @@ public class FinancialstatementActionsMenuBar extends CommonActionsMenuBar {
         super(messageHelper, eventBus);
     }
 
-    @Override
-    protected void buildViewActions() {
-        LOG.debug("Building View actions group...");
-        addCustomSeparator(messageHelper.getMessage("menu.actions.separator.view"));
-    }
-    
     @Override
     protected void initDropDownMenu() {
         buildVersionActions();

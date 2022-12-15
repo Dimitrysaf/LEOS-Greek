@@ -39,12 +39,12 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
     protected MenuItem guidance;
     protected MenuItem changeDetails;
     private SimpleFileDownloader fileDownloader;
-    private Class childClass;
+    private Class<?> childClass;
     private MenuItem showCleanVersionItem;
     private MenuItem renumberingItem;
     private MenuItem renumberingGroup;
 
-    public CommonActionsMenuBar(MessageHelper messageHelper, EventBus eventBus) {
+    protected CommonActionsMenuBar(MessageHelper messageHelper, EventBus eventBus) {
         super(messageHelper, eventBus, LeosTheme.LEOS_HAMBURGUER_16);
         initDownloader();
     }
@@ -170,11 +170,11 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         renumberingGroup.setVisible(visible);
     }
 
-    public void setChildComponentClass(Class clazz) {
+    public void setChildComponentClass(Class<?> clazz) {
         this.childClass = clazz;
     }
     
-    public Class getChildComponentClass() {
+    public Class<?> getChildComponentClass() {
         return childClass;
     }
     
@@ -233,7 +233,7 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         private static final long serialVersionUID = -4455740778411909392L;
 
         private ColumnPosition position;
-        private PaneAddEvent paneAddEvent;
+        private transient PaneAddEvent paneAddEvent;
 
         public MenuItemCommand(ColumnPosition position, PaneAddEvent paneAddEvent) {
             this.position = position;
