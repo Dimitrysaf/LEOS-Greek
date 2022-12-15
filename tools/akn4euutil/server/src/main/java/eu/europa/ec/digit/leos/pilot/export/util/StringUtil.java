@@ -24,4 +24,14 @@ public class StringUtil {
         }
         return str1.equals(str2);
     }
+
+    public static boolean isInteger(final String str) {
+        if (str == null) return false;
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch(NumberFormatException ex) {
+            return false;
+        }
+    }
 }
