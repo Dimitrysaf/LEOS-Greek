@@ -210,6 +210,10 @@
                     <elementSelector>division heading</elementSelector>
                     <profileName>inlineAknDivisionHeading</profileName>
                 </profile>
+                <profile>
+                    <elementSelector>heading:not(level[leos\:origin='cn'] heading)</elementSelector>
+                    <profileName>inlineAknHeading</profileName>
+                </profile>
             </profiles>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
