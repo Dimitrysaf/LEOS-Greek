@@ -27,6 +27,7 @@ define(function aknSubParagraphProfileModule(require) {
     plugins.push(require("plugins/leosInlineEditor/leosInlineEditorPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
     plugins.push(require("plugins/aknHtmlAnchor/aknHtmlAnchorPlugin"));
+    plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
     plugins.push(require("plugins/aknSubParagraph/aknSubParagraphPlugin"));
@@ -79,8 +80,8 @@ define(function aknSubParagraphProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
-        + "widget,lineutils,basicstyles," + "indent,"
-        + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
+            + "widget,lineutils,basicstyles,"
+            + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -96,16 +97,16 @@ define(function aknSubParagraphProfileModule(require) {
         disableNativeSpellChecker: false,
         // toolbar groups arrangement, optimized for a single toolbar row
         toolbar : [
-        	{ name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
-        	{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
-        	{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Subscript', 'Superscript'] },
-        	{ name: 'ref', items: [ 'authorialNoteWidget', 'LeosCrossReference' ] },
-        	{ name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
-        	{ name: 'tools', items: [ 'LeosShowBlocks' ] },
-        	'/',
-        	{ name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandler', 'leosElementMerge', 'Table' ] },
-        	{ name : "mode" , items: [ 'Sourcedialog' ] }
-    	],
+            { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
+            { name: 'ref', items: [ 'authorialNoteWidget', 'LeosCrossReference' ] },
+            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
+            { name: 'tools', items: [ 'LeosShowBlocks' ] },
+            '/',
+            { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandler', 'leosElementMerge', 'Table' ] },
+            { name : "mode" , items: [ 'Sourcedialog' ] }
+        ],
         //show toolbar on startup
         startupFocus: 'end',
         // comma-separated list of toolbar button names that must not be rendered
