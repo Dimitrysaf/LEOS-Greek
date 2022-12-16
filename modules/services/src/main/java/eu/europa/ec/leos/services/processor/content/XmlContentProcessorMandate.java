@@ -29,6 +29,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFr
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.AUTHORIAL_NOTE;
@@ -327,7 +328,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         XercesUtils.removeAttribute(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         XercesUtils.removeAttribute(node, LEOS_SOFT_USER_ATTR);
         XercesUtils.removeAttribute(node, LEOS_SOFT_DATE_ATTR);
-        XercesUtils.updateXMLIDAttribute(node, EMPTY_STRING, true);
+        updateXMLIDAttribute(node, EMPTY_STRING, true);
     }
 
     private Node convertToElement(List<TocItem> tocItems, Node node, String elementName) {
@@ -587,7 +588,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             }
         }
         if (hasTocItemSoftAction(tocVo, SoftActionType.TRANSFORM) && !tocVo.isIndentedOrRestored()) {
-            XercesUtils.updateXMLIDAttribute(existingNode, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, true);
+            updateXMLIDAttribute(existingNode, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, true);
         }
         XercesUtils.insertOrUpdateAttributeValue(existingNode, LEOS_ORIGIN_ATTR, tocVo.getOriginAttr());
         return existingNode;
@@ -707,6 +708,16 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
         updateSoftInfo(node, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo),
                 tocVo.getTocItem().getAknTag().value(), tocVo);
+
+        /*
+         * As the method updateSoftInfo removes all "deleted_" from the ids for undeleted nodes,
+         * we need set it again for num when the article was numbered and changed to unnumbered,
+         * as the num in this case was deleted by the situation of this change
+         */
+        if (tocVo.getNumSoftActionAttr() != null && tocVo.getNumSoftActionAttr().equals(SoftActionType.DELETE)) {
+            Node numNode = getFirstChild(node, XercesUtils.getNumTag(node.getNodeName()));
+            updateXMLIDAttribute(numNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, false);
+        }
 
         XercesUtils.insertOrUpdateAttributeValue(node, LEOS_AFFECTED_ATTR, tocVo.isAffected() ? Boolean.TRUE.toString() : null);
         if (tocVo.getItemDepth() > 0 && NumberingType.LEVEL_NUM.equals(tocVo.getTocItem().getNumberingType())) {

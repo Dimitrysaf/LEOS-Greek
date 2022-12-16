@@ -915,22 +915,20 @@ public class XercesUtils {
 
     public static void updateXMLIDAttribute(Node node, String newValuePrefix, boolean replacePrefix) {
         String id = getId(node);
-        if(id == null) {
-            LOG.error("Node does not have ID attribute", XercesUtils.nodeToString(node));
-            throw new IllegalStateException("Node does not have ID");
-        }
-        String newId = id;
         String softActionPrefix = getSoftActionPrefix(id);
+        if(id != null) {
+            String newId = id;
 
-        //Replace YES and SoftAction Exists and (New prefix is empty or different from the actual)
-        if (replacePrefix && softActionPrefix != null && (StringUtils.isEmpty(newValuePrefix) || !newValuePrefix.equals(softActionPrefix))){
-            newId = id.replace(softActionPrefix, newValuePrefix);
+            //Replace YES and SoftAction Exists and (New prefix is empty or different from the actual)
+            if (replacePrefix && softActionPrefix != null && (StringUtils.isEmpty(newValuePrefix) || !newValuePrefix.equals(softActionPrefix))){
+                newId = id.replace(softActionPrefix, newValuePrefix);
+            }
+            //New Value different from Actual (Avoid moved_moved labels) AND Id do not contains already the new Value
+            else if (newValuePrefix != null && !newValuePrefix.equals(softActionPrefix) && !newId.startsWith(newValuePrefix)) {
+                newId = newValuePrefix + id;
+            }
+            addAttribute(node, XMLID, newId);
         }
-        //New Value different from Actual (Avoid moved_moved labels) AND Id do not contains already the new Value
-        else if (newValuePrefix != null && !newValuePrefix.equals(softActionPrefix) && !newId.startsWith(newValuePrefix)) {
-            newId = newValuePrefix + id;
-        }
-        addAttribute(node, XMLID, newId);
     }
 
     public static void insertOrUpdateAttributeValue(Node node, String attrName, String attrValue) {
