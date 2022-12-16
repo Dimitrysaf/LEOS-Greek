@@ -148,4 +148,5 @@ interface AnnexScreen {
     void confirmRenumberDocument();
 
     Optional<ContributionVO> findContributionAndShowTab(String revisionVersion);
+    public void setUserGuidance(String userGuidance);
 }

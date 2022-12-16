@@ -74,6 +74,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
@@ -148,6 +149,7 @@ import eu.europa.ec.leos.web.event.view.document.FetchCrossRefTocRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchCrossRefTocResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchElementResponseEvent;
+import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceRequest;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
 import eu.europa.ec.leos.web.event.view.document.InsertElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.MergeSuggestionRequest;
@@ -253,7 +255,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private final CommonDelegate<Explanatory> commonDelegate;
     private boolean milestoneExplorerOpened = false;
     private final List<String> openElementEditors;
-
+    private final TemplateConfigurationService templateConfigurationService;
     private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Autowired
@@ -268,7 +270,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
             UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
             ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
-            NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate) {
+            NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate,
+            TemplateConfigurationService templateConfigurationService) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         LOG.trace("Initializing explanatory presenter...");
         this.explanatoryScreen = explanatoryScreen;
@@ -295,6 +298,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         this.notificationService = notificationService;
         this.commonDelegate = commonDelegate;
         this.openElementEditors = new ArrayList<>();
+        this.templateConfigurationService = templateConfigurationService;
     }
 
     @Override
@@ -1170,6 +1174,13 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         explanatoryScreen.sendUserPermissions(userPermissions);
     }
 
+    @Subscribe
+    public void getUserGuidance(FetchUserGuidanceRequest event) {
+        // KLUGE temporary hack for compatibility with new domain model
+        Explanatory explanatory = explanatoryService.findExplanatory(documentId);
+        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(), "guidance");
+        explanatoryScreen.setUserGuidance(jsonGuidance);
+    }
     @Subscribe
     public void fetchSearchMetadata(SearchMetadataRequest event) {
         if (!milestoneExplorerOpened) {

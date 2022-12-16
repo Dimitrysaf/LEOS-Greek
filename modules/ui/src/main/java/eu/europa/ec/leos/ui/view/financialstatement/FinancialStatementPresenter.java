@@ -59,6 +59,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
@@ -85,6 +86,7 @@ import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.EditElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceRequest;
 import eu.europa.ec.leos.web.event.view.document.InsertElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
@@ -173,6 +175,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private String connectedEntity;
     private final List<String> openElementEditors;
     private Element elementToEditAfterClose;
+    private final TemplateConfigurationService templateConfigurationService;
 
     protected FinancialStatementPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                                           EventBus leosApplicationEventBus, UuidHelper uuidHelper, PackageService packageService,
@@ -188,7 +191,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                                           UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService,
                                           LegService legService, ProposalService proposalService, SearchService searchService,
                                           ExportPackageService exportPackageService, NotificationService notificationService,
-                                          CloneContext cloneContext, AttachmentProcessor attachmentProcessor) {
+                                          CloneContext cloneContext, AttachmentProcessor attachmentProcessor,
+                                          TemplateConfigurationService templateConfigurationService) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.financialStatementScreen = financialStatementScreen;
         this.financialStatementProcessor = financialStatementProcessor;
@@ -218,6 +222,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         this.cloneContext = cloneContext;
         this.attachmentProcessor = attachmentProcessor;
         this.openElementEditors = new ArrayList<>();
+        this.templateConfigurationService = templateConfigurationService;
     }
 
     @Override
@@ -552,6 +557,14 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             financialStatementScreen.scrollTo(elementToEditAfterClose.getElementId());
             eventBus.post(new EditElementRequestEvent(elementToEditAfterClose.getElementId(), elementToEditAfterClose.getElementTagName()));
         }
+    }
+
+    @Subscribe
+    public void getUserGuidance(FetchUserGuidanceRequest event) {
+        // KLUGE temporary hack for compatibility with new domain model
+        FinancialStatement financialStatement = financialStatementService.findFinancialStatement(documentId);
+        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(financialStatement.getMetadata().get().getDocTemplate(), "guidance");
+        financialStatementScreen.setUserGuidance(jsonGuidance);
     }
 
     @Subscribe

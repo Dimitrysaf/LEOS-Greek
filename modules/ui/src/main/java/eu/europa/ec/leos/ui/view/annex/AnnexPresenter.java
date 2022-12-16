@@ -39,7 +39,11 @@ import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.action.*;
+import eu.europa.ec.leos.model.action.ActionType;
+import eu.europa.ec.leos.model.action.CheckinCommentVO;
+import eu.europa.ec.leos.model.action.CheckinElement;
+import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
@@ -52,6 +56,7 @@ import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
@@ -78,6 +83,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
@@ -121,7 +127,6 @@ import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
 import eu.europa.ec.leos.ui.model.AnnotateMetadata;
 import eu.europa.ec.leos.ui.model.AnnotationStatus;
-import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
 import eu.europa.ec.leos.ui.support.DownloadExportRequest;
@@ -153,8 +158,8 @@ import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
-import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
+import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
@@ -166,6 +171,7 @@ import eu.europa.ec.leos.web.event.view.document.FetchCrossRefTocRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchCrossRefTocResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchElementResponseEvent;
+import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceRequest;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
 import eu.europa.ec.leos.web.event.view.document.InsertElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
@@ -293,6 +299,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private final AnnotateService annotateService;
     private final List<String> openElementEditors;
 
+    private final TemplateConfigurationService templateConfigurationService;
     @Autowired
     AnnexPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                    AnnexScreen annexScreen,
@@ -305,7 +312,10 @@ class AnnexPresenter extends AbstractLeosPresenter {
                    Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
                    UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
                    ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService, AnnotateService annotateService,
-                   NotificationService notificationService, CommonDelegate<Annex> commonDelegate, CloneContext cloneContext, AttachmentProcessor attachmentProcessor, InstanceTypeResolver instanceTypeResolver, NumberService numberService, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor) {
+                   NotificationService notificationService, CommonDelegate<Annex> commonDelegate, CloneContext cloneContext,
+                   AttachmentProcessor attachmentProcessor, InstanceTypeResolver instanceTypeResolver, NumberService numberService,
+                   MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
+                   TemplateConfigurationService templateConfigurationService) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.attachmentProcessor = attachmentProcessor;
         LOG.trace("Initializing annex presenter...");
@@ -342,6 +352,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         this.xmlContentProcessor = xmlContentProcessor;
         this.openElementEditors = new ArrayList<>();
         this.annotateService = annotateService;
+        this.templateConfigurationService = templateConfigurationService;
     }
 
     @Override
@@ -480,6 +491,12 @@ class AnnexPresenter extends AbstractLeosPresenter {
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
         annexScreen.refreshVersions(allVersions, comparisonMode);
+    }
+    @Subscribe
+    public void getUserGuidance(FetchUserGuidanceRequest event) {
+        Annex annex = annexService.findAnnex(documentId, true);
+        String jsonGuidance = templateConfigurationService.getTemplateConfiguration(annex.getMetadata().get().getDocTemplate(), "guidance");
+        annexScreen.setUserGuidance(jsonGuidance);
     }
 
     private Integer countMinorVersionsFn(String currIntVersion) {
