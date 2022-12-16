@@ -142,4 +142,6 @@ public interface FinancialStatementScreen {
     boolean isCoverPageVisible();
 
     Optional<ContributionVO> findContributionAndShowTab(String revisionVersion);
+
+    void setUserGuidance(String guidance);
 }

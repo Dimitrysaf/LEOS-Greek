@@ -13,62 +13,12 @@
  */
 package eu.europa.ec.leos.ui.view.annex;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Provider;
-
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.StreamResource;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.vo.SearchMatchVO;
-import eu.europa.ec.leos.model.action.ContributionVO;
-import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
-import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.ui.event.search.ReplaceMatchResponseEvent;
-import eu.europa.ec.leos.ui.event.search.SearchTextResponseEvent;
-import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
-import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
-import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
-import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
-import eu.europa.ec.leos.web.event.view.document.CreateEventParameter;
-import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
-import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;
-import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
-import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
-import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
-import eu.europa.ec.leos.web.event.view.document.RenumberingEvent;
-import eu.europa.ec.leos.web.ui.component.SearchDelegate;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.vaadin.dialogs.ConfirmDialog;
-import org.vaadin.sliderpanel.SliderPanel;
-import org.vaadin.sliderpanel.SliderPanelBuilder;
-import org.vaadin.sliderpanel.client.SliderMode;
-import org.vaadin.sliderpanel.client.SliderTabPosition;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.DesignRoot;
 import com.vaadin.data.TreeData;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -93,8 +43,11 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
@@ -103,6 +56,8 @@ import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.AccordionPane;
@@ -112,7 +67,10 @@ import eu.europa.ec.leos.ui.component.toc.TableOfContentComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
+import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
+import eu.europa.ec.leos.ui.event.search.ReplaceMatchResponseEvent;
+import eu.europa.ec.leos.ui.event.search.SearchTextResponseEvent;
 import eu.europa.ec.leos.ui.event.security.SecurityTokenRequest;
 import eu.europa.ec.leos.ui.event.security.SecurityTokenResponse;
 import eu.europa.ec.leos.ui.event.toc.DisableEditTocEvent;
@@ -120,10 +78,12 @@ import eu.europa.ec.leos.ui.event.toc.ExpandTocSliderPanel;
 import eu.europa.ec.leos.ui.event.toc.InlineTocCloseRequestEvent;
 import eu.europa.ec.leos.ui.extension.ActionManagerExtension;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
+import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
 import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
 import eu.europa.ec.leos.ui.extension.MathJaxExtension;
 import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
 import eu.europa.ec.leos.ui.extension.UserCoEditionExtension;
+import eu.europa.ec.leos.ui.extension.UserGuidanceExtension;
 import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
@@ -135,16 +95,56 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
+import eu.europa.ec.leos.web.event.view.document.CreateEventParameter;
+import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
+import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceResponse;
+import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;
+import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
+import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
+import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
+import eu.europa.ec.leos.web.event.view.document.RenumberingEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.ui.component.AnnexComponent;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
+import eu.europa.ec.leos.web.ui.component.SearchDelegate;
 import eu.europa.ec.leos.web.ui.component.actions.AnnexActionsMenuBar;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import eu.europa.ec.leos.web.ui.themes.LeosTheme;
 import eu.europa.ec.leos.web.ui.window.IntermediateVersionWindow;
 import eu.europa.ec.leos.web.ui.window.TimeLineWindow;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.sliderpanel.SliderPanel;
+import org.vaadin.sliderpanel.SliderPanelBuilder;
+import org.vaadin.sliderpanel.client.SliderMode;
+import org.vaadin.sliderpanel.client.SliderTabPosition;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Provider;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @ViewScope
@@ -291,7 +291,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
         screenLayoutHelper = new ScreenLayoutHelper(eventBus, Arrays.asList(contentSplit, annexSplit));
         screenLayoutHelper.addPane(annexDoc, 1, true);
         screenLayoutHelper.addPane(accordionPane, 0, true);
-
+        new UserGuidanceExtension<>(annexContent, eventBus);
         new MathJaxExtension<>(annexContent);
         new RefToLinkExtension<>(annexContent);
         userCoEditionExtension = new UserCoEditionExtension<>(annexContent, messageHelper, securityContext, cfgHelper);
@@ -764,5 +764,9 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     @Override
     public Optional<ContributionVO> findContributionAndShowTab(String revisionVersion) {
         return Optional.empty();
+    }
+    @Override
+    public void setUserGuidance(String userGuidance) {
+        eventBus.post(new FetchUserGuidanceResponse(userGuidance));
     }
 }

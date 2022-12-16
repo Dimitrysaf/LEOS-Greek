@@ -76,6 +76,7 @@ import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
 import eu.europa.ec.leos.ui.extension.MathJaxExtension;
 import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
 import eu.europa.ec.leos.ui.extension.UserCoEditionExtension;
+import eu.europa.ec.leos.ui.extension.UserGuidanceExtension;
 import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
@@ -90,6 +91,7 @@ import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
+import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceResponse;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
@@ -249,6 +251,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         screenLayoutHelper.addPane(financialStatementDoc, 1, true);
         screenLayoutHelper.addPane(accordionPane, 0, true);
 
+        new UserGuidanceExtension<>(financialStatementContent, eventBus);
         new MathJaxExtension<>(financialStatementContent);
         new RefToLinkExtension<>(financialStatementContent);
         userCoEditionExtension = new UserCoEditionExtension<>(financialStatementContent, messageHelper, securityContext, cfgHelper);
@@ -713,5 +716,9 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         tocItemContainer.addComponent(gridLayout);
         tocItemContainer.setExpandRatio(gridLayout, 1.0f);
         return tocItemContainer;
+    }
+    @Override
+    public void setUserGuidance(String userGuidance) {
+        eventBus.post(new FetchUserGuidanceResponse(userGuidance));
     }
 }

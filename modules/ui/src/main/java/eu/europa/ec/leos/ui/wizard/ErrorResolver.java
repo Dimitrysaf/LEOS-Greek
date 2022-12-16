@@ -26,7 +26,8 @@ public enum ErrorResolver {
     DOCUMENT_PROPOSAL_TEMPLATE_NOT_FOUND ("wizard.document.upload.error.document.proposal.template"),
     DOCUMENT_ANNEX_INDEX_NOT_FOUND ("wizard.document.upload.error.document.annex.index"),
     DOCUMENT_ANNEX_TITLE_NOT_FOUND ("wizard.document.upload.error.document.annex.title"),
-    DOCUMENT_ANNEX_NUMBER_NOT_FOUND ("wizard.document.upload.error.document.annex.number");
+    DOCUMENT_ANNEX_NUMBER_NOT_FOUND ("wizard.document.upload.error.document.annex.number"),
+    DOCUMENT_EXPLANATORY_TITLE_NOT_FOUND("wizard.document.upload.error.document.explanatory.title");
     
     private String errorMessageKey;
 
