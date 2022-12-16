@@ -21,4 +21,11 @@ public class StringUtilsTests {
         Assertions.assertFalse(StringUtil.isEqual("EqualText", "NotEqualText"));
         Assertions.assertFalse(StringUtil.isEqual("NotEqualText", "EqualText"));
     }
+
+    @Test
+    public void testIsInteger() {
+        Assertions.assertTrue(StringUtil.isInteger("1"));
+        Assertions.assertFalse(StringUtil.isInteger(null));
+        Assertions.assertFalse(StringUtil.isInteger("NoInteger"));
+    }
 }

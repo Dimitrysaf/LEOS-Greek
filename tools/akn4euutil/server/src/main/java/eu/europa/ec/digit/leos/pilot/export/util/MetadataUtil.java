@@ -7,6 +7,7 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.*;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -40,7 +41,7 @@ public class MetadataUtil {
 
     private static final String EMISSION_DATE_PARSE_PATTERN = "yyyy-MM-dd";
 
-    private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\) ([0-9]+)";
+    private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\) ([0-9]+)([\" \"]{0,1})([A-Za-z]{0,5})";
 
     private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/identifier/COMnumber";
 
@@ -513,7 +514,7 @@ public class MetadataUtil {
 
         String type = fieldValue.substring(0, bracketIndex);
         String year = fieldValue.substring(bracketIndex+1, closingBracketIndex);
-        String number = fieldValue.substring(closingBracketIndex+1).trim();
+        String number = readCoteNumber(fieldValue, closingBracketIndex+1);
 
         String id = "_" + generateRandomIdentifier(5);
         String shortValue = String.format(INSERT_COTE_SHORT_VALUE_PATTERN, type, year, number);
@@ -546,6 +547,19 @@ public class MetadataUtil {
         }
 
         return result;
+    }
+
+    private static String readCoteNumber(String value, int startIndex) {
+        String nextCharacter = value.substring(startIndex, startIndex+1);
+        while (startIndex < value.length() && !StringUtil.isInteger(nextCharacter)) {
+            startIndex++;
+            nextCharacter = value.substring(startIndex, startIndex+1);
+        }
+        if (startIndex == value.length()) return "";
+
+        Integer spaceIndex = value.indexOf(" ", startIndex);
+        String coteNumber = (spaceIndex == -1) ? value.substring(startIndex) : value.substring(startIndex, spaceIndex);
+        return coteNumber.trim();
     }
 
     public static MetadataFieldInfo parseLinkedDocuments(String fieldValue) throws MetadataUtilsException {
