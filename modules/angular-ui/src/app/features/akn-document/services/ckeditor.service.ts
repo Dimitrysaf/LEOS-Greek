@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { combineLatest, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import {BehaviorSubject, catchError, combineLatest, map, Observable, of, Subject, switchMap, takeUntil} from 'rxjs';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
+import {HttpClient} from "@angular/common/http";
 
 // FIXME: mockdata
 const tocItemsList = [
@@ -659,6 +660,9 @@ const params = {
 export class CKEditorService implements OnDestroy {
   elementEditor$: Observable<any>;
 
+  private xmlBS = new BehaviorSubject<string>('');
+  xml$ = this.xmlBS.asObservable();
+
   connector: any = {
     getParentId: () => 123,
     getElement: (...args) => document.getElementById('docContainer'),
@@ -727,11 +731,20 @@ export class CKEditorService implements OnDestroy {
         isClonedProposal,
       );
     },
+    saveElement:(elemData: {elementId: string, elementType: string, elementFragment: string, isSplit: boolean}) => {
+      const data = {...elemData, documentRef: 'annex_1'};
+      console.log('DATA => ', data);
+      this.saveAnnexElement(data.documentRef, data.elementId, data.elementType, data.elementFragment, data.isSplit)
+         .subscribe(response => {
+           console.log('SAVED')
+         })
+
+    }
   };
 
   private destroy$ = new Subject<void>();
 
-  constructor(private leosLegacyService: LeosLegacyService) {}
+  constructor(private leosLegacyService: LeosLegacyService, private http: HttpClient) {}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -873,4 +886,16 @@ export class CKEditorService implements OnDestroy {
         },
       );
   }
+
+
+  saveAnnexElement(documentRef: string, elementId: string, elementType: string, elementFragment: string, isSplit: boolean) {
+    return this.http.put(`api/secured/annex/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      elementFragment);
+  }
+
+  setXml(xml: string) {
+    this.xmlBS.next(xml);
+  }
+
+
 }

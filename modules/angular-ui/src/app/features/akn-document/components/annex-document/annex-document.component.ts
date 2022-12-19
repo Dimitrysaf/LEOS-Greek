@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-annex-document',
@@ -22,6 +23,7 @@ export class AnnexDocumentComponent implements OnInit, AfterViewInit {
     private ckeditorService: CKEditorService,
     @Inject(DOCUMENT) private document: Document,
     private rootElementRef: ElementRef<HTMLElement>,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {}
