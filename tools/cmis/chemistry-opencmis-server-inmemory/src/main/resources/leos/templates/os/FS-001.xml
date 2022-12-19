@@ -488,7 +488,7 @@
                 <num>3.</num>
                 <heading>ESTIMATED FINANCIAL IMPACT OF THE PROPOSAL/INITIATIVE</heading>
             </level>
-            <level>
+            <level class="landscape">
                 <num>3.1.</num>
                 <heading>Heading(s) of the multiannual financial framework and expenditure budget line(s) affected
                 </heading>
@@ -508,31 +508,31 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;width:50%;margin-left:0%;">
                             <tr>
-                                <td rowspan="2" style="border:1px solid black;padding:15px;text-align:center;">
+                                <td rowspan="2" style="border:1px solid black;text-align:center;">
                                     <p>Heading of multiannual financial framework</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Budget line</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Type of
                                         <br/>
                                         expenditure
                                     </p>
                                 </td>
-                                <td colspan="4" style="border:1px solid black;padding:15px;text-align:center;">
+                                <td colspan="4" style="border:1px solid black;text-align:center;">
                                     <p>Contribution</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>Number
                                         <br/>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Diff./Non-diff.
                                         <authorialNote marker="5" placement="bottom">
                                             <p>Diff. = Differentiated appropriations / Non-diff. = Non-differentiated
@@ -541,14 +541,14 @@
                                         </authorialNote>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>from EFTA countries
                                         <authorialNote marker="6" placement="bottom">
                                             <p>EFTA: European Free Trade Association.</p>
                                         </authorialNote>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>from candidate countries and potential candidates
                                         <authorialNote marker="7" placement="bottom">
                                             <p>Candidate countries and, where applicable, potential candidates from the
@@ -557,33 +557,33 @@
                                         </authorialNote>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>from other third countries</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>other assigned revenue</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:center;;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left">
+                                <td style="border:1px solid black;text-align:left">
                                     <p>[XX.YY.YY.YY]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Diff./Non-diff.</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
                             </tr>
@@ -607,66 +607,66 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;width:50%;margin-bottom:25px;margin-left:0%;">
                             <tr>
-                                <td rowspan="2" style="border:1px solid black;padding:15px;text-align:center;">
+                                <td rowspan="2" style="border:1px solid black;text-align:center;">
                                     <p>Heading of multiannual financial framework</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Budget line</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Type of
                                         <br/>
                                         expenditure
                                     </p>
                                 </td>
-                                <td colspan="4" style="border:1px solid black;padding:15px;text-align:center;">
+                                <td colspan="4" style="border:1px solid black;text-align:center;">
                                     <p>Contribution</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>Number
                                         <br/>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Diff./non-diff.</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>from EFTA countries</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>from candidate countries and potential candidates</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>from other third countries</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>other assigned revenue</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:center;;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left">
+                                <td style="border:1px solid black;text-align:left">
                                     <p>[XX.YY.YY.YY]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Diff./Non-diff.</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>YES/NO</p>
                                 </td>
                             </tr>
@@ -702,9 +702,9 @@
                     <content>
                         <!-- rotated table (landscape) -->
                         <!-- sorry for all the inline styles, surely need cleanup I got to redo it all from word -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;width:72%;margin-left:0%;">
                             <tr>
-                                <td style="background-color:#D3D3D3;border:1px solid black;padding:15px;text-align:center;">
+                                <td style="background-color:#D3D3D3;border:1px solid black;text-align:center;">
                                     <p>
                                         <b>Heading of multiannual financial
                                             <br/>
@@ -712,10 +712,10 @@
                                         </b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Number</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;width:63.1%">
                                     <p>[...]</p>
                                 </td>
                             </tr>
@@ -726,7 +726,7 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table (landscape) -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;margin-left:0%;">
                             <tr>
                                 <td style="width: 198.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;">
                                     <p style="text-align: center;" >DG: &lt;…….&gt;</p>
@@ -1257,12 +1257,12 @@
                             <br/>
                         </p>
                         <!-- rotated table -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;margin-left:0%;">
                             <tr style="height: 13.85pt;">
                                 <td style="width: 198.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                     rowspan="2" >
                                     <!--br style="page-break-before: always;" clear="all"/-->
-                                    <p style="margin: 1.0pt 0cm 1.0pt 0cm;">Ÿ TOTAL operational appropriations</p>
+                                    <p style="margin: 1.0pt 0cm 1.0pt 0cm;">• TOTAL operational appropriations</p>
                                 </td>
                                 <td style="width: 72.0pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;">
                                     <p style="margin: 2.4pt 0cm 2.4pt 0cm;">Commitments</p>
@@ -1348,7 +1348,7 @@
                             <tr style="height: 26.65pt;">
                                 <td style="width: 270.0pt; border: solid windowtext 1.0pt; border-top: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                     colspan="2">
-                                    <p style="margin: 2.4pt 0cm 2.4pt 0cm;">Ÿ TOTAL appropriations of an administrative
+                                    <p style="margin: 2.4pt 0cm 2.4pt 0cm;">• TOTAL appropriations of an administrative
                                         nature financed from the envelope for specific programmes
                                     </p>
                                 </td>
@@ -1525,101 +1525,101 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;margin-left:0%;">
                             <tr>
-                                <td rowspan="2" style="border:1px solid black;padding:15px;text-align:left;">
+                                <td rowspan="2" style="border:1px solid black;text-align:left;">
                                     <p>• TOTAL operational appropriations (all operational headings)</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>Commitments</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>(4)</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;width: 50px;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>Payments</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>(5)</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="border:1px solid black;padding:15px;text-align:left;">
+                                <td colspan="2" style="border:1px solid black;text-align:left;">
                                     <p>TOTAL appropriations of an administrative nature financed from the envelope of
                                         specific programmes (all operational headings)
                                     </p>
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>(6)</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
@@ -1627,7 +1627,7 @@
                             </tr>
                             <tr>
                                 <td rowspan="2"
-                                    style="background-color:#D3D3D3;border:1px solid black;padding:15px;text-align:left;">
+                                    style="background-color:#D3D3D3;border:1px solid black;text-align:left;">
                                     <p>
                                         <b>TOTAL appropriations
                                             <br/>
@@ -1639,62 +1639,62 @@
                                         (Reference amount)
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>Commitments</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>=4+ 6</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>Payments</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>=5+ 6</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
@@ -1707,9 +1707,9 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;width:89%;margin-left:0%">
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:center; background-color:#D3D3D3;">
+                                <td style="border:1px solid black;text-align:center; background-color:#D3D3D3;">
                                     <p>
                                         <b>Heading of multiannual financial
                                             <br/>
@@ -1717,12 +1717,12 @@
                                         </b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center; background-color:#D3D3D3;">
+                                <td style="border:1px solid black;text-align:center; background-color:#D3D3D3;">
                                     <p>
                                         <b>7</b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left">
+                                <td style="border:1px solid black;text-align:left;width:79%">
                                     <p>‘Administrative expenditure’</p>
                                 </td>
                             </tr>
@@ -1742,97 +1742,140 @@
                             Commission section of the general budget of the European Union), which is uploaded to DECIDE
                             for interservice consultation purposes.
                         </p>
+                        <p style="text-align: right;padding-right: 12%;">
+                            EUR million (to three decimal places)
+                        </p>
                         <!-- / Guidance -->
                         <!-- rotated table -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;margin-left:0%;">
+                            <tr>
+                                <td style="border:none;">
+                                    <p/>
+                                </td>
+                                <td style="border:none;">
+                                    <p/>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p>Year N
+                                        <authorialNote marker="11" placement="bottom">
+                                            <p>Year N is the year in which implementation of the proposal/initiative
+                                                starts. Please replace "N" by the expected first year of implementation
+                                                (for instance: 2021). The same for the following years.
+                                            </p>
+                                        </authorialNote>
+                                    </p>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p>Year N+1</p>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p>Year N+2</p>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p>Year N+3</p>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p/>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p>Enter as many years as necessary to show the duration of the impact (see point
+                                        1.6)
+                                    </p>
+                                </td>
+                                <td style="border:1px solid black;text-align:center;">
+                                    <p>
+                                        <b>TOTAL</b>
+                                    </p>
+                                </td>
+                            </tr>
                             <tr style="border:1px solid black;">
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>DG: &lt;…….&gt;</p>
                                 </td>
-                                <td colspan="8" style="padding:15px;border:none;">
+                                <td colspan="8" style=";border:none;">
                                     <p/>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="border:1px solid black;padding:15px;text-align:left;">
+                                <td colspan="2" style="border:1px solid black;text-align:left;">
                                     <p>• Human Resources</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="border:1px solid black;padding:15px;text-align:left;">
+                                <td colspan="2" style="border:1px solid black;text-align:left;">
                                     <p>• Other administrative expenditure</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>
                                         <b>TOTAL DG &lt;…….&gt;</b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left">
+                                <td style="border:1px solid black;text-align:left">
                                     <p>Appropriations</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
@@ -1843,9 +1886,9 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;margin-left:0%;">
                             <tr>
-                                <td style="border:1px solid black;padding:15px;text-align:center; background-color:#D3D3D3;">
+                                <td style="border:1px solid black;text-align:center; background-color:#D3D3D3;">
                                     <p>
                                         <b>TOTAL appropriations
                                             <br/>
@@ -1855,30 +1898,30 @@
                                         of the multiannual financial framework 
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:left;">
+                                <td style="border:1px solid black;text-align:left;">
                                     <p>(Total commitments = Total payments)</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
-                                    <p>[...]</p>
-                                    <p>></p>
-                                </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                     <p>></p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
+                                    <p>[...]</p>
+                                    <p>></p>
+                                </td>
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
@@ -1886,7 +1929,7 @@
                         <!-- end of rotated table -->
                     </content>
                 </subparagraph>
-                <subparagraph>
+                <subparagraph style="text-align: right;padding-right:4%;">
                     <content>
                         <p>EUR million (to three decimal places)</p>
                     </content>
@@ -1894,7 +1937,7 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
-                        <table style="border-collapse:collapse;">
+                        <table style="border-collapse:collapse;margin-bottom:25px;margin-left:0%">
                             <tr>
                                 <td style="border:none;">
                                     <p/>
@@ -1902,7 +1945,7 @@
                                 <td style="border:none;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year N
                                         <authorialNote marker="11" placement="bottom">
                                             <p>Year N is the year in which implementation of the proposal/initiative
@@ -1912,24 +1955,24 @@
                                         </authorialNote>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year N+1</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year N+2</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year N+3</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Enter as many years as necessary to show the duration of the impact (see point
                                         1.6)
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>
                                         <b>TOTAL</b>
                                     </p>
@@ -1937,7 +1980,7 @@
                             </tr>
                             <tr>
                                 <td rowspan="2" style="border:1px solid
-									black;padding:15px;text-align:center;">
+									black;text-align:center;">
                                     <p>
                                         <b>TOTAL appropriations
                                             <br/>
@@ -1948,35 +1991,35 @@
                                     </p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:left;">
+									black;text-align:left;">
                                     <p>Commitments</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
@@ -1984,35 +2027,35 @@
                             </tr>
                             <tr>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:left;">
+									black;text-align:left;">
                                     <p>Payments</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>[...]</p>
                                 </td>
                                 <td style="border:1px solid
-									black;padding:15px;text-align:right;">
+									black;text-align:right;">
                                     <p>
                                         <b>[...]</b>
                                     </p>
@@ -2026,7 +2069,7 @@
             <level class="landscape">
                 <num>3.2.2.</num>
                 <heading>Estimated impact on administrative appropriations</heading>
-                <subparagraph>
+                <subparagraph style="text-align: right;padding-right:4%;">
                     <content>
                         <p>Commitment appropriations in EUR million (to three decimal places)</p>
                     </content>
@@ -2034,9 +2077,9 @@
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- rotated table -->
-                        <table style="text-align:center;border-collapse:collapse;">
+                        <table style="text-align:center;border-collapse:collapse;margin-bottom:25px;">
                             <tr>
-                                <td rowspan="3" style="border:1px solid black;padding:15px">
+                                <td rowspan="3" style="border:1px solid black;">
                                     <p>
                                         <b>Indicate
                                             <br/>
@@ -2047,44 +2090,44 @@
                                     </p>
                                     <p>⇩</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px" colspan="2">
+                                <td style="border:1px solid black;" colspan="2">
                                     <p>Year N</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px" colspan="2">
+                                <td style="border:1px solid black;" colspan="2">
                                     <p>Year N+1</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px" colspan="2">
+                                <td style="border:1px solid black;" colspan="2">
                                     <p>Year N+2</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px" colspan="2">
+                                <td style="border:1px solid black;" colspan="2">
                                     <p>Year N+3</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px" colspan="2">
+                                <td style="border:1px solid black;" colspan="6">
                                     <p>Enter as many years as necessary to show the duration of the impact (see point
                                         1.6)
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px" colspan="2">
+                                <td style="border:1px solid black;" colspan="2">
                                     <p>
                                         <b>TOTAL</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px" colspan="16">
+                                <td style="border:1px solid black;" colspan="18">
                                     <p>
                                         <b>OUTPUTS</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>Type
                                         <authorialNote marker="12" placement="bottom">
                                             <p>   Outputs are products and services to be supplied (e.g.: number of
@@ -2093,68 +2136,68 @@
                                         </authorialNote>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>Average
                                         <br/>
                                         cost
                                     </p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;padding:15px">
+                                <td style="background-color:#D3D3D3;">
                                     <p>Cost</p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;padding:15px">
+                                <td style="background-color:#D3D3D3;">
                                     <p>Cost</p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;padding:15px">
+                                <td style="background-color:#D3D3D3;">
                                     <p>Cost</p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;padding:15px">
+                                <td style="background-color:#D3D3D3;">
                                     <p>Cost</p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;width:4%">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;padding:15px">
+                                <td style="background-color:#D3D3D3;width:4%">
                                     <p>Cost</p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;width:4%">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;padding:15px">
+                                <td style="background-color:#D3D3D3;width:4%">
                                     <p>Cost</p>
                                 </td>
                                 <td style="background-color:#D3D3D3;border:1px solid
-									black;border-right:dashed;padding:15px">
+									black;border-right:dashed;width:4%">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid black;padding:15px">
+                                <td style="background-color:#D3D3D3;border:1px solid black;width:4%">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid black;padding:15px">
+                                <td style="background-color:#D3D3D3;border:1px solid black;border-right:dashed">
                                     <p>Total
                                         <br/>
                                         No
                                     </p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid black;padding:15px">
+                                <td style="background-color:#D3D3D3;border:1px solid black;">
                                     <p>Total
                                         <br/>
                                         cost
@@ -2162,275 +2205,305 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px" colspan="3">
+                                <td style="border:1px solid black;" colspan="3">
                                     <p>SPECIFIC OBJECTIVE No 1: [...]
                                         <authorialNote marker="13" placement="bottom">
                                             <p>   As described in point 1.4.2. ‘Specific objective(s)…’</p>
                                         </authorialNote>
                                     </p>
                                 </td>
-                                <td colspan="14" style="border:1px solid black;border-right:none;padding:15px">
+                                <td colspan="16" style="border:1px solid black;border-right:none;">
                                     <p/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>- Output</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-right:dashed;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-right:dashed;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-right:dashed;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-right:dashed;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-right:dashed;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-right:dashed;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>- Output</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px" colspan="3">
+                                <td style="border:1px solid black;border-bottom:solid;" colspan="3">
                                     <p>Subtotal for specific objective No 1</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;border-bottom:solid;padding:15px">
+                                <td style="border:1px solid black;border-bottom:solid;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;border-bottom:solid;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;border-bottom:solid;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px" colspan="3">
+                                <td style="border:1px solid black;" colspan="3">
                                     <p>SPECIFIC OBJECTIVE No 2 ...</p>
                                 </td>
-                                <td colspan="16" style="border:1px solid black;border-right:none;padding:15px">
+                                <td colspan="16" style="border:1px solid black;border-right:none;">
                                     <p/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>- Output</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px" colspan="3">
+                                <td style="border:1px solid black;" colspan="3">
                                     <p>Subtotal for specific objective No 2</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
@@ -2440,46 +2513,52 @@
                                         <b>TOTAL COST</b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px">
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
+                                    <p>[...]</p>
+                                </td>
+                                <td style="border:1px solid black;">
                                     <p>[...]</p>
                                 </td>
                             </tr>
@@ -2507,11 +2586,16 @@
                         </content>
                     </indent>
                 </list>
+                <subparagraph style="text-align: right;padding-right:20%;">
+                    <content>
+                        <p>Commitment appropriations in EUR million (to three decimal places)</p>
+                    </content>
+                </subparagraph>
 
                 <subparagraph leos:editable="true">
                     <content>
                         <!-- nouveau tableaux de 2em partie 3.2.3 -->
-                        <table style="text-align:center;border-collapse:collapse;">
+                        <table style="text-align:center;border-collapse:collapse;margin-bottom:25px;margin-left:0%;">
                             <tr>
                                 <td style="border: solid windowtext 1.0pt; ">
                                     <p/>
@@ -2557,102 +2641,88 @@
                                     </p>
                                 </td>
                             </tr>
-                        </table>
-                        <!-- à vérifier et cleaner -->
-                        <table style="text-align:center;border-collapse:collapse;">
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;border-left: none;border-right:none;height: 41px;"
+                                    colspan="7">
+                                    <p></p>
+                                </td>
+                            </tr>
+                        <!-- à vérifier et cleaner -->
+                            <tr>
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>HEADING 7</b>
                                         <br/>
                                         <b>of the multiannual financial framework</b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Human resources</p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
                             <tr style="height: 29.25pt;">
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Other administrative expenditure</p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
                             <tr style="height: 29.25pt;">
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>Subtotal HEADING 7
                                             <br/>
@@ -2660,35 +2730,27 @@
                                         </b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none;">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none;">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none;">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none;">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none;">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none;">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt; ">
                                     <p> </p>
                                 </td>
                             </tr>
-                        </table>
-                        <table style="text-align:center;border-collapse:collapse;">
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>Outside HEADING 7
                                             <authorialNote marker="15" placement="bottom">
@@ -2705,94 +2767,76 @@
                                         <b> </b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Human resources</p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p>></p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
+                                <td style="border: solid windowtext 1.0pt;">
+                                    <p></p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Other expenditure
                                         <br/>
                                         of an administrative nature
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-top: none; background: #CCCCCC;">
+                                <td style="border: solid windowtext 1.0pt;background: #CCCCCC;">
                                     <p>
                                         <b>Subtotal
                                             <br/>
@@ -2802,61 +2846,50 @@
                                         </b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
                                 </td>
                             </tr>
-                        </table>
-                        <table style="text-align:center;border-collapse:collapse;">
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;border-left: none;border-right:none;height: 41px;"
+                                    colspan="7">
+                                    <p></p>
+                                </td>
+                            </tr>
+                            <tr style="border:solid">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>TOTAL</b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
@@ -2888,58 +2921,49 @@
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <table style="text-align:center;border-collapse:collapse;">
+                        <table style="text-align:center;border-collapse:collapse;margin-left:0%;">
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Year
                                         <br/>
                                         <b>N</b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Year
                                         <br/>
                                         <b>N+1</b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Year
                                         <b>N+2</b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p>Year
                                         <b>N+3
                                         </b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;" colspan="3">
                                     <p style="text-align: center;">Enter as many years as necessary to show the duration
                                         of the impact (see point 1.6)
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;text-align:left;" colspan="8">
                                     <p>
-                                        <b>* Establishment plan posts (officials and temporary staff)</b>
+                                        <b>• Establishment plan posts (officials and temporary staff)</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; " colspan="2">
+                                <td style="border: solid windowtext 1.0pt;text-align:left">
                                     <p>20 01 02 01 (Headquarters and Commission’s Representation Offices)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
@@ -2965,10 +2989,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; " colspan="2">
+                                <td style="border: solid windowtext 1.0pt;text-align:left">
                                     <p>20 01 02 03 (Delegations)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
@@ -2994,96 +3015,87 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;text-align:left">
                                     <p>01 01 01 01  (Indirect research)</p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
+                                <td style="border: solid windowtext 1.0pt; border-top:none;text-align:left">
                                     <p> 01 01 01 11 (Direct research)</p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
+                                <td style="border: solid windowtext 1.0pt; border-top: none;text-align:left">
                                     <p>Other budget lines (specify)</p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p> </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;text-align:left" colspan="8">
                                     <p>
-                                        <b>* External staff (in Full Time Equivalent unit: FTE)
+                                        <b>• External staff (in Full Time Equivalent unit: FTE)
                                             <authorialNote marker="16" placement="bottom">
                                                 <p>AC= Contract Staff; AL = Local Staff; END= Seconded National Expert;
                                                     INT = agency staff; JPD= Junior Professionals in Delegations
@@ -3095,9 +3107,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none;" colspan="2">
                                     <p>20 02 01 (AC, END, INT from the ‘global envelope’)</p>
                                 </td>
@@ -3119,25 +3128,16 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p/>
-                                </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
                                     <p>20 02 03 (AC, AL, END, INT and JPD in the delegations)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p>></p>
+                                    <p/>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p>></p>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p>></p>
+                                    <p/>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p/>
@@ -3153,9 +3153,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none; " rowspan="2">
                                     <p>
                                         <b>XX</b>
@@ -3176,32 +3173,26 @@
                                         <b> </b>
                                     </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p/>
-                                </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
+                                <td style="border: solid windowtext 1.0pt;">
                                     <p/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p>- in Delegations</p>
                                 </td>
@@ -3223,14 +3214,8 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p/>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p/>
-                                </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
                                     <p>01 01 01 02 (AC, END, INT - Indirect research)</p>
                                 </td>
@@ -3252,14 +3237,8 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
                                     <p> 01 01 01 12 (AC, END, INT - Direct research)</p>
                                 </td>
@@ -3281,14 +3260,8 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
                                     <p>Other budget lines (specify)</p>
                                 </td>
@@ -3310,22 +3283,11 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; ">
                                     <p> </p>
                                 </td>
-                                <td style="border: solid windowtext 1.0pt; border-left: none; ">
-                                    <p> </p>
-                                </td>
                             </tr>
                             <tr>
-                                <td style="border: none; padding: 0cm 0cm 0cm 0cm;">
-                                    <p> </p>
-                                </td>
                                 <td style="border: solid windowtext 1.0pt; border-top: none; " colspan="2">
                                     <p>
                                         <b>TOTAL</b>
-                                    </p>
-                                </td>
-                                <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; ">
-                                    <p>
-                                        <b> </b>
                                     </p>
                                 </td>
                                 <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; ">
@@ -3379,20 +3341,20 @@
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <table style="border-collapse:collapse; text-align:left;">
+                        <table style="border-collapse:collapse; text-align:left;margin-bottom:25px;margin-left:0%;">
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Officials and temporary staff</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;width:500px">
+                                <td style="border:1px solid black;width:500px">
                                     <p/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>External staff</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;width:500px">
+                                <td style="border:1px solid black;width:500px">
                                     <p/>
                                 </td>
                             </tr>
@@ -3490,12 +3452,12 @@
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <table style="border-collapse:collapse; text-align:left;">
+                        <table style="border-collapse:collapse;text-align:left;margin-bottom:25px;margin-left:0%;">
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year
                                         <b>N
                                             <authorialNote marker="18" placement="bottom">
@@ -3510,79 +3472,79 @@
 
 
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year
                                         <b>N+1</b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year
                                         <b>N+2</b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Year
                                         <b>N+3</b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;" colspan="2">
+                                <td style="border:1px solid black;text-align:center;" colspan="2">
                                     <p>Enter as many years as necessary to show the duration of the impact (see point
                                         1.6)
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:center;">
+                                <td style="border:1px solid black;text-align:center;">
                                     <p>Total</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Specify the co-financing body</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>TOTAL appropriations co-financed</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;;text-align:right;">
+                                <td style="border:1px solid black;text-align:right;">
                                     <p/>
                                 </td>
                             </tr>
@@ -3636,15 +3598,15 @@
                 </subparagraph>
                 <subparagraph leos:editable="true">
                     <content>
-                        <table style="border-collapse:collapse; text-align:center;vertical-align:middle;">
+                        <table style="border-collapse:collapse; text-align:center;vertical-align:middle;margin-left:0%;">
                             <tr>
-                                <td rowspan="2" style="border:1px solid black;padding:15px;">
+                                <td rowspan="2" style="border:1px solid black;">
                                     <p>Budget revenue line:</p>
                                 </td>
-                                <td rowspan="2" style="border:1px solid black;padding:15px;">
+                                <td rowspan="2" style="border:1px solid black;">
                                     <p>Appropriations available for the current financial year</p>
                                 </td>
-                                <td colspan="7" style="border:1px solid black;padding:15px;">
+                                <td colspan="7" style="border:1px solid black;">
                                     <p>Impact of the proposal/initiative
                                         <authorialNote marker="25" placement="bottom">
                                             <p>   As regards traditional own resources (customs duties, sugar levies),
@@ -3656,62 +3618,62 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Year
                                         <br/>
                                         N
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Year
                                         <br/>
                                         N+1
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Year
                                         <br/>
                                         N+2
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Year
                                         <br/>
                                         N+3
                                     </p>
                                 </td>
-                                <td colspan="3" style="border:1px solid black;padding:15px;">
+                                <td colspan="3" style="border:1px solid black;">
                                     <p>Enter as many years as necessary to show the duration of the impact (see point
                                         1.6)
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p>Article ………….</p>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
-                                <td style="border:1px solid black;padding:15px;">
+                                <td style="border:1px solid black;">
                                     <p/>
                                 </td>
                             </tr>

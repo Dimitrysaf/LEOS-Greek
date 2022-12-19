@@ -282,7 +282,7 @@
             </item>
         </item>
     </item>
-    <item type="CATEGORY" id="c2" enabled="true" key="SUPPORTING_DOCUMENTS">
+    <item type="CATEGORY" id="c2" hidden="true" enabled="true" key="SUPPORTING_DOCUMENTS">
         <names>
             <name lang="EN">Other supporting documents</name>
         </names>
