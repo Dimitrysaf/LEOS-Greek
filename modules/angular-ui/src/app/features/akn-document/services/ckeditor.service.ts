@@ -14,7 +14,6 @@ import {
 } from 'rxjs';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import { Annex } from '@/shared';
 
 // FIXME: mockdata
 const tocItemsList = [
