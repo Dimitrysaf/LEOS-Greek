@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DocumentService } from '@/features/akn-document/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
+import { CKEditorService } from '../../services/ckeditor.service';
+
 @Component({
   selector: 'app-annex-editor',
   templateUrl: './annex-editor.component.html',
@@ -28,6 +30,7 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
     public doc: DocumentService,
     private route: ActivatedRoute,
     private translate: TranslateService,
+    private cdkEditor: CKEditorService,
   ) {}
 
   ngOnInit(): void {
@@ -36,8 +39,8 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
     this.route.params.subscribe((params) => {
       this.id = params.id;
       this.doc.setDocumentId(params.id);
+      this.cdkEditor.setDocumentRef(params.id);
     });
-
     this.doc.documentXML$.subscribe((xml) => {
       this.loadDocument(xml);
     });

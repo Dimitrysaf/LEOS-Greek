@@ -1,8 +1,20 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import {BehaviorSubject, catchError, combineLatest, map, Observable, of, Subject, switchMap, takeUntil} from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import {HttpClient} from "@angular/common/http";
+import { Annex } from '@/shared';
 
 // FIXME: mockdata
 const tocItemsList = [
@@ -658,10 +670,11 @@ const params = {
   providedIn: 'root',
 })
 export class CKEditorService implements OnDestroy {
-  elementEditor$: Observable<any>;
-
+  private documentRefBS = new BehaviorSubject<string>(null);
   private xmlBS = new BehaviorSubject<string>('');
+  elementEditor$: Observable<any>;
   xml$ = this.xmlBS.asObservable();
+  documentRef$ = this.documentRefBS.asObservable();
 
   connector: any = {
     getParentId: () => 123,
@@ -731,20 +744,31 @@ export class CKEditorService implements OnDestroy {
         isClonedProposal,
       );
     },
-    saveElement:(elemData: {elementId: string, elementType: string, elementFragment: string, isSplit: boolean}) => {
-      const data = {...elemData, documentRef: 'annex_1'};
-      console.log('DATA => ', data);
-      this.saveAnnexElement(data.documentRef, data.elementId, data.elementType, data.elementFragment, data.isSplit)
-         .subscribe(response => {
-           console.log('SAVED')
-         })
-
-    }
+    saveElement: (elemData: {
+      elementId: string;
+      elementType: string;
+      elementFragment: string;
+      isSplit: boolean;
+    }) => {
+      const documentRef = this.documentRefBS.value;
+      this.saveAnnexElement(
+        documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        elemData.elementFragment,
+        elemData.isSplit,
+      ).subscribe((response) => {
+        this.xmlBS.next(response);
+      });
+    },
   };
 
   private destroy$ = new Subject<void>();
 
-  constructor(private leosLegacyService: LeosLegacyService, private http: HttpClient) {}
+  constructor(
+    private leosLegacyService: LeosLegacyService,
+    private http: HttpClient,
+  ) {}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -887,15 +911,25 @@ export class CKEditorService implements OnDestroy {
       );
   }
 
-
-  saveAnnexElement(documentRef: string, elementId: string, elementType: string, elementFragment: string, isSplit: boolean) {
-    return this.http.put(`api/secured/annex/${documentRef}/element/${elementType}/${elementId}/save-element`,
-      elementFragment);
+  saveAnnexElement(
+    documentRef: string,
+    elementId: string,
+    elementType: string,
+    elementFragment: string,
+    isSplit: boolean,
+  ) {
+    return this.http.put(
+      `api/secured/annex/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      elementFragment,
+      { responseType: 'text' },
+    );
   }
 
   setXml(xml: string) {
     this.xmlBS.next(xml);
   }
 
-
+  setDocumentRef(documentRef: string) {
+    this.documentRefBS.next(documentRef);
+  }
 }
