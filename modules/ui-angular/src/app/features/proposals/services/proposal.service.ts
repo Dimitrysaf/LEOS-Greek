@@ -1,0 +1,194 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Document } from '@leos/shared';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  pluck,
+  shareReplay,
+  tap,
+} from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
+import { appConfig } from '../../../../config';
+import {
+  CreateProposalBody,
+  CreateProposalResponse,
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  DEFAULT_SORT_ORDER,
+  GetTemplatesResponse,
+  ListProposalsWithFilterBody,
+  ListProposalsWithFilterBodyFilter,
+  ListProposalsWithFilterResponse,
+  ProposalFilter,
+} from '../models';
+
+const initialFilters: ProposalFilter = {
+  searchTerm: '',
+  procedures: [],
+  acts: [],
+  templates: [],
+  roles: [],
+};
+const defaultLanguage =
+  appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ProposalService {
+  private static extractParamFilters(formFilters: ProposalFilter) {
+    const reqFilters: ListProposalsWithFilterBodyFilter[] = [];
+
+    if (formFilters.procedures?.length) {
+      reqFilters.push({
+        type: 'procedureType',
+        value: [...formFilters.procedures].sort(),
+      });
+    }
+    if (formFilters.acts?.length) {
+      reqFilters.push({
+        type: 'docType',
+        value: [...formFilters.acts].sort(),
+      });
+    }
+    if (formFilters.templates?.length) {
+      reqFilters.push({
+        type: 'template',
+        value: [...formFilters.templates].sort(),
+      });
+    }
+    if (formFilters.roles?.length) {
+      reqFilters.push({
+        type: 'role',
+        value: [...formFilters.roles].sort(),
+      });
+    }
+    if (formFilters.searchTerm?.length) {
+      reqFilters.push({
+        type: 'title',
+        value: [formFilters.searchTerm],
+      });
+    }
+
+    return reqFilters;
+  }
+
+  private static eqFilters(f1: ProposalFilter, f2: ProposalFilter) {
+    const eqArray = (a: unknown[], b: unknown[]) =>
+      a.length === b.length && a.every((x) => b.includes(x));
+    const keys = Object.keys(f1);
+    if (!eqArray(keys, Object.keys(f2))) {
+      return false;
+    }
+
+    const propIsEqual = (k) => {
+      const v1 = f1[k];
+      const v2 = f2[k];
+      return Array.isArray(v1) ? eqArray(v1, v2) : Object.is(v1, v2);
+    };
+
+    return keys.every(propIsEqual);
+  }
+
+  filters$: Observable<ProposalFilter>;
+  sortOrder$: Observable<boolean>;
+  limit$: Observable<number>;
+  page$: Observable<number>;
+  loading$: Observable<boolean>;
+  proposals$: Observable<Document[]>;
+  totalResults$: Observable<number>;
+  templateCatalog$ = this.http
+    .get<GetTemplatesResponse>(`api/secured/getTemplates`)
+    .pipe(shareReplay(1));
+
+  private userLang = 'EN'; // FIXME: Get from UserService
+  private filtersBS = new BehaviorSubject<ProposalFilter>(initialFilters);
+  private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
+  private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
+  private pageBS = new BehaviorSubject<number>(DEFAULT_PAGE);
+  private loadingBS = new BehaviorSubject<boolean>(false);
+  private params$: Observable<ListProposalsWithFilterBody>;
+  private proposalResponse$: Observable<ListProposalsWithFilterResponse>;
+
+  constructor(private http: HttpClient) {
+    this.filters$ = this.filtersBS.pipe(
+      distinctUntilChanged(ProposalService.eqFilters),
+    );
+    this.sortOrder$ = this.sortOrderBS.pipe(distinctUntilChanged());
+    this.limit$ = this.limitBS.pipe(distinctUntilChanged());
+    this.page$ = this.pageBS.pipe(distinctUntilChanged());
+    this.loading$ = this.loadingBS.asObservable();
+
+    this.params$ = combineLatest([
+      this.filters$,
+      this.sortOrder$,
+      this.limit$,
+      this.page$,
+    ]).pipe(
+      map(([filters, sortOrder, limit, page]) => ({
+        startIndex: page * limit,
+        sortOrder,
+        limit,
+        filters: ProposalService.extractParamFilters(filters),
+      })),
+      distinctUntilChanged(
+        (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
+      ),
+    );
+
+    this.proposalResponse$ = this.params$.pipe(
+      debounceTime(10),
+      tap(() => this.loadingBS.next(true)),
+      switchMap((params) =>
+        this.http.post<ListProposalsWithFilterResponse>(
+          `api/secured/filterProposals`,
+          params,
+        ),
+      ),
+      tap(() => this.loadingBS.next(false)),
+      shareReplay(1),
+    );
+
+    this.totalResults$ = this.proposalResponse$.pipe(pluck('proposalCount'));
+    this.proposals$ = this.proposalResponse$.pipe(pluck('proposals'));
+  }
+
+  setSortOrder(order: boolean) {
+    this.sortOrderBS.next(order);
+  }
+
+  setPage(page: number) {
+    this.pageBS.next(page);
+  }
+
+  setLimit(limit: number) {
+    this.limitBS.next(limit);
+  }
+
+  setFilters(filters: Partial<ProposalFilter>) {
+    this.filtersBS.next({
+      ...this.filtersBS.value,
+      ...filters,
+    });
+  }
+
+  getTranslation(dict: Record<string, string>, langCode = this.userLang) {
+    const firstAvailableLang = Object.keys(dict)[0];
+    return (
+      dict[langCode] ?? dict[defaultLanguage] ?? dict[firstAvailableLang] ?? ''
+    );
+  }
+
+  createProposal(data: CreateProposalBody) {
+    return this.http.post<CreateProposalResponse>(
+      `api/secured/createPackage`,
+      data,
+    );
+  }
+}

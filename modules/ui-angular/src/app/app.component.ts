@@ -1,0 +1,31 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { getUserState, UserState } from '@eui/core';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+})
+export class AppComponent implements OnInit, OnDestroy {
+  userInfos: UserState;
+  // Observe state changes
+  userState: Observable<UserState>;
+  // an array to keep all subscriptions and easily unsubscribe
+  subs: Subscription[] = [];
+
+  constructor(private store: Store<any>) {
+    this.userState = this.store.select(getUserState);
+    this.subs.push(
+      this.userState.subscribe((user: UserState) => {
+        this.userInfos = { ...user };
+      }),
+    );
+  }
+
+  ngOnInit() {}
+
+  ngOnDestroy() {
+    this.subs.forEach((s: Subscription) => s.unsubscribe());
+  }
+}

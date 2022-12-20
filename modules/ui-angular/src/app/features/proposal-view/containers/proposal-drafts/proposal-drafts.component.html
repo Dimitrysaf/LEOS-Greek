@@ -1,0 +1,151 @@
+<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="coverpage">
+  <eui-card-header>
+    <eui-card-header-title>
+      <a [routerLink]="['/coverpage', coverpage.metadata.internalRef]"
+        ><strong>Cover page</strong></a
+      >
+    </eui-card-header-title>
+    <eui-card-header-subtitle
+      *ngIf="coverpage.updatedOn && coverpage.updatedBy"
+    >
+      <app-proposal-last-updated-on
+        [date]="coverpage.updatedOn"
+        [name]="coverpage.updatedBy"
+      ></app-proposal-last-updated-on>
+    </eui-card-header-subtitle>
+  </eui-card-header>
+</eui-card>
+
+<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
+  <eui-card-header>
+    <eui-card-header-title>
+      <a
+        [routerLink]="['/memorandum', memorandum.metadata.internalRef]"
+        (click)="$event.preventDefault()"
+        ><strong>Explanatory Memorandum</strong></a
+      >
+    </eui-card-header-title>
+    <eui-card-header-subtitle
+      *ngIf="memorandum.updatedOn && memorandum.updatedBy"
+    >
+      <app-proposal-last-updated-on
+        [date]="memorandum.updatedOn"
+        [name]="memorandum.updatedBy"
+      ></app-proposal-last-updated-on>
+    </eui-card-header-subtitle>
+  </eui-card-header>
+</eui-card>
+
+<eui-card
+  class="eui-u-mt-s eui-u-mb-l"
+  *ngIf="document"
+  #documentCard
+  euiCollapsible
+  euiCollapsed
+>
+  <eui-card-header>
+    <eui-card-header-title>
+      <a
+        [routerLink]="['/document', document.metadata.internalRef]"
+        (click)="$event.preventDefault()"
+        ><strong>Legal Act</strong></a
+      >
+    </eui-card-header-title>
+    <eui-card-header-subtitle *ngIf="document.updatedOn && document.updatedBy">
+      <app-proposal-last-updated-on
+        [date]="document.updatedOn"
+        [name]="document.updatedBy"
+      ></app-proposal-last-updated-on>
+    </eui-card-header-subtitle>
+  </eui-card-header>
+  <eui-card-content>
+    <ng-container *ngIf="!documentCard.euiCollapsed">
+      <div class="eui-u-flex">
+        <div class="flex-grow-1">
+          <div><strong>Annexes</strong></div>
+          <div *ngIf="annexes.length">
+            <strong>{{ annexes.length }}</strong> annexes found
+          </div>
+          <div *ngIf="!annexes.length">There is no annex to this document</div>
+        </div>
+        <button
+          class="eui-u-ml-l"
+          euiButton
+          euiPrimary
+          (click)="handleAnnexAdd()"
+        >
+          Add
+        </button>
+        <button
+          class="eui-u-ml-l"
+          euiButton
+          euiPrimary
+          euiOutline
+          (click)="handleAnnexReorder()"
+        >
+          Reorder
+        </button>
+      </div>
+
+      <table
+        class="eui-u-mt-m"
+        euiTable
+        euiTableResponsive
+        [rows]="annexes"
+        *ngIf="annexes.length"
+      >
+        <ng-template euiTemplate="header">
+          <tr>
+            <th>Annex title</th>
+            <th>Last Updated by</th>
+            <th>Last Updated on</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template let-row euiTemplate="body">
+          <tr>
+            <td>
+              <a
+                [routerLink]="['/annex', row.metadata.internalRef]"
+                (click)="$event.preventDefault()"
+                ><strong>{{ row.title }}</strong></a
+              >
+            </td>
+            <td>{{ row.updatedBy }}</td>
+            <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
+            <td>
+              <div class="eui-dropdown-button">
+                <eui-dropdown>
+                  <button
+                    euiButton
+                    euiRounded
+                    euiIconButton
+                    euiBasicButton
+                    euiSecondary
+                    euiTooltip="Annex actions"
+                    [attr.aria-label]="'Annex actions'"
+                  >
+                    <span
+                      euiIcon
+                      iconClass="eui-icon eui-icon-more-vertical"
+                    ></span>
+                  </button>
+                  <eui-dropdown-content>
+                    <ul euiList>
+                      <li euiListItem (click)="handleAnnexEditTitle(row)">
+                        <button euiListItem>Edit title</button>
+                      </li>
+                      <li euiListItem (click)="handleAnnexDelete(row)">
+                        <button euiListItem>Delete</button>
+                      </li>
+                    </ul>
+                  </eui-dropdown-content>
+                </eui-dropdown>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </table>
+    </ng-container>
+  </eui-card-content>
+</eui-card>

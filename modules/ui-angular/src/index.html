@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Application name</title>
+
+    <script>
+      var locationHref = window.location.href.split("/");
+      document.write("<base href='/" + locationHref[3] + "/" + locationHref[4] + "/'/>");
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script id="leos-config" type="application/json">
+      {
+        "instance": "%NG_APP_LEOS_INSTANCE%",
+        "env": "%NG_APP_LEOS_ENV%",
+        "roles": []
+      }
+    </script>
+  </head>
+
+  <body>
+    <app-root>
+      <div id="loader-wrapper">
+        <div id="loader"></div>
+      </div>
+    </app-root>
+  </body>
+</html>

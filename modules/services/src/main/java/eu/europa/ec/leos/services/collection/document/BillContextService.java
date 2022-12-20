@@ -80,6 +80,7 @@ public class BillContextService {
     private String purpose = null;
     private String moveDirection = null;
     private String annexId;
+    private String annexRef;
     private boolean cloneProposal;
     private boolean eeaRelevance;
 
@@ -164,6 +165,12 @@ public class BillContextService {
     public void useDocument(DocumentVO document) {
         Validate.notNull(document, "Bill document is required!");
         billDocument = document;
+    }
+
+    public void useAnnexwithRef(String annexRef) {
+        Validate.notNull(annexRef, "Bill 'annexRef' is required!");
+        LOG.trace("Using Bill ... [annexRef={}]", annexRef);
+        this.annexRef = annexRef;
     }
 
     public void useAnnexDocument(DocumentVO document) {

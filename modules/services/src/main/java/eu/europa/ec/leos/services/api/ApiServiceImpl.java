@@ -1,19 +1,38 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
+import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.cmis.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
+import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
+import eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper;
+import eu.europa.ec.leos.services.document.AnnexService;
+import eu.europa.ec.leos.services.document.BillService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
@@ -21,11 +40,17 @@ import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.milestone.MilestoneService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.store.ArchiveService;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import org.apache.commons.lang3.StringUtils;
+import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +60,16 @@ import javax.inject.Provider;
 import javax.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.locks.StampedLock;
 
 @Service
 public class ApiServiceImpl implements ApiService {
@@ -48,16 +82,41 @@ public class ApiServiceImpl implements ApiService {
     private final SecurityContext securityContext;
     private final LeosPermissionAuthorityMap authorityMap;
     private final ProposalService proposalService;
-
+    private final PackageService packageService;
     private final ExportService exportService;
     private final Provider<CollectionContextService> collectionContextProvider;
     private final MessageHelper messageHelper;
+    private final Provider<BillContextService> billContextProvider;
+    private final BillService billService;
+    private final DocumentContentService documentContentService;
+    private final XmlContentProcessor xmlContentProcessor;
+    private final ArchiveService archiveService;
+    private final AnnexService annexService;
+    private final MilestoneService milestoneService;
+    private final CloneContext cloneContext;
+    private CloneProposalMetadataVO cloneProposalMetadataVO;
+
 
     @Autowired
-    public ApiServiceImpl(TemplateService templateService, WorkspaceService workspaceService, UserService userService,
-                          CreateCollectionService createCollectionService, ProposalService proposalService,
-                          SecurityContext securityContext, LeosPermissionAuthorityMap authorityMap, ExportService exportService,
-                          Provider<CollectionContextService> collectionContextProvider, MessageHelper messageHelper) {
+    public ApiServiceImpl(TemplateService templateService,
+                          WorkspaceService workspaceService,
+                          UserService userService,
+                          CreateCollectionService createCollectionService,
+                          ProposalService proposalService,
+                          SecurityContext securityContext,
+                          LeosPermissionAuthorityMap authorityMap,
+                          ExportService exportService,
+                          Provider<CollectionContextService> collectionContextProvider,
+                          DocumentContentService documentContentService,
+                          MessageHelper messageHelper,
+                          Provider<BillContextService> billContextProvider,
+                          PackageService packageService,
+                          BillService billService,
+                          XmlContentProcessor xmlContentProcessor,
+                          ArchiveService archiveService,
+                          AnnexService annexService,
+                          CloneContext cloneContext,
+                          MilestoneService milestoneService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -68,6 +127,15 @@ public class ApiServiceImpl implements ApiService {
         this.exportService = exportService;
         this.collectionContextProvider = collectionContextProvider;
         this.messageHelper = messageHelper;
+        this.packageService = packageService;
+        this.documentContentService = documentContentService;
+        this.billContextProvider = billContextProvider;
+        this.billService = billService;
+        this.xmlContentProcessor = xmlContentProcessor;
+        this.archiveService = archiveService;
+        this.annexService = annexService;
+        this.cloneContext = cloneContext;
+        this.milestoneService = milestoneService;
     }
 
     @Override
@@ -120,6 +188,25 @@ public class ApiServiceImpl implements ApiService {
             return new DocumentVO(context.executeUpdateProposal());
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
+            throw e;
+        }
+    }
+    private String getJobFileName(String proposalRef) {
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("Proposal_");
+        strBuilder.append(proposalRef);
+        strBuilder.append(".zip");
+        return strBuilder.toString();
+    }
+    @Override
+    public byte[] downloadProposal(String proposalRef) throws Exception {
+        String jobFileName = getJobFileName(proposalRef);
+        File packageFile;
+        try {
+            packageFile = exportService.createCollectionPackage(jobFileName, proposalRef, new ExportLW(ExportOptions.Output.WORD));
+            return FileUtils.readFileToByteArray(packageFile);
+        }catch( Exception e){
+            LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
             throw e;
         }
     }
@@ -180,4 +267,428 @@ public class ApiServiceImpl implements ApiService {
         }
         return null;
     }
+
+    @Override
+    public Optional<DocumentVO> getProposalDetails(String proposalRef) {
+        LOG.trace(proposalRef);
+        Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDate).reversed());
+        Proposal proposal = null;
+        byte[] proposalXmlContent = new byte[0];
+        boolean isClonedProposal = false;
+        Set<String> docVersionSeriesIds = new HashSet<>();
+        String proposalVersionSeriesId = null;
+        CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
+        if(proposalRef != null) {
+            proposal = this.proposalService.findProposalByRef(proposalRef);
+            LOG.trace(proposal.toString());
+        }
+        if(proposal !=null) {
+            String proposalId = proposal.getId();
+            proposalXmlContent = proposal.getContent().exists(c -> c.getSource() !=null)
+                    ? proposal.getContent().get().getSource().getBytes()
+                    : new byte[0];
+            isClonedProposal = proposal.isClonedProposal();
+            if(isClonedProposal) {
+                cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
+                cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+            }
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+            List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+            List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+            legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+            DocumentVO proposalVO =   this.createViewObject(documents,proposalXmlContent,proposalVersionSeriesId,docVersionSeriesIds);
+            proposalVO.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+            StampedLock milestonesVOsLock = new StampedLock();
+            long stamp = milestonesVOsLock.writeLock();
+            try {
+                milestonesVOs.clear();
+                legDocuments.forEach(document -> milestonesVOs.add(getMilestonesVO(document,proposalId,proposalRef)));
+            } finally {
+                milestonesVOsLock.unlockWrite(stamp);
+            }
+            return  Optional.of(proposalVO);
+        }
+        //TODO : handle case no proposal
+        return Optional.of(null);
+    }
+    //TODO : probably this code should be moved somewhere else
+    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent,String proposalVersionSeriesId,Set<String> docVersionSeriesIds) {
+        DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
+        List<DocumentVO> annexVOList = new ArrayList<>();
+        docVersionSeriesIds = new HashSet<>();
+        //We have the latest version of the document, no need to search for them again
+        for (XmlDocument document : documents) {
+            switch (document.getCategory()) {
+                case PROPOSAL: {
+                    Proposal proposal = (Proposal) document;
+                    MetadataVO metadataVO = createMetadataVO(proposal);
+                    proposalVO.setMetaData(metadataVO);
+                    proposalVO.addCollaborators(proposal.getCollaborators());
+                    proposalVersionSeriesId = proposal.getVersionSeriesId();
+                    proposalVO.setUpdatedBy(proposal.getLastModifiedBy());
+                    proposalVO.setUpdatedOn(Date.from(proposal.getLastModificationInstant()));
+                    proposalVO.setLanguage(metadataVO.getLanguage());
+                    proposalVO.setSource(proposalXmlContent);
+                    if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
+                        proposalVO.addChildDocument(getCoverPageVO(proposalVO,proposal.getOriginRef()));
+                    }
+                    break;
+                }
+                case COUNCIL_EXPLANATORY: {
+                    Explanatory explanatory = (Explanatory) document;
+                    DocumentVO explanatoryVO = getExplanatroyVO(explanatory);
+                    explanatoryVO.addCollaborators(explanatory.getCollaborators());
+                    explanatoryVO.getMetadata().setInternalRef(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getRef());
+                    explanatoryVO.setVersionSeriesId(explanatory.getVersionSeriesId());
+                    explanatoryVO.setTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getTemplate());
+                    proposalVO.addChildDocument(explanatoryVO);
+                    docVersionSeriesIds.add(explanatory.getVersionSeriesId());
+                    break;
+                }
+                case MEMORANDUM: {
+                    Memorandum memorandum = (Memorandum) document;
+                    DocumentVO memorandumVO = getMemorandumVO(memorandum);
+                    proposalVO.addChildDocument(memorandumVO);
+                    memorandumVO.addCollaborators(memorandum.getCollaborators());
+                    memorandumVO.getMetadata().setInternalRef(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is not available!").getRef());
+                    memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
+                    docVersionSeriesIds.add(memorandum.getVersionSeriesId());
+                    break;
+                }
+                case BILL: {
+                    Bill bill = (Bill) document;
+                    DocumentVO billVO = getLegalTextVO(bill);
+                    proposalVO.addChildDocument(billVO);
+                    billVO.addCollaborators(bill.getCollaborators());
+                    billVO.getMetadata().setInternalRef(bill.getMetadata().getOrError(() -> "Legal text metadata is not available!").getRef());
+                    billVO.setVersionSeriesId(bill.getVersionSeriesId());
+                    docVersionSeriesIds.add(bill.getVersionSeriesId());
+                    break;
+                }
+                case ANNEX: {
+                    Annex annex = (Annex) document;
+                    DocumentVO annexVO = createAnnexVO(annex);
+                    annexVO.addCollaborators(annex.getCollaborators());
+                    annexVO.getMetadata().setInternalRef(annex.getMetadata().getOrError(() -> "Annex metadata is not available!").getRef());
+                    annexVOList.add(annexVO);
+                    annexVO.setVersionSeriesId(annex.getVersionSeriesId());
+                    docVersionSeriesIds.add(annex.getVersionSeriesId());
+                    break;
+                }
+                default:
+                    LOG.debug("Do nothing for rest of the categories like MEDIA, CONFIG & LEG");
+                    break;
+            }
+        }
+
+        annexVOList.sort(Comparator.comparingInt(DocumentVO::getDocNumber));
+        DocumentVO legalText = proposalVO.getChildDocument(LeosCategory.BILL);
+        if (legalText != null) {
+            for (DocumentVO annexVO : annexVOList) {
+                legalText.addChildDocument(annexVO);
+            }
+        }
+
+        return proposalVO;
+    }
+
+    // FIXME refine
+    private DocumentVO getExplanatroyVO(Explanatory explanatory) {
+        DocumentVO explanatoryVO = new DocumentVO(explanatory.getId(),
+                explanatory.getMetadata().exists(e -> e.getLanguage() != null) ? explanatory.getMetadata().get().getLanguage() : "EN",
+                LeosCategory.COUNCIL_EXPLANATORY,
+                explanatory.getLastModifiedBy(),
+                Date.from(explanatory.getLastModificationInstant()));
+
+        if (explanatory.getMetadata().isDefined()) {
+            ExplanatoryMetadata metadata = explanatory.getMetadata().get();
+            explanatoryVO.setTitle(metadata.getTitle());
+        }
+
+        return explanatoryVO;
+    }
+
+    // FIXME refine
+    private DocumentVO getMemorandumVO(Memorandum memorandum) {
+        return new DocumentVO(memorandum.getId(),
+                memorandum.getMetadata().exists(m -> m.getLanguage() != null) ? memorandum.getMetadata().get().getLanguage() : "EN",
+                LeosCategory.MEMORANDUM,
+                memorandum.getLastModifiedBy(),
+                Date.from(memorandum.getLastModificationInstant()));
+    }
+
+    // FIXME refine
+    private DocumentVO getLegalTextVO(Bill bill) {
+        return new DocumentVO(bill.getId(),
+                bill.getMetadata().exists(m -> m.getLanguage() != null) ? bill.getMetadata().get().getLanguage() : "EN",
+                LeosCategory.BILL,
+                bill.getLastModifiedBy(),
+                Date.from(bill.getLastModificationInstant()));
+    }
+
+    // FIXME refine
+    private DocumentVO createAnnexVO(Annex annex) {
+        DocumentVO annexVO =
+                new DocumentVO(annex.getId(),
+                        annex.getMetadata().exists(m -> m.getLanguage() != null) ? annex.getMetadata().get().getLanguage() : "EN",
+                        LeosCategory.ANNEX,
+                        annex.getLastModifiedBy(),
+                        Date.from(annex.getLastModificationInstant()));
+
+        if (annex.getMetadata().isDefined()) {
+            AnnexMetadata metadata = annex.getMetadata().get();
+            annexVO.setDocNumber(metadata.getIndex());
+            annexVO.setTitle(metadata.getTitle());
+            annexVO.getMetadata().setNumber(metadata.getNumber());
+        }
+
+        return annexVO;
+    }
+
+    // FIXME refine
+    private DocumentVO getCoverPageVO(DocumentVO proposalVO,String  proposalRef) {
+        DocumentVO coverPageVO = new DocumentVO(proposalVO.getId(),
+                proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
+                LeosCategory.COVERPAGE,
+                proposalVO.getUpdatedBy(),
+                proposalVO.getUpdatedOn());
+        coverPageVO.getMetadata().setInternalRef(proposalRef);
+        coverPageVO.setSource(documentContentService.getCoverPageContent(proposalVO.getSource()));
+        return coverPageVO;
+    }
+
+    private MetadataVO createMetadataVO(Proposal proposal) {
+        ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
+        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance());
+    }
+
+    private LegDocument getLegDocument(String legFileName, LeosPackage leosPackage) {
+        return packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+    }
+
+    private List<Annex> getAnnexes(LeosPackage leosPackage) {
+        return packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+    }
+
+    @Override
+    public String createProposalAnnex(String proposalRef, DocumentVO annex) throws IOException {
+        LOG.trace("Creating annex...");
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        if (proposal != null) {
+            String proposalId = proposal.getId();
+
+            try {
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+                Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+                BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
+                BillContextService billContext = billContextProvider.get();
+                billContext.usePackage(leosPackage);
+                billContext.useTemplate(bill);
+                billContext.usePurpose(metadata.getPurpose());
+                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+                billContext.useActionMessage(ContextActionService.ANNEX_ADDED, messageHelper.getMessage("collection.block.annex.added"));
+                billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+
+                CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
+                String annexTemplate = templateItem.getItems().get(0).getId();
+                billContext.useAnnexTemplate(annexTemplate);
+                billContext.executeCreateBillAnnex();
+                return "New Bill Annex created successfully";
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while creating new annex", e);
+                throw e;
+            }
+        }
+        return proposalRef;
+    }
+
+    private boolean identifyContributionChanges(String clonedProposalRef, String clonedLegFileName, String proposalId) {
+        Validate.notNull(clonedProposalRef, "Cloned proposal ref should not be null");
+        Validate.notNull(clonedLegFileName, "Cloned leg file name should not be null");
+        Proposal proposal = proposalService.getProposalByRef(clonedProposalRef);
+        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LegDocument clonedLegDocument = getLegDocument(clonedLegFileName, clonedLeosPackage);
+        LeosPackage originalLeosPackage = packageService.findPackageByDocumentId(proposalId);
+        String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
+        LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
+        boolean contributionChanged = false;
+        if (clonedLegDocument != null && originalLegDocument != null) {
+            File legFileTemp = null, originalLegFileTemp = null;
+            try {
+                legFileTemp = File.createTempFile("milestone", ".leg");
+                Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, clonedLegDocument);
+                Map<String, Object> annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, clonedLegDocument, getAnnexes(originalLeosPackage),
+                        xmlContentProcessor);
+                if (annexAddedMap != null && annexAddedMap.size() > 0) {
+                    contributionChanged = true;
+                } else {
+                    originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
+                    Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
+                    Map<String, Object> annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(originalDocumentFiles,
+                            contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
+                    if (annexDeletedMap != null && annexDeletedMap.size() > 0) {
+                        contributionChanged = true;
+                    }
+                }
+            } catch (IOException e) {
+                LOG.error("Exception occurred while deleting the file from file system" + e);
+            } finally {
+                try {
+                    MilestoneHelper.deleteTempFilesIfExists(legFileTemp);
+                } catch (IOException e) {
+                    LOG.error("Exception occurred while deleting the file from file system" + e);
+                }
+            }
+        }
+        return contributionChanged;
+    }
+
+    @Override
+    public List<MilestonesVO> getProposalMilestones(String proposalRef){
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        if (proposal != null) {
+            String proposalId = proposal.getId();
+            try {
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+                List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+                legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+
+                List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocuments.get(0).getName());
+                List<MilestonesVO> milestones = new ArrayList();
+                legDocuments.forEach(legDocument -> {
+                    MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
+                            Date.from(legDocument.getCreationInstant()),
+                            Date.from(legDocument.getLastModificationInstant()),
+                            messageHelper.getMessage("milestones.column.status.value." + legDocument.getStatus().name()),
+                            legDocument.getName(), proposalRef);
+
+                    if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
+                        List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
+                        cloneProposalMetadataVOs.forEach(cpmVo -> {
+                            List<String> titles = new ArrayList<>();
+                            titles.add(messageHelper.getMessage("clone.proposal.contribution.sent").concat(" ").
+                                    concat(userService.getUser(cpmVo.getTargetUser()).getName()));
+                                    MilestonesVO milestoneVO = new MilestonesVO(titles, cpmVo.getCreationDate(),
+                                    null, cpmVo.getRevisionStatus(),
+                                    cpmVo.getLegFileName(), cpmVo.getCloneProposalRef());
+                            milestoneVO.setClone(true);
+                            if (cpmVo.getRevisionStatus().equalsIgnoreCase(
+                                    messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
+                                    identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName(), proposalId)) {
+                                milestoneVO.setContributionChanged(true);
+                            }
+                            clonedMilestonesVOS.add(milestoneVO);
+                        });
+                        milestonesVO.setClonedMilestones(clonedMilestonesVOS);
+                    }
+                    milestones.add(milestonesVO);
+                });
+                return milestones;
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while getting proposal milestones ", e);
+                throw e;
+            }
+        }
+        return null;
+    }
+    private MilestonesVO getMilestonesVO(LegDocument legDocument,String proposalId,String proposalRef) {
+        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
+        MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
+                Date.from(legDocument.getCreationInstant()),
+                Date.from(legDocument.getLastModificationInstant()),
+                legDocument.getStatus().name(),
+                legDocument.getName(), proposalRef);
+
+        if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
+            List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
+            cloneProposalMetadataVOs.forEach(cpmVo -> {
+                List<String> titles = new ArrayList<>();
+                titles.add(messageHelper.getMessage("clone.proposal.contribution.sent").concat(" ").
+                        concat(userService.getUser(cpmVo.getTargetUser()).getName()));
+                MilestonesVO milestoneVO = new MilestonesVO(titles, cpmVo.getCreationDate(),
+                        null, cpmVo.getRevisionStatus(),
+                        cpmVo.getLegFileName(), cpmVo.getCloneProposalRef());
+                milestoneVO.setClone(true);
+                if(cpmVo.getRevisionStatus().equalsIgnoreCase(
+                        messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
+                        identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName(),proposalId)) {
+                    milestoneVO.setContributionChanged(true);
+                }
+                clonedMilestonesVOS.add(milestoneVO);
+            });
+            milestonesVO.setClonedMilestones(clonedMilestonesVOS);
+        }
+        return milestonesVO;
+    }
+
+    @Override
+    public void deleteAnnex(String proposalRef, String annexRef) {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        DocumentVO annex = createAnnexVO(annexService.findAnnexByRef(annexRef));
+        
+        if (proposal != null) {
+            String proposalId = proposal.getId();
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+            BillContextService billContext = billContextProvider.get();
+            billContext.useAnnexwithRef(annexRef);
+            billContext.usePackage(leosPackage);
+            billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+            billContext.useActionMessage(ContextActionService.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
+            archiveService.archiveDocument(annex, Annex.class, leosPackage.getPath());
+            billContext.executeRemoveBillAnnex();
+        }
+    }
+
+    @Override
+    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection){
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        if (proposal != null) {
+            String proposalId = proposal.getId();
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+            BillContextService billContext = billContextProvider.get();
+            billContext.usePackage(leosPackage);
+            billContext.useMoveDirection(moveDirection);
+            billContext.useAnnexwithRef(annexRef);
+            billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+            billContext.executeMoveAnnex();
+        }
+    }
+
+    private void createMajorVersions(String proposalRef, String milestoneComment, String versionComment, CollectionContextService context) {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        context.useProposal(proposal);
+        context.useMilestoneComment(milestoneComment);
+        context.useVersionComment(versionComment);
+        context.executeCreateMilestone();
+    }
+
+    @Override
+    public LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception {
+        LOG.trace(("Creating new milestone..."));
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        if (proposal != null) {
+            String proposalId = proposal.getId();
+            byte[] proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
+                    proposal.getContent().get().getSource().getBytes() : new byte[0];
+            boolean isClonedProposal = proposal.isClonedProposal();
+            try {
+                CollectionContextService context = collectionContextProvider.get();
+                List<String> milestoneComments = proposal.getMilestoneComments();
+                String versionComment = messageHelper.getMessage("milestone.versionComment");
+                createMajorVersions(proposalRef, milestoneComments.get(0), versionComment, context);
+                if(isClonedProposal) {
+                    cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
+                    cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+                }
+                LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComments.get(0));
+                LOG.trace("Milestone creation successfully requested leg");
+                return newLegDocument;
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while creating new milestone ", e);
+                throw e;
+            }
+        }
+        return null;
+    }
+
 }

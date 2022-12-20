@@ -1,0 +1,63 @@
+<div class="eui-u-flex-column">
+  <p>Select the document type, language and name</p>
+
+  <div class="eui-u-flex eui-u-mt-m">
+    <div class="flex-grow-1 eui-u-mr-l">
+      <div class="eui-input-group-addon">
+        <div class="eui-input-group-addon-item">
+          <span euiIcon iconClass="eui-icon-search"></span>
+        </div>
+        <input
+          euiInputText
+          euiClearable
+          [(ngModel)]="filterText"
+          (ngModelChange)="treeComponent.onFilter($event)"
+          placeholder="Search by document type"
+          aria-label="Search by document type"
+        />
+      </div>
+    </div>
+
+    <div class="eui-u-mr-l" style="width: 244px">
+      <select
+        euiSelect
+        name="language"
+        [(ngModel)]="selectedLanguage"
+        (ngModelChange)="onLanguageChanged($event)"
+        title="Document language"
+        aria-label="Document language"
+      >
+        <option *ngFor="let lang of languages" [value]="lang.code">
+          {{ lang.label }}
+        </option>
+      </select>
+    </div>
+
+    <button
+      euiButton
+      euiIconButton
+      [title]="isExpanded ? 'Collapse All' : 'Expand All'"
+      (click)="toggleExpanded()"
+      [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
+    >
+      <eui-icon-svg *ngIf="isExpanded" icon="contract"></eui-icon-svg>
+      <eui-icon-svg *ngIf="!isExpanded" icon="expand"></eui-icon-svg>
+    </button>
+  </div>
+
+  <div class="tree-wrapper eui-u-mt-l">
+    <ux-tree
+      #treeComponent
+      [nodes]="treeNodes"
+      isHideLines="true"
+      isClickTogglingNode="true"
+      isClickSelectingNode="true"
+      isShowActiveNode="true"
+      expandedIconClass="eui-icon eui-icon-angle-down eui-u-color-grey-100"
+      collapsedIconClass="eui-icon eui-icon-angle-right eui-u-color-grey-100"
+      [isExpanded]="isExpanded"
+      (nodeClick)="onNodeClick($event)"
+    >
+    </ux-tree>
+  </div>
+</div>

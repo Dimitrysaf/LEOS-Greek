@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    Copyright 2022 European Commission
+
+    Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+    You may not use this work except in compliance with the Licence.
+    You may obtain a copy of the Licence at:
+
+        https://joinup.ec.europa.eu/software/page/eupl
+
+    Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the Licence for the specific language governing permissions and limitations under the Licence.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>eu.europa.ec.leos.pilot</groupId>
+    <artifactId>leos-modules</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>leos-ui-angular</artifactId>
+  <packaging>jar</packaging>
+
+  <name>UI Angular</name>
+  <description>LEOS UI Angular Module</description>
+
+  <properties>
+    <yarn.version>v1.22.19</yarn.version>
+    <nodejs.version>v16.17.0</nodejs.version>
+    <mvn.resource.plugin.version>3.0.2</mvn.resource.plugin.version>
+    <yarn.build.command>build-prod</yarn.build.command>
+    <skipTests>false</skipTests>
+    <!-- _CSDR=K1:V1,K2:V2
+       We initialize them with `:` (noop key-value pair) so that profiles can
+       set proper values such as `skipTest:true`.
+       See node_modules/@eui/tools/scripts/utils/build/app/build-app-utils.js
+    -->
+    <_CSDR.skipTest>:</_CSDR.skipTest>
+    <_CSDR.skipLint>:</_CSDR.skipLint>
+  </properties>
+
+  <build>
+    <plugins>
+      <!-- clean the dist directory used by Angular -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>dist</directory>
+            </fileset>
+            <fileset>
+              <directory>target</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.11.2</version>
+        <configuration>
+          <installDirectory>target</installDirectory>
+        </configuration>
+        <executions>
+          <!-- Install node and npm -->
+          <execution>
+            <id>install node and yarn</id>
+            <goals>
+              <goal>install-node-and-yarn</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <nodeVersion>${nodejs.version}</nodeVersion>
+              <yarnVersion>${yarn.version}</yarnVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn install</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <!-- code validation -->
+          <execution>
+            <id>yarn lint</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <arguments>lint</arguments>
+              <skip>${skipTests}</skip>
+            </configuration>
+          </execution>
+          <!-- build app -->
+          <execution>
+            <id>yarn build</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <environmentVariables>
+                <_CSDR_ARGS>${_CSDR.skipTest},${_CSDR.skipLint}</_CSDR_ARGS>
+                <NG_APP_LEOS_INSTANCE>${leos.build.instance}</NG_APP_LEOS_INSTANCE>
+                <NG_APP_LEOS_ENV>${leos.build.env}</NG_APP_LEOS_ENV>
+              </environmentVariables>
+              <arguments>${yarn.build.command}</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <resources>
+      <resource>
+        <directory>dist</directory>
+        <targetPath>ui-a</targetPath>
+      </resource>
+    </resources>
+  </build>
+
+  <profiles>
+
+    <!-- Skip linting and tests when `-DskipTests=true` -->
+    <profile>
+      <id>skipTests</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <skipTests>true</skipTests>
+        <_CSDR.skipTest>skipTest:true</_CSDR.skipTest>
+        <_CSDR.skipLint>skipLint:true</_CSDR.skipLint>
+      </properties>
+    </profile>
+
+    <!-- SET build env -->
+    <profile>
+      <id>env-default</id>
+      <activation>
+        <property>
+          <name>!env</name>
+        </property>
+      </activation>
+      <properties>
+        <leos.build.env>local</leos.build.env>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>env</id>
+      <activation>
+        <property>
+          <name>env</name>
+        </property>
+      </activation>
+      <properties>
+        <leos.build.env>${env}</leos.build.env>
+      </properties>
+    </profile>
+
+    <!-- SET build instance -->
+    <profile>
+      <id>instance-default</id>
+      <activation>
+        <property>
+          <name>!instance</name>
+        </property>
+      </activation>
+      <properties>
+        <leos.build.instance>os</leos.build.instance>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>instance</id>
+      <activation>
+        <property>
+          <name>instance</name>
+        </property>
+      </activation>
+      <properties>
+        <leos.build.instance>${instance}</leos.build.instance>
+      </properties>
+    </profile>
+
+  </profiles>
+
+</project>

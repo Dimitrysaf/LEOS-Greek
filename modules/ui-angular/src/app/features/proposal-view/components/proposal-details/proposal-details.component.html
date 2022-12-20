@@ -1,0 +1,52 @@
+<eui-fieldset
+  class="eui-u-display-block"
+  label="Details"
+  isExpandable
+  isExpanded="true"
+>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>Package Title</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.packageTitle }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 label-column"><label>Template</label></div>
+        <div class="col-sm-8">{{ proposal.metadata.template }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 label-column"><label>Language</label></div>
+        <div class="col-sm-8">{{ proposal.metadata.language }}</div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>Confidentiality Level</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.securityLevel }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>Internal Reference</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.internalRef }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <input
+            euiInputCheckBox
+            aria-label="EEA Relevance"
+            [checked]="proposal.metadata.eeaRelevance"
+          />
+          <label class="eui-u-p-none"
+            ><!--keep checkbox vertically aligned--></label
+          >
+        </div>
+        <div class="col-sm-8">EEA Relevance</div>
+      </div>
+    </div>
+  </div>
+</eui-fieldset>

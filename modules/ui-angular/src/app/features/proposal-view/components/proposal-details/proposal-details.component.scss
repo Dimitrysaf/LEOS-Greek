@@ -1,0 +1,10 @@
+.label-column label {
+  font-weight: bold;
+  padding-right: 0;
+}
+
+@media (min-width: 576px) {
+  .label-column {
+    text-align: end;
+  }
+}

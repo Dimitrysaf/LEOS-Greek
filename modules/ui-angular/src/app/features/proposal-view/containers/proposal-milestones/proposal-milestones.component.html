@@ -1,0 +1,128 @@
+<div class="eui-u-flex eui-u-flex-justify-content-end">
+  <button
+    euiButton
+    euiPrimary
+    (click)="openDialog()"
+    class="eui-u-mb-m eui-u-mt-2xs"
+  >
+    Add
+  </button>
+</div>
+<eui-dialog
+  #milestonesDialog
+  [title]="'Add Milestones'"
+  (clickOutside)="onClickOutside()"
+>
+  <form [formGroup]="form" class="eui-u-ml-4xl">
+    <div
+      class="eui-u-flex eui-u-mb-m eui-u-flex-justify-content-between eui-u-flex-align-items-start"
+    >
+      <label
+        for="milestone_type"
+        class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
+        >Milestone Type</label
+      >
+      <select
+        euiSelect
+        name="milestone_type"
+        aria-label="Milestone type"
+        formControlName="milestonesType"
+        class="milestones-select"
+      >
+        <option
+          value="{{ 'page.collection.milestones.type.1' | translate }}"
+          selected
+        >
+          {{ 'page.collection.milestones.type.1' | translate }}
+        </option>
+        <option value="{{ 'page.collection.milestones.type.2' | translate }}">
+          {{ 'page.collection.milestones.type.2' | translate }}
+        </option>
+        <option value="{{ 'page.collection.milestones.type.3' | translate }}">
+          {{ 'page.collection.milestones.type.3' | translate }}
+        </option>
+        <option value="other">
+          {{ 'page.collection.milestones.type.4' | translate }}
+        </option>
+      </select>
+    </div>
+    <div
+      class="eui-u-flex milestones-required eui-u-flex-justify-content-between eui-u-flex-align-items-start"
+    >
+      <!-- attr.data-required="{{!disabled}}" -->
+      <input
+        euiInputText
+        name="milestone_title"
+        class="milestones-title"
+        placeholder="Please type milestone title here"
+        formControlName="milestonesTitle"
+      />
+      <label
+        for="milestone_title"
+        class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
+        >Title</label
+      >
+    </div>
+  </form>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end">
+      <button
+        type="button"
+        class="eui-u-mr-xs"
+        euiButton
+        euiSecondary
+        (click)="onDismiss()"
+      >
+        Cancel
+      </button>
+      <button type="button" euiButton euiPrimary (click)="onAccept()">
+        Create Milestone
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>
+<table euiTable euiTableResponsive [rows]="dataSource">
+  <ng-template euiTemplate="header">
+    <tr>
+      <th>{{ 'page.collection.milestones.table.title' | translate }}</th>
+      <th>{{ 'page.collection.milestones.table.date' | translate }}</th>
+      <th>{{ 'page.collection.milestones.table.status' | translate }}</th>
+      <th>{{ 'page.collection.milestones.table.actions' | translate }}</th>
+    </tr>
+  </ng-template>
+  <ng-template let-row euiTemplate="body">
+    <tr>
+      <td data-col-label="Title">{{ row.title }}</td>
+      <td data-col-label="Date">{{ row.date }}</td>
+      <td data-col-label="Status" [class]="findStatusColor(row.status)">
+        {{ row.status }}
+      </td>
+      <td>
+        <eui-dropdown>
+          <button euiButton euiBasicButton="true">
+            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+          </button>
+          <eui-dropdown-content>
+            <!-- This can be a dynamic injected component -->
+            <ul euiList>
+              <li euiListItem *ngFor="let item of listItems; let i = index">
+                <button
+                  euiListItem
+                  class="{{ i === 2 ? 'eui-u-color-danger-100' : '' }}"
+                  (click)="i === 2 ? deleteMilestone(row.id) : false"
+                >
+                  {{ item.label }}
+                </button>
+              </li>
+            </ul>
+          </eui-dropdown-content>
+        </eui-dropdown>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template euiTemplate="emptyMessage">
+    <tr>
+      <td class="eui-u-text-center" colspan="5">No data</td>
+    </tr>
+  </ng-template>
+</table>

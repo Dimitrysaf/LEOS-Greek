@@ -1,0 +1,62 @@
+<div class="proposals-container">
+  <eui-breadcrumb>
+    <eui-breadcrumb-item link="/" label="Home"></eui-breadcrumb-item>
+    <eui-breadcrumb-item label="Repository Browser"></eui-breadcrumb-item>
+  </eui-breadcrumb>
+
+  <div class="row eui-u-m-none">
+    <app-proposals-filters
+      class="col-md-3 eui-u-p-none"
+    ></app-proposals-filters>
+    <div class="col-md-9 eui-u-ph-m eui-u-pb-2xl">
+      <div
+        class="upload-create-buttons eui-u-flex eui-u-flex-justify-content-end eui-u-flex-align-items-center"
+      >
+        <button
+          class="eui-u-mr-s upload-btn"
+          euiButton
+          [euiTooltip]="'page.workspace.upload.button.tooltip' | translate"
+        >
+          {{ 'page.workspace.upload.button.text' | translate }}
+        </button>
+        <app-proposal-create-wizard></app-proposal-create-wizard>
+      </div>
+      <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
+        <div
+          class="total-results-sort eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l"
+        >
+          <div class="totalResults">
+            <h4 class="eui-u-font-bold">
+              {{ 'page.workspace.results.title' | translate }}
+            </h4>
+            <div>{{ totalResults$ | async }} proposals found</div>
+          </div>
+          <div class="sort-btn">
+            <button euiButton (click)="toggleSortOrder()">
+              <span euiLabel>Sort by</span>
+              <span
+                euiIcon
+                iconClass="eui-icon"
+                [ngClass]="[
+                  sortOrder ? 'eui-icon-arrow-down' : 'eui-icon-arrow-up'
+                ]"
+              ></span>
+            </button>
+          </div>
+        </div>
+        <app-proposals-list
+          *ngIf="proposals$ | async"
+          [proposals]="proposals$ | async"
+        ></app-proposals-list>
+        <eui-paginator
+          #paginatorComponent
+          class="eui-u-pv-2xs"
+          [pageSizeOptions]="[1, 2, 40]"
+          [pageSize]="limit$ | async"
+          [length]="totalResults$ | async"
+          (pageChange)="handlePagerChange($event)"
+        ></eui-paginator>
+      </div>
+    </div>
+  </div>
+</div>
