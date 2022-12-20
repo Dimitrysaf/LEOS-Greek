@@ -10,10 +10,11 @@ import {
   Subject,
   switchMap,
   take,
-  takeUntil,
+  takeUntil, tap,
 } from 'rxjs';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
+import {DocumentService} from "@/features/akn-document/services/document.service";
 
 // FIXME: mockdata
 const tocItemsList = [
@@ -757,9 +758,17 @@ export class CKEditorService implements OnDestroy {
         elemData.elementFragment,
         elemData.isSplit,
       ).subscribe((response) => {
-        this.xmlBS.next(response);
+        // this.documentService.setDocumentId(documentRef);
       });
     },
+    closeElement: () => {
+      console.log('CLOSE EDITOR')
+    },
+    releaseElement: () => {
+      console.log('RELEASE-element');
+      const documentRef = this.documentRefBS.value;
+      this.documentService.setDocumentId(documentRef);
+    }
   };
 
   private destroy$ = new Subject<void>();
@@ -767,6 +776,7 @@ export class CKEditorService implements OnDestroy {
   constructor(
     private leosLegacyService: LeosLegacyService,
     private http: HttpClient,
+    private documentService: DocumentService
   ) {}
 
   ngOnDestroy() {
@@ -921,7 +931,9 @@ export class CKEditorService implements OnDestroy {
       `api/secured/annex/${documentRef}/element/${elementType}/${elementId}/save-element`,
       elementFragment,
       { responseType: 'text' },
-    );
+    ).pipe(
+      tap(() => this.connector.closeElement())
+    )
   }
 
   setXml(xml: string) {
