@@ -271,8 +271,10 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         if (tocVo.getTocItem().getAknTag().value().equals(PARAGRAPH)) {
             if (tocVo.getParentItem().isNumberingToggled() != null) {
                 if (tocVo.getParentItem().isNumberingToggled()) {
-                    if (isNumberSoftDeleted(tocVo)) {// if a para is soft deleted and numbering is toggled
+                    if (isNumberSoftDeleted(tocVo)) {// if a para num is soft deleted and numbering is toggled
                         updateSoftActionOnNumElement(node, null, BACK_TO_NUM_FROM_SOFT_DELETED);
+                        // Remove soft delete action on number
+                        tocVo.setNumSoftActionAttr(null);
                     } else {
                         updateSoftActionOnNumElement(node, SoftActionType.ADD, TOGGLED_TO_NUM);
                     }
