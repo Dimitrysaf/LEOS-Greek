@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -554,6 +555,12 @@ public class IndentApplyRules {
                 }
                 item.setAffected(true);
                 item.setOriginNumAttr(CN);
+            }
+            if (!getTagValueFromTocItemVo(item).equals(XmlHelper.PARAGRAPH)
+                    && Arrays.asList(NUMBERED_ITEMS).contains(getTagValueFromTocItemVo(item))
+                    && item.getNumSoftActionAttr() != null
+                    && item.getNumSoftActionAttr().equals(SoftActionType.DELETE)) {
+                item.setNumSoftActionAttr(null);
             }
             item.setElementNumberId(item.getIndentOriginNumId());
         } else if (newDepth == item.getIndentOriginIndentLevel() && restored) {
