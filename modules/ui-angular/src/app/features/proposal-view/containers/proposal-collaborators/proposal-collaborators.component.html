@@ -1,0 +1,114 @@
+<div class="d-flex flex-column">
+  <div class="eui-u-flex eui-u-flex-row eui-u-width-20 align-self-end">
+    <div euiInputGroup class="eui-u-mr-s">
+      <div class="eui-input-group-addon">
+        <div class="eui-input-group-addon-item">
+          <eui-icon iconClass="eui-icon-search"></eui-icon>
+        </div>
+        <form [formGroup]="userInputForm">
+          <input
+            formControlName="searchTerm"
+            euiInputText
+            type="text"
+            [placeholder]="
+              'page.collection.collaborators.table.header.search-placeholder'
+                | translate
+            "
+          />
+        </form>
+      </div>
+    </div>
+    <app-proposal-collaborators-dialog></app-proposal-collaborators-dialog>
+  </div>
+  <table euiTable euiTableResponsive class="w-100" [rows]="dataSource">
+    <ng-template euiTemplate="header">
+      <tr>
+        <th>{{ 'page.collection.collaborators.table.td-name' | translate }}</th>
+        <th>{{ 'page.collection.collaborators.table.td-unit' | translate }}</th>
+        <th>{{ 'page.collection.collaborators.table.td-role' | translate }}</th>
+        <th>
+          {{ 'page.collection.collaborators.table.td-actions' | translate }}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template let-row euiTemplate="body">
+      <tr>
+        <td>{{ row.login }}</td>
+        <td>{{ row.entity }}</td>
+        <td>
+          <ng-container
+            *ngIf="isEditRole && editUserId === row.id; else tdRole"
+          >
+            <select
+              euiSelect
+              (change)="hanldeOnChange($event)"
+              [selectedIndex]="getRoleOfCallaborator()"
+            >
+              <option value="Author">
+                {{ 'page.collection.collaborators.role.author' | translate }}
+              </option>
+              <option value="Contributor">
+                {{
+                  'page.collection.collaborators.role.contributor' | translate
+                }}
+              </option>
+              <option value="Reviewer">
+                {{ 'page.collection.collaborators.role.reviewer' | translate }}
+              </option>
+            </select>
+          </ng-container>
+          <ng-template #tdRole>
+            <span>{{ row.role }}</span>
+          </ng-template>
+        </td>
+        <td>
+          <eui-dropdown>
+            <button
+              euiButton
+              euiRounded
+              euiIconButton
+              euiBasicButton
+              euiSecondary
+              euiTooltip="More options"
+              [attr.aria-label]="'More options'"
+            >
+              <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+            </button>
+            <eui-dropdown-content>
+              <div euiList>
+                <button
+                  euiListItem
+                  class="eui-u-p-s"
+                  (click)="editCollaborator(row.id)"
+                >
+                  {{
+                    'page.collection.collaborators.table.actions.edit-role'
+                      | translate
+                  }}
+                </button>
+                <button
+                  euiListItem
+                  class="eui-u-p-s"
+                  euiDanger
+                  (click)="deleteCollaborator(row.id)"
+                >
+                  {{
+                    'page.collection.collaborators.table.actions.delete'
+                      | translate
+                  }}
+                </button>
+              </div>
+            </eui-dropdown-content>
+          </eui-dropdown>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template euiTemplate="emptyMessage">
+      <tr>
+        <td class="eui-u-text-center" colspan="5">
+          {{ 'page.collection.collaborators.table.no-data' | translate }}
+        </td>
+      </tr>
+    </ng-template>
+  </table>
+</div>

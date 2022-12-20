@@ -1,0 +1,35 @@
+<eui-dropdown isDropDownRightAligned>
+  <button
+    euiButton
+    euiBasicButton
+    euiRounded
+    euiIconButton
+    euiSizeS
+    [title]="'page.editor.versions.actions-button.tootlip' | translate"
+    [attr.aria-label]="
+      'page.editor.versions.actions-button.tootlip' | translate
+    "
+    [disabled]="disabled"
+  >
+    <span euiIcon iconClass="eui-icon-more-vertical"></span>
+  </button>
+  <eui-dropdown-content>
+    <div euiList>
+      <button
+        euiListItem
+        translate="page.editor.versions.actions.view"
+        (click)="doc.versionView(version.versionNumber)"
+      ></button>
+      <button
+        euiListItem
+        translate="page.editor.versions.actions.revert"
+        (click)="doc.versionRevert(version.versionNumber)"
+      ></button>
+      <button
+        euiListItem
+        translate="page.editor.versions.actions.explore"
+        (click)="doc.versionExploreMilestone(version.versionNumber)"
+      ></button>
+    </div>
+  </eui-dropdown-content>
+</eui-dropdown>

@@ -1,0 +1,48 @@
+:host {
+  align-items: center;
+  column-gap: var(--eui-base-spacing-l);
+  display: grid;
+  grid-template-areas:
+    'search-label  search-input  search-controls'
+    'replace-label replace-input replace-controls';
+  grid-template-columns: min-content 500px auto;
+}
+
+:host(.isReplace) {
+  row-gap: var(--eui-base-spacing-m);
+}
+
+.search-label {
+  grid-area: search-label;
+}
+
+.search-input {
+  grid-area: search-input;
+}
+
+.search-controls {
+  grid-area: search-controls;
+}
+
+.replace-label {
+  grid-area: replace-label;
+}
+
+.replace-input {
+  grid-area: replace-input;
+}
+
+.replace-controls {
+  grid-area: replace-controls;
+}
+
+:host ::ng-deep .checkbox-input-group {
+  /* align checkbox controls */
+  label {
+    margin-bottom: unset;
+  }
+
+  input[type='checkbox'].eui-input-checkbox:not(.cdk-visually-hidden) + label {
+    padding-right: unset;
+  }
+}

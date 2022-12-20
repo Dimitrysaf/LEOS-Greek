@@ -1,0 +1,20 @@
+{
+  "/annotate": {
+    "target": "http://localhost:9099",
+    "secure": false
+  },
+  "/leos-js": {
+    "target": "http://localhost:8080/leos-pilot",
+    "pathRewrite": { "^/leos-js": "" },
+    "secure": false
+  },
+  "/legacy": {
+    "target": "http://localhost:8080/leos-pilot",
+    "pathRewrite": { "^/legacy": "" },
+    "secure": false
+  },
+  "/api": {
+    "target": "http://localhost:8080/leos-pilot",
+    "secure": false
+  }
+}

@@ -1,0 +1,35 @@
+:host ::ng-deep {
+  .ux-tree--hidelines li.ux-tree__node--expandable::before {
+    // fix hidelines for all nodes
+    display: none;
+  }
+
+  .eui-input-group-addon > :not(:first-child) .eui-input-text--clearable {
+    // fix eui-input-group-addon with euiClearable
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    margin-left: -1px;
+  }
+
+  /*
+   * Style the search icon like the mockups
+   */
+
+  .eui-input-group-addon .eui-input-text {
+    border-left: none;
+  }
+
+  .eui-input-group-addon-item {
+    background: none;
+  }
+
+  .eui-input-group-addon-item .eui-icon {
+    color: var(--eui-base-color-grey-35);
+  }
+
+  .ux-tree__node-label-wrapped:focus,
+  .ux-tree__node-label-wrapped:hover {
+    // Remove link styling from nodes
+    text-decoration: none;
+  }
+}

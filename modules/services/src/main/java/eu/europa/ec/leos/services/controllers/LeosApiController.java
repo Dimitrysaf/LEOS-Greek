@@ -21,9 +21,11 @@ import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.security.AuthClient;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
@@ -49,6 +51,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -74,13 +77,12 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 
 @RestController
+@RequestMapping
 public class LeosApiController {
-
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiController.class);
 
     private final LegService legService;
     private final WorkspaceService workspaceService;
-    private final ApiService apiService;
     private final TokenService tokenService;
     private final TransformationService transformationService;
     private final ContentComparatorService comparatorService;
@@ -89,6 +91,8 @@ public class LeosApiController {
     private final CreateCollectionService createCollectionService;
     private final Properties applicationProperties;
     private final ExportPackageService exportPackageService;
+    private final ApiService apiService;
+    private final SecurityContext securityContext;
 
     private final int SINGLE_COLUMN_MODE = 1;
     private final int TWO_COLUMN_MODE = 2;
@@ -101,7 +105,7 @@ public class LeosApiController {
                              TransformationService transformationService, ContentComparatorService comparatorService,
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
-                             ExportPackageService exportPackageService, ApiService apiService) {
+                             ExportPackageService exportPackageService, ApiService apiService, SecurityContext securityContext) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -113,6 +117,7 @@ public class LeosApiController {
         this.applicationProperties = applicationProperties;
         this.exportPackageService = exportPackageService;
         this.apiService = apiService;
+        this.securityContext = securityContext;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -379,4 +384,120 @@ public class LeosApiController {
                     exportPackageId, HttpStatus.NOT_FOUND);
         }
     }
+
+    @RequestMapping(value ="/secured/proposals/{proposalRef}", method =  RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public  ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
+        try {
+            Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef);
+            if (requestedProposal.isPresent()) {
+                return ResponseEntity.ok(requestedProposal.get());
+            } else {
+                return new ResponseEntity<>("No result found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            LOG.error("An error occured while getting the proposals details " + ex.getMessage());
+            return new ResponseEntity<>("Error while fetching proposal details", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> downloadProposal(@RequestParam("proposalRef") String proposalRef) {
+        try{
+            return new ResponseEntity<>(apiService.downloadProposal(proposalRef), HttpStatus.OK);
+        }catch(Exception e){
+            LOG.error("Unexpected error occurred while downloading proposal - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occured while downloading proposal", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> createProposalAnnex(@RequestParam("proposalRef") String proposalRef,
+                                                           @RequestBody DocumentVO annex) {
+        try {
+            return new ResponseEntity<>(apiService.createProposalAnnex(proposalRef, annex), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error while creating new bill annex - " + e.getMessage() );
+            return new ResponseEntity<>("Unexpected error occured while creating new bill annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping (value = "/secured/proposal/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getProposalMilestones(@RequestParam("proposalRef") String proposalRef) {
+        try {
+            return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef), HttpStatus.OK);
+        }catch (Exception e) {
+            LOG.error("Unexpected error occurred while generating milestones - " + e.getMessage());
+            return new ResponseEntity<>("An error occurred while generating milestones", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/deleteAnnex/{annexRef}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> deleteAnnex(@RequestParam("proposalRef") String proposalRef,
+                            @RequestParam("annexRef") String annexRef) {
+        try {
+            apiService.deleteAnnex(proposalRef, annexRef);
+            return new ResponseEntity<>("Annex deleted", HttpStatus.OK);
+        }catch (Exception e) {
+            LOG.error("Error occured while deleting proposal annex - " + e.getMessage());
+            return new ResponseEntity<>("Error occured while deleting proposal annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/updateAnnexOrder/{proposalRef}/annex/{annexRef}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateProposalAnnexOrder(@RequestParam("proposalRef") String proposalRef, @RequestParam("annexRef") String annexRef,
+                                                           @RequestBody String moveDirection) {
+        try {
+            apiService.updateAnnexOrder(proposalRef, annexRef, moveDirection);
+            return new ResponseEntity<>("Updated proposal annex order", HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occured while updating annex order - "+ e.getMessage());
+            return new ResponseEntity<>("Unexpected error occured while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> createmilestone(@RequestParam("proposalRef") String proposalRef,  @RequestBody String milestoneComment) {
+        try {
+            return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error while creating new milestone - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error while creating new milestone", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getCurrentUser() {
+        try {
+            return new ResponseEntity<>(securityContext.getUser(), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error while creating new bill annex - " + e.getMessage() );
+            return new ResponseEntity<>("Unexpected error occured while getting current user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/document/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE )
+    @ResponseBody
+    public ResponseEntity<Object> getDocument(@RequestParam("documentRef") String documentRef) {
+        XmlDocument document = null;
+        try {
+            document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
+            if (document != null) {
+                DocumentVO vo = new DocumentVO(document);
+                return new ResponseEntity<>(vo, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            LOG.error("Error occured while getting XML Document - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting XML document", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return null;
+    }
+
 }

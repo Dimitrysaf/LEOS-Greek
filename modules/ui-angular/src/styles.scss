@@ -1,0 +1,59 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@eui/styles-base/src/styles/base';
+
+/*
+ * Overrides
+ */
+
+eui-icon-svg > svg > use {
+  // disables svg icon tooltips
+  pointer-events: none;
+}
+
+/*
+ * Utilities
+ */
+
+.app-u-gap-none {
+  gap: var(--eui-base-spacing-none);
+}
+
+.app-u-gap-xs {
+  gap: var(--eui-base-spacing-xs);
+}
+
+.app-u-gap-s {
+  gap: var(--eui-base-spacing-s);
+}
+
+.app-u-gap-m {
+  gap: var(--eui-base-spacing-m);
+}
+
+.app-u-gap-l {
+  gap: var(--eui-base-spacing-l);
+}
+
+.app-u-gap-xl {
+  gap: var(--eui-base-spacing-xl);
+}
+
+.app-u-gap-xs {
+  gap: var(--eui-base-spacing-xs);
+}
+
+.app-u-flex-basis-0 {
+  flex-basis: 0 !important;
+}
+
+.app-u-flex-basis-100 {
+  flex-basis: 100% !important;
+}
+
+.app-u-flex-basis-auto {
+  flex-basis: auto !important;
+}
+
+.eui-u-text-wrap {
+  white-space: normal !important;
+}

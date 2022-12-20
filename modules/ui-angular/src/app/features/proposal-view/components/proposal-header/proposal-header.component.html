@@ -1,0 +1,20 @@
+<header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l">
+  <h1 class="flex-grow-1 eui-u-font-2xl">
+    {{ nonEditablePartOfTitle }} {{ editableTitle }}
+  </h1>
+
+  <button
+    euiButton
+    euiSizeS
+    euiOutline
+    euiPrimary
+    class="eui-u-ml-s"
+    (click)="handleEdit()"
+  >
+    Edit
+  </button>
+
+  <app-proposal-actions-dropdown
+    class="eui-u-ml-s"
+  ></app-proposal-actions-dropdown>
+</header>

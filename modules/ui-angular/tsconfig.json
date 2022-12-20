@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "module": "ESNext",
+    "target": "ES2016",
+    "lib": ["es2020", "dom", "ES2021.String"],
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "@/*": ["src/app/*"],
+      "@leos/shared": ["src/app/shared"],
+      "@leos/api": ["src/app/core"]
+    }
+  }
+}
+
+// "paths": {
+//   "primeng/*": ["node_modules/primeng-lts/*"],
+//   "@cmm/core": ["src/app/core"],
+//   "@cmm/shared": ["src/app/shared"],
+//   "@cmm/api": ["src/app/api"]
+// }

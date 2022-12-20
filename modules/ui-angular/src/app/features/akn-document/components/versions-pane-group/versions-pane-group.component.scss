@@ -1,0 +1,16 @@
+.subversions {
+  align-items: center;
+  display: grid;
+  grid-template-columns: min-content auto min-content;
+  max-height: 100px;
+}
+
+.subversions > .version {
+  justify-self: end;
+  margin-right: 0.25em; // ~ a single space character
+}
+
+.eui-card-header__title-container-title,
+.eui-card-header__title-container-subtitle {
+  white-space: normal;
+}

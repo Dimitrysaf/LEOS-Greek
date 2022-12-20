@@ -33,7 +33,7 @@ public class WorkspaceApiController {
         this.apiService = apiService;
     }
 
-    @RequestMapping(value = "/filterProposals", method = RequestMethod.GET)
+    @RequestMapping(value = "/filterProposals", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> filterProposals(@RequestBody FilterProposalsRequest request) {
         try {

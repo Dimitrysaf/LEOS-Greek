@@ -1,0 +1,88 @@
+<eui-card euiNoShadow>
+  <eui-card-header>
+    <eui-card-header-title>{{ title }}</eui-card-header-title>
+
+    <eui-card-header-subtitle *ngIf="description">
+      {{ description }}
+    </eui-card-header-subtitle>
+    <eui-card-header-subtitle>
+      {{ subtitle }}
+    </eui-card-header-subtitle>
+
+    <eui-card-header-right-content *ngIf="!isRecents">
+      <eui-chip euiRounded euiPrimary *ngIf="isMilestone">
+        <span
+          euiLabel
+          translate="page.editor.versions.group-tag.milestone"
+        ></span>
+      </eui-chip>
+      <eui-chip euiRounded euiSuccess *ngIf="isCreation">
+        <span
+          euiLabel
+          translate="page.editor.versions.group-tag.creation"
+        ></span>
+      </eui-chip>
+
+      <app-version-actions-dropdown
+        [version]="group"
+      ></app-version-actions-dropdown>
+    </eui-card-header-right-content>
+  </eui-card-header>
+
+  <eui-card-content
+    class="eui-u-pb-none"
+    *ngIf="group.subVersions.length && showModifications"
+  >
+    <div class="subversions">
+      <ng-container
+        *ngFor="
+          let version of group.subVersions;
+          trackByProperty: 'versionNumber'
+        "
+      >
+        <div class="version">{{ version.versionNumber }}</div>
+        <div>{{ version.checkinComment.title }}</div>
+        <div>
+          <app-version-actions-dropdown
+            [version]="version"
+          ></app-version-actions-dropdown>
+        </div>
+      </ng-container>
+    </div>
+  </eui-card-content>
+
+  <eui-card-content *ngIf="group.subVersions.length">
+    <button
+      class="eui-u-pv-none eui-u-pl-none eui-u-pr-xs"
+      euiButton
+      euiSizeS
+      euiBasicButton
+      euiSecondary
+      (click)="showModifications = !showModifications"
+    >
+      <eui-icon-svg
+        *ngIf="showModifications"
+        icon="chevron-up"
+        set="sharp"
+        size="s"
+        fillColor="primary-100"
+      ></eui-icon-svg>
+      <eui-icon-svg
+        *ngIf="!showModifications"
+        icon="chevron-down"
+        set="sharp"
+        size="s"
+        fillColor="primary-100"
+      ></eui-icon-svg>
+      <span
+        class="eui-u-ml-2xs"
+        euiLabel
+        [translate]="
+          showModifications
+            ? 'page.editor.versions.modifications-hide'
+            : 'page.editor.versions.modifications-show'
+        "
+      ></span>
+    </button>
+  </eui-card-content>
+</eui-card>

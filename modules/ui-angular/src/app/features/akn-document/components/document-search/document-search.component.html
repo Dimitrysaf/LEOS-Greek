@@ -1,0 +1,149 @@
+<ng-container [formGroup]="form">
+  <!-- Search Row -->
+
+  <div class="search-label">
+    <label
+      class="eui-u-m-none eui-u-p-none"
+      for="search-input"
+      translate="page.editor.search.search-input.label"
+    ></label>
+  </div>
+  <div class="search-input eui-u-m-none" euiInputGroup>
+    <div class="eui-input-group-addon">
+      <input
+        id="search-input"
+        type="text"
+        euiInputText
+        euiClearable
+        formControlName="searchText"
+      />
+
+      <div class="eui-input-group-addon-item">
+        <eui-icon iconClass="eui-icon-search-m"></eui-icon>
+      </div>
+    </div>
+  </div>
+  <div class="search-controls eui-u-flex app-u-gap-m">
+    <button euiButton euiIconButton euiSecondary (click)="doc.searchNext()">
+      <span
+        euiIcon
+        iconClass="eui-icon eui-icon-angle-down"
+        [title]="'page.editor.search.next-button.tooltip' | translate"
+        [attr.aria-label]="'page.editor.search.next-button.tooltip' | translate"
+      ></span>
+    </button>
+
+    <button euiButton euiIconButton euiSecondary (click)="doc.searchPrevious()">
+      <span
+        euiIcon
+        iconClass="eui-icon eui-icon-angle-up"
+        [title]="'page.editor.search.prev-button.tooltip' | translate"
+        [attr.aria-label]="'page.editor.search.prev-button.tooltip' | translate"
+      ></span>
+    </button>
+
+    <div class="checkbox-input-group">
+      <input
+        euiInputCheckBox
+        id="matchCase"
+        formControlName="matchCase"
+        [label]="'page.editor.search.matchCase.label' | translate"
+      />
+    </div>
+
+    <div class="checkbox-input-group">
+      <input
+        euiInputCheckBox
+        id="wholeWords"
+        formControlName="wholeWords"
+        [label]="'page.editor.search.wholeWords.label' | translate"
+      />
+    </div>
+
+    <button euiButton euiIconButton euiSecondary (click)="toggleReplace()">
+      <span
+        euiIcon
+        iconClass="eui-icon eui-icon-swap-horizontal"
+        [title]="'page.editor.search.replaceToggle-button.tooltip' | translate"
+        [attr.aria-label]="
+          'page.editor.search.replaceToggle-button.tooltip' | translate
+        "
+      ></span>
+    </button>
+
+    <button euiButton euiOutline euiPrimary>
+      <span
+        euiLabel
+        translate="page.editor.search.cancel-button.label"
+        (click)="doc.toggleSearchPane(false)"
+      ></span>
+    </button>
+  </div>
+
+  <!-- Replace Row -->
+  <ng-container *ngIf="isReplace">
+    <div class="replace-label">
+      <label
+        class="eui-u-m-none eui-u-p-none"
+        for="replace-input"
+        translate="page.editor.search.replace-input.label"
+      ></label>
+    </div>
+    <div class="replace-input eui-u-m-none" euiInputGroup>
+      <div class="eui-input-group-addon">
+        <input
+          id="replace-input"
+          euiInputText
+          type="text"
+          euiClearable
+          (input)="setReplaceText($event)"
+        />
+
+        <div class="eui-input-group-addon-item">
+          <eui-icon iconClass="eui-icon-swap-horizontal"></eui-icon>
+        </div>
+      </div>
+    </div>
+    <div class="replace-controls eui-u-flex app-u-gap-m">
+      <button
+        euiButton
+        euiOutline
+        euiPrimary
+        (click)="doc.searchReplace(replaceText)"
+      >
+        <span
+          euiLabel
+          translate="page.editor.search.replace-button.label"
+        ></span>
+      </button>
+
+      <button
+        euiButton
+        euiOutline
+        euiPrimary
+        (click)="doc.searchReplaceAll(replaceText)"
+      >
+        <span
+          euiLabel
+          translate="page.editor.search.replaceAll-button.label"
+        ></span>
+      </button>
+
+      <button euiButton euiOutline euiSecondary (click)="doc.searchSave()">
+        <span euiLabel translate="page.editor.search.save-button.label"></span>
+      </button>
+
+      <button
+        euiButton
+        euiOutline
+        euiSecondary
+        (click)="doc.searchSaveAndClose()"
+      >
+        <span
+          euiLabel
+          translate="page.editor.search.saveAndClose-button.label"
+        ></span>
+      </button>
+    </div>
+  </ng-container>
+</ng-container>
