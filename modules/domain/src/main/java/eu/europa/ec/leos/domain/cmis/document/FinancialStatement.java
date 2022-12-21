@@ -20,7 +20,7 @@ public final class FinancialStatement extends XmlDocument {
                               List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
                               Option<FinancialStatementMetadata> metadata, String baseRevisionId) {
 
-        super(LeosCategory.FINANCIAL_STATEMENT, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
+        super(LeosCategory.STAT_FINANC_LEGIS, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators, milestoneComments, content);
         this.metadata = metadata;
         this.baseRevisionId = baseRevisionId;

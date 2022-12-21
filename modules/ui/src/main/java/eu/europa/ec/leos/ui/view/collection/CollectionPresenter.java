@@ -400,7 +400,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     docVersionSeriesIds.add(annex.getVersionSeriesId());
                     break;
                 }
-                case FINANCIAL_STATEMENT: {
+                case STAT_FINANC_LEGIS: {
                     FinancialStatement financialStatement = (FinancialStatement) document;
                     DocumentVO financialStatementVO = createFinancialStatementVO(financialStatement);
                     proposalVO.addChildDocument(financialStatementVO);
@@ -705,7 +705,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         DocumentVO financialDocumentVO =
                 new DocumentVO(financialStatement.getId(),
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
-                        LeosCategory.FINANCIAL_STATEMENT,
+                        LeosCategory.STAT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()));
 
@@ -916,8 +916,8 @@ class CollectionPresenter extends AbstractLeosPresenter {
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
         financialStatementContext.useFinancialStatement(event.getFinancialStatement().getId());
         financialStatementContext.usePackage(leosPackage);
-        financialStatementContext.useActionMessage(ContextActionService.FINANCIAL_STATEMENT_METADATA_UPDATED, messageHelper.getMessage("collection.block.financial.statement.metadata.updated"));
-        financialStatementContext.useActionMessage(ContextActionService.FINANCIAL_STATEMENT_DELETED, messageHelper.getMessage("collection.block.financial.statement.deleted"));
+        financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED, messageHelper.getMessage("collection.block.financial.statement.metadata.updated"));
+        financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_DELETED, messageHelper.getMessage("collection.block.financial.statement.deleted"));
         financialStatementContext.executeDeleteFinancialStatement();
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposalId, event.getFinancialStatement().getMetadata().getInternalRef(), id));
         eventBus.post(new DocumentUpdatedEvent());
@@ -1012,7 +1012,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             switch (template) {
                 default :
                     actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
-                    context.useActionMessage(ContextActionService.FINANCIAL_STATEMENT_ADDED, actionMessage);
+                    context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
                     context.executeCreateFinancialStatement();
             }
             eventBus.post(new DocumentUpdatedEvent());
@@ -1110,7 +1110,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         final String documentRef = event.getFinancialStatement().getMetadata().getInternalRef();
         RepositoryContext repositoryContext = repositoryContextProvider.get();
         repositoryContext.populateVersionsWithoutVersionLabel(FinancialStatement.class, documentRef);
-        eventBus.post(new NavigationRequestEvent(Target.FINANCIAL_STATEMENT, documentRef));
+        eventBus.post(new NavigationRequestEvent(Target.STAT_FINANC_LEGIS, documentRef));
     }
 
     @Subscribe

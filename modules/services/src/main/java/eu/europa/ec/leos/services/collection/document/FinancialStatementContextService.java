@@ -166,7 +166,7 @@ public class FinancialStatementContextService {
         Validate.notNull(purpose, "FinancialStatement purpose is required!");
         FinancialStatementMetadata metadata = metadataOption.get().withPurpose(purpose).withType(type).withTemplate(template).withTitle(title);
 
-        financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.FINANCIAL_STATEMENT_METADATA_UPDATED), null);
+        financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
         financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
 
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

@@ -376,7 +376,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 return "Annex " + annexNumber + versionLabel;
             case COVERPAGE:
                 return  showCoverPage ? messageHelper.getMessage(COVER_PAGE_TAB_TITLE_KEY) + " " + versionLabel : "";
-            case FINANCIAL_STATEMENT:
+            case STAT_FINANC_LEGIS:
                 return "Financial Statement" + versionLabel;
             default:
                 return "";
@@ -417,7 +417,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 } else {
                     LeosCategory category = xmlContentProcessor.identifyCategory(key,
                             xmlContent.getBytes(StandardCharsets.UTF_8));
-                    if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.FINANCIAL_STATEMENT)) {
+                    if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                         String tabName = getTabName(category, 0, version);
                         TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                         if(isCompared) {
@@ -480,7 +480,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 LeosCategory category = xmlContentProcessor.identifyCategory(key,
                         xmlContent.getBytes(StandardCharsets.UTF_8));
 
-                if (category != null && category.equals(LeosCategory.FINANCIAL_STATEMENT)) {
+                if (category != null && category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                     String tabName = getTabName(category, 0, version);
                     TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                     if(isCompared) {

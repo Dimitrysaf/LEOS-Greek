@@ -18,14 +18,12 @@ import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
-import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -40,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.BILL;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.FINANCIAL_STATEMENT;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
 

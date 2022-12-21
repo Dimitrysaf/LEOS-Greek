@@ -21,7 +21,7 @@
         @extend %defaultBoxSizing;
         @extend %pageFont;
 
-        doc[name="FINANCIAL_STATEMENT" i] {
+        doc[name="STAT_FINANC_LEGIS" i] {
             @extend %xmlCoverPageFS;
             @extend %xmlCoverPage;
             @extend %xmlSecondPageFS;
@@ -62,7 +62,7 @@
     }
     
     // AKN styles
-    doc[name="FINANCIAL_STATEMENT" i] {
+    doc[name="STAT_FINANC_LEGIS" i] {
         @extend %xmlAuthorialNote;
         @extend %elementActions;
         @extend %elementUserCoEdition;
@@ -92,11 +92,11 @@
         display: block;
     }
 
-    div.leos-financialstatement-view div.leos-doc-content doc[name="FINANCIAL_STATEMENT" i] {
+    div.leos-statfinanclegis-view div.leos-doc-content doc[name="STAT_FINANC_LEGIS" i] {
         @extend %soft;
     }
 
-    div.leos-financialstatement-view div.leos-double-comparison-content doc[name="FINANCIAL_STATEMENT" i] {
+    div.leos-statfinanclegis-view div.leos-double-comparison-content doc[name="STAT_FINANC_LEGIS" i] {
         @extend %doubleCompare;
     }
 }

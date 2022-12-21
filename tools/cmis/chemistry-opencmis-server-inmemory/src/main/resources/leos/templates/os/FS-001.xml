@@ -1,6 +1,6 @@
 <!--legislative_financial_statement-->
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
-    <doc name="FINANCIAL_STATEMENT">
+    <doc name="STAT_FINANC_LEGIS">
         <meta>
             <identification source="~_PUBL">
                 <FRBRWork>
@@ -34,8 +34,8 @@
                 <TLCOrganization xml:id="_PUBL"
                                  href="http://publications.europa.eu/resource/authority/corporate-body/PUBL"
                                  showAs="Publications Office"/>
-                <TLCReference xml:id="_FINANCIAL_STATEMENT" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/FINANCIAL_STATEMENT"
+                <TLCReference xml:id="_STAT_FINANC_LEGIS" name="docType"
+                              href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS"
                               showAs="Legislative Financial Statement"/>
                 <!--  draft  -->
             </references>
@@ -49,7 +49,7 @@
         <preface>
             <longTitle>
                 <p>
-                    <docType refersTo="~_FINANCIAL_STATEMENT">LEGISLATIVE FINANCIAL STATEMENT</docType>
+                    <docType refersTo="~_STAT_FINANC_LEGIS">LEGISLATIVE FINANCIAL STATEMENT</docType>
                 </p>
             </longTitle>
         </preface>
@@ -81,13 +81,13 @@
                 <heading>The proposal/initiative relates to</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <content>
                             <p>a new action</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>a new action following a pilot project/preparatory action
                                 <authorialNote marker="1" placement="bottom">
@@ -97,13 +97,13 @@
                         </content>
                     </indent>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>the extension of an existing action</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>a merger of one or more actions towards another/a new action</p>
                         </content>
@@ -237,7 +237,7 @@
                 <heading>Duration and financial impact of the proposal/initiative</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <subparagraph>
                             <content>
                                 <p>limited duration</p>
@@ -245,13 +245,13 @@
                         </subparagraph>
                         <list refersTo="~_CHECK">
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>in effect from [DD/MM]YYYY to [DD/MM]YYYY</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>Financial impact from YYYY to YYYY for commitment appropriations and from YYYY to
                                         YYYY for payment appropriations.
@@ -261,7 +261,7 @@
                         </list>
                     </indent>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <subparagraph>
                             <content>
                                 <p>unlimited duration</p>
@@ -269,13 +269,13 @@
                         </subparagraph>
                         <list refersTo="~_CHECK">
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>Implementation with a start-up period from YYYY to YYYY,</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>followed by full-scale operation.</p>
                                 </content>
@@ -299,7 +299,7 @@
                 </heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>
                                 <b>Direct management</b>
@@ -309,20 +309,20 @@
                     </indent>
                     <list refersTo="~_CHECK">
                         <indent>
-                            <num>☐</num>
+                            <num><inline name="unchecked">☐</inline></num>
                             <content>
                                 <p>by its departments, including by its staff in the Union delegations;</p>
                             </content>
                         </indent>
                         <indent>
-                            <num>☐</num>
+                            <num><inline name="unchecked">☐</inline></num>
                             <content>
                                 <p>by the executive agencies</p>
                             </content>
                         </indent>
                     </list>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>
                                 <b>Shared management</b>
@@ -331,7 +331,7 @@
                         </content>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <subparagraph>
                             <content>
                                 <p>
@@ -342,37 +342,37 @@
                         </subparagraph>
                         <list refersTo="~_CHECK">
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>third countries or the bodies they have designated;</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>international organisations and their agencies (to be specified);</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>the EIB and the European Investment Fund;</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☑</num>
+                                <num><inline name="checked">☑</inline></num>
                                 <content>
                                     <p>bodies referred to in Articles 70 and 71 of the Financial Regulation</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>public law bodies;</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>bodies governed by private law with a public service mission to the extent that
                                         they provide adequate financial guarantees;
@@ -380,7 +380,7 @@
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>bodies governed by the private law of a Member State that are entrusted with the
                                         implementation of a public-private partnership and that provide adequate
@@ -389,7 +389,7 @@
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>bodies or persons entrusted with the implementation of specific actions in the
                                         CFSP pursuant to Title V of the TEU, and identified in the relevant basic act.
@@ -684,13 +684,13 @@
                 <heading>Summary of estimated impact on operational appropriations</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>The proposal/initiative does not require the use of operational appropriations</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>The proposal/initiative requires the use of operational appropriations, as explained
                                 below:
@@ -2572,13 +2572,13 @@
                 <heading>Summary of estimated impact on administrative appropriations</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>The proposal/initiative does not require the use of operational appropriations</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <content>
                             <p>The proposal/initiative requires the use of operational appropriations, as explained
                                 below:
@@ -2902,13 +2902,13 @@
                 <heading>Estimated requirements of human resources</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>The proposal/initiative does not require the use of human resources.</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <content>
                             <p>The proposal/initiative requires the use of human resources, as explained below:</p>
                         </content>
@@ -3367,13 +3367,13 @@
                 <heading>Compatibility with the current multiannual financial framework</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <content>
                             <p>The proposal/initiative :</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <subparagraph>
                             <content>
                                 <p>can be fully financed through redeployment within the relevant heading of the
@@ -3391,7 +3391,7 @@
                         </subparagraph>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <subparagraph>
                             <content>
                                 <p>requires use of the unallocated margin under the relevant heading of the MFF and/or
@@ -3408,7 +3408,7 @@
                         </subparagraph>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <subparagraph>
                             <content>
                                 <p>requires a revision of the MFF.</p>
@@ -3429,7 +3429,7 @@
                 <heading>Third-party contributions</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <subparagraph>
                             <content>
                                 <p>does not provide for co-financing by third parties</p>
@@ -3437,7 +3437,7 @@
                         </subparagraph>
                     </indent>
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <subparagraph>
                             <content>
                                 <p>provides for the co-financing by third parties estimated below:</p>
@@ -3557,13 +3557,13 @@
                 <heading>Estimated impact on revenue</heading>
                 <list refersTo="~_CHECK">
                     <indent>
-                        <num>☑</num>
+                        <num><inline name="checked">☑</inline></num>
                         <content>
                             <p>The proposal/initiative has no financial impact on revenue.</p>
                         </content>
                     </indent>
                     <indent>
-                        <num>☐</num>
+                        <num><inline name="unchecked">☐</inline></num>
                         <subparagraph>
                             <content>
                                 <p>The proposal/initiative has the following financial impact:</p>
@@ -3571,19 +3571,19 @@
                         </subparagraph>
                         <list refersTo="~_CHECK">
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>on own resources</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>on other revenue</p>
                                 </content>
                             </indent>
                             <indent>
-                                <num>☐</num>
+                                <num><inline name="unchecked">☐</inline></num>
                                 <content>
                                     <p>please indicate, if the revenue is assigned to expenditure lines</p>
                                 </content>

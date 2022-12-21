@@ -21,4 +21,7 @@ public class CheckBoxesState extends LeosJavaScriptExtensionState {
     public String checkBoxTagName;
     public String checkedBoxValue;
     public String uncheckedBoxValue;
+    public String checkBoxAttributeName;
+    public String checkedBoxAttribute;
+    public String uncheckedBoxAttribute;
 }

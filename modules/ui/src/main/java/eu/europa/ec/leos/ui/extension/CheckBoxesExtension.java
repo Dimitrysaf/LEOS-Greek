@@ -30,8 +30,9 @@ public class CheckBoxesExtension<T extends AbstractField<V>, V> extends LeosJava
 
     private final EventBus eventBus;
 
-    public CheckBoxesExtension(T target, EventBus eventBus, String checkBoxTagName
-            , String checkedBoxValue, String uncheckedBoxValue) {
+    public CheckBoxesExtension(T target, EventBus eventBus, String checkBoxTagName,
+             String checkedBoxValue, String uncheckedBoxValue,
+             String checkBoxAttributeName, String checkedBoxAttribute, String uncheckedBoxAttribute) {
         super();
         this.eventBus =  eventBus;
         registerServerSideAPI();
@@ -39,20 +40,21 @@ public class CheckBoxesExtension<T extends AbstractField<V>, V> extends LeosJava
         getState().checkBoxTagName = checkBoxTagName;
         getState().checkedBoxValue = checkedBoxValue;
         getState().uncheckedBoxValue = uncheckedBoxValue;
+
+        getState().checkBoxAttributeName = checkBoxAttributeName;
+        getState().checkedBoxAttribute = checkedBoxAttribute;
+        getState().uncheckedBoxAttribute = uncheckedBoxAttribute;
         extend(target);
     }
 
     private void registerServerSideAPI() {
-        addFunction("saveElement", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
+        addFunction("saveElement", arguments -> {
                 LOG.trace("Saving element...");
                 JsonObject data = arguments.get(0);
                 String elementId = data.getString("elementId");
                 String elementType = data.getString("elementType");
                 String elementFragment = data.getString("elementFragment");
                 eventBus.post(new SaveElementRequestEvent(elementId, elementType, elementFragment, false));
-            }
         });
     }
 

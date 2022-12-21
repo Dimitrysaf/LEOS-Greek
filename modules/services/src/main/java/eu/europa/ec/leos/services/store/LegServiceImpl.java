@@ -162,7 +162,7 @@ public class LegServiceImpl implements LegService {
     private static final String memoStyleSheet = LeosCategory.MEMORANDUM.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String billStyleSheet = LeosCategory.BILL.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String coverPageStyleSheet = LeosCategory.COVERPAGE.name().toLowerCase() + STYLE_SHEET_EXT;
-    private static final String financialStatementStyleSheet = LeosCategory.FINANCIAL_STATEMENT.name().toLowerCase() + STYLE_SHEET_EXT;
+    private static final String financialStatementStyleSheet = LeosCategory.STAT_FINANC_LEGIS.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String explanatoryStyleSheet = "explanatory" + STYLE_SHEET_EXT;
 
     public static final String FORMAT_DATE_TIME_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -487,7 +487,7 @@ public class LegServiceImpl implements LegService {
                 legPackage.addContainedFile(bill.getVersionedReference());
             } else if (FinancialStatement.class.equals(exportOptions.getFileType())) {
                 FinancialStatement financialStatement = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
-                        proposalRefsMap.get(LeosCategory.FINANCIAL_STATEMENT.name() + "_href"), FinancialStatement.class);
+                        proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href"), FinancialStatement.class);
                 byte[] xmlContent;
                 if (exportOptions.isComparisonMode()) {
                     xmlContent = getComparedContent(exportOptions);
@@ -576,7 +576,7 @@ public class LegServiceImpl implements LegService {
     private void addFinancialStatementToPackage(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                         ExportResource exportProposalResource, final Map<String, String> proposalRefsMap,
                                         LegPackage legPackage, String proposalRef) {
-        final String financialStatementRef = proposalRefsMap.get(LeosCategory.FINANCIAL_STATEMENT.name() + "_href");
+        final String financialStatementRef = proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href");
         if (!StringUtils.isEmpty(financialStatementRef) && !financialStatementRef.equals("#")) {
             final FinancialStatement financialStatement = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), financialStatementRef, FinancialStatement.class);
             enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement, proposalRef);
@@ -965,8 +965,8 @@ public class LegServiceImpl implements LegService {
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.BILL, "href"));
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.COUNCIL_EXPLANATORY, "xml:id"));
         config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.COUNCIL_EXPLANATORY, "href"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.FINANCIAL_STATEMENT, "xml:id"));
-        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.FINANCIAL_STATEMENT, "href"));
+        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_FINANC_LEGIS, "xml:id"));
+        config.putAll(xmlNodeConfigProcessor.getProposalComponentsConfig(LeosCategory.STAT_FINANC_LEGIS, "href"));
         config.putAll(xmlNodeConfigProcessor.getConfig(LeosCategory.PROPOSAL));
 
         Map<String, String> proposalRefsMap = xmlNodeProcessor.getValuesFromXml(xmlContent,
@@ -977,8 +977,8 @@ public class LegServiceImpl implements LegService {
                         LeosCategory.MEMORANDUM.name() + "_href",
                         LeosCategory.BILL.name() + "_xml:id",
                         LeosCategory.BILL.name() + "_href",
-                        LeosCategory.FINANCIAL_STATEMENT.name() + "_xml:id",
-                        LeosCategory.FINANCIAL_STATEMENT.name() + "_href"
+                        LeosCategory.STAT_FINANC_LEGIS.name() + "_xml:id",
+                        LeosCategory.STAT_FINANC_LEGIS.name() + "_href"
                 },
                 config);
 
@@ -1026,10 +1026,10 @@ public class LegServiceImpl implements LegService {
     }
 
     private ExportResource buildExportResourceFinancialStatement(Map<String, String> proposalRefsMap, byte[] xmlContent) {
-        ExportResource finStmntExportResource = new ExportResource(LeosCategory.FINANCIAL_STATEMENT);
-        finStmntExportResource.setResourceId(proposalRefsMap.get(LeosCategory.FINANCIAL_STATEMENT.name() + "_xml:id"));
-        finStmntExportResource.setHref(proposalRefsMap.get(LeosCategory.FINANCIAL_STATEMENT.name() + "_href"));
-        finStmntExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.FINANCIAL_STATEMENT, xmlContent));
+        ExportResource finStmntExportResource = new ExportResource(LeosCategory.STAT_FINANC_LEGIS);
+        finStmntExportResource.setResourceId(proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_xml:id"));
+        finStmntExportResource.setHref(proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href"));
+        finStmntExportResource.setComponentsIdsMap(getCoverPage(LeosCategory.STAT_FINANC_LEGIS, xmlContent));
         return finStmntExportResource;
     }
 
