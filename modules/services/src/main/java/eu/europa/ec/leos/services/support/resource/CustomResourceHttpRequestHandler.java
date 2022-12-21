@@ -19,6 +19,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -34,7 +35,8 @@ public class CustomResourceHttpRequestHandler extends ResourceHttpRequestHandler
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IOException {
         Resource resource = this.getResource(request);
         String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        if ((resource == null) && !path.startsWith("assets/")) {
+        String mimeType = request.getServletContext().getMimeType(path);
+        if ((resource == null) && !StringUtils.hasText(mimeType)) {
             request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, "index.html");
         }
         super.handleRequest(request, response);
