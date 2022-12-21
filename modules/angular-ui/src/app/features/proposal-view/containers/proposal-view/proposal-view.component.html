@@ -8,6 +8,7 @@
     <app-proposal-header
       [nonEditablePartOfTitle]="proposalTitleNonEditablePart"
       [editableTitle]="proposalTitleEditablePart"
+      (saveTitle)="onSaveTitle($event)"
     ></app-proposal-header>
 
     <app-proposal-details [proposal]="proposal"></app-proposal-details>

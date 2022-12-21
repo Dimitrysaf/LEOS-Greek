@@ -7,6 +7,7 @@ import {
   filter,
   map,
   Observable,
+  of,
   switchMap,
   take,
   tap,
@@ -75,8 +76,52 @@ export class ProposalDetailsService {
     this.proposalRefBS.next(proposalRef);
   }
 
-  getProposalRef(): string {
+  get proposalRef(): string {
     return this.proposalRefBS.getValue();
+  }
+
+  createAnnex() {
+    this.http
+      .post<any>(`api/secured/proposals/${this.proposalRef}/createAnnex`, {})
+      .subscribe((val) => {
+        console.log('creating annex');
+        this.setProposalRef(this.proposalRef);
+      });
+  }
+
+  updateAnnexTitle(annexId: string, annexTitle: string) {
+    this.http
+      .put<any>(
+        `api/secured/proposals/${this.proposalRef}/update-annex-title/${annexId}`,
+        {},
+        { params: { title: annexTitle } },
+      )
+      .subscribe((val) => {
+        this.setProposalRef(this.proposalRef);
+      });
+  }
+
+  deleteAnnex(annexRef: string) {
+    this.http
+      .delete<any>(
+        `api/secured/proposals/${this.proposalRef}/deleteAnnex/${annexRef}`,
+        {},
+      )
+      .subscribe((val) => {
+        this.setProposalRef(this.proposalRef);
+      });
+  }
+
+  updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
+    this.http
+      .put<any>(`api/secured/proposal/${this.proposalRef}`, {
+        docPurpose,
+        eeaRelevance,
+        title: '',
+      })
+      .subscribe((val) => {
+        this.proposalRefBS.next(this.proposalRef);
+      });
   }
 
   addCallaborators(collaboratorsToAdd: Collaborator[]) {

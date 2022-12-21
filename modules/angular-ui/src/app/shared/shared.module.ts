@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { EuiAllModule } from '@eui/components';
 import { UxAllModule } from '@eui/components/legacy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,6 +11,7 @@ import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
     EuiAllModule,
     NgForTrackByPropertyModule,
     TranslateModule,
+    FormsModule,
   ],
   declarations: [],
   exports: [
@@ -17,6 +19,7 @@ import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
     EuiAllModule,
     NgForTrackByPropertyModule,
     TranslateModule,
+    FormsModule,
   ],
 })
 export class SharedModule {}

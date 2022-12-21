@@ -14,6 +14,24 @@
     Edit
   </button>
 
+  <eui-dialog #editTitle title="Edit title">
+    <div euiInputGroup class="flex-row">
+      <label class="label"> New title</label>
+      <div class="d-flex flex-wrap">
+        <span>{{ nonEditablePartOfTitle }}</span>
+        <input euiInputText [(ngModel)]="title" />
+      </div>
+    </div>
+    <eui-dialog-footer>
+      <div class="d-flex flex-row justify-content-end">
+        <button euiButton euiSecondary (click)="handleClose()">Cancel</button>
+        <button euiButton euiPrimary (click)="handleSave()" class="save-button">
+          Save
+        </button>
+      </div>
+    </eui-dialog-footer>
+  </eui-dialog>
+
   <app-proposal-actions-dropdown
     class="eui-u-ml-s"
   ></app-proposal-actions-dropdown>

@@ -47,13 +47,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log(
-      'Proposal Ref => ',
-      this.proposalDetailsService.getProposalRef(),
-    );
+    console.log('Proposal Ref => ', this.proposalDetailsService.proposalRef);
     this.buildForm();
     this.handleChanges();
-    const proposalRef = this.proposalDetailsService.getProposalRef();
+    const proposalRef = this.proposalDetailsService.proposalRef;
     this.proposalMilestonesService
       .getProposalMilestones(proposalRef)
       .pipe(takeUntil(this.destroy$))
