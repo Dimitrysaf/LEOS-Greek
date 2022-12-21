@@ -7,6 +7,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
+import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,21 +34,6 @@ public class AnnexController {
     private static final Logger LOG = LoggerFactory.getLogger(AnnexController.class);
     @Autowired
     private AnnexApiService annexAPIService;
-
-    @GetMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE )
-    @ResponseBody
-    public ResponseEntity<Object> getAnnexElement(@PathVariable("documentRef") String documentRef,
-                                                  @PathVariable("elementName") String elementName,
-                                                  @PathVariable("elementId") String elementId) {
-        try {
-            String annexXml = this.annexAPIService.getAnnexElement(documentRef,elementName,elementId);
-            return  ResponseEntity.ok().body(annexXml);
-        } catch (Exception e) {
-            LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpcted error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
 
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_XML_VALUE )
     @ResponseBody
@@ -229,6 +215,20 @@ public class AnnexController {
             return   new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getAnnexElement(@PathVariable("documentRef") String documentRef,
+                                                  @PathVariable("elementId") String elementId,
+                                                  @PathVariable("elementTagName") String elementTagName) {
+        try {
+            EditElementResponse response = this.annexAPIService.editElement(documentRef,elementId,elementTagName);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while getting annex element - " + e.getMessage());
+            return   new ResponseEntity<>("Unexpected error while getting annex element ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
