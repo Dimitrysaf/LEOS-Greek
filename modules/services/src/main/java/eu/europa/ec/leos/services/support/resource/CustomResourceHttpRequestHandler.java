@@ -41,7 +41,19 @@ public class CustomResourceHttpRequestHandler extends ResourceHttpRequestHandler
         }
         super.handleRequest(request, response);
     }
-
+/*
+    @Override
+    protected MediaType getMediaType(HttpServletRequest request, Resource resource) {
+        MediaType result;
+        String mimeTypeFromRequest = request.getServletContext().getMimeType(request.getPathInfo());
+        if (resource.getFilename().equals("index.html") && StringUtils.hasText(mimeTypeFromRequest)) {
+            result = MediaType.parseMediaType(mimeTypeFromRequest);
+        } else {
+            result = super.getMediaType(request, resource);
+        }
+        return result;
+    }
+*/
     public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
             throws BeansException {
         String[] names = factory.getBeanNamesForType(ResourceHttpRequestHandler.class);
