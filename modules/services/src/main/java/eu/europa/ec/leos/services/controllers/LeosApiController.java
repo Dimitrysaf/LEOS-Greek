@@ -406,7 +406,7 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> downloadProposal(@RequestParam("proposalRef") String proposalRef) {
+    public ResponseEntity<Object> downloadProposal(@PathVariable("proposalRef") String proposalRef) {
         try{
             return new ResponseEntity<>(apiService.downloadProposal(proposalRef), HttpStatus.OK);
         }catch(Exception e){
@@ -415,21 +415,36 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST,
+                                                                            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> createProposalAnnex(@RequestParam("proposalRef") String proposalRef,
-                                                           @RequestBody DocumentVO annex) {
+    public ResponseEntity<Object> createProposalAnnex(@PathVariable("proposalRef") String proposalRef) {
         try {
-            return new ResponseEntity<>(apiService.createProposalAnnex(proposalRef, annex), HttpStatus.OK);
+            this.apiService.createProposalAnnex(proposalRef);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error("Error while creating new bill annex - " + e.getMessage() );
-            return new ResponseEntity<>("Unexpected error occured while creating new bill annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while creating new bill annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/update-annex-title/{annexId}", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateAnnexTitle(@PathVariable("proposalRef") String proposalRef,@PathVariable("annexId") String annexId,
+                                                    @RequestParam("title")  String title) {
+        try {
+            this.apiService.updateAnnexTitle(proposalRef,annexId,title);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            LOG.error("Error while creating new bill annex - " + e.getMessage() );
+            return new ResponseEntity<>("Unexpected error occurred while creating new bill annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @RequestMapping (value = "/secured/proposal/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getProposalMilestones(@RequestParam("proposalRef") String proposalRef) {
+    public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef) {
         try {
             return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef), HttpStatus.OK);
         }catch (Exception e) {
@@ -438,13 +453,13 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/deleteAnnex/{annexRef}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/deleteAnnex/{annexRef}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> deleteAnnex(@RequestParam("proposalRef") String proposalRef,
-                            @RequestParam("annexRef") String annexRef) {
+    public ResponseEntity<Object> deleteAnnex(@PathVariable("proposalRef") String proposalRef,
+                            @PathVariable("annexRef") String annexRef) {
         try {
             apiService.deleteAnnex(proposalRef, annexRef);
-            return new ResponseEntity<>("Annex deleted", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (Exception e) {
             LOG.error("Error occured while deleting proposal annex - " + e.getMessage());
             return new ResponseEntity<>("Error occured while deleting proposal annex", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -453,8 +468,8 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/updateAnnexOrder/{proposalRef}/annex/{annexRef}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> updateProposalAnnexOrder(@RequestParam("proposalRef") String proposalRef, @RequestParam("annexRef") String annexRef,
-                                                           @RequestBody String moveDirection) {
+    public ResponseEntity<Object> updateProposalAnnexOrder(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexRef") String annexRef,
+                                                           @RequestParam String moveDirection) {
         try {
             apiService.updateAnnexOrder(proposalRef, annexRef, moveDirection);
             return new ResponseEntity<>("Updated proposal annex order", HttpStatus.OK);
@@ -466,7 +481,7 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> createmilestone(@RequestParam("proposalRef") String proposalRef,  @RequestBody String milestoneComment) {
+    public ResponseEntity<Object> createMilestone(@PathVariable("proposalRef") String proposalRef,  @RequestBody String milestoneComment) {
         try {
             return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
         } catch (Exception e) {
@@ -488,7 +503,7 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/document/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getDocument(@RequestParam("documentRef") String documentRef) {
+    public ResponseEntity<Object> getDocument(@PathVariable("documentRef") String documentRef) {
         XmlDocument document = null;
         try {
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);

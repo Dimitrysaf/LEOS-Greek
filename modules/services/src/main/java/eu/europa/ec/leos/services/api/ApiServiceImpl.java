@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
@@ -471,12 +472,11 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public String createProposalAnnex(String proposalRef, DocumentVO annex) throws IOException {
+    public void createProposalAnnex(String proposalRef) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
             String proposalId = proposal.getId();
-
             try {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
@@ -493,13 +493,11 @@ public class ApiServiceImpl implements ApiService {
                 String annexTemplate = templateItem.getItems().get(0).getId();
                 billContext.useAnnexTemplate(annexTemplate);
                 billContext.executeCreateBillAnnex();
-                return "New Bill Annex created successfully";
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
             }
         }
-        return proposalRef;
     }
 
     private boolean identifyContributionChanges(String clonedProposalRef, String clonedLegFileName, String proposalId) {
@@ -652,6 +650,14 @@ public class ApiServiceImpl implements ApiService {
             billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
             billContext.executeMoveAnnex();
         }
+    }
+
+    @Override
+    public void updateAnnexTitle(String proposalRef, String annexId, String annexTitle) {
+        Annex annex = annexService.findAnnex(annexId,true);
+        AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+        AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
     }
 
     private void createMajorVersions(String proposalRef, String milestoneComment, String versionComment, CollectionContextService context) {
