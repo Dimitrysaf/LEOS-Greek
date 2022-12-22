@@ -228,7 +228,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
         returns attribute if there is attribute selector.
      */
     private Attribute parseForAttribute(String xPathFragment) {
-        if (!xPathFragment.contains("[")) {
+        if (xPathFragment == null || !xPathFragment.contains("[")) {
             return null;
         }
         Pattern pattern = Pattern.compile("(?<tagName>[a-zA-Z]+?)\\[@(?<attName>.+?)='(?<attValue>.+?)'\\]");

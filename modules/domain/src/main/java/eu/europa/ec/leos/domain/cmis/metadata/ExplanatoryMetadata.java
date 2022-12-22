@@ -14,39 +14,97 @@ public class ExplanatoryMetadata extends LeosMetadata{
         this.title = title;
     }
 
-    public final ExplanatoryMetadata withPurpose(String purpose) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
+    public ExplanatoryMetadataBuilder builder() {
+        return new ExplanatoryMetadataBuilder(this);
     }
+    public static final class ExplanatoryMetadataBuilder {
+        private String stage;
+        private String type;
+        private String purpose;
+        private String template;
+        private String language;
+        private String docTemplate;
+        private String ref;
+        private String objectId;
+        private String docVersion;
+        private boolean eeaRelevance;
+        private String title;
 
-    public final ExplanatoryMetadata withRef(String ref) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+        private ExplanatoryMetadataBuilder() {
+        }
 
-    public final ExplanatoryMetadata withObjectId(String objectId) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+        private ExplanatoryMetadataBuilder(ExplanatoryMetadata metadata) {
+            this.title = metadata.title;
 
-    public final ExplanatoryMetadata withType(String type) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+            this.stage = metadata.stage;
+            this.type = metadata.type;
+            this.purpose = metadata.purpose;
+            this.template = metadata.template;
+            this.language = metadata.language;
+            this.docTemplate = metadata.docTemplate;
+            this.ref = metadata.ref;
+            this.objectId = metadata.objectId;
+            this.docVersion = metadata.docVersion;
+            this.eeaRelevance = metadata.eeaRelevance;
+        }
 
-    public final ExplanatoryMetadata withTemplate(String template) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+        public ExplanatoryMetadataBuilder withStage(String stage) {
+            this.stage = stage;
+            return this;
+        }
 
-    public final ExplanatoryMetadata withDocVersion(String docVersion) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+        public ExplanatoryMetadataBuilder withType(String type) {
+            this.type = type;
+            return this;
+        }
 
-    public final ExplanatoryMetadata withDocTemplate(String docTemplate) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+        public ExplanatoryMetadataBuilder withPurpose(String purpose) {
+            this.purpose = purpose;
+            return this;
+        }
 
-    public final ExplanatoryMetadata withTitle(String title) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
-    }
+        public ExplanatoryMetadataBuilder withTemplate(String template) {
+            this.template = template;
+            return this;
+        }
 
-    public final ExplanatoryMetadata withEeaRelevance(boolean eeaRelevance) {
-        return new ExplanatoryMetadata(stage, type, purpose, template, language, docTemplate, ref, title, objectId, docVersion, eeaRelevance);
+        public ExplanatoryMetadataBuilder withLanguage(String language) {
+            this.language = language;
+            return this;
+        }
+
+        public ExplanatoryMetadataBuilder withDocTemplate(String docTemplate) {
+            this.docTemplate = docTemplate;
+            return this;
+        }
+
+        public ExplanatoryMetadataBuilder withRef(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
+        public ExplanatoryMetadataBuilder withObjectId(String objectId) {
+            this.objectId = objectId;
+            return this;
+        }
+
+        public ExplanatoryMetadataBuilder withDocVersion(String docVersion) {
+            this.docVersion = docVersion;
+            return this;
+        }
+
+        public ExplanatoryMetadataBuilder withEeaRelevance(boolean eeaRelevance) {
+            this.eeaRelevance = eeaRelevance;
+            return this;
+        }
+
+        public ExplanatoryMetadataBuilder withTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public ExplanatoryMetadata build() {
+            return new ExplanatoryMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.title, this.objectId, this.docVersion, this.eeaRelevance);
+        }
     }
 }

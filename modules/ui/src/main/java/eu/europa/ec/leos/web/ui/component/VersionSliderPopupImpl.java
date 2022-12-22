@@ -26,13 +26,15 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public abstract class VersionSliderPopupImpl<T extends XmlDocument> extends PopupView implements VersionSliderPopup<T> {
     private static final long serialVersionUID = -5435432434L;
 
     protected static final Logger LOG = LoggerFactory.getLogger(VersionSliderPopupImpl.class);
-    protected final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    protected final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     protected static final String FIRST_VERSION = "1.0";
     
     protected MessageHelper messageHelper;

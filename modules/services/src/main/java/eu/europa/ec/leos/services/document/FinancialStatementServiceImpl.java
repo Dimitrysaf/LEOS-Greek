@@ -85,9 +85,13 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         LOG.trace("Creating FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String FinancialStatementUid = Cuid.createCuid();
         final String language = metadata.getLanguage();
-        final String ref = STAT_FINANC_LEGIS_NAME_PREFIX + FinancialStatementUid +  "-" + language.toLowerCase();
-        final String fileName = ref + STAT_FINANC_LEGIS_DOC_EXTENSION;
-        metadata = metadata.withRef(ref);
+        StringBuilder refBuilder = new StringBuilder(STAT_FINANC_LEGIS_NAME_PREFIX).append(FinancialStatementUid).append("-").append(language.toLowerCase());
+        final String ref = refBuilder.toString();
+        final String fileName = refBuilder.append(STAT_FINANC_LEGIS_DOC_EXTENSION).toString();
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         FinancialStatement FinancialStatement = financialStatementRepository.createFinancialStatement(templateId, path, fileName, metadata);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(FinancialStatement) : content, metadata);
         return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);

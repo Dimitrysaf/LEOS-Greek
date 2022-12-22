@@ -66,7 +66,7 @@ class TemplateServiceImpl implements TemplateService {
             LOG.trace("Parsing templates catalog XML content...");
             Catalog catalog = loadCatalog(optContent.get().getSource().getInputStream());
             // FIXME handle null catalog!!!
-            return catalog.getItems();
+            return catalog != null ? catalog.getItems() : Collections.emptyList();
         } else {
             LOG.trace("Templates catalog XML content is empty!");
             return Collections.emptyList();

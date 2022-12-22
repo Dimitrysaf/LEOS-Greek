@@ -281,7 +281,10 @@ public class LeosApiController {
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         } finally{
             if (legFileTemp != null && legFileTemp.exists()) {
-                legFileTemp.delete();
+                boolean fileDeleted = legFileTemp.delete();
+                if(!fileDeleted){
+                    LOG.warn("File not deleted");
+                }
             }
         }
     }

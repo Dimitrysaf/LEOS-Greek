@@ -58,7 +58,9 @@ public class ZipPackageUtil {
         } catch (IOException e) {
             LOG.error("Error creating zip package: {}", e.getMessage());
             if (zipFile != null && zipFile.exists()) {
-                zipFile.delete();
+                if(!zipFile.delete()){
+                    LOG.info("File not deleted {}", zipFile.toPath());
+                }
             }
             throw new IOException(e.getMessage());
         } finally {
@@ -96,9 +98,9 @@ public class ZipPackageUtil {
                 File fileValue = (File) value;
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
-                FileInputStream fileInputStream = new FileInputStream(fileValue);
-                IOUtils.copy(fileInputStream, zipOutputStream);
-                fileInputStream.close();
+                try(FileInputStream fileInputStream = new FileInputStream(fileValue)){
+                    IOUtils.copy(fileInputStream, zipOutputStream);
+                }
                 zipOutputStream.closeEntry();
             } else if (value instanceof ByteArrayOutputStream) {
                 ByteArrayOutputStream byteArrayOutputStreamValue = (ByteArrayOutputStream) value;
@@ -157,9 +159,9 @@ public class ZipPackageUtil {
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         throw new IOException("Failed to create directory " + parent);
                     }
-                    final FileOutputStream fos = new FileOutputStream(newFile);
-                    IOUtils.copy(zis, fos);
-                    fos.close();
+                    try(FileOutputStream fos = new FileOutputStream(newFile)) {
+                        IOUtils.copy(zis, fos);
+                    }
                     unzippedFiles.put(newFile.getName(), newFile);
                 }
             }

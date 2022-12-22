@@ -36,54 +36,6 @@ public final class AnnexMetadata extends LeosMetadata {
         return clonedRef;
     }
 
-    public AnnexMetadata withPurpose(String purpose) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withIndex(int index) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withNumber(String number) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withTitle(String title) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withRef(String ref) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withObjectId(String objectId) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withType(String type) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withTemplate(String template) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-    
-    public AnnexMetadata withDocVersion(String docVersion) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-    
-    public AnnexMetadata withDocTemplate(String docTemplate) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withEeaRelevance(boolean eeaRelevance) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
-    public AnnexMetadata withClonedRef(String clonedRef) {
-        return new AnnexMetadata(stage, type, purpose, template, language, docTemplate, ref, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
-    }
-
     @Override
     public String toString() {
         return "AnnexMetadata{" +
@@ -118,4 +70,103 @@ public final class AnnexMetadata extends LeosMetadata {
     public int hashCode() {
         return Objects.hash(super.hashCode(), index, number, title);
     }
+    public AnnexMetadataBuilder builder() {
+        return new AnnexMetadataBuilder(this);
+    }
+    public static final class AnnexMetadataBuilder {
+        private String stage;
+        private String type;
+        private String purpose;
+        private String template;
+        private String language;
+        private String docTemplate;
+        private String ref;
+        private String objectId;
+        private String docVersion;
+        private boolean eeaRelevance;
+        private int index;
+        private String number;
+        private String title;
+        private String clonedRef;
+        private AnnexMetadataBuilder() {
+        }
+        private AnnexMetadataBuilder(AnnexMetadata metadata) {
+            this.index = metadata.index;
+            this.number= metadata.number;
+            this.title= metadata.title;
+            this.clonedRef= metadata.clonedRef;
+            this.stage= metadata.stage;
+            this.type= metadata.type;
+            this.purpose= metadata.purpose;
+            this.template= metadata.template;
+            this.language= metadata.language;
+            this.docTemplate= metadata.docTemplate;
+            this.ref= metadata.ref;
+            this.objectId= metadata.objectId;
+            this.docVersion= metadata.docVersion;
+            this.eeaRelevance= metadata.eeaRelevance;
+        }
+        public AnnexMetadataBuilder withStage(String stage) {
+            this.stage = stage;
+            return this;
+        }
+        public AnnexMetadataBuilder withType(String type) {
+            this.type = type;
+            return this;
+        }
+        public AnnexMetadataBuilder withPurpose(String purpose) {
+            this.purpose = purpose;
+            return this;
+        }
+        public AnnexMetadataBuilder withTemplate(String template) {
+            this.template = template;
+            return this;
+        }
+        public AnnexMetadataBuilder withLanguage(String language) {
+            this.language = language;
+            return this;
+        }
+        public AnnexMetadataBuilder withDocTemplate(String docTemplate) {
+            this.docTemplate = docTemplate;
+            return this;
+        }
+        public AnnexMetadataBuilder withRef(String ref) {
+            this.ref = ref;
+            return this;
+        }
+        public AnnexMetadataBuilder withObjectId(String objectId) {
+            this.objectId = objectId;
+            return this;
+        }
+        public AnnexMetadataBuilder withDocVersion(String docVersion) {
+            this.docVersion = docVersion;
+            return this;
+        }
+        public AnnexMetadataBuilder withEeaRelevance(boolean eeaRelevance) {
+            this.eeaRelevance = eeaRelevance;
+            return this;
+        }
+        public AnnexMetadataBuilder withIndex(int index) {
+            this.index = index;
+            return this;
+        }
+        public AnnexMetadataBuilder withNumber(String number) {
+            this.number = number;
+            return this;
+        }
+        public AnnexMetadataBuilder withTitle(String title) {
+            this.title = title;
+            return this;
+        }
+        public AnnexMetadataBuilder withClonedRef(String clonedRef) {
+            this.clonedRef = clonedRef;
+            return this;
+        }
+        public AnnexMetadata build() {
+            return new AnnexMetadata(this.stage, this.type, this.purpose, this.template, this.language,
+                    this.docTemplate, this.ref, this.index, this.number, this.title, this.objectId, this.docVersion,
+                    this.eeaRelevance, this.clonedRef);
+        }
+    }
+
 }

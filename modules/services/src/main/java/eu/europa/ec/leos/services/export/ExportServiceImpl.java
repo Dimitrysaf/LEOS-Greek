@@ -22,6 +22,8 @@ import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,7 @@ import java.util.Map;
 
 abstract class ExportServiceImpl implements ExportService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ExportServiceImpl.class);
     protected final LegService legService;
     protected final PackageService packageService;
     protected ToolBoxService toolBoxService;
@@ -104,7 +107,9 @@ abstract class ExportServiceImpl implements ExportService {
             return createZipFile(legPackage, jobFileName, exportOptions);
         } finally {
             if (legFile != null && legFile.exists()) {
-                legFile.delete();
+                if(!legFile.delete()){
+                    LOG.info("File not deleted {}", legFile.toPath());
+                }
             }
         }
     }

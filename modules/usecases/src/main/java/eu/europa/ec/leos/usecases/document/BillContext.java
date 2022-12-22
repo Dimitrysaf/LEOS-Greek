@@ -209,7 +209,11 @@ public class BillContext {
         Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
 
         Validate.notNull(purpose, "Bill purpose is required!");
-        BillMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        BillMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED), null);
         return billService.createVersion(billCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
@@ -300,10 +304,11 @@ public class BillContext {
         Validate.isTrue(bill.getMetadata().isDefined(), "Bill metadata is required!");
 
         String ref = billService.generateBillReference(bill.getContent().get().getSource().getBytes(), bill.getMetadata().get().getLanguage());
-        final BillMetadata updatedBillMetadata = bill.getMetadata().get()
+        final BillMetadata updatedBillMetadata = bill.getMetadata().get().builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
-                .withRef(ref);
+                .withRef(ref)
+                .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(billDocument.getSource(), createValueMap(updatedBillMetadata), xmlNodeConfigProcessor.getConfig(updatedBillMetadata.getCategory()));
 
         billDocument.setName(ref + XML_DOC_EXT);
@@ -331,7 +336,11 @@ public class BillContext {
             Option<BillMetadata> metadataOption = bill.getMetadata();
             Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
             Validate.notNull(purpose, "Bill purpose is required!");
-            BillMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+            BillMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
             billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextAction.METADATA_UPDATED));
             // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
             List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
@@ -489,6 +498,7 @@ public class BillContext {
         
         final String ref = annexService.generateAnnexReference(annex.getContent().get().getSource().getBytes(), annexMetadataVO.getLanguage());
         final AnnexMetadata updatedAnnexMetadata = annex.getMetadata().getOrError(() -> "Annex metadata is required")
+                .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .withIndex(annexIndex)
@@ -497,7 +507,8 @@ public class BillContext {
                 .withType(billMetadata.getType())
                 .withTemplate(annexMetadataVO.getTemplate())
                 .withClonedRef(annexDocument.getRef())
-                .withRef(ref);
+                .withRef(ref)
+                .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
 

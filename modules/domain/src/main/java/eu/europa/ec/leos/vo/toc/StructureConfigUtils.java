@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 public class StructureConfigUtils {
     
     public static final String NUM_HEADING_SEPARATOR = " - ";
@@ -41,9 +43,12 @@ public class StructureConfigUtils {
         List<TocItem> subElementTocItems = getTocItemsByName(tocItems, subElementTagName);
         if (subElementTocItems.size() > 1 && subElementTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem parentTocItem = getTocItemByName(tocItems, subElementTocItems.get(0).getParentNameNumberingTypeDependency().value());
-            for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().tocItemTypes) {
-                if (tocItemTyp.getName().equals(tocItemType)) {
-                    return getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName, tocItemTyp.getSubElementNumberingConfigs());
+            if(parentTocItem != null && parentTocItem.getTocItemTypes() != null
+                    && isNotEmpty(parentTocItem.getTocItemTypes().tocItemTypes)) {
+                for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().tocItemTypes) {
+                    if (tocItemTyp.getName().equals(tocItemType)) {
+                        return getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName, tocItemTyp.getSubElementNumberingConfigs());
+                    }
                 }
             }
         } else if (subElementTocItems.size() >= 1) {
@@ -56,11 +61,14 @@ public class StructureConfigUtils {
         List<TocItem> subElementTocItems = getTocItemsByName(tocItems, subElementTagName);
         if (subElementTocItems.size() > 1 && subElementTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem parentTocItem = getTocItemByName(tocItems, subElementTocItems.get(0).getParentNameNumberingTypeDependency().value());
-            for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().tocItemTypes) {
-                if (tocItemTyp.getName().equals(tocItemType)) {
-                    NumberingType numberingType = getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName,
-                            tocItemTyp.getSubElementNumberingConfigs());
-                    return getTocItemByNumberingType(tocItems, numberingType, subElementTagName);
+            if(parentTocItem != null && parentTocItem.getTocItemTypes() != null
+                    && isNotEmpty(parentTocItem.getTocItemTypes().tocItemTypes)){
+                for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().tocItemTypes) {
+                    if (tocItemTyp.getName().equals(tocItemType)) {
+                        NumberingType numberingType = getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName,
+                                tocItemTyp.getSubElementNumberingConfigs());
+                        return getTocItemByNumberingType(tocItems, numberingType, subElementTagName);
+                    }
                 }
             }
         } else if (subElementTocItems.size() == 1) {
@@ -228,7 +236,7 @@ public class StructureConfigUtils {
     
     public static NumberingConfig getNumberingConfigByTagName(List<TocItem> items, List<NumberingConfig> numberingConfigs, String tagName) {
         TocItem tocItem = getTocItemByName(items, tagName);
-        return getNumberingByName(numberingConfigs, tocItem.getNumberingType());
+        return getNumberingByName(numberingConfigs, tocItem != null ? tocItem.getNumberingType() : null);
     }
 
     public static NumberingType getNumberingTypeBySequence(List<NumberingConfig> numberingConfigs, String sequence) {
@@ -285,8 +293,8 @@ public class StructureConfigUtils {
 
     private static boolean isNumberingTypeMatchesSequence(List<NumberingConfig> numberingConfigs, NumberingType numberingType, String numValue) {
         NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs, numberingType);
-        String numValueWithoutPrefixAndSuffix = getNumValueWithoutPrefixAndSuffix(numValue, numberingConfig);
-        return (isNumValueWithPrefixAndSuffix(numValue, numberingConfig) &&
+        String numValueWithoutPrefixAndSuffix = numberingConfig != null ? getNumValueWithoutPrefixAndSuffix(numValue, numberingConfig) : numValue;
+        return (numberingConfig != null && isNumValueWithPrefixAndSuffix(numValue, numberingConfig) &&
                 numberingConfig.getSequence() != null
                 && numberingConfig.getSequence().equalsIgnoreCase(numValueWithoutPrefixAndSuffix));
     }

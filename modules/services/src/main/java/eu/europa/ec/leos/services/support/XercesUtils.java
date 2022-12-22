@@ -188,7 +188,11 @@ public class XercesUtils {
             }
             buildNodeAsString(node, sb);
             if (sb.toString().length() == 0) {
-                buildNodeAsString(getNextSibling(node), sb);
+
+                Node nextSibling = getNextSibling(node);
+                if(nextSibling != null){
+                    buildNodeAsString(nextSibling, sb);
+                }
             }
         }
         return sb.toString();
@@ -539,11 +543,13 @@ public class XercesUtils {
 
     public static String getAttributeValueForElementId(Node node, String elementId, String attrName) {
         node = getElementById(node, elementId);
-        NamedNodeMap attributesMap = node.getAttributes();
-        Node nodeAttribute = attributesMap.getNamedItem(attrName);
         String attrVal = null;
-        if (nodeAttribute != null) {
-            attrVal = nodeAttribute.getTextContent();
+        if(node != null) {
+            NamedNodeMap attributesMap = node.getAttributes();
+            Node nodeAttribute = attributesMap.getNamedItem(attrName);
+            if (nodeAttribute != null) {
+                attrVal = nodeAttribute.getTextContent();
+            }
         }
         return attrVal;
     }
@@ -564,7 +570,7 @@ public class XercesUtils {
 
     public static boolean getAttributeValueAsSimpleBoolean(Node node, String attrName) {
         Boolean attrVal = getAttributeValueAsBoolean(node, attrName);
-        return attrVal != null ? Boolean.valueOf(attrVal) : false;
+        return Boolean.TRUE.equals(attrVal);
     }
 
     public static boolean containsAttribute(Node node, String attrName) {

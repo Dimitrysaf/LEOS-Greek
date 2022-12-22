@@ -194,7 +194,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -256,7 +257,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private boolean milestoneExplorerOpened = false;
     private final List<String> openElementEditors;
     private final TemplateConfigurationService templateConfigurationService;
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     @Autowired
     ExplanatoryPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
@@ -515,9 +516,9 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloadXmlFiles", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "error.message", e.getMessage()));
-        } finally {
-            if (zipFile != null) {
-                zipFile.delete();
+        }  finally {
+            if(zipFile != null && !zipFile.delete()){
+                LOG.info("File was not deleted {}", zipFile.getPath());
             }
         }
     }
@@ -815,10 +816,9 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
                 updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
+                LOG.info("Element '{}' in Explanatory {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
             }
-            LOG.info("Element '{}' in Explanatory {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), explanatory.getName(),
-                    explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        } catch (Exception ex) {
+        } catch (Exception ex){
             LOG.error("Exception while deleting element operation for ", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
@@ -846,9 +846,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
+            LOG.info("New Element of type '{}' inserted in Explanatory {} id {}, in {} milliseconds ({} sec)", tagName, explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         }
-        LOG.info("New Element of type '{}' inserted in Explanatory {} id {}, in {} milliseconds ({} sec)", tagName, explanatory.getName(), explanatory.getId(),
-                stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @Subscribe
@@ -870,12 +869,11 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                     eventBus.post(new CloseElementEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+                    LOG.info("Element '{}' merged into '{}' in Explanatory {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
                 }
             } else {
                 explanatoryScreen.showAlertDialog("operation.element.not.performed");
             }
-            LOG.info("Element '{}' merged into '{}' in Explanatory {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
-                    explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error in mergeElement", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "unknown.error.message"));
@@ -1243,7 +1241,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
-                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType(), versionLabel, versionComment);
     }
 

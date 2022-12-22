@@ -168,7 +168,8 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -222,7 +223,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     private final List<String> openElementEditors;
     private final AnnotateService annotateService;
 
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     @Autowired
     CoverPagePresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
@@ -961,16 +962,28 @@ class CoverPagePresenter extends AbstractLeosPresenter {
                 switch (mergeActionVO.getElementState()) {
                     case ADD:
                         if (mergeActionVO.getAction().equals(MergeActionRequestEvent.MergeAction.UNDO)) {
-                            proposalMetadata = proposalMetadata.withEeaRelevance(false);
+                            proposalMetadata = proposalMetadata
+                                    .builder()
+                                    .withEeaRelevance(false)
+                                    .build();
                         } else {
-                            proposalMetadata = proposalMetadata.withEeaRelevance(true);
+                            proposalMetadata = proposalMetadata
+                                    .builder()
+                                    .withEeaRelevance(true)
+                                    .build();
                         }
                         break;
                     case DELETE:
                         if (mergeActionVO.getAction().equals(MergeActionRequestEvent.MergeAction.UNDO)) {
-                            proposalMetadata = proposalMetadata.withEeaRelevance(true);
+                            proposalMetadata = proposalMetadata
+                                    .builder()
+                                    .withEeaRelevance(true)
+                                    .build();
                         } else {
-                            proposalMetadata = proposalMetadata.withEeaRelevance(false);
+                            proposalMetadata = proposalMetadata
+                                    .builder()
+                                    .withEeaRelevance(false)
+                                    .build();
                         }
                         break;
                 }
@@ -1105,7 +1118,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName(): "",
-                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType());
     }
 

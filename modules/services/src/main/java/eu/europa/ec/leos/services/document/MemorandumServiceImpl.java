@@ -258,7 +258,10 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     public Memorandum createMemorandum(String templateId, String path, MemorandumMetadata metadata, String actionMsg, byte[] content) {
         LOG.trace("Creating Memorandum... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String ref = generateMemorandumReference(templateId, content, metadata.getLanguage());
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         Memorandum memorandum = memorandumRepository.createMemorandum(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Memorandum ref {} in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(memorandum) : content, metadata);

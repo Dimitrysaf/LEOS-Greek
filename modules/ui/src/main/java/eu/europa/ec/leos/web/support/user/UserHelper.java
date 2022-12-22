@@ -63,10 +63,9 @@ public class UserHelper {
         try {
             User user = getUser(value);
             value = ((user.getName() == null) || (user.getName().isEmpty())) ? user.getLogin() : user.getName();
+        }catch(Exception e){
         }
-        finally {
-            return value;
-        }
+        return value;
     }
     public List<User> searchUsersByKey(String key) {
         List<UserJSON> results = userService.searchUsersByKey(key);

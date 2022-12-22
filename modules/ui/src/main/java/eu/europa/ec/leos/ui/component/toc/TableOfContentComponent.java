@@ -33,6 +33,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.HASH_NUM_VALUE;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -150,7 +153,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
     private static final long serialVersionUID = -4752609567267410718L;
     private static final Logger LOG = LoggerFactory.getLogger(TableOfContentComponent.class);
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    public static final DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final float TOC_MIN_WIDTH = 190F;
     private static final int MAX_CHECKIN_COMMENTS = 15;
 
@@ -953,7 +956,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             } else {
                 userDescription.append(coEditionVO.getUserName()).append(" (").append(StringUtils.isEmpty(coEditionVO.getEntity()) ? "-" : coEditionVO.getEntity()).append(")");
             }
-            itemDescription.append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(coEditionVO.getEditionTime()))) + "<br>");
+            itemDescription.append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(coEditionVO.getEditionTime()))) + "<br>");
         }
         return itemDescription.toString();
     }
@@ -1162,7 +1165,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     }
                     tocUserCoEdition.setDescription(
                             tocUserCoEdition.getDescription() +
-                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))) +
+                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))) +
                                     "<br>",
                             ContentMode.HTML);
                 });
@@ -1704,7 +1707,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     }
 
                     if ("Numbered".equals(buttons.getSelectedItem().get())) {
-                        if ((firstChild.getNumber() == null || firstChild.getNumber() == "")
+                        if ((firstChild.getNumber() == null || firstChild.getNumber().equals(""))
                                 || flag) {
                             updatedItemVO.setNumberingToggled(true);
                             updatedItemVO.getChildItemsView().stream().filter(itemVo -> itemVo.getNode() == null).forEach(itemVo -> {
@@ -1718,7 +1721,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                                     "Unnumbered".equals(buttons.getSelectedItem().get()), "Numbered".equals(buttons.getSelectedItem().get()));
                         }
                     } else if ("Unnumbered".equals(buttons.getSelectedItem().get())) {
-                        if ((firstChild.getNumber() != null && firstChild.getNumber() != "")
+                        if (StringUtils.isNotEmpty(firstChild.getNumber())
                                 && !flag) {
                             updatedItemVO.setNumberingToggled(false);
                             updatedItemVO.getChildItemsView().stream().filter(itemVo -> itemVo.getNode() == null).forEach(itemVo -> {

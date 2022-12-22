@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -181,7 +182,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
 
         Result<?> result = postProcessingDocumentService.saveOriginalProposalIdToClonedProposal(propDocument, legDocument.getName(), iscRef);
         if (result.isError()) {
-            CreateCollectionError error = new CreateCollectionError(result.getErrorCode().get().ordinal(),
+            CreateCollectionError error = new CreateCollectionError(result.getErrorCode().orElse(ErrorCode.EXCEPTION).ordinal(),
                     messageHelper.getMessage("clone.proposal.metadata.preserve.error"));
             return new CreateCollectionResult(idsAndUrlsHolder, false, error);
         }
@@ -207,7 +208,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             } catch (Exception e) {
                 LOG.error("Error deleting the cloned proposal", e);
             }
-            CreateCollectionError error = new CreateCollectionError(result.getErrorCode().get().ordinal(),
+            CreateCollectionError error = new CreateCollectionError(result.getErrorCode().orElse(ErrorCode.EXCEPTION).ordinal(),
                     messageHelper.getMessage("clone.proposal.metadata.preserve.error"));
             return new CreateCollectionResult(idsAndUrlsHolder, true, error);
         } else {

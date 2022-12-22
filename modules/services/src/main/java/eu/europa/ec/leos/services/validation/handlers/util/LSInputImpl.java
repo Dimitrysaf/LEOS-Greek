@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.validation.handlers.util;
 
-import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSInput;
@@ -51,7 +50,8 @@ public class LSInputImpl implements LSInput {
         synchronized (inputStream) {
             try {
                 byte[] input = new byte[inputStream.available()];
-                inputStream.read(input);
+                int bytesRead = inputStream.read(input);
+                LOG.debug("Bytes read: {}", bytesRead);
                 String contents = new String(input);
                 return contents;
             } catch (IOException e) {

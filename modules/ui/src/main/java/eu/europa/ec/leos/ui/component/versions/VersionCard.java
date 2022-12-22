@@ -561,7 +561,7 @@ public class VersionCard<D extends XmlDocument> extends VerticalLayout {
             versionsHolder.removeStyleName("versions-holder-row1 versions-holder-row2 versions-holder-row3 versions-holder-row4");
         } else {
             grid.setHeightByRows(size);
-            versionsHolder.setHeight(size * 23 + 10, Unit.PIXELS);
+            versionsHolder.setHeight((float) (size * 23 + 10), Unit.PIXELS);
             if (size == 1) {
                 versionsHolder.addStyleName("versions-holder-row1");
             } else if (size == 2) {

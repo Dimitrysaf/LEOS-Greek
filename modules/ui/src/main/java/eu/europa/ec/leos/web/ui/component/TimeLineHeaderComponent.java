@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,7 +71,7 @@ public class TimeLineHeaderComponent<T extends XmlDocument> extends VerticalLayo
     private UserHelper userHelper;
     private SecurityContext securityContext;
 
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     private ComparisonDisplayMode diffMode;
 
     private GridLayout oldVersionInfo;
@@ -432,7 +434,7 @@ public class TimeLineHeaderComponent<T extends XmlDocument> extends VerticalLayo
         versionLabel.setValue(messageHelper.getMessage("document.versions.caption.version", componentCompareItem.getVersionLabel(), getVersionType(componentCompareItem)));
 
         Label dateLabel = (Label)gridLayout.getComponent(0, 1);
-        dateLabel.setValue(messageHelper.getMessage("document.versions.caption.date", dateFormatter.format(Date.from(componentCompareItem.getLastModificationInstant()))));
+        dateLabel.setValue(messageHelper.getMessage("document.versions.caption.date", dateFormatter.format(componentCompareItem.getLastModificationInstant())));
 
         if (hasRestoreVersionPermission()) {
             Button versionRestoreButton = (Button)versionInfoLayout.getComponent(1);

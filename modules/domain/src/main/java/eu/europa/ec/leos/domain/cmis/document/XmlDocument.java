@@ -11,7 +11,6 @@ import io.atlassian.fugue.Option;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 public abstract class XmlDocument extends LeosDocument implements Securable {
     private final String title;

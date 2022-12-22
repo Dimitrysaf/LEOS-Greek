@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.ui.model;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +28,7 @@ public class ExportPackageVO {
     private final Date date;
     private final String status;
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter dateFormat =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public ExportPackageVO(String id, String versionId, String versionLabel, List<String> comments, Date date, String status) {
         this.id = id;
@@ -72,7 +72,7 @@ public class ExportPackageVO {
     }
 
     public String getDateFormatted() {
-        return dateFormat.format(date);
+        return dateFormat.format(date.toInstant());
     }
 
     public String getStatus() {

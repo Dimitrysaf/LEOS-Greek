@@ -104,6 +104,9 @@ import org.vaadin.dialogs.ConfirmDialog;
 import javax.annotation.PostConstruct;
 import javax.inject.Provider;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -122,7 +125,7 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
 
     private static final Logger LOG = LoggerFactory.getLogger(MemorandumScreenImpl.class);
     
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     protected EventBus eventBus;
     protected UserHelper userHelper;
@@ -447,7 +450,7 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
                         userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
                     }
                     coEditorsList.append("&nbsp;&nbsp;-&nbsp;")
-                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))))
+                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))))
                             .append("<br>");
                 });
         if (!StringUtils.isEmpty(coEditorsList)) {

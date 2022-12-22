@@ -138,7 +138,10 @@ class UploadDocumentStep extends CustomComponent implements WizardStep, Upload.S
                             file = File.createTempFile(filename,
                                     filename.contains(".") ? filename.substring(filename.lastIndexOf("."), filename.length()) : "");
                             if (!file.exists()) {
-                                file.createNewFile();
+                                boolean isFileCreated = file.createNewFile();
+                                if(!isFileCreated){
+                                    LOG.info("File was not created {}", filename);
+                                }
                             }
                             outputFile = new FileOutputStream(file);
                         } catch (IOException e) {

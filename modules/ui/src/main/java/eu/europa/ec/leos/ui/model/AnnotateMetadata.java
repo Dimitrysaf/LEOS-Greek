@@ -67,7 +67,7 @@ public class AnnotateMetadata implements Serializable {
             mapper.setSerializationInclusion(Include.NON_NULL);
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
-            return null;
+            return "";
         }
     }
 }

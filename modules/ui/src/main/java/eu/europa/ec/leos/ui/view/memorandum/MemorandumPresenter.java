@@ -168,6 +168,8 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -220,7 +222,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     private XmlContentProcessor xmlContentProcessor;
     private final List<String> openElementEditors;
 
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     @Autowired
     MemorandumPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
@@ -1067,7 +1069,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName(): "",
-                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType());
     }
 

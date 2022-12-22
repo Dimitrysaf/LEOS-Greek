@@ -238,7 +238,9 @@ public class MandateDocumentScreenImpl extends DocumentScreenImpl {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "error.message", e.getMessage()));
         } finally {
             if (zipFile != null) {
-                zipFile.delete();
+                if(!zipFile.delete()){
+                    LOG.info("File was not deleted {}", zipFile.toPath());
+                }
             }
         }
     }

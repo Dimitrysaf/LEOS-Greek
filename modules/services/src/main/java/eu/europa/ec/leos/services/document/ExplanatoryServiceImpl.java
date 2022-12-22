@@ -38,8 +38,6 @@ import java.util.concurrent.TimeUnit;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 
 @Service
 public class ExplanatoryServiceImpl implements ExplanatoryService {
@@ -88,7 +86,10 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         final String explanatoryUid = Cuid.createCuid();
         final String ref = EXPLANATORY_NAME_PREFIX + explanatoryUid;
         final String fileName = ref + EXPLANATORY_DOC_EXTENSION;
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         Explanatory explanatory = explanatoryRepository.createExplanatory(templateId, path, fileName, metadata);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(explanatory) : content, metadata);
         return explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
