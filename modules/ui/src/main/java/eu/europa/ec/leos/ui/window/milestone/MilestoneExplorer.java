@@ -35,7 +35,9 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataRequest;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataResponse;
@@ -83,6 +85,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 public class MilestoneExplorer extends AbstractWindow {
 
@@ -549,6 +554,11 @@ public class MilestoneExplorer extends AbstractWindow {
                     content = readFileToString(((File) contentFiles.get(selectedDocument + HTML)));
                 } catch (IOException e) {
                     throw new RuntimeException("Unexpected error occurred while reading content file", e);
+                }
+                if(selectedDocument.startsWith(STAT_FINANC_LEGIS)) {
+                    String nsContent = XmlHelper.addDummyNamespace(content);
+                    Document document = XercesUtils.createXercesDocument(nsContent.getBytes(UTF_8));
+                    content = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
                 }
                 if (!selectedDocument.startsWith(COVER_PAGE_CONTENT_FILE_NAME)) {
                     int annexNumber = 0;

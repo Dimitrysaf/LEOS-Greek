@@ -490,6 +490,11 @@ public class XmlHelper {
                 .replaceFirst(">", " xmlns=\"http://docs\\.oasis-open\\.org/legaldocml/ns/akn/3\\.0\">");
     }
 
+    public static String addDummyNamespace(String str) {
+        return str.replaceFirst(">", " xmlns=\"dummyURL\">");
+
+    }
+
     public static String removeAllNameSpaces(String str) {
         return str.replaceAll(" xmlns=\"http://docs\\.oasis-open\\.org/legaldocml/ns/akn/3\\.0\"", "")
                 .replaceAll(" xmlns:leos=\"urn:eu:europa:ec:leos\"", "")

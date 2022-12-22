@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -106,6 +107,15 @@ public class XercesUtilsTest extends LeosTest {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/bill1.xml");
         Document document = XercesUtils.createXercesDocument(fileContent);
         fullScanTags(document);
+    }
+
+    @Ignore
+    @Test
+    public void test_addDivsToFinStmntHtml() {
+        byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/finstmnt.xml");
+        String nsContent = XmlHelper.addDummyNamespace(new String(fileContent));
+        Document document = XercesUtils.createXercesDocument(nsContent.getBytes(StandardCharsets.UTF_8));
+        LeosXercesUtils.wrapWithPageOrientationDivs(document);
     }
 
     @Test

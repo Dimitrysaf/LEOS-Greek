@@ -64,7 +64,7 @@ import java.util.Optional;
 @ViewScope
 @SpringComponent
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
-@StyleSheet({"vaadin://../assets/css/financialstatement.css" + LeosCacheToken.TOKEN})
+@StyleSheet({"vaadin://../assets/css/stat_financ_legis.css" + LeosCacheToken.TOKEN})
 public class ProposalFinancialStatementScreenImpl extends FinancialStatementScreenImpl {
     private static final long serialVersionUID = -6719257516608653344L;
 
