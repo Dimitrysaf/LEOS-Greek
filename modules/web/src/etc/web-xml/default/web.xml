@@ -181,6 +181,17 @@
         <url-pattern>/api/token</url-pattern>
     </filter-mapping>
 
+    <!-- ForwardSlashFilter filter -->
+    <filter>
+        <filter-name>ForwardSlashFilter</filter-name>
+        <filter-class>eu.europa.ec.leos.web.support.resource.ForwardSlashFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ForwardSlashFilter</filter-name>
+        <url-pattern>/ui-a</url-pattern>
+    </filter-mapping>
+
     <!-- Hook for Spring Security -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
