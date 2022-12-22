@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.leos.services.support.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -31,15 +33,28 @@ import java.io.IOException;
 @Controller
 public class CustomResourceHttpRequestHandler extends ResourceHttpRequestHandler implements BeanFactoryPostProcessor {
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomResourceHttpRequestHandler.class);
+
     @Override
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IOException {
         Resource resource = this.getResource(request);
-        String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        String mimeType = request.getServletContext().getMimeType(path);
-        if ((resource == null) && !StringUtils.hasText(mimeType)) {
-            request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, "index.html");
+        if (resource == null) {
+            String path = this.processPathAndRemoveParams((String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
+            String fileName = StringUtils.getFilename(path);
+            String fileNameExtension = StringUtils.getFilenameExtension(path);
+            logger.debug("Resource null for path {} and file extension {}", path, fileNameExtension);
+            if (!StringUtils.hasText(fileNameExtension)) { // Main URL - No resource -> index.html
+                request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, "index.html");
+            } else if (StringUtils.hasText(fileName) && !path.startsWith("assets/")) { // Resource not in assets -> root folder
+                request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, fileName);
+            }
         }
         super.handleRequest(request, response);
+    }
+
+    private String processPathAndRemoveParams(String path) {
+        path = path.replaceFirst("\\?.*$", "");
+        return this.processPath(path);
     }
 
     public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
