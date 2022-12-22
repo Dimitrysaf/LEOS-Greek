@@ -98,7 +98,7 @@ public interface XmlNodeConfigProcessor {
                 showAs = "Council Explanatory";
                 break;
             case STAT_FINANC_LEGIS:
-                showAs = "Financial Statement";
+                showAs = "Legislative Financial Statement";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid configuration");
