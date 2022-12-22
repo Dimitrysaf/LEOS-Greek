@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.services.support.resource;
+package eu.europa.ec.leos.web.support.resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class CustomResourceHttpRequestHandler extends ResourceHttpRequestHandler
         String[] names = factory.getBeanNamesForType(ResourceHttpRequestHandler.class);
         for (String name : names) {
             BeanDefinition bd = factory.getBeanDefinition(name);
-            bd.setBeanClassName("eu.europa.ec.leos.services.support.resource.CustomResourceHttpRequestHandler");
+            bd.setBeanClassName("eu.europa.ec.leos.web.support.resource.CustomResourceHttpRequestHandler");
         }
     }
 }
