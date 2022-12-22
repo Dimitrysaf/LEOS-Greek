@@ -58,8 +58,8 @@ import java.util.function.Supplier;
 @SpringComponent
 @ViewScope
 @Instance(InstanceType.COUNCIL)
-@StyleSheet({"vaadin://../assets/css/financialstatement.css" + LeosCacheToken.TOKEN})
-@StyleSheet({"vaadin://../assets/css/financialstatement-wo-diffing-style.css" + LeosCacheToken.TOKEN})
+@StyleSheet({"vaadin://../assets/css/stat_financ_legis.css" + LeosCacheToken.TOKEN})
+@StyleSheet({"vaadin://../assets/css/stat_financ_legis-wo-diffing-style.css" + LeosCacheToken.TOKEN})
 public class MandateFinancialStatementScreenImpl extends FinancialStatementScreenImpl {
     private static final long serialVersionUID = 934198605326069948L;
 
