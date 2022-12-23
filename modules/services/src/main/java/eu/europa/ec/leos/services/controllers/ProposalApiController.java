@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class ProposalApiController {
     public ResponseEntity<Object> deleteProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
             apiService.deleteCollection(proposalRef);
-            return new ResponseEntity<>("Proposal successfully deleted", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error("Error occurred while deleting proposal - " + e.getMessage());
             return new ResponseEntity<>("Error occurred while deleting proposal: " + e.getMessage(),
@@ -103,15 +104,21 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping (value = "/export", method = RequestMethod.GET)
+    @RequestMapping (value = "/{proposalRef}/export", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> exportProposal(@RequestBody ExportPdfRequest request) {
+    public ResponseEntity<Object> exportProposal(
+                @PathVariable("proposalRef") String  proposalRef,
+                @RequestParam String  exportOutput) {
         try {
-            String jobId = apiService.exportProposal(request.getProposalRef(), request.getExportOutput());
+            String jobId = apiService.exportProposal(proposalRef,exportOutput);
             return new ResponseEntity<>(jobId , HttpStatus.OK);
+        } catch (WebServiceException wse) {
+            LOG.error("External system not available due to WebServiceException: {}", wse.getMessage());
+            return new ResponseEntity<>("Error occurred while exporting proposal : " + wse.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            LOG.error("Unexpected error occurred while creating the explanatory", e);
-            return new ResponseEntity<>("Error occurred while creating the explanatory document: " + e.getMessage(),
+            LOG.error("Unexpected error occurred while trying to export proposal", e);
+            return new ResponseEntity<>("Error occurred while exporting proposal : " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

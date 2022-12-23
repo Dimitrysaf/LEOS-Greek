@@ -201,10 +201,11 @@ public class ApiServiceImpl implements ApiService {
     }
     @Override
     public byte[] downloadProposal(String proposalRef) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String jobFileName = getJobFileName(proposalRef);
         File packageFile;
         try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposalRef, new ExportLW(ExportOptions.Output.WORD));
+            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportLW(ExportOptions.Output.WORD));
             return FileUtils.readFileToByteArray(packageFile);
         }catch( Exception e){
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
@@ -244,29 +245,22 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public String exportProposal(String proposalRef, String outputType) {
-        try {
-            Proposal proposal = proposalService.findProposalByRef(proposalRef);
-            ExportOptions.Output output;
-            switch (outputType) {
-                case "PDF":
-                    output = ExportOptions.Output.PDF;
-                    break;
-                case "WORD":
-                    output = ExportOptions.Output.WORD;
-                    break;
-                default:
-                    throw new RuntimeException("Invalid output type provided");
-            }
-            ExportOptions exportOptions = new ExportLW(output);
-            String jobId = exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
-            return jobId;
-        } catch (WebServiceException wse) {
-            LOG.error("External system not available due to WebServiceException: {}", wse.getMessage());
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while sending job to ToolBox: {}", e.getMessage());
+    public String exportProposal(String proposalRef, String outputType) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        ExportOptions.Output output;
+        switch (outputType) {
+            case "PDF":
+                output = ExportOptions.Output.PDF;
+                break;
+            case "WORD":
+                output = ExportOptions.Output.WORD;
+                break;
+            default:
+                throw new RuntimeException("Invalid output type provided");
         }
-        return null;
+        ExportOptions exportOptions = new ExportLW(output);
+        String jobId = exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
+        return jobId;
     }
 
     @Override

@@ -37,7 +37,7 @@ public interface ApiService {
 
     void createExplanatoryDocument(String proposalRef, String template);
 
-    String exportProposal(String proposalRef, String outputType);
+    String exportProposal(String proposalRef, String outputType) throws Exception;
 
     Optional<DocumentVO> getProposalDetails(String proposalRef);
 
