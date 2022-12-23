@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { UxAppShellService } from '@eui/core';
+
+import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({
   selector: 'app-proposal-actions-dropdown',
@@ -6,14 +9,19 @@ import { Component } from '@angular/core';
   styleUrls: ['./proposal-actions-dropdown.component.scss'],
 })
 export class ProposalActionsDropdownComponent {
-  constructor() {}
+  @Input() proposalId: string;
+  loading = false;
+  constructor(
+    private proposalDetailsService: ProposalDetailsService,
+    private uxService: UxAppShellService,
+  ) {}
 
   handleDownload() {
-    console.warn('stub:', 'handleDownload'); // FIXME
+    this.proposalDetailsService.donwloadProposal();
   }
 
   handleExport() {
-    console.warn('stub:', 'handleExport'); // FIXME
+    this.proposalDetailsService.exportProposal('PDF');
   }
 
   handleShare() {
@@ -21,6 +29,6 @@ export class ProposalActionsDropdownComponent {
   }
 
   handleDelete() {
-    console.warn('stub:', 'handleDelete'); // FIXME
+    this.proposalDetailsService.deleteProposal();
   }
 }

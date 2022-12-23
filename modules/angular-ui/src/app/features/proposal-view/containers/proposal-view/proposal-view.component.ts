@@ -37,7 +37,6 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (proposal) => {
-          console.log('Proposal => ', proposal);
           this.proposalTitleNonEditablePart = `${proposal.metadata.docStage} ${proposal.metadata.docType}`;
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
           this.setStateDone(proposal);

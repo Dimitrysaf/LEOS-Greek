@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
+import { UxAppShellService } from '@eui/core';
 import { Collaborator, Document, User } from '@leos/shared';
 import {
   BehaviorSubject,
+  catchError,
   filter,
   map,
   Observable,
@@ -37,11 +40,18 @@ export class ProposalDetailsService {
     switchMap((name) => this.searchUsers(name)),
   );
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private uxAppService: UxAppShellService,
+  ) {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
-
+    this.loadingBS.asObservable().subscribe((val) => {
+      this.uxAppService.isBlockDocumentActive = val;
+    });
     this.proposalDetails$ = this.proposalDetailsResponse$.pipe(
       tap((res) => this.collaboratorsBS.next(res.collaborators)),
+      tap((res) => this.loadingBS.next(false)),
       map((res: any) => res),
     );
 
@@ -81,15 +91,17 @@ export class ProposalDetailsService {
   }
 
   createAnnex() {
+    this.loadingBS.next(true);
     this.http
       .post<any>(`api/secured/proposals/${this.proposalRef}/createAnnex`, {})
       .subscribe((val) => {
-        console.log('creating annex');
         this.setProposalRef(this.proposalRef);
+        this.loadingBS.next(false);
       });
   }
 
   updateAnnexTitle(annexId: string, annexTitle: string) {
+    this.loadingBS.next(true);
     this.http
       .put<any>(
         `api/secured/proposals/${this.proposalRef}/update-annex-title/${annexId}`,
@@ -98,10 +110,12 @@ export class ProposalDetailsService {
       )
       .subscribe((val) => {
         this.setProposalRef(this.proposalRef);
+        this.loadingBS.next(false);
       });
   }
 
   deleteAnnex(annexRef: string) {
+    this.loadingBS.next(true);
     this.http
       .delete<any>(
         `api/secured/proposals/${this.proposalRef}/deleteAnnex/${annexRef}`,
@@ -121,6 +135,51 @@ export class ProposalDetailsService {
       })
       .subscribe((val) => {
         this.proposalRefBS.next(this.proposalRef);
+      });
+  }
+
+  donwloadProposal() {
+    this.http
+      .get(`api/secured/proposals/${this.proposalRef}/download`, {
+        responseType: 'blob',
+      })
+      .pipe(
+        tap(() => this.loadingBS.next(true)),
+        map((res) => {
+          this.downloadFile(
+            res,
+            'application/zip',
+            `Proposal_${this.proposalRef}`,
+          );
+        }),
+      )
+      .subscribe(() => {
+        this.loadingBS.next(false);
+      });
+  }
+
+  exportProposal(outputType: string) {
+    this.http
+      .get<any>(
+        `api/secured/proposal/${this.proposalRef}/export?exportOutput=${outputType}`,
+      )
+      .subscribe({
+        next: (res) =>
+          // TODO : service is unvailable
+          console.log('exporting'),
+        error: (err) => {
+          this.uxAppService.growlError(err.error);
+        },
+      });
+  }
+
+  deleteProposal() {
+    this.loadingBS.next(true);
+    this.http
+      .delete<string>(`api/secured/proposal/${this.proposalRef}`)
+      .subscribe(() => {
+        this.loadingBS.next(false);
+        this.router.navigate(['/workspace']);
       });
   }
 
@@ -162,6 +221,7 @@ export class ProposalDetailsService {
   }
 
   private getProposalDetails(proposalRef: string): Observable<Document> {
+    this.loadingBS.next(true);
     return this.http.get<Document>(`api/secured/proposals/${proposalRef}`);
   }
 
@@ -200,5 +260,13 @@ export class ProposalDetailsService {
     return this.http.get<User[]>(`api/secured/users/searchUsers`, {
       params: { name },
     });
+  }
+
+  private downloadFile(data: any, type: string, filename: string) {
+    const blob = new Blob([data], {
+      type: 'application/zip',
+    });
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);
   }
 }
