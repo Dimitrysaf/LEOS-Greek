@@ -98,8 +98,8 @@ public class AnnexServiceImplTest extends LeosTest {
         when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithLiveDiffing());
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), true);
-        Annex explanatory = annexService.updateAnnex(objectId, properties, true);
-        assertTrue(explanatory.isLiveDiffingRequired());
+        Annex annex = annexService.updateAnnex(objectId, properties, true);
+        assertTrue(annex.isLiveDiffingRequired());
 
     }
 
@@ -108,8 +108,8 @@ public class AnnexServiceImplTest extends LeosTest {
         when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithoutLiveDiffing());
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), false);
-        Annex explanatory = annexService.updateAnnex(objectId, properties, true);
-        assertFalse(explanatory.isLiveDiffingRequired());
+        Annex annex = annexService.updateAnnex(objectId, properties, true);
+        assertFalse(annex.isLiveDiffingRequired());
     }
 
     private Annex getMockedAnnexWithBaseVersionId() {
@@ -123,28 +123,28 @@ public class AnnexServiceImplTest extends LeosTest {
     }
 
     private Annex getMockedAnnexWithLiveDiffing() {
-        AnnexMetadata explanatoryMetadata = getMockedMetadata();
+        AnnexMetadata annexMetadata = getMockedMetadata();
         List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
         Content content = mock(Content.class);
         return new Annex(objectId, "ANNEX_COUNCIL", "test", Instant.now(), "test", Instant.now(),
                 "", "", "", "", VersionType.MINOR, false, "",
                 collaborators, Arrays.asList(""), null, true, "", "", Option.some(content),
-                Option.some(explanatoryMetadata));
+                Option.some(annexMetadata));
     }
 
     private Annex getMockedAnnexWithoutLiveDiffing() {
-        AnnexMetadata explanatoryMetadata = getMockedMetadata();
+        AnnexMetadata annexMetadata = getMockedMetadata();
         List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
         Content content = mock(Content.class);
-        return new Annex(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(),
+        return new Annex(objectId, "ANNEX_COUNCIL", "test", Instant.now(), "test", Instant.now(),
                 "", "", "", "", VersionType.MINOR, false, "",
                 collaborators, Arrays.asList(""), null, false, "", "", Option.some(content),
-                Option.some(explanatoryMetadata));
+                Option.some(annexMetadata));
     }
 
     private AnnexMetadata getMockedMetadata() {
         return new AnnexMetadata("... at this stage", "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL", "on ...",
-                "CE-001", "EN", "CE-001", "explanatory", 1, "I", "Working Party cover page", "555",
+                "CE-001", "EN", "CE-001", "annex", 1, "I", "Working Party cover page", "555",
                 "0.1.0", false, "");
     }
 
