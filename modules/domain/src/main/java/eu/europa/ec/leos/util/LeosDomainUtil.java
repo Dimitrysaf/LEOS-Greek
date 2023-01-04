@@ -32,6 +32,8 @@ public class LeosDomainUtil {
 
     private final static String WRAP_FRAGMENT_END = "</aknFragment>";
 
+    private final static String WRAP_FRAGMENT_START_REGEX =  "<aknFragment(.*?)>";
+
     public static Date getLeosDateFromString(String dateStr) {
         return getDateFromString(dateStr, LEOS_REPO_DATE_FORMAT);
     }
@@ -62,7 +64,7 @@ public class LeosDomainUtil {
     }
 
     public static String unWrapXmlFragment(String xmlFragment) {
-        return xmlFragment.replaceAll(WRAP_FRAGMENT_START, "").replaceAll(WRAP_FRAGMENT_END, "");
+     return xmlFragment.replaceAll(WRAP_FRAGMENT_START_REGEX, "").replaceAll(WRAP_FRAGMENT_END, "");
     }
 
     public static void addDateIfNotNull(String fieldName, GregorianCalendar calendar, String LEFT_PAD, String RIGHT_CHAR, StringBuilder sb) {
