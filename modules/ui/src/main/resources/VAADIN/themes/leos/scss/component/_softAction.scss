@@ -31,6 +31,7 @@ $WHITE:#FFFFFF;
     line-height: 1;
     border-radius: 4px;
     display: inline-block;
+    text-decoration: none !important;
     color: $WHITE !important;       /*KLUGE:!important is used to override the leos-content-removed styling as it has
                                       more preference over this */
 }
