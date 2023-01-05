@@ -11,6 +11,7 @@ import java.util.Random;
 public class SearchBarState extends LeosJavaScriptExtensionState {
     public static final long serialVersionUID = 12345678L;
 
+    private static final Random RANDOM = new Random();
     Long searchRequestId = 0L; //Keep only one search request . ignore rest
     boolean matchCase;
     boolean wholeWords;
@@ -31,7 +32,7 @@ public class SearchBarState extends LeosJavaScriptExtensionState {
     }
 
     public void newSearch() {
-            Long searchId = new Random().nextLong();
+            Long searchId = RANDOM.nextLong();
             setSearchRequestId(searchId);
             this.selectedMatch = -1;
             this.matches.clear();

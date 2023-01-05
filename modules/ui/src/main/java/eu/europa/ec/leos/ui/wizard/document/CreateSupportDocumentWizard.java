@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Scope("prototype")
@@ -57,10 +58,13 @@ public class CreateSupportDocumentWizard extends AbstractWizard {
     public void init(List<CatalogItem> templates, List<String> templateDocPresent) {
         List<CatalogItem> supportingDocumentTemplate = new ArrayList<>();
         supportDocumentCatalogKey = cfgfHelper.getProperty("leos.supporting.documents.catalog.key");
-        supportingDocumentTemplate.add(templates.stream().filter(template -> template.getKey().equals(supportDocumentCatalogKey)).findAny().get());
-        checkForAlreadyPresentSupportDoc(supportingDocumentTemplate, templateDocPresent);
-        registerWizardStep(new TemplateSelectionStep(document, supportingDocumentTemplate, messageHelper, true, true));
-        setWizardStep(0);
+        Optional<CatalogItem> catalogItem = templates.stream().filter(template -> template.getKey().equals(supportDocumentCatalogKey)).findAny();
+        if(catalogItem.isPresent()) {
+            supportingDocumentTemplate.add(catalogItem.get());
+            checkForAlreadyPresentSupportDoc(supportingDocumentTemplate, templateDocPresent);
+            registerWizardStep(new TemplateSelectionStep(document, supportingDocumentTemplate, messageHelper, true, true));
+            setWizardStep(0);
+        }
     }
 
     private void checkForAlreadyPresentSupportDoc(List<CatalogItem> supportingDocumentTemplate, List<String> templateDocPresent) {

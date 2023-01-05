@@ -1,0 +1,77 @@
+<div class="filters-container eui-u-ph-m">
+  <form class="filters-form" [formGroup]="form" *ngIf="form">
+    <!-- Header Row -->
+
+    <div
+      class="filters-title eui-u-pb-2xs eui-u-flex eui-u-flex-align-items-center eui-u-flex-justify-content-between eui-u-shadow-z-depth-0"
+    >
+      <h4 class="eui-u-font-xl eui-u-font-bold">Filters</h4>
+      <div class="filters-title--actions">
+        <button
+          euiButton
+          euiBasicButton
+          class="eui-u-font-s eui-u-ph-none"
+          (click)="resetFilters()"
+        >
+          <span class="eui-u-color-primary-100">Reset</span>
+          <span
+            class="eui-icon eui-icon-angle-left eui-u-font-size-s eui-u-pl-xl eui-u-color-grey-100"
+          ></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Title Row -->
+
+    <div class="filters-search-input eui-u-shadow-z-depth-0 eui-u-pb-xs">
+      <div euiInputGroup>
+        <label
+          euiLabel
+          for="with_action-button_disabled"
+          class="eui-u-mt-s eui-u-mb-xs eui-u-font-l eui-u-font-bold"
+          >Search by title</label
+        >
+        <div class="eui-input-group-addon eui-u-pr-3xl">
+          <input
+            euiInputText
+            id="with_action-button_disabled"
+            placeholder="Search for a proposal"
+            formControlName="searchTerm"
+          />
+          <button euiButton euiSecondary euiIconButton>
+            <span euiIcon iconClass="eui-icon eui-icon-search"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkbox Filters Row -->
+
+    <div class="filters-checkboxes">
+      <div
+        class="filters-checkboxes-section eui-u-shadow-z-depth-0 eui-u-pb-xs"
+        *ngFor="let filter of filterGroups"
+      >
+        <h5 class="eui-u-pv-xs eui-u-font-l eui-u-font-bold">
+          {{ filter.title }}
+        </h5>
+        <div
+          euiInputGroup
+          class="eui-u-mb-none"
+          *ngFor="let filterOption of filter.filterOptions"
+        >
+          <input
+            euiInputCheckBox
+            class="eui-u-display-hidden"
+            [id]="filterOption.id"
+            [name]="filterOption.fieldName"
+            [formControlName]="filterOption.fieldName"
+          />
+          <label class="align-items-start" [for]="filterOption.id">{{
+            filterOption.label
+          }}</label>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

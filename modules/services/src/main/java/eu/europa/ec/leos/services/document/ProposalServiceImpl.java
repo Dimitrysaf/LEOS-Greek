@@ -385,7 +385,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     @Override public Proposal updateProposal(Proposal proposal, byte[] content,  VersionType versionType, String comment) {
         LOG.trace("Updating Proposal Xml Content... [id={}]", proposal.getId());
-        ProposalMetadata updatedMetadata = proposal.getMetadata().get().withPurpose(StringEscapeUtils.unescapeXml(getPurposeFromXml(content)));
+        ProposalMetadata updatedMetadata = proposal.getMetadata().get()
+                .builder()
+                .withPurpose(StringEscapeUtils.unescapeXml(getPurposeFromXml(content)))
+                .build();
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, content, versionType, comment);
 
         return proposal;
@@ -475,7 +478,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Proposal createProposal(String templateId, String path, ProposalMetadata metadata, byte[] content) {
         LOG.trace("Creating Proposal... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         String ref = generateProposalReference(metadata.getLanguage());
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         Proposal proposal = proposalRepository.createProposal(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Proposal ref {} in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(proposal) : content, metadata);
@@ -486,7 +492,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Proposal createProposalFromContent(String path, ProposalMetadata metadata, byte[] content) {
         LOG.trace("Creating Proposal From Content... [path={}, metadata={}]", path, metadata);
         String ref = generateProposalReference(metadata.getLanguage());
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         return proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(content, metadata));
     }
 

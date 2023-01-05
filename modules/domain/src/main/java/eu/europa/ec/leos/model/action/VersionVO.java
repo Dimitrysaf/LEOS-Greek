@@ -2,11 +2,11 @@ package eu.europa.ec.leos.model.action;
 
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -25,8 +25,7 @@ public class VersionVO {
     private CheckinCommentVO checkinCommentVO;
     private boolean mostRecentVersion;
     
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     public VersionType getVersionType() {
         return versionType;
     }
@@ -60,7 +59,7 @@ public class VersionVO {
     }
     
     public void setUpdatedDate(Instant updatedDate) {
-        this.updatedDate = dateFormatter.format(Date.from(updatedDate));
+        this.updatedDate = dateFormatter.format(updatedDate);
     }
     
     public String getUsername() {

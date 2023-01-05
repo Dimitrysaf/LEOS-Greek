@@ -1,0 +1,10 @@
+<div class="eui-u-flex eui-u-flex-column app-u-gap-m">
+  <app-versions-pane-group
+    class="eui-u-display-block eui-u-width-100"
+    *ngFor="
+      let group of doc.versions$ | async;
+      trackByProperty: 'versionNumber'
+    "
+    [group]="group"
+  ></app-versions-pane-group>
+</div>

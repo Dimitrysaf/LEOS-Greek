@@ -1,0 +1,93 @@
+{
+  "name": "eui-angular-app",
+  "version": "14.0.4",
+  "license": "EUPL-1.1",
+  "scripts": {
+    "ng": "ng",
+    "start-mock-server": "nodemon --watch ./mock ./mock/server.js",
+    "start-serve": "eui-scripts serve-app --configuration=proxy-mock",
+    "start": "npm-run-all --parallel start-mock-server start-serve",
+    "start-proxy": "eui-scripts serve-app --configuration=proxy",
+    "start-leos-proxy": "eui-scripts serve-app --proxy-config proxy.conf.json",
+    "start-local": "eui-scripts serve-app",
+    "build": "eui-scripts build-app",
+    "build-dev": "eui-scripts build-app --configuration=development --configEnvTarget=dev",
+    "build-prod": "eui-scripts build-app --configuration=production-optimized --configEnvTarget=prod",
+    "build-prod-skip-test": "eui-scripts build-app --configuration=production-optimized --configEnvTarget=prod --skipTest --skipLint",
+    "build-prod-stats": "eui-scripts build-app --configuration=production-optimized --configEnvTarget=prod --statsJson",
+    "app:build": "eui-scripts build-app",
+    "app:inject-config": "eui-scripts inject-config-app",
+    "generate-changelog": "eui-scripts generate-changelog",
+    "eslint": "eslint --ext .ts --ext .html src/",
+    "eslint:fix": "eslint --fix --ext .ts --ext .html src/",
+    "prettier": "prettier --loglevel warn --check .",
+    "prettier:fix": "prettier --loglevel warn --write .",
+    "stylelint": "stylelint \"src/**/*.{css,scss}\"",
+    "stylelint:fix": "stylelint --fix \"src/**/*.{css,scss}\"",
+    "lint": "yarn run eslint && yarn run stylelint && yarn run prettier",
+    "lint:fix": "yarn run eslint:fix && yarn run stylelint:fix && yarn run prettier:fix",
+    "prepare": "cd ../.. && husky install ./modules/ui-angular/.husky"
+  },
+  "lint-staged": {
+    "src/*.{ts,html}": [
+      "eslint --quiet --cache --fix",
+      "prettier --loglevel warn --write"
+    ],
+    "src/*.{css,scss}": [
+      "stylelint --quiet --cache --fix",
+      "prettier --loglevel warn --write"
+    ],
+    "src/*.{js,json,md}": [
+      "prettier --loglevel warn --write"
+    ],
+    "./*.{js,json,md}": [
+      "prettier --loglevel warn --write"
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@eui/deps-base": "14.0.7",
+    "ng-for-track-by-property": "14.0.2",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3"
+  },
+  "peerDependencies": {
+    "@angular/animations": "*",
+    "@angular/cdk": "*",
+    "@angular/common": "*",
+    "@angular/compiler": "*",
+    "@angular/compiler-cli": "*",
+    "@angular/core": "*",
+    "@angular/elements": "*",
+    "@angular/forms": "*",
+    "@angular/language-service": "*",
+    "@angular/material": "*",
+    "@angular/material-moment-adapter": "*",
+    "@angular/platform-browser": "*",
+    "@angular/platform-browser-dynamic": "*",
+    "@angular/router": "*",
+    "@angular/service-worker": "*",
+    "@eui/base": "*",
+    "@eui/components": "*",
+    "@eui/core": "*",
+    "@eui/showcase": "*",
+    "@eui/styles": "*",
+    "@eui/styles-base": "*",
+    "@eui/tools": "*",
+    "@ngx-translate/core": "*",
+    "lodash-es": "*",
+    "rxjs": "*"
+  },
+  "devDependencies": {
+    "@ngx-env/builder": "2.2.0",
+    "@types/ckeditor4": "4.16.4",
+    "@types/lodash-es": "4.17.6",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "husky": "8.0.1",
+    "lint-staged": "13.0.3",
+    "postcss-scss": "4.0.5",
+    "prettier": "^2.7.1",
+    "stylelint-config-prettier": "9.0.3"
+  }
+}

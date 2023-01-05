@@ -1,0 +1,24 @@
+<div class="eui-dropdown-button">
+  <eui-dropdown>
+    <button euiButton euiSizeS euiPrimary euiOutline>
+      <span euiLabel>Actions</span>
+      <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+    </button>
+    <eui-dropdown-content>
+      <ul euiList>
+        <li euiListItem (click)="handleDownload()">
+          <button euiListItem>Download</button>
+        </li>
+        <li euiListItem (click)="handleExport()">
+          <button euiListItem>Export</button>
+        </li>
+        <li euiListItem (click)="handleShare()">
+          <button euiListItem>Share</button>
+        </li>
+        <li euiListItem (click)="handleDelete()">
+          <button euiListItem euiDanger>Delete</button>
+        </li>
+      </ul>
+    </eui-dropdown-content>
+  </eui-dropdown>
+</div>

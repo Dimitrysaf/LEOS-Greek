@@ -103,7 +103,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DIR_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_IN_TOC;
-import static eu.europa.ec.leos.services.support.XmlHelper.FINANCIAL_STATEMENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
@@ -1539,7 +1539,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String originalId = XercesUtils.getAttributeValue(node, LEOS_SOFT_MOVE_FROM);
         Boolean originalActionRoot = XercesUtils.getAttributeValueAsBoolean(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         LOG.debug("Setting original node {} as MOVED. Actual node {}", originalId, getId(node));
-        if (originalId != null && Boolean.valueOf(originalActionRoot)) {
+        if (originalId != null && Boolean.TRUE.equals(originalActionRoot)) {
             Node originalNode = XercesUtils.getElementById(node.getOwnerDocument(), originalId);
             if (originalNode != null) {
                 softDeleteElementForNode(originalNode);
@@ -1847,8 +1847,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 case PROP_ACT:
                     category = null;
                     break;
-                case FINANCIAL_STATEMENT:
-                    category = LeosCategory.FINANCIAL_STATEMENT;
+                case STAT_FINANC_LEGIS:
+                    category = LeosCategory.STAT_FINANC_LEGIS;
                     break;
                 default:
                     category = LeosCategory.MEDIA;

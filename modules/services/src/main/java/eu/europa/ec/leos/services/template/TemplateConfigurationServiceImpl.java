@@ -42,11 +42,8 @@ class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
 
     @Override
     public String getTemplateConfiguration(String templateId, String confElement) {
-        if (getConfElementJson(templateId, confElement) != null) {
-            return getConfElementJson(templateId, confElement).toString();
-        } else {
-            return null;
-        }
+        JsonNode confElementJson = getConfElementJson(templateId, confElement);
+        return confElementJson != null ? confElementJson.toString() : null;
     }
 
     @Override

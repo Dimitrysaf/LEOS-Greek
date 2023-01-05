@@ -13,6 +13,11 @@
  */
 package eu.europa.ec.leos.services.utils;
 
+import eu.europa.ec.leos.services.compare.ContentComparatorContext;
+import eu.europa.ec.leos.services.compare.vo.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,16 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.CollectionUtils;
-
-import eu.europa.ec.leos.services.compare.ContentComparatorContext;
-import eu.europa.ec.leos.services.compare.vo.Element;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author bogdan.mladinescu
  */
 public class XMLContentComparatorDebugLogger {
-
+    private static final Logger LOG = LoggerFactory.getLogger(XMLContentComparatorDebugLogger.class);
     /**
      *  Service used to debug the element transitions with respect to their node index
      *
@@ -66,7 +68,7 @@ public class XMLContentComparatorDebugLogger {
     }
 
     public static void addOperationToLog(String content) {
-        if(1==1)
+        if(Boolean.TRUE.booleanValue())
         {
             return;
         }
@@ -79,7 +81,7 @@ public class XMLContentComparatorDebugLogger {
             return "null-element";
         }
 
-        if(CollectionUtils.isEmpty(element.getChildren())) {
+        if(isEmpty(element.getChildren())) {
             return "no-children-" + element.getTagId();
         }
 
@@ -119,7 +121,10 @@ public class XMLContentComparatorDebugLogger {
             outputFile = new File(OUTPUT_DIRECTORY + File.separator + threadId() + ".log");
 
             if(!outputFile.exists()) {
-                outputFile.createNewFile();
+                boolean newFile = outputFile.createNewFile();
+                if(newFile){
+                    LOG.info("File created {}", outputFile.toPath());
+                }
             }
 
             fw = new FileWriter(outputFile, false);
@@ -135,7 +140,7 @@ public class XMLContentComparatorDebugLogger {
         finally {
 
             try {
-                fw.close();
+                if(fw != null) fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

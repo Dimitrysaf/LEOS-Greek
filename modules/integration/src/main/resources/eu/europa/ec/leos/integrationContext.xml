@@ -5,7 +5,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean class="org.springframework.web.client.RestTemplate"/>
+    <bean id="RestOperations" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>
+            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+                <property name="readTimeout" value="30000" />
+                <property name="connectTimeout" value="30000" />
+            </bean>
+        </constructor-arg>
+    </bean>
 
     <!-- Integration Properties -->
     <util:properties id="integrationProperties" ignore-resource-not-found="true"

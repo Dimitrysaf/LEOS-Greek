@@ -295,7 +295,10 @@ public abstract class AnnexServiceImpl implements AnnexService {
     public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content) {
         LOG.trace("Creating Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         String ref = generateAnnexReference(templateId, content, metadata.getLanguage());
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         Annex annex = annexRepository.createAnnex(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata);

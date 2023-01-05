@@ -80,6 +80,7 @@ public class BillContextService {
     private String purpose = null;
     private String moveDirection = null;
     private String annexId;
+    private String annexRef;
     private boolean cloneProposal;
     private boolean eeaRelevance;
 
@@ -166,6 +167,12 @@ public class BillContextService {
         billDocument = document;
     }
 
+    public void useAnnexwithRef(String annexRef) {
+        Validate.notNull(annexRef, "Bill 'annexRef' is required!");
+        LOG.trace("Using Bill ... [annexRef={}]", annexRef);
+        this.annexRef = annexRef;
+    }
+
     public void useAnnexDocument(DocumentVO document) {
         Validate.notNull(document, "Annex document is required!");
         annexDocument = document;
@@ -209,7 +216,10 @@ public class BillContextService {
         Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
 
         Validate.notNull(purpose, "Bill purpose is required!");
-        BillMetadata metadata = metadataOption.get().withPurpose(purpose);
+        BillMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED), null);
         return billService.createVersion(billCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
@@ -310,8 +320,11 @@ public class BillContextService {
 
         final String ref = billService.generateBillReference(bill.getContent().get().getSource().getBytes(), bill.getMetadata().get().getLanguage());
         final BillMetadata updatedBillMetadata = bill.getMetadata().get()
+                .builder()
                 .withPurpose(purpose)
-                .withRef(ref).withEeaRelevance(eeaRelevance);
+                .withRef(ref)
+                .withEeaRelevance(eeaRelevance)
+                .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(billDocument.getSource(), createValueMap(updatedBillMetadata), xmlNodeConfigProcessor.getConfig(updatedBillMetadata.getCategory()));
         
         billDocument.setName(ref + XML_DOC_EXT);
@@ -339,7 +352,10 @@ public class BillContextService {
         Option<BillMetadata> metadataOption = bill.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
         Validate.notNull(purpose, "Bill purpose is required!");
-        BillMetadata metadata = metadataOption.get().withPurpose(purpose);
+        BillMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .build();
         billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
@@ -488,13 +504,15 @@ public class BillContextService {
 
         final String ref = annexService.generateAnnexReference(annex.getContent().get().getSource().getBytes(), annexMetadataVO.getLanguage());
         final AnnexMetadata updatedAnnexMetadata = annex.getMetadata().getOrError(() -> "Annex metadata is required")
+                .builder()
                 .withPurpose(purpose)
                 .withIndex(annexIndex)
                 .withNumber(annexMetadataVO.getNumber())
                 .withTitle(annexMetadataVO.getTitle())
                 .withType(billMetadata.getType())
                 .withTemplate(annexMetadataVO.getTemplate())
-                .withRef(ref);
+                .withRef(ref)
+                .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
 

@@ -21,12 +21,7 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.ViewScope;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
@@ -40,8 +35,8 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.AccordionPane;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
@@ -64,19 +59,8 @@ import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.HeaderResizeEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
-import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
-import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
+import eu.europa.ec.leos.web.event.view.document.*;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
-import eu.europa.ec.leos.web.event.view.document.CreateEventParameter;
-import eu.europa.ec.leos.web.event.view.document.FetchCrossRefTocResponseEvent;
-import eu.europa.ec.leos.web.event.view.document.FetchElementResponseEvent;
-import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceResponse;
-import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;
-import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
-import eu.europa.ec.leos.web.event.view.document.ReferenceLabelResponseEvent;
-import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
-import eu.europa.ec.leos.web.event.view.document.RenumberingEvent;
-import eu.europa.ec.leos.web.event.view.document.SearchActResponseEvent;
 import eu.europa.ec.leos.web.model.TocAndAncestorsVO;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
@@ -102,12 +86,10 @@ import org.vaadin.dialogs.ConfirmDialog;
 import javax.annotation.PostConstruct;
 import javax.inject.Provider;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -120,7 +102,7 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentScreenImpl.class);
     
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     protected final UserHelper userHelper;
     protected final SecurityContext securityContext;
@@ -434,7 +416,7 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
                         userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
                     }
                     coEditorsList.append("&nbsp;&nbsp;-&nbsp;")
-                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))))
+                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))))
                             .append("<br>");
                 });
         if (!StringUtils.isEmpty(coEditorsList)) {

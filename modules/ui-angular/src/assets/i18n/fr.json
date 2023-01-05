@@ -1,0 +1,15 @@
+{
+  "page.home.title": "Bienvenue dans eUI!",
+  "app.search.button": "Chercher",
+  "eui.my-profile-informations": "My profile information FR",
+  "eui.you-are-logged-in-as": "You are logged in as FR",
+  "eui.sign-out": "Sign out FR",
+  "page.collection.milestones.table.title": "Title FR",
+  "page.collection.milestones.table.date": "Date FR",
+  "page.collection.milestones.table.status": "Status FR",
+  "page.collection.milestones.table.actions": "Actions FR",
+  "page.collection.milestones.type.1": "For Interservice Consultation FR",
+  "page.collection.milestones.type.2": "For Decision FR",
+  "page.collection.milestones.type.3": "Revision after Interservice Consultation FR",
+  "page.collection.milestones.type.4": "Other FR"
+}

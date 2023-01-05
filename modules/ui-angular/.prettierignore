@@ -1,0 +1,20 @@
+*
+
+# app sources
+!/src
+!/src/**
+/src/coverage
+
+# mock server
+!/mock
+!/mock/**
+/mock/legacy
+
+# build configurations and scripts
+!/*.js
+!/*.json
+
+# modified by npm / yarn
+package.json
+package-lock.json
+yarn.lock

@@ -26,7 +26,6 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.component.doubleCompare.DoubleComparisonComponent;
-import eu.europa.ec.leos.ui.component.toc.TableOfContentComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
@@ -59,8 +58,8 @@ import java.util.function.Supplier;
 @SpringComponent
 @ViewScope
 @Instance(InstanceType.COUNCIL)
-@StyleSheet({"vaadin://../assets/css/financialstatement.css" + LeosCacheToken.TOKEN})
-@StyleSheet({"vaadin://../assets/css/financialstatement-wo-diffing-style.css" + LeosCacheToken.TOKEN})
+@StyleSheet({"vaadin://../assets/css/stat_financ_legis.css" + LeosCacheToken.TOKEN})
+@StyleSheet({"vaadin://../assets/css/stat_financ_legis-wo-diffing-style.css" + LeosCacheToken.TOKEN})
 public class MandateFinancialStatementScreenImpl extends FinancialStatementScreenImpl {
     private static final long serialVersionUID = 934198605326069948L;
 
@@ -96,21 +95,21 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     @Override
     public void populateComparisonContent(String comparedContent, String comparedInfo, FinancialStatement original, FinancialStatement current) {
         ExportVersions<FinancialStatement> exportVersions = new ExportVersions<>(original, current);
-        doubleComparisonComponent.populateMarkedContent(comparedContent, LeosCategory.FINANCIAL_STATEMENT, comparedInfo, exportVersions);
+        doubleComparisonComponent.populateMarkedContent(comparedContent, LeosCategory.STAT_FINANC_LEGIS, comparedInfo, exportVersions);
         doubleComparisonComponent.setSimpleComparison();
     }
 
     @Override
     public void populateDoubleComparisonContent(String comparedContent, String comparedInfo, FinancialStatement original, FinancialStatement intermediate, FinancialStatement current) {
         ExportVersions<FinancialStatement> exportVersions = new ExportVersions<>(original, intermediate, current);
-        doubleComparisonComponent.populateDoubleComparisonContent(comparedContent, LeosCategory.FINANCIAL_STATEMENT, comparedInfo, exportVersions);
+        doubleComparisonComponent.populateDoubleComparisonContent(comparedContent, LeosCategory.STAT_FINANC_LEGIS, comparedInfo, exportVersions);
         doubleComparisonComponent.setDoubleComparison();
     }
 
     @Override
     public void showVersion(String content, String versionInfo) {
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, doubleComparisonComponent));
-        doubleComparisonComponent.populateDoubleComparisonContent(content.replaceAll("(?i) id=\"", " id=\"doubleCompare-"), LeosCategory.FINANCIAL_STATEMENT, versionInfo, null);
+        doubleComparisonComponent.populateDoubleComparisonContent(content.replaceAll("(?i) id=\"", " id=\"doubleCompare-"), LeosCategory.STAT_FINANC_LEGIS, versionInfo, null);
         doubleComparisonComponent.removeComparison();
     }
 
@@ -163,7 +162,7 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     @Override
     public void cleanComparedContent() {
         final String versionInfo = messageHelper.getMessage("document.compare.version.caption.double");
-        doubleComparisonComponent.populateDoubleComparisonContent("", LeosCategory.FINANCIAL_STATEMENT, versionInfo, null);
+        doubleComparisonComponent.populateDoubleComparisonContent("", LeosCategory.STAT_FINANC_LEGIS, versionInfo, null);
         doubleComparisonComponent.removeComparison();
     }
 
@@ -205,7 +204,9 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "error.message", e.getMessage()));
         } finally {
             if (zipFile != null) {
-                zipFile.delete();
+                if(!zipFile.delete()){
+                    LOG.info("File was not deleted {}", zipFile.getPath());
+                }
             }
         }
     }

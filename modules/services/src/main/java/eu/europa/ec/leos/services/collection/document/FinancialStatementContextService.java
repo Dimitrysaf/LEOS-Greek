@@ -164,9 +164,15 @@ public class FinancialStatementContextService {
         Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
 
         Validate.notNull(purpose, "FinancialStatement purpose is required!");
-        FinancialStatementMetadata metadata = metadataOption.get().withPurpose(purpose).withType(type).withTemplate(template).withTitle(title);
+        FinancialStatementMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withType(type)
+                .withTemplate(template)
+                .withTitle(title)
+                .build();
 
-        financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.FINANCIAL_STATEMENT_METADATA_UPDATED), null);
+        financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
         financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
 
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
@@ -197,7 +203,10 @@ public class FinancialStatementContextService {
         Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
 
         // Updating only purpose at this time. other metadata needs to be set, if needed
-        FinancialStatementMetadata FinancialStatementMetadata = metadataOption.get().withPurpose(purpose);
+        FinancialStatementMetadata FinancialStatementMetadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .build();
         financialStatementService.updateFinancialStatement(financialStatement, FinancialStatementMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
     }
 
@@ -209,11 +218,13 @@ public class FinancialStatementContextService {
         Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
         FinancialStatementMetadata metadata = metadataOption.get();
         FinancialStatementMetadata financialStatementMetadata = metadata
+                .builder()
                 .withPurpose(metadata.getPurpose())
                 .withType(metadata.getType())
                 .withTemplate(template)
                 .withDocVersion(metadata.getDocVersion())
-                .withDocTemplate(template);
+                .withDocTemplate(template)
+                .build();
 
         financialStatement = financialStatementService.updateFinancialStatement(financialStatement, xmlContent, financialStatementMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.ANNEX_STRUCTURE_UPDATED));
     }

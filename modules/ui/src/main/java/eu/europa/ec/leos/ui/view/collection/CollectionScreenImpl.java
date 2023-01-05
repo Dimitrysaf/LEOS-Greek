@@ -102,11 +102,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.context.WebApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +122,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionScreenImpl.class);
 
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final long serialVersionUID = 1L;
     private static final int TITLE_TEXT_MAX_LENGTH = 2000;
 
@@ -375,7 +376,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         populateDetailsData(proposalVO.getMetadata());
         populateMemorandumData(proposalVO.getChildDocument(LeosCategory.MEMORANDUM));
         populateLegalTextData(proposalVO.getChildDocument(LeosCategory.BILL));
-        populateFinancialStatementData(proposalVO.getChildDocument(LeosCategory.FINANCIAL_STATEMENT));
+        populateFinancialStatementData(proposalVO.getChildDocument(LeosCategory.STAT_FINANC_LEGIS));
         populateExplanatory(proposalVO);
         this.cloneProposalMetadataVO = proposalVO.getCloneProposalMetadataVO();
         populateCloneProposalMetadata(cloneProposalMetadataVO);
@@ -705,7 +706,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
 
     private String setLastUpdated(DocumentVO vo) {
         return messageHelper.getMessage("collection.caption.document.lastupdated",
-                vo.getUpdatedOn() != null ? dataFormat.format(vo.getUpdatedOn()) : "",
+                vo.getUpdatedOn() != null ? dataFormat.format(vo.getUpdatedOn().toInstant()) : "",
                 vo.getUpdatedBy() != null ? userHelper.convertToPresentation(vo.getUpdatedBy()) : "");
     }
 
@@ -735,7 +736,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
                     }
                     userCoEditionLabel.setDescription(
                             userCoEditionLabel.getDescription() +
-                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))) +
+                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))) +
                                     "<br>",
                             ContentMode.HTML);
                 });

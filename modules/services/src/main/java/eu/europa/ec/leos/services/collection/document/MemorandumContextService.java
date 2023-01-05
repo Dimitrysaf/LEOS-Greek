@@ -138,7 +138,12 @@ public class MemorandumContextService {
         Validate.isTrue(metadataOption.isDefined(), "Memorandum metadata is required!");
 
         Validate.notNull(purpose, "Memorandum purpose is required!");
-        MemorandumMetadata metadata = metadataOption.get().withPurpose(purpose).withType(type).withTemplate(template);
+        MemorandumMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withType(type)
+                .withTemplate(template)
+                .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED), null);
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
@@ -154,7 +159,11 @@ public class MemorandumContextService {
             Validate.isTrue(metadataOption.isDefined(), "Memorandum metadata is required!");
 
             Validate.notNull(purpose, "Memorandum purpose is required!");
-            MemorandumMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+            MemorandumMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
 
             memorandumService.updateMemorandum(memorandum, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
         }
@@ -169,11 +178,14 @@ public class MemorandumContextService {
         Validate.isTrue(metadataOption.isDefined(), "Memorandum metadata is required!");
 
         String ref = createRefForMemorandum();
-        MemorandumMetadata metadata = metadataOption.get().
-                                        withPurpose(purpose).
-                                        withType(type).
-                                        withTemplate(template).
-                                        withRef(ref).withEeaRelevance(eeaRelevance);
+        MemorandumMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withType(type)
+                .withTemplate(template)
+                .withRef(ref)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         Validate.notNull(memoDocument.getSource(), "Memorandum xml is required!");
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(memoDocument.getSource(), createValueMap(metadata),
@@ -192,8 +204,10 @@ public class MemorandumContextService {
 
         final String ref = memorandumService.generateMemorandumReference(memorandum.getContent().get().getSource().getBytes(), memorandum.getMetadata().get().getLanguage());
         final MemorandumMetadata updatedMemorandumMetadata = memorandum.getMetadata().get()
+                .builder()
                 .withPurpose(purpose)
-                .withRef(ref);
+                .withRef(ref)
+                .build();
 
         memoDocument.setName(ref + XML_DOC_EXT);
         memoDocument.setMetadataDocument(updatedMemorandumMetadata);

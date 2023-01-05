@@ -18,14 +18,12 @@ import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
-import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -40,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.BILL;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.FINANCIAL_STATEMENT;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
 
@@ -163,7 +160,11 @@ public abstract class CollectionContext {
         purpose = propMeta.getDocPurpose();
         Validate.notNull(purpose, "Proposal purpose is required!");
         eeaRelevance = propMeta.getEeaRelevance();
-        ProposalMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
         proposal = proposalService.createProposalFromContent(leosPackage.getPath(), metadata, propDocument.getSource());
@@ -210,7 +211,11 @@ public abstract class CollectionContext {
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
 
         Validate.notNull(purpose, "Proposal purpose is required!");
-        ProposalMetadata metadata = metadataOption.get().withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
 

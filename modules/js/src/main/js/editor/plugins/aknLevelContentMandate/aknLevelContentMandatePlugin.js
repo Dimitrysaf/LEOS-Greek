@@ -64,13 +64,17 @@ define(function aknLevelContentMandatePluginModule(require) {
             // wrap the new p, or table with a content
             event.data.dataValue = event.data.dataValue.replace("<p>", "<content><p>").replace("</p>", "</p></content>")
                                         .replace("<table", "<content><table").replace("</table>", "</table></content>");
-            // wrap both <content>s with a subparagraph
-            event.data.dataValue = event.data.dataValue.replace(/<content/g, "<subparagraph><content")
+            //remove editable attr from content
+            event.data.dataValue = event.data.dataValue.replace(/leos:editable=\"true\"/g, "");
+            // wrap both <content>s with a subparagraph and add editable attr
+            event.data.dataValue = event.data.dataValue.replace(/<content/g, "<subparagraph leos:editable='true'><content")
                 .replace(/<\/content>/g, "</content></subparagraph>");
         }
         if (event.data.dataValue.includes("</content><content>")) {
+            //remove editable attr from content
+            event.data.dataValue = event.data.dataValue.replace(/leos:editable=\"true\"/g, "");
             // wrap both <content>s with a subparagraph
-            event.data.dataValue = event.data.dataValue.replace(/<content/g, "<subparagraph><content")
+            event.data.dataValue = event.data.dataValue.replace(/<content/g, "<subparagraph leos:editable='true'><content")
                 .replace(/<\/content>/g, "</content></subparagraph>");
         }
     }

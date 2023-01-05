@@ -16,6 +16,7 @@ package eu.europa.ec.leos.ui.view.collection;
 import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
@@ -28,6 +29,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.event.ExportPackageCreatedEvent;
 import eu.europa.ec.leos.model.event.ExportPackageDeletedEvent;
 import eu.europa.ec.leos.model.event.ExportPackageUpdatedEvent;
@@ -71,6 +73,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.ui.event.CloneProposalRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
@@ -139,10 +142,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -154,6 +160,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Component
 @Scope("prototype")
@@ -202,6 +209,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
     private UserAuthentication userAuthentication;
     private final DocumentContentService documentContentService;
     private final ComparisonDelegate comparisonDelegate;
+    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -392,7 +400,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     docVersionSeriesIds.add(annex.getVersionSeriesId());
                     break;
                 }
-                case FINANCIAL_STATEMENT: {
+                case STAT_FINANC_LEGIS: {
                     FinancialStatement financialStatement = (FinancialStatement) document;
                     DocumentVO financialStatementVO = createFinancialStatementVO(financialStatement);
                     proposalVO.addChildDocument(financialStatementVO);
@@ -604,10 +612,13 @@ class CollectionPresenter extends AbstractLeosPresenter {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Map<String, byte[]> exportPackageContent = exportService.getExportPackageContent(previewExportPackageEvent.getId(), ".docx");
-            DownloadStreamResource downloadStreamResource = new DownloadStreamResource(exportPackageContent.keySet().stream().findFirst().get(),
-                    new ByteArrayInputStream(exportPackageContent.values().stream().findFirst().get()));
-            collectionScreen.setExportPackageStreamResource(downloadStreamResource);
-            LOG.info("Export Package {} for proposal {} downloaded in {} milliseconds ({} sec)", previewExportPackageEvent.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            Optional<Map.Entry<String, byte[]>> first = exportPackageContent.entrySet().stream().findFirst();
+            if(first.isPresent()){
+                DownloadStreamResource downloadStreamResource = new DownloadStreamResource(first.get().getKey(),
+                        new ByteArrayInputStream(first.get().getValue()));
+                collectionScreen.setExportPackageStreamResource(downloadStreamResource);
+                LOG.info("Export Package {} for proposal {} downloaded in {} milliseconds ({} sec)", previewExportPackageEvent.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading Export Package", e);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.block.export.package.action.download.error", e.getMessage()));
@@ -697,7 +708,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         DocumentVO financialDocumentVO =
                 new DocumentVO(financialStatement.getId(),
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
-                        LeosCategory.FINANCIAL_STATEMENT,
+                        LeosCategory.STAT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()));
 
@@ -746,7 +757,22 @@ class CollectionPresenter extends AbstractLeosPresenter {
         // 1. get Annex
         Annex annex = annexService.findAnnex(event.getAnnex().getId(), true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
-        AnnexMetadata updatedMetadata = metadata.withTitle(event.getAnnex().getTitle());
+        AnnexMetadata updatedMetadata = metadata
+                .builder()
+                .withTitle(event.getAnnex().getTitle())
+                .build();
+
+        String baseRevisionId = annex.getBaseRevisionId();
+        cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+
+        if(StringUtils.isBlank(baseRevisionId)) {
+            VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(annex), messageHelper).get(0);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(CmisProperties.BASE_REVISION_ID.getId(), versionVO.getDocumentId() + CMIS_PROPERTY_SPLITTER +
+                    versionVO.getVersionNumber().toString() + CMIS_PROPERTY_SPLITTER +
+                    versionVO.getCheckinCommentVO().getTitle());
+            annex =  annexService.updateAnnex(annex.getId(), properties, true);
+        }
 
         // 2. save metadata
         annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
@@ -896,8 +922,8 @@ class CollectionPresenter extends AbstractLeosPresenter {
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
         financialStatementContext.useFinancialStatement(event.getFinancialStatement().getId());
         financialStatementContext.usePackage(leosPackage);
-        financialStatementContext.useActionMessage(ContextActionService.FINANCIAL_STATEMENT_METADATA_UPDATED, messageHelper.getMessage("collection.block.financial.statement.metadata.updated"));
-        financialStatementContext.useActionMessage(ContextActionService.FINANCIAL_STATEMENT_DELETED, messageHelper.getMessage("collection.block.financial.statement.deleted"));
+        financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED, messageHelper.getMessage("collection.block.financial.statement.metadata.updated"));
+        financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_DELETED, messageHelper.getMessage("collection.block.financial.statement.deleted"));
         financialStatementContext.executeDeleteFinancialStatement();
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposalId, event.getFinancialStatement().getMetadata().getInternalRef(), id));
         eventBus.post(new DocumentUpdatedEvent());
@@ -912,7 +938,10 @@ class CollectionPresenter extends AbstractLeosPresenter {
         // 1. get explanatory
         Explanatory explanatory = explanatoryService.findExplanatory(event.getExplanatory().getId());
         ExplanatoryMetadata metadata = explanatory.getMetadata().getOrError(() -> "Explanatory metadata not found!");
-        ExplanatoryMetadata updatedMetadata = metadata.withTitle(event.getExplanatory().getTitle());
+        ExplanatoryMetadata updatedMetadata = metadata
+                .builder()
+                .withTitle(event.getExplanatory().getTitle())
+                .build();
 
         // 2. save metadata
         explanatoryService.updateExplanatory(explanatory, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
@@ -992,7 +1021,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             switch (template) {
                 default :
                     actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
-                    context.useActionMessage(ContextActionService.FINANCIAL_STATEMENT_ADDED, actionMessage);
+                    context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
                     context.executeCreateFinancialStatement();
             }
             eventBus.post(new DocumentUpdatedEvent());
@@ -1090,7 +1119,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         final String documentRef = event.getFinancialStatement().getMetadata().getInternalRef();
         RepositoryContext repositoryContext = repositoryContextProvider.get();
         repositoryContext.populateVersionsWithoutVersionLabel(FinancialStatement.class, documentRef);
-        eventBus.post(new NavigationRequestEvent(Target.FINANCIAL_STATEMENT, documentRef));
+        eventBus.post(new NavigationRequestEvent(Target.STAT_FINANC_LEGIS, documentRef));
     }
 
     @Subscribe
@@ -1248,7 +1277,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void exportProposal(ExportProposalEvent event) {
-        File downloadFile = null;
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             ExportOptions exportOptions = event.getExportOptions();
@@ -1272,10 +1300,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LOG.error("Unexpected error occured while sending job to ToolBox: {}", e.getMessage());
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.export.error", e.getMessage()));
-        } finally {
-            if (downloadFile != null) {
-                downloadFile.delete();
-            }
         }
     }
 
@@ -1331,7 +1355,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.downloaded.error", e.getMessage()));
         } finally {
             if (packageFile != null && packageFile.exists()) {
-                packageFile.delete();
+                if(!packageFile.delete()){
+                    LOG.info("File was not deleted {}", packageFile.toPath());
+                }
             }
         }
     }
@@ -1348,7 +1374,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.downloaded.error", e.getMessage()));
         } finally {
             if (packageFile != null && packageFile.exists()) {
-                packageFile.delete();
+                if(!packageFile.delete()){
+                    LOG.info("File was not deleted {}", packageFile.toPath());
+                }
             }
         }
     }
@@ -1511,7 +1539,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 "clone.proposal.contribution.done.success.notification",
                 NotificationEvent.Type.TRAY) :
                 new NotificationEvent(NotificationEvent.Type.ERROR,
-                        "clone.proposal.contribution.done.error.notification", result.getErrorCode().get(),
+                        "clone.proposal.contribution.done.error.notification", result.getErrorCode().orElse(null),
                         resultFiles.left());
         eventBus.post(notificationEvent);
     }

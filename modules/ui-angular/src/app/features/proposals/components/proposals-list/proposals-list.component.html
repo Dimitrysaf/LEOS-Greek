@@ -1,0 +1,12 @@
+<div class="proposals-list-container">
+  <ng-container *ngIf="proposals.length">
+    <ng-container
+      *ngFor="let proposal of proposals; trackBy: trackProposal; let i = index"
+    >
+      <app-proposal-item
+        [proposal]="proposal"
+        [status]="i % 2 === 0 ? 'pending' : 'ready'"
+      ></app-proposal-item>
+    </ng-container>
+  </ng-container>
+</div>

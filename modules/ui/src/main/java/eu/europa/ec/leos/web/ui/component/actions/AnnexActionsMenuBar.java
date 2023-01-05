@@ -63,7 +63,7 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
     }
     
     private AnnexStructureType getSwitchStructureType(AnnexStructureType structureType) {
-        return AnnexStructureType.LEVEL.getType().equals(structureType.getType()) ? AnnexStructureType.ARTICLE : AnnexStructureType.LEVEL;
+        return AnnexStructureType.LEVEL.getType().equals(structureType.getType())  ? AnnexStructureType.ARTICLE : AnnexStructureType.LEVEL;
     }
     
     @Override

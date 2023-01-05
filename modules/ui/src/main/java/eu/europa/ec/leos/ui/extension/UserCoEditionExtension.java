@@ -24,7 +24,9 @@ import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @JavaScript({"vaadin://../js/ui/extension/userCoEditionConnector.js" + LeosCacheToken.TOKEN})
@@ -32,8 +34,7 @@ public class UserCoEditionExtension<T extends AbstractField<V>, V> extends LeosJ
 
     private static final long serialVersionUID = 1L;
 
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
+    private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private MessageHelper messageHelper;
     private User user;
     private boolean coEditionSipEnabled;
@@ -87,7 +88,7 @@ public class UserCoEditionExtension<T extends AbstractField<V>, V> extends LeosJ
                         userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
                     }
                     coEditionElements.merge(x.getElementId(),
-                            messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))) + "<br>",
+                            messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))) + "<br>",
                             String::concat);
                 });
         getState(true).coEditionElements = coEditionElements;

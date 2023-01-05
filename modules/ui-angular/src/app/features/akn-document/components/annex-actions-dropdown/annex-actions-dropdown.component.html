@@ -1,0 +1,52 @@
+<div class="eui-dropdown-button">
+  <eui-dropdown>
+    <button euiButton euiSecondary euiOutline>
+      <span euiLabel translate="page.editor.actions-dropdown.label"></span>
+      <span
+        euiIcon
+        iconClass="eui-icon eui-icon-more-vertical"
+        aria-label=" "
+      ></span>
+    </button>
+    <eui-dropdown-content>
+      <ul euiList>
+        <li euiListItem (click)="doc.saveVersion()">
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.save-version"
+          ></button>
+        </li>
+        <li euiListItem (click)="doc.download()">
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.download"
+          ></button>
+        </li>
+        <li euiListItem (click)="doc.downloadWithAnnotation()">
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.download-with-annotation"
+          ></button>
+        </li>
+        <li euiListItem (click)="doc.import()">
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.import"
+          ></button>
+        </li>
+        <li euiListItem (click)="doc.seeUserGuidance()">
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.see-user-guidance"
+          ></button>
+        </li>
+        <li euiListItem (click)="doc.seeNavigation()">
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.see-navigation"
+          ></button>
+        </li>
+      </ul>
+    </eui-dropdown-content>
+  </eui-dropdown>
+</div>

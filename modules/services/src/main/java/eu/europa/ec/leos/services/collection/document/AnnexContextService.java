@@ -174,7 +174,14 @@ public class AnnexContextService {
         Validate.notNull(purpose, "Annex purpose is required!");
         Validate.notNull(type, "Annex type is required!");
         
-        AnnexMetadata metadata = metadataOption.get().withPurpose(purpose).withIndex(index).withNumber(annexNumber).withType(type).withTemplate(template);
+        AnnexMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withIndex(index)
+                .withNumber(annexNumber)
+                .withType(type)
+                .withTemplate(template)
+                .build();
 
         annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
         annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
@@ -193,7 +200,11 @@ public class AnnexContextService {
         
         final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
         AnnexMetadata metadataDocument = (AnnexMetadata) annexDocument.getMetadataDocument();
-        metadataDocument = metadataDocument.withPurpose(purpose).withEeaRelevance(eeaRelevance);
+        metadataDocument = metadataDocument
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
+                .build();
         annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
         annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         Map<String, Object> annexProperties = new HashMap<>();
@@ -212,7 +223,10 @@ public class AnnexContextService {
         Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
 
         // Updating only purpose at this time. other metadata needs to be set, if needed
-        AnnexMetadata annexMetadata = metadataOption.get().withPurpose(purpose);
+        AnnexMetadata annexMetadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .build();
         annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
     }
 
@@ -226,7 +240,11 @@ public class AnnexContextService {
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
         AnnexMetadata metadata = metadataOption.get();
-        AnnexMetadata annexMetadata = metadata.withIndex(index).withNumber(annexNumber);
+        AnnexMetadata annexMetadata = metadata
+                .builder()
+                .withIndex(index)
+                .withNumber(annexNumber)
+                .build();
         annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED));
     }
 
@@ -237,9 +255,15 @@ public class AnnexContextService {
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
         AnnexMetadata metadata = metadataOption.get();
-        AnnexMetadata annexMetadata = metadata.withPurpose(metadata.getPurpose()).
-                    withType(metadata.getType()).withTitle(metadata.getTitle()).withTemplate(template).
-                    withDocVersion(metadata.getDocVersion()).withDocTemplate(template);
+        AnnexMetadata annexMetadata = metadata
+                .builder()
+                .withPurpose(metadata.getPurpose())
+                .withType(metadata.getType())
+                .withTitle(metadata.getTitle())
+                .withTemplate(template)
+                .withDocVersion(metadata.getDocVersion())
+                .withDocTemplate(template)
+                .build();
         
         annex = annexService.updateAnnex(annex, xmlContent, annexMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.ANNEX_STRUCTURE_UPDATED));
     }

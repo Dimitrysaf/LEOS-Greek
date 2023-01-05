@@ -88,7 +88,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         // unzip file
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, "/unzip/");
         try {
-            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().get();
+            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().orElse("");
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
                 File proposalFile = (File) unzippedFiles.get(proposalFileKey);
@@ -209,7 +209,9 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
      * @param unzippedFiles
      */
     private void deleteFiles(File mainFile, Map<String, Object> unzippedFiles) {
-        mainFile.delete();
+        if(!mainFile.delete()){
+            LOG.info("File not deleted {}", mainFile.getPath());
+        }
         List<String> parentFolders = new ArrayList<>();
         for (String docName : unzippedFiles.keySet()) {
             File unzippedFile = (File) unzippedFiles.get(docName);

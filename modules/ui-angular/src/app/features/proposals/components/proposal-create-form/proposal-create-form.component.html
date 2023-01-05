@@ -1,0 +1,114 @@
+<form [formGroup]="createForm">
+  <p>Enter document metadata</p>
+
+  <div euiInputGroup class="row eui-u-mt-m">
+    <div class="col-md-3">
+      <label euiLabel for="templateName">Document Template</label>
+    </div>
+    <div class="col-md-9 eui-inline-edit">
+      <textarea
+        id="templateName"
+        euiTextArea
+        formControlName="templateName"
+        readonly
+      ></textarea>
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel euiRequired for="docPurpose">Document Title</label>
+    </div>
+    <div class="col-md-9">
+      <input id="docPurpose" euiInputText formControlName="docPurpose" />
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel for="documentLanguage">Document Language</label>
+    </div>
+    <div class="col-md-9">
+      <input
+        id="documentLanguage"
+        euiInputText
+        formControlName="documentLanguage"
+        readonly
+      />
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel for="confidentialityLevel">Confidentiality Level</label>
+    </div>
+    <div class="col-md-9">
+      <input
+        id="confidentialityLevel"
+        euiInputText
+        formControlName="confidentialityLevel"
+        readonly
+      />
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel for="internalReference">Internal Reference</label>
+    </div>
+    <div class="col-md-9">
+      <input
+        id="internalReference"
+        euiInputText
+        formControlName="internalReference"
+      />
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel for="interInstitutionalReference"
+        >Inter-institutional Reference</label
+      >
+    </div>
+    <div class="col-md-9">
+      <input
+        id="interInstitutionalReference"
+        euiInputText
+        formControlName="interInstitutionalReference"
+      />
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel for="packageTitle">Package Title</label>
+    </div>
+    <div class="col-md-1">
+      <input
+        euiInputCheckBox
+        formControlName="packageTitleCheck"
+        title="Package Title checkbox"
+        aria-label="Package Title checkbox"
+      />
+    </div>
+    <div class="col-md-8">
+      <input id="packageTitle" euiInputText formControlName="packageTitle" />
+    </div>
+  </div>
+  <div euiInputGroup class="row">
+    <div class="col-md-3">
+      <label euiLabel for="eeaRelevance">EEA Relevance</label>
+    </div>
+    <div class="col-md-1">
+      <input
+        euiInputCheckBox
+        formControlName="eeaRelevance"
+        title="EEA Relevance checkbox"
+        aria-label="EEA Relevance checkbox"
+      />
+    </div>
+    <div class="col-md-8">
+      <input
+        id="eeaRelevanceText"
+        euiInputText
+        formControlName="eeaRelevance"
+        placeholder="(Text with EEA relevance)"
+      />
+    </div>
+  </div>
+</form>

@@ -27,7 +27,6 @@
     <packaging>jar</packaging>
 
     <name>UI</name>
-
     <description>LEOS UI Module</description>
 
     <properties>

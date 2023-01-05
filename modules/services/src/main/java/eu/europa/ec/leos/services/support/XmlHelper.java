@@ -214,7 +214,7 @@ public class XmlHelper {
     public static final String PROPOSAL_FILE = "main";
     public static final String PROP_ACT = "PROP_ACT";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
-    public static final String FINANCIAL_STATEMENT = "FINANCIAL_STATEMENT";
+    public static final String STAT_FINANC_LEGIS = "STAT_FINANC_LEGIS";
 
     public static String extractContentFromTocItem(TableOfContentItemVO tocItem) {
         if (tocItem.getContent() == null) {
@@ -488,6 +488,11 @@ public class XmlHelper {
     public static String addLeosNamespace(String str) {
         return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">")
                 .replaceFirst(">", " xmlns=\"http://docs\\.oasis-open\\.org/legaldocml/ns/akn/3\\.0\">");
+    }
+
+    public static String addDummyNamespace(String str) {
+        return str.replaceFirst(">", " xmlns=\"dummyURL\">");
+
     }
 
     public static String removeAllNameSpaces(String str) {

@@ -43,7 +43,9 @@ public class LabelKey {
         if (obj == null) {
             return false;
         }
-
+        if (this.getClass() != obj.getClass())
+            return false;
+        
         LabelKey other = (LabelKey) obj;
         if (other.labelName.equals(labelName)
                 && other.labelNumber.equals(labelNumber)) {

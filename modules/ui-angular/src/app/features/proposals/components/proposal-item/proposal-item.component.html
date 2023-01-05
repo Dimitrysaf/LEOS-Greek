@@ -1,0 +1,37 @@
+<eui-card class="eui-u-mt-m">
+  <eui-card-header
+    class="eui-u-flex-align-items-start"
+    [isHeaderMultilines]="true"
+  >
+    <eui-card-header-title class="align-self-start eui-u-color-primary-100">
+      <a [routerLink]="['/collection', proposal.ref]">{{ proposal.title }}</a>
+    </eui-card-header-title>
+    <eui-card-header-subtitle>
+      Updated on {{ proposal.updatedOn | date: 'dd/MM/yyyy h:mm' }} by
+      {{ proposal.updatedBy }}
+    </eui-card-header-subtitle>
+    <eui-card-header-right-content
+      class="eui-u-flex-column col-2 eui-u-flex-align-items-start"
+    >
+      <div
+        class="eui-u-font-m eui-u-font-bold eui-u-color-grey-75 eui-u-mb-2xs"
+      >
+        ISC/2022/0330
+      </div>
+      <div class="eui-u-font-m eui-u-font-bold eui-u-color-grey-100">
+        Contribution status
+      </div>
+      <eui-chip
+        euiSizeS
+        euiOutline
+        [euiSuccess]="status === 'ready'"
+        [euiSecondary]="status === 'pending'"
+        class="eui-u-mr-2xs eui-u-mb-2xs"
+      >
+        <span euiLabel *ngIf="status">{{
+          status === 'ready' ? 'Ready to merge' : 'Sent for contribution'
+        }}</span>
+      </eui-chip>
+    </eui-card-header-right-content>
+  </eui-card-header>
+</eui-card>

@@ -1,0 +1,7 @@
+# ignore everyting
+*
+
+# include src selectivelly
+!/src
+!/src/**
+/src/coverage

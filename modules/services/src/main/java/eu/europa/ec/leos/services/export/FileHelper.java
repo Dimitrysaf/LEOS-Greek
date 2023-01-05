@@ -39,7 +39,9 @@ public class FileHelper {
     public static void deleteFile(File file) {
         try {
             if (file != null && file.exists()) {
-                file.delete();
+                if(!file.delete()){
+                    LOG.info("File not deleted {}", file.toPath());
+                }
             }
         } catch (Exception e) {
             LOG.error("Error when cleaning up file ", e);

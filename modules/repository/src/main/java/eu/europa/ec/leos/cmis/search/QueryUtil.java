@@ -5,7 +5,6 @@ import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.filter.QueryFilter.Filter;
 import eu.europa.ec.leos.model.filter.QueryFilter.FilterType;
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

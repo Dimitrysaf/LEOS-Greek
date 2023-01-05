@@ -14,8 +14,8 @@
 
 package eu.europa.ec.leos.ui.model;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -31,13 +31,12 @@ public class MilestonesVO {
     private Boolean isClone ;
     private boolean isContributionChanged;
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
+    private static final DateTimeFormatter dateFormat =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName,
                         String proposalRef) {
         this.title = String.join(",", titles);
         this.updatedDate = updatedDate;
-        this.createdDate = dateFormat.format(createdDate);
+        this.createdDate = dateFormat.format(createdDate.toInstant());
         this.status = status;
         this.legDocumentName = legDocumentName;
         this.proposalRef = proposalRef;

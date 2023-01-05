@@ -112,6 +112,9 @@ import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -129,7 +132,7 @@ abstract class CoverPageScreenImpl extends VerticalLayout implements CoverPageSc
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(CoverPageScreenImpl.class);
-    public static SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    public static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     protected EventBus eventBus;
     protected UserHelper userHelper;
@@ -434,7 +437,7 @@ abstract class CoverPageScreenImpl extends VerticalLayout implements CoverPageSc
                         userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
                     }
                     coEditorsList.append("&nbsp;&nbsp;-&nbsp;")
-                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(new Date(x.getEditionTime()))))
+                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))))
                             .append("<br>");
                 });
         if (!StringUtils.isEmpty(coEditorsList)) {

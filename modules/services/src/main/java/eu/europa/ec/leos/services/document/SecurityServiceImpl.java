@@ -21,7 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 // REFACTOR SecurityService API should probably be moved into WorkspaceService
 
@@ -52,7 +54,7 @@ class SecurityServiceImpl implements SecurityService {
     public <T extends XmlDocument> T removeCollaborator(String id, String userLogin, Class<T> type) {
         T document = workspaceRepository.findDocumentById(id, type, true);
         List<Collaborator> collaborators = document.getCollaborators();
-        collaborators.remove(userLogin);
+        collaborators.removeIf(c -> userLogin.equals(c.getLogin()));
         return workspaceRepository.updateDocumentCollaborators(id, collaborators, type);
     }
 }

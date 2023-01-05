@@ -217,6 +217,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -284,7 +286,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private String proposalRef;
     private String connectedEntity;
 
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
     private boolean milestoneExplorerOpened = false;
     private InstanceTypeResolver instanceTypeResolver;
@@ -769,7 +771,9 @@ class DocumentPresenter extends AbstractLeosPresenter {
             } else {
                 documentScreen.showAlertDialog("operation.element.not.performed");
             }
-            LOG.info("Element '{}' merged into '{}' in Bill {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), bill.getName(), bill.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            if(mergeOnElement != null && bill != null){
+                LOG.info("Element '{}' merged into '{}' in Bill {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), bill.getName(), bill.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error in mergeElement", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "unknown.error.message"));
@@ -1758,7 +1762,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
-                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType());
     }
 

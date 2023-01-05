@@ -1,0 +1,1193 @@
+{
+  "user-details": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "fullName": "John Doe",
+    "role": ["USER", "SUPPORT"],
+    "organisationRef": {
+      "id": "123456",
+      "abbreviation": "DIGIT.B.3"
+    },
+    "userId": "doejohn",
+    "email": "John.DOE@ec.europa.eu"
+  },
+  "users": {
+    "users": [
+      {
+        "id": 1,
+        "firstName": "John",
+        "lastName": "Doe",
+        "fullName": "John Doe",
+        "role": ["REVIEWER", "CONTRIBUTOR"],
+        "organisationRef": {
+          "id": "123456",
+          "abbreviation": "DIGIT.B.1"
+        },
+        "userId": "doejohn",
+        "email": "John.DOE@ec.europa.eu"
+      },
+      {
+        "id": 2,
+        "firstName": "Stella",
+        "lastName": "Doe",
+        "fullName": "Stella Doe",
+        "role": ["REVIEWER", "CONTRIBUTOR"],
+        "organisationRef": {
+          "id": "123456",
+          "abbreviation": "DIGIT.B.3"
+        },
+        "userId": "doejohn",
+        "email": "John.DOE@ec.europa.eu"
+      }
+    ]
+  },
+  "milestones": {
+    "milestones": [
+      {
+        "id": 1,
+        "title": "For Interservice Consultation",
+        "date": "22/06/2022 15:02:32",
+        "status": "File error"
+      },
+      {
+        "id": 2,
+        "title": "For Decision",
+        "date": "22/06/2022 15:02:32",
+        "status": "Status 1"
+      },
+      {
+        "id": 3,
+        "title": "Revision after Interservice Consultation",
+        "date": "22/06/2022 15:02:32",
+        "status": "Status 2"
+      }
+    ]
+  },
+  "proposals": [
+    {
+      "id": "f154f8122967efcada94f27add8f9c54bda82afb",
+      "title": "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL test undelete",
+      "createdBy": "admin/gautare",
+      "createdOn": 1664193612226,
+      "updatedBy": "admin/gautare",
+      "updatedOn": 1664193765137,
+      "language": "EN",
+      "template": "SJ-023",
+      "docNumber": 0,
+      "source": null,
+      "uploaded": false,
+      "versionSeriesId": null,
+      "ref": null,
+      "documentType": "PROPOSAL",
+      "procedureType": null,
+      "actType": null,
+      "childDocuments": [],
+      "collaborators": [
+        {
+          "name": "John Doe",
+          "role": "REVIEWER",
+          "entity": "DIGIT.B.1",
+          "id": "54d19c11-e76e-4007-8f9d-1642e4fe032c"
+        }
+      ],
+      "metadata": {
+        "docStage": null,
+        "docType": null,
+        "docPurpose": null,
+        "packageTitle": null,
+        "internalRef": null,
+        "securityLevel": "STANDARD",
+        "language": null,
+        "eeaRelevance": false,
+        "templateName": null,
+        "template": null,
+        "docTemplate": null,
+        "title": null,
+        "index": null,
+        "number": null
+      },
+      "name": null,
+      "metadataDocument": null,
+      "cloneProposalMetadataVO": null,
+      "category": "PROPOSAL"
+    },
+    {
+      "id": "c28d31fb2d1532f266e2fb32605de4ecf79a7327",
+      "title": "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL on ...6156",
+      "createdBy": "admin/support",
+      "createdOn": 1663249277341,
+      "updatedBy": "admin/dasatya",
+      "updatedOn": 1664191575732,
+      "language": "EN",
+      "template": "SJ-023",
+      "docNumber": 0,
+      "source": null,
+      "uploaded": false,
+      "versionSeriesId": null,
+      "ref": null,
+      "documentType": "PROPOSAL",
+      "procedureType": null,
+      "actType": null,
+      "childDocuments": [],
+      "collaborators": [
+        {
+          "name": "Stella Doe",
+          "role": "CONTRIBUTOR",
+          "entity": "DIGIT.B.3",
+          "id": "d107d174-1d28-4f29-b98f-5a91da5b7fa7"
+        },
+        {
+          "name": "John Doe",
+          "role": "REVIEWER",
+          "entity": "DIGIT.B.1",
+          "id": "6c08d2ce-8d20-4a96-833c-b4c0f39bf860"
+        }
+      ],
+      "metadata": {
+        "docStage": null,
+        "docType": null,
+        "docPurpose": null,
+        "packageTitle": null,
+        "internalRef": null,
+        "securityLevel": "STANDARD",
+        "language": null,
+        "eeaRelevance": false,
+        "templateName": null,
+        "template": null,
+        "docTemplate": null,
+        "title": null,
+        "index": null,
+        "number": null
+      },
+      "name": null,
+      "metadataDocument": null,
+      "cloneProposalMetadataVO": null,
+      "category": "PROPOSAL"
+    },
+    {
+      "id": "proposal_with_child_docs",
+      "title": "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL [Proposal With Child Docs]",
+      "createdBy": "admin/gautare",
+      "createdOn": 1664193612226,
+      "updatedBy": "admin/gautare",
+      "updatedOn": 1664193765137,
+      "language": "EN",
+      "template": "SJ-023",
+      "docNumber": 0,
+      "source": null,
+      "uploaded": false,
+      "versionSeriesId": null,
+      "ref": null,
+      "documentType": "PROPOSAL",
+      "procedureType": null,
+      "actType": null,
+      "childDocuments": [
+        {
+          "id": "<COVERPAGE-id>",
+          "title": "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL test undelete",
+          "createdBy": "admin/gautare",
+          "createdOn": 1664193612226,
+          "updatedBy": "admin/gautare",
+          "updatedOn": 1664193765137,
+          "language": "EN",
+          "template": "SJ-023",
+          "docNumber": 0,
+          "source": null,
+          "uploaded": false,
+          "versionSeriesId": null,
+          "ref": null,
+          "documentType": "COVERPAGE",
+          "procedureType": null,
+          "actType": null,
+          "childDocuments": [],
+          "collaborators": [],
+          "metadata": {
+            "docStage": null,
+            "docType": null,
+            "docPurpose": null,
+            "packageTitle": null,
+            "internalRef": "COVERPAGE-cl96t6c93009h9034mc740fd9-en",
+            "securityLevel": "STANDARD",
+            "language": null,
+            "eeaRelevance": false,
+            "templateName": null,
+            "template": null,
+            "docTemplate": null,
+            "title": null,
+            "index": null,
+            "number": null
+          },
+          "name": null,
+          "metadataDocument": null,
+          "cloneProposalMetadataVO": null,
+          "category": "COVERPAGE"
+        },
+        {
+          "id": "<BILL|Document|LegalText|LegalAct|REG-id>",
+          "title": "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL test undelete",
+          "createdBy": "admin/gautare",
+          "createdOn": 1664193612226,
+          "updatedBy": "admin/gautare",
+          "updatedOn": 1664193765137,
+          "language": "EN",
+          "template": "SJ-023",
+          "docNumber": 0,
+          "source": null,
+          "uploaded": false,
+          "versionSeriesId": null,
+          "ref": null,
+          "documentType": "BILL",
+          "procedureType": null,
+          "actType": null,
+          "childDocuments": [],
+          "collaborators": [],
+          "metadata": {
+            "docStage": null,
+            "docType": null,
+            "docPurpose": null,
+            "packageTitle": null,
+            "internalRef": "REG-cl96t6c93009h9034mc740fd9-en",
+            "securityLevel": "STANDARD",
+            "language": null,
+            "eeaRelevance": false,
+            "templateName": null,
+            "template": null,
+            "docTemplate": null,
+            "title": null,
+            "index": null,
+            "number": null
+          },
+          "name": null,
+          "metadataDocument": null,
+          "cloneProposalMetadataVO": null,
+          "category": "BILL"
+        },
+        {
+          "id": "<EXPL_MEMORANDUM-id>",
+          "title": "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+          "createdBy": "admin/gautare",
+          "createdOn": 1664193612226,
+          "updatedBy": "admin/gautare",
+          "updatedOn": 1664193765137,
+          "language": "EN",
+          "template": "SJ-023",
+          "docNumber": 0,
+          "source": null,
+          "uploaded": false,
+          "versionSeriesId": null,
+          "ref": null,
+          "documentType": "MEMORANDUM",
+          "procedureType": null,
+          "actType": null,
+          "childDocuments": [],
+          "collaborators": [],
+          "metadata": {
+            "docStage": null,
+            "docType": null,
+            "docPurpose": null,
+            "packageTitle": null,
+            "internalRef": "EXPL_MEMORANDUM-cl96t6btd009g9034vlzgccwu-en",
+            "securityLevel": "STANDARD",
+            "language": null,
+            "eeaRelevance": false,
+            "templateName": null,
+            "template": null,
+            "docTemplate": null,
+            "title": null,
+            "index": null,
+            "number": null
+          },
+          "name": null,
+          "metadataDocument": null,
+          "cloneProposalMetadataVO": null,
+          "category": "MEMORANDUM"
+        },
+        {
+          "id": "<ANNEX-id_1>",
+          "title": "An awesome annex title",
+          "createdBy": "admin/gautare",
+          "createdOn": 1664193612226,
+          "updatedBy": "admin/gautare",
+          "updatedOn": 1664193765137,
+          "language": "EN",
+          "template": "SJ-023",
+          "docNumber": 0,
+          "source": null,
+          "uploaded": false,
+          "versionSeriesId": null,
+          "ref": null,
+          "documentType": "ANNEX",
+          "procedureType": null,
+          "actType": null,
+          "childDocuments": [],
+          "collaborators": [],
+          "metadata": {
+            "docStage": null,
+            "docType": null,
+            "docPurpose": null,
+            "packageTitle": null,
+            "internalRef": "ANNEX-cl981wt44009p9034tm6ggxc1-en",
+            "securityLevel": "STANDARD",
+            "language": null,
+            "eeaRelevance": false,
+            "templateName": null,
+            "template": null,
+            "docTemplate": null,
+            "title": null,
+            "index": null,
+            "number": null
+          },
+          "name": null,
+          "metadataDocument": null,
+          "cloneProposalMetadataVO": null,
+          "category": "ANNEX"
+        },
+        {
+          "id": "<ANNEX-id_2>",
+          "title": "An second awesome annex title",
+          "createdBy": "admin/gautare",
+          "createdOn": 1664193612226,
+          "updatedBy": "admin/gautare",
+          "updatedOn": 1664193765137,
+          "language": "EN",
+          "template": "SJ-023",
+          "docNumber": 0,
+          "source": null,
+          "uploaded": false,
+          "versionSeriesId": null,
+          "ref": null,
+          "documentType": "ANNEX",
+          "procedureType": null,
+          "actType": null,
+          "childDocuments": [],
+          "collaborators": [],
+          "metadata": {
+            "docStage": null,
+            "docType": null,
+            "docPurpose": null,
+            "packageTitle": null,
+            "internalRef": "ANNEX-cl981wt44009p9034tm6ggxc2-en",
+            "securityLevel": "STANDARD",
+            "language": null,
+            "eeaRelevance": false,
+            "templateName": null,
+            "template": null,
+            "docTemplate": null,
+            "title": null,
+            "index": null,
+            "number": null
+          },
+          "name": null,
+          "metadataDocument": null,
+          "cloneProposalMetadataVO": null,
+          "category": "ANNEX"
+        }
+      ],
+      "collaborators": [
+        {
+          "name": "John Doe",
+          "role": "CONTRIBUTOR",
+          "entity": "DIGIT.B.1",
+          "id": "342fe45f-8e36-46cf-90db-6a542b8047b5"
+        }
+      ],
+      "metadata": {
+        "docStage": null,
+        "docType": null,
+        "docPurpose": null,
+        "packageTitle": null,
+        "internalRef": null,
+        "securityLevel": "STANDARD",
+        "language": null,
+        "eeaRelevance": false,
+        "templateName": null,
+        "template": null,
+        "docTemplate": null,
+        "title": null,
+        "index": null,
+        "number": null
+      },
+      "name": null,
+      "metadataDocument": null,
+      "cloneProposalMetadataVO": null,
+      "category": "PROPOSAL"
+    }
+  ],
+  "templates": [
+    {
+      "type": "CATEGORY",
+      "id": "c1",
+      "enabled": true,
+      "hidden": null,
+      "key": "LAW_INITIATIVE",
+      "names": {
+        "EN": "Interinstitutional procedures - Law Initiative (COM/JOIN)",
+        "FR": "Procédure interinstitutionnelles - Droit d'initiative (COM/JOIN)"
+      },
+      "languages": {},
+      "descriptions": {
+        "EN": "Interinstitutional procedures - Law Initiative (COM/JOIN)",
+        "FR": "Procédure interinstitutionnelles - Droit d'initiative (COM/JOIN)"
+      },
+      "items": [
+        {
+          "type": "CATEGORY",
+          "id": "c1.1",
+          "enabled": true,
+          "hidden": null,
+          "key": "LEGISLATIVE_ACTS",
+          "names": {
+            "EN": "Legal acts",
+            "FR": "Actes législatifs"
+          },
+          "languages": {},
+          "descriptions": {
+            "EN": "Legal acts",
+            "FR": "Actes législatifs"
+          },
+          "items": [
+            {
+              "type": "CATEGORY",
+              "id": "c1.1.1",
+              "enabled": true,
+              "hidden": null,
+              "key": "ORDINARY_LEGISLATIVE_PROC",
+              "names": {
+                "EN": "Ordinary legislative procedure",
+                "FR": "Procédure législative ordinaire"
+              },
+              "languages": {},
+              "descriptions": {
+                "EN": "Ordinary legislative procedure",
+                "FR": "Procédure législative ordinaire"
+              },
+              "items": [
+                {
+                  "type": "CATEGORY",
+                  "id": "c1.1.1.1",
+                  "enabled": true,
+                  "hidden": null,
+                  "key": "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+                  "names": {
+                    "EN": "Proposal for a regulation",
+                    "FR": "Proposition de règlement"
+                  },
+                  "languages": {},
+                  "descriptions": {
+                    "EN": "Regulation to be adopted by the European Parliament and the Council",
+                    "FR": "Règlement à adopter conjointement par le Parlement Européen et le Conseil"
+                  },
+                  "items": [
+                    {
+                      "type": "TEMPLATE",
+                      "id": "PR-023;EM-LP01;BL-023",
+                      "enabled": true,
+                      "hidden": null,
+                      "key": "SJ-023",
+                      "names": {
+                        "EN": "SJ-023 - Proposal for a Regulation of the European Parliament and of the Council",
+                        "FR": "SJ-023 - Proposition de règlement du Parlement européen et du Conseil"
+                      },
+                      "languages": {
+                        "EN": "English"
+                      },
+                      "descriptions": {
+                        "EN": "Template 23 of the LS: Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+                        "FR": "Template 23 du SJ: Proposition de RÈGLEMENT DU PARLEMENT EUROPÉEN ET DU CONSEIL"
+                      },
+                      "items": [
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-017",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-017",
+                          "names": {
+                            "EN": "SG-017 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-018",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-018",
+                          "names": {
+                            "EN": "SG-018 - Annex to a proposal / to another proposal\n\t\t\t\t\t\t\t\t"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another\tproposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "CP-036",
+                          "enabled": false,
+                          "hidden": null,
+                          "key": "CP-036",
+                          "names": {
+                            "EN": "CP-036 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "CATEGORY",
+                  "id": "c1.1.1.2",
+                  "enabled": true,
+                  "hidden": null,
+                  "key": "DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+                  "names": {
+                    "EN": "Proposal for a directive",
+                    "FR": "Proposition de directive"
+                  },
+                  "languages": {},
+                  "descriptions": {
+                    "EN": "Directive to be adopted by the European Parliament and the Council",
+                    "FR": "Directive à adopter conjointement par le Parlement Européen et le Conseil"
+                  },
+                  "items": [
+                    {
+                      "type": "TEMPLATE",
+                      "id": "PR-024;EM-LP01;BL-024",
+                      "enabled": true,
+                      "hidden": null,
+                      "key": "SJ-024",
+                      "names": {
+                        "EN": "SJ-024 - Proposal for a Directive of the European Parliament and of the Council",
+                        "FR": "SJ-024 - Proposition de directive du Parlement européen et du Conseil"
+                      },
+                      "languages": {
+                        "EN": "English"
+                      },
+                      "descriptions": {
+                        "EN": "Template 24 of the LS: Proposal for a DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+                        "FR": "Template 24 du SJ: Proposition de DIRECTIVE DU PARLEMENT EUROPÉEN ET DU CONSEIL"
+                      },
+                      "items": [
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-017",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-017",
+                          "names": {
+                            "EN": "SG-017 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-018",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-018",
+                          "names": {
+                            "EN": "SG-018 - Annex to a proposal / to another proposal\n\t\t\t\t\t\t\t\t"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another\tproposal (COM/JOIN)"
+                          },
+                          "items": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "CATEGORY",
+                  "id": "c1.1.1.3",
+                  "enabled": true,
+                  "hidden": null,
+                  "key": "DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+                  "names": {
+                    "EN": "Proposal for a decision",
+                    "FR": "Proposition de décision"
+                  },
+                  "languages": {
+                    "EN": "English",
+                    "FR": "Français"
+                  },
+                  "descriptions": {
+                    "EN": "Decision to be adopted by the European Parliament and the Council",
+                    "FR": "Décision à adopter conjointement par le Parlement Européen et le Conseil"
+                  },
+                  "items": [
+                    {
+                      "type": "TEMPLATE",
+                      "id": "PR-025;EM-LP01;BL-025",
+                      "enabled": true,
+                      "hidden": null,
+                      "key": "SJ-025",
+                      "names": {
+                        "EN": "SJ-025 - Proposal for a Decision of the European Parliament and of the Council",
+                        "FR": "SJ-025 - Proposition de décision du Parlement européen et du Conseil"
+                      },
+                      "languages": {
+                        "EN": "English"
+                      },
+                      "descriptions": {
+                        "EN": "Template 25 of the LS: Proposal for a DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL",
+                        "FR": "Template 25 du SJ: Proposition de DÉCISION DU PARLEMENT EUROPÉEN ET DU CONSEIL"
+                      },
+                      "items": [
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-017",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-017",
+                          "names": {
+                            "EN": "SG-017 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-018",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-018",
+                          "names": {
+                            "EN": "SG-018 - Annex to a proposal / to another proposal\n\t\t\t\t\t\t\t\t"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another\tproposal (COM/JOIN)"
+                          },
+                          "items": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "TEMPLATE",
+                      "id": "PR-026;EM-LP01;BL-026",
+                      "enabled": true,
+                      "hidden": null,
+                      "key": "SJ-026",
+                      "names": {
+                        "EN": "SJ-026 - Proposal for a Decision of the European Parliament and of the Council (without addressees)",
+                        "FR": "SJ-026 - Proposition de décision du Parlement européen et du Conseil (sans destinataires)"
+                      },
+                      "languages": {
+                        "EN": "English"
+                      },
+                      "descriptions": {
+                        "EN": "Template 26 of the LS: Proposal for a DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL without addressees",
+                        "FR": "Template 26 du SJ: Proposition de DÉCISION DU PARLEMENT EUROPÉEN ET DU CONSEIL sans destinataires"
+                      },
+                      "items": [
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-017",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-017",
+                          "names": {
+                            "EN": "SG-017 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-018",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-018",
+                          "names": {
+                            "EN": "SG-018 - Annex to a proposal / to another proposal\n\t\t\t\t\t\t\t\t"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another\tproposal (COM/JOIN)"
+                          },
+                          "items": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "CATEGORY",
+              "id": "c1.1.2",
+              "enabled": false,
+              "hidden": null,
+              "key": "SPECIAL_LEGISLATIVE_ACTS",
+              "names": {
+                "EN": "Special legislative procedure",
+                "FR": "Special legislative procedure"
+              },
+              "languages": {},
+              "descriptions": {
+                "EN": "Council legal acts",
+                "FR": "Procédures législatives spéciales"
+              },
+              "items": []
+            },
+            {
+              "type": "CATEGORY",
+              "id": "c1.1.3",
+              "enabled": false,
+              "hidden": null,
+              "key": "COMMISSION_LEGAL_ACTS",
+              "names": {
+                "EN": "Commission legal acts",
+                "FR": "Commission actes législatifs"
+              },
+              "languages": {},
+              "descriptions": {
+                "EN": "Commission legal acts",
+                "FR": "Commission actes législatifs"
+              },
+              "items": []
+            },
+            {
+              "type": "CATEGORY",
+              "id": "c1.1.4",
+              "enabled": true,
+              "hidden": null,
+              "key": "COUNCIL_LEGAL_ACTS",
+              "names": {
+                "EN": "Council legal acts",
+                "FR": "Council actes législatifs"
+              },
+              "languages": {},
+              "descriptions": {
+                "EN": "Council legal acts",
+                "FR": "Council actes législatifs"
+              },
+              "items": [
+                {
+                  "type": "CATEGORY",
+                  "id": "c1.1.4.1",
+                  "enabled": true,
+                  "hidden": null,
+                  "key": "COUNCIL DECISION",
+                  "names": {
+                    "EN": "Proposal for a Council decision",
+                    "FR": "Proposition de décision du Conseil"
+                  },
+                  "languages": {
+                    "EN": "English",
+                    "FR": "Français"
+                  },
+                  "descriptions": {
+                    "EN": "Decision to be adopted by the Council",
+                    "FR": "Décision à adopter par le Conseil"
+                  },
+                  "items": [
+                    {
+                      "type": "TEMPLATE",
+                      "id": "PR-019;EM-LP01;BL-019",
+                      "enabled": true,
+                      "hidden": null,
+                      "key": "SJ-019",
+                      "names": {
+                        "EN": "SJ-019 - Proposal for a Council Decision",
+                        "FR": "SJ-019 - Proposition de décision du Conseil"
+                      },
+                      "languages": {
+                        "EN": "English"
+                      },
+                      "descriptions": {
+                        "EN": "Template 19 of the LS: Proposal for a COUNCIL DECISION",
+                        "FR": "Template 19 du SJ: Proposition de DÉCISION DU CONSEIL"
+                      },
+                      "items": [
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-017",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-017",
+                          "names": {
+                            "EN": "SG-017 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "SG-018",
+                          "enabled": true,
+                          "hidden": null,
+                          "key": "SG-018",
+                          "names": {
+                            "EN": "SG-018 - Annex to a proposal / to another proposal\n\t\t\t\t\t\t\t\t"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another\tproposal (COM/JOIN)"
+                          },
+                          "items": []
+                        },
+                        {
+                          "type": "TEMPLATE",
+                          "id": "CP-036",
+                          "enabled": false,
+                          "hidden": null,
+                          "key": "CP-036",
+                          "names": {
+                            "EN": "CP-036 - Annex to a proposal / to another proposal"
+                          },
+                          "languages": {},
+                          "descriptions": {
+                            "EN": "Annex to a proposal / to another proposal (COM/JOIN)"
+                          },
+                          "items": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "versions": [
+    {
+      "versionType": "INTERMEDIATE",
+      "documentId": "[documentId]",
+      "cmisVersionNumber": null,
+      "versionNumber": null,
+      "updatedDate": 1664193765137,
+      "username": null,
+      "versionedReference": null,
+      "mostRecentVersion": false,
+      "checkinComment": {
+        "title": null,
+        "description": null,
+        "checkinElement": null
+      },
+      "subVersions": [
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "4.2",
+          "versionNumber": "2.1.2",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": true,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "4.1",
+          "versionNumber": "2.1.1",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex metadata updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        }
+      ]
+    },
+    {
+      "versionType": "INTERMEDIATE",
+      "documentId": "[documentId]",
+      "cmisVersionNumber": "4.0",
+      "versionNumber": "2.1.0",
+      "updatedDate": 1664193765137,
+      "username": "admin/gautare",
+      "versionedReference": "[versionedReference]",
+      "mostRecentVersion": false,
+      "checkinComment": {
+        "title": "manually saved version",
+        "description": "manually saved version's description",
+        "checkinElement": null
+      },
+      "subVersions": [
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "3.2",
+          "versionNumber": "2.0.2",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "3.1",
+          "versionNumber": "2.0.1",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex metadata updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        }
+      ]
+    },
+    {
+      "versionType": "MAJOR",
+      "documentId": "[documentId]",
+      "cmisVersionNumber": "3.0",
+      "versionNumber": "2.0.0",
+      "updatedDate": 1664193765137,
+      "username": "admin/gautare",
+      "versionedReference": "[versionedReference]",
+      "mostRecentVersion": false,
+      "checkinComment": {
+        "title": "other milestone reason",
+        "description": null,
+        "checkinElement": null
+      },
+      "subVersions": [
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "2.2",
+          "versionNumber": "1.0.2",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "2.1",
+          "versionNumber": "1.0.1",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex metadata updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        }
+      ]
+    },
+    {
+      "versionType": "MAJOR",
+      "documentId": "[documentId]",
+      "cmisVersionNumber": "2.0",
+      "versionNumber": "1.0.0",
+      "updatedDate": 1664193765137,
+      "username": "admin/gautare",
+      "versionedReference": "[versionedReference]",
+      "mostRecentVersion": false,
+      "checkinComment": {
+        "title": "For Interservice Consultation",
+        "description": null,
+        "checkinElement": null
+      },
+      "subVersions": [
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "1.6",
+          "versionNumber": "0.1.6",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "1.5",
+          "versionNumber": "0.1.5",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "1.4",
+          "versionNumber": "0.1.4",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "1.3",
+          "versionNumber": "0.1.3",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "1.2",
+          "versionNumber": "0.1.2",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex block updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "1.1",
+          "versionNumber": "0.1.1",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex metadata updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        }
+      ]
+    },
+    {
+      "versionType": "INTERMEDIATE",
+      "documentId": "[documentId]",
+      "cmisVersionNumber": "1.0",
+      "versionNumber": "0.1.0",
+      "updatedDate": 1664193765137,
+      "username": "admin/gautare",
+      "versionedReference": "[versionedReference]",
+      "mostRecentVersion": false,
+      "checkinComment": {
+        "title": "Document created",
+        "description": null,
+        "checkinElement": null
+      },
+      "subVersions": [
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "0.2",
+          "versionNumber": "0.0.2",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Annex metadata updated",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        },
+        {
+          "versionType": "MINOR",
+          "documentId": "[documentId]",
+          "cmisVersionNumber": "0.1",
+          "versionNumber": "0.0.1",
+          "updatedDate": 1664193765137,
+          "username": "admin/gautare",
+          "versionedReference": "[versionedReference]",
+          "mostRecentVersion": false,
+          "checkinComment": {
+            "title": "Element Created",
+            "description": null,
+            "checkinElement": null
+          },
+          "subVersions": []
+        }
+      ]
+    }
+  ]
+}

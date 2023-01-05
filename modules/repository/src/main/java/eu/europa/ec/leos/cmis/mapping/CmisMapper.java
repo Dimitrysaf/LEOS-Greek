@@ -30,14 +30,14 @@ public class CmisMapper {
         documentCategoryMap = new HashMap<>();
 
         // FIXME move this mapping somewhere else or implement in better way?!!!
-        documentCategoryMap.put(LeosDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, MEDIA, CONFIG, LEG, EXPORT, FINANCIAL_STATEMENT));
-        documentCategoryMap.put(XmlDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, FINANCIAL_STATEMENT));
+        documentCategoryMap.put(LeosDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, MEDIA, CONFIG, LEG, EXPORT, STAT_FINANC_LEGIS));
+        documentCategoryMap.put(XmlDocument.class, EnumSet.of(PROPOSAL, MEMORANDUM, COUNCIL_EXPLANATORY, BILL, ANNEX, STAT_FINANC_LEGIS));
         documentCategoryMap.put(Proposal.class, singleton(PROPOSAL));
         documentCategoryMap.put(Memorandum.class, singleton(MEMORANDUM));
         documentCategoryMap.put(Explanatory.class, singleton(COUNCIL_EXPLANATORY));
         documentCategoryMap.put(Bill.class, singleton(BILL));
         documentCategoryMap.put(Annex.class, singleton(ANNEX));
-        documentCategoryMap.put(FinancialStatement.class, singleton(FINANCIAL_STATEMENT));
+        documentCategoryMap.put(FinancialStatement.class, singleton(STAT_FINANC_LEGIS));
         documentCategoryMap.put(MediaDocument.class, singleton(MEDIA));
         documentCategoryMap.put(ConfigDocument.class, singleton(CONFIG));
         documentCategoryMap.put(LegDocument.class, singleton(LEG));

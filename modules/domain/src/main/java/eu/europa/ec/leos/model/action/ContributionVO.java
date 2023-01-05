@@ -2,10 +2,10 @@ package eu.europa.ec.leos.model.action;
 
 import eu.europa.ec.leos.model.user.Collaborator;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -53,7 +53,7 @@ public class ContributionVO implements Comparable<ContributionVO> {
         this.contributionStatus = ContributionStatus.of(contributionStatus);
     }
 
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public ContributionVO.VersionNumber getVersionNumber() {
         return versionNumber;
@@ -64,7 +64,7 @@ public class ContributionVO implements Comparable<ContributionVO> {
     }
 
     public String getUpdatedDate() {
-        return dateFormatter.format(Date.from(updatedDate));
+        return dateFormatter.format(updatedDate);
     }
 
     public void setUpdatedDate(Instant updatedDate) {

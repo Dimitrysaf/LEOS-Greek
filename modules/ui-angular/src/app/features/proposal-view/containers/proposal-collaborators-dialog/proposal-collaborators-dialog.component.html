@@ -1,0 +1,129 @@
+<button class="eui-u-mb-s" euiButton euiPrimary (click)="openDialog()">
+  {{ 'page.collection.collaborators.table.header.add-btn' | translate }}
+</button>
+
+<eui-dialog
+  #addCollaboratosModal
+  [title]="'page.collection.collaborators.dialog.header' | translate"
+  isClosedOnClickOutside
+  [isHandleCloseOnDismiss]="true"
+  [isHandleCloseOnEscape]="true"
+  [isHandleCloseOnClose]="true"
+  (clickOutside)="closeDialog()"
+  (dismiss)="closeDialog()"
+  (escape)="closeDialog()"
+  (close)="closeDialog()"
+>
+  <div euiInputGroup class="row justify-content-center">
+    <div class="col-md-3">
+      <label euiLabel for="quantity">
+        {{ 'page.collection.collaborators.dialog.quantity' | translate }}</label
+      >
+    </div>
+    <div class="col-md-9">
+      <input
+        type="number"
+        euiInputText
+        id="quantity"
+        name="quantity"
+        min="0"
+        max="20"
+        [(ngModel)]="quantity"
+        (ngModelChange)="handleQuantityChange($event)"
+        [isInvalid]="isQuantityValid"
+      />
+      <eui-feedback-message euiDanger [hidden]="isQuantityValid">
+        {{ 'page.collection.collaborators.dialog.max-quantity' | translate }}
+        {{ MAX_QUANTITY_USER }}</eui-feedback-message
+      >
+    </div>
+  </div>
+  <div [formGroup]="collaboratorsForm">
+    <div formArrayName="collaborators">
+      <div *ngFor="let item of collaboratorsFormList.controls; let i = index">
+        <div [formGroupName]="i" class="row eui-u-p-xs align-items-center">
+          <div class="col-md-4">
+            <label euiLabel for="item">{{
+              'page.collection.collaborators.dialog.form.name' | translate
+            }}</label>
+            <eui-autocomplete
+              async
+              [autocompleteData]="userAutocompleteData"
+              name="item"
+              id="item"
+              formControlName="item"
+              (selectionChange)="handleNameSelect($event, i)"
+            ></eui-autocomplete>
+          </div>
+          <div class="col-md-4">
+            <label euiLabel for="entity">{{
+              'page.collection.collaborators.dialog.form.entity' | translate
+            }}</label>
+            <input
+              euiInputText
+              name="entity"
+              id="entity"
+              formControlName="entity"
+              type="text"
+            />
+          </div>
+          <div class="col-md-3">
+            <label euiLabel for="role">{{
+              'page.collection.collaborators.dialog.form.role' | translate
+            }}</label>
+            <select
+              euiSelect
+              name="role"
+              formControlName="role"
+              (change)="handleRoleSelect($event, i)"
+            >
+              <option value="Author">
+                {{ 'page.collection.collaborators.role.author' | translate }}
+              </option>
+              <option value="Contributor">
+                {{
+                  'page.collection.collaborators.role.contributor' | translate
+                }}
+              </option>
+              <option value="Reviewer">
+                {{ 'page.collection.collaborators.role.reviewer' | translate }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-1 eui-u-mt-l">
+            <span
+              euiIcon
+              euiDanger
+              (click)="removeCollaborator(i)"
+              class="eui-icon eui-icon-close-m"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end">
+      <button
+        type="button"
+        class="eui-u-mr-xs"
+        euiButton
+        euiSecondary
+        (click)="closeDialog()"
+      >
+        Cancel
+      </button>
+      <button
+        [disabled]="!isFormValid"
+        type="button"
+        euiButton
+        euiPrimary
+        (click)="handleAddUsers()"
+      >
+        {{
+          'page.collection.collaborators.dialog.footer.add-users' | translate
+        }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

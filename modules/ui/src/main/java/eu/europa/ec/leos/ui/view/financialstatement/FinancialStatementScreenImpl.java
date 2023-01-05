@@ -180,6 +180,9 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     private final TableOfContentProcessor tableOfContentProcessor;
     private static final String CHECKED = "\u2611";
     private static final String UNCHECKED = "\u2610";
+    private static final String NAME_ATTR ="name";
+    private static final String NAME_ATTR_CHECKED = "checked";
+    private static final String NAME_ATTR_UNCHECKED = "unchecked";
 
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
     private SearchDelegate searchDelegate;
@@ -226,7 +229,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     void init() {
-        new CheckBoxesExtension<>(financialStatementContent, eventBus, XmlHelper.INDENT, CHECKED, UNCHECKED);
+        new CheckBoxesExtension<>(financialStatementContent, eventBus, XmlHelper.INDENT, CHECKED, UNCHECKED, NAME_ATTR, NAME_ATTR_CHECKED, NAME_ATTR_UNCHECKED);
         markAsDirty();
         actionsMenuBar.setChildComponentClass(MarkedTextComponent.class);
         tableOfContentComponent = new TableOfContentComponent(messageHelper, eventBus, securityContext, cfgHelper, tocEditor, structureContextProvider, tableOfContentProcessor);

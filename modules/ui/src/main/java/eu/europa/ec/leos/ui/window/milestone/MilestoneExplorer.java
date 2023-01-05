@@ -35,7 +35,9 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataRequest;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataResponse;
@@ -75,6 +77,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,12 +88,15 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
+
 public class MilestoneExplorer extends AbstractWindow {
 
     private static final long serialVersionUID = -4472838309232070251L;
     private static final Logger LOG = LoggerFactory.getLogger(MilestoneExplorer.class);
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public static final String LEOS_CONTENT_PROCESSED = "leos-content-processed";
     public static final String LEOS_CONTENT_REMOVED = "leos-content-removed";
@@ -300,7 +307,7 @@ public class MilestoneExplorer extends AbstractWindow {
         titleLayout.setSizeFull();
 
         User user = userHelper.getUser(legDocument.getInitialCreatedBy());
-        Label description = new Label(messageHelper.getMessage("milestone.explorer.window.description", dateFormat.format(Date.from(legDocument.getInitialCreationInstant())),
+        Label description = new Label(messageHelper.getMessage("milestone.explorer.window.description", dateFormat.format(legDocument.getInitialCreationInstant()),
                 user.getName(), milestoneTitle), ContentMode.HTML);
         titleLayout.addComponent(description);
         if(isContributionMilestone) {
@@ -376,7 +383,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 return "Annex " + annexNumber + versionLabel;
             case COVERPAGE:
                 return  showCoverPage ? messageHelper.getMessage(COVER_PAGE_TAB_TITLE_KEY) + " " + versionLabel : "";
-            case FINANCIAL_STATEMENT:
+            case STAT_FINANC_LEGIS:
                 return "Financial Statement" + versionLabel;
             default:
                 return "";
@@ -387,7 +394,7 @@ public class MilestoneExplorer extends AbstractWindow {
         HashMap<String, Boolean> annexesComparaison = new HashMap();
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
-            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().get();
+            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
             String version = docVersionMap.get(contentFileName);
             boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
@@ -417,7 +424,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 } else {
                     LeosCategory category = xmlContentProcessor.identifyCategory(key,
                             xmlContent.getBytes(StandardCharsets.UTF_8));
-                    if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.FINANCIAL_STATEMENT)) {
+                    if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                         String tabName = getTabName(category, 0, version);
                         TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                         if(isCompared) {
@@ -461,7 +468,7 @@ public class MilestoneExplorer extends AbstractWindow {
         }
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
-            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().get();
+            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
             String version = docVersionMap.get(contentFileName);
 
@@ -480,7 +487,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 LeosCategory category = xmlContentProcessor.identifyCategory(key,
                         xmlContent.getBytes(StandardCharsets.UTF_8));
 
-                if (category != null && category.equals(LeosCategory.FINANCIAL_STATEMENT)) {
+                if (category != null && category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                     String tabName = getTabName(category, 0, version);
                     TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                     if(isCompared) {
@@ -549,6 +556,11 @@ public class MilestoneExplorer extends AbstractWindow {
                     content = readFileToString(((File) contentFiles.get(selectedDocument + HTML)));
                 } catch (IOException e) {
                     throw new RuntimeException("Unexpected error occurred while reading content file", e);
+                }
+                if(selectedDocument.startsWith(STAT_FINANC_LEGIS)) {
+                    String nsContent = XmlHelper.addDummyNamespace(content);
+                    Document document = XercesUtils.createXercesDocument(nsContent.getBytes(UTF_8));
+                    content = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
                 }
                 if (!selectedDocument.startsWith(COVER_PAGE_CONTENT_FILE_NAME)) {
                     int annexNumber = 0;

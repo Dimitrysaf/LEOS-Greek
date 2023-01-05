@@ -1,0 +1,70 @@
+<button euiButton euiPrimary (click)="openCreateWizard()">
+  Create Proposal
+</button>
+
+<eui-dialog
+  #createWizardDialog
+  [title]="'Create new legislative document'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  (close)="onClose()"
+>
+  <ux-wizard-steps
+    (selectStep)="onSelectStepRemoteNav($event)"
+    [activeStepIndex]="currentStepIndex"
+    [isNavigationAllowed]="isNavigationAllowed"
+  >
+    <ux-wizard-step
+      label="Template selection"
+      [isCompleted]="!!(selectedTemplate && selectedLanguage)"
+    >
+      <uxWizardStepContent
+        ><app-proposal-create-template-selector
+          #templateSelector
+          (selectTemplate)="handleSelectTemplate($event)"
+          (selectLanguage)="handleSelectLanguage($event)"
+        ></app-proposal-create-template-selector
+      ></uxWizardStepContent>
+    </ux-wizard-step>
+    <ux-wizard-step label="Document metadata" [isCompleted]="createForm.valid">
+      <uxWizardStepContent
+        ><app-proposal-create-form
+          [createForm]="createForm"
+        ></app-proposal-create-form
+      ></uxWizardStepContent>
+    </ux-wizard-step>
+  </ux-wizard-steps>
+  <eui-dialog-footer>
+    <div class="dialog-footer-content">
+      <button euiButton (click)="closeDialog()">Cancel</button>
+      <button
+        euiButton
+        type="button"
+        [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
+        (click)="onNavigation(-1)"
+      >
+        <span class="eui-icon eui-icon-chevron-left"></span>
+        <span euiLabel>Previous</span>
+      </button>
+      <button
+        euiButton
+        type="button"
+        [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"
+        (click)="onNavigation(+1)"
+        [hidden]="showCreateHideNext()"
+      >
+        <span euiLabel>Next</span>
+        <span class="eui-icon eui-icon-chevron-right"></span>
+      </button>
+      <button
+        [hidden]="!showCreateHideNext()"
+        [disabled]="!isFormValid()"
+        euiButton
+        euiPrimary
+        (click)="onCreate()"
+      >
+        Create
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

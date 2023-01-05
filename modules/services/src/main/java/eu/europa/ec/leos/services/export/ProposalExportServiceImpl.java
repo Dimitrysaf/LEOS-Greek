@@ -48,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
 public class ProposalExportServiceImpl extends ExportServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(ProposalExportServiceImpl.class);
+    private static final String FILE_NOT_DELETED = "File not deleted {}";
 
     protected final AKN4EUService akn4euService;
 
@@ -101,7 +102,9 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
-                legisWritePackage.delete();
+                if(!legisWritePackage.delete()){
+                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
+                }
             }
         }
         return jobId;
@@ -140,7 +143,9 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
-                legisWritePackage.delete();
+                if(!legisWritePackage.delete()){
+                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
+                }
             }
         }
     }
@@ -177,10 +182,14 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
-                legisWritePackage.delete();
+                if(!legisWritePackage.delete()){
+                    LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
+                }
             }
             if (pdfPackage != null && pdfPackage.exists()) {
-                pdfPackage.delete();
+                if(!pdfPackage.delete()){
+                    LOG.info(FILE_NOT_DELETED, pdfPackage.toPath());
+                }
             }
         }
 
@@ -213,7 +222,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             }
 
             count++;
-            Thread.sleep(jobResultPullingThresholdInSeconds * 1000);
+            Thread.sleep(jobResultPullingThresholdInSeconds * 1000L);
         }
         LOG.warn("Couldn't generate Rendition for legFile with jobId '{}'. jobResultMaxTries: {}, jobResultPullingThresholdInSeconds: {} . Total time {} secs",
                 jobId, jobResultMaxTries, jobResultPullingThresholdInSeconds, stopwatch.elapsed(TimeUnit.SECONDS));
@@ -230,7 +239,10 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             return createZipFile(legPackage, jobFileName, exportOptions);
         } finally {
             if (legFile != null && legFile.exists()) {
-                legFile.delete();
+                if(!legFile.delete()){
+                    LOG.info(FILE_NOT_DELETED, legFile.toPath());
+                }
+
             }
         }
     }
@@ -253,8 +265,10 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             LOG.error("An exception occurred while using the Legiswrite service: ", e);
             throw e;
         } finally {
-            if(legPackage.getFile() != null && legPackage.getFile().exists()) {
-                legPackage.getFile().delete();
+            if(legPackage != null && legPackage.getFile() != null && legPackage.getFile().exists()) {
+                if(!legPackage.getFile().delete()){
+                    LOG.info(FILE_NOT_DELETED, legPackage.getFile().toPath());
+                }
             }
             LOG.debug("createLegisWritePackage() end....");
         }

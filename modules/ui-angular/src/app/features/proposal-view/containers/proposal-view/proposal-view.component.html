@@ -1,0 +1,48 @@
+<eui-breadcrumb>
+  <eui-breadcrumb-item link="/" label="Home"></eui-breadcrumb-item>
+  <eui-breadcrumb-item label="Proposal Viewer"></eui-breadcrumb-item>
+</eui-breadcrumb>
+
+<section [ngSwitch]="proposalState" class="eui-u-mh-m">
+  <ng-container *ngSwitchCase="'done'">
+    <app-proposal-header
+      [nonEditablePartOfTitle]="proposalTitleNonEditablePart"
+      [editableTitle]="proposalTitleEditablePart"
+    ></app-proposal-header>
+
+    <app-proposal-details [proposal]="proposal"></app-proposal-details>
+
+    <eui-tabs class="eui-u-display-block eui-u-mt-l">
+      <eui-tab>
+        <eui-tab-label>Drafts</eui-tab-label>
+        <eui-tab-content>
+          <app-proposal-drafts [proposal]="proposal"></app-proposal-drafts>
+        </eui-tab-content>
+      </eui-tab>
+      <eui-tab>
+        <eui-tab-label>Milestones</eui-tab-label>
+        <eui-tab-content>
+          <app-proposal-milestones></app-proposal-milestones>
+        </eui-tab-content>
+      </eui-tab>
+      <eui-tab>
+        <eui-tab-label>Collaborators</eui-tab-label>
+        <eui-tab-content>
+          <app-proposal-collaborators></app-proposal-collaborators>
+        </eui-tab-content>
+      </eui-tab>
+    </eui-tabs>
+  </ng-container>
+  <ng-container *ngSwitchCase="'error'" [ngSwitch]="proposalErrorCode">
+    <eui-alert euiDanger *ngSwitchCase="403">
+      You do not have permission to access the requested proposal.
+    </eui-alert>
+    <eui-alert euiDanger *ngSwitchCase="404">
+      The requested proposal does not exist.
+    </eui-alert>
+    <eui-alert euiDanger *ngSwitchDefault>
+      Something went wrong. Please try again and if the problem persists contact
+      with support team.
+    </eui-alert>
+  </ng-container>
+</section>

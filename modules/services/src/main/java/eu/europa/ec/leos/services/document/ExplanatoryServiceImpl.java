@@ -86,7 +86,10 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         final String explanatoryUid = Cuid.createCuid();
         final String ref = EXPLANATORY_NAME_PREFIX + explanatoryUid;
         final String fileName = ref + EXPLANATORY_DOC_EXTENSION;
-        metadata = metadata.withRef(ref);
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
         Explanatory explanatory = explanatoryRepository.createExplanatory(templateId, path, fileName, metadata);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(explanatory) : content, metadata);
         return explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
