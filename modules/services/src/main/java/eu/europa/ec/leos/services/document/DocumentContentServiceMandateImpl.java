@@ -52,24 +52,18 @@ public class DocumentContentServiceMandateImpl extends DocumentContentServiceImp
 
     @Override
     public String toEditableContent(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext, byte[] coverPageContent) {
-    	String currentDocumentEditableXml = getEditableXml(xmlDocument, contextPath, securityContext, coverPageContent);
+        String currentDocumentEditableXml = getEditableXml(xmlDocument, contextPath, securityContext, coverPageContent);
     	
-    	if(!isComparisonRequired(xmlDocument, securityContext)) {
-        	return currentDocumentEditableXml;
+        if(!isComparisonRequired(xmlDocument, securityContext)) {
+            return currentDocumentEditableXml;
         }
     	
-    	if(isAnnexFromCouncil(xmlDocument) && (StringUtils.isBlank(((Annex)xmlDocument).getBaseRevisionId()) || isBaseECVersion((Annex)xmlDocument))) {
-    		byte[] resultContent = xmlContentProcessor.insertSoftAddedClassAttribute(xmlDocument.getContent().get().getSource().getBytes());
-    		return transformationService.toEditableXml(getContentInputStream(resultContent), contextPath, xmlDocument.getCategory(),
-    				securityContext.getPermissions(xmlDocument), getContentInputStream(coverPageContent));
-    	}
+        XmlDocument originalDocument = getOriginalDocument(xmlDocument);
+        if(originalDocument == null) {
+            return currentDocumentEditableXml;
+        }
     	
-    	XmlDocument originalDocument = getOriginalDocument(xmlDocument);
-    	if(originalDocument == null) {
-    		return currentDocumentEditableXml;
-    	}
-    	
-    	String originalDocumentEditableXml = getEditableXml(originalDocument, contextPath, securityContext,
+        String originalDocumentEditableXml = getEditableXml(originalDocument, contextPath, securityContext,
                 coverPageContent != null && coverPageContent.length > 0 ? getCoverPageContent(originalDocument.getContent().get().getSource().getBytes()) : coverPageContent);
     	
         LeosPostDiffingProcessor postDiffingProcessor = new LeosPostDiffingProcessor();

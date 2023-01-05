@@ -97,12 +97,6 @@ public class ExplanatoryRepositoryImpl implements ExplanatoryRepository {
         logger.debug("Finding Explanatory by ref... [ref=" + ref + "]");
         return leosRepository.findDocumentByRef(ref, Explanatory.class);
     }
-    
-    @Override
-    public Explanatory findExplanatoryByVersion(String documentRef, String versionLabel) {
-    	logger.debug("Finding Explanatory by version... [ref=" + documentRef + " and version=" + versionLabel + "]");
-        return leosRepository.findDocumentByVersion(Explanatory.class, documentRef, versionLabel);
-    }
 
     @Override
     public List<Explanatory> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {

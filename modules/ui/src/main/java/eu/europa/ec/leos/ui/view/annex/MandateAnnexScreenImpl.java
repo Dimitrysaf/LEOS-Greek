@@ -29,6 +29,7 @@ import eu.europa.ec.leos.ui.component.doubleCompare.DoubleComparisonComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
+import eu.europa.ec.leos.ui.event.ToggleLiveDiffingRequiredEvent;
 import eu.europa.ec.leos.ui.event.view.AddStructureChangeMenuEvent;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.ui.view.TriFunction;
@@ -42,6 +43,7 @@ import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
+import eu.europa.ec.leos.web.ui.themes.LeosTheme;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +88,7 @@ public class MandateAnnexScreenImpl extends AnnexScreenImpl {
         actionsMenuBar.setChildComponentClass(DoubleComparisonComponent.class);
         screenLayoutHelper.addPane(comparisonComponent, 2, false);
         screenLayoutHelper.layoutComponents();
+        toggleLiveDiffingButton();
         new SoftActionsExtension<>(annexContent);
     }
 
@@ -229,8 +232,8 @@ public class MandateAnnexScreenImpl extends AnnexScreenImpl {
     }
 
     @Override
-    public void setPermissions(DocumentVO annex, boolean isClonedProposal) {
-        super.setPermissions(annex, isClonedProposal);
+    public void setPermissions(DocumentVO annex, boolean isClonedProposal, boolean isAnnexFromCouncil) {
+        super.setPermissions(annex, isClonedProposal, isAnnexFromCouncil);
         boolean enableExportPackage = securityContext.hasPermission(annex, LeosPermission.CAN_WORK_WITH_EXPORT_PACKAGE);
         actionsMenuBar.setExportPackageVisible(enableExportPackage);
         doubleComparisonComponent.enableExportPackage(enableExportPackage);
@@ -246,6 +249,12 @@ public class MandateAnnexScreenImpl extends AnnexScreenImpl {
             actionsMenuBar.setRenumberingVisible(false);
             actionsMenuBar.setRenumberingGroupVisible(false);
         }
+        if (isAnnexFromCouncil) {
+            boolean enableLiveDiffing = securityContext.hasPermission(annex, LeosPermission.CAN_TOGGLE_LIVE_DIFFING);
+            toggleLiveDiffingButton.setVisible(enableLiveDiffing);
+        } else {
+            toggleLiveDiffingButton.setVisible(false);
+        }
     }
 
     @Override
@@ -254,5 +263,21 @@ public class MandateAnnexScreenImpl extends AnnexScreenImpl {
 
     @Override
     public boolean isCoverPageVisible() { return false; }
+
+    @Override
+    public void setLiveDiffingRequired(boolean liveDiffingRequired) {
+        toggleLiveDiffingButton.setData(liveDiffingRequired ? "ON" : "OFF");
+        toggleLiveDiffingButton.setIcon(liveDiffingRequired ? LeosTheme.LEOS_TOGGLE_ON_32 : LeosTheme.LEOS_TOGGLE_OFF_32);
+    }
+
+    @Override
+    public void toggleLiveDiffingButton() {
+        toggleLiveDiffingButton.addStyleName("leos-toggle-button");
+        toggleLiveDiffingButton.setDescription(messageHelper.getMessage("document.live.diffing.minimized.description"));
+        toggleLiveDiffingButton.addClickListener(event -> {
+            boolean liveDiffingRequired = toggleLiveDiffingButton.getData() == "ON" ? false : true;
+            eventBus.post(new ToggleLiveDiffingRequiredEvent(liveDiffingRequired));
+        });
+    }
 
 }

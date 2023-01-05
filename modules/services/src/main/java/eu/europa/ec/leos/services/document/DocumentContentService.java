@@ -51,6 +51,8 @@ public interface DocumentContentService {
 
     XmlDocument getOriginalProposal(Proposal proposal);
 
+    boolean isAnnexComparisonRequired(Annex annex, SecurityContext securityContext);
+
     boolean isAnnexComparisonRequired(byte[] contentBytes);
 
     boolean isMemorandumComparisonRequired(byte[] contentBytes);

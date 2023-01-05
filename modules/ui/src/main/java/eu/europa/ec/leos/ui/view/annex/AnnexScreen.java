@@ -68,7 +68,7 @@ interface AnnexScreen {
 
     void setStructureChangeMenuItem();
 
-    void setPermissions(DocumentVO annex, boolean isClonedProposal);
+    void setPermissions(DocumentVO annex, boolean isClonedProposal, boolean isAnnexFromCouncil);
 
     void initLeosEditor(DocumentVO annex, List<LeosMetadata> documentsMetadata);
 
@@ -148,5 +148,11 @@ interface AnnexScreen {
     void confirmRenumberDocument();
 
     Optional<ContributionVO> findContributionAndShowTab(String revisionVersion);
+
     public void setUserGuidance(String userGuidance);
+
+    void toggleLiveDiffingButton();
+
+    void setLiveDiffingRequired(boolean liveDiffingRequired);
+
 }

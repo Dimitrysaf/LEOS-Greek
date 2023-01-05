@@ -38,8 +38,6 @@ import java.util.concurrent.TimeUnit;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 
 @Service
 public class ExplanatoryServiceImpl implements ExplanatoryService {
@@ -313,10 +311,5 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     	LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return explanatory;
     }
-    
-    @Override
-    public Explanatory findExplanatoryByVersion(String documentRef, String versionLabel) {
-    	LOG.trace("Finding Explanatory by version... [ref=" + documentRef + " and version=" + versionLabel + "]");
-        return explanatoryRepository.findExplanatoryByVersion(documentRef, versionLabel);
-    }
+
 }
