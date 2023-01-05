@@ -1588,7 +1588,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
-                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType(), versionLabel, versionComment);
     }
 
