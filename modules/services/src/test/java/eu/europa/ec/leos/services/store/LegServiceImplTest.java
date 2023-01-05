@@ -571,7 +571,7 @@ public class LegServiceImplTest {
 				"annex_cl3yjnpcz0007k485t5p989mq.xml", 1, "Annex 1", "title", "", "0.0.1", false, STORE_DIR);
 		return new Annex("555", "annex_cl3yjnpcz0007k485t5p989mq.xml", "login", Instant.now(), "login", Instant.now(),
 				"0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
-                "title", Collections.emptyList(), Arrays.asList(""), "", "", "",
+                "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",
                 Option.some(content), Option.some(annexMetadata));
 	}
 

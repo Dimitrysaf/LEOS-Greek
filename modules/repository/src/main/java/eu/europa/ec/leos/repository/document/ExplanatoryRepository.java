@@ -110,8 +110,6 @@ public interface ExplanatoryRepository {
      */
     @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     Explanatory findExplanatoryByRef(String ref);
-    
-    Explanatory findExplanatoryByVersion(String documentRef, String versionLabel);
 
     List<Explanatory> findAllMinorsForIntermediate(String docRef, String curr, int startIndex, int maxResults);
 

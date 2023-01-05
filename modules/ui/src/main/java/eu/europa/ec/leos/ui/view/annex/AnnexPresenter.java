@@ -98,6 +98,7 @@ import eu.europa.ec.leos.ui.event.DownloadXmlVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.FetchMilestoneByVersionedReferenceEvent;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
+import eu.europa.ec.leos.ui.event.ToggleLiveDiffingRequiredEvent;
 import eu.europa.ec.leos.ui.event.contribution.ApplyContributionsRequestEvent;
 import eu.europa.ec.leos.ui.event.contribution.CompareAndShowRevisionEvent;
 import eu.europa.ec.leos.ui.event.doubleCompare.DocuWriteExportRequestEvent;
@@ -453,7 +454,9 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexScreen.setStructureChangeMenuItem();
             DocumentVO annexVO = createAnnexVO(annex);
             annexScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(annex.getVersionSeriesId()), id);
-            annexScreen.setPermissions(annexVO, isClonedProposal());
+            boolean isAnnexFromCouncil = documentContentService.isAnnexFromCouncil(annex);
+            annexScreen.setPermissions(annexVO, isClonedProposal(), isAnnexFromCouncil);
+            annexScreen.setLiveDiffingRequired(annex.isLiveDiffingRequired());
             annexScreen.initAnnotations(annexVO, proposalRef, connectedEntity);
             if(isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
@@ -567,15 +570,19 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     private void doDownloadActualVersion(Boolean isWithAnnotations, String annotations) {
         try {
-            XmlDocument original = documentContentService.getOriginalAnnex(getDocument());
+            Annex currentDocument = getDocument();
+            XmlDocument original = documentContentService.getOriginalAnnex(currentDocument);
             ExportOptions exportOptions;
             if (InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
                 exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
-                exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, getDocument()));
-
+                exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, currentDocument));
             } else {
+                boolean isLiveDiffing = currentDocument.isLiveDiffingRequired();
+                if (!isLiveDiffing) {
+                    original = currentDocument; // For NO Diffing
+                }
                 exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
-                exportOptions.setExportVersions(new ExportVersions<>(original, getDocument()));
+                exportOptions.setExportVersions(new ExportVersions<>(original, currentDocument));
             }
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
@@ -772,6 +779,10 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final Annex currentDocument = getDocument();
         XmlDocument original = documentContentService.getOriginalAnnex(currentDocument);
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
+        boolean isLiveDiffing = currentDocument.isLiveDiffingRequired();
+        if (!isLiveDiffing) {
+            original = currentDocument; // For NO Diffing
+        }
         exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
         exportOptions.setRelevantElements(event.getRelevantElements());
         exportOptions.setWithFilteredAnnotations(event.isWithAnnotations());
@@ -867,12 +878,12 @@ class AnnexPresenter extends AbstractLeosPresenter {
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
 
         if(StringUtils.isBlank(baseRevisionId)) {
-    		VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(document), messageHelper).get(0);
-    		Map<String, Object> properties = new HashMap<>();
-    		properties.put(CmisProperties.BASE_REVISION_ID.getId(), versionVO.getDocumentId() + CMIS_PROPERTY_SPLITTER + versionVO.getVersionNumber().toString() + CMIS_PROPERTY_SPLITTER + versionVO.getCheckinCommentVO().getTitle());
-    		document =  annexService.updateAnnex(documentId, properties, true);
-    		baseRevisionId = document.getBaseRevisionId();
-    	}
+            VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(document), messageHelper).get(0);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(CmisProperties.BASE_REVISION_ID.getId(), versionVO.getDocumentId() + CMIS_PROPERTY_SPLITTER + versionVO.getVersionNumber().toString() + CMIS_PROPERTY_SPLITTER + versionVO.getCheckinCommentVO().getTitle());
+            document =  annexService.updateAnnex(documentId, properties, true);
+            baseRevisionId = document.getBaseRevisionId();
+        }
         if(!StringUtils.isEmpty(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
             String versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
             String versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
@@ -1090,12 +1101,12 @@ class AnnexPresenter extends AbstractLeosPresenter {
         Annex annexFromSession = getAnnexFromSession();
         if(annexFromSession != null) {
             annexScreen.setContent(getEditableXml(annexFromSession));
+            annexScreen.setLiveDiffingRequired(annexFromSession.isLiveDiffingRequired());
         }else{
             eventBus.post(new RefreshDocumentEvent());
         }
         LOG.debug("User edit information removed");
     }
-
 
     @Subscribe
     void editElement(EditElementRequestEvent event){
@@ -1439,7 +1450,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
     }
 
-    private String getVersionInfoAsString(XmlDocument document) {
+    private String getVersionInfoAsString(Annex document) {
         final VersionInfoVO versionInfo = getVersionInfo(document);
         final String versionInfoString = messageHelper.getMessage(
                 "document.version.caption",
@@ -1563,15 +1574,22 @@ class AnnexPresenter extends AbstractLeosPresenter {
         commonDelegate.mergeSuggestions(annex, event, elementProcessor, annexService::updateAnnex);
     }
 
-    private VersionInfoVO getVersionInfo(XmlDocument document) {
+    private VersionInfoVO getVersionInfo(Annex document) {
         String userId = document.getLastModifiedBy();
         User user = userHelper.getUser(userId);
 
+        String versionLabel = null;
+        String versionComment = null;
+        String baseRevisionId = document.getBaseRevisionId();
+        if(StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+            versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
+            versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
+        }
         return new VersionInfoVO(
                 document.getVersionLabel(),
                 user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
-                dateFormatter.format(document.getLastModificationInstant()),
-                document.getVersionType());
+                dateFormatter.format(Date.from(document.getLastModificationInstant())),
+                document.getVersionType(), versionLabel, versionComment);
     }
 
     private DocumentVO createAnnexVO(Annex annex) {
@@ -1754,6 +1772,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         Annex annexUpdated = copyIntoNew(annexFromSession, updatedContent);
         httpSession.setAttribute("annex#" + getDocumentRef(), annexUpdated);
         annexScreen.setContent(getEditableXml(annexUpdated));
+        annexScreen.setLiveDiffingRequired(annexUpdated.isLiveDiffingRequired());
         eventBus.post(new ReplaceAllMatchResponseEvent(true));
     }
 
@@ -1784,6 +1803,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 source.getCollaborators(),
                 source.getMilestoneComments(),
                 source.getBaseRevisionId(),
+                source.isLiveDiffingRequired(),
                 source.getContributionStatus(),
                 source.getClonedFrom(),
                 updatedContentOptionObj,
@@ -1825,6 +1845,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             Annex annexUpdated = copyIntoNew(annexFromSession, updatedContent);
             httpSession.setAttribute("annex#" + getDocumentRef(), annexUpdated);
             annexScreen.setContent(getEditableXml(annexUpdated));
+            annexScreen.setLiveDiffingRequired(annexUpdated.isLiveDiffingRequired());
             annexScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), true);
         } else {
             annexScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), false);
@@ -1851,9 +1872,50 @@ class AnnexPresenter extends AbstractLeosPresenter {
         versionInfoVO.setRevisedBaseVersion(versionLabel);
         versionInfoVO.setBaseVersionTitle(event.getBaseVersionTitle());
         annexScreen.setContent(getEditableXml(updatedAnnex));
-        annexScreen.setDocumentVersionInfo(versionInfoVO);
+        annexScreen.setLiveDiffingRequired(updatedAnnex.isLiveDiffingRequired());
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.info",
                 versionLabel));
+    }
+
+    @Subscribe
+    void toggleLiveDiffingRequired(ToggleLiveDiffingRequiredEvent event) {
+
+        boolean liveDiffingRequired = event.isLiveDiffingRequired();
+        Annex updatedAnnex = updateLiveDiffingRequired(liveDiffingRequired);
+
+        NotificationEvent notification;
+        if (liveDiffingRequired) {
+            String baseRevisionId = updatedAnnex.getBaseRevisionId();
+            if (org.apache.commons.lang.StringUtils.isEmpty(baseRevisionId)) {
+                VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(updatedAnnex), messageHelper).get(0);
+                updatedAnnex = updateBaseVersion(versionVO.getDocumentId(), versionVO.getVersionNumber().toString(),
+                        versionVO.getCheckinCommentVO().getTitle());
+                notification = new NotificationEvent(Type.INFO, "document.live.diffing.on.warning", versionVO.getVersionNumber().toString());
+            } else {
+                notification = new NotificationEvent(Type.INFO, "document.live.diffing.on");
+            }
+        } else {
+            notification = new NotificationEvent(Type.INFO, "document.live.diffing.off");
+        }
+
+        annexScreen.setLiveDiffingRequired(updatedAnnex.isLiveDiffingRequired());
+        annexScreen.setContent(getEditableXml(updatedAnnex));
+        eventBus.post(notification);
+
+    }
+
+    private Annex updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
+        Annex updatedExplanatory =  annexService.updateAnnex(documentId, properties, true);
+        return updatedExplanatory;
+    }
+
+    private Annex updateLiveDiffingRequired(boolean liveDiffingRequired) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), liveDiffingRequired);
+        Annex updatedAnnex = annexService.updateAnnex(documentId, properties, true);
+        return updatedAnnex;
     }
 
     @Subscribe

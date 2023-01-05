@@ -30,7 +30,6 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +81,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 	        case COUNCIL_EXPLANATORY:
 	            return isCouncilExplanatoryComparisonRequired((Explanatory) xmlDocument, securityContext);
 	        case ANNEX:
-	            return isAnnexComparisonRequired(contentBytes);
+	            return isAnnexComparisonRequired((Annex) xmlDocument, securityContext);
 	        case BILL:
 	            return true;
             case STAT_FINANC_LEGIS:
@@ -111,12 +110,6 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 	    }
     }
 
-    protected boolean isSameDocument(XmlDocument xmlDocument, XmlDocument originalDocument) {
-    	return originalDocument != null
-    			&& StringUtils.equals(originalDocument.getId(), xmlDocument.getId())
-    			&& StringUtils.equals(originalDocument.getVersionLabel(), xmlDocument.getVersionLabel());
-    }
-
     protected String[] getContentsToCompare(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext,
                                             byte[] coverPageContent) {
         String currentDocumentEditableXml = getEditableXml(xmlDocument, contextPath, securityContext, coverPageContent);
@@ -133,7 +126,6 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 }
                 break;
             case COUNCIL_EXPLANATORY:
-                contentBytes = xmlDocument.getContent().get().getSource().getBytes();
                 if (isCouncilExplanatoryComparisonRequired((Explanatory) xmlDocument, securityContext)) {
                     originalDocument = getOriginalExplanatory((Explanatory) xmlDocument);
                 } else {
@@ -141,8 +133,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 }
                 break;
             case ANNEX:
-                contentBytes = xmlDocument.getContent().get().getSource().getBytes();
-                if (isAnnexComparisonRequired(contentBytes)) {
+                if (isAnnexComparisonRequired((Annex) xmlDocument, securityContext)) {
                     originalDocument = getOriginalAnnex((Annex) xmlDocument);
                 } else {
                     return new String[]{currentDocumentEditableXml};
@@ -197,6 +188,11 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     @Override
     public XmlDocument getOriginalBill(Bill bill) {
         return billService.findFirstVersion(bill.getMetadata().get().getRef());
+    }
+
+    @Override
+    public boolean isAnnexComparisonRequired(Annex annex, SecurityContext securityContext) {
+        return !isAnnexFromCouncil(annex) || (securityContext.hasPermission(annex, LeosPermission.CAN_TOGGLE_LIVE_DIFFING) && annex.isLiveDiffingRequired());
     }
 
     @Override

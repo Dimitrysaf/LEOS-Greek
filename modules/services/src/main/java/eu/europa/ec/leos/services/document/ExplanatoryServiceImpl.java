@@ -314,10 +314,5 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     	LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return explanatory;
     }
-    
-    @Override
-    public Explanatory findExplanatoryByVersion(String documentRef, String versionLabel) {
-    	LOG.trace("Finding Explanatory by version... [ref=" + documentRef + " and version=" + versionLabel + "]");
-        return explanatoryRepository.findExplanatoryByVersion(documentRef, versionLabel);
-    }
+
 }

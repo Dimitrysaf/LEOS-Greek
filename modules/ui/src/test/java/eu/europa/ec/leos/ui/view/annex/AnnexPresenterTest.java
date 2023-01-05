@@ -90,8 +90,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -283,18 +285,20 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isCoverPageExists(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
+        verify(documentContentService).isAnnexFromCouncil(any());
 
-        verify(annexScreen, times(1)).isCoverPageVisible();
+        verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setContent(displayableContent);
         verify(annexScreen).setTitle(docTitle, docNumber);
         verify(annexScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
-        verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(false));
+        verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(false), anyBoolean());
         verify(annexScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), any(), any());
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
         verify(annexService).getAllVersions(docId, docRef);
         verify(contributionService).getDocumentContributions(docId, 1, Annex.class);
         verify(annexScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(annexScreen).setLiveDiffingRequired(anyBoolean());
         verifyNoMoreInteractions(userHelper, annexService, documentContentService, annexScreen);
     }
 
@@ -369,12 +373,13 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isCoverPageExists(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
+        verify(documentContentService).isAnnexFromCouncil(any());
 
-        verify(annexScreen, times(1)).isCoverPageVisible();
+        verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setContent(displayableContent);
         verify(annexScreen).setTitle(docTitle, docNumber);
         verify(annexScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
-        verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(true));
+        verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(true), anyBoolean());
         verify(annexScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), any(), any());
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
@@ -382,13 +387,16 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(annexScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
         verify(annexService).getAllVersions(docId, docRef);
         verify(cloneContext, Mockito.times(8)).setCloneProposalMetadataVO(any());
+        verify(annexScreen).setDocumentVersionInfo(any());
+        verify(annexScreen).setContent(any());
+        verify(annexScreen).setLiveDiffingRequired(anyBoolean());
         verifyNoMoreInteractions(userHelper, annexService, documentContentService, annexScreen);
     }
 
     private Annex getMockedAnnex(Content content, String documentVersion, AnnexMetadata annexMetadata) {
         return new Annex(docId, "Annex", "login", Instant.now(), "login", Instant.now(),
                     documentVersion, "", documentVersion, "", VersionType.MINOR, true,
-                    docTitle, Collections.emptyList(), Arrays.asList(""), docId+"0.1.0"+"Document Created", "", "",
+                    docTitle, Collections.emptyList(), Arrays.asList(""), docId+"0.1.0"+"Document Created", false, "", "",
                     Option.some(content), Option.some(annexMetadata));
     }
     
@@ -469,16 +477,18 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
         verify(documentContentService).isCoverPageExists(any());
+        verify(documentContentService).isAnnexFromCouncil(any());
 
         verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setDocumentVersionInfo(any());
         verify(annexScreen).setContent(displayableContent);
         verify(annexScreen).setTitle(docTitle, docNumber);
         verify(annexScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
-        verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(false));
+        verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(false), anyBoolean());
         verify(annexScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), any(), any());
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
+        verify(annexScreen).setLiveDiffingRequired(anyBoolean());
         verifyNoMoreInteractions(userHelper, annexService, documentContentService, annexScreen);
     }
 

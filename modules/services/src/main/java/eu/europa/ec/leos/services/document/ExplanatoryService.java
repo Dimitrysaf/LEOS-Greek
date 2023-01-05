@@ -68,5 +68,4 @@ public interface ExplanatoryService {
     
     Explanatory updateExplanatory(String id, Map<String, Object> properties, boolean latest);
 
-    Explanatory findExplanatoryByVersion(String documentRef, String versionLabel);
 }

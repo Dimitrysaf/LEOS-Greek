@@ -48,6 +48,7 @@ import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
+import eu.europa.ec.leos.web.ui.themes.LeosTheme;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -266,14 +267,15 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
     }
 
     @Override
-    public void setPermissions(DocumentVO annex, boolean isClonedProposal) {
-        super.setPermissions(annex, isClonedProposal);
+    public void setPermissions(DocumentVO annex, boolean isClonedProposal, boolean isAnnexFromCouncil) {
+        super.setPermissions(annex, isClonedProposal, isAnnexFromCouncil);
         actionsMenuBar.setDownloadVersionVisible(true);
         actionsMenuBar.setDownloadVersionWithAnnotationsVisible(true);
         actionsMenuBar.setDownloadCleanVersionVisible(isClonedProposal);
         actionsMenuBar.setShowCleanVersionVisible(isClonedProposal);
         actionsMenuBar.setRenumberingVisible(false);
         actionsMenuBar.setRenumberingGroupVisible(false);
+        toggleLiveDiffingButton.setVisible(false);
     }
 
     @Override
@@ -298,4 +300,16 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
     }
+
+    @Override
+    public void toggleLiveDiffingButton() {
+        toggleLiveDiffingButton.setVisible(false);
+    }
+
+    @Override
+    public void setLiveDiffingRequired(boolean liveDiffingRequired) {
+        toggleLiveDiffingButton.setData("OFF");
+        toggleLiveDiffingButton.setIcon(LeosTheme.LEOS_TOGGLE_OFF_32);
+    }
+
 }

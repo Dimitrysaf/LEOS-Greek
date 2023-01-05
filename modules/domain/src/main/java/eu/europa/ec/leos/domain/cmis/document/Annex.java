@@ -13,13 +13,14 @@ import java.util.List;
 public final class Annex extends XmlDocument {
     private final Option<AnnexMetadata> metadata;
     private final String baseRevisionId;
+    private final boolean liveDiffingRequired;
     private final String contributionStatus;
     private final String clonedFrom;
 
     public Annex(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
                  Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
                  VersionType versionType, boolean isLatestVersion, String title, List<Collaborator> collaborators,
-                 List<String> milestoneComments, String baseRevisionId, String contributionStatus, String clonedFrom,
+                 List<String> milestoneComments, String baseRevisionId, boolean liveDiffingRequired, String contributionStatus, String clonedFrom,
                  Option<Content> content, Option<AnnexMetadata> metadata) {
 
         super(LeosCategory.ANNEX, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
@@ -29,6 +30,7 @@ public final class Annex extends XmlDocument {
         this.baseRevisionId = baseRevisionId;
         this.contributionStatus = contributionStatus;
         this.clonedFrom = clonedFrom;
+        this.liveDiffingRequired = liveDiffingRequired;
     }
 
     public Option<AnnexMetadata> getMetadata() {
@@ -36,6 +38,10 @@ public final class Annex extends XmlDocument {
     }
 
     public String getBaseRevisionId() { return baseRevisionId; }
+
+    public boolean isLiveDiffingRequired() {
+        return liveDiffingRequired;
+    }
 
     public String getContributionStatus() {
         return contributionStatus;

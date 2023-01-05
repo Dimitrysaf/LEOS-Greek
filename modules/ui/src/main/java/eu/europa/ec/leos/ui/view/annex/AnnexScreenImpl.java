@@ -194,6 +194,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     protected Button refreshNoteButton;
     protected Button refreshButton;
     protected Button searchButton;
+    protected Button toggleLiveDiffingButton;
 
     protected LeosEditorExtension<LeosDisplayField> leosEditorExtension;
     protected ActionManagerExtension<LeosDisplayField> actionManagerExtension;
@@ -376,15 +377,19 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     @Override
     public void setDocumentVersionInfo(VersionInfoVO versionInfoVO) {
         String baseVersionStr = "";
-        String baseECVersion = messageHelper.getMessage("document.base.ec.version");
         String revisedBaseVersion = versionInfoVO.getRevisedBaseVersion();
-        if(!StringUtils.isEmpty(revisedBaseVersion) && !baseECVersion.equalsIgnoreCase(revisedBaseVersion)) {
+        if(!StringUtils.isEmpty(revisedBaseVersion) && isLiveDiffingOn()) {
             baseVersionStr = messageHelper.getMessage("document.base.version.toolbar.info", versionInfoVO.getBaseVersionTitle(),
                     versionInfoVO.getRevisedBaseVersion());
         }
         this.versionInfoLabel.setValue(messageHelper.getMessage("document.version.caption",
                 versionInfoVO.getDocumentVersion(), versionInfoVO.getLastModifiedBy(), versionInfoVO.getEntity(),
                 versionInfoVO.getLastModificationInstant()) + " " + baseVersionStr);
+    }
+
+    private boolean isLiveDiffingOn() {
+        return toggleLiveDiffingButton.isVisible() && toggleLiveDiffingButton.getData() != null &&
+                StringUtils.equalsIgnoreCase((String)toggleLiveDiffingButton.getData(), "ON");
     }
 
     private void refreshNoteButton() {
@@ -432,7 +437,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     }
     
     @Override
-    public void setPermissions(DocumentVO annex, boolean isClonedProposal){
+    public void setPermissions(DocumentVO annex, boolean isClonedProposal, boolean isAnnexFromCouncil){
         boolean enableUpdate = securityContext.hasPermission(annex, LeosPermission.CAN_UPDATE);
         actionsMenuBar.setSaveVersionVisible(enableUpdate);
         tableOfContentComponent.setPermissions(enableUpdate);
@@ -704,9 +709,10 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
 
         boolean canRestorePreviousVersion = securityContext.hasPermission(annexVO, LeosPermission.CAN_RESTORE_PREVIOUS_VERSION);
         boolean canDownload = securityContext.hasPermission(annexVO, LeosPermission.CAN_DOWNLOAD_XML_COMPARISON);
+        boolean canEnableLiveDiffing = securityContext.hasPermission(annexVO, LeosPermission.CAN_TOGGLE_LIVE_DIFFING);
 
         versionsTab.setDataFunctions(allVersions, minorVersionsFn, countMinorVersionsFn,
-                recentChangesFn, countRecentChangesFn, true, false,
+                recentChangesFn, countRecentChangesFn, true, canEnableLiveDiffing ? true : false,
                 canRestorePreviousVersion, canDownload);
         setContributionsData(allContributions);
 

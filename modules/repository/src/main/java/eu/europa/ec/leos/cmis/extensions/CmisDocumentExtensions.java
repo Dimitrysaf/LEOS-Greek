@@ -212,6 +212,7 @@ public class CmisDocumentExtensions {
                 getCollaborators(d),
                 getMilestoneComments(d),
                 getBaseRevisionId(d),
+                isLiveDiffingRequired(d),
                 getContributionStatus(d),
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
