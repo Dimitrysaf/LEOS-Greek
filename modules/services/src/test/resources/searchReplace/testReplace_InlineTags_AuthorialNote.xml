@@ -1,0 +1,20 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <bill name="REG">
+        <preamble xml:id="_preamble">
+            <recitals leos:editable="false" xml:id="_recs">
+                <recital leos:deletable="true" leos:editable="true" xml:id="_recs_1">
+                    <num xml:id="_recs_1_n">(6)</num>
+                    <p xml:id="_recs_1_p">First phrase that should be ok.</p>
+                </recital>
+                <recital leos:deletable="true" leos:editable="true" xml:id="_recs_2">
+                    <num xml:id="_recs_2_n">(6)</num>
+                    <p xml:id="_recs_2_p">Directive 2006/48/EC of the European Parliament
+                        <authorialNote marker="4" placement="bottom" xml:id="_recs_2_auth">
+                            <p xml:id="_recs_2_auth_p">OJ L 177, 30.6.2006, p. 201.</p>
+                        </authorialNote>
+                        have been significantly amended on several occasions. Many provisions of Directives 2006/48/EC and 2006/49/EC are applicable to both credit institutions and investment firms. For the sake of clarity and in order to ensure a coherent application of those provisions, they should be merged into new legislative acts that are applicable to both credit</p>
+                </recital>
+            </recitals>
+        </preamble>
+    </bill>
+</akomaNtoso>

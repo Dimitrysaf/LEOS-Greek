@@ -94,7 +94,6 @@ public class SearchEngineImpl implements SearchEngine {
             }
             textStartIndex += contentLength;
         }
-
         return textStartIndex;
     }
 
@@ -131,7 +130,6 @@ public class SearchEngineImpl implements SearchEngine {
 
         // Loop to extract the text content of all the elements.
         // They will be concatenated so that later a regular string search can be done.
-
         elements.forEach(el -> {
             if (((!Tag.isKnownTag(el.tag) && !customInlineTags.contains(el.tag)) // unknown tags are considered block tags and space is inserted after them
             || (Tag.valueOf(el.tag).isBlock() && el.startIndexOfText <= 0) // if block tag is containing any text
@@ -185,9 +183,9 @@ public class SearchEngineImpl implements SearchEngine {
         } else {
             patternText.append(quotedText);
         }
+
         Matcher matcher = Pattern.compile(patternText.toString()).matcher(searchableString);
         while (matcher.find()) {
-
             List<ElementMatchVO> matchedElements = new ArrayList<>();
             for (int i = matcher.start(); i < matcher.end(); i++) {
                 Index idx = indexesForString.get(i);
@@ -201,7 +199,7 @@ public class SearchEngineImpl implements SearchEngine {
                     continue;
                 }
 
-                ElementMatchVO elementMatchVO = null;
+                ElementMatchVO elementMatchVO;
                 if (matchedElements.size() > 0) {
                     ElementMatchVO lastElement = matchedElements.get(matchedElements.size() - 1);
                     if (lastElement.getElementId().equals(element.elementId)) {
@@ -285,17 +283,13 @@ public class SearchEngineImpl implements SearchEngine {
             for (ElementMatchVO eVO : smVO.getMatchedElements()) {
                 // length of the search text segment present in the element
                 int lenMatchInsideElement = eVO.getMatchEndIndex() - eVO.getMatchStartIndex();
-
                 // add the length of the matched search segment to the new start index to get end index
                 int endIndexLocal = startIndex + lenMatchInsideElement;
-
                 String replaceSubText;
-
                 // calculate corresponding replace segment
                 if (startIndex < replaceLength) {
                     if (endIndexLocal < replaceLength) {
-                        replaceSubText = replaceText.substring(startIndex,
-                                endIndexLocal);
+                        replaceSubText = replaceText.substring(startIndex, endIndexLocal);
                     } else {
                         replaceSubText = replaceText.substring(startIndex);
                     }
@@ -303,9 +297,7 @@ public class SearchEngineImpl implements SearchEngine {
                     replaceSubText = "";
                 }
                 replaceTextSegments.add(replaceSubText);
-
                 startIndex = endIndexLocal;
-
             }
             // when search string segments < replace string
             if (startIndex < replaceLength) {
@@ -340,9 +332,10 @@ public class SearchEngineImpl implements SearchEngine {
         Node node = XercesUtils.getElementById(document, elementId);
         if (node != null) {
             NodeList nodeList = node.getChildNodes();
+            Node nodeTemp;
             for (int i = 0; i < nodeList.getLength(); i++) {
-                node = nodeList.item(i);
-                childNodesContentLength.add(node.getTextContent().length());
+                nodeTemp = nodeList.item(i);
+                childNodesContentLength.add(nodeTemp.getTextContent().length());
             }
         }
         return childNodesContentLength;
@@ -360,29 +353,27 @@ public class SearchEngineImpl implements SearchEngine {
             int endEVO = eVO.getMatchEndIndex();
             String replaceSegment = replaceSegmentGlobal;
             Node lastUpdatedNode = null;
-
             NodeList nodeList = node.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 node = nodeList.item(i);
-                int length = matchedElementChildContentLength.get(i);
+                int length;
+                if(tagsToExclude.contains(node.getNodeName())){
+                    length = 0;
+                } else {
+                    length = matchedElementChildContentLength.get(i);
+                }
                 int indexAtEndOfContent = index + length;
-
                 if ((node.getNodeType() == Node.TEXT_NODE) && (index < endEVO && indexAtEndOfContent > startEVO)) {
-
                     String content = node.getTextContent();
                     int minReplaceSegmentLength = Math.min(replaceSegment.length(), indexAtEndOfContent - startEVO);
-
                     // replace from startEVO till length
-                    String updatedContent = content.substring(0, startEVO - index) + replaceSegment.substring(0,
-                            minReplaceSegmentLength);
-
+                    String updatedContent = content.substring(0, startEVO - index) + replaceSegment.substring(0, minReplaceSegmentLength);
                     // tail part: if the search segment part falls within the content, then simply append the remaing content
                     if (indexAtEndOfContent > endEVO && endEVO > startEVO) {
                         // when there exist search segment that has been replaced somewhere in the middle i.e, startEVO>0
                         // but there is still some content left towards the end i.e, length > endEVO
                         updatedContent += content.substring(endEVO - Math.min(startEVO, index));
                     }
-
                     // record an update to be executed later
                     // in case the content is empty and as a result the tag as well, then it can also be deleted
                     if (removeEmptyTags) {
@@ -392,10 +383,8 @@ public class SearchEngineImpl implements SearchEngine {
                             containsNonEmptyElement = true;
                         }
                     }
-
                     node.setTextContent(parseXml(updatedContent));
                     lastUpdatedNode = node;
-
                     replaceSegment = replaceSegment.substring(minReplaceSegmentLength);
                     startEVO = indexAtEndOfContent;
                 } else {
@@ -403,14 +392,12 @@ public class SearchEngineImpl implements SearchEngine {
                 }
                 index += length;
             }
-
             // In case if the replace segment is too large and still some part was remaining,
             // simple append at the end.
             if (lastUpdatedNode != null && replaceSegment.length() > 0) {
                 lastUpdatedNode.setTextContent(lastUpdatedNode.getTextContent() + parseXml(replaceSegment));
             }
         }
-
         return containsEmptyTextElement && !containsNonEmptyElement;
     }
 
