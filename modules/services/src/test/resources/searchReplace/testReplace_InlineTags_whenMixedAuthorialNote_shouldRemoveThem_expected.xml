@@ -1,0 +1,17 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <bill name="REG">
+        <preamble xml:id="_preamble">
+            <citations leos:editable="false" xml:id="cits">
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_5">
+                    <p xml:id="cit_5__p">AAAAA REP<authorialNote marker="2" placement="bottom" xml:id="authorialnote_1">
+                        <p xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
+                    </authorialNote>LACE<authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
+                        <p xml:id="authorialNote_2__p">OJ C [...], [...], p. [...]</p>
+                    </authorialNote> CO<authorialNote marker="2" placement="bottom" xml:id="authorialnote_3">
+                        <p xml:id="authorialNote_3__p">OJ C [...], [...], p. [...]</p>
+                    </authorialNote>NTENT to the opinion of the Committee of the Regions,</p>
+                </citation>
+            </citations>
+        </preamble>
+    </bill>
+</akomaNtoso>
