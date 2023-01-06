@@ -108,11 +108,11 @@
                 <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_5">
                     <p xml:id="cit_5__p">AAAAA <authorialNote marker="2" placement="bottom" xml:id="authorialnote_1">
                         <p xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
-                    </authorialNote>ing <authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
+                    </authorialNote><authorialNote marker="2" placement="bottom" xml:id="authorialnote_2">
                         <p xml:id="authorialNote_2__p">OJ C [...], [...], p. [...]</p>
-                    </authorialNote>reg<authorialNote marker="2" placement="bottom" xml:id="authorialnote_3">
+                    </authorialNote><authorialNote marker="2" placement="bottom" xml:id="authorialnote_3">
                         <p xml:id="authorialNote_3__p">OJ C [...], [...], p. [...]</p>
-                    </authorialNote>ard to the opinion of the Committee of the Regions,</p>
+                    </authorialNote> to the opinion of the Committee of the Regions,</p>
                 </citation>
 
                 <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_6">

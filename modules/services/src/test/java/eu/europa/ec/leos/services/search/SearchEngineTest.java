@@ -78,6 +78,20 @@ public class SearchEngineTest extends LeosTest {
         assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
     }
 
+    //TODO bug. The correct behaviour should be remove the old Authorial notes
+    @Test
+    public void testReplace_InlineTags_whenMixedAuthorialNote_shouldRemoveThem() {
+        byte[] docContentGlobal = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/testReplace_InlineTags_whenMixedAuthorialNote_shouldRemoveThem.xml");
+        byte[] docContent = docContentGlobal;
+        SearchEngine se = SearchEngineImpl.forContent(docContent);
+        final String searchTextGlobal = "Having regard";
+        final String replaceTextGlobal = "REPLACE CONTENT";
+        List<SearchMatchVO> matches = se.searchText(searchTextGlobal, false, false);
+        docContent = se.replace(docContent, matches, searchTextGlobal, replaceTextGlobal, true);
+        byte[] docContentExpected = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/testReplace_InlineTags_whenMixedAuthorialNote_shouldRemoveThem_expected.xml");
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(docContentExpected)), squeezeXmlAndRemoveAllNS(new String(docContent)));
+    }
+
     @Test
     public void testReplace_InlineTags_AuthorialNote() {
         byte[] docContentGlobal = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/testReplace_InlineTags_AuthorialNote.xml");
