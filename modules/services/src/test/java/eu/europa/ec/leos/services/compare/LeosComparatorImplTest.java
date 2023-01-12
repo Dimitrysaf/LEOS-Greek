@@ -21,10 +21,10 @@ public class LeosComparatorImplTest extends LeosTest {
 
     @Test
     public void test_brokenReference() {
-        String original = "Text...<mref id=\"art_1_HiRJJI\">Annex, point <ref id=\"art_1_723tGC\">2";
-        String revised = "Text...<mref id=\"art_1_HiRJJI\" leos:broken=\"true\">Annex, point <ref id=\"art_1_723tGC\">2";
+        String original = "Text...<mref id=\"art_1_HiRJJI\">Annex, point <ref id=\"art_1_723tGC\">2</ref></mref>";
+        String revised = "Text...<mref id=\"art_1_HiRJJI\" leos:broken=\"true\">Annex, point <ref id=\"art_1_723tGC\">2</ref></mref>";
 
-        String expected = "Text...<spanclass=\"leos-double-compare-removed\"><mrefid=\"dummyId\">Annex,point<refid=\"dummyId\">2</ref></mref></span><spanclass=\"leos-double-compare-added\"><mrefid=\"dummyId\"leos:broken=\"true\">Annex,point<refid=\"dummyId\">2</ref></mref></span>";
+        String expected = "Text...<mrefid=\"dummyId\"leos:broken=\"true\">Annex,point<refid=\"dummyId\">2</ref></mref>";
 
         ContentComparatorContext context = getContentComparatorContext(original, revised);
         String diffResult = textComparator.compareTextNodeContents(original, revised, null, context);
