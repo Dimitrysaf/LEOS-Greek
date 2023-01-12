@@ -20,6 +20,7 @@ import difflib.DiffUtils;
 import difflib.InsertDelta;
 import difflib.Patch;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.services.compare.processor.InternalReferenceProcessor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,15 +58,30 @@ public class LeosTextComparatorImpl implements TextComparator {
 
     @Override
     public String compareTextNodeContents(String firstContent, String secondContent, String intermediateContent, ContentComparatorContext context) {
+
         String result;
         try {
+
+            InternalReferenceProcessor internalReferenceProcessor = new InternalReferenceProcessor();
+            List<String> listOfBrokenInternalReferences = internalReferenceProcessor.getBrokenInternalReferences(secondContent);
+
+            firstContent = internalReferenceProcessor.removeBrokenAttributeFromInternalReferences(firstContent);
+            secondContent = internalReferenceProcessor.removeBrokenAttributeFromInternalReferences(secondContent);
+
             result = compareTextNodeContentsTwoWayDiff(firstContent, secondContent, context);
+
+            if (listOfBrokenInternalReferences != null) {
+                result = internalReferenceProcessor.addOriginalBrokenAttributeInInternalReferences(listOfBrokenInternalReferences, result);
+            }
+
             result = parseXml(result);
+
         } catch (Exception e) {
             LOG.error("Failure during text comparison. Exception thrown from text diffing library ", e);
             result = messageHelper.getMessage("leos.version.compare.error.message");
         }
         return result;
+
     }
     
     private String compareTextNodeContentsTwoWayDiff(String firstContent, String secondContent, ContentComparatorContext context) {

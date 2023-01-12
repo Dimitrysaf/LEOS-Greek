@@ -1,0 +1,9 @@
+<akomaNtoso id="bill_clcomvi0k0007us88ivqhbys9" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <aknP leos:origin="ec" id="_art_1__para_1__content__p">Text
+        <mref id="_art_1_7sjxAJ" leos:origin="ec">Article 2
+            <ref href="bill_clcomvi0k0007us88ivqhbys9/__akn_article_nNJq9y_oZI4bA" id="_art_1_wruYi7" leos:origin="ec"
+                 onclick="LEOS.scrollTo('__akn_article_nNJq9y_oZI4bA')">(3)
+            </ref>
+        </mref>
+    </aknP>
+</akomaNtoso>
