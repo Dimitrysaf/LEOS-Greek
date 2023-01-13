@@ -21,6 +21,7 @@ import java.util.Map;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.TocItemType;
+import eu.europa.ec.leos.web.event.NotificationEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -215,14 +216,19 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         addFunction("saveElement", new JavaScriptFunction() {
             @Override
             public void call(JsonArray arguments) {
-                LOG.trace("Saving element...");
-                JsonObject data = arguments.get(0);
-                String elementId = data.getString("elementId");
-                String elementType = data.getString("elementType");
-                String elementFragment = data.getString("elementFragment");
-                boolean isSplit = data.getBoolean("isSplit");
-                Validate.isTrue(elementFragment.contains(elementType), String.format("Element must contain %s", elementType));
-                eventBus.post(new SaveElementRequestEvent(elementId, elementType, elementFragment, isSplit));
+                try {
+                    LOG.trace("Saving element...");
+                    JsonObject data = arguments.get(0);
+                    String elementId = data.getString("elementId");
+                    String elementType = data.getString("elementType");
+                    String elementFragment = data.getString("elementFragment");
+                    boolean isSplit = data.getBoolean("isSplit");
+                    Validate.isTrue(elementFragment.contains(elementType), String.format("Element must be of type %s", elementType));
+                    eventBus.post(new SaveElementRequestEvent(elementId, elementType, elementFragment, isSplit));
+                } catch (IllegalArgumentException e) {
+                    LOG.error("Exception occurred while saving element: ", e);
+                    eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "document.content.save.error", e.getMessage()));
+                }
             }
         });
         addFunction("requestElement", new JavaScriptFunction() {
@@ -251,7 +257,7 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
                         elementIds.add(hrefArr[0]);
                     }
                 }
-                eventBus.post(new FetchCrossRefTocRequestEvent(elementIds)); // along with TOC, the ancester tree for elementId passed will be fetched
+                eventBus.post(new FetchCrossRefTocRequestEvent(elementIds)); // along with TOC, the ancestor tree for elementId passed will be fetched
             }
         });
         addFunction("requestRefLabel", new JavaScriptFunction() {

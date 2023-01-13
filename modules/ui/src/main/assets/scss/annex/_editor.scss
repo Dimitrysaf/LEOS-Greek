@@ -38,4 +38,10 @@
         @extend %showblockList;
 		@extend %showblockSubParagraph;
     }
+    .cke_editable.leos-placeholder.num-placeholder {
+        grid-column: 1;
+        float: left;
+        margin-right: 50px;
+        width: fit-content;
+    }
 }

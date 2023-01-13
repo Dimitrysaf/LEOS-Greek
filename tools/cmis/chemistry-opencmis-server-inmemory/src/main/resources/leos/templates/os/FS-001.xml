@@ -247,14 +247,14 @@
                             <indent>
                                 <num><inline name="unchecked">☐</inline></num>
                                 <content>
-                                    <p>in effect from [DD/MM]YYYY to [DD/MM]YYYY</p>
+                                    <p>in effect from <inline name="date" period="dd/mm/yy">[DD/MM]YYYY</inline> to <inline name="date" period="dd/mm/yy">[DD/MM]YYYY</inline></p>
                                 </content>
                             </indent>
                             <indent>
                                 <num><inline name="unchecked">☐</inline></num>
                                 <content>
-                                    <p>Financial impact from YYYY to YYYY for commitment appropriations and from YYYY to
-                                        YYYY for payment appropriations.
+                                    <p>Financial impact from <inline name="date" period="yy">YYYY</inline> to <inline name="date" period="yy">YYYY</inline> for commitment appropriations and from <inline name="date" period="yy">YYYY</inline> to
+                                        <inline name="date" period="yy">YYYY</inline> for payment appropriations.
                                     </p>
                                 </content>
                             </indent>
@@ -271,7 +271,7 @@
                             <indent>
                                 <num><inline name="unchecked">☐</inline></num>
                                 <content>
-                                    <p>Implementation with a start-up period from YYYY to YYYY,</p>
+                                    <p>Implementation with a start-up period from <inline name="date" period="yy">YYYY</inline> to <inline name="date" period="yy">YYYY</inline>,</p>
                                 </content>
                             </indent>
                             <indent>

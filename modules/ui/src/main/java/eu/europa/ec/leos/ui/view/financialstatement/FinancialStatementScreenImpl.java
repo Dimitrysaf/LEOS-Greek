@@ -72,6 +72,7 @@ import eu.europa.ec.leos.ui.extension.ActionManagerExtension;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
 import eu.europa.ec.leos.ui.extension.CheckBoxesExtension;
+import eu.europa.ec.leos.ui.extension.DatePickerExtension;
 import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
 import eu.europa.ec.leos.ui.extension.MathJaxExtension;
 import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
@@ -92,6 +93,7 @@ import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceResponse;
+import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
@@ -256,6 +258,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
         new UserGuidanceExtension<>(financialStatementContent, eventBus);
         new MathJaxExtension<>(financialStatementContent);
+        new DatePickerExtension<>(financialStatementContent, eventBus);
         new RefToLinkExtension<>(financialStatementContent);
         userCoEditionExtension = new UserCoEditionExtension<>(financialStatementContent, messageHelper, securityContext, cfgHelper);
         new ChangeDetailsExtension<>(financialStatementContent, eventBus);
@@ -389,17 +392,22 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void sendUserPermissions(List<LeosPermission> userPermissions) {
-
+        eventBus.post(new FetchUserPermissionsResponse(userPermissions));
     }
 
     @Override
     public void updateUserCoEditionInfo(List<CoEditionVO> coEditionVos, String presenterId) {
-
+        this.getUI().access(() -> {
+            tableOfContentComponent.updateUserCoEditionInfo(coEditionVos, presenterId);
+            userCoEditionExtension.updateUserCoEditionInfo(coEditionVos, presenterId);
+        });
     }
 
     @Override
     public void displayDocumentUpdatedByCoEditorWarning() {
-
+        this.getUI().access(() -> {
+            refreshNoteButton.setVisible(true);
+        });
     }
 
     @Override

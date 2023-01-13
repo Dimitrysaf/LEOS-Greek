@@ -402,10 +402,19 @@ public class XercesUtils {
     public static Node replaceElement(Node node, String newContent) {
         Node fakeNodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), ("<fake>" + newContent + "</fake>").getBytes(UTF_8), false);
         NodeList fakeNodeChildNodes = fakeNodeWithNewContent.getChildNodes();
+        boolean isInline = false;
         for (int i = fakeNodeChildNodes.getLength() - 1; i >= 0; i--) {
-            addSibling(fakeNodeChildNodes.item(i), node, false);
+            Node childNode = fakeNodeChildNodes.item(i);
+            if(childNode != null && childNode.getNodeName().equalsIgnoreCase(INLINE)) {
+                replaceElement(childNode, node);
+                isInline = true;
+            } else {
+                addSibling(fakeNodeChildNodes.item(i), node, false);
+            }
         }
-        deleteElement(node);
+        if(!isInline) {
+            deleteElement(node);
+        }
         return node.getOwnerDocument();
     }
 

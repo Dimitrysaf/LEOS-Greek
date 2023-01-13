@@ -224,3 +224,11 @@ hs_err_pid*
 styles.css
 
 # -- .gitignore ---------------------------------------------------------------
+/modules/ui/src/main/assets/css/financialstatement-wo-diffing-style.css
+/modules/ui/src/main/assets/css/financialstatement.css
+/modules/ui/src/main/assets/css/explanatory.css
+/modules/ui/src/main/assets/css/coverpage.css
+/modules/ui/src/main/assets/css/bill-wo-diffing-style.css
+/modules/ui/src/main/assets/css/bill.css
+/modules/ui/src/main/assets/css/annex-wo-diffing-style.css
+/modules/ui/src/main/assets/css/annex.css

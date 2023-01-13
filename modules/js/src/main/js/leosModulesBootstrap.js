@@ -50,6 +50,7 @@
             // JavaScript libraries
             logger: "lib/loglevel_1.4.0/loglevel",
             jquery: "lib/jquery_3.2.1/jquery",
+            jqueryUi: "lib/jquery-ui-1.13.2/jquery-ui",
             stampit: "lib/stampit_1.2.0/stampit",
             postal: "lib/postal.js_2.0.0/postal",
             "postal.diagnostics": "lib/postal.diagnostics/postal.diagnostics",
@@ -100,9 +101,9 @@
         map: {
             "*": {
                 "waypoint.inview": "waypoints/shortcuts/inview",
-                plugins: "js/editor/plugins",           // TODO remove mapping after changing the profiles and plugins
-                profiles: "js/editor/profiles",         // TODO remove mapping after changing the profiles and plugins
-                transformer: "js/editor/transformer"    // TODO remove mapping after changing the profiles and plugins
+                plugins: "js/editor/plugins",
+                profiles: "js/editor/profiles",
+                transformer: "js/editor/transformer"
             }
         },
         // shim configuration for loading non-AMD scripts

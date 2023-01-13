@@ -212,12 +212,6 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
-            <profiles>
-                <profile>
-                    <elementSelector>level inline[name='date']</elementSelector>
-                    <profileName>inlineAknInlineElement</profileName>
-                </profile>
-            </profiles>
             <editable>true</editable>
         </tocItem>
 

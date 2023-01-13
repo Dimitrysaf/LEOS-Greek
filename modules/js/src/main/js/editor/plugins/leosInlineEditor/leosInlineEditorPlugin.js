@@ -84,7 +84,8 @@ define(function leosInlineEditorPluginModule(require) {
             }
 
             editor.on('blur', function (evt) {
-                if (evt.editor.LEOS.implicitSaveEnabled && !evt.editor.LEOS.bookmarkNavigatorClicked) {
+                if (evt.editor.LEOS.implicitSaveEnabled && !evt.editor.LEOS.bookmarkNavigatorClicked &&
+                    !evt.editor.LEOS.saveCmdExecuted) {
                 	if (_isMouseOutsideEditor(evt.editor.container.$) && !_isMouseOnDocumentScrollbar()) {
                         if (evt.editor.checkDirty()) {
                             var isSaved = editor.fire("save", {
@@ -102,6 +103,7 @@ define(function leosInlineEditorPluginModule(require) {
                     }
                 } else {
                     evt.editor.LEOS.bookmarkNavigatorClicked = false;
+                    evt.editor.LEOS.saveCmdExecuted = false;
                 }
             });
 
