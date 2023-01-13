@@ -218,12 +218,7 @@ define(function elementEditorModule(require) {
     }
     
     function _updatePlaceholderStyleForNumElement(placeholder) {
-       $(placeholder).css({
-           "width": "fit-content",
-           "grid-column": "1",
-           "float": "left",
-           "margin-right": "50px"
-       });
+       $(placeholder).addClass("num-placeholder");
     }
 
     var _setEventType = function (event) {
@@ -309,6 +304,7 @@ define(function elementEditorModule(require) {
                     elementFragment: event.data.data,
                     isSplit: event.data.origin === "split" ? true : false
                 };
+                editor.LEOS.saveCmdExecuted = true;
                 connector.saveElement(data);
                 return true;
             }

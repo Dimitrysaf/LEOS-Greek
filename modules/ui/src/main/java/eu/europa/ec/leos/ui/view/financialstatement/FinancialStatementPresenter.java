@@ -562,7 +562,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void getUserGuidance(FetchUserGuidanceRequest event) {
-        // KLUGE temporary hack for compatibility with new domain model
         FinancialStatement financialStatement = financialStatementService.findFinancialStatement(documentId);
         String jsonGuidance = templateConfigurationService.getTemplateConfiguration(financialStatement.getMetadata().get().getDocTemplate(), "guidance");
         financialStatementScreen.setUserGuidance(jsonGuidance);
@@ -652,6 +651,21 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             LOG.error("Exception while deleting element operation for ", ex);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "error.message", ex.getMessage()));
         }
+    }
+
+
+    @Subscribe
+    public void documentUpdatedByCoEditor(DocumentUpdatedByCoEditorEvent documentUpdatedByCoEditorEvent) {
+        if (isCurrentInfoId(documentUpdatedByCoEditorEvent.getDocumentId()) &&
+                !id.equals(documentUpdatedByCoEditorEvent.getPresenterId())) {
+            eventBus.post(new NotificationEvent(leosUI, "coedition.caption", "coedition.operation.update", NotificationEvent.Type.TRAY,
+                    documentUpdatedByCoEditorEvent.getUser().getName()));
+            financialStatementScreen.displayDocumentUpdatedByCoEditorWarning();
+        }
+    }
+
+    private boolean isCurrentInfoId(String versionSeriesId) {
+        return versionSeriesId.equals(strDocumentVersionSeriesId);
     }
 
     private VersionInfoVO getVersionInfo(XmlDocument document) {
