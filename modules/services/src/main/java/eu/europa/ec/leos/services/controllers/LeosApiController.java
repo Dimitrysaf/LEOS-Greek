@@ -442,7 +442,7 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping (value = "/secured/proposal/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping (value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef) {
         try {
