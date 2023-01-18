@@ -220,6 +220,9 @@ hs_err_pid*
 # Visio autosave temporary files
 *.~vsdx
 
+# -- VisualStudioCode.gitignore ------------------------------------------------------------
+.vscode/
+
 # -- LEOS specific.gitignore---------------------------------------------------
 styles.css
 
