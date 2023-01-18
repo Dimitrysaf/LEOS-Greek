@@ -77,7 +77,7 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   private loadStyleSheet() {
     // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
     const leosBuildTimestamp = 1667202194805; // FIXME: get this from server at runtime
-    const legacyAssetsPrefix = '/legacy/assets'; // FIXME: import stylesheets to ngui?
+    const legacyAssetsPrefix = 'legacy/assets'; // FIXME: import stylesheets to ngui?
     const cssUrl = `${legacyAssetsPrefix}/css/annex.css?cacheToken_${leosBuildTimestamp}`;
     this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
   }

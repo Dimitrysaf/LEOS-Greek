@@ -116,6 +116,7 @@
               ]
             },
             "development": {
+              "baseHref": "/leos/ui2/",
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,

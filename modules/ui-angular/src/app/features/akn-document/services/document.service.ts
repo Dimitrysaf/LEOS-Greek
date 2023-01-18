@@ -73,7 +73,7 @@ export class DocumentService implements OnDestroy {
     this.versions$ = this.documentId$.pipe(
       // FIXME: use proper API
       mergeMap((id) =>
-        this.http.get<Version[]>(`/api/secured/documents/${id}/versions/`),
+        this.http.get<Version[]>(`api/secured/documents/${id}/versions/`),
       ),
     );
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
