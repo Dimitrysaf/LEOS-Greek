@@ -21,7 +21,7 @@ DEPENDENCIES
 ============
 
 To compile the supplied source files and run the generated WAR the following software should be configured:
-    * Java SDK version 8.0
+    * Java SDK version 8.0 (⚠️ do not upgrade to Java SDK 17/19 yet. It won't work)
     * Maven version 3.3.9+
       (Maven runtime memory might need to be set: MAVEN_OPTS=-Xms256m -Xmx512m)
       (Maven settings, proxy and mirrors, might need to be adjusted to your environment and internet access requirements)
