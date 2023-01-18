@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="EXPL_COUNCIL">
         <meta>
             <identification source="~_COM">
@@ -16,7 +15,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="9999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage xml:id="_FRBRlanguage" language="en"/>
+                    <FRBRlanguage language="en" xml:id="_FRBRlanguage"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -29,16 +28,16 @@
                 </FRBRManifestation>
             </identification>
             <references source="~_CONSIL">
-                <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
-                <TLCOrganization xml:id="_CONSIL" href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="_EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
-                <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCRole xml:id="_PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="_EXPL_COUNCIL" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_COUNCIL" showAs="Council explanatory"/>
-                <TLCReference xml:id="_legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456" showAs="Legal basis"/>
-                <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
-                <TLCReference xml:id="_procedure_YYYY_NNN" name="procedureNumber" href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" showAs="YYYY/NNNN (AAA)" shortForm="YYYY/NNN/AAA"/>
-                <TLCReference xml:id="_azs3y" name="identifier" href="http://publications.europa.eu/resource/authority/identifier/COMnumber" showAs="AAA(YYYY) NNN" shortForm="AAA/YYYY/NNN"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="_CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="_EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="_COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="_PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/EXPL_COUNCIL" name="docType" showAs="Council explanatory" xml:id="_EXPL_COUNCIL"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="_legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="_language"/>
+                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" name="procedureNumber" shortForm="YYYY/NNN/AAA" showAs="YYYY/NNNN (AAA)" xml:id="_procedure_YYYY_NNN"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/identifier/COMnumber" name="identifier" shortForm="AAA/YYYY/NNN" showAs="AAA(YYYY) NNN" xml:id="_azs3y"/>
             </references>
             <proprietary source="~leos">
                 <leos:templateVersion>2.0.1</leos:templateVersion>
@@ -54,8 +53,8 @@
                 <leos:objectId/>
             </proprietary>
         </meta>
-        <preface xml:id="_preface" status="ignored">
-            <container xml:id="_akn_Vb05uc" name="procedureIdentifier">
+        <preface status="ignored" xml:id="_preface">
+            <container name="procedureIdentifier" xml:id="_akn_Vb05uc">
                 <p xml:id="_akn_zuju00">
                     <docketNumber xml:id="_akn_l3BNBS"/>
                 </p>
@@ -76,7 +75,7 @@
                 </subparagraph>
                 <crossHeading leos:indent-level="1" style="--indent-level:1;" xml:id="_body_para_1__crossheading">
                     <inline name="crossHnum" xml:id="_akn_oa6e0J">•</inline>The request of the EP <b xml:id="_akn_Jkqevj2">and</b><u xml:id="_akn_DZhLBD2"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK2"><i xml:id="_akn_rSYt6j2">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq2"><p xml:id="_akn_vKX4HU2">Comment....</p></authorialNote>delivered an opinion:
-                    <inline xml:id="_akn_art_xX8jV5_PUBq7h2" name="math-tex">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                    <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h2">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                 </crossHeading>
             </paragraph>
         </mainBody>

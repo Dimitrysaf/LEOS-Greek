@@ -636,12 +636,12 @@ class DocumentPresenter extends AbstractLeosPresenter {
         switch (elementTagName) {
             case SUBPARAGRAPH:
             case SUBPOINT:
-                return elementContent.contains("<" + elementTagName);
+                return elementContent.contains("<" + elementTagName + ">") || StringUtils.countMatches(elementContent, "<" + elementTagName) > 1;
             case PARAGRAPH:
                 return elementContent.contains("<paragraph") || elementContent.contains("<subparagraph");
             case POINT:
             case INDENT:
-                return elementContent.contains("<alinea");
+                return elementContent.contains("<subparagraph>");
             default:
                 return false;
         }
@@ -1691,12 +1691,10 @@ class DocumentPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LogUtil.logError(LOG, eventBus, "Unexpected error occurred while generating Export Package", e);
         } finally {
-            if (exportDocument != null) {
-                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
-                if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
-                    leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
-                }
+            exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+            if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
+                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
             }
         }
     }

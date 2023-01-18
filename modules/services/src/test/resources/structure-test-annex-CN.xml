@@ -284,7 +284,8 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>level[leos\:origin='ec'] subparagraph, paragraph[leos\:origin='ec'] subparagraph</elementSelector>
+                    <elementSelector>level[leos\:origin='ec'] subparagraph, paragraph[leos\:origin='ec'] subparagraph, point[leos\:origin='ec']
+                        subparagraph, indent[leos\:origin='ec'] subparagraph</elementSelector>
                     <profileName>inlineAknSubParagraphMandate</profileName>
                 </profile>
             </profiles>
@@ -329,7 +330,9 @@
             <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>level[leos\:origin='ec'] point:not(:has(point)):not(:has(indent)):not(:has(alinea)), paragraph[leos\:origin='ec'] list point:not(:has(point)):not(:has(indent)):not(:has(alinea)), paragraph[leos\:origin='ec'] list point alinea</elementSelector>
+                    <elementSelector>level[leos\:origin='ec'] point:not(:has(point)):not(:has(indent)):not(:has(subparagraph)),
+                        paragraph[leos\:origin='ec'] list point:not(:has(point)):not(:has(indent)):not(:has(subparagraph)),
+                        paragraph[leos\:origin='ec'] list point subparagraph</elementSelector>
                     <profileName>inlineAknPointMandate</profileName>
                 </profile>
             </profiles>
@@ -355,37 +358,8 @@
             <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>indent[leos\:origin='ec']:not(:has(alinea)),indent[leos\:origin='cn']</elementSelector>
+                    <elementSelector>indent[leos\:origin='ec']:not(:has(subparagraph)),indent[leos\:origin='cn']</elementSelector>
                     <profileName>inlineAknIndentMandate</profileName>
-                </profile>
-            </profiles>
-            <editable>true</editable>
-        </tocItem>
-
-        <tocItem>
-            <aknTag>alinea</aknTag>
-            <root>false</root>
-            <draggable>false</draggable>
-            <childrenAllowed>false</childrenAllowed>
-            <display>true</display>
-            <itemNumber>none</itemNumber>
-            <itemHeading>none</itemHeading>
-            <itemDescription>false</itemDescription>
-            <numberEditable>false</numberEditable>
-            <contentDisplayed>true</contentDisplayed>
-            <deletable>true</deletable>
-            <numWithType>false</numWithType>
-            <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
-            <profiles>
-                <profile>
-                    <elementSelector>level[leos\:origin='ec'] alinea</elementSelector>
-                    <profileName>inlineAknAlineaMandate</profileName>
-                </profile>
-                <profile>
-                    <elementSelector>paragraph[leos\:origin='ec'] alinea</elementSelector>
-                    <profileName>inlineAknAlineaMandate</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
@@ -440,6 +414,7 @@
             <suffix>)</suffix>
             <sequence>a</sequence>
             <description>(a), (b), etc</description>
+            <regex>[a-z]+$|#</regex>
         </numberingConfig>
         <numberingConfig>
             <type>ROMAN_LOWER_PARENTHESIS</type>
@@ -448,6 +423,8 @@
             <suffix>)</suffix>
             <sequence>i</sequence>
             <description>(i), (ii), etc</description>
+            <regex>m{0,4}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})$|#</regex>
+            <msgValidationError>roman.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
             <type>ROMAN_UPPER</type>
@@ -616,6 +593,7 @@
         <entry>
             <tocItem>list</tocItem>
             <list>
+                <tocItem>subparagraph</tocItem>
                 <tocItem>point</tocItem>
                 <tocItem>indent</tocItem>
             </list>
@@ -625,7 +603,7 @@
             <list>
                 <tocItem>point</tocItem>
                 <tocItem>indent</tocItem>
-                <tocItem>alinea</tocItem>
+                <tocItem>subparagraph</tocItem>
                 <tocItem>list</tocItem>
             </list>
         </entry>
@@ -634,7 +612,7 @@
             <list>
                 <tocItem>point</tocItem>
                 <tocItem>indent</tocItem>
-                <tocItem>alinea</tocItem>
+                <tocItem>subparagraph</tocItem>
             </list>
         </entry>
     </tocRules>

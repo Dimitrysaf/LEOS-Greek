@@ -157,11 +157,11 @@
 					</point>
 					<point leos:origin="ec" xml:id="art6_par3_L1_point5a">
 						<num leos:origin="ec" xml:id="art6_par3_L1_point5a_num">(c)</num>
-						<alinea leos:origin="ec" xml:id="art_1_6G73F7">
+						<subparagraph leos:origin="ec" xml:id="art_1_6G73F7">
 							<content leos:origin="ec" xml:id="art_1_keYk7S">
 								<p leos:origin="ec" xml:id="art_1_PMAuPF">Even for EC is now (h)</p>
 							</content>
-						</alinea>
+						</subparagraph>
 						<list leos:origin="ec" xml:id="art6_par3_L2">
 							<point leos:origin="cn" xml:id="art6_par3_L2_point8">
 								<num leos:origin="cn" xml:id="art6_par3_L2_point8_num">(-i)</num>
@@ -189,11 +189,11 @@
 							</point>
 							<point leos:origin="ec" xml:id="art6_par3_L2_point10a">
 								<num leos:origin="ec" xml:id="art6_par3_L2_point10a_num">(ii)</num>
-								<alinea leos:origin="ec" xml:id="art6_par3_L2_point10a_a">
+								<subparagraph leos:origin="ec" xml:id="art6_par3_L2_point10a_a">
 									<content leos:origin="ec" xml:id="art6_par3_L2_point10a_c">
 										<p leos:origin="ec" xml:id="art6_par3_L2_point10a_ac">Even for EC is now (v)</p>
 									</content>
-								</alinea>
+								</subparagraph>
 								<list leos:origin="ec" xml:id="art6_par3_L3">
 									<point leos:origin="cn" xml:id="art6_par3_L3_point12">
 										<num leos:origin="cn" xml:id="art6_par3_L3_point12_num">(-1)</num>
@@ -227,11 +227,11 @@
 									</point>
 									<point leos:origin="ec" xml:id="art6_par3_L3_point16a">
 										<num leos:origin="ec" xml:id="art6_par3_L3_point16aa_num">(2)</num>
-										<alinea leos:origin="ec" xml:id="art6_par3_L3_point16a_a">
+										<subparagraph leos:origin="ec" xml:id="art6_par3_L3_point16a_a">
 											<content leos:origin="ec" xml:id="art6_par3_L3_point16a_c">
 												<p leos:origin="ec" xml:id="art6_par3_L3_point16aa_ac">Even for EC is now (6)</p>
 											</content>
-										</alinea>
+										</subparagraph>
 										<list leos:origin="ec" xml:id="art6_par3_L4">
 											<indent leos:origin="cn" xml:id="art6_par3_L4_point17">
 												<num leos:origin="cn" xml:id="art6_par3_L4_point17_num">-</num>

@@ -5,7 +5,7 @@
                 <FRBRWork>
                     <FRBRthis value=""/>
                     <FRBRuri value=""/>
-                    <FRBRalias value="" name=""/>
+                    <FRBRalias name="" value=""/>
                     <FRBRdate date="9999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <FRBRcountry value="EU"/>
@@ -29,32 +29,20 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU"
-                             showAs="Brussels"/>
-                <TLCOrganization xml:id="CONSIL"
-                                 href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament"/>
-                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission"/>
-                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID"
-                         showAs="President"/>
-                <TLCReference xml:id="_REG" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/REG"
-                              showAs="Regulation"/>
-                <TLCReference xml:id="_PROP_ACT" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT"
-                              showAs="Proposal for an act"/>
-                <TLCReference xml:id="legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456"
-                              showAs="Legal basis"/>
-                <TLCReference xml:id="language" name="language"
-                              href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
-                <TLCReference xml:id="leos" href="/software/leos" showAs="EC DIGIT LEOS PILOT" name="software"/>
-                <TLCConcept xml:id="bill" href="/software/leos/bill" showAs="Bill"/>
-                <TLCConcept xml:id="memorandum" href="/software/leos/memorandum" showAs="Memorandum"/>
-                <TLCReference xml:id="_procedure" name="" href="" showAs="" shortForm=""/>
-                <TLCReference xml:id="_azs3y" name="identifier" href="" showAs="" shortForm=""/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="_REG"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT" name="docType" showAs="Proposal for an act" xml:id="_PROP_ACT"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCReference href="/software/leos" name="software" showAs="EC DIGIT LEOS PILOT" xml:id="leos"/>
+                <TLCConcept href="/software/leos/bill" showAs="Bill" xml:id="bill"/>
+                <TLCConcept href="/software/leos/memorandum" showAs="Memorandum" xml:id="memorandum"/>
+                <TLCReference href="" name="" shortForm="" showAs="" xml:id="_procedure"/>
+                <TLCReference href="" name="identifier" shortForm="" showAs="" xml:id="_azs3y"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -93,26 +81,24 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img xml:id="coverpage__container_1__p__img"
-                         src=""
-                         alt="European Commission" title="European Commission"/>
+                    <img alt="European Commission" src="" title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
-            <container xml:id="akn_zs9Qjb" name="mainDoc">
-                <block xml:id="akn_c3lDnS" name="placeAndDate">
-                    <location xml:id="akn_tbNme3" refersTo=""/>
-                    <date xml:id="akn_RuDT0C" date="9999-01-01"/>
+            <container name="mainDoc" xml:id="akn_zs9Qjb">
+                <block name="placeAndDate" xml:id="akn_c3lDnS">
+                    <location refersTo="" xml:id="akn_tbNme3"/>
+                    <date date="9999-01-01" xml:id="akn_RuDT0C"/>
                 </block>
-                <block xml:id="akn_Lh3vCv" name="reference">
+                <block name="reference" xml:id="akn_Lh3vCv">
                     <docNumber xml:id="akn_dk9KOU"/>
                 </block>
             </container>
-            <container xml:id="akn_okAJ6c" name="procedureIdentifier">
+            <container name="procedureIdentifier" xml:id="akn_okAJ6c">
                 <p xml:id="akn_LmbpB6">
                     <docketNumber xml:id="akn_vzcCFQ"/>
                 </p>
             </container>
-            <longTitle xml:id="coverpage__longtitle" refersTo="#bill">
+            <longTitle refersTo="#bill" xml:id="coverpage__longtitle">
                 <p xml:id="coverpage__longtitle__p">
                     <docStage xml:id="coverpage__longtitle__p__docstage">Proposal for a</docStage>
                     <docType refersTo="~_REG" xml:id="coverpage__longtitle__p__doctype">REGULATION OF THE EUROPEAN
@@ -126,19 +112,16 @@
             </container>
         </coverPage>
         <collectionBody xml:id="body">
-            <component xml:id="body_cmp_1" refersTo="#memorandum">
+            <component refersTo="#memorandum" xml:id="body_cmp_1">
                 <!-- reference to the memorandum, relative to this proposal -->
-                <documentRef xml:id="body_cmp_1__dref_1" href="memorandum_ckn9773is000ywn567lsopipc.xml"
-                             showAs="Explanatory Memorandum"/>
+                <documentRef href="memorandum_ckn9773is000ywn567lsopipc.xml" showAs="Explanatory Memorandum" xml:id="body_cmp_1__dref_1"/>
             </component>
-            <component xml:id="body_cmp_2" refersTo="#bill">
+            <component refersTo="#bill" xml:id="body_cmp_2">
                 <!-- reference to the bill, relative to this proposal -->
-                <documentRef xml:id="body_cmp_1__dref_2" href="bill_ckn97778i000zwn56esq96qet.xml"
-                             showAs="Regulation of the European Parliament and of the Council"/>
+                <documentRef href="bill_ckn97778i000zwn56esq96qet.xml" showAs="Regulation of the European Parliament and of the Council" xml:id="body_cmp_1__dref_2"/>
             </component>
-			<component xml:id="body_cmp_3" refersTo="#council_explanatory">
-				<documentRef xml:id="body_cmp_3__dref_1" href="explanatory_cl43ykqyd0006k485zxvf53na.xml" 
-                             showAs="Council Explanatory"/>
+			<component refersTo="#council_explanatory" xml:id="body_cmp_3">
+				<documentRef href="explanatory_cl43ykqyd0006k485zxvf53na.xml" showAs="Council Explanatory" xml:id="body_cmp_3__dref_1"/>
 			</component>
         </collectionBody>
     </documentCollection>

@@ -1,6 +1,4 @@
-
-<?xml-stylesheet type="text/css" href="renditions/html/css/annex.css"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<?xml-stylesheet type="text/css" href="renditions/html/css/annex.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="EXPL_COUNCIL">
         <meta>
             <identification source="~_COM">
@@ -73,7 +71,7 @@
                 <num xml:id="_body_division_1_num">I.</num>
                 <heading xml:id="_body_division_1_heading">INTRODUCTION</heading>
             </division>
-            <block leos:indent-level="0" leos:name="crossHeading" leos:origin="cn" class="leos-editable-content" name="crossHeading" xml:id="_akn_ckdeCc" style="--indent-level:0;">
+            <block class="leos-editable-content" leos:indent-level="0" leos:name="crossHeading" leos:origin="cn" name="crossHeading" style="--indent-level:0;" xml:id="_akn_ckdeCc">
                 Crossheading...
             </block>
             <level leos:depth="1" xml:id="_body_level_1">
@@ -282,15 +280,15 @@
             </level>
             <level leos:depth="1" xml:id="_body_level_21">
                 <num xml:id="_body_level_21_num">21.</num>
-                <subparagraph refersTo="~_INP" xml:id="_body_level_21_subparagraph_1">
-                    <content xml:id="_akn_gM7klr">
-                        <p xml:id="_body_level_21_content_p">In view of the above, the
-                            <u xml:id="_body_level_21__content__p_u_17">Permanent Representatives Committee</u>
-                            is invited to examine the compromise text as set out in the Annex to this note, address the outstanding issues and submit it to the Council (…) with a view to reaching general approach at its session on ….
-                        </p>
-                    </content>
-                </subparagraph>
                 <list xml:id="_body_level_21_list_1">
+                    <subparagraph refersTo="~_INP" xml:id="_body_level_21_subparagraph_1">
+                        <content xml:id="_akn_gM7klr">
+                            <p xml:id="_body_level_21_content_p">In view of the above, the
+                                <u xml:id="_body_level_21__content__p_u_17">Permanent Representatives Committee</u>
+                                is invited to examine the compromise text as set out in the Annex to this note, address the outstanding issues and submit it to the Council (…) with a view to reaching general approach at its session on ….
+                            </p>
+                        </content>
+                    </subparagraph>
                     <point xml:id="_body_level_21_list_1_indent_1">
                         <num xml:id="_body_level_21_list_1_indent_1_num">–</num>
                         <content xml:id="_body_level_21_list_1_indent_1_content">
@@ -307,39 +305,39 @@
             </level>
             <level leos:depth="1" xml:id="_body_level_22">
                 <num xml:id="_body_level_22_num">22.</num>
-                <subparagraph refersTo="~_INP" xml:id="_body_level_22_subparagraph_1">
-                    <content xml:id="_akn_firnsX">
-                        <p xml:id="_body_level_22_content_p">Against this background, the
-                            <u xml:id="_body_level_22__content__p_u_18">Permanent Representatives Committee</u>
-                            is invited to:
-                        </p>
-                    </content>
-                </subparagraph>
                 <list xml:id="_body_level_22_list_1">
+                    <subparagraph refersTo="~_INP" xml:id="_body_level_22_subparagraph_1">
+                        <content xml:id="_akn_firnsX">
+                            <p xml:id="_body_level_22_content_p">Against this background, the
+                                <u xml:id="_body_level_22__content__p_u_18">Permanent Representatives Committee</u>
+                                is invited to:
+                            </p>
+                        </content>
+                    </subparagraph>
                     <indent xml:id="_body_level_22_list_1_indent_1">
                         <num xml:id="_body_level_22_list_1_indent_1_num">•</num>
-                        <alinea xml:id="_akn_lER0zi">
-                            <content xml:id="_akn_kf3VaF">
-                                <p xml:id="_akn_v5pCvO">approve the final compromise text as set out in the Annex to this Note with a view to reaching an agreement at first reading with the European Parliament;</p>
-                            </content>
-                        </alinea>
                         <list xml:id="_akn_WLUMJ8">
+                            <subparagraph refersTo="~_INP" xml:id="_akn_lER0zi">
+                                <content xml:id="_akn_kf3VaF">
+                                    <p xml:id="_akn_v5pCvO">approve the final compromise text as set out in the Annex to this Note with a view to reaching an agreement at first reading with the European Parliament;</p>
+                                </content>
+                            </subparagraph>
                             <indent xml:id="_akn_loKsyU">
                                 <num xml:id="_akn_WAB89f">◦</num>
-                                <alinea xml:id="_akn_0mUcLO">
-                                    <content xml:id="_akn_s0mxIO">
-                                        <p xml:id="_akn_6EOCWg">tested</p>
-                                    </content>
-                                </alinea>
                                 <list xml:id="_akn_9yy6qK">
+                                    <subparagraph refersTo="~_INP" xml:id="_akn_0mUcLO">
+                                        <content xml:id="_akn_s0mxIO">
+                                            <p xml:id="_akn_6EOCWg">tested</p>
+                                        </content>
+                                    </subparagraph>
                                     <indent xml:id="_akn_zQmqsf">
                                         <num xml:id="_akn_4HU89O">▪</num>
-                                        <alinea xml:id="_akn_Fa65R2">
-                                            <content xml:id="_akn_zLXBL4">
-                                                <p xml:id="_akn_UIX4GE">rgtsrgts</p>
-                                            </content>
-                                        </alinea>
                                         <list xml:id="_akn_c9hfiB">
+                                            <subparagraph refersTo="~_INP" xml:id="_akn_Fa65R2">
+                                                <content xml:id="_akn_zLXBL4">
+                                                    <p xml:id="_akn_UIX4GE">rgtsrgts</p>
+                                                </content>
+                                            </subparagraph>
                                             <indent xml:id="_akn_8PLQhP">
                                                 <num xml:id="_akn_tPkkDn">▫</num>
                                                 <content xml:id="_akn_1fwdSF">
@@ -383,7 +381,7 @@
             </level>
             <level leos:depth="1" xml:id="_body_level_24">
                 <num xml:id="_body_level_24_num">24.</num>
-                <subparagraph refersTo="~_INP" xml:id="_body_level_24_subparagraph_1">
+                <subparagraph xml:id="_body_level_24_subparagraph_1">
                     <content xml:id="_body_level_24_subparagraph_1_content">
                         <p xml:id="_body_level_24_subparagraph_1_content__p">The
                             <u xml:id="_body_level_24__content__p_u_18">Permanent Representatives Committee</u>
@@ -398,7 +396,7 @@
                 </crossHeading>
                 <list xml:id="_body_level_24_list_1">
                     <crossHeading leos:crossheading-type="list" leos:indent-level="1" style="--indent-level:1;" xml:id="_akn_TNpD17">The request of the EP <b xml:id="_akn_Jkqevj">and</b><u xml:id="_akn_DZhLBD"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK"><i xml:id="_akn_rSYt6j">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq"><p xml:id="_akn_vKX4HU">Comment....</p></authorialNote>delivered an opinion:
-                        <inline xml:id="_akn_art_xX8jV5_PUBq7h" name="math-tex">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                        <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                     </crossHeading>
                     <indent xml:id="_body_level_24_list_1_indent_1">
                         <num xml:id="_body_level_24_list_1_indent_1_num">-</num>
@@ -408,7 +406,7 @@
                     </indent>
                     <crossHeading leos:crossheading-type="list" leos:indent-level="1" leos:origin="cn" style="--indent-level:1;" xml:id="_akn_jr0ciX">
                         <inline name="crossHnum" xml:id="_akn_oa6e0J">•</inline>The request of the EP <b xml:id="_akn_Jkqevj2">and</b><u xml:id="_akn_DZhLBD2"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK2"><i xml:id="_akn_rSYt6j2">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq2"><p xml:id="_akn_vKX4HU2">Comment....</p></authorialNote>delivered an opinion:
-                        <inline xml:id="_akn_art_xX8jV5_PUBq7h2" name="math-tex">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                        <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h2">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                     </crossHeading>
                     <indent xml:id="_body_level_24_list_1_indent_2">
                         <num xml:id="_body_level_24_list_1_indent_2_num">-</num>
@@ -416,13 +414,13 @@
                             <p xml:id="_body_level_24_list_1_indent_2_content__p">decide that the statement in the addendum to this note be entered in the minutes of that meeting.</p>
                         </content>
                     </indent>
-                </list>
-                <subparagraph refersTo="" xml:id="_body_level_24_subparagraph_2">
+                <subparagraph refersTo="~_WRP" xml:id="_body_level_24_subparagraph_2">
                     <content xml:id="_body_level_24_subparagraph_2_content">
                         <p xml:id="_body_level_24_subparagraph_2_content__p">If the Council approves the European Parliament's position, the legislative act will be adopted.</p>
                     </content>
-                </subparagraph>
-                <subparagraph refersTo="" xml:id="_body_level_24_subparagraph_3">
+                </subparagraph></list>
+                
+                <subparagraph xml:id="_body_level_24_subparagraph_3">
                     <content xml:id="_body_level_24_subparagraph_3_content">
                         <p xml:id="_body_level_24_subparagraph_3_content__p">After being signed by the President of the European Parliament and the President of the Council, the legislative act will be published in the Official Journal of the European Union</p>
                     </content>

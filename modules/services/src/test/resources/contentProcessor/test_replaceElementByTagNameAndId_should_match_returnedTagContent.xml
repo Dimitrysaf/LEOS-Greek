@@ -28,7 +28,7 @@
     </article>
     <article xml:id="art486">
         <num class="ArticleNumber" xml:id="num1">Article 486</num>
-        <alinea xml:id="art486-aln1">
+        <subparagraph xml:id="art486-aln1">
             <content xml:id="c">
                 <p class="Paragraph(unnumbered)" xml:id="p">This text should appear in the main document after merge
                     <authorialNote marker="3" xml:id="a4">
@@ -37,6 +37,6 @@
                     with the updated Article <i xml:id="i1">Official Journal of the European Union</i>.
                 </p>
             </content>
-        </alinea>
+        </subparagraph>
     </article>
 </part>

@@ -15,27 +15,27 @@
                     <list leos:origin="ec" xml:id="_art_2_dETnG9">
                         <point leos:origin="ec" xml:id="_art_2_SFQ4X0">
                             <num leos:origin="ec" xml:id="_art_2_caR83y">(a)</num>
-                            <alinea leos:origin="ec" leos:softaction="trans"
+                            <subparagraph leos:origin="ec" leos:softaction="trans"
                                     leos:softdate="2022-06-14T13:09:19.883+02:00" leos:softuser="jane(DIGIT)"
                                     xml:id="transformed__art_2_SFQ4X0">
                                 <content xml:id="_art_2_1QV5j4">
                                     <p xml:id="_art_2_1UCWq2">Point a</p>
                                 </content>
-                            </alinea>
-                            <alinea leos:origin="cn" leos:softaction="add" leos:softdate="2022-06-14T13:09:19.884+02:00"
+                            </subparagraph>
+                            <subparagraph leos:origin="cn" leos:softaction="add" leos:softdate="2022-06-14T13:09:19.884+02:00"
                                     leos:softuser="jane(DIGIT)" xml:id="_art_2_82v7Fg">
                                 <content xml:id="_art_2_LdilBR">
                                     <p xml:id="_art_2_C10KpN">of Article 2</p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                         </point>
                         <point leos:origin="ec" xml:id="_art_2_XZ1wQb">
                             <num leos:origin="ec" xml:id="_art_2_AdnE11">(b)</num>
-                            <alinea leos:origin="ec" xml:id="_art_2_btTLSv">
+                            <subparagraph leos:origin="ec" xml:id="_art_2_btTLSv">
                                 <content leos:origin="ec" xml:id="_art_2_1pKPOW">
                                     <p leos:origin="ec" xml:id="_art_2_9kttFq">Point b of Article 2</p>
                                 </content>
-                            </alinea>
+                            </subparagraph>
                             <list leos:origin="ec" xml:id="_art_2_y10Jke">
                                 <point leos:origin="ec" xml:id="_art_2_NeS3N1">
                                     <num leos:origin="ec" xml:id="_art_2_grHAdE">(i)</num>

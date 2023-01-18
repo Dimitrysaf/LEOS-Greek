@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT_LABEL;
 
@@ -104,7 +105,7 @@ public class TreeNode {
     private String getDecoratedType(String type, String num) {
         if("-".equals(num)) {
             type = INDENT;
-        } else if(type.equals(SUBPOINT)) {
+        } else if(type.equals(SUBPOINT) || type.equals(SUBPARAGRAPH)) {
             type = SUBPOINT_LABEL;
         }
         return type;

@@ -7,43 +7,43 @@
         </preface>
 
         <mainBody xml:id="body">
-            <level xml:id="body_level_1" leos:depth="1">
+            <level leos:depth="1" xml:id="body_level_1">
                 <num xml:id="body_level_1_num">1.</num>
                 <content xml:id="body_level_1_content">
                     <p xml:id="body_level_1_content_p">Text...</p>
                 </content>
             </level>
-            <level xml:id="body_level_2" leos:depth="1">
+            <level leos:depth="1" xml:id="body_level_2">
                 <num xml:id="body_level_2_num">2.</num>
                 <content xml:id="body_level_2_content">
                     <p xml:id="body_level_2_content_p">Text...</p>
                 </content>
             </level>
-            <division xml:id="body_division_3" class="type_2">
+            <division class="type_2" xml:id="body_division_3">
                 <num>#</num>
                 <heading>should be renumbered to I.</heading>
             </division>
-            <division xml:id="body_division_4" class="type_1">
+            <division class="type_1" xml:id="body_division_4">
                 <num>#</num>
                 <heading>should be renumbered to II.</heading>
             </division>
-            <division xml:id="body_division_5" class="type_2">
+            <division class="type_2" xml:id="body_division_5">
                 <num>A.</num>
                 <heading>TEXT…</heading>
             </division>
-            <division xml:id="body_division_7" class="type_3">
+            <division class="type_3" xml:id="body_division_7">
                 <num>I)</num>
                 <heading>TEXT…</heading>
             </division>
-            <division xml:id="body_division_8" class="type_4">
+            <division class="type_4" xml:id="body_division_8">
                 <num>A)</num>
                 <heading>TEXT…</heading>
             </division>
-            <division xml:id="body_division_9" class="type_1">
+            <division class="type_1" xml:id="body_division_9">
                 <num>#</num>
                 <heading>should be renumbered to III.</heading>
             </division>
-            <division xml:id="body_division_10" class="type_1">
+            <division class="type_1" xml:id="body_division_10">
                 <num>#</num>
                 <heading>should be renumbered to IV.</heading>
             </division>

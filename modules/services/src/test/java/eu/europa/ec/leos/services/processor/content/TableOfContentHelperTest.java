@@ -45,7 +45,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -135,17 +135,16 @@ public class TableOfContentHelperTest extends LeosTest {
     @Test
     public void test_restore_Subpoint_FromFirstSubpoint() {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_firstsubpoint.xml", "transformed_art_1_6G47GHJ");
-        item.removeChildItem(item.getChildItems().get(1));
         TableOfContentItemVO convertedItem = indentConversionHelper.buildSubElementFromFirstElement(tocItems, item, 1, true, false, false);
         Node node =convertedItem.getNode();
-        assertEquals(node.getNodeName(), SUBPOINT);
+        assertEquals(node.getNodeName(), SUBPARAGRAPH);
         NamedNodeMap attributes = node.getAttributes();
         List<Node> children = XercesUtils.getChildren(node);
-        assertEquals(attributes.getLength(), 2);
+        assertEquals(attributes.getLength(), 3);
         assertEquals(attributes.item(0).getNodeName(), LEOS_ORIGIN_ATTR);
         assertEquals(attributes.item(0).getNodeValue(), EC);
-        assertEquals(attributes.item(1).getNodeName(), XMLID);
-        assertEquals(attributes.item(1).getNodeValue(), "art_1_6G47GHJ");
+        assertEquals(attributes.item(2).getNodeName(), XMLID);
+        assertEquals(attributes.item(2).getNodeValue(), "art_1_6G47GHJ");
         assertEquals(children.size(), 1);
         assertEquals(children.get(0).getNodeName(), CONTENT);
         NamedNodeMap childAttributes = children.get(0).getAttributes();
@@ -162,7 +161,7 @@ public class TableOfContentHelperTest extends LeosTest {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "art_1_8g5Tr7");
         TableOfContentItemVO convertedItem = indentConversionHelper.buildSubElementFromElement(tocItems, item, 1, true, false, false);
         Node node = convertedItem.getNode();
-        assertEquals(node.getNodeName(), SUBPOINT);
+        assertEquals(node.getNodeName(), SUBPARAGRAPH);
         NamedNodeMap attributes = node.getAttributes();
         List<Node> children = XercesUtils.getChildren(node);
         assertEquals(attributes.getLength(), 5);
@@ -182,11 +181,10 @@ public class TableOfContentHelperTest extends LeosTest {
     @Test
     public void test_restore_Subpoint_FromFirstSubparagraph() {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_firstsubparagraph.xml", "indented_akn_article_ebFhaW_EXRv7x");
-        item.removeChildItem(item.getChildItems().get(1));
-        item.removeChildItem(item.getChildItems().get(1));
+        TableOfContentHelper.removeChildItem(item, item.getChildItems().get(1));
         TableOfContentItemVO convertedItem = indentConversionHelper.buildSubElementFromFirstElement(tocItems, item, 1, true, true, false);
         Node node = convertedItem.getNode();
-        assertEquals(node.getNodeName(), SUBPOINT);
+        assertEquals(node.getNodeName(), SUBPARAGRAPH);
         NamedNodeMap attributes = node.getAttributes();
         List<Node> children = XercesUtils.getChildren(node);
         assertEquals(attributes.getLength(), 5);
@@ -210,14 +208,14 @@ public class TableOfContentHelperTest extends LeosTest {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_firstsubparagraph.xml", "akn_article_ebFhaW_qxNs2C");
         TableOfContentItemVO convertedItem = indentConversionHelper.buildSubElementFromSubElement(tocItems, item, 1, true, false);
         Node node = convertedItem.getNode();
-        assertEquals(node.getNodeName(), SUBPOINT);
+        assertEquals(node.getNodeName(), SUBPARAGRAPH);
         NamedNodeMap attributes = node.getAttributes();
         List<Node> children = XercesUtils.getChildren(node);
-        assertEquals(attributes.getLength(), 5);
+        assertEquals(attributes.getLength(), 6);
         assertEquals(attributes.item(0).getNodeName(), LEOS_ORIGIN_ATTR);
         assertEquals(attributes.item(0).getNodeValue(), CN);
-        assertEquals(attributes.item(4).getNodeName(), XMLID);
-        assertEquals(attributes.item(4).getNodeValue(), "akn_article_ebFhaW_qxNs2C");
+        assertEquals(attributes.item(5).getNodeName(), XMLID);
+        assertEquals(attributes.item(5).getNodeValue(), "akn_article_ebFhaW_qxNs2C");
         assertEquals(children.size(), 1);
         assertEquals(children.get(0).getNodeName(), CONTENT);
         NamedNodeMap childAttributes = children.get(0).getAttributes();
@@ -232,7 +230,6 @@ public class TableOfContentHelperTest extends LeosTest {
     @Test
     public void test_point_FromFirstSubpoint() {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "transformed_art_1_urNCcV");
-        item.removeChildItem(item.getChildItems().get(1));
         TableOfContentItemVO convertedItem = indentConversionHelper.buildElementFromFirstElement(tocItems, item, 1, false, false, false);
         Node node = convertedItem.getNode();
         assertEquals(node.getNodeName(), POINT);
@@ -297,7 +294,6 @@ public class TableOfContentHelperTest extends LeosTest {
     @Test
     public void test_point_FromFirstSubparagraph() {
         TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "art_1_GqEOBU");
-        item.removeChildItem(item.getChildItems().get(1));
         TableOfContentItemVO convertedItem = indentConversionHelper.buildElementFromFirstElement(tocItems, item, 1, false, true, false);
         Node node = convertedItem.getNode();
         assertEquals(node.getNodeName(), POINT);
@@ -326,9 +322,8 @@ public class TableOfContentHelperTest extends LeosTest {
         assertEquals(childAttributes.item(0).getNodeValue(), EC);
         assertEquals(childAttributes.item(1).getNodeName(), XMLID);
         assertEquals(childAttributes.item(1).getNodeValue(), "art_1_fCeC1t");
-        assertEquals(XercesUtils.getChildren(children.get(1)).get(0).getTextContent(), "Example --\n" +
-                "                                Point (c) indented\n" +
-                "                            ");
+        String content = XercesUtils.getChildren(children.get(1)).get(0).getTextContent().replaceAll("[\\t|\\n|\\r|\\s]","");
+        assertEquals(content, "Example --Point(c)indented");
     }
 
     @Test
@@ -354,9 +349,8 @@ public class TableOfContentHelperTest extends LeosTest {
         assertEquals(childAttributes.getLength(), 1);
         assertEquals(childAttributes.item(0).getNodeName(), XMLID);
         assertEquals(childAttributes.item(0).getNodeValue(), "art_1_IBPut4");
-        assertEquals(XercesUtils.getChildren(children.get(1)).get(0).getTextContent(), "\n" +
-                "                                                storage, comprising customs warehousing and free zones;\n" +
-                "                                            ");
+        String content = XercesUtils.getChildren(children.get(1)).get(0).getTextContent().replaceAll("[\\t|\\n|\\r|\\s]","");
+        assertEquals(content, "storage,comprisingcustomswarehousingandfreezones;");
     }
 
     @Test
@@ -379,20 +373,19 @@ public class TableOfContentHelperTest extends LeosTest {
         NamedNodeMap childAttributes = children.get(0).getAttributes();
         assertEquals(childAttributes.getLength(), 0);
         assertEquals(children.get(0).getTextContent(), "");
-        assertEquals(children.get(1).getNodeName(), SUBPOINT);
+        assertEquals(children.get(1).getNodeName(), SUBPARAGRAPH);
         childAttributes = children.get(1).getAttributes();
-        assertEquals(childAttributes.getLength(), 5);
-        assertEquals(childAttributes.item(4).getNodeName(), XMLID);
-        assertEquals(childAttributes.item(4).getNodeValue(), "art_1_ExfjFV");
+        assertEquals(childAttributes.getLength(), 6);
+        assertEquals(childAttributes.item(5).getNodeName(), XMLID);
+        assertEquals(childAttributes.item(5).getNodeValue(), "art_1_ExfjFV");
         Node content = XercesUtils.getFirstChild(children.get(1), CONTENT);
         assertNotNull(content);
         childAttributes = content.getAttributes();
         assertEquals(childAttributes.getLength(), 1);
         assertEquals(childAttributes.item(0).getNodeName(), XMLID);
         assertEquals(childAttributes.item(0).getNodeValue(), "art_1_IBPut4");
-        assertEquals(XercesUtils.getChildren(content).get(0).getTextContent(), "\n" +
-                "                                                storage, comprising customs warehousing and free zones;\n" +
-                "                                            ");
+        String contentStr = XercesUtils.getChildren(content).get(0).getTextContent().replaceAll("[\\t|\\n|\\r|\\s]","");
+        assertEquals(contentStr, "storage,comprisingcustomswarehousingandfreezones;");
     }
 
     @Test
@@ -418,7 +411,7 @@ public class TableOfContentHelperTest extends LeosTest {
         assertEquals(childAttributes.item(1).getNodeName(), XMLID);
         assertEquals(childAttributes.item(1).getNodeValue(), "num_9yZwYq");
         assertEquals(children.get(0).getTextContent(), "-");
-        assertEquals(children.get(1).getNodeName(), SUBPOINT);
+        assertEquals(children.get(1).getNodeName(), SUBPARAGRAPH);
         childAttributes = children.get(1).getAttributes();
         assertEquals(childAttributes.getLength(), 5);
         assertEquals(childAttributes.item(4).getNodeName(), XMLID);
@@ -454,19 +447,18 @@ public class TableOfContentHelperTest extends LeosTest {
         assertEquals(childAttributes.item(1).getNodeName(), XMLID);
         assertEquals(childAttributes.item(1).getNodeValue(), "art_1_Woc735");
         assertEquals(children.get(0).getTextContent(), "2.");
-        assertEquals(children.get(1).getNodeName(), SUBPOINT);
+        assertEquals(children.get(1).getNodeName(), SUBPARAGRAPH);
         childAttributes = children.get(1).getAttributes();
-        assertEquals(childAttributes.getLength(), 2);
-        assertEquals(childAttributes.item(1).getNodeName(), XMLID);
-        assertEquals(childAttributes.item(1).getNodeValue(), "art_1_MU1hKr");
+        assertEquals(childAttributes.getLength(), 3);
+        assertEquals(childAttributes.item(2).getNodeName(), XMLID);
+        assertEquals(childAttributes.item(2).getNodeValue(), "art_1_MU1hKr");
         Node content = XercesUtils.getFirstChild(children.get(1), CONTENT);
         assertNotNull(content);
         childAttributes = content.getAttributes();
         assertEquals(childAttributes.getLength(), 2);
         assertEquals(childAttributes.item(1).getNodeName(), XMLID);
         assertEquals(childAttributes.item(1).getNodeValue(), "art_1_fCeC1t");
-        assertEquals(XercesUtils.getChildren(content).get(0).getTextContent(), "Example --\n" +
-                "                                Point (c) indented\n" +
-                "                            ");
+        String contentStr = XercesUtils.getChildren(content).get(0).getTextContent().replaceAll("[\\t|\\n|\\r|\\s]","");
+        assertEquals(contentStr, "Example --Point(c)indented");
     }
 }

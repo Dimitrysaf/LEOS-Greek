@@ -2,20 +2,20 @@
     <num>Article 272</num>
     <heading>Definitions</heading>
     <paragraph>
-        <subparagraph>
-            <content>
-                <p>Sub paragraph content</p>
-            </content>
-        </subparagraph>
         <list>
+            <subparagraph refersTo="~_INP">
+                <content>
+                    <p>Sub paragraph content</p>
+                </content>
+            </subparagraph>
             <indent>
-                <num></num>
-                <alinea>
-                    <content>
-                        <p>General terms</p>
-                    </content>
-                </alinea>
+                <num/>
                 <list>
+                    <subparagraph refersTo="~_INP">
+                        <content>
+                            <p>General terms</p>
+                        </content>
+                    </subparagraph>
                     <point>
                         <num>(1)</num>
                         <content>
@@ -25,13 +25,13 @@
                 </list>
             </indent>
             <indent>
-                <num></num>
-                <alinea>
-                    <content>
-                        <p>Transaction types</p>
-                    </content>
-                </alinea>
+                <num/>
                 <list>
+                    <subparagraph refersTo="~_INP">
+                        <content>
+                            <p>Transaction types</p>
+                        </content>
+                    </subparagraph>
                     <point>
                         <num>(2)</num>
                         <content>
@@ -47,30 +47,30 @@
                 </list>
             </indent>
             <indent>
-                <num></num>
-                <alinea>
-                    <content>
-                        <p>Netting set, hedging sets, and related terms</p>
-                    </content>
-                </alinea>
+                <num/>
                 <list>
+                    <subparagraph refersTo="~_INP">
+                        <content>
+                            <p>Netting set, hedging sets, and related terms</p>
+                        </content>
+                    </subparagraph>
                     <point>
                         <num>(4)</num>
-                        <alinea>
+                        <subparagraph>
                             <content>
                                 <p>content of (4)</p>
                             </content>
-                        </alinea>
-                        <alinea>
+                        </subparagraph>
+                        <subparagraph>
                             <content>
                                 <p>first Alinea</p>
                             </content>
-                        </alinea>
-                        <alinea>
+                        </subparagraph>
+                        <subparagraph>
                             <content>
                                 <p>second Alinea</p>
                             </content>
-                        </alinea>
+                        </subparagraph>
                     </point>
                 </list>
             </indent>

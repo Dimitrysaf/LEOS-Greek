@@ -1,12 +1,11 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <documentCollection name="PROP_ACT">
         <meta>
             <identification source="~COM">
                 <FRBRWork>
                     <FRBRthis value=""/>
                     <FRBRuri value=""/>
-                    <FRBRalias value="" name=""/>
+                    <FRBRalias name="" value=""/>
                     <FRBRdate date="9999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <FRBRcountry value="EU"/>
@@ -30,32 +29,20 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU"
-                             showAs="Brussels"/>
-                <TLCOrganization xml:id="CONSIL"
-                                 href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament"/>
-                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission"/>
-                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID"
-                         showAs="President"/>
-                <TLCReference xml:id="_REG" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/REG"
-                              showAs="Regulation"/>
-                <TLCReference xml:id="_PROP_ACT" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT"
-                              showAs="Proposal for an act"/>
-                <TLCReference xml:id="legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456"
-                              showAs="Legal basis"/>
-                <TLCReference xml:id="language" name="language"
-                              href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
-                <TLCReference xml:id="leos" href="/software/leos" showAs="EC DIGIT LEOS PILOT" name="software"/>
-                <TLCConcept xml:id="bill" href="/software/leos/bill" showAs="Bill"/>
-                <TLCConcept xml:id="memorandum" href="/software/leos/memorandum" showAs="Memorandum"/>
-                <TLCReference xml:id="_procedure" name="" href="" showAs="" shortForm=""/>
-                <TLCReference xml:id="_azs3y" name="identifier" href="" showAs="" shortForm=""/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="_REG"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT" name="docType" showAs="Proposal for an act" xml:id="_PROP_ACT"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCReference href="/software/leos" name="software" showAs="EC DIGIT LEOS PILOT" xml:id="leos"/>
+                <TLCConcept href="/software/leos/bill" showAs="Bill" xml:id="bill"/>
+                <TLCConcept href="/software/leos/memorandum" showAs="Memorandum" xml:id="memorandum"/>
+                <TLCReference href="" name="" shortForm="" showAs="" xml:id="_procedure"/>
+                <TLCReference href="" name="identifier" shortForm="" showAs="" xml:id="_azs3y"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -80,26 +67,24 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img xml:id="coverpage__container_1__p__img"
-                         src=""
-                         alt="European Commission" title="European Commission"/>
+                    <img alt="European Commission" src="" title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
-            <container xml:id="akn_2kSBLf" name="mainDoc">
-                <block xml:id="akn_8mV4qv" name="placeAndDate">
-                    <location xml:id="akn_1M8ja6" refersTo=""/>
-                    <date xml:id="akn_73XXOn" date=""/>
+            <container name="mainDoc" xml:id="akn_2kSBLf">
+                <block name="placeAndDate" xml:id="akn_8mV4qv">
+                    <location refersTo="" xml:id="akn_1M8ja6"/>
+                    <date date="" xml:id="akn_73XXOn"/>
                 </block>
-                <block xml:id="akn_xWBHr3" name="reference">
+                <block name="reference" xml:id="akn_xWBHr3">
                     <docNumber xml:id="akn_z8w3jf"/>
                 </block>
             </container>
-            <container xml:id="akn_9TiX6T" name="procedureIdentifier">
+            <container name="procedureIdentifier" xml:id="akn_9TiX6T">
                 <p xml:id="akn_TPbMYk">
                     <docketNumber xml:id="akn_lI6Smd"/>
                 </p>
             </container>
-            <longTitle xml:id="coverpage__longtitle" refersTo="#bill">
+            <longTitle refersTo="#bill" xml:id="coverpage__longtitle">
                 <p xml:id="coverpage__longtitle__p">
                     <docStage xml:id="coverpage__longtitle__p__docstage">Proposal for a</docStage>
                     <docType refersTo="~_REG" xml:id="coverpage__longtitle__p__doctype">REGULATION OF THE EUROPEAN
@@ -113,15 +98,13 @@
             </container>
         </coverPage>
         <collectionBody xml:id="body">
-            <component xml:id="body_cmp_1" refersTo="#memorandum">
+            <component refersTo="#memorandum" xml:id="body_cmp_1">
                 <!-- reference to the memorandum, relative to this proposal -->
-                <documentRef xml:id="body_cmp_1__dref_1" href="memorandum_ckoij73hh0003cm56uiejs8pn.xml"
-                             showAs="EXPLANATORY MEMORANDUM"/>
+                <documentRef href="memorandum_ckoij73hh0003cm56uiejs8pn.xml" showAs="EXPLANATORY MEMORANDUM" xml:id="body_cmp_1__dref_1"/>
             </component>
-            <component xml:id="body_cmp_2" refersTo="#bill">
+            <component refersTo="#bill" xml:id="body_cmp_2">
                 <!-- reference to the bill, relative to this proposal -->
-                <documentRef xml:id="body_cmp_1__dref_2" href="bill_ckoij79850004cm56f2mivvyj.xml"
-                             showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL"/>
+                <documentRef href="bill_ckoij79850004cm56f2mivvyj.xml" showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" xml:id="body_cmp_1__dref_2"/>
             </component>
         </collectionBody>
     </documentCollection>

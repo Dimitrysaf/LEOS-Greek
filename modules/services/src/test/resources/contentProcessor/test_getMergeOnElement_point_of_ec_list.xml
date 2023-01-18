@@ -1,19 +1,18 @@
-<root xml:id="akn_f2ejkO" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
-    <article leos:origin="ec" leos:editable="false" leos:deletable="false" xml:id="imp_art_d1e1276_XAPlpX">
+<root xmlns:leos="urn:eu:europa:ec:leos" xml:id="akn_f2ejkO">
+    <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX">
         <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_PCoY8I">Article 5</num>
         <heading leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_yDHX83">Definitions</heading>
         <paragraph leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_494qUn">
             <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_gxZ46e">1.</num>
-            <subparagraph leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_KyB4qy">
-                <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_nBJK4i">
-                    <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_aW9qa6">For the purposes of this Regulation, the following definitions shall
-                        apply:
-                    </p>
-                </content>
-            </subparagraph>
             <list leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_J7TbDh">
-                <point leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_4K2GdA" leos:editable="false" leos:deletable="false"
-                       leos:softaction="del" leos:softactionroot="true" leos:softuser="demo" leos:softdate="1900-01-01T00:00:00.000+01:00">
+                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e1276_XAPlpX_KyB4qy">
+                    <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_nBJK4i">
+                        <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_aW9qa6">For the purposes of this Regulation, the following definitions shall
+                            apply:
+                        </p>
+                    </content>
+                </subparagraph>
+                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="1900-01-01T00:00:00.000+01:00" leos:softuser="demo" xml:id="deleted_imp_art_d1e1276_XAPlpX_4K2GdA">
                     <num leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_jh6oZJ">(c)</num>
                     <content leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_fYqac8">
                         <p leos:origin="ec" xml:id="deleted_imp_art_d1e1276_XAPlpX_Eif3cN">firms which are not authorised to provide the ancillary
@@ -34,24 +33,22 @@
                 </point>
                 <point leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_HMwJok">
                     <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_TD9PRk">(2)</num>
-                    <alinea leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_vPsN8G">
-                        <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Atnkut">
-                            <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Z5vpZD">'investment firm' means a person as defined in point (1) of
-                                Article 4(1) of Directive 2004/39/EC, which is subject to the requirements imposed by that Directive, excluding the
-                                following:
-                            </p>
-                        </content>
-                    </alinea>
                     <list leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_aZi7xk">
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e1276_XAPlpX_vPsN8G">
+                            <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Atnkut">
+                                <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Z5vpZD">'investment firm' means a person as defined in point (1) of
+                                    Article 4(1) of Directive 2004/39/EC, which is subject to the requirements imposed by that Directive, excluding the
+                                    following:
+                                </p>
+                            </content>
+                        </subparagraph>
                         <point leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_X9uQs2">
                             <num leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_G73ZDv">(a)</num>
                             <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_HMkDsZ">
                                 <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_oKMA14">credit institutions;</p>
                             </content>
                         </point>
-                        <point leos:softmove_label="MOVED from point (c)" leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_4K2GdA"
-                               leos:softaction="move_from" leos:softactionroot="true" leos:softmove_from="moved_imp_art_d1e1276_XAPlpX_4K2GdA"
-                               leos:softuser="demo" leos:softdate="1900-01-01T00:00:00.000+01:00">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="1900-01-01T00:00:00.000+01:00" leos:softmove_from="moved_imp_art_d1e1276_XAPlpX_4K2GdA" leos:softmove_label="MOVED from point (c)" leos:softuser="demo" xml:id="imp_art_d1e1276_XAPlpX_4K2GdA">
                             <num leos:origin="cn" xml:id="imp_art_d1e1276_XAPlpX_jh6oZJ">(aa)</num>
                             <content leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_fYqac8">
                                 <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_Eif3cN">firms which are not authorised to provide the ancillary
@@ -68,9 +65,7 @@
                                 <p leos:origin="ec" xml:id="imp_art_d1e1276_XAPlpX_vpwYsL">local firms;</p>
                             </content>
                         </point>
-                        <point leos:softmove_label="MOVED to point (aa)" leos:origin="ec" xml:id="moved_imp_art_d1e1276_XAPlpX_4K2GdA"
-                               leos:editable="false" leos:deletable="false" leos:softaction="move_to" leos:softactionroot="true"
-                               leos:softmove_to="imp_art_d1e1276_XAPlpX_4K2GdA" leos:softuser="demo" leos:softdate="1900-01-01T00:00:00.000+01:00">
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="1900-01-01T00:00:00.000+01:00" leos:softmove_label="MOVED to point (aa)" leos:softmove_to="imp_art_d1e1276_XAPlpX_4K2GdA" leos:softuser="demo" xml:id="moved_imp_art_d1e1276_XAPlpX_4K2GdA">
                             <num leos:origin="ec" xml:id="moved_imp_art_d1e1276_XAPlpX_jh6oZJ">(c)</num>
                             <content leos:origin="ec" xml:id="moved_imp_art_d1e1276_XAPlpX_fYqac8">
                                 <p leos:origin="ec" xml:id="moved_imp_art_d1e1276_XAPlpX_Eif3cN">firms which are not authorised to provide the

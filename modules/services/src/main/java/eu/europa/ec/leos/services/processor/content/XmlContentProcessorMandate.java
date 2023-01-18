@@ -21,6 +21,7 @@ import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHe
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateSoftInfo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
+import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_ITEMS;
 import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.PARAGRAPH_LEVEL_ITEMS;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.formatHeadingNodeForDivision;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
@@ -31,6 +32,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.manageListContainingOnlySubpoints;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.AUTHORIAL_NOTE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BACK_TO_NUM_FROM_SOFT_DELETED;
@@ -68,7 +70,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_TY
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_UNUMBERED_PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
@@ -155,6 +156,13 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     protected Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
                                        Document document, Node parentNode, TableOfContentItemVO tocVo, User user) {
+        String tagName = tocVo.getTocItem().getAknTag().value();
+        if (tagName.equals(LIST) && !tocVo.getChildItemsView().isEmpty() && TableOfContentHelper.containsOnlySubpoints(tocVo)) {
+            int index = tocVo.getParentItem().getChildItemsView().indexOf(tocVo);
+            manageListContainingOnlySubpoints(tocVo);
+            tocVo = tocVo.getParentItem().getChildItemsView().get(index);
+            tagName = tocVo.getTocItem().getAknTag().value();
+        }
         Node node = getNode(document, tocVo);
         TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems, getTagValueFromTocItemVo(tocVo),
                 XercesUtils.getAttributes(node));
@@ -173,7 +181,6 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             Node newChild = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, newNode, child, user);
             appendChildIfNotNull(newChild, newNode);
         }
-        String tagName = tocVo.getTocItem().getAknTag().value();
         if (Arrays.asList(PARAGRAPH, LEVEL).contains(tagName) && skipParagraphContent(tocVo)) {
             buildParagraphOrLevelContent(tocItems, node, newNode, tocVo, user);
         } else if (Arrays.asList(POINT, INDENT).contains(tagName) && shouldWrapWithList(tocVo.getParentItem())) {
@@ -193,7 +200,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             setIndentAttributes(newNode, tocVo);
         }
         if (tagName.equals(LIST) && tocVo.getParentItem().isAffected()) {
-            TableOfContentItemVO firstChild = tocVo.getChildItemsView().get(0);
+            TableOfContentItemVO firstChild = TableOfContentHelper.getFirstChildWithTagName(tocVo, Arrays.asList(NUMBERED_ITEMS));
             XercesUtils.insertOrUpdateAttributeValue(newNode, LEOS_LIST_TYPE_ATTR, firstChild.getTocItem().getNumberingType().toString().toLowerCase());
         }
         updateTocItemTypeAttributes(tocItems, newNode, tocVo);
@@ -236,11 +243,18 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     private boolean skipParagraphContent(TableOfContentItemVO tocVo) {
         boolean skipParagraphContent = false;
         List<TableOfContentItemVO> childList = tocVo.getChildItems();
-        if (!childList.isEmpty()) {
+        List<Node> content = tocVo.getNode() != null ? XercesUtils.getChildren(tocVo.getNode(), CONTENT) : new ArrayList<>();
+        if (childList != null && !childList.isEmpty()) {
             skipParagraphContent = true;
             for (TableOfContentItemVO child : childList) {
                 // if is not a new SUBPARAGRAPH
                 if (child.getNode() != null && child.getTocItem().getAknTag().value().equals(SUBPARAGRAPH) && !child.isMovedOnEmptyParent()) {
+                    return false;
+                }
+                if ((child.getNode() != null) && !child.isMovedOnEmptyParent()
+                        && ((getTagValueFromTocItemVo(child).equals(LIST) && child.getChildItemsView().size() > 0
+                        && (!content.isEmpty() || getTagValueFromTocItemVo(tocVo).equals(LEVEL) || getTagValueFromTocItemVo(child.getChildItemsView().get(0)).equals(SUBPARAGRAPH)))
+                        || getTagValueFromTocItemVo(child).equals(SUBPARAGRAPH))) {
                     return false;
                 }
             }
@@ -251,10 +265,17 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     private boolean skipPointContent(TableOfContentItemVO tocVo) {
         boolean skipPointContent = false;
         List<TableOfContentItemVO> childList = tocVo.getChildItems();
+        List<Node> content = tocVo.getNode() != null ? XercesUtils.getChildren(tocVo.getNode(), CONTENT) : new ArrayList<>();
         if (childList != null && !childList.isEmpty()) {
             TableOfContentItemVO child = childList.get(0);
-            String tagValue = child.getTocItem().getAknTag().value();
-            skipPointContent = Arrays.asList(LIST, POINT, INDENT, CROSSHEADING).contains(tagValue);
+            String tagValue = getTagValueFromTocItemVo(child);
+            skipPointContent = tagValue.equals(POINT)
+                    || tagValue.equals(INDENT)
+                    || tagValue.equalsIgnoreCase(CROSSHEADING)
+                    || child.isMovedOnEmptyParent()
+                    || (tagValue.equals(LIST)
+                    && (!content.isEmpty()  && child.getChildItemsView().size() > 0
+                    && getTagValueFromTocItemVo(child.getChildItemsView().get(0)).equals(SUBPARAGRAPH)));
         }
         return skipPointContent;
     }
@@ -456,7 +477,8 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 pointChildrenNode.add(extractOrBuildNumElement(node, tocVo));
                 pointChildrenNode.add(convertToSubPoint(tocItems, node, tocVo, user));
                 if (newNode.getChildNodes().getLength() > 0 && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(LIST)
-                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(CROSSHEADING)) {
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(CROSSHEADING)
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(SUBPARAGRAPH)) {
                     pointChildrenNode.add(wrapWithList(newNode, tocVo, user));
                 } else {
                     pointChildrenNode.addAll(XercesUtils.getChildren(newNode));
@@ -469,7 +491,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     private Node convertToSubPoint(List<TocItem> tocItems, Node node, TableOfContentItemVO tocVo, User user) {
-        Node subPointNode = convertToElement(tocItems, node, SUBPOINT);
+        Node subPointNode = convertToElement(tocItems, node, SUBPARAGRAPH);
         updateSoftInfo(subPointNode, SoftActionType.ADD, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null);
         XercesUtils.insertOrUpdateAttributeValue(subPointNode, LEOS_ORIGIN_ATTR, CN);
         return subPointNode;
@@ -606,7 +628,9 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                     // If only single subparagraph or subpoint is remaining in the paragraph
                     if ((firstChild.getNode() != null && !firstChild.isMovedOnEmptyParent()) &&
                             (firstChild.getTocItem().getAknTag().value().equals(SUBPARAGRAPH) ||
-                                    firstChild.getTocItem().getAknTag().value().equals(SUBPOINT))) {
+                                    (firstChild.getTocItem().getAknTag().value().equals(LIST)
+                                            && firstChild.getChildItemsView().size()>0
+                                            && getTagValueFromTocItemVo(firstChild.getChildItemsView().get(0)).equals(SUBPARAGRAPH)))) {
                         isSingle = true;
                     }
                     break;
@@ -704,7 +728,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             softUndeleteAuthorialNote(node);
         } else if (Arrays.asList(PARAGRAPH, LEVEL, POINT, INDENT).contains(tocVo.getTocItem().getAknTag().value()) &&
                 !isEmptyElement(tocVo) && isSingleSubElement(tocVo.getChildItems().get(0)) &&
-                !isSoftDeletedOrMoved(tocVo.getChildItems().get(0))) {
+                !isSoftDeletedOrMoved(tocVo.getChildItems().get(0)) && !getTagValueFromTocItemVo(tocVo.getChildItems().get(0)).equalsIgnoreCase(LIST)) {
             XercesUtils.insertOrUpdateAttributeValue(node, LEOS_SOFT_TRANS_FROM, tocVo.getChildItems().get(0).getId());
         }
 
@@ -754,6 +778,9 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             splitElement = getSiblingOfParentElement(xmlContent, CONTENT, idAttributeValue);
         } else {
             splitElement = getChildElement(xmlContent, tagName, idAttributeValue, Arrays.asList(SUBPARAGRAPH, SUBPOINT), 2);
+        }
+        if (splitElement.getElementTagName().equals(LIST)) {
+            splitElement = getChildElement(xmlContent, tagName, splitElement.getElementId(), Arrays.asList(tagName), 1);
         }
 
         return buildSplittedElementPair(xmlContent, splitElement);
@@ -902,8 +929,11 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         if(parent != null && PARAGRAPH.equals(parent.getElementTagName()) && SUBPARAGRAPH.equals(element.getElementTagName()) && sibling != null
                 && SUBPARAGRAPH.equals(sibling.getElementTagName())) {
             // Structure needs to be corrected - outdent sibling of the changed element
-            xmlContent = this.indentElement(xmlContent,sibling.getElementTagName(), sibling.getElementId(),
-                    sibling.getElementFragment(), toc, targetLevel, originalIndentLevel, true);
+            Element firstParentChild = this.getChildElement(xmlContent, parent.getElementTagName(), parent.getElementId(), Arrays.asList(NUM), 1);
+            if (firstParentChild == null) {
+                xmlContent = this.indentElement(xmlContent, sibling.getElementTagName(), sibling.getElementId(),
+                        sibling.getElementFragment(), toc, targetLevel, originalIndentLevel, true);
+            }
         }
         return xmlContent;
     }
@@ -930,8 +960,8 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             updateNewElements(node, RECITAL, null, CN);
             updateNewElements(node, ARTICLE, null, CN);
             updateNewElements(node, PARAGRAPH, SUBPARAGRAPH, CN);
-            updateNewElements(node, POINT, SUBPOINT, CN);
-            updateNewElements(node, INDENT, SUBPOINT, CN);
+            updateNewElements(node, POINT, SUBPARAGRAPH, CN);
+            updateNewElements(node, INDENT, SUBPARAGRAPH, CN);
             updateNewElements(node, PREFACE, null, CN);
             updateNewElements(node, MAIN_BODY, null, CN);
             updateNewElements(node, LEVEL, SUBPARAGRAPH, CN);
@@ -975,7 +1005,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);
             if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                XercesUtils.insertOrUpdateAttributeValue(childNode, LEOS_RENUMBERED, "true");
+                XercesUtils.insertOrUpdateAttributeValue(childNode, "leos:renumbered", "true");
             }
         }
     }
@@ -1143,5 +1173,4 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             }
         }
     }
-
 }

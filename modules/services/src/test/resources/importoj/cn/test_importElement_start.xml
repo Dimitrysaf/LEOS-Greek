@@ -1,5 +1,4 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~COM">
@@ -29,22 +28,14 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"
-                             xml:id="_BEL_BRU"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union" xml:id="CONSIL"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament" xml:id="EP"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission" xml:id="COM"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"
-                         xml:id="PRESID"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType"
-                              showAs="Regulation" xml:id="REG"/>
-                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"
-                              xml:id="legalBasis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
-                              showAs="en" xml:id="language"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -62,9 +53,7 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img alt="European Commission"
-                         src="data:image/png;base64"
-                         title="European Commission" xml:id="coverpage__container_1__p__img"/>
+                    <img alt="European Commission" src="data:image/png;base64" title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
             <longTitle xml:id="coverpage__longtitle">
@@ -176,8 +165,7 @@
                 </paragraph>
             </article>
 
-            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1"
-                    leos:selectedoption="1" xml:id="clause_1">
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
                 <content xml:id="clause_1__content">
                     <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly
                         applicable in all Member States.

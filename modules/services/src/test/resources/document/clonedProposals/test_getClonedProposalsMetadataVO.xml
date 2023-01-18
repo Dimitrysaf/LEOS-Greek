@@ -1,5 +1,4 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <documentCollection name="PROP_ACT">
         <meta>
             <proprietary source="~_leos">
@@ -21,7 +20,7 @@
                 </leos:clonedProposals>
                 <leos:docType xml:id="proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL
                 </leos:docType>
-                <leos:objectId></leos:objectId>
+                <leos:objectId/>
             </proprietary>
         </meta>
         <coverPage xml:id="coverpage">

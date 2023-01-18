@@ -100,6 +100,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     function _onShiftEnterKeyCommand(cmd, editor) {
         LOG.debug("SHIFT_ENTER button clicked");
         _executeShiftEnter(editor);
+        leosPluginUtils.manageEmptyLists(editor);
+        leosPluginUtils.managePoints(editor);
+        leosPluginUtils.manageEmptySubparagraphs(editor);
+        leosPluginUtils.manageCrossheadings(editor);
+        leosPluginUtils.manageSiblingLists(editor);
     }
 
     function _onEnterKey(context) {
@@ -110,6 +115,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             context.event.cancel();
         } else if (elementType && (elementType === 'level' || elementType === 'paragraph') && (_isStartElementOrderedListOrContent(selection))) {
             _executeShiftEnter(context.editor);
+            leosPluginUtils.manageEmptyLists(context.editor);
+            leosPluginUtils.managePoints(context.editor);
+            leosPluginUtils.manageEmptySubparagraphs(context.editor);
+            leosPluginUtils.manageCrossheadings(context.editor);
+            leosPluginUtils.manageSiblingLists(context.editor);
         }
     }
 
@@ -124,14 +134,28 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             ||  startElement.getAttribute(DATA_AKN_NAME) === 'aknContent';
     }
 
+    function _renameIntroToP(editor, element) {
+        element.renameNode('p');
+        leosPluginUtils.copyContentAndMpAttributeToElement(element, element);
+    }
+
     function _executeShiftEnter(editor) {
         var selection = editor.getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
+        if (leosPluginUtils.isListIntro(startElement)) {
+            startElement.insertBefore(startElement.getParent());
+            _renameIntroToP(editor, startElement);
+        }
+        if (leosPluginUtils.isListEnding(startElement)) {
+            startElement.insertAfter(startElement.getParent());
+            _renameIntroToP(editor, startElement);
+        }
         var startElementName = startElement.getName && startElement.getName();
         // grab the content from selection to the end of the current inline content
-        var contentAfterShiftEnter = getContentAfterShiftEnter(editor);
+        var contentAfterShiftEnter = getContentAfterShiftEnter(editor, selection);
         // if the current inline content is not wrap in p, wrap it if it is not heading
         var wrappingP = startElementName === 'h2' ? startElement : wrapCurrentInlineContent(startElement, editor);
+
         // insert new subparagraph with extracted content in the next line
         contentAfterShiftEnter.insertAfter(wrappingP);
         // make selection at the beginning of the new subparagraph
@@ -174,7 +198,8 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         var inlineWrapper = getInlineWrapper(el);
         if (inlineWrapper != null) {
             var inlineWrapperName = inlineWrapper.getName && inlineWrapper.getName();
-            if ((inlineWrapperName === 'li') || (inlineWrapperName === 'th') || (inlineWrapperName === 'td')) {
+            if ((inlineWrapperName === 'li') || (inlineWrapperName ===
+             'th') || (inlineWrapperName === 'td')) {
                 var blockChild = _getBlockElementIfExists(inlineWrapper);
                 var rangeContent = getFirstRange(editor).clone();
 
@@ -219,8 +244,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         return inlineWrapper;
     };
 
-    var getContentAfterShiftEnter = function getContentAfterShiftEnter(editor) {
-        var selection = editor.getSelection();
+    var getContentAfterShiftEnter = function getContentAfterShiftEnter(editor, selection) {
         var startElement = selection.getStartElement();
         var startElementName = startElement.getName && startElement.getName();
         var startElementParent = startElement.getParent();
@@ -358,7 +382,9 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             var elements = Object.values(allowedElementsForShiftEnter);
             for (var i = 0; i < elements.length; i++) {
                 if (elements[i].elementName === 'table') {
-                    return _isElementInsideTable(selection.getStartElement());
+                    if (_isElementInsideTable(selection.getStartElement())) {
+                        return true;
+                    }
                 }
             }
 

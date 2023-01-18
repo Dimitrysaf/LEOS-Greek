@@ -1,15 +1,15 @@
-<root xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
-    <article leos:origin="ec" leos:editable="false" leos:deletable="false" xml:id="imp_art_d1e34277_V6MXDb">
+<root xmlns:leos="urn:eu:europa:ec:leos">
+    <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="imp_art_d1e34277_V6MXDb">
         <num leos:origin="ec" xml:id="imp_art_d1e34277_V6MXDb_MG65v8">Article 4</num>
         <heading leos:origin="ec" xml:id="imp_art_d1e34277_V6MXDb_Opeshn">Calculating the effect of the use of credit
             risk mitigation techniques
         </heading>
-        <paragraph xml:id="imp_art_d1e34277_V6MXDb_mdQK5X" leos:origin="ec">
-            <num xml:id="imp_art_d1e34277_V6MXDb_rSp9HS" leos:origin="ec">1.</num>
+        <paragraph leos:origin="ec" xml:id="imp_art_d1e34277_V6MXDb_mdQK5X">
+            <num leos:origin="ec" xml:id="imp_art_d1e34277_V6MXDb_rSp9HS">1.</num>
             <subparagraph xml:id="imp_art_d1e34277_V6MXDb_BtcrKZ">
                 <content xml:id="imp_art_d1e34277_V6MXDb_g2YFMP">
                     <p xml:id="imp_art_d1e34277_V6MXDb_A3K1iq">For calculating the value of exposures for the purposes
-                        of Article 395(1) an institution may use the &apos;fully adjusted exposure value&apos;
+                        of Article 395(1) an institution may use the 'fully adjusted exposure value'
                     </p>
                 </content>
             </subparagraph>

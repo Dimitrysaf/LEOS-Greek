@@ -12,7 +12,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
@@ -21,6 +21,7 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.model.action.SoftActionType.TRANSFORM;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftOrigin;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.moveChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
@@ -68,8 +69,9 @@ public class IndentConversionHelper {
             if (originalItem.getChildItems().isEmpty()) {
                 // For sure, convert it to a single point or single paragraph
                 targetIndentItemType = paragraphIndentLevel ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT;
-            } else if ((originalItem.getChildItems().size() == 1) &&
-                    (beforeIndentItemType.equals(IndentedItemType.FIRST_SUBPOINT) ||
+            } else if ((originalItem.getChildItems().size() == 1
+                    && (!getTagValueFromTocItemVo(originalItem.getChildItemsView().get(0)).equals(LIST) || originalItem.getChildItemsView().get(0).getChildItemsView().size() <= 1))
+                    && (beforeIndentItemType.equals(IndentedItemType.FIRST_SUBPOINT) ||
                             beforeIndentItemType.equals(IndentedItemType.FIRST_SUBPARAGRAPH))) {
                 // Should be converted to a single point
                 targetIndentItemType = paragraphIndentLevel ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT;
@@ -181,13 +183,21 @@ public class IndentConversionHelper {
                 paragraphToCompare = originalItem.getParentItem().getChildItemsView().get(1);
             }
 
-            if (paragraphToCompare != null) {
-                if (DELETE.equals(paragraphToCompare.getNumSoftActionAttr())
+            if (originalItem.getIndentOriginNumId().startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)){
+                if (paragraphToCompare == null){
+                    originalItem.setNumSoftActionAttr(DELETE);
+                } else {
+                    if(DELETE.equals(paragraphToCompare.getNumSoftActionAttr())
+                            || Strings.isNullOrEmpty(paragraphToCompare.getNumber())) {
+                        originalItem.setNumSoftActionAttr(DELETE);
+                    }
+                }
+            } else if (paragraphToCompare != null){
+                //if originalItem does not contains "_deleted". check paragraphToCompare
+                if(DELETE.equals(paragraphToCompare.getNumSoftActionAttr())
                         || Strings.isNullOrEmpty(paragraphToCompare.getNumber())) {
                     originalItem.setNumSoftActionAttr(DELETE);
                 }
-            } else if (originalItem.getIndentOriginNumId().startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)) {
-                originalItem.setNumSoftActionAttr(DELETE);
             }
         }
     }
@@ -201,11 +211,14 @@ public class IndentConversionHelper {
 
         String tagName = getTagValueFromTocItemVo(originalItem);
 
-        if ((tagName.equals(LIST) || tagName.equals(ARTICLE)) && !originalItem.getChildItemsView().isEmpty()) {
+        if (tagName.equals(ARTICLE) && !originalItem.getChildItemsView().isEmpty()) {
             return;
         } else if (tagName.equals(LIST) && originalItem.getChildItemsView().isEmpty()) {
             // It means that there is an empty list that should be removed
             originalItem.getParentItem().removeChildItem(originalItem);
+            originalItem = originalItem.getParentItem();
+            tagName = getTagValueFromTocItemVo(originalItem);
+        } else if (tagName.equals(LIST) && !originalItem.getChildItemsView().isEmpty()) {
             originalItem = originalItem.getParentItem();
             tagName = getTagValueFromTocItemVo(originalItem);
         }
@@ -213,17 +226,17 @@ public class IndentConversionHelper {
             return;
         }
 
-        boolean paragraphLevel = ArrayUtils.contains(PARAGRAPH_LEVEL_ITEMS, tagName);
+        boolean paragraphLevel = isParagraphLevel(originalItem);
         int originalIndentLevel = (originalItem.isIndented()) ? originalItem.getIndentOriginIndentLevel() : getIndentedItemIndentLevel(originalItem);
-        IndentedItemType beforeIndentItemType = tableOfContentProcessor.isFirstElement(originalItem, SUBPOINT) ? IndentedItemType.FIRST_SUBPOINT
-                : tableOfContentProcessor.containsElement(originalItem, SUBPARAGRAPH) ? IndentedItemType.FIRST_SUBPARAGRAPH : paragraphLevel ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT;
+        IndentedItemType beforeIndentItemType = getCurrentIndentedItemType(originalItem);
         IndentedItemType originalIndentItemType = originalItem.getIndentOriginType() == null ? beforeIndentItemType : originalItem.getIndentOriginType();
         IndentedItemType targetIndentItemType;
 
         if (originalItem.getChildItems().isEmpty()) {
             // For sure, convert it to a single point
             targetIndentItemType = paragraphLevel ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT;
-        } else if ((originalItem.getChildItems().size() == 1) &&
+        } else if ((originalItem.getChildItems().size() == 1
+                && (!getTagValueFromTocItemVo(originalItem.getChildItemsView().get(0)).equals(LIST) || originalItem.getChildItemsView().get(0).getChildItemsView().size() <= 1)) &&
                 (beforeIndentItemType.equals(IndentedItemType.FIRST_SUBPOINT) || beforeIndentItemType.equals(IndentedItemType.FIRST_SUBPARAGRAPH)) ) {
             // Should be converted to a single point
             targetIndentItemType = paragraphLevel ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT;
@@ -304,7 +317,11 @@ public class IndentConversionHelper {
             return originalItem;
         } else {
             firstSubelement = originalItem.getChildItems().get(0);
-            if (!getTagValueFromTocItemVo(firstSubelement).equals((notSameKind == toParagraph) ? SUBPOINT : SUBPARAGRAPH)) {
+            if (getTagValueFromTocItemVo(firstSubelement).equals(LIST) && !firstSubelement.getChildItems().isEmpty()) {
+                firstSubelement = firstSubelement.getChildItems().get(0);
+            }
+            if (!getTagValueFromTocItemVo(firstSubelement).equals(SUBPOINT)
+                    && !getTagValueFromTocItemVo(firstSubelement).equals(SUBPARAGRAPH)) {
                 return originalItem;
             }
         }
@@ -321,7 +338,7 @@ public class IndentConversionHelper {
         }
 
         // Ok, checking is done, remove the first subparagraph
-        originalItem.removeChildItem(firstSubelement);
+        firstSubelement.getParentItem().removeChildItem(firstSubelement);
         removeTransformPrefix(originalItem);
         tableOfContentProcessor.convertTocItemContent(originalItem, null, (notSameKind == toParagraph) ? IndentedItemType.FIRST_SUBPOINT : IndentedItemType.FIRST_SUBPARAGRAPH, toParagraph ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT, restored);
         return originalItem;
@@ -351,7 +368,7 @@ public class IndentConversionHelper {
         populateIndentInfoIfNotRestored(originalItem, originalIndentLevel, (notSameKind == toParagraph) ? IndentedItemType.POINT : IndentedItemType.PARAGRAPH, restored);
 
         // Ok, checking is done, convert the point
-        TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? SUBPARAGRAPH : SUBPOINT);
+        TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
         TableOfContentItemVO firstSubelement = buildTransItemFromItem(originalItem);
         handleTransformActionForFirstElements(originalItem, firstSubelement, restored, true);
 
@@ -383,14 +400,18 @@ public class IndentConversionHelper {
                                                                  boolean restored, boolean toParagraph) {
         TableOfContentItemVO firstSubelement;
         TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
-        TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? SUBPARAGRAPH : SUBPOINT);
+        TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
 
         // If it has more than one child or does not contain the subpoint, conversion is not possible
         if (originalItem.getChildItems().isEmpty()) {
             return originalItem;
         } else {
             firstSubelement = originalItem.getChildItems().get(0);
-            if (!getTagValueFromTocItemVo(firstSubelement).equals(toParagraph ? SUBPOINT : SUBPARAGRAPH)) {
+            if (getTagValueFromTocItemVo(firstSubelement).equals(LIST) && !firstSubelement.getChildItems().isEmpty()) {
+                firstSubelement = firstSubelement.getChildItems().get(0);
+            }
+            if (!getTagValueFromTocItemVo(firstSubelement).equals(SUBPOINT)
+                    && !getTagValueFromTocItemVo(firstSubelement).equals(SUBPARAGRAPH)) {
                 return originalItem;
             }
         }
@@ -429,7 +450,7 @@ public class IndentConversionHelper {
 
         removeTransformPrefix(originalItem);
         if (notSameKind) {
-            TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? SUBPARAGRAPH : SUBPOINT);
+            TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
             originalItem.setTocItem(subElementTocItem);
         }
 
@@ -475,7 +496,11 @@ public class IndentConversionHelper {
             return originalItem;
         } else {
             firstSubelement = originalItem.getChildItems().get(0);
-            if (!getTagValueFromTocItemVo(firstSubelement).equals((notSameKind == toParagraph) ? SUBPOINT : SUBPARAGRAPH)) {
+            if (getTagValueFromTocItemVo(firstSubelement).equals(LIST) && !firstSubelement.getChildItems().isEmpty()) {
+                firstSubelement = firstSubelement.getChildItems().get(0);
+            }
+            if (!getTagValueFromTocItemVo(firstSubelement).equals(SUBPOINT)
+                    && !getTagValueFromTocItemVo(firstSubelement).equals(SUBPARAGRAPH)) {
                 return originalItem;
             }
         }
@@ -491,11 +516,11 @@ public class IndentConversionHelper {
         int originalPosition = originalItem.getParentItem().getChildItems().indexOf(originalItem);
         // Parent should be a paragraph here no need to check if it's a list
         originalItem.getParentItem().removeChildItem(originalItem);
-        originalItem.removeChildItem(firstSubelement);
+        firstSubelement.getParentItem().removeChildItem(firstSubelement);
         originalItem.getParentItem().addChildItem(originalPosition, firstSubelement);
 
         if (notSameKind) {
-            TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? SUBPARAGRAPH : SUBPOINT);
+            TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
             firstSubelement.setTocItem(subElementTocItem);
         }
 
@@ -514,7 +539,7 @@ public class IndentConversionHelper {
         populateIndentInfoIfNotRestored(originalItem, originalIndentLevel, (notSameKind == toParagraph) ? IndentedItemType.POINT : IndentedItemType.PARAGRAPH, restored);
 
         // Ok, checking is done, convert the element
-        TocItem subelementTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? SUBPARAGRAPH : SUBPOINT);
+        TocItem subelementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
         originalItem.setTocItem(subelementTocItem);
         // Remove numbering
         removeNumbering(originalItem);
@@ -533,7 +558,7 @@ public class IndentConversionHelper {
         populateIndentInfoIfNotRestored(originalItem, originalIndentLevel, toParagraph ? IndentedItemType.OTHER_SUBPOINT : IndentedItemType.OTHER_SUBPARAGRAPH, restored);
 
         // Ok, checking is done, convert the sub element
-        TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? SUBPARAGRAPH : SUBPOINT);
+        TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
         originalItem.setTocItem(subElementTocItem);
 
         // Remove "transformed" prefix -> For comparaison, id must be the same
@@ -617,16 +642,6 @@ public class IndentConversionHelper {
         }
 
         return startingDepth;
-    }
-
-    private void moveChildren(TableOfContentItemVO source, TableOfContentItemVO target) {
-        List<TableOfContentItemVO> children = new ArrayList<>();
-        children.addAll(source.getChildItems());
-
-        for (TableOfContentItemVO child : children) {
-            source.removeChildItem(child);
-            target.addChildItem(child);
-        }
     }
 
     // While converting to a unumbered element, remove number
@@ -772,5 +787,34 @@ public class IndentConversionHelper {
             destItem.setSoftDateAttr(sourceItem.getSoftDateAttr());
             destItem.setSoftUserAttr(sourceItem.getSoftUserAttr());
         }
+    }
+
+    public boolean isParagraphLevel(TableOfContentItemVO item) {
+        String tagName = getTagValueFromTocItemVo(item);
+        if (tagName.equalsIgnoreCase(PARAGRAPH)) {
+            return true;
+        } else if (tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
+            TableOfContentItemVO parent = item.getParentItem();
+            if (!getTagValueFromTocItemVo(parent).equalsIgnoreCase(POINT)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public IndentedItemType getCurrentIndentedItemType(TableOfContentItemVO item) {
+        boolean paragraphLevel = isParagraphLevel(item);
+        if (paragraphLevel) {
+            return tableOfContentProcessor.containsElement(item, SUBPARAGRAPH) ?
+                    IndentedItemType.FIRST_SUBPARAGRAPH : IndentedItemType.PARAGRAPH;
+        } else {
+            return tableOfContentProcessor.containsElement(item, SUBPARAGRAPH)
+                    || tableOfContentProcessor.containsElement(item, SUBPOINT) ?
+                    IndentedItemType.FIRST_SUBPOINT : IndentedItemType.POINT;
+        }
+    }
+
+    public boolean isUnumberedInAlist(TableOfContentItemVO item) {
+        return Arrays.asList(UNUMBERED_ITEMS).contains(getTagValueFromTocItemVo(item)) && getTagValueFromTocItemVo(item.getParentItem()).equals(LIST);
     }
 }

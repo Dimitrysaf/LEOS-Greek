@@ -20,6 +20,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.buildElement;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isElementContentEqual;
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.isListIntroAndFirstSubpoint;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftAction;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.withPlaceholderPrefix;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.containsNotDeletedElementsInOtherContext;
@@ -66,6 +68,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
@@ -228,6 +231,14 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                 }
                 appendAddedElementContent(context);
                 newContentChildIndex++;
+            }
+            // Case when subparagraph has been moved out of a list, find subparagraph in new context and compare
+            else if (wasIntroOfOtherElement(context.getNewElement(), context.getOldElement()) != null
+                    && !isElementIndented(context.getNewElement())
+                    && !isSoftAction(context.getNewElement().getNode(), SoftActionType.MOVE_FROM)) {
+                    context.setOldElement(wasIntroOfOtherElement(context.getNewElement(), context.getOldElement()));
+                    compareElementContents(context);
+                    newContentChildIndex++;
             } else if (newContentChildIndex == context.getIndexOfOldElementInNewContent()
                     && (!context.getDisplayRemovedContentAsReadOnly()
                     || (shouldCompareElements(context.getOldElement(), context.getNewElement())
@@ -307,15 +318,21 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         } else {
                             compareElementContents(new ContentComparatorContext.Builder(context)
                                     .withOldElement(context.getOldElement().getChildren().get(0))
+                                    .withStartTagAttrName(context.getAttrName())
+                                    .withStartTagAttrValue(context.getAddedValue())
                                     .build());
                         }
                         oldContentChildIndex++;
                         newContentChildIndex++;
                     } else if (oldContentChildIndex == newContentChildIndex) {
-                        if (isList(context.getOldElement()) && isList(context.getNewElement())
+                        /*if (isList(context.getOldElement()) && isList(context.getNewElement())
                                 && hasIndentedChild(context.getNewElement())
                                 && context.getNewElement().getParent().getTagId().equals(context.getOldElement().getParent().getTagId())) {
                             compareElementContents(context);
+                        }*/
+                        if (getIntroFromFirstList(context.getNewElement()) != null && context.getOldElement().getTagName().equals(XmlHelper.CONTENT)) {
+                            appendRemovedElementContentIfRequired(context);
+                            appendAddedElementContentIfRequired(context);
                         } else {
                             appendAddedElementContentIfRequired(context);
                             appendRemovedElementContentIfRequired(context);
@@ -456,6 +473,10 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         continue; //skip to next iteration till deleted content is fully displayed
                     }
                 }
+                // Checks if list introduction has been removed in next list
+                if (oldContentChildIndex == newContentIndexForChildren) {
+                    manageNextListWithRemovedIntro(context, newElementChild);
+                }
                 if(!shouldIgnoreElement(newElementChild)) {
                     appendAddedElementContent(context.setIndexOfOldElementInNewContent(newContentIndexForChildren).setNewElement(newElementChild));
                 } else if (shouldIgnoreElement(newElementChild) && hasIndentedChild(context.getNewContentRoot())) {
@@ -521,7 +542,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                     node = buildNodeForAddedElement(context);
                 } else if(shouldIgnoreElement(context.getNewElement())) {
                     node = buildNodeForRemovedElement(context.getNewElement(), context, context.getIntermediateContentElements());
-                } else if (isActionRoot(node)) {
+                } else if (isActionRoot(node) || (isListIntroAndFirstSubpoint(context.getNewElement()) && isActionRoot(node.getParentNode().getParentNode()))) {
                     node = buildNodeForAddedElement(context);
                 } else if (context.getOldElement() == null && !shouldIgnoreElement(context.getNewElement()) && !shouldIgnoreElement(context.getIntermediateElement())) { //build start tag for added element in intermediate
                     node = buildNodeForAddedElement(context);
@@ -704,10 +725,17 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
     }
 
     protected boolean isElementInItsOriginalPosition(Element element) {
-        return element == null ||
-                (!isSoftAction(element.getNode(), SoftActionType.ADD)
-                        && !isSoftAction(element.getNode(), SoftActionType.TRANSFORM)
-                        && !isSoftAction(element.getNode(), SoftActionType.MOVE_FROM));
+        if (element != null &&
+                (isSoftAction(element.getNode(), SoftActionType.ADD)
+                        || isSoftAction(element.getNode(), SoftActionType.TRANSFORM)
+                        || isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
+            return false;
+        } else if (isListIntroAndFirstSubpoint(element)) {
+            return (!isSoftAction(element.getParent().getParent().getNode(), SoftActionType.ADD)
+                    && !isSoftAction(element.getParent().getParent().getNode(), SoftActionType.TRANSFORM)
+                    && !isSoftAction(element.getParent().getParent().getNode(), SoftActionType.MOVE_FROM));
+        }
+        return true;
     }
 
     protected boolean isElementMovedOrTransformed(Element element) {
@@ -1188,5 +1216,49 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
     @Override
     public String[] twoColumnsCompareContents(ContentComparatorContext context) {
         return new String[]{context.getLeftResultBuilder().toString(), context.getRightResultBuilder().toString()};
+    }
+
+    protected void manageNextListWithRemovedIntro(ContentComparatorContext context, Element newElementChild) {
+    }
+
+    public boolean isListWrapping(Element element) {
+        return (element != null
+                && element.getTagName().equals(XmlHelper.SUBPARAGRAPH));
+    }
+
+    public Element getIntroFromFirstList(Element element) {
+        if (element.getTagName().equals(XmlHelper.LIST) && !element.getChildren().isEmpty() && isIntroFromFirstList(element.getChildren().get(0))) {
+            return element.getChildren().get(0);
+        }
+        return null;
+    }
+
+    public boolean isIntroFromFirstList(Element element) {
+        if (element != null && element.getTagName().equals(SUBPARAGRAPH)) {
+            boolean isFirstElement = false;
+            int index = element.getParent().getParent().getChildren().indexOf(element.getParent());
+            isFirstElement = (index == 0) || (index == 1 && element.getParent().getParent().getChildren().get(0).getTagName().equals(NUM));
+            return (isFirstElement
+                    && !element.getParent().getParent().equals(XmlHelper.LEVEL)
+                    && ComparisonHelper.isListIntro(element));
+        }
+        return false;
+    }
+
+    public Element wasIntroOfOtherElement(Element element, Element otherElement) {
+        if (element.getTagName().equalsIgnoreCase(XmlHelper.SUBPARAGRAPH)) {
+            if (otherElement.getTagName().equalsIgnoreCase(XmlHelper.LIST)) {
+                List<Element> children = otherElement.getChildren();
+                for (Element child : children) {
+                    if (!child.getTagName().equals(SUBPARAGRAPH)) {
+                        return null;
+                    }
+                    if (child.getTagId().equals(element.getTagId())) {
+                        return child;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

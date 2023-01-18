@@ -39,9 +39,7 @@ import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
-import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
@@ -163,7 +161,6 @@ import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
-import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -183,7 +180,6 @@ import eu.europa.ec.leos.web.event.view.document.ReferenceLabelRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.ReferenceLabelResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshContributionEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
-import eu.europa.ec.leos.web.event.view.document.RenumberingEvent;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.ResponseFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
@@ -683,31 +679,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
         }
     }
 
-    @Subscribe
-    void confirmRenumberDocument(ConfirmRenumberingEvent event) {
-        annexScreen.confirmRenumberDocument();
-    }
-
-    @Subscribe
-    void renumberDocument(RenumberingEvent event) {
-
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        final Annex annex = getDocument();
-
-        AnnexStructureType structureType = getStructureType();
-        final byte[] newXmlContent = annexProcessor.renumberDocument(annex, structureType);
-
-        final String title = messageHelper.getMessage("operation.element.document_renumbered");
-        final String description = messageHelper.getMessage("operation.checkin.minor");
-        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.DOCUMENT_RENUMBERED));
-        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-
-        updateAnnexContent(annex, newXmlContent, checkinCommentJson, "document.renumbered");
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
-        LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-
-    }
-
     private void createDocuWritePackageForExport(ExportOptions exportOptions) throws Exception {
         final String proposalId = this.getContextProposalId();
         exportOptions.setDocuwrite(true);
@@ -831,12 +802,10 @@ class AnnexPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LogUtil.logError(LOG, eventBus, "Unexpected error occurred while generating Export Package", e);
         } finally {
-            if (exportDocument != null) {
-                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
-                if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
-                    leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
-                }
+            exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+            if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
+                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
             }
         }
     }
@@ -1189,15 +1158,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
             case SUBPARAGRAPH:
             case CONTENT:
             case SUBPOINT:
-                return elementContent.contains("<" + elementTagName);
+                return elementContent.contains("<" + elementTagName + ">") || StringUtils.countMatches(elementContent, "<" + elementTagName) > 1;
             case PARAGRAPH:
                 return elementContent.contains("<paragraph") || elementContent.contains("<subparagraph");
             case LEVEL:
                 return elementContent.contains("<level") || elementContent.contains("<subparagraph");
             case POINT:
-                return elementContent.contains("<alinea");
             case INDENT:
-                return elementContent.contains("<alinea");
+                return elementContent.contains("<subparagraph>");
             default:
                 return false;
         }

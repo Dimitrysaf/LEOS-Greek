@@ -264,7 +264,7 @@ define(function aknLevelSubParagraphPluginModule(require) {
                 html : "data-akn-attr-softdate"
             }]
         },
-        rootElementsForFrom: ["level"],
+        rootElementsForFrom: ["subparagraph"],
         contentWrapperForFrom: "subparagraph",
         rootElementsForTo: ["li"]
     });

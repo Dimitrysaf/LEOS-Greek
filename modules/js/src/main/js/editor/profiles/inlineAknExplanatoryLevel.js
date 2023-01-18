@@ -30,7 +30,6 @@ define(function aknExplanatoryLevelProfileModule(require) {
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
     plugins.push(require("plugins/aknHtmlExplanatoryHeadingAlign/aknHtmlExplanatoryHeadingAlignPlugin"));
-    plugins.push(require("plugins/aknExplanatoryLevel/aknExplanatoryLevelPlugin"));
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
@@ -67,6 +66,7 @@ define(function aknExplanatoryLevelProfileModule(require) {
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
     plugins.push(require("plugins/aknHtmlStrikeThrough/aknHtmlStrikeThroughPlugin"));
     plugins.push(require("plugins/aknHeading/aknHeadingPlugin"));
+    plugins.push(require("plugins/aknExplanatoryLevel/aknExplanatoryLevelPlugin"));
 
     var pluginNames=[];
     var specificConfig={

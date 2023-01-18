@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.processor.content.indent;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -27,6 +28,9 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_FROM;
 import static eu.europa.ec.leos.model.action.SoftActionType.TRANSFORM;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftOrigin;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.listHasAConclusion;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.listHasAnIntro;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.manageListContainingOnlySubpoints;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
@@ -36,7 +40,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_ITEMS;
-import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.PARAGRAPH_LEVEL_ITEMS;
 import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.UNUMBERED_ITEMS;
 
 @Component
@@ -58,12 +61,18 @@ public class IndentApplyRules {
             // If indent, children should become children of the new indented item parent (if not numbered)
 
             // We should skip the first child (= first subpoint) because it contains the point's content
-            int startPosition = 1;
+            int startPosition = getTagValueFromTocItemVo(indentedItem.getChildItemsView().get(0)).equals(SUBPARAGRAPH) ? 1 : 0;
 
             List<TableOfContentItemVO> children = buildNewListBeforeMoving(indentedItem, 0);
 
             for (int i = startPosition; i < children.size(); i++) {
                 TableOfContentItemVO child = children.get(i);
+                // Move the intro with indented item
+                if (listHasAnIntro(child) && i == 0) {
+                    TableOfContentItemVO intro = child.getChildItemsView().get(0);
+                    intro.getParentItem().removeChildItem(intro);
+                    indentedItem.addChildItem(i, intro);
+                }
                 if (i == startPosition && getTagValueFromTocItemVo(child).equals(LIST) && !indentChildrenParent.getChildItemsView().isEmpty()) {
                     TableOfContentItemVO lastChild = indentChildrenParent.getChildItemsView().get(indentChildrenParent.getChildItemsView().size() - 1);
                     if (getTagValueFromTocItemVo(lastChild).equals(LIST)) {
@@ -90,12 +99,13 @@ public class IndentApplyRules {
         } else if (IndentRules.getOutdentChildrenRule().equals(IndentRules.ChildrenRule.FIRST)) {
             // If outdented, only the first item of a list is outdented
             if (isNumbered) {
-                List<TableOfContentItemVO> children = buildNewListBeforeMoving(indentedItem, 1);
+                List<TableOfContentItemVO> children = buildSortedNewListBeforeMoving(indentedItem, 0);
                 applyOutdentRuleForFirstChild(children, tocItems, numberingConfigs, lastCycle);
             } else {
                 // If not numbered, children are children of target
                 // We should skip the first child because it contains the point's content (first subpoint)
-                List<TableOfContentItemVO> children = buildNewListBeforeMoving(indentedItem, 1);
+                manageIntroInFirstList(indentedItem);
+                List<TableOfContentItemVO> children = buildSortedNewListBeforeMoving(indentedItem, 0);
                 int index = targetPosition + 1;
 
                 // Try to find a good list candidate
@@ -133,6 +143,7 @@ public class IndentApplyRules {
     Pair<TableOfContentItemVO, Integer> applyOutdentRulesToSiblings(final TableOfContentItemVO indentedItem, final TableOfContentItemVO targetItem
             , boolean isNumbered, int targetPosition, int originalIndentLevel, final List<TableOfContentItemVO> nextSiblings, TableOfContentItemVO originalParent
             ,List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, final boolean lastCycle) {
+        TableOfContentItemVO parentOfSiblings = nextSiblings.get(0).getParentItem();
         if (isNumbered) {
             TableOfContentItemVO lastChild = (indentedItem.getChildItems().size() > 0) ? indentedItem.getChildItemsView().get(indentedItem.getChildItems().size() -1 ) : null;
             for (int i = 0; i < nextSiblings.size(); i++) {
@@ -235,6 +246,7 @@ public class IndentApplyRules {
         if (originalIndentLevel > getTargetIndentLevel(targetItem)) {
             applyOutdentRuleForFirstChild(nextSiblings, tocItems, numberingConfigs, lastCycle);
         }
+        manageListContainingOnlySubpoints(parentOfSiblings);
 
         return new Pair<>(originalParent, targetPosition);
     }
@@ -258,37 +270,39 @@ public class IndentApplyRules {
                 for (int i = 0; i < listPosition; i++) {
                     // Convert subpoints to subparagraphs or subpoints to subparagraphs before list
                     TableOfContentItemVO item = items.get(i);
+                    int originalIndentLevel = indentConversionHelper.getIndentedItemIndentLevel(item) + 1;
                     if (!getTagValueFromTocItemVo(item).equals(LEVEL)) {
-                        item.populateIndentInfo(getTagValueFromTocItemVo(item).equals(SUBPARAGRAPH) ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
-                                , indentConversionHelper.getIndentedItemIndentLevel(item) + 1
+                        item.populateIndentInfo(originalIndentLevel <= 1 ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
+                                , originalIndentLevel
                                 , item.getElementNumberId()
                                 , item.getNumber()
                                 , item.getOriginNumAttr());
                     }
                     indentConversionHelper.convertIndentedItem(tocItems, item, false
-                            , getTagValueFromTocItemVo(item).equals(SUBPARAGRAPH) ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
-                            , indentConversionHelper.getIndentedItemIndentLevel(item) + 1
+                            , originalIndentLevel <= 1 ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
+                            , originalIndentLevel
                             , false);
                 }
             }
-            firstItemOfTheFirstList = firstList.getChildItemsView().get(0);
+            firstItemOfTheFirstList = TableOfContentHelper.getFirstChildWithTagName(firstList, Arrays.asList(NUMBERED_ITEMS));
             sizeOfFirstList = firstList.getChildItems().size();
         } else if (firstList == null && items.size() >= 1 && getTagValueFromTocItemVo(items.get(0).getParentItem()).equals(LIST)) {
-            firstItemOfTheFirstList = items.get(0);
+            firstItemOfTheFirstList = TableOfContentHelper.getFirstChildWithTagName(items.get(0).getParentItem(), Arrays.asList(NUMBERED_ITEMS));
             sizeOfFirstList = items.size();
         }
         if (firstItemOfTheFirstList == null && items.size() >= 1) {
             // Means that there are only subparagraphs or subpoints
             for (TableOfContentItemVO item : items) {
+                int originalIndentLevel = indentConversionHelper.getIndentedItemIndentLevel(item) + 1;
                 if (!getTagValueFromTocItemVo(item).equals(LEVEL)) {
-                    item.populateIndentInfo(getTagValueFromTocItemVo(item).equals(SUBPARAGRAPH) ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
+                    item.populateIndentInfo(originalIndentLevel <= 1 ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
                             , indentConversionHelper.getIndentedItemIndentLevel(item) + 1
                             , item.getElementNumberId()
                             , item.getNumber()
                             , item.getOriginNumAttr());
                 }
                 indentConversionHelper.convertIndentedItem(tocItems, item, false
-                        , getTagValueFromTocItemVo(item).equals(SUBPARAGRAPH) ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
+                        , originalIndentLevel <= 1 ? IndentedItemType.OTHER_SUBPARAGRAPH : IndentedItemType.OTHER_SUBPOINT
                         , indentConversionHelper.getIndentedItemIndentLevel(item) + 1
                         , false);
             }
@@ -317,7 +331,7 @@ public class IndentApplyRules {
                 if (tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList,SUBPOINT)
                         || tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList,SUBPARAGRAPH)) {
                     TableOfContentItemVO child = null;
-                    while ((child == null || getTagValueFromTocItemVo(child).equals(SUBPOINT)) && index < firstItemOfTheFirstList.getChildItemsView().size()) {
+                    while ((child == null || Arrays.asList(UNUMBERED_ITEMS).contains(getTagValueFromTocItemVo(child))) && index < firstItemOfTheFirstList.getChildItemsView().size()) {
                         child = firstItemOfTheFirstList.getChildItemsView().get(index);
                         index++;
                     }
@@ -326,22 +340,18 @@ public class IndentApplyRules {
                 listOfThefirstItemOfTheFirstList = newList;
             }
             if (listOfThefirstItemOfTheFirstList != null) {
-                nextChildren = buildNewListBeforeMoving(listOfThefirstItemOfTheFirstList, 0);
+                nextChildren = buildSortedNewListBeforeMoving(listOfThefirstItemOfTheFirstList, 0);
                 if (firstList != null) {
                     moveFromOneListToAnother(firstList, listOfThefirstItemOfTheFirstList, 1);
+                    manageListContainingOnlySubpoints(firstList);
                 } else {
-                    moveFromOneListToAnother(items.subList(1, items.size()), listOfThefirstItemOfTheFirstList);
+                    List<TableOfContentItemVO> sortedItems = skipFirstSubParagraphFromList(items);
+                    moveFromOneListToAnother(sortedItems.subList(1, sortedItems.size()), listOfThefirstItemOfTheFirstList);
                 }
                 checkListOrigin(listOfThefirstItemOfTheFirstList);
             }
         }
-        boolean paragraphLevel = ArrayUtils.contains(PARAGRAPH_LEVEL_ITEMS, getTagValueFromTocItemVo(firstItemOfTheFirstList));
-        IndentedItemType beforeIndentedItemType;
-        if (paragraphLevel) {
-            beforeIndentedItemType = tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList,SUBPARAGRAPH) ? IndentedItemType.FIRST_SUBPARAGRAPH : IndentedItemType.PARAGRAPH;
-        } else {
-            beforeIndentedItemType = tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList,SUBPOINT) ? IndentedItemType.FIRST_SUBPOINT : IndentedItemType.POINT;
-        }
+        IndentedItemType beforeIndentedItemType = indentConversionHelper.getCurrentIndentedItemType(firstItemOfTheFirstList);
         if (!getTagValueFromTocItemVo(firstItemOfTheFirstList).equals(LEVEL)) {
             firstItemOfTheFirstList.populateIndentInfo(beforeIndentedItemType
                     , indentConversionHelper.getIndentedItemIndentLevel(firstItemOfTheFirstList) + 1
@@ -353,7 +363,9 @@ public class IndentApplyRules {
         int firstItemListPosition;
         Pair<TableOfContentItemVO, Boolean> result = new Pair<>(firstItemOfTheFirstList, false);
         if (sizeOfFirstList <= 1 && (listPosition < items.size() - 1)) {
-            if (!paragraphLevel && !tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList, SUBPOINT)) {
+            boolean paragraphLevel = indentConversionHelper.isParagraphLevel(firstItemOfTheFirstList);
+            if (!paragraphLevel && (!tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList,SUBPOINT)
+                    && !tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList,SUBPARAGRAPH))) {
                 result = indentConversionHelper.forceBuildFirstSubpointFromPoint(tocItems, firstItemOfTheFirstList
                         , indentConversionHelper.getIndentedItemIndentLevel(firstItemOfTheFirstList) + 1);
             } else if (paragraphLevel && !tableOfContentProcessor.isFirstElement(firstItemOfTheFirstList, SUBPARAGRAPH)) {
@@ -447,14 +459,22 @@ public class IndentApplyRules {
 
     List<TableOfContentItemVO> buildNewListBeforeMoving(TableOfContentItemVO source, int startingIndex) {
         List<TableOfContentItemVO> children = new ArrayList<>();
-        if (source.getChildItems().size() > startingIndex) {
-            children.addAll(source.getChildItems().subList(startingIndex, source.getChildItems().size()));
+        if (source.getChildItemsView().size() >= startingIndex) {
+            children.addAll(source.getChildItemsView().subList(startingIndex, source.getChildItemsView().size()));
+        }
+        return children;
+    }
+
+    List<TableOfContentItemVO> buildSortedNewListBeforeMoving(TableOfContentItemVO source, int startingIndex) {
+        List<TableOfContentItemVO> children = skipFirstSubParagraphFromList(source);
+        if (children.size() >= startingIndex) {
+            children = children.subList(startingIndex, children.size());
         }
         return children;
     }
 
     void moveFromOneListToAnother(TableOfContentItemVO source, TableOfContentItemVO target, int startingIndex) {
-        List<TableOfContentItemVO> children = buildNewListBeforeMoving(source, startingIndex);
+        List<TableOfContentItemVO> children = buildSortedNewListBeforeMoving(source, startingIndex);
         moveFromOneListToAnother(children, target);
     }
 
@@ -466,6 +486,10 @@ public class IndentApplyRules {
     }
 
     void mergeTwoLists(TableOfContentItemVO primeList, TableOfContentItemVO secondList) {
+        if (!previousListCanBeMerged(primeList) && !nextListCanBeMerged(secondList)) {
+            return;
+        }
+
         if (primeList.getNode() == null) {
             primeList.setNode(secondList.getNode());
             primeList.setId(secondList.getId());
@@ -479,9 +503,13 @@ public class IndentApplyRules {
         } else if (hasTocItemSoftOrigin(primeList, CN) && hasTocItemSoftOrigin(secondList, EC)) {
             primeList.setOriginAttr(secondList.getOriginAttr());
         }
-        secondList.getParentItem().removeChildItem(secondList);
-
-        moveFromOneListToAnother(secondList, primeList, 0);
+        if (listCanBeMerged(secondList)) {
+            secondList.getParentItem().removeChildItem(secondList);
+            moveFromOneListToAnother(secondList, primeList, 0);
+        } else {
+            moveFromOneListToAnother(secondList, primeList, 0);
+            manageListContainingOnlySubpoints(secondList);
+        }
     }
 
     TableOfContentItemVO buildEmptyList(List<TocItem> tocItems) {
@@ -565,6 +593,61 @@ public class IndentApplyRules {
             item.setElementNumberId(item.getIndentOriginNumId());
         } else if (newDepth == item.getIndentOriginIndentLevel() && restored) {
             item.setIndentOriginType(IndentedItemType.RESTORED);
+        }
+    }
+
+    TableOfContentItemVO getLastChildWithTagName(TableOfContentItemVO item, List<String> tagNames) {
+        for (int i = item.getChildItemsView().size()-1; i>=0; i--) {
+            TableOfContentItemVO child = item.getChildItemsView().get(i);
+            if (tagNames.contains(getTagValueFromTocItemVo(child))) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    List<TableOfContentItemVO> skipFirstSubParagraphFromList(TableOfContentItemVO item) {
+        List<TableOfContentItemVO> children = new ArrayList<>();
+        if (!item.getChildItemsView().isEmpty() && Arrays.asList(UNUMBERED_ITEMS).contains(getTagValueFromTocItemVo(item.getChildItemsView().get(0)))) {
+            children.addAll(item.getChildItemsView().subList(1, item.getChildItemsView().size()));
+        } else {
+            children.addAll(item.getChildItemsView());
+        }
+        return children;
+    }
+
+    List<TableOfContentItemVO> skipFirstSubParagraphFromList(List<TableOfContentItemVO> items) {
+        List<TableOfContentItemVO> children = new ArrayList<>();
+        if (!items.isEmpty() && Arrays.asList(UNUMBERED_ITEMS).contains(getTagValueFromTocItemVo(items.get(0)))) {
+            children.addAll(items.subList(1, items.size()));
+        } else {
+            children.addAll(items);
+        }
+        return children;
+    }
+
+    boolean listCanBeMerged(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(LIST)
+                && (item.getChildItemsView().isEmpty()
+                || (!getTagValueFromTocItemVo(item.getChildItemsView().get(0)).equals(SUBPARAGRAPH)
+                && !getTagValueFromTocItemVo(item.getChildItemsView().get(item.getChildItemsView().size() - 1)).equals(SUBPARAGRAPH)));
+    }
+
+    boolean previousListCanBeMerged(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(LIST) && !listHasAConclusion(item);
+    }
+
+    boolean nextListCanBeMerged(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(LIST) && !listHasAnIntro(item);
+    }
+
+    void manageIntroInFirstList(TableOfContentItemVO item) {
+        List<TableOfContentItemVO> children = item.getChildItemsView();
+        TableOfContentItemVO firstChild = children.isEmpty() ? null : children.get(0);
+        if (listHasAnIntro(firstChild)) {
+            TableOfContentItemVO intro = firstChild.getChildItemsView().get(0);
+            intro.getParentItem().removeChildItem(intro);
+            item.addChildItem(0 ,intro);
         }
     }
 }

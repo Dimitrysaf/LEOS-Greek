@@ -11,25 +11,17 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                     leos:softdate="2022-06-17T11:22:21.847+02:00" leos:softuser="demo jane(Ext)"
-                     xml:id="_akn_article_4PnQBg">
+            <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:22:21.847+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_article_4PnQBg">
                 <num leos:editable="false" leos:origin="cn">#</num>
                 <heading>Article heading...</heading>
-                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                           leos:softdate="2022-06-17T11:22:21.847+02:00" leos:softuser="demo jane(Ext)"
-                           xml:id="_akn_paragraph_wa0JpA">
+                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:22:21.847+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_paragraph_wa0JpA">
                     <num leos:editable="false" leos:origin="cn">#</num>
-                    <subparagraph leos:softaction="add" leos:softactionroot="true"
-                                  leos:softdate="2022-06-17T11:22:21.847+02:00" leos:softuser="demo jane(Ext)"
-                                  xml:id="_akn_subparagraph_8s3PYG">
+                    <subparagraph leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:22:21.847+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_subparagraph_8s3PYG">
                         <content>
                             <p>Text...</p>
                         </content>
                     </subparagraph>
-                    <subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                                  leos:softdate="2022-06-17T11:22:21.832+02:00" leos:softuser="demo jane(Ext)"
-                                  xml:id="_akn_subparagraph_7gTeFq">
+                    <subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:22:21.832+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_subparagraph_7gTeFq">
                         <content>
                             <p>Text...</p>
                         </content>

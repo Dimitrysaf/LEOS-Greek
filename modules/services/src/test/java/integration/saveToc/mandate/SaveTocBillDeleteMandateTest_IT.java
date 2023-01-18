@@ -22,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.List;
 
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO body = getElementById(toc, "body");
-        body.removeChildItem(getElementById(toc, "art_1"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_1"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -73,9 +74,9 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO body = getElementById(toc, "body");
-        body.removeChildItem(getElementById(toc, "art_2"));
-        body.removeChildItem(getElementById(toc, "art_3"));
-        body.removeChildItem(getElementById(toc, "art_4"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_2"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_3"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_4"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -99,7 +100,7 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO body = getElementById(toc, "body");
-        body.removeChildItem(getElementById(toc, "art_2"));
+        TableOfContentHelper.removeChildItem(body, getElementById(toc, "art_2"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -124,7 +125,7 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO listElement = getElementById(toc, "art_2_par_1_list_1");
-        listElement.removeChildItem(getElementById(toc, "art_2_par_1_new_point_1"));
+        TableOfContentHelper.removeChildItem(listElement, getElementById(toc, "art_2_par_1_new_point_1"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -148,7 +149,7 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO paragraph = getElementById(toc, "art_2_par_1");
-        paragraph.removeChildItem(getElementById(toc, "art_2_par_1_list_1"));
+        TableOfContentHelper.removeChildItem(paragraph, getElementById(toc, "art_2_par_1_list_1"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
@@ -172,7 +173,7 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO listElement = getElementById(toc, "art_1_par_1_list_1");
-        listElement.removeChildItem(getElementById(toc, "art_1_par_1_point_1"));
+        TableOfContentHelper.removeChildItem(listElement, getElementById(toc, "art_1_par_1_point_1"));
 
         // When
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);

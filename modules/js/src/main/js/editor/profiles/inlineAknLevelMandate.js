@@ -29,7 +29,6 @@ define(function aknLevelMandateProfileModule(require) {
     plugins.push(require("plugins/aknHtmlAnchor/aknHtmlAnchorPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
-    plugins.push(require("plugins/aknLevelMandate/aknLevelMandatePlugin"));
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
@@ -61,6 +60,7 @@ define(function aknLevelMandateProfileModule(require) {
     plugins.push(require("plugins/leosAnnexOrderedList/leosAnnexOrderedListPlugin"));
     plugins.push(require("plugins/leosAnnexList/leosAnnexListPlugin"));
     plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
+    plugins.push(require("plugins/aknLevelMandate/aknLevelMandatePlugin"));
 
     var pluginNames=[];
     var specificConfig={

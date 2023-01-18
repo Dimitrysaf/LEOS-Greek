@@ -46,12 +46,12 @@
                 <list leos:origin="cn" xml:id="lis_TFii2E">
                     <point xml:id="akn_EZas6o">
                         <num xml:id="akn_cWfvQa">#</num>
-                        <alinea xml:id="akn_alinea_gNRfcY">
+                        
+                        <list leos:origin="cn" xml:id="lis_DC8vLq"><subparagraph refersTo="~_INP" xml:id="akn_alinea_gNRfcY">
                             <content xml:id="akn_hv7ptL">
                                 <p xml:id="akn_CxpeEp">Should be (a)</p>
                             </content>
-                        </alinea>
-                        <list leos:origin="cn" xml:id="lis_DC8vLq">
+                        </subparagraph>
                             <point xml:id="akn_point_kiE2ol">
                                 <num xml:id="akn_qZcnXD">#</num>
                                 <content xml:id="akn_Mq65nZ">
@@ -60,12 +60,12 @@
                             </point>
                             <point xml:id="akn_FlZMbb">
                                 <num xml:id="akn_e425K4">#</num>
-                                <alinea xml:id="akn_alinea_clAXNs">
+                                
+                                <list leos:origin="cn" xml:id="lis_d6McQH"><subparagraph refersTo="~_INP" xml:id="akn_alinea_clAXNs">
                                     <content xml:id="akn_RwAxg5">
                                         <p xml:id="akn_D0LNAr">Should be (ii)</p>
                                     </content>
-                                </alinea>
-                                <list leos:origin="cn" xml:id="lis_d6McQH">
+                                </subparagraph>
                                     <point xml:id="akn_point_2jDdbY">
                                         <num xml:id="akn_AauD1n">#</num>
                                         <content xml:id="akn_ME2w0r">
@@ -92,12 +92,12 @@
             </level>
             <level leos:depth="1" xml:id="body_level_2">
                 <num xml:id="body_level_2_num">#</num>
-                <subparagraph xml:id="akn_subparagraph_SzvtsL">
+                
+                <list leos:origin="cn" xml:id="lis_s5JJGx"><subparagraph refersTo="~_INP" xml:id="akn_subparagraph_SzvtsL">
                     <content xml:id="body_level_2_content">
                         <p xml:id="body_level_2_content_p">Should be 2.</p>
                     </content>
                 </subparagraph>
-                <list leos:origin="cn" xml:id="lis_s5JJGx">
                     <indent xml:id="akn_point_eqJUpl">
                         <num xml:id="akn_VRGqhU">#</num>
                         <content xml:id="akn_lQW3Q9">
@@ -120,12 +120,12 @@
             </division>
             <level leos:depth="2" xml:id="body_level_2_1">
                 <num xml:id="body_level__2_1_num">#</num>
-                <subparagraph xml:id="akn_subparagraph__2_1SzvtsL">
+                
+                <list leos:origin="cn" xml:id="lis__2_1s5JJGx"><subparagraph refersTo="~_INP" xml:id="akn_subparagraph__2_1SzvtsL">
                     <content xml:id="body_level__2_1_content">
                         <p xml:id="body_level__2_1_content_p">Should be 2.1</p>
                     </content>
                 </subparagraph>
-                <list leos:origin="cn" xml:id="lis__2_1s5JJGx">
                     <point xml:id="akn_point_2_1_eqJUpl">
                         <num xml:id="akn_2_1_VRGqhU">#</num>
                         <content xml:id="akn_2_1_lQW3Q9">

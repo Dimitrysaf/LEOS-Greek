@@ -85,6 +85,9 @@ $LIST_SPACING: 40px;
             @extend %padList;
         }
     }
+    point > .cke_editable > ol[data-akn-name=aknSubParagraphMandate] {
+        padding-left: $LIST_SPACING;
+    }
 }
 
 //------------------------------- Editor Styles -----------------------------//
@@ -109,11 +112,17 @@ $LIST_SPACING: 40px;
 }
     
 %editorList {
+    ol[data-akn-name=aknAnnexOrderedList] > li[data-akn-element=subparagraph]:first-child {
+        margin-top: -7px;
+    }
+    li[data-akn-element=paragraph]:not([data-akn-num]) > ol[data-akn-name=aknAnnexOrderedList] > li[data-akn-element=subparagraph]:first-child {
+        margin-left: -40px;
+    }
+
     ol[data-akn-name=aknAnnexList],
     ol[data-akn-name=aknOrderedList],
     ol[data-akn-name=aknSubParagraphMandate],
     ol[data-akn-name=aknPointMandateOrderedList],
-    ol[data-akn-name=aknAlineaMandate],
     ol[data-akn-name=aknAnnexOrderedList],
     ul[data-akn-name=UnNumberedBlockList],
     ol[data-akn-name=NumberedBlockList],
@@ -142,6 +151,11 @@ $LIST_SPACING: 40px;
             }
         }
     }
+
+    ol[data-akn-name=aknAnnexOrderedList] {
+        padding-bottom: 7px;
+    }
+
     ol[data-akn-depth="5"],ol[data-akn-depth="6"],ol[data-akn-depth="7"] {
         & > li[data-akn-num] {
             &:before {
@@ -149,17 +163,12 @@ $LIST_SPACING: 40px;
             }
         }
     }
+
     ol[data-akn-depth="1"],ol[data-akn-depth="2"],ol[data-akn-depth="3"],ol[data-akn-depth="4"] {
         & > li[data-akn-num] {
             &:before {
                 min-width: 67px
             }
-        }
-    }
-
-    ol[data-akn-name=aknAlineaMandate]{
-        & > li {
-            padding-left: $LIST_SPACING;
         }
     }
 

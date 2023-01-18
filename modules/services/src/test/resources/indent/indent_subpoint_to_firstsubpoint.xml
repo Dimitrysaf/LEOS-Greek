@@ -12,14 +12,14 @@
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="art_1_GqEOBU">
                     <num leos:origin="ec" xml:id="art_1_Woc735">2.</num>
-                    <subparagraph leos:origin="ec" xml:id="art_1_MU1hKr">
-                        <content leos:origin="ec" xml:id="art_1_fCeC1t">
-                            <p leos:origin="ec" xml:id="art_1_NT9OhJ">Example --
-                                <b leos:origin="ec" xml:id="art_1_Klz48x">Point (c) indented</b>
-                            </p>
-                        </content>
-                    </subparagraph>
                     <list leos:origin="ec" xml:id="art_1_Wnl7op">
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_MU1hKr">
+                            <content leos:origin="ec" xml:id="art_1_fCeC1t">
+                                <p leos:origin="ec" xml:id="art_1_NT9OhJ">Example --
+                                    <b leos:origin="ec" xml:id="art_1_Klz48x">Point (c) indented</b>
+                                </p>
+                            </content>
+                        </subparagraph>
                         <point leos:origin="ec" xml:id="art_1_urNCcV">
                             <num leos:origin="ec" xml:id="art_1_gFkBde">(a)</num>
                             <content leos:origin="ec" xml:id="art_1_Qzmsjc">
@@ -34,12 +34,12 @@
                         </point>
                         <point leos:origin="ec" xml:id="art_1_ZzykdM">
                             <num leos:origin="ec" xml:id="art_1_koxWzM">(c)</num>
-                            <alinea leos:origin="ec" xml:id="art_1_78ndzv">
-                                <content leos:origin="ec" xml:id="art_1_EzAUvo">
-                                    <p leos:origin="ec" xml:id="art_1_17jvrP">'import of cultural goods' means:</p>
-                                </content>
-                            </alinea>
                             <list leos:origin="ec" xml:id="art_1_bQW8O7">
+                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_78ndzv">
+                                    <content leos:origin="ec" xml:id="art_1_EzAUvo">
+                                        <p leos:origin="ec" xml:id="art_1_17jvrP">'import of cultural goods' means:</p>
+                                    </content>
+                                </subparagraph>
                                 <point leos:origin="ec" xml:id="art_1_azxVUY">
                                     <num leos:origin="ec" xml:id="art_1_8G6jeY">(i)</num>
                                     <content leos:origin="ec" xml:id="art_1_yoa6NC">
@@ -48,12 +48,12 @@
                                 </point>
                                 <point leos:origin="ec" xml:id="art_1_mSvIgb">
                                     <num leos:origin="ec" xml:id="art_1_Fyvr9w">(ii)</num>
-                                    <alinea leos:origin="ec" xml:id="art_1_6G73F7">
-                                        <content leos:origin="ec" xml:id="art_1_keYk7S">
-                                            <p leos:origin="ec" xml:id="art_1_PMAuPF">the placing of cultural goods under one of the following categories of special procedures referred to in Article 210 of Regulation (EU) No 952/2013:</p>
-                                        </content>
-                                    </alinea>
                                     <list leos:origin="ec" xml:id="art_1_gDJwrD">
+                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G73F7">
+                                            <content leos:origin="ec" xml:id="art_1_keYk7S">
+                                                <p leos:origin="ec" xml:id="art_1_PMAuPF">the placing of cultural goods under one of the following categories of special procedures referred to in Article 210 of Regulation (EU) No 952/2013:</p>
+                                            </content>
+                                        </subparagraph>
                                         <point leos:origin="ec" xml:id="art_1_1juLXq">
                                             <num leos:origin="ec" xml:id="art_1_Wxy2we">(1)</num>
                                             <content leos:origin="ec" xml:id="art_1_N0JGOv">
@@ -62,13 +62,13 @@
                                         </point>
                                         <point leos:origin="ec" xml:id="art_1_SQHh5n">
                                             <num leos:origin="ec" xml:id="art_1_Z61Xsc">(2)</num>
-                                            <alinea leos:origin="ec" xml:id="art_1_6G45GHJ">
-                                                <content leos:origin="ec" xml:id="art_1_SPx97b">
-                                                    <p leos:origin="ec" xml:id="art_1_iALt29">specific use, comprising temporary admission and end-use;</p>
-                                                </content>
-                                            </alinea>
                                             <list leos:origin="ec" xml:id="art_1_gDGhFRT">
-                                                <indent leos:indent-origin-indent-level="4" leos:indent-origin-num-origin="ec" leos:indent-origin-type="FIRST_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.088+01:00" leos:softtrans_from="art_1_6G46GHJ" leos:softuser="demo" xml:id="art_1_1juLJh">
+                                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G45GHJ">
+                                                    <content leos:origin="ec" xml:id="art_1_SPx97b">
+                                                        <p leos:origin="ec" xml:id="art_1_iALt29">specific use, comprising temporary admission and end-use;</p>
+                                                    </content>
+                                                </subparagraph>
+                                                <indent leos:indent-origin-indent-level="4" leos:indent-origin-num-origin="ec" leos:indent-origin-type="FIRST_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.088+01:00" leos:softtrans_from="art_1_6G46GHJ" leos:softuser="demo(DGT)" xml:id="art_1_1juLJh">
                                                     <num leos:origin="ec" xml:id="art_1_Wxy2we_1">-</num>
                                                     <content leos:origin="ec" xml:id="art_1_N0JGOv_1">
                                                         <p leos:origin="ec" xml:id="art_1_ddsnGD_1">example of indent with subpoint</p>
@@ -78,16 +78,16 @@
                                         </point>
                                     </list>
                                 </point>
-                                <point leos:indent-origin-indent-level="5" leos:indent-origin-type="OTHER_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.089+01:00" leos:softuser="demo" xml:id="transformed_art_1_6G47GHJ">
+                                <point leos:indent-origin-indent-level="5" leos:indent-origin-type="OTHER_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.089+01:00" leos:softuser="demo(DGT)" xml:id="transformed_art_1_6G47GHJ">
                                     <num class="leos-content-soft-new" leos:origin="cn" xml:id="num_OaXM9N">
                                         <span class="leos-content-soft-new">(iia)</span>
                                     </num>
-                                    <alinea leos:origin="ec" xml:id="art_1_6G47GHJ">
-                                        <content leos:origin="ec" xml:id="art_1_NGHSZ">
-                                            <p leos:origin="ec" xml:id="art_1_bgH78">subpoint of indent</p>
-                                        </content>
-                                    </alinea>
-                                    <list class="leos-content-soft-new" leos:origin="ec" xml:id="lis_zftkvS">
+                                    <list leos:origin="ec" xml:id="lis_zftkvS">
+                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G47GHJ">
+                                            <content leos:origin="ec" xml:id="art_1_NGHSZ">
+                                                <p leos:origin="ec" xml:id="art_1_bgH78">subpoint of indent</p>
+                                            </content>
+                                        </subparagraph>
                                         <point leos:origin="ec" xml:id="art_1_kqZEk9">
                                             <num leos:origin="ec" xml:id="art_1_vqCBfZ">(3)</num>
                                             <content leos:origin="ec" xml:id="art_1_2RKX4f">

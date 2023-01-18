@@ -54,22 +54,29 @@ $LIST_SPACING: 40px;
             @extend %padList;
         }
     }
+
+    point > list > subparagraph:not(:first-child) {
+        padding-left: $LIST_SPACING;
+    }
 }
 
 //------------------------------- Editor Styles -----------------------------//
 %editorList {
+    ol[data-akn-name=aknAnnexOrderedList] > li[data-akn-element=subparagraph]:first-child {
+        margin-top: -7px;
+    }
+
     ol[data-akn-name=aknAnnexList],
     ol[data-akn-name=aknOrderedList],
     ol[data-akn-name=aknSubParagraphMandate],
+    ol[data-akn-name=aknSubParagraphMandate],
     ol[data-akn-name=aknPointMandateOrderedList],
-    ol[data-akn-name=aknAlineaMandate],
     ol[data-akn-name=aknAnnexOrderedList],
     ul[data-akn-name=UnNumberedBlockList],
     ol[data-akn-name=NumberedBlockList],
     li > ol,
     li > ul {
         list-style-type: none;
-        padding-left: 0;  // override default list padding
         margin: 0;        // override default list margin
 
         & > li {
@@ -96,10 +103,22 @@ $LIST_SPACING: 40px;
         }
     }
 
+    ol[data-akn-name=aknAnnexList],
+    ol[data-akn-name=aknOrderedList],
+    indent > ol[data-akn-name=aknSubParagraphMandate],
+    point > ol[data-akn-name=aknSubParagraphMandate],
+    paragraph > ol[data-akn-name=aknSubParagraphMandate],
+    ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknAnnexOrderedList],
+    ul[data-akn-name=UnNumberedBlockList],
+    ol[data-akn-name=NumberedBlockList],
     li > ol,
     li > ul {
-        padding-left: $LIST_SPACING;  // override default list padding
+        padding-left: 0px;  // override default list padding
+    }
+
+    ol[data-akn-name=aknAnnexOrderedList] {
+        padding-bottom: 7px;
     }
 
     ol[data-akn-depth="5"],ol[data-akn-depth="6"],ol[data-akn-depth="7"] {
@@ -109,6 +128,7 @@ $LIST_SPACING: 40px;
             }
         }
     }
+
     ol[data-akn-depth="1"],ol[data-akn-depth="2"],ol[data-akn-depth="3"],ol[data-akn-depth="4"] {
         & > li[data-akn-num] {
             &:before {
@@ -117,16 +137,26 @@ $LIST_SPACING: 40px;
         }
     }
 
-    ol[data-akn-name=aknAlineaMandate]{
-        & > li {
-            padding-left: $LIST_SPACING;
-        }
-    }
-
     li[data-akn-name=aknNumberedParagraph] > ol[data-akn-name=aknOrderedList]{
         padding-left: $LIST_SPACING;
     }
 
+    li[data-akn-name=aknNumberedParagraph]:not([data-akn-num]) > ol[data-akn-name=aknAnnexOrderedList] > li[data-akn-element=subparagraph] {
+        margin-left: -$LIST_SPACING;
+    }
+
+    ol[data-akn-depth="1"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList]
+    ,ol[data-akn-depth="2"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList]
+    ,ol[data-akn-depth="3"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList]
+    ,ol[data-akn-depth="4"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList] {
+        padding-left: 27px;
+    }
+
+    ol[data-akn-depth="5"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList]
+    ,ol[data-akn-depth="6"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList]
+    ,ol[data-akn-depth="7"] > li[data-akn-element=level] > ol[data-akn-name=aknAnnexOrderedList] {
+        padding-left: 65px;
+    }
 }
 
 

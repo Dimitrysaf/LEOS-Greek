@@ -54,18 +54,24 @@ $LIST_SPACING: 40px;
             @extend %padList;
         }
     }
+    paragraph > list:not(:first-child) > subparagraph {
+        padding-left: $LIST_SPACING;
+    }
 }
 
 //--------------------------------Editor list---------------------------------/
 %editorList {
+    ol[data-akn-name=aknOrderedList] > li[data-akn-element=subparagraph]:first-child,
+    ol[data-akn-name=aknAnnexOrderedList] > li[data-akn-element=subparagraph]:first-child {
+        margin-top: -7px;
+    }
+
     ol[data-akn-name=aknPointMandateOrderedList],
-    ol[data-akn-name=aknAlineaMandate],
     ol[data-akn-name=aknNumberedParagraphMandate],
     ol[data-akn-name=aknSubParagraphMandate],
     li > ol,
     li > ul {
         list-style-type: none;
-        padding-left: 0;  // override default list padding
         margin: 0;        // override default list margin
 
         & > li {
@@ -94,12 +100,30 @@ $LIST_SPACING: 40px;
             @extend %moveSubElement;
         }
     }
+
+    ol[data-akn-name=aknPointMandateOrderedList],
+    ol[data-akn-name=aknNumberedParagraphMandate],
+    paragraph > ol[data-akn-name=aknSubParagraphMandate],
+    point > ol[data-akn-name=aknSubParagraphMandate],
+    indent > ol[data-akn-name=aknSubParagraphMandate],
+    li > ol,
+    li > ul {
+        padding-left: 0;  // override default list padding
+    }
+
     li[data-akn-name=aknNumberedParagraph] > ol[data-akn-name=aknOrderedList],
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknPointMandateOrderedList] > li,
-    ol[data-akn-name=aknAlineaMandate],
     li > ol > li[data-akn-num] {
         padding-left: $LIST_SPACING;
+    }
+
+    li[data-akn-name=aknNumberedParagraph]:not([data-akn-num]) > ol[data-akn-name=aknOrderedList] > li[data-akn-element=subparagraph] {
+        margin-left: -$LIST_SPACING;
+    }
+
+    ol[data-akn-name=aknAnnexOrderedList] {
+        padding-bottom: 7px;
     }
 
     ol[data-akn-name=aknPointMandateOrderedList],

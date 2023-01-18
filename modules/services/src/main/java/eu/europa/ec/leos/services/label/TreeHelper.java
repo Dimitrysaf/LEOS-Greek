@@ -41,6 +41,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 public class TreeHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TreeHelper.class);
@@ -186,13 +187,37 @@ public class TreeHelper {
 
     private static int findSeq(Node node, String tagName) {
         int childSeq = 1;
+        Node tmpNode = node;
         while ((node = XercesUtils.getSibling(node, true)) != null) {
             if ((tagName == null || tagName.equals(node.getNodeName())) //this considers elements of same type only.
                     && !XercesUtils.toBeSkippedForNumbering(node)) {
                 childSeq++;
             }
         }
-        return childSeq;
+        return childSeq + addSeqForListIntroOrConclusion(tmpNode, tagName);
+    }
+
+    private static int addSeqForListIntroOrConclusion(Node node, String tagName) {
+        int childSeq2Add = 0;
+        if (node != null && tagName != null && tagName.equals(SUBPARAGRAPH)) {
+            Node parent = node.getParentNode();
+            if (LIST.equalsIgnoreCase(parent.getNodeName())) {
+                while ((parent = XercesUtils.getSibling(parent, true)) != null) {
+                    if ((tagName.equals(parent.getNodeName())) //this considers elements of same type only.
+                            && !XercesUtils.toBeSkippedForNumbering(parent)) {
+                        childSeq2Add++;
+                    } else if (LIST.equalsIgnoreCase(parent.getNodeName())) {
+                        List<Node> children = XercesUtils.getChildren(parent, tagName);
+                        for (Node child : children) {
+                            if (!XercesUtils.toBeSkippedForNumbering(child)) {
+                                childSeq2Add++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return childSeq2Add;
     }
 
     private static String findNum(Node node) {

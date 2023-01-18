@@ -1,5 +1,4 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <body leos:origin="ec" xml:id="body">
             <part leos:origin="ec" xml:id="part_1">
@@ -8,8 +7,8 @@
                 <chapter leos:origin="ec" xml:id="chapter_1">
                     <num leos:origin="ec" xml:id="akn_9Stf16">Chapter 1</num>
                     <heading leos:origin="ec" xml:id="akn_LFvufQ">Chapter heading...</heading>
-                    <article leos:origin="ec" xml:id="art_3" leos:editable="false" leos:deletable="false">
-                        <num leos:origin="ec" leos:editable="false" xml:id="art_3__num">Article 1</num>
+                    <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_3">
+                        <num leos:editable="false" leos:origin="ec" xml:id="art_3__num">Article 1</num>
                         <heading leos:origin="ec" xml:id="art_3__heading">Scope</heading>
                         <paragraph leos:origin="ec" xml:id="art_3__para_1">
                             <num leos:origin="ec" xml:id="art_3__para_1__num">1.</num>

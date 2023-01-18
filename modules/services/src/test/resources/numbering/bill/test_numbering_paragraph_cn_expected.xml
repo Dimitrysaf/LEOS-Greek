@@ -18,12 +18,12 @@
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="art1_par3">
                     <num leos:origin="ec" xml:id="art1_par3_num">1.</num>
-                    <subparagraph leos:origin="ec" xml:id="art1_par3_sub1">
-                        <content leos:origin="ec" xml:id="art1_par3_sub1_c">
-                            <p leos:origin="ec" xml:id="art1_par3_sub1_c_p">EC is 1.</p>
-                        </content>
-                    </subparagraph>
                     <list leos:origin="ec" xml:id="art1_par3_L1">
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art1_par3_sub1">
+                            <content leos:origin="ec" xml:id="art1_par3_sub1_c">
+                                <p leos:origin="ec" xml:id="art1_par3_sub1_c_p">EC is 1.</p>
+                            </content>
+                        </subparagraph>
                         <point leos:origin="cn" xml:id="art1_par3_L1_point1">
                             <num leos:origin="cn" xml:id="art1_par3_L1_point1_num">(-a)</num>
                             <content leos:origin="ec" xml:id="art1_par3_L1_point1_c">
@@ -68,12 +68,12 @@
                         </point>
                         <point leos:origin="ec" xml:id="art1_par3_L1_point5a">
                             <num leos:origin="ec" xml:id="art1_par3_L1_point5a_num">(c)</num>
-                            <alinea leos:origin="ec" xml:id="art_1_6G73F7">
-                                <content leos:origin="ec" xml:id="art_1_keYk7S">
-                                    <p leos:origin="ec" xml:id="art_1_PMAuPF">EC is (c)</p>
-                                </content>
-                            </alinea>
                             <list leos:origin="ec" xml:id="art1_par3_L2">
+                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G73F7">
+                                    <content leos:origin="ec" xml:id="art_1_keYk7S">
+                                        <p leos:origin="ec" xml:id="art_1_PMAuPF">EC is (c)</p>
+                                    </content>
+                                </subparagraph>
                                 <point leos:origin="cn" xml:id="art1_par3_L2_point8">
                                     <num leos:origin="cn" xml:id="art1_par3_L2_point8_num">(-i)</num>
                                     <content leos:origin="ec" xml:id="art1_par3_L2_point8_c">
@@ -100,12 +100,12 @@
                                 </point>
                                 <point leos:origin="ec" xml:id="art1_par3_L2_point10a">
                                     <num leos:origin="ec" xml:id="art1_par3_L2_point10a_num">(ii)</num>
-                                    <alinea leos:origin="ec" xml:id="art1_par3_L2_point10a_a">
-                                        <content leos:origin="ec" xml:id="art1_par3_L2_point10a_c">
-                                            <p leos:origin="ec" xml:id="art1_par3_L2_point10a_ac">EC is (ii)</p>
-                                        </content>
-                                    </alinea>
                                     <list leos:origin="ec" xml:id="art1_par3_L3">
+                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art1_par3_L2_point10a_a">
+                                            <content leos:origin="ec" xml:id="art1_par3_L2_point10a_c">
+                                                <p leos:origin="ec" xml:id="art1_par3_L2_point10a_ac">EC is (ii)</p>
+                                            </content>
+                                        </subparagraph>
                                         <point leos:origin="cn" xml:id="art1_par3_L3_point12">
                                             <num leos:origin="cn" xml:id="art1_par3_L3_point12_num">(-1)</num>
                                             <content leos:origin="ec" xml:id="art1_par3_L3_point12_c">
@@ -138,12 +138,12 @@
                                         </point>
                                         <point leos:origin="ec" xml:id="art1_par3_L3_point16a">
                                             <num leos:origin="ec" xml:id="art1_par3_L3_point16aa_num">(2)</num>
-                                            <alinea leos:origin="ec" xml:id="art1_par3_L3_point16a_a">
-                                                <content leos:origin="ec" xml:id="art1_par3_L3_point16a_c">
-                                                    <p leos:origin="ec" xml:id="art1_par3_L3_point16aa_ac">EC is (2)</p>
-                                                </content>
-                                            </alinea>
                                             <list leos:origin="ec" xml:id="art1_par3_L4">
+                                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art1_par3_L3_point16a_a">
+                                                    <content leos:origin="ec" xml:id="art1_par3_L3_point16a_c">
+                                                        <p leos:origin="ec" xml:id="art1_par3_L3_point16aa_ac">EC is (2)</p>
+                                                    </content>
+                                                </subparagraph>
                                                 <indent leos:origin="cn" xml:id="art1_par3_L4_point17">
                                                     <num leos:origin="cn" xml:id="art1_par3_L4_point17_num">-</num>
                                                     <content leos:origin="ec" xml:id="art1_par3_L4_point17_c">

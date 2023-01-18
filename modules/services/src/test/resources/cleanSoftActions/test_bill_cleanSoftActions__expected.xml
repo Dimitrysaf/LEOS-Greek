@@ -28,22 +28,14 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"
-                             xml:id="_BEL_BRU"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union" xml:id="CONSIL"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament" xml:id="EP"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission" xml:id="COM"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"
-                         xml:id="PRESID"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType"
-                              showAs="Regulation" xml:id="REG"/>
-                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"
-                              xml:id="legalBasis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
-                              showAs="en" xml:id="language"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -170,12 +162,12 @@
                 <heading xml:id="art_1__heading">Scope</heading>
                 <paragraph xml:id="art_1__para_1">
                     <num xml:id="art_1__para_1__num">1.</num>
-                    <subparagraph xml:id="art_1_4vUBUy">
-                        <content xml:id="art_1_Thide8">
-                            <p xml:id="art_1_z2qhqn">Article 1 Par 1</p>
-                        </content>
-                    </subparagraph>
                     <list xml:id="art_1_z0GLE0">
+                        <subparagraph refersTo="~_INP" xml:id="art_1_4vUBUy">
+                            <content xml:id="art_1_Thide8">
+                                <p xml:id="art_1_z2qhqn">Article 1 Par 1</p>
+                            </content>
+                        </subparagraph>
                         <point xml:id="art_1_MLsvBK">
                             <num xml:id="art_1_zq0BhR">(a)</num>
                             <content xml:id="art_1_gZewcy">
@@ -184,12 +176,12 @@
                         </point>
                         <point xml:id="art_1_TWqCUT">
                             <num xml:id="art_1_g18kU4">(b)</num>
-                            <alinea xml:id="art_1_SlgKmp">
-                                <content xml:id="art_1_LXPO9t">
-                                    <p xml:id="art_1_fk8ORa">Point (b)</p>
-                                </content>
-                            </alinea>
                             <list xml:id="art_1_f7fCdM">
+                                <subparagraph refersTo="~_INP" xml:id="art_1_SlgKmp">
+                                    <content xml:id="art_1_LXPO9t">
+                                        <p xml:id="art_1_fk8ORa">Point (b)</p>
+                                    </content>
+                                </subparagraph>
                                 <point xml:id="art_1_TMg4vE">
                                     <num xml:id="art_1_qP3QbH">(i)</num>
                                     <content xml:id="art_1_XlNtaC">
@@ -198,12 +190,12 @@
                                 </point>
                                 <point xml:id="art_1_1gzoJ8">
                                     <num xml:id="art_1_IkPhdc">(ii)</num>
-                                    <alinea xml:id="art_1_9AOtk2">
-                                        <content xml:id="art_1_iH7k6x">
-                                            <p xml:id="art_1_1O0aT6">Point (ii)</p>
-                                        </content>
-                                    </alinea>
                                     <list xml:id="art_1_FWnakB">
+                                        <subparagraph refersTo="~_INP" xml:id="art_1_9AOtk2">
+                                            <content xml:id="art_1_iH7k6x">
+                                                <p xml:id="art_1_1O0aT6">Point (ii)</p>
+                                            </content>
+                                        </subparagraph>
                                         <point xml:id="art_1_UYApck">
                                             <num xml:id="art_1_vTDn18">(1)</num>
                                             <content xml:id="art_1_xWpe5l">
@@ -212,12 +204,12 @@
                                         </point>
                                         <point xml:id="art_1_O8ARkm">
                                             <num xml:id="art_1_I0CLAg">(2)</num>
-                                            <alinea xml:id="art_1_b9kMWz">
-                                                <content xml:id="art_1_jmVcCF">
-                                                    <p xml:id="art_1_VHDLn1">Point (2)</p>
-                                                </content>
-                                            </alinea>
                                             <list xml:id="art_1_hkHZha">
+                                                <subparagraph refersTo="~_INP" xml:id="art_1_b9kMWz">
+                                                    <content xml:id="art_1_jmVcCF">
+                                                        <p xml:id="art_1_VHDLn1">Point (2)</p>
+                                                    </content>
+                                                </subparagraph>
                                                 <indent xml:id="art_1_xTrRRv">
                                                     <num xml:id="art_1_eJHpp1">-</num>
                                                     <content xml:id="art_1_XYIc5o">
@@ -244,12 +236,12 @@
                 <heading xml:id="akn_article_fDbNA5_8rm8Vp">Article heading...</heading>
                 <paragraph xml:id="akn_article_fDbNA5_Eyuk15">
                     <num xml:id="akn_article_fDbNA5_cKHvKe">1.</num>
-                    <subparagraph xml:id="akn_article_fDbNA5_wJgVCP">
-                        <content xml:id="akn_article_fDbNA5_i6wGkz">
-                            <p xml:id="akn_article_fDbNA5_qpI40u">Article 2 Paragraph 1</p>
-                        </content>
-                    </subparagraph>
                     <list xml:id="akn_article_fDbNA5_iUA5l4">
+                        <subparagraph refersTo="~_INP" xml:id="akn_article_fDbNA5_wJgVCP">
+                            <content xml:id="akn_article_fDbNA5_i6wGkz">
+                                <p xml:id="akn_article_fDbNA5_qpI40u">Article 2 Paragraph 1</p>
+                            </content>
+                        </subparagraph>
                         <point xml:id="akn_article_fDbNA5_wb91We">
                             <num leos:origin="cn" xml:id="akn_article_fDbNA5_wwVy6v">(-a)</num>
                             <content xml:id="akn_article_fDbNA5_fKoN9x">
@@ -264,12 +256,12 @@
                         </point>
                         <point xml:id="akn_article_fDbNA5_E81Txq">
                             <num xml:id="akn_article_fDbNA5_ZHBzSe">(b)</num>
-                            <alinea xml:id="akn_article_fDbNA5_iXQbvA">
-                                <content xml:id="akn_article_fDbNA5_LJDNqC">
-                                    <p xml:id="akn_article_fDbNA5_P06LiF">Point (b)</p>
-                                </content>
-                            </alinea>
                             <list xml:id="akn_article_fDbNA5_4POUnv">
+                                <subparagraph refersTo="~_INP" xml:id="akn_article_fDbNA5_iXQbvA">
+                                    <content xml:id="akn_article_fDbNA5_LJDNqC">
+                                        <p xml:id="akn_article_fDbNA5_P06LiF">Point (b)</p>
+                                    </content>
+                                </subparagraph>
                                 <point xml:id="akn_article_fDbNA5_ntl7ky">
                                     <num xml:id="akn_article_fDbNA5_ulorpt">(i)</num>
                                     <content xml:id="akn_article_fDbNA5_MJwBZ7">
@@ -301,12 +293,12 @@
                         <heading xml:id="akn_article_oVJeL8_4SZOR4">Article heading...</heading>
                         <paragraph xml:id="akn_article_oVJeL8-par1">
                             <num xml:id="akn_article_oVJeL8_hV4FQL">1.</num>
-                            <subparagraph xml:id="akn_article_oVJeL8_YzfgrA">
-                                <content xml:id="akn_article_oVJeL8_dk1Gge">
-                                    <p xml:id="akn_article_oVJeL8_Ubkw3B">Article 4 - Paragraph 1</p>
-                                </content>
-                            </subparagraph>
                             <list xml:id="akn_article_oVJeL8_ybdDZW">
+                                <subparagraph refersTo="~_INP" xml:id="akn_article_oVJeL8_YzfgrA">
+                                    <content xml:id="akn_article_oVJeL8_dk1Gge">
+                                        <p xml:id="akn_article_oVJeL8_Ubkw3B">Article 4 - Paragraph 1</p>
+                                    </content>
+                                </subparagraph>
                                 <point xml:id="akn_article_oVJeL8_DAQFCJ">
                                     <num xml:id="akn_article_oVJeL8_BTEAd3">(a)</num>
                                     <content xml:id="akn_article_oVJeL8_CT6Tb7">
@@ -315,12 +307,12 @@
                                 </point>
                                 <point xml:id="akn_article_oVJeL8_UYQSos">
                                     <num xml:id="akn_article_oVJeL8_5BSNcf">(b)</num>
-                                    <alinea xml:id="akn_article_oVJeL8_vAbSSv">
-                                        <content xml:id="akn_article_oVJeL8_P61OOe">
-                                            <p xml:id="akn_article_oVJeL8_wnfiQo">Point (b)</p>
-                                        </content>
-                                    </alinea>
                                     <list xml:id="akn_article_oVJeL8_lPdQQB">
+                                        <subparagraph refersTo="~_INP" xml:id="akn_article_oVJeL8_vAbSSv">
+                                            <content xml:id="akn_article_oVJeL8_P61OOe">
+                                                <p xml:id="akn_article_oVJeL8_wnfiQo">Point (b)</p>
+                                            </content>
+                                        </subparagraph>
                                         <point xml:id="akn_article_oVJeL8_oGPPzs">
                                             <num xml:id="akn_article_oVJeL8_FAsXBR">(i)</num>
                                             <content xml:id="akn_article_oVJeL8_t7Fo2O">
@@ -348,13 +340,13 @@
                             <heading xml:id="akn_article_KVwRsO_zds3fN">Article heading...</heading>
                             <paragraph xml:id="akn_article_KVwRsO-par1">
                                 <num xml:id="akn_article_KVwRsO_HIlOSn">1.</num>
-                                <subparagraph xml:id="akn_article_KVwRsO_kkqCkQ">
-                                    <content xml:id="akn_article_KVwRsO_F1OA9m">
-                                        <p xml:id="akn_article_KVwRsO_WRurGM">Article 7 - Paragraph 1
-                                        </p>
-                                    </content>
-                                </subparagraph>
                                 <list xml:id="akn_article_KVwRsO_qyScGd">
+                                    <subparagraph refersTo="~_INP" xml:id="akn_article_KVwRsO_kkqCkQ">
+                                        <content xml:id="akn_article_KVwRsO_F1OA9m">
+                                            <p xml:id="akn_article_KVwRsO_WRurGM">Article 7 - Paragraph 1
+                                            </p>
+                                        </content>
+                                    </subparagraph>
                                     <point xml:id="akn_article_KVwRsO_vxo1ea">
                                         <num xml:id="akn_article_KVwRsO_YqrGM1">(a)</num>
                                         <content xml:id="akn_article_KVwRsO_qEkfS1">
@@ -370,21 +362,21 @@
                             <heading xml:id="akn_article_z437jN_kH8RqK">Article heading...</heading>
                             <paragraph xml:id="akn_article_z437jN-par1">
                                 <num xml:id="akn_article_z437jN_IhSair">1.</num>
-                                <subparagraph xml:id="transformed_akn_article_z437jN-par1">
-                                    <content xml:id="akn_article_z437jN_Bm8Z2k">
-                                        <p xml:id="akn_article_z437jN_nOzbLD">Article 8 - Paragraph 1
-                                        </p>
-                                    </content>
-                                </subparagraph>
                                 <list leos:origin="cn" xml:id="lis_gtMYrZ">
+                                    <subparagraph refersTo="~_INP" xml:id="transformed_akn_article_z437jN-par1">
+                                        <content xml:id="akn_article_z437jN_Bm8Z2k">
+                                            <p xml:id="akn_article_z437jN_nOzbLD">Article 8 - Paragraph 1
+                                            </p>
+                                        </content>
+                                    </subparagraph>
                                     <point leos:origin="cn" xml:id="ckg22vo8n0005ao24t217hqkb">
                                         <num leos:origin="cn" xml:id="akn_article_z437jN_jmb4mJ">(a)</num>
-                                        <alinea leos:origin="cn" xml:id="akn_alinea_3HjFpa">
-                                            <content xml:id="akn_article_z437jN_KbmSWL">
-                                                <p xml:id="akn_article_z437jN_jqz8Fl">Text...</p>
-                                            </content>
-                                        </alinea>
                                         <list leos:origin="cn" xml:id="lis_gw8frL">
+                                            <subparagraph leos:origin="cn" refersTo="~_INP" xml:id="akn_alinea_3HjFpa">
+                                                <content xml:id="akn_article_z437jN_KbmSWL">
+                                                    <p xml:id="akn_article_z437jN_jqz8Fl">Text...</p>
+                                                </content>
+                                            </subparagraph>
                                             <point leos:origin="cn" xml:id="akn_point_XwCTkB">
                                                 <num xml:id="akn_article_z437jN_H039Xs">(i)</num>
                                                 <content xml:id="akn_article_z437jN_2xFFi3">

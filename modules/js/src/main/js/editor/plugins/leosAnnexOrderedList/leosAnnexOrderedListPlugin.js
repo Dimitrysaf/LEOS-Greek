@@ -280,7 +280,8 @@ define(function leosAnnexOrderedListPluginModule(require) {
      */
     function _pushListsWithoutIntro(child, listsWithoutIntro, isListPushed){
         var hasNoIntro = leosPluginUtils.getElementName(child) === leosPluginUtils.ORDER_LIST_ELEMENT
-            && (!child.previousSibling || leosPluginUtils.getElementName(child.previousSibling) !== leosPluginUtils.HTML_SUB_POINT);
+            && (!child.previousSibling || leosPluginUtils.getElementName(child.previousSibling) !== leosPluginUtils.HTML_SUB_POINT)
+            && (!child.firstChild || leosPluginUtils.getElementName(child.firstChild) !== leosPluginUtils.HTML_POINT);
         if(hasNoIntro && isListPushed[child] !== 1){
             isListPushed[child] = 1;
             listsWithoutIntro.push(child);
@@ -309,13 +310,6 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 singleSubPoints.push(subPoint);
             }
         }
-    }
-
-    /*
-     * returns the Ordered List of the element
-     */
-    function getOrderedList(element){
-        return element.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT, true);
     }
 
     function _getAscendantPoint(element) {
@@ -427,9 +421,12 @@ define(function leosAnnexOrderedListPluginModule(require) {
 
     function elementTagIndexProvider(element) {
         if ((element.name.toLowerCase() == leosPluginUtils.CROSSHEADING.toLowerCase()) || (typeof element.attributes[leosPluginUtils.CROSSHEADING_LIST_ATTR] !== 'undefined' && element.attributes[leosPluginUtils.CROSSHEADING_LIST_ATTR] == leosPluginUtils.LIST)) {
-            return 2;
+            return 3;
         } else if (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.INDENT) {
             return 1;
+        } else if ((element.name.toLowerCase() == leosPluginUtils.SUBPARAGRAPH.toLowerCase()) || (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT]
+         && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.SUBPARAGRAPH)) {
+            return 2;
         } else {
             return leosPluginUtils.calculateListLevel(element) >= leosPluginUtils.MAX_LIST_LEVEL ? 1 : 0;
         }
@@ -454,8 +451,9 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 html : "data-akn-name=aknAnnexOrderedList"
             } ]
         },
-        rootElementsForFrom : [ "list", { elementTags : ["point", "indent", "crossheading"], elementTagIndexProvider : elementTagIndexProvider }],
-        contentWrapperForFrom : "alinea",
+        rootElementsForFrom : [ "list", { elementTags : ["point", "indent", "subparagraph", "crossheading"], elementTagIndexProvider :
+         elementTagIndexProvider }],
+        contentWrapperForFrom : "subparagraph",
         rootElementsForTo : [ "ol", "li" ]
     });
 

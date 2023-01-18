@@ -6,12 +6,12 @@
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
                 <paragraph leos:origin="ec" xml:id="art_1__para_1">
                     <num leos:origin="ec" xml:id="art_1__para_1__b">1.</num>
-                    <subparagraph leos:origin="ec" xml:id="akn_art_YnSKbj_oNh4Vl">
-                        <content leos:origin="ec" xml:id="art_1__para_1__content">
-                            <p leos:origin="ec" xml:id="art_1__para_1__content__p">Para1</p>
-                        </content>
-                    </subparagraph>
                     <list leos:origin="cn" xml:id="akn_art_YnSKbj_gvmXCy">
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_YnSKbj_oNh4Vl">
+                            <content leos:origin="ec" xml:id="art_1__para_1__content">
+                                <p leos:origin="ec" xml:id="art_1__para_1__content__p">Para1</p>
+                            </content>
+                        </subparagraph>
                         <point leos:origin="cn" xml:id="akn_art_YnSKbj_LA9Azw">
                             <num leos:origin="cn" xml:id="akn_art_YnSKbj_soCjiB">(a)</num>
                             <content leos:origin="cn" xml:id="akn_art_YnSKbj_89xvgD">

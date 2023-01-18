@@ -784,6 +784,12 @@ define(function leosArticleListPluginModule(require) {
                 nextList = nextPath.contains( CKEDITOR.dtd.$list ),
                 last;
 
+        if (leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(nextCursor.startContainer)) {
+            nextPath = new CKEDITOR.dom.elementPath( nextCursor.startContainer.getParent().getParent() );
+            nextLi = nextPath.contains( CKEDITOR.dtd.$listItem );
+            nextList = nextPath.contains( CKEDITOR.dtd.$list );
+        }
+
         // Remove bogus node the current block/pseudo block.
         if ( pathBlock ) {
             var bogus = pathBlock.getBogus();
@@ -815,6 +821,12 @@ define(function leosArticleListPluginModule(require) {
            cursor.startContainer.append( frag );
        }
 
+        if (leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(nextCursor.startContainer)) {
+            nextPath = new CKEDITOR.dom.elementPath( nextCursor.startContainer.getParent().getParent() );
+            nextLi = nextPath.contains( CKEDITOR.dtd.$listItem );
+            nextList = nextPath.contains( CKEDITOR.dtd.$list );
+        }
+
         // Move the sub list nested in the next list item.
         if ( nextLi ) {
             var sublist = getSubList( nextLi );
@@ -829,6 +841,11 @@ define(function leosArticleListPluginModule(require) {
                     currentBlock.append( sublist );
                 }
             }
+
+        }
+
+        if (nextLi.getChildren().count() == 0) {
+            nextLi.remove();
         }
 
         var nextBlock, parent;
@@ -922,10 +939,11 @@ define(function leosArticleListPluginModule(require) {
 
                         // Join a sub list's first line, with the previous visual line in parent.
                         if (
-                            ( previous = path.contains( listNodeNames ) ) &&
+                            ( !leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(path.lastElement) ) &&
+                            (( previous = path.contains( listNodeNames ) ) &&
                             range.checkBoundaryOfElement( previous, CKEDITOR.START ) &&
                             ( previous = previous.getParent() ) && previous.is( 'li' ) &&
-                            ( previous = getSubList( previous ) )
+                            ( previous = getSubList( previous ) ))
                         ) {
                             joinWith = previous;
                             previous = previous.getPrevious( nonEmpty );
@@ -1165,6 +1183,11 @@ define(function leosArticleListPluginModule(require) {
                     setTimeout( function() {
                         editor.selectionChange( 1 );
                     } );
+                    leosPluginUtils.manageEmptyLists(editor);
+                    leosPluginUtils.managePoints(editor);
+                    leosPluginUtils.manageEmptySubparagraphs(editor);
+                    leosPluginUtils.manageCrossheadings(editor);
+                    leosPluginUtils.manageSiblingLists(editor);
                 }
             } );
         }

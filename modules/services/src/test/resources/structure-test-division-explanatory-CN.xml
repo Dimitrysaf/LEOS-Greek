@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
-           xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
+        <structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
+                   xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
 
     <name>structure_05.xml</name>
     <description>Structure used for Council Explanatory CN (new document added by the user)</description>
@@ -371,26 +371,6 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
             <numberingType>POINT_NUM</numberingType>
-            <editable>true</editable>
-            <addSoftAttr>false</addSoftAttr>
-        </tocItem>
-
-        <tocItem>
-            <aknTag>alinea</aknTag>
-            <root>false</root>
-            <draggable>false</draggable>
-            <childrenAllowed>false</childrenAllowed>
-            <display>true</display>
-            <itemNumber>none</itemNumber>
-            <itemHeading>none</itemHeading>
-            <itemDescription>false</itemDescription>
-            <numberEditable>false</numberEditable>
-            <contentDisplayed>true</contentDisplayed>
-            <deletable>true</deletable>
-            <numWithType>false</numWithType>
-            <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -811,6 +791,7 @@
         <entry>
             <tocItem>list</tocItem>
             <list>
+				<tocItem>subparagraph</tocItem>
                 <tocItem>point</tocItem>
                 <tocItem>indent</tocItem>
                 <tocItem>crossHeading</tocItem>
@@ -822,7 +803,7 @@
             <list>
                 <tocItem>point</tocItem>
                 <tocItem>indent</tocItem>
-                <tocItem>alinea</tocItem>
+                <tocItem>subparagraph</tocItem>
                 <tocItem>list</tocItem>
                 <tocItem>crossHeading</tocItem>
                 <tocItem>block</tocItem>
@@ -831,7 +812,7 @@
         <entry>
             <tocItem>indent</tocItem>
             <list>
-                <tocItem>alinea</tocItem>
+                <tocItem>subparagraph</tocItem>
                 <tocItem>crossHeading</tocItem>
                 <tocItem>block</tocItem>
                 <tocItem>indent</tocItem>

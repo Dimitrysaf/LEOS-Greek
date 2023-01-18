@@ -205,9 +205,17 @@ define(function leosInlineEditorPluginModule(require) {
             }
 
             function _paddNumElement(element) {
-                if (!element.getParent().is("article") && (element.getPrevious() instanceof CKEDITOR.dom.element) &&
-                        element.getPrevious().is("num")) {
+                if (!element.getParent().is("article")
+                    && !!element.getPrevious()
+                    && element.getPrevious() instanceof CKEDITOR.dom.element
+                    && element.getPrevious().is("num")) {
                     element.getPrevious().setStyle("padding-top", "66pt");
+                } else if (!element.getParent().is("article")
+                    && !element.getPrevious()
+                    && element.getParent().is("list")
+                    && !!element.getParent().getPrevious()
+                    && element.getParent().getPrevious().is("num")) {
+                    element.getParent().getPrevious().setStyle("padding-top", "66pt");
                 }
             }
 

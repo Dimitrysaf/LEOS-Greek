@@ -438,7 +438,7 @@ define(function actionManagerExtensionModule(require) {
     function _generateActions($element, editable, deletable, connector) {
         let type = _getType($element);
         type = type === 'level' ? 'point' : type;
-        type = type === 'alinea' ? 'sub-point' : type;
+        type = type === 'alinea' || type === 'subparagraph' ? 'sub-point' : type;
         type = type === 'crossHeading' ? 'crossheading' : type;
         type = type === 'block' ? 'crossheading' : type;
         var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, deletable, connector);

@@ -1,4 +1,3 @@
-
 <aknFragment xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_1">
         <p xml:id="cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular

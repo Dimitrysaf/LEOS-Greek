@@ -43,6 +43,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
@@ -86,7 +87,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
 
-        final Element parentElement;
+        Element parentElement;
         String template;
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
@@ -111,10 +112,12 @@ class AnnexProcessorImpl implements AnnexProcessor {
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before);
                 break;
             case SUBPARAGRAPH:
-                parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
+                parentElement = getParentElementForSubParagraph(document, elementId);
                 if (isFirstSubParagraph(document, parentElement.getElementId(), parentElement.getElementTagName(), elementId)) {
                     updatedContent = insertAnnexBlock(document, parentElement.getElementId(), parentElement.getElementTagName(), before);
-                } else if (!PARAGRAPH.equals(parentElement.getElementTagName())) {
+                } else if (Arrays.asList(POINT, INDENT).contains(parentElement.getElementTagName())) {
+                    updatedContent = insertAnnexBlock(document, parentElement.getElementId(), parentElement.getElementTagName(), before);
+                } else if (!Arrays.asList(PARAGRAPH).contains(parentElement.getElementTagName())) {
                     template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                     template = addDocTypeToTemplateXmlId(template);
                     updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before);
@@ -167,10 +170,12 @@ class AnnexProcessorImpl implements AnnexProcessor {
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before);
                 break;
             case SUBPARAGRAPH:
-                parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
+                parentElement = getParentElementForSubParagraph(document, elementId);
                 if (isFirstSubParagraph(document, parentElement.getElementId(), parentElement.getElementTagName(), elementId)) {
                     updatedContent = insertAnnexBlock(document, parentElement.getElementId(), parentElement.getElementTagName(), before);
-                } else if (!PARAGRAPH.equals(parentElement.getElementTagName())) {
+                } else if (Arrays.asList(POINT, INDENT).contains(parentElement.getElementTagName())) {
+                    updatedContent = insertAnnexBlockWithElementContent(document, parentElement.getElementId(), parentElement.getElementTagName(), before, elementContent);
+                } else if (!Arrays.asList(PARAGRAPH).contains(parentElement.getElementTagName())) {
                     updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before);
                 } else {
                     throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
@@ -201,8 +206,20 @@ class AnnexProcessorImpl implements AnnexProcessor {
     }
 
     private boolean isFirstSubParagraph(Annex annex, String elementId, String tagName, String subParElementId) {
-        Element firstSubParElement = xmlContentProcessor.getChildElement(getContent(annex), tagName, elementId, Arrays.asList(SUBPARAGRAPH), 1);
+        Element firstSubParElement = xmlContentProcessor.getChildElement(getContent(annex), tagName, elementId, Arrays.asList(SUBPARAGRAPH, LIST), 1);
+        if (firstSubParElement.getElementTagName().equalsIgnoreCase(LIST)) {
+            firstSubParElement = xmlContentProcessor.getChildElement(getContent(annex), firstSubParElement.getElementTagName(), firstSubParElement.getElementId(),
+                    Arrays.asList(SUBPARAGRAPH), 1);
+        }
         return firstSubParElement != null && subParElementId.equals(firstSubParElement.getElementId());
+    }
+
+    private Element getParentElementForSubParagraph(Annex annex, String elementId) {
+        Element parentElement = xmlContentProcessor.getParentElement(getContent(annex), elementId);
+        if (parentElement.getElementTagName().equalsIgnoreCase(LIST)) {
+            parentElement = xmlContentProcessor.getParentElement(getContent(annex), parentElement.getElementId());
+        }
+        return parentElement;
     }
 
     @Override
@@ -210,7 +227,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         byte[] updatedContent = null;
         if (xmlContentProcessor.needsToBeIndented(elementFragment)) {
             byte[] contentBytes = getContent(annex);
-            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.NOT_SIMPLIFIED);
+            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, tagName, elementId, elementFragment, toc);
         } else {
             updatedContent = elementProcessor.updateElement(annex, elementFragment, tagName, elementId);

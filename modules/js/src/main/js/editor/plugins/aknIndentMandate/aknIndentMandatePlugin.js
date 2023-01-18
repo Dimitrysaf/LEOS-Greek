@@ -73,7 +73,7 @@ define(function aknIndentMandatePluginModule(require) {
             }]
         },
         rootElementsForFrom: ["indent"],
-        contentWrapperForFrom: "alinea",
+        contentWrapperForFrom: "subparagraph",
         rootElementsForTo: ["ol", "li"]
     });
 

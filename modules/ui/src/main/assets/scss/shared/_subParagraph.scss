@@ -33,7 +33,7 @@ $LIST_SPACING: 40px;
 }
 
 %tocSubParagraph {
-  subparagraph > content > aknP, subparagraph > content > p {
+  & > subparagraph > content > aknP, subparagraph > content > p {
     @extend %clearTopText;
   }
   @extend  %padSubParagraph
@@ -41,17 +41,17 @@ $LIST_SPACING: 40px;
 
 %padSubParagraph {
   // pad all subparagraphs of numbered paragraphs, except the first one which is already padded by the number tag
-  num ~ subparagraph > content > p::before, num ~ subparagraph > content > aknp::before {
+  & > num ~ subparagraph > content > p::before, & > num ~ subparagraph > content > aknp::before {
     @extend %padRight;
   }
-  num + subparagraph > content > p::before, num + subparagraph > content > aknp::before {
+  & > num + subparagraph > content > p::before, & > num + subparagraph > content > aknp::before {
     display: none;
   }
 }
 
 //------------------------------- Editor Styles -----------------------------//
 %editorSubParagraph {
-  ol > li {
+  ol > li[data-akn-name="aknNumberedParagraph"], ol[data-akn-name="aknAnnexList"] > li {
     & > p:first-child {
       padding-top: 0;
     }
@@ -75,11 +75,11 @@ $LIST_SPACING: 40px;
 
 %padSubParagraphEditor {
   // pad all subparagraphs of numbered paragraphs, except the first one which is already padded by the number tag
-  num ~ .cke_editable > ol[data-akn-name=aknSubParagraphMandate] > li::before {
+  & > num ~ .cke_editable > ol[data-akn-name=aknSubParagraphMandate] > li::before {
     content: '';
     margin-right: $LIST_SPACING;
   }
-  num + .cke_editable > ol[data-akn-name=aknSubParagraphMandate] > li::before {
+  & > num + .cke_editable > ol[data-akn-name=aknSubParagraphMandate] > li::before {
     display: none;
   }
 }

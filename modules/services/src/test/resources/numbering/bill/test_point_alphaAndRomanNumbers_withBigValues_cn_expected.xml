@@ -12,12 +12,12 @@
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="_art_1_qnK8k5">
                     <num leos:origin="ec" xml:id="_art_1_B7jh1J">2.</num>
-                    <subparagraph leos:origin="ec" xml:id="_art_1_3lyVsD">
+                    
+                    <list leos:origin="ec" xml:id="_art_1_JFtVhJ"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_3lyVsD">
                         <content leos:origin="ec" xml:id="_art_1_O5brcD">
                             <p leos:origin="ec" xml:id="_art_1_xCqpwX">Text number 2</p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="ec" xml:id="_art_1_JFtVhJ">
                         <point leos:origin="ec" xml:id="_art_1_ycViTm">
                             <num leos:origin="ec" xml:id="_art_1_Q3BFvW">(a)</num>
                             <content leos:origin="ec" xml:id="_art_1_Yp8Vfd">

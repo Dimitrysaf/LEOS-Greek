@@ -372,6 +372,10 @@ bill article alinea {
     display: block;
 }
 
+bill article subparagraph {
+    display: block;
+}
+
 bill article list point > num {
     display: block;
     min-width: 40px;
@@ -386,6 +390,18 @@ bill article alinea > content > aknP {
     padding-left: 40px;
 }
 
+bill article subparagraph {
+    display: block;
+}
+
+bill article subparagraph > content > aknP {
+    padding-left: 40px;
+}
+
 bill article alinea > content > aknP, bill article alinea > content > p {
+    display: block;
+}
+
+bill article subparagraph > content > aknP, bill article subparagraph > content > p {
     display: block;
 }

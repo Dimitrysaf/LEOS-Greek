@@ -228,8 +228,9 @@ define(function listItemNumberModule(require) {
     function _isPoint(element) {
         var isLi = leosPluginUtils.getElementName(element) === leosPluginUtils.HTML_POINT;
         var crossheadingAttr = element.getAttribute(leosPluginUtils.CROSSHEADING_LIST_ATTR);
+        var dataAknElementAttr = element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
 
-        if (element && isLi && (crossheadingAttr == null || crossheadingAttr != leosPluginUtils.LIST)) {
+        if (element && isLi && (dataAknElementAttr == null || dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase()) && (crossheadingAttr == null || crossheadingAttr != leosPluginUtils.LIST)) {
             return true;
         } else {
             return false;

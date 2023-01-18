@@ -370,8 +370,37 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
+    <xsl:template match="POINT/ALINEA">
+        <!-- ALINEA in POINT
+          ALINEA as mixed content if not alone, = <subparagraph> with content ; with subblock, see the treatment of this subblock. -->
+        <xsl:choose>
+            <!-- !!! order of the cases are important !!!  -->
+            <xsl:when test="LIST | P | TBL| FORMULA.S | DLIST | GR.TBL | GR.SEQ">
+                <!-- if ALINEA contains block, each block is treated separately. -->
+                <xsl:apply-templates/>
+            </xsl:when>
+            <xsl:when test="count(../ALINEA)  > 1">
+                <!-- point contains always alinea, even if only one block.  Subparagraph is only when multiple block. -->
+                <xsl:element name="subparagraph">
+                    <xsl:element name="content">
+                        <xsl:element name="p">
+                            <xsl:apply-templates/>
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:element name="content">
+                    <xsl:element name="p">
+                        <xsl:apply-templates/>
+                    </xsl:element>
+                </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     <!-- -->
-    	<xsl:template match="SUBDIV">
+  	<xsl:template match="SUBDIV">
 	<!-- he SUBDIV element is used to mark up a subdivision when the paragraphs or alineas in an article are grouped together; not covered by Leos -->
 		<xsl:text disable-output-escaping="yes">&lt;!-- &lt;leos:unknown></xsl:text>
 		<xsl:element name="{local-name()}"><xsl:copy-of select="@*"/>
@@ -442,7 +471,7 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <!-- block that don't contain sub-block in the case of multiple blocks -> = alinea -->
-                                <xsl:element name="alinea">
+                                <xsl:element name="subparagraph">
                                     <xsl:element name="content">
                                         <xsl:element name="p">
                                             <xsl:apply-templates/>
@@ -489,7 +518,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <!-- block that don't contain sub-block in the case of multiple blocks -> = alinea -->
                     <!-- certainly to be reviewed -->
                     <xsl:element name="content">
@@ -531,7 +560,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:when test="parent::NP">
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <xsl:attribute name="class"><xsl:value-of select="name()"/></xsl:attribute>
                     <xsl:apply-templates/>
                 </xsl:element>
@@ -568,7 +597,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:when test="parent::*/parent::NP">
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <xsl:attribute name="class"><xsl:value-of select="name()"/></xsl:attribute>
                     <xsl:element name="content">
 						<xsl:element name="p">
@@ -627,7 +656,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <xsl:element name="list">
                         <xsl:apply-templates/>
                     </xsl:element>
@@ -668,7 +697,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <xsl:element name="content">
                         <xsl:element name="table">
                             <xsl:attribute name="class" select="$elementName"/>
@@ -711,7 +740,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <xsl:element name="content">
                         <xsl:element name="table">
                             <xsl:attribute name="class" select="$elementName"/>
@@ -755,7 +784,7 @@
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:element name="alinea">
+                <xsl:element name="subparagraph">
                     <xsl:element name="content">
                         <xsl:element name="foreign">
                             <xsl:element name="fmx:FORMULA.S" extension-element-prefixes="fmx" namespace="http://formex.publications.europa.eu/schema/formex-05.21-20110601.xd">
@@ -964,7 +993,7 @@
             </xsl:when>
             <xsl:when test="parent::NP and not(LIST or FORMULA.S or TBL or DLIST or GR.TBL or GR.SEQ) and ancestor::ENACTING.TERMS">
 				<!-- P in NP or in QUOT.S is always a second block -->
-				<xsl:element name="alinea">
+				<xsl:element name="subparagraph">
 					<xsl:element name="content">
 						<xsl:element name="p">
 							<xsl:apply-templates/>
@@ -986,7 +1015,7 @@
             </xsl:when>
  			<xsl:when test="parent::QUOT.S and ancestor::ENACTING.TERMS">
 				<!-- P as child of QUOT.S is always a block inside a point / indent -->
-				<xsl:element name="alinea">
+				<xsl:element name="subparagraph">
 					<xsl:element name="content">
 						<xsl:element name="p">
 							<xsl:apply-templates/>

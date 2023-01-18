@@ -43,7 +43,7 @@ import java.util.List;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
@@ -119,29 +119,29 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
     @Test
     public void test_getTagContentByNameAndId_should_returnTagContent_when_tagAndIdFound() {
-        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPOINT, "art486-aln1");
-        String expected = "<alinea xml:id=\"art486-aln1\">" +
+        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPARAGRAPH, "art486-aln1");
+        String expected = "<subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c3\">" +
                 "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"8\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
                 "                        </content>" +
-                "                    </alinea>";
+                "                    </subparagraph>";
         assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(tagContent));
     }
 
     @Test
     public void test_getTagContentByNameAndId_should_returnNull_when_tagAndIdNotFound() {
-        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPOINT, "art486-aln1123456789");
+        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPARAGRAPH, "art486-aln1123456789");
         assertThat(tagContent, is(nullValue()));
     }
 
     @Test
     public void test_getTagContentByNameAndId_should_returnFirstTag_when_IdNull() {
-        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPOINT, null);
-        String expected = "<alinea xml:id=\"art486-aln1\">" +
+        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(docContent, SUBPARAGRAPH, null);
+        String expected = "<subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c3\">" +
                 "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"8\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
                 "                        </content>" +
-                "                    </alinea>";
+                "                    </subparagraph>";
         assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(tagContent));
     }
 
@@ -149,7 +149,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     public void test_getTagContentByNameAndId_should_throwRuntimeException_when_illegalXmlFormat() {
         String xml = " <article xml:id=\"art486\">" +
                 "                    <num class=\"ArticleNumber\">Article 486</num>";
-        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(xml.getBytes(UTF_8), SUBPOINT, "art486-aln1");
+        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(xml.getBytes(UTF_8), SUBPARAGRAPH, "art486-aln1");
         assertThat(tagContent, is(nullValue()));
     }
 
@@ -157,11 +157,11 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     public void test_replaceElement() {
         String newContent = "<article xml:id=\"artnew\">" +
                 "                    <num class=\"ArticleNumber\" xml:id=\"num1\">Article new</num>" +
-                "                    <alinea xml:id=\"artnew-aln1\">" +
+                "                    <subparagraph xml:id=\"artnew-aln1\">" +
                 "                        <content xml:id=\"c\">" +
                 "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p\">new content</p>" +
                 "                        </content>" +
-                "                    </alinea>" +
+                "                    </subparagraph>" +
                 "                </article>";
 
         byte[] returnedElement = xercesXmlContentProcessor.replaceElement(docContent, "//*[@xml:id = 'art486']", true, newContent);
@@ -205,11 +205,11 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     public void test_replaceElementByTagNameAndId_should_match_returnedTagContent() {
         String newContent = "<article xml:id=\"art486\">" +
                 "                    <num class=\"ArticleNumber\" xml:id=\"num1\">Article 486</num>" +
-                "                    <alinea xml:id=\"art486-aln1\">" +
+                "                    <subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c\">" +
                 "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p\">This text should appear in the main document after merge<authorialNote marker=\"1\" xml:id=\"a4\"><p xml:id=\"p1\">TestNoteX</p></authorialNote> with the updated Article <i xml:id=\"i1\">Official Journal of the European Union</i>.</p>" +
                 "                        </content>" +
-                "                    </alinea>" +
+                "                    </subparagraph>" +
                 "                </article>";
 
         byte[] returnedElement = xercesXmlContentProcessor.replaceElementById(docContent, newContent, "art486");
@@ -606,11 +606,11 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     @Test
     public void test_getParentElement_should_returnParentElement_when_childIdFound() {
         Element element = xercesXmlContentProcessor.getParentElement(docContent, "c3");
-        String expected = "<alinea xml:id=\"art486-aln1\">" +
+        String expected = "<subparagraph xml:id=\"art486-aln1\">" +
                 "                        <content xml:id=\"c3\">" +
                 "                            <p class=\"Paragraph(unnumbered)\" xml:id=\"p3\">This Regulation shall enter into force on the day following that of its publication in the <i xml:id=\"i2\">Official Journal of the European<authorialNote marker=\"8\" xml:id=\"a3\"><p>TestNote3</p></authorialNote> Union</i>.</p>" +
                 "                        </content>" +
-                "                    </alinea>";
+                "                    </subparagraph>";
 
         assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(element.getElementFragment()));
     }

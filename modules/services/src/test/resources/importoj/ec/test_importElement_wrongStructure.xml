@@ -14,38 +14,38 @@
 
         <paragraph xml:id="imp_art_23_P99mof_58pYPx">
             <num xml:id="imp_art_23_P99mof_h0d1hy">2.</num>
-            <subparagraph xml:id="imp_art_23_P99mof_Qk0CtG">
-                <content xml:id="imp_art_23_P99mof_prZB8Z">
-                    <p xml:id="imp_art_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
-                </content>
-            </subparagraph>
             <list xml:id="imp_art_23_P99mof_u93htc">
+                <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_Qk0CtG">
+                    <content xml:id="imp_art_23_P99mof_prZB8Z">
+                        <p xml:id="imp_art_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
+                    </content>
+                </subparagraph>
                 <point xml:id="imp_art_23_P99mof_zfNq9s">
                     <num xml:id="imp_art_23_P99mof_FC1tcm">(a)</num>
-                    <alinea xml:id="imp_art_23_P99mof_C0cyPH">
+                    <subparagraph xml:id="imp_art_23_P99mof_C0cyPH">
                         <content xml:id="imp_art_23_P99mof_bwovMa">
                             <p xml:id="imp_art_23_P99mof_CCX9D5">Article 25, paragraph 2, Point (a), first alinea</p>
                         </content>
-                    </alinea>
-                    <alinea xml:id="imp_art_23_P99mof_kUIIeV">
+                    </subparagraph>
+                    <subparagraph xml:id="imp_art_23_P99mof_kUIIeV">
                         <content xml:id="imp_art_23_P99mof_ThoMVz">
                             <p xml:id="imp_art_23_P99mof_0615td">Article 25, paragraph 2, Point (b), second alinea</p>
                         </content>
-                    </alinea>
+                    </subparagraph>
                 </point>
                 <point xml:id="imp_art_23_P99mof_fD6PFK">
                     <num xml:id="imp_art_23_P99mof_g7iGYJ">(b)</num>
-                    <alinea xml:id="imp_art_23_P99mof_i4rCY2">
+                    <subparagraph xml:id="imp_art_23_P99mof_i4rCY2">
                         <content xml:id="imp_art_23_P99mof_DJx4Q8">
                             <p xml:id="imp_art_23_P99mof_8fYIul">Article 25, paragraph 2, Point (b), first alinea</p>
                         </content>
-                    </alinea>
-                    <alinea xml:id="imp_art_23_P99mof_LYUT0e">
-                        <content xml:id="imp_art_23_P99mof_znCsOX">
-                            <p xml:id="imp_art_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second alinea</p>
-                        </content>
-                    </alinea>
+                    </subparagraph>
                     <list xml:id="imp_art_23_P99mof_SQ8BMd">
+                        <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_LYUT0e">
+                            <content xml:id="imp_art_23_P99mof_znCsOX">
+                                <p xml:id="imp_art_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second alinea</p>
+                            </content>
+                        </subparagraph>
                         <indent xml:id="imp_art_23_P99mof_ydKJie">
                             <num xml:id="imp_art_23_P99mof_hERt8s">-</num>
                             <content xml:id="imp_art_23_P99mof_QQsneg">
@@ -64,16 +64,16 @@
                 </point>
                 <point xml:id="imp_art_23_P99mof_lHSKlW">
                     <num xml:id="imp_art_23_P99mof_pHLgiE">(c)</num>
-                    <alinea xml:id="imp_art_23_P99mof_aVESKN">
+                    <subparagraph xml:id="imp_art_23_P99mof_aVESKN">
                         <content xml:id="imp_art_23_P99mof_NdRXK8">
                             <p xml:id="imp_art_23_P99mof_NEWqze">Article 25, paragraph 2, Point (c), first alinea</p>
                         </content>
-                    </alinea>
-                    <alinea xml:id="imp_art_23_P99mof_m5xD3y">
+                    </subparagraph>
+                    <subparagraph xml:id="imp_art_23_P99mof_m5xD3y">
                         <content xml:id="imp_art_23_P99mof_0u6LpQ">
                             <p xml:id="imp_art_23_P99mof_pPg6PJ">Article 25, paragraph 2, Point (c), second alinea</p>
                         </content>
-                    </alinea>
+                    </subparagraph>
                 </point>
             </list>
         </paragraph>
@@ -85,4 +85,3 @@
         </paragraph>
     </article>
 </akomaNtoso>
-            

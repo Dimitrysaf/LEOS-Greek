@@ -22,6 +22,7 @@ import com.vaadin.ui.TreeGrid;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 
@@ -137,7 +138,7 @@ public class ProposalTocEditor extends AbstractTocEditor {
             dropItemAtOriginalPosition(moveToTemp, moveToFinal, container);
             container.removeItem(moveToTemp);
             if (moveToTemp.getParentItem() != null) {
-                moveToTemp.getParentItem().removeChildItem(moveToTemp);
+                TableOfContentHelper.removeChildItem(moveToTemp.getParentItem(), moveToTemp);
             }
         }
         moveFromItem.setOriginNumAttr(LS);

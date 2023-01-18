@@ -28,30 +28,16 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU"
-                             showAs="Brussels"/>
-                <TLCOrganization xml:id="CONSIL"
-                                 href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament"/>
-                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission"/>
-                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID"
-                         showAs="President"/>
-                <TLCReference xml:id="REG" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/REG"
-                              showAs="Regulation"/>
-                <TLCReference xml:id="legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456"
-                              showAs="Legal basis"/>
-                <TLCReference xml:id="language" name="language"
-                              href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
-                <TLCReference xml:id="_procedure_2012_227" name="procedureReference"
-                              href="http://eur-lex.europa.eu/procedure/EN/2012_227" showAs="2012/0227 (COD)"
-                              shortForm="2012/227/COD"/>
-                <TLCReference xml:id="_azs3y" name="identifier"
-                              href="http://publications.europa.eu/resource/authority/identifier/COMnumber"
-                              showAs="COM(2012) 466" shortForm="COM/2012/466"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/2012_227" name="procedureReference" shortForm="2012/227/COD" showAs="2012/0227 (COD)" xml:id="_procedure_2012_227"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/identifier/COMnumber" name="identifier" shortForm="COM/2012/466" showAs="COM(2012) 466" xml:id="_azs3y"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -69,22 +55,21 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img xml:id="coverpage__container_1__p__img" src="data:image/png;base64,iVBORw0KG..."
-                         alt="European Commission" title="European Commission"/>
+                    <img alt="European Commission" src="data:image/png;base64,iVBORw0KG..." title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
-            <container xml:id="akn_ito6Ch" name="mainDoc">
-                <block xml:id="akn_P7DwOr" name="placeAndDate"><location xml:id="akn_cRgdyZ" refersTo="~_BEL_BRU">
+            <container name="mainDoc" xml:id="akn_ito6Ch">
+                <block name="placeAndDate" xml:id="akn_P7DwOr"><location refersTo="~_BEL_BRU" xml:id="akn_cRgdyZ">
                     Brussels</location>,
-                    <date xml:id="akn_E4utu9" date="2012-09-28">
+                    <date date="2012-09-28" xml:id="akn_E4utu9">
                         28.09.2012
                     </date>
                 </block>
-                <block xml:id="akn_2gXu3c" name="reference">
+                <block name="reference" xml:id="akn_2gXu3c">
                     <docNumber xml:id="akn_zn9q3V">COM(2012) 466 final</docNumber>
                 </block>
             </container>
-            <container xml:id="akn_4bOdDr" name="procedureIdentifier">
+            <container name="procedureIdentifier" xml:id="akn_4bOdDr">
                 <p xml:id="akn_TNycWp">
                     <docketNumber xml:id="akn_CL4Ftj">2012/0227 (COD)</docketNumber>
                 </p>
@@ -104,7 +89,7 @@
 
         </coverPage>
         <preface xml:id="preface">
-            <container xml:id="akn_8Z4nIK" name="procedureIdentifier">
+            <container name="procedureIdentifier" xml:id="akn_8Z4nIK">
                 <p xml:id="akn_R1yPcH">
                     <docketNumber xml:id="akn_QAkmGs">2012/0227 (COD)</docketNumber>
                 </p>
@@ -120,50 +105,50 @@
             </longTitle>
         </preface>
         <preamble xml:id="preamble">
-            <formula xml:id="preamble__formula_1" name="actingEntity">
+            <formula name="actingEntity" xml:id="preamble__formula_1">
                 <p xml:id="preamble__formula_1__p">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
             </formula>
-            <citations xml:id="cits" leos:editable="false">
-                <citation refersTo="~legalBasis" xml:id="cit_1" leos:editable="true">
+            <citations leos:editable="false" xml:id="cits">
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_1">
                     <p xml:id="cit_1__p">Citation 1
                         content
                         with newLine
                     </p>
                 </citation>
-                <citation refersTo="~legalBasis" xml:id="cit_2" leos:editable="true">
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_2">
                     <p xml:id="cit_2__p">Citation 2 content with AuthorialNote
-                        <authorialNote xml:id="authorialnote_1" marker="1" placement="bottom">
+                        <authorialNote marker="1" placement="bottom" xml:id="authorialnote_1">
                             <p xml:id="authorialNote_1__p">Inside Authorial note</p>
                         </authorialNote>
                         ,
                     </p>
                 </citation>
             </citations>
-            <recitals xml:id="recs" leos:editable="false">
+            <recitals leos:editable="false" xml:id="recs">
                 <intro xml:id="recitalsIntro">
                     <p xml:id="recs_intro">Whereas:</p>
                 </intro>
-                <recital leos:editable="true" leos:deletable="true" xml:id="rec_1">
+                <recital leos:deletable="true" leos:editable="true" xml:id="rec_1">
                     <num xml:id="rec_1_num">(1)</num>
                     <p xml:id="recs_ain12d">
                         Recital 1 content
                     </p>
                 </recital>
 
-                <recital leos:editable="true" leos:deletable="true" xml:id="rec_2">
+                <recital leos:deletable="true" leos:editable="true" xml:id="rec_2">
                     <num xml:id="rec_2_num">(2)</num>
                     <p xml:id="recs_5anVUo">Recital 2 content with special character Larosière
                     </p>
                 </recital>
             </recitals>
-            <formula xml:id="preamble__formula_2" name="enactingFormula">
+            <formula name="enactingFormula" xml:id="preamble__formula_2">
                 <p xml:id="preamble__formula_2__p">HAVE ADOPTED THIS REGULATION:</p>
             </formula>
         </preamble>
 
         <body xml:id="body">
 
-            <part xml:id="akn_part_htJBP6" leos:depth="1">
+            <part leos:depth="1" xml:id="akn_part_htJBP6">
                 <num xml:id="akn_BE55oX">Part I</num>
                 <heading>
                     100
@@ -173,7 +158,7 @@
                     in
                     header
                 </heading>
-                <article leos:origin="cn" leos:editable="false" xml:id="art_1">
+                <article leos:editable="false" leos:origin="cn" xml:id="art_1">
                     <num xml:id="art_1_num">Article 1</num>
                     <heading xml:id="art_1_heading">Article 1 Heading</heading>
                     <paragraph xml:id="art_1_par">
@@ -193,38 +178,38 @@
                         </content>
                     </paragraph>
                 </article>
-                <article leos:origin="ec" leos:editable="true" leos:deletable="true" xml:id="art_2">
+                <article leos:deletable="true" leos:editable="true" leos:origin="ec" xml:id="art_2">
                     <num xml:id="art_2_num">Article 2</num>
                     <heading xml:id="art_2_heading">Article 2 Heading</heading>
                     <paragraph leos:origin="ec" xml:id="art_2_par1">
                         <num leos:origin="ec" xml:id="art_2_Woc735">1.</num>
-                        <subparagraph leos:origin="ec" xml:id="art_2_par1_sub1">
+                        
+                        <list leos:origin="ec" xml:id="art_2_Wnl7op"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_2_par1_sub1">
                             <content leos:origin="ec" xml:id="art_2_fCeC1t">
                                 <p leos:origin="ec" xml:id="art_2_NT9OhJ">Sub paragraph --
                                     <b leos:origin="ec" xml:id="art_2_Klz48x"> of Paragraph 1</b> Article 2
                                 </p>
                             </content>
                         </subparagraph>
-                        <list leos:origin="ec" xml:id="art_2_Wnl7op">
                             <point leos:origin="ec" xml:id="art_2_urNCcV">
                                 <num leos:origin="ec" xml:id="art_2_gFkBde">(a)</num>
                                 <content leos:origin="ec" xml:id="art_2_Qzmsjc">
                                     <p leos:origin="ec" xml:id="art_2_aQ7g6K">point (a)</p>
                                 </content>
                             </point>
-                            <point xml:id="art_2_kWNiUC" leos:origin="ec">
-                                <num xml:id="art_2_acDbga" leos:origin="ec">(b)</num>
+                            <point leos:origin="ec" xml:id="art_2_kWNiUC">
+                                <num leos:origin="ec" xml:id="art_2_acDbga">(b)</num>
                                 <content leos:origin="ec" xml:id="art_2_flq9C1">
                                     <p leos:origin="ec" xml:id="art_2_kw4sXt">point (b)</p>
                                 </content>
                             </point>
-                            <point xml:id="art_2_ZzykdM" leos:origin="ec">
-                                <num xml:id="art_2_koxWzM" leos:origin="ec">(c)</num>
-                                <alinea xml:id="art_2_78ndzv" leos:origin="ec">
+                            <point leos:origin="ec" xml:id="art_2_ZzykdM">
+                                <num leos:origin="ec" xml:id="art_2_koxWzM">(c)</num>
+                                <subparagraph leos:origin="ec" xml:id="art_2_78ndzv">
                                     <content leos:origin="ec" xml:id="art_2_EzAUvo">
                                         <p leos:origin="ec" xml:id="art_2_17jvrP">point (c) content. This is alinea</p>
                                     </content>
-                                </alinea>
+                                </subparagraph>
                                 <list leos:origin="ec" xml:id="art_2_bQW8O7">
                                     <point leos:origin="ec" xml:id="art_2_azxVUY">
                                         <num leos:origin="ec" xml:id="art_2_8G6jeY">(i)</num>
@@ -234,11 +219,11 @@
                                     </point>
                                     <point leos:origin="ec" xml:id="art_2_mSvIgb">
                                         <num leos:origin="ec" xml:id="art_2_Fyvr9w">(ii)</num>
-                                        <alinea leos:origin="ec" xml:id="art_2_6G73F7">
+                                        <subparagraph leos:origin="ec" xml:id="art_2_6G73F7">
                                             <content leos:origin="ec" xml:id="art_2_keYk7S">
                                                 <p leos:origin="ec" xml:id="art_2_PMAuPF">point (i) content</p>
                                             </content>
-                                        </alinea>
+                                        </subparagraph>
                                         <list leos:origin="ec" xml:id="art_2_gDJwrD">
                                             <point leos:origin="ec" xml:id="art_2_point1">
                                                 <num leos:origin="ec" xml:id="art_2_point1_num">(1)</num>
@@ -248,24 +233,24 @@
                                             </point>
                                             <point leos:origin="ec" xml:id="art_2_SQHh5n">
                                                 <num leos:origin="ec" xml:id="art_2_Z61Xsc">(2)</num>
-                                                <alinea leos:origin="ec" xml:id="art_2_6G45GHJ">
+                                                <subparagraph leos:origin="ec" xml:id="art_2_6G45GHJ">
                                                     <content leos:origin="ec" xml:id="art_2_SPx97b">
                                                         <p leos:origin="ec" xml:id="art_2_iALt29">point (2) content</p>
                                                     </content>
-                                                </alinea>
+                                                </subparagraph>
                                                 <list leos:origin="ec" xml:id="art_2_gDGhFRT">
                                                     <indent leos:origin="ec" xml:id="art_2_1juLJh">
                                                         <num leos:origin="ec" xml:id="art_2_Wxy2we">-</num>
-                                                        <alinea leos:origin="ec" xml:id="art_2_6G46GHJ">
+                                                        <subparagraph leos:origin="ec" xml:id="art_2_6G46GHJ">
                                                             <content leos:origin="ec" xml:id="art_2_N0JGOv">
                                                                 <p leos:origin="ec" xml:id="art_2_ddsnGD">point - (first indent) content. this is alinea</p>
                                                             </content>
-                                                        </alinea>
-                                                        <alinea leos:origin="ec" xml:id="art_2_6G47GHJ">
+                                                        </subparagraph>
+                                                        <subparagraph leos:origin="ec" xml:id="art_2_6G47GHJ">
                                                             <content leos:origin="ec" xml:id="art_2_NGHSZ">
                                                                 <p leos:origin="ec" xml:id="art_2_bgH78">point - (first indent) content.  this is alinea</p>
                                                             </content>
-                                                        </alinea>
+                                                        </subparagraph>
                                                     </indent>
                                                 </list>
                                             </point>
@@ -295,7 +280,7 @@
                         </content>
                     </paragraph>
                 </article>
-                <article leos:editable="true" leos:deletable="true" xml:id="art_3">
+                <article leos:deletable="true" leos:editable="true" xml:id="art_3">
                     <num xml:id="art_3_num">Article 3</num>
                     <heading xml:id="imp_art_d179e1262_nWKVTv_lylMhW">Article 3 Heading</heading>
                     <paragraph xml:id="imp_art_d179e1262_nWKVTv_XInC3R">
@@ -307,8 +292,7 @@
                 </article>
             </part>
 
-            <clause xml:id="clause_1" leos:editable="true" leos:deletable="true" leos:alternative="true"
-                    leos:optionlist="listOption1" leos:selectedoption="1">
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
                 <content xml:id="clause_1__content">
                     <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly
                         applicable in all Member States.
@@ -319,29 +303,29 @@
 
 
         <conclusions xml:id="conclusions">
-            <p xml:id="conclusions__p_1">Done at <location xml:id="conclusions__p__location_1" refersTo="~_BEL_BRU">
+            <p xml:id="conclusions__p_1">Done at <location refersTo="~_BEL_BRU" xml:id="conclusions__p__location_1">
                 Brussels</location>,
             </p>
             <block name="signatory" xml:id="conclusions__block_1">
                 <signature xml:id="conclusions__block_1__signature_1">
-                    <organization xml:id="conclusions__block_1__signature_1__organization" refersTo="~EP">For the
+                    <organization refersTo="~EP" xml:id="conclusions__block_1__signature_1__organization">For the
                         European Parliament
                     </organization>
-                    <role xml:id="conclusions__block_1__signature_1__role" refersTo="~PRESID">The President</role>
-                    <person xml:id="conclusions__block_1__signature_1__person" refersTo="">[...]</person>
+                    <role refersTo="~PRESID" xml:id="conclusions__block_1__signature_1__role">The President</role>
+                    <person refersTo="" xml:id="conclusions__block_1__signature_1__person">[...]</person>
                 </signature>
                 <signature xml:id="conclusions__block_1__signature_2">
-                    <organization xml:id="conclusions__block_1__signature_2__organization" refersTo="~CONSIL">For the
+                    <organization refersTo="~CONSIL" xml:id="conclusions__block_1__signature_2__organization">For the
                         Council
                     </organization>
-                    <role xml:id="conclusions__block_1__signature_2__role" refersTo="~PRESID">The President</role>
-                    <person xml:id="conclusions__block_1__signature_2__person" refersTo="">[...]</person>
+                    <role refersTo="~PRESID" xml:id="conclusions__block_1__signature_2__role">The President</role>
+                    <person refersTo="" xml:id="conclusions__block_1__signature_2__person">[...]</person>
                 </signature>
             </block>
         </conclusions>
 		<attachments>
 			<attachment xml:id="attachment_1">
-				<documentRef xml:id="attachment_1__annex" href="annex_cl3yjnpcz0007k485t5p989mq.xml" showAs="Annex"/>
+				<documentRef href="annex_cl3yjnpcz0007k485t5p989mq.xml" showAs="Annex" xml:id="attachment_1__annex"/>
 			</attachment>
 		</attachments>
     </bill>

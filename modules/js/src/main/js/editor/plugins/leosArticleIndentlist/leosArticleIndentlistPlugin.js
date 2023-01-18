@@ -112,7 +112,13 @@ define(function leosArticleIndentListPluginModule(require) {
                         function(editor, path) {
                             var list = this.getContext( path );
                             var range = getSelectedRange(editor);
-                            if (!list
+                            path = leosPluginUtils.manageSubparagraphs(range, path);
+                            var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
+                            if (isListEnding) {
+                                return TRISTATE_OFF;
+                            } else if (leosPluginUtils.isSubparagraph(path.lastElement)) {
+                                return TRISTATE_OFF;
+                            } else if (!list
                                 || firstItemInPath( this.context, path, list )
                                 || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), leosPluginUtils.MAX_LIST_LEVEL) ) {
                                 return TRISTATE_DISABLED;
@@ -157,7 +163,7 @@ define(function leosArticleIndentListPluginModule(require) {
                 endContainer = endContainer.getParent();
 
             if (!startContainer || !endContainer
-                || (that.isIndent && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL))){
+                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer) && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL))){
                 return false;
             }
 
@@ -187,13 +193,16 @@ define(function leosArticleIndentListPluginModule(require) {
                 }
             }
 
-            var indentOffset = that.isIndent ? 1 : -1, startItem = itemsToMove[0], lastItem = itemsToMove[itemsToMove.length - 1],
+            var indentOffset = that.isIndent ? 1 : -1, startItem = itemsToMove[0], lastItem = itemsToMove[itemsToMove.length - 1], listArray;
 
             // Convert the list DOM tree into a one dimensional array.
-            listArray = CKEDITOR.plugins.leosArticleList.listToArray(listNode, database),
+            listArray = CKEDITOR.plugins.leosArticleList.listToArray(listNode, database);
 
             // Apply indenting or outdenting on the array.
-            baseIndent = listArray[lastItem.getCustomData('listarray_index')].indent;
+            if (!listArray[lastItem.getCustomData('listarray_index')]) {
+                return false;
+            }
+            var baseIndent = listArray[lastItem.getCustomData('listarray_index')].indent;
 
             for (i = startItem.getCustomData('listarray_index'); i <= lastItem.getCustomData('listarray_index'); i++) {
                 listArray[i].indent += indentOffset;
@@ -281,6 +290,8 @@ define(function leosArticleIndentListPluginModule(require) {
             iterator = ranges.createIterator();
 
         while ((range = iterator.getNextRange())) {
+            range.endContainer = leosPluginUtils.manageListIntro(range.endContainer);
+            range.startContainer = leosPluginUtils.manageListIntro(range.startContainer);
             var nearestListBlock = range.getCommonAncestor();
 
             while ( nearestListBlock && !( nearestListBlock.type == CKEDITOR.NODE_ELEMENT && context[ nearestListBlock.getName() ] ) ) {
@@ -324,8 +335,29 @@ define(function leosArticleIndentListPluginModule(require) {
                 range.endContainer = walker.previous();
             }
 
-            if (nearestListBlock)
-                return indent(nearestListBlock);
+            if (nearestListBlock) {
+                // Is this is a subparagraph, no need to go to the list of points' logic, just set it as a point
+                if (leosPluginUtils.isSubParaButNotListIntroOrFirstSubparaOfPointOrPara(range.startContainer)) {
+                    range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
+                    range.startContainer.renameNode('li');
+                    // Check if point has an ol as parent, if not add it
+                    if (!range.startContainer.getParent().is('ol')) {
+                        var doc = range.startContainer.getParent().getDocument();
+                        var newOl = doc.createElement('ol');
+                        range.startContainer.getParent().$.insertBefore(newOl.$, range.startContainer.$);
+                        newOl.append(range.startContainer);
+                    }
+                    result = true;
+                } else {
+                    var result = indent(nearestListBlock);
+                }
+                leosPluginUtils.manageEmptyLists(editor);
+                leosPluginUtils.managePoints(editor);
+                leosPluginUtils.manageEmptySubparagraphs(editor);
+                leosPluginUtils.manageCrossheadings(editor);
+                leosPluginUtils.manageSiblingLists(editor);
+                return result;
+            }
         }
         return 0;
     }
@@ -453,7 +485,7 @@ define(function leosArticleIndentListPluginModule(require) {
 
     // Determines whether a node is a list <li> element.
     function listItem(node) {
-        return node.type == CKEDITOR.NODE_ELEMENT && node.is('li');
+        return node.type == CKEDITOR.NODE_ELEMENT && node.is('li') && node.hasAttribute(leosPluginUtils.DATA_AKN_NUM);
     }
 
     function neitherWhitespacesNorBookmark(node) {
@@ -505,6 +537,9 @@ define(function leosArticleIndentListPluginModule(require) {
         if (range && !range.collapsed) {
             return findWithinRange(range, function(node) {
                 //Check if the node is the first level list item.
+                if (leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(node)) {
+                    node = node.getParent().getParent();
+                }
                 return node && node.getAscendant && !node.getAscendant('li');
             });
         } else {

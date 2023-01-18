@@ -1,6 +1,4 @@
-
-<?xml-stylesheet type="text/css" href="renditions/html/css/memorandum.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
- >
+<?xml-stylesheet type="text/css" href="renditions/html/css/memorandum.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="EXPL_MEMORANDUM">
         <meta>
             <identification source="~COM">
@@ -30,14 +28,14 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
-                <TLCOrganization xml:id="CONSIL" href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
-                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="EXPL_MEMORANDUM" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM"  showAs="Explanatory Memorandum"/>
-                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456" showAs="Legal basis"/>
-                <TLCReference xml:id="language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory Memorandum" xml:id="EXPL_MEMORANDUM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
                 <leos:version>1.1.1</leos:version>
@@ -50,13 +48,13 @@
             </proprietary>
         </meta>
         <mainBody xml:id="body">
-            <tblock xml:id="tblock_2" refersTo="~statementOfLegalReasons">
+            <tblock refersTo="~statementOfLegalReasons" xml:id="tblock_2">
                 <num xml:id="tblock_2__num">2.</num>
                 <heading xml:id="tblock_2__heading">LEGAL BASIS, SUBSIDIARITY AND PROPORTIONALITY</heading>
-                <tblock xml:id="tblock_2__tblock_2" refersTo="~subsidiarity">
+                <tblock refersTo="~subsidiarity" xml:id="tblock_2__tblock_2">
                     <num xml:id="tblock_2__tblock_2__num">•</num>
                     <heading xml:id="tblock_2__tblock_2__heading">Subsidiarity (for non-exclusive competence)</heading>
-                    <blockContainer xml:id="tblock_2__tblock_2__blockcontainer" leos:editable="true">
+                    <blockContainer leos:editable="true" xml:id="tblock_2__tblock_2__blockcontainer">
                         <p xml:id="tblock_2__tblock_2__blockcontainer__p">This is my search content, this is my other search content and this is other search content</p>
                         <p xml:id="tblock_2__tblock_2__blockcontainer__p_2">This is my second search content and this is my other second search content</p>
                     </blockContainer>

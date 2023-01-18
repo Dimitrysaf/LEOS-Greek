@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.xerces.dom.DeferredElementImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,8 @@ import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.i
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isElementUnumberedIndentedInOtherContext;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isIndentedAndRemovedParent;
 import static eu.europa.ec.leos.services.support.XercesUtils.getSoftAction;
+import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isRemovedSubparagraphPartOfIndentedFirstElement;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
@@ -299,7 +302,8 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
 
     @Override
     protected void appendRemovedElementContent(ContentComparatorContext context) {
-        if (context.getOldElement() == null) {
+        if (context.getOldElement() == null || isRemovedSubparagraphPartOfIndentedFirstElement(context.getOldElement(),
+                context.getNewContentElements())) {
             return;
         }
         if (context.getDisplayRemovedContentAsReadOnly() && !shouldIgnoreElement(context.getOldElement())) {
@@ -609,7 +613,18 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
         if (attrName != null && attrValue != null) {
             Node node = element.getNode();
             XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), attrValue);
+            appendIndentedDeletedOrMovedToChildren(attrName, attrValue, element);
             addToResultNode(context, node);
+        }
+    }
+
+    private void appendIndentedDeletedOrMovedToChildren(String attrName, String attrValue, Element element) {
+        for (Element child: element.getChildren()) {
+            if (!child.getTagName().equals(CONTENT)) {
+                Node childNode = child.getNode();
+                XercesUtils.insertOrUpdateAttributeValue(childNode, attrName, attrValue);
+                appendIndentedDeletedOrMovedToChildren(attrName, attrValue, child);
+            }
         }
     }
 
@@ -676,6 +691,41 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
             } else {
                 removeNotDeletedElementsFromContent(context, notDeletedElements, child, childNode);
             }
+        }
+    }
+
+    private Element getIntroFromNextListWithRemovedIntroInOtherContext(Map<String, Element> otherContentElements, Element oldElement,
+                                                                             Element newElement) {
+        if (oldElement!=null && newElement!=null && newElement.getParent().getTagName().equals(LIST)
+                && oldElement.getParent().equals(newElement.getParent())
+                && isElementIndented(oldElement)) {
+            // Get next sibling of current list
+            int indexOfList = oldElement.getParent().getParent().getChildren().indexOf(oldElement.getParent());
+            if (indexOfList < oldElement.getParent().getParent().getChildren().size() - 1) {
+                Element nextSiblingList = oldElement.getParent().getParent().getChildren().get(indexOfList+1);
+                // Checks that this is a list and removed in other context
+                if (nextSiblingList.getTagName().equals(LIST)
+                        && isElementRemovedInOtherContext(otherContentElements, nextSiblingList)
+                        && !nextSiblingList.getChildren().isEmpty()) {
+                    Element firstElementOfList = nextSiblingList.getChildren().get(0);
+                    if (firstElementOfList.getTagName().equals(SUBPARAGRAPH)
+                            && isElementRemovedInOtherContext(otherContentElements, firstElementOfList)) {
+                        return firstElementOfList;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void manageNextListWithRemovedIntro(ContentComparatorContext context, Element newElementChild) {
+        Element introRemoved = getIntroFromNextListWithRemovedIntroInOtherContext(context.getNewContentElements(), context.getOldElement(), newElementChild);
+        if (introRemoved != null) {
+            Node node = getChangedElementContent(context.getOldContentNode(), introRemoved, context.getAttrName(),
+                    getStartTagValueForRemovedElementFromAncestor(introRemoved, context));
+            addReadOnlyAttributes(node);
+            addToResultNode(context, node);
         }
     }
 }

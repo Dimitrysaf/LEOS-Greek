@@ -28,7 +28,7 @@
     </article>
     <article xml:id="akn_tqYahb">
         <num class="ArticleNumber" xml:id="akn_tqYahb_h5FIM4">Article 486</num>
-        <alinea xml:id="akn_tqYahb_kelZq1">
+        <subparagraph xml:id="akn_tqYahb_kelZq1">
             <content xml:id="akn_tqYahb_TfkMYa">
                 <p class="Paragraph(unnumbered)" xml:id="akn_tqYahb_dK5YRJ">This Regulation shall enter into force on the day following
                     that of its publication in the
@@ -41,6 +41,6 @@
                     .
                 </p>
             </content>
-        </alinea>
+        </subparagraph>
     </article>
 </part>

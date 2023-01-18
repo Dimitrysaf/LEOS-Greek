@@ -7,7 +7,7 @@
                 <chapter leos:origin="ec" xml:id="chapter_1">
                     <num leos:origin="ec" xml:id="akn_9Stf16">Chapter 1</num>
                     <heading leos:origin="ec" xml:id="akn_LFvufQ">Chapter heading...</heading>
-                    <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_3" >
+                    <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_3">
                         <num leos:editable="false" leos:origin="ec" xml:id="art_3__num">Article 1</num>
                         <heading leos:origin="ec" xml:id="art_3__heading">Scope</heading>
                         <paragraph leos:origin="ec" xml:id="art_3__para_1">

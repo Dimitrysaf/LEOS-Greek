@@ -1,10 +1,9 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill>
         <meta>
             <identification>
                 <FRBRExpression>
-                    <FRBRlanguage xml:id="lang" language="FR"></FRBRlanguage>
+                    <FRBRlanguage language="FR" xml:id="lang"/>
                 	<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
                 		<akn4eu:akn4euVersion value="4.0.0.0"/>
                 	</preservation>
@@ -17,7 +16,7 @@
             </proprietary>
         </meta>
         <body>
-            <article xml:id="art486"></article>
+            <article xml:id="art486"/>
         </body>
     </bill>
 </akomaNtoso>

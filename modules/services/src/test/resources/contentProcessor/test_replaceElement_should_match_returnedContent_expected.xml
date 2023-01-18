@@ -1,12 +1,11 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <proprietary source="~_leos">
                 <leos:version>1.1.1</leos:version>
                 <leos:template>SJ-023</leos:template>
                 <leos:docTemplate>BL-023</leos:docTemplate>
-                <leos:relevantElements leos:originalVersion="0.1.0" leos:currentVersion="0.1.1">
+                <leos:relevantElements leos:currentVersion="0.1.1" leos:originalVersion="0.1.0">
                     <leos:relevantElement leos:ref="preface" leos:tagName="preface"/>
                     <leos:relevantElement leos:ref="body" leos:tagName="body"/>
                     <leos:relevantElement leos:ref="preamble" leos:tagName="preamble"/>

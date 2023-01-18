@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor;
 
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -42,6 +43,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLAUSE;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
@@ -105,8 +107,10 @@ public class BillProcessorImpl implements BillProcessor {
                 }
                 break;
             case SUBPARAGRAPH:
-                parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
+                parentElement = getParentElementForSubParagraph(document, elementId);
                 if (isFirstSubParagraph(document, parentElement.getElementId(), parentElement.getElementTagName(), elementId)) {
+                    updatedContent = insertNewElement(document, parentElement.getElementId(), before, parentElement.getElementTagName());
+                } else if (Arrays.asList(POINT, INDENT).contains(parentElement.getElementTagName())) {
                     updatedContent = insertNewElement(document, parentElement.getElementId(), before, parentElement.getElementTagName());
                 } else if (!PARAGRAPH.equals(parentElement.getElementTagName()) || isNumberedParagraph(document, parentElement.getElementId())) {
                     template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
@@ -176,8 +180,10 @@ public class BillProcessorImpl implements BillProcessor {
                 }
                 break;
             case SUBPARAGRAPH:
-                parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
+                parentElement = getParentElementForSubParagraph(document, elementId);
                 if (isFirstSubParagraph(document, parentElement.getElementId(), parentElement.getElementTagName(), elementId)) {
+                    updatedContent = insertNewElement(document, parentElement.getElementId(), before, parentElement.getElementTagName());
+                } else if (Arrays.asList(POINT, INDENT).contains(parentElement.getElementTagName())) {
                     updatedContent = insertNewElement(document, parentElement.getElementId(), before, parentElement.getElementTagName());
                 } else if (!PARAGRAPH.equals(parentElement.getElementTagName()) || isNumberedParagraph(document, parentElement.getElementId())) {
                     updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), content, tagName, elementId, before);
@@ -221,6 +227,9 @@ public class BillProcessorImpl implements BillProcessor {
                 break;
             case ARTICLE:
             case PARAGRAPH:
+                updatedContent = elementProcessor.deleteElement(document, elementId, tagName);
+                updatedContent = numberService.renumberArticles(updatedContent);
+                break;
             case SUBPARAGRAPH:
             case POINT:
             case SUBPOINT:
@@ -249,8 +258,20 @@ public class BillProcessorImpl implements BillProcessor {
     }
 
     private boolean isFirstSubParagraph(Bill document, String elementId, String tagName, String subParElementId) {
-        Element firstSubParElement = xmlContentProcessor.getChildElement(getContent(document), tagName, elementId, Arrays.asList(SUBPARAGRAPH), 1);
+        Element firstSubParElement = xmlContentProcessor.getChildElement(getContent(document), tagName, elementId, Arrays.asList(SUBPARAGRAPH, LIST), 1);
+        if (firstSubParElement.getElementTagName().equalsIgnoreCase(LIST)) {
+            firstSubParElement = xmlContentProcessor.getChildElement(getContent(document), firstSubParElement.getElementTagName(), firstSubParElement.getElementId(),
+                    Arrays.asList(SUBPARAGRAPH), 1);
+        }
         return firstSubParElement != null && subParElementId.equals(firstSubParElement.getElementId());
+    }
+
+    private Element getParentElementForSubParagraph(Bill document, String elementId) {
+        Element parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
+        if (parentElement.getElementTagName().equalsIgnoreCase(LIST)) {
+            parentElement = xmlContentProcessor.getParentElement(getContent(document), parentElement.getElementId());
+        }
+        return parentElement;
     }
 
     @Override
@@ -263,7 +284,7 @@ public class BillProcessorImpl implements BillProcessor {
         byte[] updatedContent = null;
         if (xmlContentProcessor.needsToBeIndented(elementContent)) {
             byte[] contentBytes = getContent(document);
-            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, contentBytes, TocMode.NOT_SIMPLIFIED);
+            List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, contentBytes, TocMode.RAW);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, elementName, elementId, elementContent, toc);
             if (updatedContent != null) {
                 updatedContent = numberService.renumberRecitals(updatedContent);

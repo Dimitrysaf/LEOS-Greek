@@ -7,19 +7,19 @@
 		</coverPage>
 
 		<collectionBody xml:id="body">
-			<component xml:id="body_cmp_1" refersTo="#memorandum">
+			<component refersTo="#memorandum" xml:id="body_cmp_1">
 				<!-- reference to the memorandum, relative to this proposal -->
-				<documentRef xml:id="body_cmp_1__dref_1" href="memorandum_cksyaotr60002s8283zfnj2vt.xml" showAs="EXPLANATORY MEMORANDUM"/>
+				<documentRef href="memorandum_cksyaotr60002s8283zfnj2vt.xml" showAs="EXPLANATORY MEMORANDUM" xml:id="body_cmp_1__dref_1"/>
 			</component>
-			<component xml:id="body_cmp_2" refersTo="#bill">
+			<component refersTo="#bill" xml:id="body_cmp_2">
 				<!-- reference to the bill, relative to this proposal -->
-				<documentRef xml:id="body_cmp_1__dref_2" href="bill_cksyaouxb0003s828sqpul5di.xml" showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL"/>
+				<documentRef href="bill_cksyaouxb0003s828sqpul5di.xml" showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" xml:id="body_cmp_1__dref_2"/>
 			</component>
-			<component xml:id="akn_brDLRi" refersTo="#council_explanatory">
-				<documentRef xml:id="akn_owcK0Q" showAs="COUNCIL EXPLANATORY" href="explanatory_cksyaovm00004s828ljloqpfx.xml"/>
+			<component refersTo="#council_explanatory" xml:id="akn_brDLRi">
+				<documentRef href="explanatory_cksyaovm00004s828ljloqpfx.xml" showAs="COUNCIL EXPLANATORY" xml:id="akn_owcK0Q"/>
 			</component>
-			<component xml:id="akn_OSsJLx" refersTo="#council_explanatory">
-				<documentRef xml:id="akn_gTBp7T" href="explanatory_cksyaow720005s8282cyznybt.xml" showAs="COUNCIL EXPLANATORY"/>
+			<component refersTo="#council_explanatory" xml:id="akn_OSsJLx">
+				<documentRef href="explanatory_cksyaow720005s8282cyznybt.xml" showAs="COUNCIL EXPLANATORY" xml:id="akn_gTBp7T"/>
 			</component>
 		</collectionBody>
 	</documentCollection>

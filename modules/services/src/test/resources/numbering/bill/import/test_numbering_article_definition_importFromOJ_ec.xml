@@ -3,12 +3,12 @@
     <heading>Definitions</heading>
     <paragraph xml:id="par1">
         <num>1.</num>
-        <subparagraph>
-            <content>
-                <p>For the purposes of this Chapter, the following definitions shall apply:</p>
-            </content>
-        </subparagraph>
         <list xml:id="list_L1">
+            <subparagraph refersTo="~_INP">
+                <content>
+                    <p>For the purposes of this Chapter, the following definitions shall apply:</p>
+                </content>
+            </subparagraph>
             <point xml:id="list_L1_point_1">
                 <num>1)</num>
                 <content>
@@ -23,12 +23,12 @@
             </point>
             <point xml:id="list_L1_point_3">
                 <num>3)</num>
-                <alinea>
-                    <content>
-                        <p>point (c)</p>
-                    </content>
-                </alinea>
                 <list xml:id="list_L2">
+                    <subparagraph refersTo="~_INP">
+                        <content>
+                            <p>point (c)</p>
+                        </content>
+                    </subparagraph>
                     <point xml:id="list_L2_point_1">
                         <num>a)</num>
                         <content>

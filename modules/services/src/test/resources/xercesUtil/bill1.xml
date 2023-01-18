@@ -1,5 +1,4 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-           >
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~COM">
@@ -26,43 +25,16 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU"
-                             showAs="Brussels"
-                             xml:id="_BEL_BRU"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
-                                 showAs="Council of the European Union"
-                                 xml:id="CONSIL"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
-                                 showAs="European Parliament"
-                                 xml:id="EP"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
-                                 showAs="European Commission"
-                                 xml:id="COM"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID"
-                         showAs="President"
-                         xml:id="PRESID"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG"
-                              name="docType"
-                              showAs="Regulation"
-                              xml:id="REG"/>
-                <TLCReference href="http://eurovoc.europa.eu/5456"
-                              name="contentSubject"
-                              showAs="Legal basis"
-                              xml:id="legalBasis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG"
-                              name="language"
-                              showAs="en"
-                              xml:id="language"/>
-                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/2012_227"
-                              name="procedureReference"
-                              shortForm="2012/227/COD"
-                              showAs="2012/0227 (COD)"
-                              xml:id="_procedure_2012_227"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/identifier/COMnumber"
-                              name="identifier"
-                              shortForm="COM/2012/466"
-                              showAs="COM(2012) 466"
-                              xml:id="_azs3y"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/2012_227" name="procedureReference" shortForm="2012/227/COD" showAs="2012/0227 (COD)" xml:id="_procedure_2012_227"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/identifier/COMnumber" name="identifier" shortForm="COM/2012/466" showAs="COM(2012) 466" xml:id="_azs3y"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -80,10 +52,7 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img alt="European Commission"
-                         src="data:image/png;base64,iVBORw0KG..."
-                         title="European Commission"
-                         xml:id="coverpage__container_1__p__img"/>
+                    <img alt="European Commission" src="data:image/png;base64,iVBORw0KG..." title="European Commission" xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
             <container name="mainDoc" xml:id="akn_ito6Ch">
@@ -174,9 +143,7 @@
                 <intro xml:id="recitalsIntro">
                     <p xml:id="recs_intro">Whereas:</p>
                 </intro>
-                <recital leos:deletable="true"
-                         leos:editable="true"
-                         xml:id="imp_rec_d179e87_9jqEzL">
+                <recital leos:deletable="true" leos:editable="true" xml:id="imp_rec_d179e87_9jqEzL">
                     <num xml:id="recs_sGR9NK">(1)</num>
                     <p xml:id="recs_ain12d">The G-20 Declaration of 2 April 2009 on Strengthening of the Financial
                         System called for internationally consistent efforts that are aimed at strengthening
@@ -194,9 +161,7 @@
                     </p>
                 </recital>
 
-                <recital leos:deletable="true"
-                         leos:editable="true"
-                         xml:id="imp_rec_d179e102_s8COA0">
+                <recital leos:deletable="true" leos:editable="true" xml:id="imp_rec_d179e102_s8COA0">
                     <num xml:id="recs_pKrCue">(2)</num>
                     <p xml:id="recs_5anVUo">The High Level Group on Financial Supervision in the EU chaired by Jacques
                         de Larosière (the "de Larosière group") invited the Union to develop a more harmonised
@@ -207,9 +172,7 @@
                     </p>
                 </recital>
 
-                <recital leos:deletable="true"
-                         leos:editable="true"
-                         xml:id="imp_rec_d179e140_OMtVOf">
+                <recital leos:deletable="true" leos:editable="true" xml:id="imp_rec_d179e140_OMtVOf">
                     <num xml:id="recs_ggt4wS">(3)</num>
                     <p xml:id="recs_F47RtN">Directive 2006/48/EC of the European Parliament and of the Council of 14
                         June 2006 relating to the taking up and pursuit of the business of credit institutions
@@ -236,9 +199,7 @@
                 </recital>
 
 
-                <recital leos:deletable="true"
-                         leos:editable="true"
-                         xml:id="imp_rec_d179e1193_QZu78o">
+                <recital leos:deletable="true" leos:editable="true" xml:id="imp_rec_d179e1193_QZu78o">
                     <num xml:id="recs_EhXlcF">(4)</num>
                     <p xml:id="recs_pgzsba">Regulation (EU) No 648/2012 should be amended accordingly,</p>
                 </recital>
@@ -277,7 +238,8 @@
                     <num xml:id="imp_art_d179e1221_P9kEii_l5sIk5">Article 1</num>
                     <heading xml:id="imp_art_d179e1221_P9kEii_QVmXB0">Scope</heading>
                     <paragraph xml:id="imp_art_d179e1221_P9kEii_oHxHh8">
-                        <subparagraph xml:id="imp_art_d179e1221_P9kEii_DV2icu">
+                        
+                        <list xml:id="imp_art_d179e1221_P9kEii_z694nQ"><subparagraph refersTo="~_INP" xml:id="imp_art_d179e1221_P9kEii_DV2icu">
                             <content xml:id="imp_art_d179e1221_P9kEii_THG15B">
                                 <p xml:id="imp_art_d179e1221_P9kEii_LTEPGI">This Regulation lays down uniform rules
                                     concerning general prudential requirements that institutions supervised under
@@ -285,7 +247,6 @@
                                 </p>
                             </content>
                         </subparagraph>
-                        <list xml:id="imp_art_d179e1221_P9kEii_z694nQ">
                             <point xml:id="imp_art_d179e1221_P9kEii_7vqFIG">
                                 <num xml:id="imp_art_d179e1221_P9kEii_BDRJur">(a)</num>
                                 <content xml:id="imp_art_d179e1221_P9kEii_DZpz46">
@@ -337,9 +298,7 @@
                     </paragraph>
                 </article>
                 <chapter leos:depth="1" xml:id="chapter">
-                    <article leos:deletable="true"
-                             leos:editable="true"
-                             xml:id="imp_art_d179e1262_nWKVTv">
+                    <article leos:deletable="true" leos:editable="true" xml:id="imp_art_d179e1262_nWKVTv">
                         <num xml:id="imp_art_d179e1262_nWKVTv_5w3GqY">Article 2</num>
                         <heading xml:id="imp_art_d179e1262_nWKVTv_lylMhW">Supervisory powers</heading>
                         <paragraph xml:id="imp_art_d179e1262_nWKVTv_XInC3R">
@@ -352,9 +311,7 @@
                         </paragraph>
                     </article>
                     <section>
-                        <article leos:deletable="true"
-                                 leos:editable="true"
-                                 xml:id="imp_art_d179e1269_ACTBmf">
+                        <article leos:deletable="true" leos:editable="true" xml:id="imp_art_d179e1269_ACTBmf">
                             <num xml:id="imp_art_d179e1269_ACTBmf_Y8FsqY">Article 3</num>
                             <heading xml:id="imp_art_d179e1269_ACTBmf_76RK0U">Application of stricter requirements by
                                 institutions
@@ -369,21 +326,19 @@
                             </paragraph>
                         </article>
                     </section>
-                    <article leos:deletable="true"
-                             leos:editable="true"
-                             xml:id="imp_art_d179e1276_YsW4Ef">
+                    <article leos:deletable="true" leos:editable="true" xml:id="imp_art_d179e1276_YsW4Ef">
                         <num xml:id="imp_art_d179e1276_YsW4Ef_92FVgw">Article 4</num>
                         <heading xml:id="imp_art_d179e1276_YsW4Ef_hi80ZZ">Definitions</heading>
                         <paragraph xml:id="imp_art_d179e1276_YsW4Ef_drVHDs">
                             <num xml:id="imp_art_d179e1276_YsW4Ef_PRwcBT">1.</num>
-                            <subparagraph xml:id="imp_art_d179e1276_YsW4Ef_wzJMCY">
+                            
+                            <list xml:id="imp_art_d179e1276_YsW4Ef_q0DVmQ"><subparagraph refersTo="~_INP" xml:id="imp_art_d179e1276_YsW4Ef_wzJMCY">
                                 <content xml:id="imp_art_d179e1276_YsW4Ef_tLR9Ps">
                                     <p xml:id="imp_art_d179e1276_YsW4Ef_l1wyP5">For the purposes of this Regulation, the
                                         following definitions shall apply:
                                     </p>
                                 </content>
                             </subparagraph>
-                            <list xml:id="imp_art_d179e1276_YsW4Ef_q0DVmQ">
                                 <point xml:id="imp_art_d179e1276_YsW4Ef_ZuVNgI">
                                     <num xml:id="imp_art_d179e1276_YsW4Ef_sUBxM8">(a)</num>
                                     <content xml:id="imp_art_d179e1276_YsW4Ef_YiwdZ9">
@@ -395,7 +350,8 @@
                                 </point>
                                 <point xml:id="imp_art_d179e1276_YsW4Ef_eluJlj">
                                     <num xml:id="imp_art_d179e1276_YsW4Ef_pbgRY6">(b)</num>
-                                    <alinea xml:id="imp_art_d179e1276_YsW4Ef_Enjtmv">
+                                    
+                                    <list xml:id="imp_art_d179e1276_YsW4Ef_SqgyUd"><subparagraph refersTo="~_INP" xml:id="imp_art_d179e1276_YsW4Ef_Enjtmv">
                                         <content xml:id="imp_art_d179e1276_YsW4Ef_N8T4VV">
                                             <p xml:id="imp_art_d179e1276_YsW4Ef_GLPSNi">'investment firm' means a
                                                 person as defined in point (1) of Article 4(1) of Directive 2004/39/EC,
@@ -403,8 +359,7 @@
                                                 the following:
                                             </p>
                                         </content>
-                                    </alinea>
-                                    <list xml:id="imp_art_d179e1276_YsW4Ef_SqgyUd">
+                                    </subparagraph>
                                         <point xml:id="imp_art_d179e1276_YsW4Ef_VhWdEQ">
                                             <num xml:id="imp_art_d179e1276_YsW4Ef_dfMkHx">(a)</num>
                                             <content xml:id="imp_art_d179e1276_YsW4Ef_5KcLZd">
@@ -461,9 +416,7 @@
                                             2009/138/EC of the European Parliament and of the Council of 25 November 2009 on
                                             the taking-up and pursuit of the business of Insurance and Reinsurance (Solvency
                                             II)
-                                            <authorialNote marker="20"
-                                                           placement="bottom"
-                                                           xml:id="imp_art_d179e1276_YsW4Ef_WJR11i">
+                                            <authorialNote marker="20" placement="bottom" xml:id="imp_art_d179e1276_YsW4Ef_WJR11i">
                                                 <p xml:id="imp_art_d179e1276_YsW4Ef_UweuzK">OJ L 335, 17.12.2009, p. 1.</p>
                                             </authorialNote>
                                             ;
@@ -487,9 +440,7 @@
                                             2009/65/EC of the European Parliament and of the Council of 13 July 2009 on the
                                             coordination of laws, regulations and administrative provisions relating to
                                             undertakings for collective investment in transferable securities (UCITS)
-                                            <authorialNote marker="21"
-                                                           placement="bottom"
-                                                           xml:id="imp_art_d179e1276_YsW4Ef_YemZ6D">
+                                            <authorialNote marker="21" placement="bottom" xml:id="imp_art_d179e1276_YsW4Ef_YemZ6D">
                                                 <p xml:id="imp_art_d179e1276_YsW4Ef_f6qpyx">OJ L 302, 17.11.2009, p. 32.</p>
                                             </authorialNote>
                                             , including, unless otherwise provided, third-country entities which carry out
@@ -498,9 +449,7 @@
                                             at least equivalent to those applied in the Union, an AIF as defined in Article
                                             4(1)(a) of Directive 2011/61/EU of the European Parliament and of the Council of
                                             8 June 2011 on Alternative Investment Fund Managers
-                                            <authorialNote marker="22"
-                                                           placement="bottom"
-                                                           xml:id="imp_art_d179e1276_YsW4Ef_9eMtNK">
+                                            <authorialNote marker="22" placement="bottom" xml:id="imp_art_d179e1276_YsW4Ef_9eMtNK">
                                                 <p xml:id="imp_art_d179e1276_YsW4Ef_rwNm4J">OJ L 174, 1.7.2011, p. 1.</p>
                                             </authorialNote>
                                             , or a non-EU AIF as defined in Article 4(1)(aa) of that Directive;
@@ -556,14 +505,14 @@
                                 </point>
                                 <point xml:id="imp_art_d179e1276_YsW4Ef_gk4xFM">
                                     <num xml:id="imp_art_d179e1276_YsW4Ef_qU4s40">(m)</num>
-                                    <alinea xml:id="imp_art_d179e1276_YsW4Ef_rkV5BY">
+                                    
+                                    <list xml:id="imp_art_d179e1276_YsW4Ef_QtPqz4"><subparagraph refersTo="~_INP" xml:id="imp_art_d179e1276_YsW4Ef_rkV5BY">
                                         <content xml:id="imp_art_d179e1276_YsW4Ef_4017jr">
                                             <p xml:id="imp_art_d179e1276_YsW4Ef_yphZrc">'originator' means an
                                                 entity which:
                                             </p>
                                         </content>
-                                    </alinea>
-                                    <list xml:id="imp_art_d179e1276_YsW4Ef_QtPqz4">
+                                    </subparagraph>
                                         <point xml:id="imp_art_d179e1276_YsW4Ef_JoYO5B">
                                             <num xml:id="imp_art_d179e1276_YsW4Ef_1zeW57">(a)</num>
                                             <content xml:id="imp_art_d179e1276_YsW4Ef_8XW90t">
@@ -596,14 +545,14 @@
                                 </point>
                                 <point xml:id="imp_art_d179e1276_YsW4Ef_9ja2ab">
                                     <num xml:id="imp_art_d179e1276_YsW4Ef_nojqST">(o)</num>
-                                    <alinea xml:id="imp_art_d179e1276_YsW4Ef_dN9RTn">
+                                    
+                                    <list xml:id="imp_art_d179e1276_YsW4Ef_pMTM6D"><subparagraph refersTo="~_INP" xml:id="imp_art_d179e1276_YsW4Ef_dN9RTn">
                                         <content xml:id="imp_art_d179e1276_YsW4Ef_75jWwF">
                                             <p xml:id="imp_art_d179e1276_YsW4Ef_GEG1zB">'parent undertaking'
                                                 means:
                                             </p>
                                         </content>
-                                    </alinea>
-                                    <list xml:id="imp_art_d179e1276_YsW4Ef_pMTM6D">
+                                    </subparagraph>
                                         <point xml:id="imp_art_d179e1276_YsW4Ef_8GNbIq">
                                             <num xml:id="imp_art_d179e1276_YsW4Ef_u27hvB">(a)</num>
                                             <content xml:id="imp_art_d179e1276_YsW4Ef_6VuKLM">
@@ -628,12 +577,12 @@
                                 </point>
                                 <point xml:id="imp_art_d179e1276_YsW4Ef_QDAZi0">
                                     <num xml:id="imp_art_d179e1276_YsW4Ef_b4yp9B">(p)</num>
-                                    <alinea xml:id="imp_art_d179e1276_YsW4Ef_Rfzqhn">
+                                    
+                                    <list xml:id="imp_art_d179e1276_YsW4Ef_4P4bbA"><subparagraph refersTo="~_INP" xml:id="imp_art_d179e1276_YsW4Ef_Rfzqhn">
                                         <content xml:id="imp_art_d179e1276_YsW4Ef_vjpfwY">
                                             <p xml:id="imp_art_d179e1276_YsW4Ef_ROh9EY">'subsidiary' means:</p>
                                         </content>
-                                    </alinea>
-                                    <list xml:id="imp_art_d179e1276_YsW4Ef_4P4bbA">
+                                    </subparagraph>
                                         <point xml:id="imp_art_d179e1276_YsW4Ef_1isvEV">
                                             <num xml:id="imp_art_d179e1276_YsW4Ef_Tw4ss9">(a)</num>
                                             <content xml:id="imp_art_d179e1276_YsW4Ef_y0qSKl">
@@ -652,15 +601,15 @@
                                                 </p>
                                             </content>
                                         </point>
-                                    </list>
-                                    <alinea xml:id="imp_art_d179e1276_YsW4Ef_iCIczu">
+                                    <subparagraph refersTo="~_WRP" xml:id="imp_art_d179e1276_YsW4Ef_iCIczu">
                                         <content xml:id="imp_art_d179e1276_YsW4Ef_XrxRus">
                                             <p xml:id="imp_art_d179e1276_YsW4Ef_ipKEyh">Subsidiaries of subsidiaries shall
                                                 also be considered to be subsidiaries of the undertaking that is their
                                                 original parent undertaking;
                                             </p>
                                         </content>
-                                    </alinea>
+                                    </subparagraph></list>
+                                    
                                 </point>
                             </list>
                         </paragraph>
@@ -696,12 +645,7 @@
                 </chapter>
             </part>
 
-            <clause leos:alternative="true"
-                    leos:deletable="true"
-                    leos:editable="true"
-                    leos:optionlist="listOption1"
-                    leos:selectedoption="1"
-                    xml:id="clause_1">
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
                 <content xml:id="clause_1__content">
                     <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly
                         applicable in all Member States.
@@ -724,8 +668,7 @@
                     <person refersTo="" xml:id="conclusions__block_1__signature_1__person">[...]</person>
                 </signature>
                 <signature xml:id="conclusions__block_1__signature_2">
-                    <organization refersTo="~CONSIL"
-                                  xml:id="conclusions__block_1__signature_2__organization">For the
+                    <organization refersTo="~CONSIL" xml:id="conclusions__block_1__signature_2__organization">For the
                         Council
                     </organization>
                     <role refersTo="~PRESID" xml:id="conclusions__block_1__signature_2__role">The President</role>

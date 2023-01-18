@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <configuration debug="false" scan="false">
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n%rEx</pattern>
         </encoder>
     </appender>
 
-    <logger name="eu.europa.ec.leos" level="ALL"/>
+    <logger level="ALL" name="eu.europa.ec.leos"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

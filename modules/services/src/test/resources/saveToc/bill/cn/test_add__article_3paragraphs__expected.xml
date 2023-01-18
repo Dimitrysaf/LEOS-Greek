@@ -11,30 +11,22 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                     leos:softdate="2022-06-17T11:21:31.091+02:00" leos:softuser="demo jane(Ext)"
-                     xml:id="_akn_article_VfKi0T">
+            <article leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:21:31.091+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_article_VfKi0T">
                 <num leos:editable="false" leos:origin="cn">#</num>
                 <heading>Article heading...</heading>
-                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                           leos:softdate="2022-06-17T11:21:31.075+02:00" leos:softuser="demo jane(Ext)"
-                           xml:id="_akn_paragraph_UCX5gr">
+                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:21:31.075+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_paragraph_UCX5gr">
                     <num leos:editable="false" leos:origin="cn">#</num>
                     <content>
                         <p>Text...</p>
                     </content>
                 </paragraph>
-                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                           leos:softdate="2022-06-17T11:21:31.075+02:00" leos:softuser="demo jane(Ext)"
-                           xml:id="_akn_paragraph_fuiDgi">
+                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:21:31.075+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_paragraph_fuiDgi">
                     <num leos:editable="false" leos:origin="cn">#</num>
                     <content>
                         <p>Text...</p>
                     </content>
                 </paragraph>
-                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true"
-                           leos:softdate="2022-06-17T11:21:31.091+02:00" leos:softuser="demo jane(Ext)"
-                           xml:id="_akn_paragraph_jBkzej">
+                <paragraph leos:affected="true" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T11:21:31.091+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_paragraph_jBkzej">
                     <num leos:editable="false" leos:origin="cn">#</num>
                     <content>
                         <p>Text...</p>

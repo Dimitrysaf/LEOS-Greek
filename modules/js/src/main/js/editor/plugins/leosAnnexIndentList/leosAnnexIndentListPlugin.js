@@ -148,7 +148,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                     refresh: this.isIndent ?
                         function(editor, path) {
                             var range = getSelectedRange(editor);
-                            path = _manageSubparagraphs(range, path);
+                            path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
                             var crossheading = _getCrossHeading(path);
                             if (!!crossheading && leosPluginUtils.isCrossHeading(crossheading)) {
@@ -199,6 +199,8 @@ define(function leosAnnexIndentListPluginModule(require) {
                                     return TRISTATE_OFF;
                                 } else if (_isIndentableInNumberEditor(range)) {
                                     return TRISTATE_OFF;
+                                } else if (leosPluginUtils.isSubparagraph(path.lastElement)) {
+                                    return TRISTATE_OFF;
                                 } else if (_isSubparagraphInsideAnnexLevel(range, path, list)) {
                                     return TRISTATE_OFF;
                                 } else if ((isLevelNumberIndentable && !isListIntro) || (isNotFirstLevelElement && isFirstLevel)) {
@@ -217,7 +219,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                             }
                         } : function(editor, path) {
                             var range = getSelectedRange(editor);
-                            path = _manageSubparagraphs(range, path);
+                            path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
                             var isSubparagraph = _isSubparagraph(path);
                             var crossheading = _getCrossHeading(path);
@@ -634,51 +636,6 @@ define(function leosAnnexIndentListPluginModule(require) {
         }
     }
 
-    function _isListIntroAndFirstSubelement(element) {
-        if (element.type == CKEDITOR.NODE_TEXT) {
-            let tmpElement = element;
-            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
-                tmpElement = tmpElement.getParent();
-            }
-            element = !!tmpElement ? tmpElement : element;
-        }
-        return (leosPluginUtils.isListIntro(element) && !element.getParent().$.previousSibling);
-    }
-
-    function _isFirstSubelement(element) {
-        if (element.type == CKEDITOR.NODE_TEXT) {
-            let tmpElement = element;
-            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
-                tmpElement = tmpElement.getParent();
-            }
-            element = !!tmpElement ? tmpElement : element;
-        }
-        return (leosPluginUtils.isSubparagraph(element) && element.getParent().getName().toLowerCase() != 'ol' && !element.$.previousSibling);
-    }
-
-    function _manageListIntro(element) {
-        if (element.type == CKEDITOR.NODE_TEXT) {
-            let tmpElement = element;
-            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
-                tmpElement = tmpElement.getParent();
-            }
-            element = !!tmpElement ? tmpElement : element;
-        }
-        if (_isListIntroAndFirstSubelement(element)) {
-            return element.getParent().getParent();
-        }
-        if (_isFirstSubelement(element)) {
-            return element.getParent();
-        }
-        return element;
-    }
-
-    function _manageSubparagraphs(range) {
-        range.startContainer = _manageListIntro(range.startContainer);
-        range.endContainer = _manageListIntro(range.endContainer);
-        return range.startPath();
-    }
-
     function aknindentList(editor) {
         var that = this, database = this.database, context = this.context, range;
         editor.fire("beforeAknIndentList");
@@ -703,7 +660,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                 endContainer = endContainer.getParent();
 
             if (!startContainer || !endContainer
-                || (that.isIndent && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL)) && !_isOnlyLevelElementSelected(startContainer, endContainer)){
+                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer) && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL)) && !_isOnlyLevelElementSelected(startContainer, endContainer)){
                 return false;
             }
 
@@ -941,8 +898,8 @@ define(function leosAnnexIndentListPluginModule(require) {
             iterator = ranges.createIterator();
 
         while ((range = iterator.getNextRange())) {
-            range.endContainer = _manageListIntro(range.endContainer);
-            range.startContainer = _manageListIntro(range.startContainer);
+            range.endContainer = leosPluginUtils.manageListIntro(range.endContainer);
+            range.startContainer = leosPluginUtils.manageListIntro(range.startContainer);
 
             var nearestListBlock = range.getCommonAncestor();
 
@@ -961,8 +918,8 @@ define(function leosAnnexIndentListPluginModule(require) {
             }
 
             if (leosPluginUtils.isAnnexList(range.startContainer.getParent())
-                && !!range.startContainer.getParent().getAttribute("data-akn-element")
-                && range.startContainer.getParent().getAttribute("data-akn-element") !== leosPluginUtils.PARAGRAPH) {
+                && !!range.startContainer.getParent().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
+                && range.startContainer.getParent().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) !== leosPluginUtils.PARAGRAPH) {
                 if (that.isIndent) {
                     _renumberOnIndent(editor, leosPluginUtils.isAnnexList(nearestListBlock) ? nearestListBlock : nearestListBlock.getParent().getParent());
                 } else {

@@ -1,4 +1,4 @@
-<root xml:id="ElementId" xmlns:leos="urn:eu:europa:ec:leos">
+<root xmlns:leos="urn:eu:europa:ec:leos" xml:id="ElementId">
     <meta>
         <proprietary source="~_leos">
             <leos:ref>bill_ckq9l0l140009jg019s8b4k2a</leos:ref>

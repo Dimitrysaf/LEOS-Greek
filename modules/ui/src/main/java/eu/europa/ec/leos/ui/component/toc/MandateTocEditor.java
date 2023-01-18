@@ -22,6 +22,7 @@ import com.vaadin.ui.TreeGrid;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
+import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -90,10 +91,10 @@ public class MandateTocEditor extends AbstractTocEditor {
     public void setTocTreeDataFilter(boolean editionEnabled, TreeDataProvider<TableOfContentItemVO> dataProvider) {
         dataProvider.setFilter(tableOfContentItemVO -> {
             return tableOfContentItemVO.getTocItem().isDisplay() &&
-                    !(editionEnabled && (tableOfContentItemVO.getTocItem().getAknTag().value().equalsIgnoreCase(SUBPARAGRAPH) || tableOfContentItemVO.getTocItem().getAknTag().value().equalsIgnoreCase(SUBPOINT))
-                    && tableOfContentItemVO.getNode() != null
-                    && tableOfContentItemVO.getParentItem() != null
-                    && tableOfContentItemVO.getParentItem().getChildItemsView().get(0).getId().equals(tableOfContentItemVO.getId()));
+                    !(editionEnabled
+                            && TableOfContentHelper.isFirstSubParagraph(tableOfContentItemVO)
+                            && tableOfContentItemVO.getNode() != null
+                            && !tableOfContentItemVO.isMovedOnEmptyParent());
         });
     }
 
@@ -196,6 +197,8 @@ public class MandateTocEditor extends AbstractTocEditor {
             }
         } else {
             updateMovedOnEmptyParent(sourceItem, actualTargetItem, PARAGRAPH, SUBPARAGRAPH);
+            updateMovedOnEmptyParent(sourceItem, actualTargetItem, POINT, SUBPARAGRAPH);
+            updateMovedOnEmptyParent(sourceItem, actualTargetItem, INDENT, SUBPARAGRAPH);
             updateMovedOnEmptyParent(sourceItem, actualTargetItem, LEVEL, SUBPARAGRAPH);
             handleMoveAction(sourceItem, tocTree);
             super.addOrMoveItem(false, sourceItem, targetItem, tocTree, actualTargetItem, position);
@@ -410,9 +413,9 @@ public class MandateTocEditor extends AbstractTocEditor {
                 if (EC.equals(child.getOriginAttr()) &&
                         (!MOVE_FROM.equals(child.getSoftActionAttr()) && !MOVE_TO.equals(child.getSoftActionAttr())
                                 && !ADD.equals(child.getSoftActionAttr()) && !DELETE.equals(child.getSoftActionAttr()))) {
-                    moveToItem.addChildItem(copyMovingItemToTemp(child, Boolean.FALSE, tocTree));
+                    TableOfContentHelper.addChildItem(moveToItem, copyMovingItemToTemp(child, Boolean.FALSE, tocTree));
                 } else if (EC.equals(child.getOriginAttr()) && (MOVE_TO.equals(child.getSoftActionAttr()) || DELETE.equals(child.getSoftActionAttr()))) {
-                    moveToItem.addChildItem(copyItemToTemp(child));
+                    TableOfContentHelper.addChildItem(moveToItem, copyItemToTemp(child));
                     setAffectedAttribute(child, tocTree.getTreeData());
                     iterator.remove();
                     tocTree.getTreeData().removeItem(child);
@@ -460,7 +463,7 @@ public class MandateTocEditor extends AbstractTocEditor {
             dropItemAtOriginalPosition(moveToTemp, moveToFinal, container);
             container.removeItem(moveToTemp);
             if (moveToTemp.getParentItem() != null) {
-                moveToTemp.getParentItem().removeChildItem(moveToTemp);
+                TableOfContentHelper.removeChildItem(moveToTemp.getParentItem(), moveToTemp);
             }
         }
         moveFromItem.setOriginNumAttr(CN);

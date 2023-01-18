@@ -1,5 +1,4 @@
-<article xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos"
-         leos:deletable="true" leos:editable="true" leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54">
+<article xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" leos:deletable="true" leos:editable="true" leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54">
     <num leos:editable="false" leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_KKMR0X">Article 4</num>
     <heading leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_SfDMQ4">Exposures to institutions</heading>
     <paragraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_N3miPh">
@@ -12,9 +11,7 @@
             </p>
         </content>
     </paragraph>
-    <paragraph leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true"
-               leos:softdate="2022-06-17T12:01:41.832+02:00" leos:softmove_to="imp_art_d1e9946_jmGg54_S7r2mk"
-               leos:softuser="demo(DIGIT)" xml:id="moved_imp_art_d1e9946_jmGg54_S7r2mk">
+    <paragraph leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T12:01:41.832+02:00" leos:softmove_to="imp_art_d1e9946_jmGg54_S7r2mk" leos:softuser="demo(DIGIT)" xml:id="moved_imp_art_d1e9946_jmGg54_S7r2mk">
         <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_m0N27i">2.</num>
         <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_RocTBx">
             <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_eaNyJQ">Exposures to institutions of a residual maturity
@@ -36,7 +33,8 @@
     </paragraph>
     <paragraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_9g9vYg">
         <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_tZc0Dj">3.</num>
-        <subparagraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_wqNpGu">
+        
+        <list leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_22HE8L"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e9946_jmGg54_wqNpGu">
             <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_DYCJJo">
                 <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_4WZUJs">Exposure to an institution in the form of
                     minimum reserves required by the ECB or by the central bank of a Member State to be held by an
@@ -45,15 +43,13 @@
                 </p>
             </content>
         </subparagraph>
-        <list leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_22HE8L">
             <point leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_fjUjL3">
                 <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_RrKazy">(a)</num>
                 <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_imBsp2">
                     <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_ECCKjK">the reserves are held in accordance with
                         Regulation (EC) No 1745/2003 of the European Central Bank of 12 September 2003 on the
                         application of minimum reserves
-                        <authorialNote leos:origin="ec" marker="3" placement="bottom"
-                                       xml:id="imp_art_d1e9946_jmGg54_oDcYFh">
+                        <authorialNote leos:origin="ec" marker="3" placement="bottom" xml:id="imp_art_d1e9946_jmGg54_oDcYFh">
                             <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_HZ9eaG">OJ L 250, 2.10.2003, p. 10.</p>
                         </authorialNote>
                         or in accordance with national requirements in all material respects equivalent to that
@@ -73,9 +69,7 @@
             </point>
         </list>
     </paragraph>
-    <paragraph leos:softaction="move_from" leos:softactionroot="true" leos:softdate="Tue Nov 09 2021"
-               leos:softmove_from="moved_imp_art_d1e9946_jmGg54_S7r2mk" leos:softuser="DOE Jane"
-               xml:id="temp_imp_art_d1e9946_jmGg54_S7r2mk">
+    <paragraph leos:softaction="move_from" leos:softactionroot="true" leos:softdate="Tue Nov 09 2021" leos:softmove_from="moved_imp_art_d1e9946_jmGg54_S7r2mk" leos:softuser="DOE Jane" xml:id="temp_imp_art_d1e9946_jmGg54_S7r2mk">
         <num leos:origin="ls">4.</num>
         <content>
             <p>Exposures to institutions of a residual maturity of three months or less denominated and funded in the
