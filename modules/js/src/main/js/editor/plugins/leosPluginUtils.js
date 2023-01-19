@@ -375,6 +375,34 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _keepCursorPosition(startContainerParents, endContainerParents, editor, cursor) {
+        for (var i = startContainerParents.length - 1; i > 0; i--) {
+            if (!!startContainerParents[i].getId()) {
+                var elt = editor.element.findOne("#" + startContainerParents[i].getId());
+                if (!!elt) {
+                    cursor.setStart(elt, cursor.startOffset);
+                    break;
+                }
+            } else if (!!startContainerParents[i].getParent()) {
+                cursor.setStart(startContainerParents[i], cursor.startOffset);
+                break;
+            }
+        }
+        for (var i = endContainerParents.length - 1; i > 0; i--) {
+            if (!!endContainerParents[i].getId()) {
+                var elt = editor.element.findOne("#" + endContainerParents[i].getId());
+                if (!!elt) {
+                    cursor.setEnd(elt, cursor.endOffset);
+                    break;
+                }
+            } else if (!!endContainerParents[i].getParent()) {
+                cursor.setEnd(endContainerParents[i], cursor.endOffset);
+                break;
+            }
+        }
+        cursor.select();
+    }
+
     function _isListIntroAndFirstSubelement(element) {
         if (element.type == CKEDITOR.NODE_TEXT) {
             var tmpElement = element;
@@ -1012,6 +1040,7 @@ define(function leosPluginUtilsModule(require) {
         manageSubparagraphs: _manageSubparagraphs,
         manageListIntro: _manageListIntro,
         manageCrossheadings: _manageCrossheadings,
+        keepCursorPosition: _keepCursorPosition,
         copyContentAndMpAttributeToElement: _copyContentAndMpAttributeToElement,
         hasPointAttribute: _hasPointAttribute,
         getArticleType: _getArticleType,
