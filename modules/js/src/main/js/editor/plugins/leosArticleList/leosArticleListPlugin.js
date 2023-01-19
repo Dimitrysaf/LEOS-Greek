@@ -821,12 +821,6 @@ define(function leosArticleListPluginModule(require) {
            cursor.startContainer.append( frag );
        }
 
-        if (leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(nextCursor.startContainer)) {
-            nextPath = new CKEDITOR.dom.elementPath( nextCursor.startContainer.getParent().getParent() );
-            nextLi = nextPath.contains( CKEDITOR.dtd.$listItem );
-            nextList = nextPath.contains( CKEDITOR.dtd.$list );
-        }
-
         // Move the sub list nested in the next list item.
         if ( nextLi ) {
             var sublist = getSubList( nextLi );
@@ -842,10 +836,6 @@ define(function leosArticleListPluginModule(require) {
                 }
             }
 
-        }
-
-        if (nextLi.getChildren().count() == 0) {
-            nextLi.remove();
         }
 
         var nextBlock, parent;
@@ -864,12 +854,15 @@ define(function leosArticleListPluginModule(require) {
                 if ( nextBlock.equals( parent.getLast( nonEmpty ) ) && nextBlock.equals( parent.getFirst( nonEmpty ) ) )
                     nextBlock = parent;
             }
-
-            nextCursor.moveToPosition( nextBlock, CKEDITOR.POSITION_BEFORE_START );
+            nextCursor.moveToPosition(nextBlock, CKEDITOR.POSITION_BEFORE_START);
             nextBlock.remove();
         }
 
-		// Check if need to further merge with the list resides after the merged block. (http://dev.ckeditor.com/ticket/9080)
+        if (!!nextLi.getParent() && nextLi.getChildren().count() == 0) {
+            nextLi.remove();
+        }
+
+        // Check if need to further merge with the list resides after the merged block. (http://dev.ckeditor.com/ticket/9080)
         var walkerRng = nextCursor.clone(), editable = editor.editable();
         walkerRng.setEndAt( editable, CKEDITOR.POSITION_BEFORE_END );
         var walker = new CKEDITOR.dom.walker( walkerRng );
@@ -1177,17 +1170,19 @@ define(function leosArticleListPluginModule(require) {
                         }
 
                     }
-
-                    // The backspace/del could potentially put cursor at a bad position,
-                    // being it handled or not, check immediately the selection to have it fixed.
-                    setTimeout( function() {
-                        editor.selectionChange( 1 );
-                    } );
+                    var startContainerParents = cursor.startContainer.getParents();
+                    var endContainerParents = cursor.endContainer.getParents();
                     leosPluginUtils.manageEmptyLists(editor);
                     leosPluginUtils.managePoints(editor);
                     leosPluginUtils.manageEmptySubparagraphs(editor);
                     leosPluginUtils.manageCrossheadings(editor);
                     leosPluginUtils.manageSiblingLists(editor);
+                    leosPluginUtils.keepCursorPosition(startContainerParents, endContainerParents, editor, cursor);
+                    // The backspace/del could potentially put cursor at a bad position,
+                    // being it handled or not, check immediately the selection to have it fixed.
+                    setTimeout( function() {
+                        editor.selectionChange( 1 );
+                    } );
                 }
             } );
         }
