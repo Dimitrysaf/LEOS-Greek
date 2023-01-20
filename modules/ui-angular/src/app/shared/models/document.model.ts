@@ -98,8 +98,20 @@ export interface Collaborator {
   id: string;
   name?: string;
   login: string;
-  entity: string;
+  entity: Entity;
   role: DocumentRole;
+}
+
+export interface Entity {
+  id: string;
+  name: string;
+  organizationName: string;
+}
+
+export interface CollaboratorRequest {
+  userId: string;
+  roleName: string;
+  connectedDG: string;
 }
 
 export type SecurityLevel = 'STANDARD' | 'SENSITIVE';

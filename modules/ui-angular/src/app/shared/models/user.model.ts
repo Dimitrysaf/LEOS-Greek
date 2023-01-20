@@ -5,13 +5,13 @@ export interface User {
   id: string;
   login?: string;
   name?: string;
-  entities?: Entity[];
+  entities?: UserEntity[];
   email?: string;
   roles?: ApplicationRole[];
-  connectedEntity?: Entity;
+  connectedEntity?: UserEntity;
 }
 
-export interface Entity {
+export interface UserEntity {
   id: string;
   name: string;
   organisationName: string;

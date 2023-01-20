@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
 import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
-import { Collaborator } from '@leos/shared';
+import { Collaborator, CollaboratorRequest } from '@leos/shared';
 import { debounceTime, retry, Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -40,7 +40,37 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
 
     this.detailsService.userAutocompleteData$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((items) => (this.userAutocompleteData = items));
+      .subscribe((users) => {
+        this.userAutocompleteData = [];
+        users.forEach((user) => {
+          if (user.entities.length > 1) {
+            for (const entity of user.entities) {
+              this.userAutocompleteData.push(
+                new EuiAutoCompleteItem({
+                  id: user.id,
+                  label: user.name + ' (' + entity.organizationName + ')',
+                  roles: user.role,
+                  entities: user.entities,
+                  defaultEntity: entity,
+                  login: user.login,
+                }),
+              );
+            }
+          } else {
+            this.userAutocompleteData.push(
+              new EuiAutoCompleteItem({
+                id: user.id,
+                label:
+                  user.name + ' (' + user.defaultEntity.organizationName + ')',
+                roles: user.role,
+                entities: user.entities,
+                defaultEntity: user.defaultEntity,
+                login: user.login,
+              }),
+            );
+          }
+        });
+      });
   }
 
   openDialog() {
@@ -70,7 +100,8 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
             name: ['', Validators.required],
             role: ['', Validators.required],
             entity: [{ value: '', disabled: true }, Validators.required],
-            item: [{}, Validators.required],
+            item: [{}],
+            login: ['', Validators.required],
           }),
         );
       }
@@ -86,15 +117,13 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
   }
 
   addSubToFormArray() {
-    this.collaboratorsFormList.controls.forEach((control) =>
+    this.collaboratorsFormList.controls.forEach((control) => {
       control.valueChanges
-        .pipe(debounceTime(500), takeUntil(this.destroy$))
-        .subscribe((item) => {
-          this.detailsService.setUserAutocompleteInputChange(
-            item.item ? item.item.label : '',
-          );
-        }),
-    );
+        .pipe(debounceTime(300), takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.detailsService.setUserAutocompleteInputChange(value.item.label);
+        });
+    });
   }
 
   handleAddUsers() {
@@ -102,10 +131,10 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     const collaboratorsToAdd = collaboratorRawValue.map(
       (value) =>
         ({
-          name: value.name,
-          role: value.role,
-          entity: value.entity,
-        } as Collaborator),
+          userId: value.login,
+          roleName: value.role,
+          connectedDG: value.entity,
+        } as CollaboratorRequest),
     );
 
     this.detailsService.addCallaborators(collaboratorsToAdd);
@@ -116,8 +145,9 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
   handleNameSelect(event, i: number) {
     this.collaboratorsFormList.controls[i].patchValue({
       name: event.label,
-      entity: event.entity,
-      role: event.roles[0],
+      entity: event.defaultEntity.organizationName,
+      role: 'OWNER',
+      login: event.login,
     });
   }
 
