@@ -51,8 +51,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.buildForm();
     this.handleChanges();
     const proposalRef = this.proposalDetailsService.proposalRef;
-    this.proposalMilestonesService
-      .getProposalMilestones(proposalRef)
+    this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (milestones) => {
@@ -75,7 +74,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   findStatusColor(val: string) {
-    return this.status.find((obj) => obj.value === val).color;
+    // return this.status.find((obj) => obj.value === val).color;
   }
 
   deleteMilestone(id: string) {
@@ -100,7 +99,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   onAccept(): void {
     this.milestonesDialog.closeDialog();
-    //this.proposalMilestonesService.addMilestone(proposalId, newMilestone);
+    this.proposalDetailsService.createMilestone(
+      this.proposalDetailsService.proposalRef,
+      this.form.get('milestonesTitle').value,
+    );
   }
 
   onDismiss(): void {

@@ -93,7 +93,7 @@
   <ng-template let-row euiTemplate="body">
     <tr>
       <td data-col-label="Title">{{ row.title }}</td>
-      <td data-col-label="Date">{{ row.date }}</td>
+      <td data-col-label="Date">{{ row.updatedDate | date }}</td>
       <td data-col-label="Status" [class]="findStatusColor(row.status)">
         {{ row.status }}
       </td>
