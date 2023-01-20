@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { EuiTableComponent } from '@eui/components/eui-table';
 import { Collaborator, Entity, User, UserEntity } from '@leos/shared';
 import { debounceTime, filter, Subject, take, takeUntil } from 'rxjs';
 
@@ -13,12 +14,15 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   roles = ['Author', 'Contributor', 'Reviewer'];
   dataSource: Collaborator[] = [];
+  filteredData: Collaborator[] = [];
   userInputForm: FormGroup;
   isEditRole = false;
   editUserId = null;
   destory$: Subject<any> = new Subject();
   entity: string;
   selectedRole: string;
+
+  @ViewChild('collaboratos') collaboratorsTable: EuiTableComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -70,6 +74,14 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     });
     this.isEditRole = false;
     this.editUserId = null;
+  }
+
+  public onFilterChange(event: any) {
+    this.filteredData = this.collaboratorsTable.filterRows(
+      event,
+      this.dataSource,
+    );
+    // this._refreshTotalPopulation();
   }
 
   getIndexByRole() {

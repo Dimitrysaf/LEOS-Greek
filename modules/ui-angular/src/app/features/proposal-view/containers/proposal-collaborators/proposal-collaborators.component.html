@@ -5,22 +5,23 @@
         <div class="eui-input-group-addon-item">
           <eui-icon iconClass="eui-icon-search"></eui-icon>
         </div>
-        <form [formGroup]="userInputForm">
-          <input
-            formControlName="searchTerm"
-            euiInputText
-            type="text"
-            [placeholder]="
-              'page.collection.collaborators.table.header.search-placeholder'
-                | translate
-            "
-          />
-        </form>
+        <eui-table-filter
+          #filter
+          placeholder="Search filter..."
+          (filterChange)="onFilterChange($event)"
+        ></eui-table-filter>
       </div>
     </div>
     <app-proposal-collaborators-dialog></app-proposal-collaborators-dialog>
   </div>
-  <table euiTable euiTableResponsive class="w-100" [rows]="dataSource">
+  <table
+    #collaboratos
+    euiTable
+    euiTableResponsive
+    class="w-100"
+    [rows]="dataSource"
+    [filter]="filter"
+  >
     <ng-template euiTemplate="header">
       <tr>
         <th>{{ 'page.collection.collaborators.table.td-name' | translate }}</th>
