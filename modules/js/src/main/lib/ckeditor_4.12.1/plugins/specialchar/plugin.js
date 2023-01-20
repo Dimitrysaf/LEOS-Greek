@@ -71,5 +71,6 @@ CKEDITOR.config.specialChars = [
 	'&icirc;', '&iuml;', '&eth;', '&ntilde;', '&ograve;', '&oacute;', '&ocirc;', '&otilde;', '&ouml;', '&divide;',
 	'&oslash;', '&ugrave;', '&uacute;', '&ucirc;', '&uuml;', '&yacute;', '&thorn;', '&yuml;', '&OElig;', '&oelig;',
 	'&#372;', '&#374', '&#373', '&#375;', '&sbquo;', '&#8219;', '&bdquo;', '&hellip;', '&trade;', '&#9658;', '&bull;',
-	'&rarr;', '&rArr;', '&hArr;', '&diams;', '&asymp;'
+	'&rarr;', '&rArr;', '&hArr;', '&diams;', '&asymp;', '&#x2610;', '&#x2611;', '&#x25C9;','&#x2B58;'
+
 ];
