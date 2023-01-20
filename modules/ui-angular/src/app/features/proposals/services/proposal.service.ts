@@ -12,7 +12,9 @@ import {
   shareReplay,
   tap,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
+
+import { LoadingService } from '@/shared/services/loading.service';
 
 import { appConfig } from '../../../../config';
 import {
@@ -100,7 +102,6 @@ export class ProposalService {
   sortOrder$: Observable<boolean>;
   limit$: Observable<number>;
   page$: Observable<number>;
-  loading$: Observable<boolean>;
   proposals$: Observable<Document[]>;
   totalResults$: Observable<number>;
   templateCatalog$ = this.http
@@ -112,18 +113,19 @@ export class ProposalService {
   private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
   private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
   private pageBS = new BehaviorSubject<number>(DEFAULT_PAGE);
-  private loadingBS = new BehaviorSubject<boolean>(false);
   private params$: Observable<ListProposalsWithFilterBody>;
   private proposalResponse$: Observable<ListProposalsWithFilterResponse>;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private loadingService: LoadingService,
+  ) {
     this.filters$ = this.filtersBS.pipe(
       distinctUntilChanged(ProposalService.eqFilters),
     );
     this.sortOrder$ = this.sortOrderBS.pipe(distinctUntilChanged());
     this.limit$ = this.limitBS.pipe(distinctUntilChanged());
     this.page$ = this.pageBS.pipe(distinctUntilChanged());
-    this.loading$ = this.loadingBS.asObservable();
 
     this.params$ = combineLatest([
       this.filters$,
@@ -131,6 +133,7 @@ export class ProposalService {
       this.limit$,
       this.page$,
     ]).pipe(
+      tap(() => this.loadingService.setLoading(true)),
       map(([filters, sortOrder, limit, page]) => ({
         startIndex: page * limit,
         sortOrder,
@@ -140,18 +143,20 @@ export class ProposalService {
       distinctUntilChanged(
         (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
       ),
+      finalize(() => this.loadingService.setLoading(false)),
     );
 
     this.proposalResponse$ = this.params$.pipe(
       debounceTime(10),
-      tap(() => this.loadingBS.next(true)),
+      tap(() => this.loadingService.setLoading(true)),
       switchMap((params) =>
         this.http.post<ListProposalsWithFilterResponse>(
           `api/secured/filterProposals`,
           params,
         ),
       ),
-      tap(() => this.loadingBS.next(false)),
+      tap(() => this.loadingService.setLoading(false)),
+
       shareReplay(1),
     );
 
@@ -186,9 +191,9 @@ export class ProposalService {
   }
 
   createProposal(data: CreateProposalBody) {
-    return this.http.post<CreateProposalResponse>(
-      `api/secured/createPackage`,
-      data,
-    );
+    this.loadingService.setLoading(true);
+    return this.http
+      .post<CreateProposalResponse>(`api/secured/createPackage`, data)
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 }

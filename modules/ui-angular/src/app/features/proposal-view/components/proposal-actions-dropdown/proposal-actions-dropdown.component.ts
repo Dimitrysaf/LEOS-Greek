@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -11,9 +13,17 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 export class ProposalActionsDropdownComponent {
   @Input() proposalId: string;
   loading = false;
+
+  mailtoHeader = 'mailto:?';
+  subjectProp = 'subject=';
+  bodyProp = 'body=';
+  amp = '&amp;';
+  breakStr = '%0D%0A';
+
   constructor(
     private proposalDetailsService: ProposalDetailsService,
-    private uxService: UxAppShellService,
+    private sanitizer: DomSanitizer,
+    private router: Router,
   ) {}
 
   handleDownload() {
@@ -30,5 +40,11 @@ export class ProposalActionsDropdownComponent {
 
   handleDelete() {
     this.proposalDetailsService.deleteProposal();
+  }
+
+  getStringifiedMailTo() {
+    const activeUrl = window.location.href;
+    const url = `${this.mailtoHeader}${this.subjectProp}Shared Proposal&${this.bodyProp}${activeUrl}`;
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 }

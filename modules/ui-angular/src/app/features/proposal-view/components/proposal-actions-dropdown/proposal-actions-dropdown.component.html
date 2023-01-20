@@ -13,7 +13,9 @@
           <button euiListItem>Export</button>
         </li>
         <li euiListItem (click)="handleShare()">
-          <button euiListItem>Share</button>
+          <a euiListItem target="_blank" [href]="getStringifiedMailTo()"
+            >Share</a
+          >
         </li>
         <li euiListItem (click)="handleDelete()">
           <button euiListItem euiDanger>Delete</button>
