@@ -78,9 +78,9 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping (value = "/searchUser/{searchKey}", method = RequestMethod.GET)
+    @RequestMapping (value = "/searchUser", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> searchUser(@PathVariable("searchKey") String searchKey) {
+    public ResponseEntity<Object> searchUser(@RequestParam("searchKey") String searchKey) {
         try {
             List<UserJSON> users = apiService.searchUser(searchKey);
             return new ResponseEntity<>(users, HttpStatus.OK);

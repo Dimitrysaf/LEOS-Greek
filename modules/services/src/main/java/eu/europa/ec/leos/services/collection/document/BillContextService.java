@@ -368,7 +368,7 @@ public class BillContextService {
         });
     }
 
-    public void executeRemoveBillAnnex() {
+    public void executeRemoveBillAnnex(String proposalRef) {
         LOG.trace("Executing 'Remove Bill Annex' use case...");
 
         Validate.notNull(leosPackage, "Bill package is required!");
@@ -521,13 +521,13 @@ public class BillContextService {
         annexDocument.setSource(updatedSource);
     }
 
-    public void executeMoveAnnex() {
+    public void executeMoveAnnex(String annexRef) {
         LOG.trace("Executing 'Update Bill Move Annex' use case...");
 
         Validate.notNull(leosPackage, "Bill package is required!");
         Validate.notNull(moveDirection, "Bill moveDirection is required");
         Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
-        Annex operatedAnnex = annexService.findAnnex(annexId, true);
+        Annex operatedAnnex = annexService.findAnnex(annexRef, true);
         int currentIndex = operatedAnnex.getMetadata().get().getIndex();
         Annex affectedAnnex = findAffectedAnnex(moveDirection.equalsIgnoreCase("UP"), currentIndex);
 

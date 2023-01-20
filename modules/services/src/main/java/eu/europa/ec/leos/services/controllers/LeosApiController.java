@@ -469,10 +469,10 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/updateAnnexOrder/{proposalRef}/annex/{annexRef}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateProposalAnnexOrder(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexRef") String annexRef,
-                                                           @RequestParam String moveDirection) {
+                                                           @RequestParam String moveDirection,@RequestParam Integer timesToMove) {
         try {
-            apiService.updateAnnexOrder(proposalRef, annexRef, moveDirection);
-            return new ResponseEntity<>("Updated proposal annex order", HttpStatus.OK);
+            apiService.updateAnnexOrder(proposalRef, annexRef, moveDirection,timesToMove);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error("Error occured while updating annex order - "+ e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);

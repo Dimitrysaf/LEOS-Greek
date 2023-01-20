@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
@@ -563,6 +564,7 @@ public class ApiServiceImpl implements ApiService {
         try {
             String finalProposalId = proposalId;
             legDocuments.forEach(document -> milestonesVOS.add(getMilestonesVO(document, finalProposalId,proposalRef)));
+            milestonesVOS.forEach(milestone -> milestone.setStatus(messageHelper.getMessage("milestones.column.status.value." + LeosLegStatus.FILE_READY.name())));
         }
         catch(Exception e) {
             LOG.error("Error while getting milestones for proposal " + e);
@@ -616,22 +618,25 @@ public class ApiServiceImpl implements ApiService {
             billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
             billContext.useActionMessage(ContextActionService.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
             archiveService.archiveDocument(annex, Annex.class, leosPackage.getPath());
-            billContext.executeRemoveBillAnnex();
+            billContext.executeRemoveBillAnnex(proposalRef);
         }
     }
 
     @Override
-    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection){
+    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection,Integer timesToMove){
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
-            String proposalId = proposal.getId();
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
-            BillContextService billContext = billContextProvider.get();
-            billContext.usePackage(leosPackage);
-            billContext.useMoveDirection(moveDirection);
-            billContext.useAnnexwithRef(annexRef);
-            billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
-            billContext.executeMoveAnnex();
+            for (int i = 0; i < timesToMove; i++) {
+                String proposalId = proposal.getId();
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+                BillContextService billContext = billContextProvider.get();
+                billContext.usePackage(leosPackage);
+                billContext.useMoveDirection(moveDirection);
+                billContext.useAnnexwithRef(annexRef);
+                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+                billContext.executeMoveAnnex(annexRef);
+            }
+
         }
     }
 

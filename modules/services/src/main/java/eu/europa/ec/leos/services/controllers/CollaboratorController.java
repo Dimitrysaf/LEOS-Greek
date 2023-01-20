@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,7 @@ public class CollaboratorController {
         this.urlBuilder = urlBuilder;
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.GET)
+    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.GET , produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getAllCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
@@ -66,7 +67,7 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)
+    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> addCollaboratorToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         final String userId = collaboratorRequest.getUserId();
@@ -76,7 +77,7 @@ public class CollaboratorController {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             String entity = collaboratorService.addCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
-            return new ResponseEntity<>("User '" + userId + "' [entity: '" + entity + "'], added successfully to document '" + proposalRef + "' with role '" + roleName + "'", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
             String msg = "Error occurred while adding User '" + userId + "' [entity '" + connectedDG + "'], as role '" + roleName + "' to proposal '" + proposalRef + "'";
             LOG.error(msg);
@@ -88,7 +89,7 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.PUT , produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> editCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         final String userId = collaboratorRequest.getUserId();
@@ -99,7 +100,7 @@ public class CollaboratorController {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             String entity = collaboratorService.editCollaborator(proposal, userId, newRoleName, connectedDG, proposalUrl);
-            return new ResponseEntity<>("User '" + userId + "' [entity: '" + entity + "'], updated successfully for proposal '" + proposalRef + "' with new role '" + newRoleName + "'", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
             String msg = "Error occurred while updating new Role '" + newRoleName + "' of User '" + userId + "' [entity '" + connectedDG + "'], for proposal '" + proposalRef + "'";
             LOG.error(msg);
@@ -111,7 +112,7 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> removeCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         final String userId = collaboratorRequest.getUserId();
@@ -122,7 +123,7 @@ public class CollaboratorController {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             String entity = collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl);
-            return new ResponseEntity<>("User '" + userId + "' [entity: '" + entity + "'], removed successfully from proposal '" + proposalRef + "' with role '" + roleName + "'", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
             String msg = "Error occurred while removing User '" + userId + "' [entity '" + connectedDG + "'], as role '" + roleName + "' from proposal '" + proposalRef + "'";
             LOG.error(msg);
