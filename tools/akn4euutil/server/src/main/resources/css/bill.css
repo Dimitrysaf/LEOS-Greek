@@ -1095,6 +1095,7 @@ bill mref[leos\:broken], .leos-toc-content .toc-content-area mref[leos\:broken] 
   color: red;
   font-style: italic;
   outline: 1px dotted red;
+  position: relative;
 }
 bill mref[leos\:broken]:after, .leos-toc-content .toc-content-area mref[leos\:broken]:after {
   display: inline;
@@ -1103,6 +1104,27 @@ bill mref[leos\:broken]:after, .leos-toc-content .toc-content-area mref[leos\:br
   content: "warning";
   vertical-align: bottom;
 }
+
+bill mref[leos\:broken]:before, .leos-toc-content .toc-content-area mref[leos\:broken]:before {
+  position:absolute;
+  content: "This Reference link is broken!";
+  top:50%;
+  transform:translateY(-50%);
+  left:100%;
+  margin-left:15px;
+  width:200px;
+  padding:10px;
+  border-radius:10px;
+  background:#474747;
+  color: #fff;
+  text-align:center;
+  display:none;
+}
+
+bill mref[leos\:broken]:hover:before, .leos-toc-content .toc-content-area mref[leos\:broken]:hover:before {
+  display:block;
+}
+
 bill mref[leos\:broken] > ref, .leos-toc-content .toc-content-area mref[leos\:broken] > ref {
   color: red;
 }
