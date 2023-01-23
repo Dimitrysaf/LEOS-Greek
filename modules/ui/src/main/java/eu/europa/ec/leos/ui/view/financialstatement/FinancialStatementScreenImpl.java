@@ -33,6 +33,7 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.declarative.Design;
 import com.vaadin.ui.dnd.DragSourceExtension;
 import com.vaadin.ui.dnd.event.DragStartListener;
@@ -40,6 +41,7 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -62,6 +64,7 @@ import eu.europa.ec.leos.ui.component.markedText.MarkedTextComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
+import eu.europa.ec.leos.ui.component.versions.VersionComparator;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
@@ -86,6 +89,7 @@ import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.OptionsType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
@@ -106,6 +110,7 @@ import eu.europa.ec.leos.web.ui.component.SearchDelegate;
 import eu.europa.ec.leos.web.ui.component.actions.FinancialstatementActionsMenuBar;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import eu.europa.ec.leos.web.ui.themes.LeosTheme;
+import eu.europa.ec.leos.web.ui.window.IntermediateVersionWindow;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -118,6 +123,7 @@ import org.vaadin.sliderpanel.SliderPanel;
 import org.vaadin.sliderpanel.SliderPanelBuilder;
 import org.vaadin.sliderpanel.client.SliderMode;
 import org.vaadin.sliderpanel.client.SliderTabPosition;
+
 
 import javax.annotation.PostConstruct;
 import javax.inject.Provider;
@@ -140,11 +146,8 @@ import java.util.function.Supplier;
 abstract public class FinancialStatementScreenImpl extends VerticalLayout implements FinancialStatementScreen {
 
     private static final long serialVersionUID = 1L;
-
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementScreenImpl.class);
-
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
     protected HorizontalSplitPanel financialStatementSplit;
     protected HorizontalSplitPanel contentSplit;
     protected Label financialStatementTitle;
@@ -156,7 +159,6 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     protected HorizontalLayout mainLayout;
     protected VerticalLayout financialStatementLayout;
     protected LeosDisplayField financialStatementContent;
-
     protected TableOfContentComponent tableOfContentComponent = new TableOfContentComponent();
     protected AccordionPane accordionPane;
     protected Accordion accordion;
@@ -180,14 +182,15 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     protected final XmlContentProcessor xmlContentProcessor;
     protected LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final TableOfContentProcessor tableOfContentProcessor;
-    private static final String CHECKED = "\u2611";
-    private static final String UNCHECKED = "\u2610";
-    private static final String NAME_ATTR ="name";
-    private static final String NAME_ATTR_CHECKED = "checked";
-    private static final String NAME_ATTR_UNCHECKED = "unchecked";
-
+    protected VersionComparator versionComparator;
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
     private SearchDelegate searchDelegate;
+
+    private static final String CHECKED = "\u2611";
+    private static final String UNCHECKED = "\u2610";
+    private static final String NAME_ATTR = "name";
+    private static final String NAME_ATTR_CHECKED = "checked";
+    private static final String NAME_ATTR_UNCHECKED = "unchecked";
 
     @Value("${leos.coedition.sip.enabled}")
     private boolean coEditionSipEnabled;
@@ -202,7 +205,8 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     FinancialStatementScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
                                  ConfigurationHelper cfgHelper, TocEditor tocEditor, InstanceTypeResolver instanceTypeResolver, VersionsTab<FinancialStatement> versionsTab,
                                  Provider<StructureContext> structureContextProvider, TableOfContentProcessor tableOfContentProcessor,
-                                 XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper) {
+                                 XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper,
+                                 VersionComparator versionComparator) {
         LOG.trace("Initializing explanatory screen...");
         Validate.notNull(messageHelper, "MessageHelper must not be null!");
         this.messageHelper = messageHelper;
@@ -226,6 +230,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
         this.authorityMapHelper = authorityMapHelper;
+        this.versionComparator = versionComparator;
         Design.read(this);
         init();
     }
@@ -310,11 +315,16 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     @Override
-    public void displayComparison(HashMap<ComparisonDisplayMode, Object> htmlCompareResult) {
+    public void displayComparison(HashMap<ComparisonDisplayMode, Object> htmlResult) {
+        eventBus.post(new ComparisonResponseEvent(htmlResult, LeosCategory.STAT_FINANC_LEGIS.name().toLowerCase()));
     }
 
     @Override
     public void showIntermediateVersionWindow() {
+        IntermediateVersionWindow intermediateVersionWindow = new IntermediateVersionWindow(messageHelper, eventBus);
+        UI.getCurrent().addWindow(intermediateVersionWindow);
+        intermediateVersionWindow.center();
+        intermediateVersionWindow.focus();
     }
 
     @Override
@@ -322,7 +332,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         String baseVersionStr = "";
         String baseECVersion = messageHelper.getMessage("document.base.ec.version");
         String revisedBaseVersion = versionInfoVO.getRevisedBaseVersion();
-        if(!StringUtils.isEmpty(revisedBaseVersion) && !baseECVersion.equalsIgnoreCase(revisedBaseVersion)) {
+        if (!StringUtils.isEmpty(revisedBaseVersion) && !baseECVersion.equalsIgnoreCase(revisedBaseVersion)) {
             baseVersionStr = messageHelper.getMessage("document.base.version.toolbar.info", versionInfoVO.getBaseVersionTitle(),
                     versionInfoVO.getRevisedBaseVersion());
         }
@@ -339,7 +349,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Subscribe
     public void handleElementState(StateChangeEvent event) {
-        if(event.getState() != null) {
+        if (event.getState() != null) {
             actionsMenuBar.setSaveVersionEnabled(event.getState().isState());
             refreshButton.setEnabled(event.getState().isState());
             refreshNoteButton.setEnabled(event.getState().isState());
@@ -348,18 +358,18 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     @Override
-    public void setPermissions(DocumentVO documentVO, boolean isClonedProposal){
+    public void setPermissions(DocumentVO documentVO, boolean isClonedProposal) {
         boolean enableUpdate = securityContext.hasPermission(documentVO, LeosPermission.CAN_UPDATE);
         actionsMenuBar.setSaveVersionVisible(enableUpdate);
         tableOfContentComponent.setPermissions(false);
         searchButton.setVisible(enableUpdate);
 
         // add extensions only if the user has the permission.
-        if(enableUpdate) {
-            if(leosEditorExtension == null) {
+        if (enableUpdate) {
+            if (leosEditorExtension == null) {
                 eventBus.post(new InitLeosEditorEvent(documentVO));
             }
-            if(actionManagerExtension == null) {
+            if (actionManagerExtension == null) {
                 actionManagerExtension = new ActionManagerExtension<>(financialStatementContent,
                         instanceTypeResolver.getInstanceType(), eventBus, structureContextProvider.get().getTocItems());
             }
@@ -383,6 +393,11 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         annotateExtension = new AnnotateExtension<>(financialStatementContent, eventBus, cfgHelper, null, AnnotateExtension.OperationMode.NORMAL,
                 ConfigurationHelper.isAnnotateAuthorityEquals(cfgHelper, "LEOS"), true, proposalRef,
                 connectedEntity);
+    }
+
+    @Override
+    public void setDownloadStreamResourceForVersion(StreamResource streamResource, String documentId) {
+        versionsTab.setDownloadStreamResourceForVersion(streamResource, documentId);
     }
 
     @Override
@@ -415,25 +430,25 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         StringBuilder coEditorsList = new StringBuilder();
         coEditionVos.stream().filter((x) -> InfoType.ELEMENT_INFO.equals(x.getInfoType()) && x.getElementId().equals(elementId))
                 .sorted(Comparator.comparing(CoEditionVO::getUserName).thenComparingLong(CoEditionVO::getEditionTime)).forEach(x -> {
-                    StringBuilder userDescription = new StringBuilder();
-                    if (!x.getUserLoginName().equals(user.getLogin())) {
-                        userDescription.append("<a href=\"")
-                                .append(StringUtils.isEmpty(x.getUserEmail()) ? "" : (coEditionSipEnabled ? new StringBuilder("sip:").append(x.getUserEmail().replaceFirst("@.*", "@" + coEditionSipDomain)).toString()
-                                        : new StringBuilder("mailto:").append(x.getUserEmail()).toString()))
-                                .append("\">").append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity())
-                                .append(")</a>");
-                    } else {
-                        userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
-                    }
-                    coEditorsList.append("&nbsp;&nbsp;-&nbsp;")
-                            .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dateFormat.format(new Date(x.getEditionTime()))))
-                            .append("<br>");
-                });
+            StringBuilder userDescription = new StringBuilder();
+            if (!x.getUserLoginName().equals(user.getLogin())) {
+                userDescription.append("<a href=\"")
+                        .append(StringUtils.isEmpty(x.getUserEmail()) ? "" : (coEditionSipEnabled ? new StringBuilder("sip:").append(x.getUserEmail().replaceFirst("@.*", "@" + coEditionSipDomain)).toString()
+                                : new StringBuilder("mailto:").append(x.getUserEmail()).toString()))
+                        .append("\">").append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity())
+                        .append(")</a>");
+            } else {
+                userDescription.append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity()).append(")");
+            }
+            coEditorsList.append("&nbsp;&nbsp;-&nbsp;")
+                    .append(messageHelper.getMessage("coedition.tooltip.message", userDescription, dateFormat.format(new Date(x.getEditionTime()))))
+                    .append("<br>");
+        });
         if (!StringUtils.isEmpty(coEditorsList)) {
             confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
         } else {
             if (action == CheckElementCoEditionEvent.Action.DELETE) {
-                eventBus.post(new CheckDeleteLastEditingTypeEvent(((DeleteElementRequestEvent)actionEvent).getElementId(), actionEvent));
+                eventBus.post(new CheckDeleteLastEditingTypeEvent(((DeleteElementRequestEvent) actionEvent).getElementId(), actionEvent));
             } else {
                 eventBus.post(actionEvent);
             }
@@ -477,18 +492,27 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         return false;
     }
 
-    @Override
-    public void setDataFunctions(DocumentVO FinancialStatementVO, List<VersionVO> allVersions, List<ContributionVO> allContributions, BiFunction<Integer, Integer, List<FinancialStatement>> majorVersionsFn, Supplier<Integer> countMajorVersionsFn, TriFunction<String, Integer, Integer, List<FinancialStatement>> minorVersionsFn, Function<String, Integer> countMinorVersionsFn, BiFunction<Integer, Integer, List<FinancialStatement>> recentChangesFn, Supplier<Integer> countRecentChangesFn) {
-
-    }
 
     @Override
-    public void setContributionsData(List<ContributionVO> allContributions) {
-
+    public void setDataFunctions(DocumentVO annexVO, List<VersionVO> allVersions,
+                                 List<ContributionVO> allContributions,
+                                 BiFunction<Integer, Integer, List<FinancialStatement>> majorVersionsFn, Supplier<Integer> countMajorVersionsFn,
+                                 TriFunction<String, Integer, Integer, List<FinancialStatement>> minorVersionsFn, Function<String, Integer> countMinorVersionsFn,
+                                 BiFunction<Integer, Integer, List<FinancialStatement>> recentChangesFn, Supplier<Integer> countRecentChangesFn) {
+        boolean canRestorePreviousVersion = securityContext.hasPermission(annexVO, LeosPermission.CAN_RESTORE_PREVIOUS_VERSION);
+        boolean canDownload = securityContext.hasPermission(annexVO, LeosPermission.CAN_DOWNLOAD_XML_COMPARISON);
+        versionsTab.setDataFunctions(allVersions, minorVersionsFn, countMinorVersionsFn,
+                recentChangesFn, countRecentChangesFn, versionComparator.isCompareModeAvailable(), false,
+                canRestorePreviousVersion, canDownload);
     }
 
     @Override
     public void refreshVersions(List<VersionVO> allVersions, boolean isComparisonMode) {
+        versionsTab.refreshVersions(allVersions, isComparisonMode);
+    }
+
+    @Override
+    public void setContributionsData(List<ContributionVO> allContributions) {
 
     }
 
@@ -549,11 +573,6 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void setDownloadStreamResourceForMenu(DownloadStreamResource streamResource) {
-
-    }
-
-    @Override
-    public void setDownloadStreamResourceForVersion(StreamResource streamResource, String documentId) {
 
     }
 
@@ -728,6 +747,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         tocItemContainer.setExpandRatio(gridLayout, 1.0f);
         return tocItemContainer;
     }
+
     @Override
     public void setUserGuidance(String userGuidance) {
         eventBus.post(new FetchUserGuidanceResponse(userGuidance));

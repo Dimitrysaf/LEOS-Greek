@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -41,6 +42,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 @Service
 public abstract class DocumentContentServiceImpl implements DocumentContentService {
@@ -53,6 +55,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     protected BillService billService;
     protected MemorandumService memorandumService;
     protected ExplanatoryService explanatoryService;
+    protected FinancialStatementService financialStatementService;
     protected ProposalService proposalService;
     protected XmlContentProcessor xmlContentProcessor;
     protected final XPathCatalog xPathCatalog;
@@ -61,7 +64,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     public DocumentContentServiceImpl(TransformationService transformationService,
                                       ContentComparatorService compareService, AnnexService annexService,
                                       BillService billService, MemorandumService memorandumService, ExplanatoryService explanatoryService,
-                                      ProposalService proposalService, XmlContentProcessor xmlContentProcessor, XPathCatalog xPathCatalog) {
+                                      ProposalService proposalService, XmlContentProcessor xmlContentProcessor, XPathCatalog xPathCatalog,
+                                      FinancialStatementService financialStatementService) {
         this.transformationService = transformationService;
         this.compareService = compareService;
         this.annexService = annexService;
@@ -71,6 +75,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         this.proposalService = proposalService;
         this.xmlContentProcessor = xmlContentProcessor;
         this.xPathCatalog = xPathCatalog;
+        this.financialStatementService = financialStatementService;
     }
 
     protected boolean isComparisonRequired(XmlDocument xmlDocument, SecurityContext securityContext) {
@@ -181,6 +186,11 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
 
     @Override
+    public XmlDocument getOriginalFinancialStatement(FinancialStatement explanatory) {
+        return financialStatementService.findFirstVersion(explanatory.getMetadata().get().getRef());
+    }
+
+    @Override
     public XmlDocument getOriginalAnnex(Annex annex) {
         return annexService.findFirstVersion(annex.getMetadata().get().getRef());
     }
@@ -202,7 +212,10 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public String getDocumentAsHtml(XmlDocument xmlDocument, String contextPath, List<LeosPermission> permissions) {
-        return this.getDocumentAsHtml(xmlDocument, contextPath, permissions, false);
+        String documentAsHtml = this.getDocumentAsHtml(xmlDocument, contextPath, permissions, false);
+        Document document = XercesUtils.createXercesDocument(documentAsHtml.getBytes(UTF_8));
+        documentAsHtml = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+        return documentAsHtml;
     }
 
     @Override
@@ -210,6 +223,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return transformationService.formatToHtml(xmlDocument, contextPath, permissions,
                         includeCoverPage ? new ByteArrayInputStream(getCoverPageContent(xmlDocument.getContent().get().getSource().getBytes()))
                                 : null)
+
                 .replaceAll("(?i)(href|onClick)=\".*?\"", "");
     }
 

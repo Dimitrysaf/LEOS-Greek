@@ -28,6 +28,7 @@ import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.component.doubleCompare.DoubleComparisonComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
+import eu.europa.ec.leos.ui.component.versions.VersionComparator;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.ui.view.TriFunction;
@@ -71,9 +72,11 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
                                         ConfigurationHelper cfgHelper, TocEditor numberEditor, InstanceTypeResolver instanceTypeResolver,
                                         VersionsTab<FinancialStatement> versionsTab, Provider<StructureContext> structureContextProvider,
                                         TableOfContentProcessor tableOfContentProcessor,
-                                        XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper) {
+                                        XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper,
+                                        VersionComparator versionComparator) {
         super(messageHelper, eventBus, securityContext, userHelper, cfgHelper, numberEditor, instanceTypeResolver,
-                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor, authorityMapHelper);
+                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor, authorityMapHelper,
+                versionComparator);
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, FinancialStatement.class, false);
         doubleComparisonComponent = new DoubleComparisonComponent<>(exportOptions, eventBus, messageHelper, securityContext);
     }
@@ -240,5 +243,10 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
 
     @Override
     public boolean isCoverPageVisible() { return false; }
+
+    @Override
+    public boolean isCleanVersionShowed() {
+        return false;
+    }
 
 }

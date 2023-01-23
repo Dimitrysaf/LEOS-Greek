@@ -144,4 +144,6 @@ public interface FinancialStatementScreen {
     Optional<ContributionVO> findContributionAndShowTab(String revisionVersion);
 
     void setUserGuidance(String guidance);
+
+    boolean isCleanVersionShowed();
 }

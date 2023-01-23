@@ -45,9 +45,10 @@ public class DocumentContentServiceMandateImpl extends DocumentContentServiceImp
     public DocumentContentServiceMandateImpl(TransformationService transformationService,
                                              ContentComparatorService compareService, AnnexService annexService, BillService billService,
                                              MemorandumService memorandumService, ExplanatoryService explanatoryService,
-                                             ProposalService proposalService, XmlContentProcessor xmlContentProcessor, XPathCatalog xPathCatalog) {
+                                             ProposalService proposalService, XmlContentProcessor xmlContentProcessor, XPathCatalog xPathCatalog,
+                                             FinancialStatementService financialStatementService) {
         super(transformationService, compareService, annexService, billService, memorandumService, explanatoryService, proposalService,
-                xmlContentProcessor, xPathCatalog);
+                xmlContentProcessor, xPathCatalog, financialStatementService);
     }
 
     @Override

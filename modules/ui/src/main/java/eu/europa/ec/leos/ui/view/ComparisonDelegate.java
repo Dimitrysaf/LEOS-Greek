@@ -23,12 +23,16 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 
 import java.util.HashMap;
 
@@ -40,6 +44,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_ORIGINAL_STYLE;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_RETAIN_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 @Component
 @Scope("prototype")
@@ -70,7 +75,10 @@ public abstract class ComparisonDelegate<T extends XmlDocument> {
     }
     
     public String getMarkedContent(T oldVersion, T newVersion) {
-        return getComparedContent(oldVersion, newVersion);
+        String markedContent = getComparedContent(oldVersion, newVersion);
+        final Document document = XercesUtils.createXercesDocument(markedContent.getBytes(XmlHelper.UTF_8));
+        markedContent = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+        return markedContent;
     }
 
     public String getContributionComparedContent(String oldVersion, String newVersion) {

@@ -39,9 +39,9 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
     public DocumentContentServiceProposalImpl(TransformationService transformationService,
                                               ContentComparatorService compareService, AnnexService annexService, BillService billService,
                                               MemorandumService memorandumService, ProposalService proposalService, XmlContentProcessor xmlContentProcessor,
-                                              CloneContext cloneContext, XPathCatalog xPathCatalog) {
+                                              CloneContext cloneContext, XPathCatalog xPathCatalog, FinancialStatementService financialStatementService) {
         super(transformationService, compareService, annexService, billService, memorandumService, null, proposalService,
-                xmlContentProcessor, xPathCatalog);
+                xmlContentProcessor, xPathCatalog, financialStatementService);
         this.cloneContext = cloneContext;
     }
 
