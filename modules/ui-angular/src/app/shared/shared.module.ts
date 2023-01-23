@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EuiAllModule } from '@eui/components';
@@ -12,6 +13,7 @@ import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
     NgForTrackByPropertyModule,
     TranslateModule,
     FormsModule,
+    DragDropModule,
   ],
   declarations: [],
   exports: [
@@ -20,6 +22,7 @@ import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
     NgForTrackByPropertyModule,
     TranslateModule,
     FormsModule,
+    DragDropModule,
   ],
 })
 export class SharedModule {}

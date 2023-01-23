@@ -164,3 +164,27 @@
     </div>
   </eui-dialog-footer>
 </eui-dialog>
+
+<eui-dialog #editAnnexOrder title="Edit annex order">
+  <div class="flex flex-col mb-5">
+    <p class="">
+      You can reorder annexes by dragging and dropping items from the list
+      below.
+    </p>
+    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+      <div
+        class="example-box"
+        *ngFor="let annex of annexes; let i = index"
+        cdkDrag
+      >
+        <span class="eui-icon eui-icon-bars"></span>
+        <div class="" [attr.data-index]="i">{{ annex.title }}</div>
+      </div>
+    </div>
+  </div>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end">
+      <button euiButton euiSecondary (click)="handleClose()">Cancel</button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>
