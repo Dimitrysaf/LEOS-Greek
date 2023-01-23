@@ -21,12 +21,31 @@ $BLUE_MARINE: #507C90;
         font-weight: normal;
         color: $BLUE_MARINE;
         outline: 1px dotted $BLUE_MARINE;
+        position: relative;
     }
 
     mref[#{"leos\\:broken"}] {
         color: red;
         font-style: italic;
         outline: 1px dotted red;
+        &:hover:before {
+            display: block;
+        }
+        &:before {
+            position: absolute;
+            content: "This Reference link is broken!";
+            top: 50%;
+            transform: translateY(-50%);
+            left: 100%;
+            margin-left: 10px;
+            width: 200px;
+            padding: 5px;
+            border-radius: 10px;
+            background: #474747;
+            color: #fff;
+            text-align: center;
+            display: none;
+        }
         &:after {
             display: inline-block;
             font-style: normal;

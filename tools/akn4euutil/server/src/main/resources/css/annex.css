@@ -1255,6 +1255,7 @@ doc[name="ANNEX" i] mref[leos\:broken] {
   color: red;
   font-style: italic;
   outline: 1px dotted red;
+  position: relative;
 }
 doc[name="ANNEX" i] mref[leos\:broken]:after {
   display: inline-block;
@@ -1262,6 +1263,24 @@ doc[name="ANNEX" i] mref[leos\:broken]:after {
   font-family: "Vaadin-Icons";
   content: "warning";
   vertical-align: bottom;
+}
+doc[name="ANNEX" i] mref[leos\:broken]:before, .leos-toc-content .toc-content-area mref[leos\:broken]:before {
+  position:absolute;
+  content: "This Reference link is broken!";
+  top:50%;
+  transform:translateY(-50%);
+  left:100%;
+  margin-left:15px;
+  width:200px;
+  padding:10px;
+  border-radius:10px;
+  background:#474747;
+  color: #fff;
+  text-align:center;
+  display:none;
+}
+doc[name="ANNEX" i] mref[leos\:broken]:hover:before, .leos-toc-content .toc-content-area mref[leos\:broken]:hover:before {
+  display:block;
 }
 doc[name="ANNEX" i] mref[leos\:broken] > ref {
   color: red;
