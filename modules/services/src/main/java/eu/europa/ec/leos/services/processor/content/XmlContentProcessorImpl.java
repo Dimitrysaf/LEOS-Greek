@@ -813,7 +813,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             originAttr = originOfChange;
         }
 
-        if (originAttr.equals(originOfChange)) {
+        if (originAttr.equals(originOfChange) && !node.getNodeName().equalsIgnoreCase(LIST)) {
             XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
             if (softAction == null && !StringUtils.isEmpty(originOfDocument) && !CN.equals(originOfDocument)) {
