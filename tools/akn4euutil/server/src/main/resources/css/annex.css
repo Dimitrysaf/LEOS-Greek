@@ -1264,7 +1264,7 @@ doc[name="ANNEX" i] mref[leos\:broken]:after {
   content: "warning";
   vertical-align: bottom;
 }
-bill mref[leos\:broken]:before, .leos-toc-content .toc-content-area mref[leos\:broken]:before {
+doc[name="ANNEX" i] mref[leos\:broken]:before, .leos-toc-content .toc-content-area mref[leos\:broken]:before {
   position:absolute;
   content: "This Reference link is broken!";
   top:50%;
@@ -1279,7 +1279,7 @@ bill mref[leos\:broken]:before, .leos-toc-content .toc-content-area mref[leos\:b
   text-align:center;
   display:none;
 }
-bill mref[leos\:broken]:hover:before, .leos-toc-content .toc-content-area mref[leos\:broken]:hover:before {
+doc[name="ANNEX" i] mref[leos\:broken]:hover:before, .leos-toc-content .toc-content-area mref[leos\:broken]:hover:before {
   display:block;
 }
 doc[name="ANNEX" i] mref[leos\:broken] > ref {
