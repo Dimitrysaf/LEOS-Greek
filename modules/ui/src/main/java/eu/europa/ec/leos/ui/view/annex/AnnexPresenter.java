@@ -573,7 +573,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
                 exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, currentDocument));
             } else {
-                boolean isLiveDiffing = currentDocument.isLiveDiffingRequired();
+                boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isAnnexFromCouncil(currentDocument);
                 if (!isLiveDiffing) {
                     original = currentDocument; // For NO Diffing
                 }
@@ -750,7 +750,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final Annex currentDocument = getDocument();
         XmlDocument original = documentContentService.getOriginalAnnex(currentDocument);
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
-        boolean isLiveDiffing = currentDocument.isLiveDiffingRequired();
+        boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isAnnexFromCouncil(currentDocument);
         if (!isLiveDiffing) {
             original = currentDocument; // For NO Diffing
         }
@@ -846,13 +846,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String baseRevisionId = document.getBaseRevisionId();
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
 
-        if(StringUtils.isBlank(baseRevisionId)) {
-            VersionVO versionVO = VersionsUtil.buildVersionVO(Arrays.asList(document), messageHelper).get(0);
-            Map<String, Object> properties = new HashMap<>();
-            properties.put(CmisProperties.BASE_REVISION_ID.getId(), versionVO.getDocumentId() + CMIS_PROPERTY_SPLITTER + versionVO.getVersionNumber().toString() + CMIS_PROPERTY_SPLITTER + versionVO.getCheckinCommentVO().getTitle());
-            document =  annexService.updateAnnex(documentId, properties, true);
-            baseRevisionId = document.getBaseRevisionId();
-        }
         if(!StringUtils.isEmpty(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
             String versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
             String versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];

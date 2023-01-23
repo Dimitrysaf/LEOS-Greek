@@ -20,6 +20,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import io.atlassian.fugue.Pair;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import java.util.List;
@@ -309,4 +310,7 @@ public interface XmlContentProcessor {
     public byte[] insertSoftAddedClassAttribute(byte[] contentBytes);
     
     boolean isRevisionAnnex(byte[] contentBytes);
+
+    public String getOriginOfDocument(Document document);
+
 }
