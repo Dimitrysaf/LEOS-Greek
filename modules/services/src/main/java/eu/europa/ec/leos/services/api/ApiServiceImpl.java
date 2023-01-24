@@ -618,7 +618,7 @@ public class ApiServiceImpl implements ApiService {
             billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
             billContext.useActionMessage(ContextActionService.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
             archiveService.archiveDocument(annex, Annex.class, leosPackage.getPath());
-            billContext.executeRemoveBillAnnex(proposalRef);
+            billContext.executeRemoveBillAnnex();
         }
     }
 
@@ -630,11 +630,11 @@ public class ApiServiceImpl implements ApiService {
                 String proposalId = proposal.getId();
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
                 BillContextService billContext = billContextProvider.get();
+                billContext.useAnnexwithRef(annexRef);
                 billContext.usePackage(leosPackage);
                 billContext.useMoveDirection(moveDirection);
-                billContext.useAnnexwithRef(annexRef);
                 billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
-                billContext.executeMoveAnnex(annexRef);
+                billContext.executeMoveAnnex();
             }
 
         }

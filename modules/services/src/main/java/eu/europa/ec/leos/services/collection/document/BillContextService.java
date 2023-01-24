@@ -368,7 +368,7 @@ public class BillContextService {
         });
     }
 
-    public void executeRemoveBillAnnex(String proposalRef) {
+    public void executeRemoveBillAnnex() {
         LOG.trace("Executing 'Remove Bill Annex' use case...");
 
         Validate.notNull(leosPackage, "Bill package is required!");
@@ -521,7 +521,7 @@ public class BillContextService {
         annexDocument.setSource(updatedSource);
     }
 
-    public void executeMoveAnnex(String annexRef) {
+    public void executeMoveAnnex() {
         LOG.trace("Executing 'Update Bill Move Annex' use case...");
 
         Validate.notNull(leosPackage, "Bill package is required!");
