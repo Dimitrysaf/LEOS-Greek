@@ -1,1 +1,36 @@
-[app-document-toc]
+<mat-tree
+  [dataSource]="dataSource"
+  [treeControl]="treeControl"
+  class="eui-primary"
+>
+  <mat-nested-tree-node *matTreeNodeDef="let node">
+    <li>
+      <div class="mat-tree-node" euiLabel euiPrimary>{{ getLabel(node) }}</div>
+    </li>
+  </mat-nested-tree-node>
+  <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChildren">
+    <li class="example-tree-container">
+      <div class="mat-tree-node">
+        <eui-icon
+          euiSizeM
+          matTreeNodeToggle
+          *ngIf="!treeControl.isExpanded(node)"
+          iconClass="eui-icon-angle-right"
+          (click)="saveExpanded(node)"
+        ></eui-icon>
+        <eui-icon
+          matTreeNodeToggle
+          *ngIf="treeControl.isExpanded(node)"
+          iconClass="eui-icon eui-icon-angle-down"
+          (click)="saveExpanded(node)"
+        ></eui-icon>
+        <span euiLabel euiPrimary>{{ getLabel(node) }}</span>
+      </div>
+      <ul class="example-tree-nested-node">
+        <div *ngIf="treeControl.isExpanded(node)">
+          <ng-container matTreeNodeOutlet></ng-container>
+        </div>
+      </ul>
+    </li>
+  </mat-nested-tree-node>
+</mat-tree>

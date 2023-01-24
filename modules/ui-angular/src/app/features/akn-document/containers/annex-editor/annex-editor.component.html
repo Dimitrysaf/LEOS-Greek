@@ -36,8 +36,26 @@
         interactiveScrollbars
         (collapsed)="onToggleTOCColumnCollapsed()"
       >
+        <eui-page-column-header-right-content>
+          <button
+            euiButton
+            euiBasicButton
+            euiSizeS
+            euiPrimary
+            class="eui-u-mr-s"
+            (click)="handleEdit()"
+            *ngIf="!isEditMode"
+          >
+            Edit
+          </button>
+          <div class="flex flex-row " *ngIf="isEditMode">
+            <span class="" (click)="handleUndo()">Undo</span>
+            <span class="" (click)="handleSave()">Save</span>
+            <span class="" (click)="handleCancel()">Cancel</span>
+          </div>
+        </eui-page-column-header-right-content>
         <eui-page-column-body>
-          <app-document-toc></app-document-toc>
+          <app-document-toc [isEdit]="isEditMode"></app-document-toc>
         </eui-page-column-body>
       </eui-page-column>
 
