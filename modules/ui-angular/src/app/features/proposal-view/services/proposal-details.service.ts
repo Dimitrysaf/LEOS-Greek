@@ -54,7 +54,6 @@ export class ProposalDetailsService {
       tap((res) => this.getAllCollaborators(this.proposalRef)),
       tap((res) => this.loadingService.setLoading(false)),
       tap((res) => this.getProposalMilestones(this.proposalRef)),
-      map((res: any) => res),
     );
 
     this.userAutocompleteData$ = this.userAutocompleteDataResponse$.pipe(
@@ -194,12 +193,6 @@ export class ProposalDetailsService {
         this.loadingService.setLoading(false);
         this.router.navigate(['/workspace']);
       });
-  }
-
-  handleSeachUserInput(userName: string) {
-    this.http
-      .get(`api/secured/proposal/searchUser?searchKey=${userName}`, {})
-      .subscribe((user) => console.log(user));
   }
 
   addCallaborators(collaboratorsToAdd: CollaboratorRequest[]) {

@@ -168,8 +168,7 @@
 <eui-dialog #editAnnexOrder title="Edit annex order">
   <div class="flex flex-col mb-5">
     <p class="">
-      You can reorder annexes by dragging and dropping items from the list
-      below.
+      {{ 'page.collection.drafts.annex-reorder-dialog.hint' | translate }}
     </p>
     <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
       <div

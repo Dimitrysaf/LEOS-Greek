@@ -765,11 +765,8 @@ export class CKEditorService implements OnDestroy {
         // this.documentService.setDocumentId(documentRef);
       });
     },
-    closeElement: () => {
-      console.log('CLOSE EDITOR');
-    },
+    closeElement: () => {},
     releaseElement: () => {
-      console.log('RELEASE-element');
       const documentRef = this.documentRefBS.value;
       this.documentService.setDocumentId(documentRef);
     },

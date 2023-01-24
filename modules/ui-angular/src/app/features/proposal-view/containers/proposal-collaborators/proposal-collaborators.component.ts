@@ -45,11 +45,6 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {}
 
-  handleSearchUserInput(value: string) {
-    //TODO :hanlde search either on FE or BE[to be discused]
-    console.log(value);
-  }
-
   editCollaborator(id: number, entity: Entity, role: string) {
     this.isEditRole = true;
     this.editUserId = id;

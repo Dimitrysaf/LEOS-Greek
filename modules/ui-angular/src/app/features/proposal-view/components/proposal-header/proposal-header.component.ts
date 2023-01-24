@@ -38,7 +38,6 @@ export class ProposalHeaderComponent implements OnInit {
   }
 
   handleSave() {
-    console.log('save');
     this.dialog.closeDialog();
     this.saveTitle.emit(this.title);
   }
