@@ -4,12 +4,14 @@ import {
   BehaviorSubject,
   distinctUntilChanged,
   filter,
+  map,
   mergeMap,
   Observable,
   skip,
   Subject,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
@@ -57,11 +59,7 @@ export class DocumentService implements OnDestroy {
     this.documentId$ = this.documentIdBS.asObservable();
     this.documentXML$ = this.documentId$.pipe(
       // FIXME: use proper API
-      mergeMap((id) =>
-        id
-          ? this.http.get('../../assets/annex_1.xml', { responseType: 'text' })
-          : null,
-      ),
+      mergeMap((ref) => (ref ? this.findById(ref) : null)),
     );
 
     this.annotationsEnabled$ = this.annotationsEnabledBS.asObservable();
@@ -75,7 +73,7 @@ export class DocumentService implements OnDestroy {
     this.versions$ = this.documentId$.pipe(
       // FIXME: use proper API
       mergeMap((id) =>
-        this.http.get<Version[]>(`/api/secured/documents/${id}/versions/`),
+        this.http.get<Version[]>(`api/secured/documents/${id}/versions/`),
       ),
     );
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
@@ -115,6 +113,12 @@ export class DocumentService implements OnDestroy {
   /** @deprecated TODO: replace uses and delete */
   getXmlDocument() {
     return this.documentXML$;
+  }
+
+  findById(ref: string) {
+    return this.http
+      .get(`api/secured/annex/${ref}`, { responseType: 'text' })
+      .pipe(take(1));
   }
 
   import() {

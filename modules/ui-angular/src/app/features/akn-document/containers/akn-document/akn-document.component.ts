@@ -12,10 +12,10 @@ export class AknDocumentComponent implements OnInit {
   constructor(private documentService: DocumentService) {}
 
   ngOnInit(): void {
-    this.documentService.getXmlDocument().subscribe((data) => {
-      console.log(typeof data === 'string');
-      this.xml = data;
-      console.log('XML => ', this.xml);
-    });
+    // this.documentService.getXmlDocument().subscribe((data) => {
+    //   console.log(typeof data === 'string');
+    //   this.xml = data;
+    //   console.log('XML => ', this.xml);
+    // });
   }
 }

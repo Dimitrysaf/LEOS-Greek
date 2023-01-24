@@ -1,7 +1,20 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { combineLatest, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  take,
+  takeUntil, tap,
+} from 'rxjs';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
+import {DocumentService} from "@/features/akn-document/services/document.service";
 
 // FIXME: mockdata
 const tocItemsList = [
@@ -657,7 +670,11 @@ const params = {
   providedIn: 'root',
 })
 export class CKEditorService implements OnDestroy {
+  private documentRefBS = new BehaviorSubject<string>(null);
+  private xmlBS = new BehaviorSubject<string>('');
   elementEditor$: Observable<any>;
+  xml$ = this.xmlBS.asObservable();
+  documentRef$ = this.documentRefBS.asObservable();
 
   connector: any = {
     getParentId: () => 123,
@@ -727,11 +744,40 @@ export class CKEditorService implements OnDestroy {
         isClonedProposal,
       );
     },
+    saveElement: (elemData: {
+      elementId: string;
+      elementType: string;
+      elementFragment: string;
+      isSplit: boolean;
+    }) => {
+      const documentRef = this.documentRefBS.value;
+      this.saveAnnexElement(
+        documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        elemData.elementFragment,
+        elemData.isSplit,
+      ).subscribe((response) => {
+        // this.documentService.setDocumentId(documentRef);
+      });
+    },
+    closeElement: () => {
+      console.log('CLOSE EDITOR')
+    },
+    releaseElement: () => {
+      console.log('RELEASE-element');
+      const documentRef = this.documentRefBS.value;
+      this.documentService.setDocumentId(documentRef);
+    }
   };
 
   private destroy$ = new Subject<void>();
 
-  constructor(private leosLegacyService: LeosLegacyService) {}
+  constructor(
+    private leosLegacyService: LeosLegacyService,
+    private http: HttpClient,
+    private documentService: DocumentService
+  ) {}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -872,5 +918,29 @@ export class CKEditorService implements OnDestroy {
           console.log('Connector => ', this.connector);
         },
       );
+  }
+
+  saveAnnexElement(
+    documentRef: string,
+    elementId: string,
+    elementType: string,
+    elementFragment: string,
+    isSplit: boolean,
+  ) {
+    return this.http.put(
+      `api/secured/annex/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      elementFragment,
+      { responseType: 'text' },
+    ).pipe(
+      tap(() => this.connector.closeElement())
+    )
+  }
+
+  setXml(xml: string) {
+    this.xmlBS.next(xml);
+  }
+
+  setDocumentRef(documentRef: string) {
+    this.documentRefBS.next(documentRef);
   }
 }

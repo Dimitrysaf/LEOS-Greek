@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
@@ -200,10 +201,11 @@ public class ApiServiceImpl implements ApiService {
     }
     @Override
     public byte[] downloadProposal(String proposalRef) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
         String jobFileName = getJobFileName(proposalRef);
         File packageFile;
         try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposalRef, new ExportLW(ExportOptions.Output.WORD));
+            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportLW(ExportOptions.Output.WORD));
             return FileUtils.readFileToByteArray(packageFile);
         }catch( Exception e){
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
@@ -243,29 +245,22 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public String exportProposal(String proposalRef, String outputType) {
-        try {
-            Proposal proposal = proposalService.findProposalByRef(proposalRef);
-            ExportOptions.Output output;
-            switch (outputType) {
-                case "PDF":
-                    output = ExportOptions.Output.PDF;
-                    break;
-                case "WORD":
-                    output = ExportOptions.Output.WORD;
-                    break;
-                default:
-                    throw new RuntimeException("Invalid output type provided");
-            }
-            ExportOptions exportOptions = new ExportLW(output);
-            String jobId = exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
-            return jobId;
-        } catch (WebServiceException wse) {
-            LOG.error("External system not available due to WebServiceException: {}", wse.getMessage());
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while sending job to ToolBox: {}", e.getMessage());
+    public String exportProposal(String proposalRef, String outputType) throws Exception {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        ExportOptions.Output output;
+        switch (outputType) {
+            case "PDF":
+                output = ExportOptions.Output.PDF;
+                break;
+            case "WORD":
+                output = ExportOptions.Output.WORD;
+                break;
+            default:
+                throw new RuntimeException("Invalid output type provided");
         }
-        return null;
+        ExportOptions exportOptions = new ExportLW(output);
+        String jobId = exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
+        return jobId;
     }
 
     @Override
@@ -471,12 +466,11 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public String createProposalAnnex(String proposalRef, DocumentVO annex) throws IOException {
+    public void createProposalAnnex(String proposalRef) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
             String proposalId = proposal.getId();
-
             try {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
@@ -493,13 +487,11 @@ public class ApiServiceImpl implements ApiService {
                 String annexTemplate = templateItem.getItems().get(0).getId();
                 billContext.useAnnexTemplate(annexTemplate);
                 billContext.executeCreateBillAnnex();
-                return "New Bill Annex created successfully";
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
             }
         }
-        return proposalRef;
     }
 
     private boolean identifyContributionChanges(String clonedProposalRef, String clonedLegFileName, String proposalId) {
@@ -545,52 +537,41 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public List<MilestonesVO> getProposalMilestones(String proposalRef){
-        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
-        if (proposal != null) {
-            String proposalId = proposal.getId();
-            try {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
-                List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
-                legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-
-                List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocuments.get(0).getName());
-                List<MilestonesVO> milestones = new ArrayList();
-                legDocuments.forEach(legDocument -> {
-                    MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
-                            Date.from(legDocument.getCreationInstant()),
-                            Date.from(legDocument.getLastModificationInstant()),
-                            messageHelper.getMessage("milestones.column.status.value." + legDocument.getStatus().name()),
-                            legDocument.getName(), proposalRef);
-
-                    if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
-                        List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
-                        cloneProposalMetadataVOs.forEach(cpmVo -> {
-                            List<String> titles = new ArrayList<>();
-                            titles.add(messageHelper.getMessage("clone.proposal.contribution.sent").concat(" ").
-                                    concat(userService.getUser(cpmVo.getTargetUser()).getName()));
-                                    MilestonesVO milestoneVO = new MilestonesVO(titles, cpmVo.getCreationDate(),
-                                    null, cpmVo.getRevisionStatus(),
-                                    cpmVo.getLegFileName(), cpmVo.getCloneProposalRef());
-                            milestoneVO.setClone(true);
-                            if (cpmVo.getRevisionStatus().equalsIgnoreCase(
-                                    messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
-                                    identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName(), proposalId)) {
-                                milestoneVO.setContributionChanged(true);
-                            }
-                            clonedMilestonesVOS.add(milestoneVO);
-                        });
-                        milestonesVO.setClonedMilestones(clonedMilestonesVOS);
-                    }
-                    milestones.add(milestonesVO);
-                });
-                return milestones;
-            } catch (Exception e) {
-                LOG.error("Unexpected error occurred while getting proposal milestones ", e);
-                throw e;
+        List<MilestonesVO> milestonesVOS = new ArrayList<>();
+        String proposalId = null;
+        byte[] proposalXmlContent = new byte[0];
+        boolean isClonedProposal = false;
+        if (proposalRef != null) {
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            if (proposal != null) {
+                proposalId = proposal.getId();
+                proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
+                        proposal.getContent().get().getSource().getBytes() :
+                        new byte[0];
+                isClonedProposal = proposal.isClonedProposal();
             }
         }
-        return null;
+        if (isClonedProposal) {
+            cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
+            cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        }
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+        List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+        legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+
+        try {
+            String finalProposalId = proposalId;
+            legDocuments.forEach(document -> milestonesVOS.add(getMilestonesVO(document, finalProposalId,proposalRef)));
+        }
+        catch(Exception e) {
+            LOG.error("Error while getting milestones for proposal " + e);
+            throw e;
+        }
+        return milestonesVOS;
     }
+
+
     private MilestonesVO getMilestonesVO(LegDocument legDocument,String proposalId,String proposalRef) {
         List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
@@ -654,6 +635,14 @@ public class ApiServiceImpl implements ApiService {
         }
     }
 
+    @Override
+    public void updateAnnexTitle(String proposalRef, String annexId, String annexTitle) {
+        Annex annex = annexService.findAnnex(annexId,true);
+        AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+        AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+    }
+
     private void createMajorVersions(String proposalRef, String milestoneComment, String versionComment, CollectionContextService context) {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         context.useProposal(proposal);
@@ -672,17 +661,8 @@ public class ApiServiceImpl implements ApiService {
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
-                CollectionContextService context = collectionContextProvider.get();
-                List<String> milestoneComments = proposal.getMilestoneComments();
-                String versionComment = messageHelper.getMessage("milestone.versionComment");
-                createMajorVersions(proposalRef, milestoneComments.get(0), versionComment, context);
-                if(isClonedProposal) {
-                    cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
-                    cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
-                }
-                LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComments.get(0));
-                LOG.trace("Milestone creation successfully requested leg");
-                return newLegDocument;
+                cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+                LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComment);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new milestone ", e);
                 throw e;

@@ -7,6 +7,8 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.annex.AnnexStructureType;
+import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -17,6 +19,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -32,6 +35,7 @@ import java.util.List;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
 @Service
 public class AnnexApiServiceImpl implements AnnexApiService {
@@ -171,6 +175,23 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         byte[] resultXmlContent = getContent(version);
         Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
         return getContent(updatedAnnex);
+    }
+
+    @Override
+    public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        try {
+            LevelItemVO levelItemVO = new LevelItemVO();
+            String element = elementProcessor.getElement(annex,elementTagName,elementId);
+            if (AnnexStructureType.LEVEL.getType().equalsIgnoreCase(elementTagName)
+                    || NUM.equalsIgnoreCase(elementTagName)) {
+                levelItemVO = annexProcessor.getLevelItemVO(annex, elementId, elementTagName);
+            }
+            return new EditElementResponse(elementId,elementTagName,element,levelItemVO);
+        } catch (Exception ex) {
+            LOG.error("Exception while edit element operation for ", ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     private byte[] getContent(Annex annex) {

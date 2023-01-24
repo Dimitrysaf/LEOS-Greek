@@ -1,20 +1,22 @@
 {
-  "/annotate": {
+  "/leos/ui2/annotate": {
     "target": "http://localhost:9099",
+    "pathRewrite": { "^/leos/ui2": "" },
     "secure": false
   },
-  "/leos-js": {
+  "/leos/ui2/leos-js": {
     "target": "http://localhost:8080/leos-pilot",
-    "pathRewrite": { "^/leos-js": "" },
+    "pathRewrite": { "^/leos/ui2/leos-js": "" },
     "secure": false
   },
-  "/legacy": {
+  "/leos/ui2/legacy": {
     "target": "http://localhost:8080/leos-pilot",
-    "pathRewrite": { "^/legacy": "" },
+    "pathRewrite": { "^/leos/ui2/legacy": "" },
     "secure": false
   },
-  "/api": {
+  "/leos/ui2/api": {
     "target": "http://localhost:8080/leos-pilot",
+    "pathRewrite": { "^/leos/ui2": "" },
     "secure": false
   }
 }

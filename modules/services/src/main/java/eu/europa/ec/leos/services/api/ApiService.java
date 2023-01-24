@@ -37,17 +37,19 @@ public interface ApiService {
 
     void createExplanatoryDocument(String proposalRef, String template);
 
-    String exportProposal(String proposalRef, String outputType);
+    String exportProposal(String proposalRef, String outputType) throws Exception;
 
     Optional<DocumentVO> getProposalDetails(String proposalRef);
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 
-    String createProposalAnnex(String proposalRef, DocumentVO annex) throws Exception;
+    void createProposalAnnex(String proposalRef) throws Exception;
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 
     void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection);
+
+    void updateAnnexTitle(String proposalRef,String annexId, String annexTitle);
 
     LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception;
 }

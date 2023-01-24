@@ -37,7 +37,6 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (proposal) => {
-          console.log('Proposal => ', proposal);
           this.proposalTitleNonEditablePart = `${proposal.metadata.docStage} ${proposal.metadata.docType}`;
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
           this.setStateDone(proposal);
@@ -45,6 +44,12 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
         error: (error) => this.setStateError(error),
       });
   }
+
+  onSaveTitle(title: string) {
+    this.proposalDetailsService.updateProposalMetadata(title, null);
+  }
+
+  onSaveEEA(eea: boolean) {}
 
   ngOnDestroy() {
     this.destroy$.next();

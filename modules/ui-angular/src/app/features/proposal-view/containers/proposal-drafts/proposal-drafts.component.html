@@ -149,3 +149,18 @@
     </ng-container>
   </eui-card-content>
 </eui-card>
+
+<eui-dialog #editTitle title="Edit title">
+  <div euiInputGroup class="flex-row align-items-center">
+    <label class="label"> New annex title</label>
+    <input euiInputText [(ngModel)]="title" />
+  </div>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end">
+      <button euiButton euiSecondary (click)="handleClose()">Cancel</button>
+      <button euiButton euiPrimary class="save-button" (click)="handleSave()">
+        Save
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
+import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -23,4 +24,5 @@ public interface AnnexApiService {
     String showVersion(String versionId);
     String compare(String newVersionId, String oldVersionId);
     byte[] restoreToVersion(String documentRef, String versionId);
+    EditElementResponse editElement(String documentRef, String elementId, String  elementTagName);
 }
