@@ -623,7 +623,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection,Integer timesToMove){
+    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove){
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
             for (int i = 0; i < timesToMove; i++) {
