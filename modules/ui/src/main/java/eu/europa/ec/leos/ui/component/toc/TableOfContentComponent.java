@@ -56,6 +56,7 @@ import javax.inject.Provider;
 
 import eu.europa.ec.leos.vo.toc.AknTag;
 import eu.europa.ec.leos.vo.toc.TocItemTypeName;
+import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingChildTypeEvent;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -373,6 +374,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         Design.read(this);
         buildToc();
         this.checkDeleteLastEditingTypeConsumer = new CheckDeleteLastEditingTypeConsumer(tocTree, messageHelper, eventBus);
+        this.checkDeleteLastEditingChildTypeConsumer = new CheckDeleteLastEditingChildTypeConsumer(tocTree, messageHelper, eventBus);
     }
 
     @Override
@@ -2049,5 +2051,12 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     @Subscribe
     public void checkDeleteLastEditingType(CheckDeleteLastEditingTypeEvent event) {
         checkDeleteLastEditingTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
+    }
+
+    private CheckDeleteLastEditingChildTypeConsumer checkDeleteLastEditingChildTypeConsumer;
+
+    @Subscribe
+    public void checkDeleteLastEditingChildType(CheckDeleteLastEditingChildTypeEvent event) {
+        checkDeleteLastEditingChildTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
     }
 }

@@ -30,7 +30,7 @@ define(function aknSubParagraphProfileModule(require) {
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
-    plugins.push(require("plugins/aknSubParagraph/aknSubParagraphPlugin"));
+    plugins.push(require("plugins/aknSubparagraph/aknSubparagraphPlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
     plugins.push(require("plugins/leosTransformer/leosTransformerPlugin"));
