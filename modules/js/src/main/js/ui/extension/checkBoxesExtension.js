@@ -54,14 +54,16 @@ define(function checkBoxesExtensionModule(require) {
     // handle connector state change on client-side
     function _connectorStateChangeListener() {
         let connector = this;
-        _initAndAddListenersToCheckBoxes(connector);
+        setTimeout(function () {
+            _initAndAddListenersToCheckBoxes(connector);
+        }, 0); //move it to the event queue to be executed after the current thread
         log.debug("checkBoxes extension state changed...");
     }
 
     function _toggleCheckBox(connector, event) {
         event.stopImmediatePropagation();
         (this.text() == UNCHECKED) ? this.text(CHECKED) : this.text(UNCHECKED);
-        (this.attr(NAME_ATTR) == NAME_ATTR_UNCHECKED) ? this.attr(NAME_ATTR, NAME_ATTR_CHECKED) : this.attr(NAME_ATTR,NAME_ATTR_UNCHECKED);
+        (this.attr(NAME_ATTR) == NAME_ATTR_UNCHECKED) ? this.attr(NAME_ATTR, NAME_ATTR_CHECKED) : this.attr(NAME_ATTR, NAME_ATTR_UNCHECKED);
         let data = {
             elementId: this.attr("id"),
             elementType: this.prop("tagName").toLowerCase(),
@@ -78,29 +80,24 @@ define(function checkBoxesExtensionModule(require) {
         NAME_ATTR = state.checkBoxAttributeName;
         NAME_ATTR_CHECKED = state.checkedBoxAttribute;
         NAME_ATTR_UNCHECKED = state.uncheckedBoxAttribute;
-        _addListeners(connector, CHECKBOX_TAGNAME, CHECKED);
-        _addListeners(connector, CHECKBOX_TAGNAME, UNCHECKED);
+        _addListeners(connector, CHECKBOX_TAGNAME, NAME_ATTR, NAME_ATTR_CHECKED);
+        _addListeners(connector, CHECKBOX_TAGNAME, NAME_ATTR, NAME_ATTR_UNCHECKED);
     }
-
-/*
-the tag that needs evaluated
-<num><inline name="checked">☑</inline></num>
-<num><inline name="unchecked">☐</inline></num>
-*/
-    function _addListeners(connector, tagName, value) {
+    function _addListeners(connector, tagName, attrName, attrValue) {
         let target = connector.target;
         $(target).find(tagName).each(function( index ) {
             if ($(this).children(NUM).length > 0) {
                 let num = $($(this).children(NUM)[0]);
                 if(!!num && num.children(INLINE).length > 0){
                     let inline = $(num.children(INLINE)[0]);
-                    if (!!inline && inline.text() == value) {
-                        inline[0].addEventListener("click", _toggleCheckBox.bind(inline, connector));
+                    if (!!inline.attr(attrName) && inline.attr(attrName) === attrValue) {
+                        inline.on("click", _toggleCheckBox.bind(inline, connector));
                     }
                 }
             }
         });
     }
+
 
     return {
         init: _initExtension
