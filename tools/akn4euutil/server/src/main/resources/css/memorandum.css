@@ -383,7 +383,7 @@ akomaNtoso doc[name="EXPL_MEMORANDUM"] coverPage container[name=mainDoc] {
   margin-left: 8.99cm;
 }
 akomaNtoso doc[name="EXPL_MEMORANDUM"] coverPage container[name=mainDoc] > block[name=placeAndDate] {
-  display: block;
+  display: inline;
   margin-bottom: -15px;
 }
 akomaNtoso doc[name="EXPL_MEMORANDUM"] coverPage container[name=mainDoc] > block[name=placeAndDate] > location {
