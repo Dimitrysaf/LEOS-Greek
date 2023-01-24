@@ -68,6 +68,7 @@ import eu.europa.ec.leos.ui.component.versions.VersionComparator;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
+import eu.europa.ec.leos.ui.event.search.SearchTextResponseEvent;
 import eu.europa.ec.leos.ui.event.toc.DisableEditTocEvent;
 import eu.europa.ec.leos.ui.event.toc.ExpandTocSliderPanel;
 import eu.europa.ec.leos.ui.event.toc.InlineTocCloseRequestEvent;
@@ -583,12 +584,12 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void showMatchResults(Long searchId, List<SearchMatchVO> results) {
-
+        eventBus.post(new SearchTextResponseEvent(searchId, results));
     }
 
     @Override
     public void closeSearchBar() {
-
+        searchDelegate.closeSearchBarComponent();
     }
 
     @Override
