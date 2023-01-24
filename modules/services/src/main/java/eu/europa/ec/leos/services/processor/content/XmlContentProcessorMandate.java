@@ -976,12 +976,6 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         return found != null;
     }
 
-    private boolean isAnnexDoc(Node node) {
-        String xPath = "//akn:doc[@name='ANNEX']";
-        Node found = XercesUtils.getFirstElementByXPath(node, xPath);
-        return found != null;
-    }
-
     @Override
     public byte[] insertAffectedAttributeIntoParentElements(byte[] xmlContent, String elementId) {
         Node document = createXercesDocument(xmlContent);

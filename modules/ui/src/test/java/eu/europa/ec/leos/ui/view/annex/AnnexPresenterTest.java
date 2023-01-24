@@ -93,7 +93,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -285,7 +284,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isCoverPageExists(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
-        verify(documentContentService).isAnnexFromCouncil(any());
+        verify(documentContentService).isRevisionAnnex(any());
 
         verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setContent(displayableContent);
@@ -373,7 +372,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isCoverPageExists(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
-        verify(documentContentService).isAnnexFromCouncil(any());
+        verify(documentContentService).isRevisionAnnex(any());
 
         verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setContent(displayableContent);
@@ -477,7 +476,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
         verify(documentContentService).isCoverPageExists(any());
-        verify(documentContentService).isAnnexFromCouncil(any());
+        verify(documentContentService).isRevisionAnnex(any());
 
         verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setDocumentVersionInfo(any());

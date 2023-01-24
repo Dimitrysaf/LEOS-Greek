@@ -450,7 +450,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexScreen.setStructureChangeMenuItem();
             DocumentVO annexVO = createAnnexVO(annex);
             annexScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(annex.getVersionSeriesId()), id);
-            boolean isAnnexFromCouncil = documentContentService.isAnnexFromCouncil(annex);
+            boolean isAnnexFromCouncil = documentContentService.isRevisionAnnex(annex);
             annexScreen.setPermissions(annexVO, isClonedProposal(), isAnnexFromCouncil);
             annexScreen.setLiveDiffingRequired(annex.isLiveDiffingRequired());
             annexScreen.initAnnotations(annexVO, proposalRef, connectedEntity);
@@ -573,7 +573,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
                 exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, currentDocument));
             } else {
-                boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isAnnexFromCouncil(currentDocument);
+                boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isRevisionAnnex(currentDocument);
                 if (!isLiveDiffing) {
                     original = currentDocument; // For NO Diffing
                 }
@@ -750,7 +750,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final Annex currentDocument = getDocument();
         XmlDocument original = documentContentService.getOriginalAnnex(currentDocument);
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
-        boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isAnnexFromCouncil(currentDocument);
+        boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isRevisionAnnex(currentDocument);
         if (!isLiveDiffing) {
             original = currentDocument; // For NO Diffing
         }

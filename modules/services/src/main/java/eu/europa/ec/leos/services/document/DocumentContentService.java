@@ -85,5 +85,5 @@ public interface DocumentContentService {
 
     boolean isCouncilExplanatoryComparisonRequired(Explanatory explanatory, SecurityContext securityContext);
     
-    boolean isAnnexFromCouncil(XmlDocument xmlDocument);
+    boolean isRevisionAnnex(XmlDocument xmlDocument);
 }

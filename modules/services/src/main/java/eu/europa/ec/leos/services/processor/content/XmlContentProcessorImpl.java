@@ -799,7 +799,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         XercesUtils.addAttribute(subElement, XMLID, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + elementId);
     }
 
-    protected String modifySubElement(Node node, String originOfChange) {
+    protected String modifySubElement(Node node, String parentOrigin) {
 
         String originOfDocument = "";
         if (node instanceof Document) {
@@ -810,10 +810,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         String originAttr = getAttributeValue(node, LEOS_ORIGIN_ATTR);
         if (originAttr == null) {
-            originAttr = originOfChange;
+            originAttr = parentOrigin;
         }
 
-        if (originAttr.equals(originOfChange) && !node.getNodeName().equalsIgnoreCase(LIST)) {
+        if (originAttr.equals(parentOrigin) && !node.getNodeName().equalsIgnoreCase(LIST)) {
             XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
             if (softAction == null && !StringUtils.isEmpty(originOfDocument) && !CN.equals(originOfDocument)) {

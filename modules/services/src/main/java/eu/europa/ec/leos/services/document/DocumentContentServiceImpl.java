@@ -192,7 +192,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public boolean isAnnexComparisonRequired(Annex annex, SecurityContext securityContext) {
-        return !isAnnexFromCouncil(annex) || (securityContext.hasPermission(annex, LeosPermission.CAN_TOGGLE_LIVE_DIFFING) && annex.isLiveDiffingRequired());
+        return !isRevisionAnnex(annex) || (securityContext.hasPermission(annex, LeosPermission.CAN_TOGGLE_LIVE_DIFFING) && annex.isLiveDiffingRequired());
     }
 
     @Override
@@ -307,7 +307,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
     
     @Override
-    public boolean isAnnexFromCouncil(XmlDocument xmlDocument) {
+    public boolean isRevisionAnnex(XmlDocument xmlDocument) {
     	return xmlContentProcessor.isRevisionAnnex(xmlDocument.getContent().get().getSource().getBytes());
     }
 

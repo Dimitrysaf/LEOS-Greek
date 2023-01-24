@@ -190,13 +190,9 @@ public class MandateTocEditor extends AbstractTocEditor {
             super.addOrMoveItem(true, sourceItem, targetItem, tocTree, actualTargetItem, position);
             moveOriginAttribute(sourceItem, targetItem);
             setNumber(sourceItem, targetItem);
-            boolean addSoftActionAttrAdd = true;
             Document document = targetItem.getNode().getOwnerDocument();
             String origin = xmlContentProcessor.getOriginOfDocument(document);
-            if (CN.equals(origin)) {
-                addSoftActionAttrAdd = false;
-            }
-            if ((sourceItem.getTocItem().isAddSoftAttr() == null || sourceItem.getTocItem().isAddSoftAttr()) && addSoftActionAttrAdd) {
+            if ((sourceItem.getTocItem().isAddSoftAttr() == null || sourceItem.getTocItem().isAddSoftAttr()) && !CN.equals(origin)) {
                 sourceItem.setSoftActionAttr(ADD);
                 sourceItem.setSoftActionRoot(Boolean.TRUE);
             }
