@@ -17,6 +17,8 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
+import eu.europa.ec.leos.cmis.domain.ContentImpl;
+import eu.europa.ec.leos.cmis.domain.SourceImpl;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
@@ -30,6 +32,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -46,7 +49,10 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.notification.NotificationService;
@@ -61,14 +67,36 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
+import eu.europa.ec.leos.ui.event.DownloadActualVersionRequestEvent;
+import eu.europa.ec.leos.ui.event.DownloadXmlVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
 import eu.europa.ec.leos.ui.event.revision.OpenRevisionDocumentEvent;
+import eu.europa.ec.leos.ui.event.search.ReplaceAllMatchRequestEvent;
+import eu.europa.ec.leos.ui.event.search.ReplaceAllMatchResponseEvent;
+import eu.europa.ec.leos.ui.event.search.SearchTextRequestEvent;
 import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
 import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;
 import eu.europa.ec.leos.ui.event.toc.InlineTocEditRequestEvent;
+import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
+import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
+import eu.europa.ec.leos.web.event.component.CompareRequestEvent;
+import eu.europa.ec.leos.web.event.component.CleanComparedContentEvent;
+import eu.europa.ec.leos.web.event.component.RestoreVersionRequestEvent;
+import eu.europa.ec.leos.web.event.component.ShowVersionRequestEvent;
+import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
+import eu.europa.ec.leos.web.event.component.ResetRevisionComponentEvent;
+import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
+import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
+import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
+import eu.europa.ec.leos.web.event.view.document.ShowCleanVersionRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
+import eu.europa.ec.leos.web.event.view.document.ShowIntermediateVersionWindowEvent;
+import eu.europa.ec.leos.ui.event.DownloadCleanVersion;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
@@ -99,7 +127,9 @@ import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
+import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -112,9 +142,11 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -177,6 +209,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private final List<String> openElementEditors;
     private Element elementToEditAfterClose;
     private final TemplateConfigurationService templateConfigurationService;
+    private boolean comparisonMode;
 
     protected FinancialStatementPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                                           EventBus leosApplicationEventBus, UuidHelper uuidHelper, PackageService packageService,
@@ -737,6 +770,324 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
     private List<FinancialStatement> recentChangesFn(int startIndex, int maxResults) {
         return financialStatementService.findRecentMinorVersions(documentId, documentRef, startIndex, maxResults);
+    }
+
+    @Subscribe
+    void searchTextInDocument(SearchTextRequestEvent event) {
+        FinancialStatement financialStatement = (FinancialStatement) httpSession.getAttribute("financialStatement#" + getDocumentRef());
+        if (financialStatement == null) {
+            financialStatement = getDocument();
+        }
+        List<SearchMatchVO> matches = Collections.emptyList();
+        try {
+            matches = searchService.searchText(getContent(financialStatement), event.getSearchText(), event.matchCase, event.completeWords);
+        } catch (Exception e) {
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "Error while searching{1}", e.getMessage()));
+        }
+
+        financialStatementScreen.showMatchResults(event.searchID, matches);
+    }
+
+    @Subscribe
+    void replaceAllTextInDocument(ReplaceAllMatchRequestEvent event) {
+        FinancialStatement financialStatement = getFinancialStatementFromSession();
+        if (financialStatement == null) {
+            financialStatement = getDocument();
+        }
+
+        byte[] updatedContent = searchService.replaceText(
+                getContent(financialStatement),
+                event.getSearchText(),
+                event.getReplaceText(),
+                event.getSearchMatchVOs());
+
+        FinancialStatement financialStatementUpdated = copyIntoNew(financialStatement, updatedContent);
+        httpSession.setAttribute("financialStatementUpdated#" + getDocumentRef(), financialStatementUpdated);
+        financialStatementScreen.setContent(getEditableXml(financialStatementUpdated));
+        eventBus.post(new ReplaceAllMatchResponseEvent(true));
+    }
+
+    private FinancialStatement copyIntoNew(FinancialStatement source, byte[] updatedContent) {
+        Content contentFromSession = source.getContent().get();
+        Content.Source updatedSource = new SourceImpl(new ByteArrayInputStream(updatedContent));
+        Content contentObj = new ContentImpl(
+                contentFromSession.getFileName(),
+                contentFromSession.getMimeType(),
+                updatedContent.length,
+                updatedSource
+        );
+        Option<Content> updatedContentOptionObj = Option.option(contentObj);
+        return new FinancialStatement(
+                source.getId(),
+                source.getName(),
+                source.getCreatedBy(),
+                source.getCreationInstant(),
+                source.getLastModifiedBy(),
+                source.getLastModificationInstant(),
+                source.getVersionSeriesId(),
+                source.getCmisVersionLabel(),
+                source.getVersionLabel(),
+                source.getVersionComment(),
+                source.getVersionType(),
+                source.isLatestVersion(),
+                source.getTitle(),
+                source.getCollaborators(),
+                source.getMilestoneComments(),
+                updatedContentOptionObj,
+                source.getMetadata(),
+                source.getBaseRevisionId()
+        );
+    }
+
+    @Subscribe
+    public void updateVersionsTab(DocumentUpdatedEvent event) {
+        final List<VersionVO> allVersions = getVersionVOS();
+        financialStatementScreen.refreshVersions(allVersions, comparisonMode);
+    }
+
+    @Subscribe
+    void getDocumentVersionsList(VersionListRequestEvent<FinancialStatement> event) {
+        List<FinancialStatement> memoVersions = financialStatementService.findVersions(documentId);
+        eventBus.post(new VersionListResponseEvent(new ArrayList<>(memoVersions)));
+    }
+
+
+    @Subscribe
+    void downloadXmlFiles(DownloadXmlFilesRequestEvent event) {
+        final ExportVersions<FinancialStatement> exportVersions = event.getExportOptions().getExportVersions();
+        final FinancialStatement current = exportVersions.getCurrent();
+        final FinancialStatement original = exportVersions.getOriginal();
+        final FinancialStatement intermediate = exportVersions.getIntermediate();
+
+        final String leosComparedContent;
+        final String docuWriteComparedContent;
+        final String comparedInfo;
+        String language = original.getMetadata().get().getLanguage();
+
+        cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        if(intermediate != null){
+            comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
+            leosComparedContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
+            docuWriteComparedContent = legService.doubleCompareXmlContents(original, intermediate, current, false);
+        } else {
+            comparedInfo = messageHelper.getMessage("version.compare.simple", original.getVersionLabel(), current.getVersionLabel());
+            leosComparedContent = comparisonDelegate.getMarkedContent(original, current);
+            docuWriteComparedContent = legService.simpleCompareXmlContents(original, current, true);
+        }
+        financialStatementScreen.setDownloadStreamResourceForXmlFiles(original, intermediate, current, language, comparedInfo, leosComparedContent, docuWriteComparedContent);
+    }
+
+    @Subscribe
+    void downloadXmlVersion(DownloadXmlVersionRequestEvent event) {
+        try {
+            cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+            final FinancialStatement chosenDocument = financialStatementService.findFinancialStatementVersion(event.getVersionId());
+            final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
+
+            DownloadStreamResource downloadStreamResource = new DownloadStreamResource(fileName, new ByteArrayInputStream(chosenDocument.getContent().get().getSource().getBytes()));
+            financialStatementScreen.setDownloadStreamResourceForVersion(downloadStreamResource, chosenDocument.getId());
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while downloadXmlVersion", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "error.message", e.getMessage()));
+        }
+    }
+
+    @Subscribe
+    void downloadCleanVersion(DownloadCleanVersion event) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        FinancialStatementContextService context = financialStatementContextProvider.get();
+        context.usePackage(leosPackage);
+        String proposalId = context.getProposalId();
+        try {
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
+            ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false, true);
+            exportOptions.setExportVersions(new ExportVersions(null, getDocument()));
+            exportOptions.setWithCoverPage(false);
+            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, user);
+            eventBus.post(new NotificationEvent("document.export.package.button.send", "document.export.message",
+                    NotificationEvent.Type.TRAY, exportOptions.getExportOutputDescription(), user.getEmail()));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "export.legiswrite.error.message", e.getMessage()));
+        }
+        LOG.info("The actual version of CLEANED FinancialStatement for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+    }
+
+    @Subscribe
+    void downloadActualVersion(DownloadActualVersionRequestEvent event) {
+        requestFilteredAnnotationsForDownload(event.isWithFilteredAnnotations());
+    }
+
+    private void requestFilteredAnnotationsForDownload(final Boolean isWithAnnotations) {
+        if (isWithAnnotations) {
+            eventBus.post(new RequestFilteredAnnotations());
+        } else {
+            doDownloadActualVersion(false, null);
+        }
+    }
+
+    private void doDownloadActualVersion(Boolean isWithAnnotations, String annotations) {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            final FinancialStatement currentDocument = getDocument();
+            ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false);
+            exportOptions.setExportVersions(new ExportVersions(isClonedProposal() ?
+                    documentContentService.getOriginalFinancialStatement(currentDocument) : null, currentDocument));
+            exportOptions.setWithFilteredAnnotations(isWithAnnotations);
+            exportOptions.setFilteredAnnotations(annotations);
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+            FinancialStatementContextService context = financialStatementContextProvider.get();
+            context.usePackage(leosPackage);
+            String proposalId = context.getProposalId();
+            if (proposalId != null) {
+                try {
+                    this.createDocumentPackageForExport(exportOptions);
+                    eventBus.post(new NotificationEvent("document.export.package.button.send",
+                            "document.export.message",
+                            NotificationEvent.Type.TRAY,
+                            exportOptions.getExportOutputDescription(),
+                            user.getEmail()));
+                } catch (Exception e) {
+                    LOG.error("Unexpected error occurred while using ExportService", e);
+                    eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "export.package.error.message", e.getMessage()));
+                }
+            }
+            LOG.info("The actual version of FinancialStatement {} downloaded in {} milliseconds ({} sec)", currentDocument.getName(),
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "export.docuwrite.error.message", e.getMessage()));
+        }
+    }
+
+    @Subscribe
+    void exportToToolBox(ToolBoxExportRequestEvent event) {
+        try {
+            cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+            this.createDocumentPackageForExport(event.getExportOptions());
+            eventBus.post(new NotificationEvent("document.export.package.button.send", "document.export.message",
+                    NotificationEvent.Type.TRAY, event.getExportOptions().getExportOutputDescription(), user.getEmail()));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ToolBoxExportService", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "export.package.error.message", e.getMessage()));
+        }
+    }
+
+    private void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final String proposalId = this.getContextProposalId();
+
+        if (proposalId != null) {
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
+            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, user);
+            LOG.info("Exported to LegisWrite and downloaded file {}, in {} milliseconds ({} sec)", jobFileName,
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        }
+    }
+
+    private String getContextProposalId(){
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        FinancialStatementContextService context = financialStatementContextProvider.get();
+        context.usePackage(leosPackage);
+        return context.getProposalId();
+    }
+
+    @Subscribe
+    void versionRestore(RestoreVersionRequestEvent event) {
+        String versionId = event.getVersionId();
+        FinancialStatement version = financialStatementService.findFinancialStatementVersion(versionId);
+        byte[] resultXmlContent = getContent(version);
+        financialStatementService.updateFinancialStatement(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        List documentVersions = financialStatementService.findVersions(documentId);
+        financialStatementScreen.updateTimeLineWindow(documentVersions);
+        eventBus.post(new RefreshDocumentEvent());
+        eventBus.post(new DocumentUpdatedEvent()); //Document might be updated.
+        leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+    }
+
+    @Subscribe
+    void cleanComparedContent(CleanComparedContentEvent event) {
+        financialStatementScreen.cleanComparedContent();
+    }
+
+    @Subscribe
+    void showVersion(ShowVersionRequestEvent event) {
+        final FinancialStatement version = financialStatementService.findFinancialStatementVersion(event.getVersionId());
+        final String versionContent = documentContentService.getDocumentAsHtml(version, urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(version));
+        final String versionInfo = getVersionInfoAsString(version);
+        financialStatementScreen.showVersion(versionContent, versionInfo);
+    }
+
+    @Subscribe
+    void showCleanVersion(ShowCleanVersionRequestEvent event) {
+        final FinancialStatement financialStatement = getDocument();
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(financialStatement, urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(financialStatement));
+        final String versionInfo = getVersionInfoAsString(financialStatement);
+        financialStatementScreen.showCleanVersion(versionContent, versionInfo);
+    }
+
+    @Subscribe
+    void refreshCleanVersion(DocumentUpdatedEvent event) {
+        if (financialStatementScreen.isCleanVersionShowed()) {
+            showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
+    }
+
+    @Subscribe
+    void compare(CompareRequestEvent event) {
+        cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        final FinancialStatement oldVersion = financialStatementService.findFinancialStatementVersion(event.getOldVersionId());
+        final FinancialStatement newVersion = financialStatementService.findFinancialStatementVersion(event.getNewVersionId());
+        String comparedContent = comparisonDelegate.getMarkedContent(oldVersion, newVersion);
+        final String comparedInfo = messageHelper.getMessage("version.compare.simple", oldVersion.getVersionLabel(), newVersion.getVersionLabel());
+        financialStatementScreen.populateComparisonContent(comparedContent, comparedInfo, oldVersion, newVersion);
+    }
+
+    private String getVersionInfoAsString(XmlDocument document) {
+        final VersionInfoVO versionInfo = getVersionInfo(document);
+        final String versionInfoString = messageHelper.getMessage(
+                "document.version.caption",
+                versionInfo.getDocumentVersion(),
+                versionInfo.getLastModifiedBy(),
+                versionInfo.getEntity(),
+                versionInfo.getLastModificationInstant()
+        );
+        return versionInfoString;
+    }
+
+    @Subscribe
+    public void changeComparisionMode(ComparisonEvent event) {
+        comparisonMode = event.isComparsionMode();
+        LayoutChangeRequestEvent layoutEvent;
+        if (comparisonMode) {
+            financialStatementScreen.cleanComparedContent();
+            layoutEvent = new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, null);
+            eventBus.post(layoutEvent);
+        } else {
+            layoutEvent = new LayoutChangeRequestEvent(ColumnPosition.OFF, ComparisonComponent.class, null);
+            eventBus.post(layoutEvent);
+            eventBus.post(new ResetRevisionComponentEvent());
+        }
+        updateVersionsTab(new DocumentUpdatedEvent());
+    }
+
+    @Subscribe
+    public void showIntermediateVersionWindow(ShowIntermediateVersionWindowEvent event) {
+        financialStatementScreen.showIntermediateVersionWindow();
+    }
+
+    @Subscribe
+    public void saveIntermediateVersion(SaveIntermediateVersionEvent event) {
+        FinancialStatement financialStatement = financialStatementService.createVersion(documentId, event.getVersionType(), event.getCheckinComment());
+        setDocumentData(financialStatement);
+        eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.major.version.saved"));
+        eventBus.post(new DocumentUpdatedEvent());
+        leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, financialStatement.getVersionSeriesId(), id));
+        populateViewData(financialStatement, TocMode.SIMPLIFIED);
     }
 
     private void resetCloneProposalMetadataVO() {

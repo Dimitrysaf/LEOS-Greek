@@ -32,6 +32,7 @@ import eu.europa.ec.leos.ui.component.markedText.MarkedTextComponent;
 import eu.europa.ec.leos.ui.component.revision.RevisionComponent;
 import eu.europa.ec.leos.ui.component.toc.TableOfContentItemConverter;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
+import eu.europa.ec.leos.ui.component.versions.VersionComparator;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
@@ -83,9 +84,11 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
                                          ConfigurationHelper cfgHelper, TocEditor tocEditor, InstanceTypeResolver instanceTypeResolver,
                                          VersionsTab<FinancialStatement> versionsTab, ContributionsTab<FinancialStatement> contributionsTab, Provider<StructureContext> structureContextProvider,
                                          MarkedTextComponent<FinancialStatement> markedTextComponent, TableOfContentProcessor tableOfContentProcessor,
-                                         CloneContext cloneContext, XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper) {
+                                         CloneContext cloneContext, XmlContentProcessor xmlContentProcessor, LeosPermissionAuthorityMapHelper authorityMapHelper,
+                                         VersionComparator versionComparator) {
         super(messageHelper, eventBus, securityContext, userHelper, cfgHelper, tocEditor, instanceTypeResolver,
-                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor, authorityMapHelper);
+                versionsTab, structureContextProvider, tableOfContentProcessor, xmlContentProcessor, authorityMapHelper,
+                versionComparator);
         ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false);
         markedTextComponent.setExportOptions(exportOptions);
         this.markedTextComponent = markedTextComponent;
@@ -283,6 +286,11 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     public Optional<ContributionVO> findContributionAndShowTab(String versionedReference) {
         accordion.setSelectedTab(contributionsTab);
         return contributionsTab.findContribution(versionedReference);
+    }
+
+    @Override
+    public boolean isCleanVersionShowed() {
+        return markedTextComponent != null && markedTextComponent.isCleanVersion();
     }
 
     private boolean isClonedProposal() {

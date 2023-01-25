@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -44,7 +45,9 @@ public interface DocumentContentService {
     XmlDocument getOriginalAnnex(Annex annex);
 
     XmlDocument getOriginalExplanatory(Explanatory explanatory);
-    
+
+    XmlDocument getOriginalFinancialStatement(FinancialStatement  financialStatement);
+
     XmlDocument getOriginalBill(Bill bill);
 
     XmlDocument getOriginalMemorandum(Memorandum memorandum);
