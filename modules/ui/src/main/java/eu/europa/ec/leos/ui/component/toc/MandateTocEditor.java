@@ -22,10 +22,10 @@ import com.vaadin.ui.TreeGrid;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
-import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.vo.toc.Level;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.NumberingType;
@@ -37,6 +37,7 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +69,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT_ROOT_PARENT_ELEMENTS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateDepthOfTocItems;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
@@ -81,10 +81,12 @@ public class MandateTocEditor extends AbstractTocEditor {
     private static final String TEMP_PREFIX = "temp_";
     private static final int MAX_INDENT_LEVEL = 4;
     private final TableOfContentProcessor tableOfContentProcessor;
+    private final XmlContentProcessor xmlContentProcessor;
 
     @Autowired
-    public MandateTocEditor(TableOfContentProcessor tableOfContentProcessor) {
+    public MandateTocEditor(TableOfContentProcessor tableOfContentProcessor, XmlContentProcessor xmlContentProcessor) {
         this.tableOfContentProcessor = tableOfContentProcessor;
+        this.xmlContentProcessor = xmlContentProcessor;
     }
 
     @Override
@@ -188,7 +190,9 @@ public class MandateTocEditor extends AbstractTocEditor {
             super.addOrMoveItem(true, sourceItem, targetItem, tocTree, actualTargetItem, position);
             moveOriginAttribute(sourceItem, targetItem);
             setNumber(sourceItem, targetItem);
-            if (sourceItem.getTocItem().isAddSoftAttr() == null ||sourceItem.getTocItem().isAddSoftAttr()) {
+            Document document = targetItem.getNode().getOwnerDocument();
+            String origin = xmlContentProcessor.getOriginOfDocument(document);
+            if ((sourceItem.getTocItem().isAddSoftAttr() == null || sourceItem.getTocItem().isAddSoftAttr()) && !CN.equals(origin)) {
                 sourceItem.setSoftActionAttr(ADD);
                 sourceItem.setSoftActionRoot(Boolean.TRUE);
             }

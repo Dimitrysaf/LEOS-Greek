@@ -70,6 +70,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_TY
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_UNUMBERED_PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
@@ -1005,7 +1006,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);
             if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                XercesUtils.insertOrUpdateAttributeValue(childNode, "leos:renumbered", "true");
+                XercesUtils.insertOrUpdateAttributeValue(childNode, LEOS_RENUMBERED, "true");
             }
         }
     }

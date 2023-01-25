@@ -23,15 +23,13 @@ import org.mockito.InjectMocks;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.Arrays;
-
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
 import static org.junit.Assert.assertEquals;
@@ -124,7 +122,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
         String result = XercesUtils.nodeToString(node);
 
-        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+        assertEquals(squeezeXml(new String(xmlExpected)), squeezeXml(result));
     }
 
     @Ignore
@@ -175,7 +173,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
         String result = XercesUtils.nodeToString(node);
 
-        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+        assertEquals(squeezeXml(new String(xmlExpected)), squeezeXml(result));
     }
 
     @Test
@@ -212,7 +210,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
         String result = XercesUtils.nodeToString(node);
 
-        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+        assertEquals(squeezeXml(new String(xmlExpected)), squeezeXml(result));
     }
 
     @Ignore

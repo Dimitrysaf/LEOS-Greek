@@ -801,22 +801,26 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     protected String modifySubElement(Node node, String parentOrigin) {
 
+        String originOfDocument = "";
+        if (node instanceof Document) {
+            originOfDocument = getOriginOfDocument((Document) node);
+        } else if (node instanceof Node) {
+            originOfDocument = getOriginOfDocument(node.getOwnerDocument());
+        }
+
         String originAttr = getAttributeValue(node, LEOS_ORIGIN_ATTR);
-        boolean isEmptyOrigin = false;
         if (originAttr == null) {
             originAttr = parentOrigin;
-            isEmptyOrigin = true;
         }
 
         if (originAttr.equals(parentOrigin) && !node.getNodeName().equalsIgnoreCase(LIST)) {
             XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
-            if (softAction == null) {
+            if (softAction == null && !StringUtils.isEmpty(originOfDocument) && !CN.equals(originOfDocument)) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
                 XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
                 XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
             }
-
         }
         return originAttr;
     }
@@ -2005,6 +2009,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             isRevisionAnnex = CN.equals(origin);
         }
         return isRevisionAnnex;
+    }
+
+    @Override
+    public String getOriginOfDocument(Document document) {
+        String origin = "";
+        NodeList nodes = document.getElementsByTagName(DOC);
+        if(nodes != null && nodes.getLength() > 0) {
+            Node child = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
+            origin = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
+        }
+        return origin;
     }
 
     protected boolean isPContent(String content, String tagName) {
