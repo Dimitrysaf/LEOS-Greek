@@ -46,7 +46,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occured while getting annex element",HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occured while getting annex element",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -61,7 +61,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpcted error occured while getting annex element",HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpcted error occured while getting annex element",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -79,7 +79,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpcted error occured while getting annex element",HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpcted error occured while getting annex element",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -95,7 +95,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on annex - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occurred while merging elements ",HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occurred while merging elements ",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -112,7 +112,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annexes);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -127,7 +127,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -142,7 +142,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occurred while getting annex toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occurred while getting annex toc items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -155,7 +155,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occurred while getting annex document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occurred while getting annex document", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -171,7 +171,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex search results - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error occurred while fetching search results for annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error occurred while fetching search results for annex ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -184,7 +184,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex version {} , error {}: - ",versionId,e.getMessage());
-            return   new ResponseEntity<>("Unexpected error while trying to get annex version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error while trying to get annex version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -198,7 +198,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId , newVersionId);
-            return   new ResponseEntity<>("Unexpected error while trying to get annex version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error while trying to get annex version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -212,7 +212,7 @@ public class AnnexController {
             return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -227,7 +227,7 @@ public class AnnexController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting annex element - " + e.getMessage());
-            return   new ResponseEntity<>("Unexpected error while getting annex element ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return  new ResponseEntity<>("Unexpected error while getting annex element ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

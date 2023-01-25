@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.leos.vo.toc;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
@@ -24,12 +26,14 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Stream;
-
 import static eu.europa.ec.leos.util.LeosDomainUtil.addFieldIfNotNull;
 import static eu.europa.ec.leos.util.LeosDomainUtil.addListFieldIfNotNull;
 import static eu.europa.ec.leos.util.LeosDomainUtil.calculateLeftPadd;
 import static eu.europa.ec.leos.util.LeosDomainUtil.addDateIfNotNull;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class TableOfContentItemVO implements Serializable {
 
     public static final long serialVersionUID = -1;
@@ -51,7 +55,6 @@ public class TableOfContentItemVO implements Serializable {
     private boolean isCrossHeading;
     private boolean isCrossHeadingInList;
     private TocItemTypeName tocItemType = TocItemTypeName.REGULAR;
-
     private final List<TableOfContentItemVO> childItems = new ArrayList<>();
     private TableOfContentItemVO parentItem;
     private SoftActionType softActionAttr;
