@@ -957,14 +957,14 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         if (!isExplanatoryDoc(node)) {
             updateSoftMoveLabelAttribute(node, LEOS_SOFT_MOVE_TO);
             updateSoftMoveLabelAttribute(node, LEOS_SOFT_MOVE_FROM);
+            updateNewElements(node, MAIN_BODY, null, CN);
+            updateNewElements(node, PREFACE, null, CN);
             updateNewElements(node, CITATION, null, CN);
             updateNewElements(node, RECITAL, null, CN);
             updateNewElements(node, ARTICLE, null, CN);
             updateNewElements(node, PARAGRAPH, SUBPARAGRAPH, CN);
             updateNewElements(node, POINT, SUBPARAGRAPH, CN);
             updateNewElements(node, INDENT, SUBPARAGRAPH, CN);
-            updateNewElements(node, PREFACE, null, CN);
-            updateNewElements(node, MAIN_BODY, null, CN);
             updateNewElements(node, LEVEL, SUBPARAGRAPH, CN);
         }
     }

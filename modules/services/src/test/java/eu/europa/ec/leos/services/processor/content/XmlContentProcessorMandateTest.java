@@ -29,7 +29,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
 import static org.junit.Assert.assertEquals;
@@ -122,7 +121,31 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
         String result = XercesUtils.nodeToString(node);
 
-        assertEquals(squeezeXml(new String(xmlExpected)), squeezeXml(result));
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_ec() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_ec.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_ec_expected.xml");
+
+        Node node = XercesUtils.createXercesDocument(xmlInput);
+        xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
+        String result = XercesUtils.nodeToString(node);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_cn() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_cn.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_add_cn_paragraph_for_annex_origin_document_cn_expected.xml");
+
+        Node node = XercesUtils.createXercesDocument(xmlInput);
+        xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
+        String result = XercesUtils.nodeToString(node);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
     @Ignore
@@ -173,7 +196,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
         String result = XercesUtils.nodeToString(node);
 
-        assertEquals(squeezeXml(new String(xmlExpected)), squeezeXml(result));
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
     @Test
@@ -210,7 +233,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         xercesXmlContentProcessor.specificInstanceXMLPostProcessing(node);
         String result = XercesUtils.nodeToString(node);
 
-        assertEquals(squeezeXml(new String(xmlExpected)), squeezeXml(result));
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
     @Ignore
