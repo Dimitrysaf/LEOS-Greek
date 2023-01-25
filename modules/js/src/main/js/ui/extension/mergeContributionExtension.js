@@ -59,7 +59,7 @@ define(function mergeContributionExtensionModule(require) {
             if (SUB_ELEMENT.includes(UTILS.getElementTagName($element))) {
                 if (!($element.parent().hasClass(MERGE_CONTRIBUTION))) {
                     var elementParentName = UTILS.getElementTagName($element.parent());
-                    var $parent = (elementParentName === "aknp" || elementParentName === "block") ? $element.parent() : UTILS.getParentWrapper($element, wrapperElementsList);
+                    var $parent = _getParentElement(elementParentName, $element);
                     if ($parent) {
                         $parent.attr(PARENT_AFFECTED, true);
                         _attachWrapperActionEvents(connector, $parent)
@@ -69,6 +69,34 @@ define(function mergeContributionExtensionModule(require) {
                 _attachWrapperActionEvents(connector, $element);
             }
         });
+    }
+
+    function _getParentElement(elementParentName, $element) {
+        if ((elementParentName === "aknp" || elementParentName === "block")) {
+            if ($element.hasClass('leos-content-removed')) {
+                var childId = $($element.get()).children().get()[0] && $($element.get()).children().get()[0].id;
+                if (childId && childId.startsWith('revision-deleted_')) {
+                    var findId = childId.replace('deleted_', '');
+                    var $findElement = findId && $('#' + findId);
+                    if ($findElement && $($findElement.get()).parent().hasClass('leos-content-new')) {
+                        return;
+                    } else {
+                        return $element.parent();
+                    }
+                }
+            } else if ($element.hasClass('leos-content-new')) {
+                var childId = $($element.get()).children().get()[0] && $($element.get()).children().get()[0].id;
+                var findId = childId && childId.replace('revision-', 'revision-deleted_',);
+                var $findElement = findId && $('#' + findId);
+                if ($findElement && $($findElement.get()).parent().hasClass('leos-content-removed')) {
+                    return;
+                } else {
+                    return $element.parent();
+                }
+            }
+        } else {
+            UTILS.getParentWrapper($element, wrapperElementsList);
+        }
     }
 
     function _attachWrapperActionEvents(connector, $element) {
