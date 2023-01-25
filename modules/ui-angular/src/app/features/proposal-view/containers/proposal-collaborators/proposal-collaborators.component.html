@@ -5,22 +5,23 @@
         <div class="eui-input-group-addon-item">
           <eui-icon iconClass="eui-icon-search"></eui-icon>
         </div>
-        <form [formGroup]="userInputForm">
-          <input
-            formControlName="searchTerm"
-            euiInputText
-            type="text"
-            [placeholder]="
-              'page.collection.collaborators.table.header.search-placeholder'
-                | translate
-            "
-          />
-        </form>
+        <eui-table-filter
+          #filter
+          placeholder="Search filter..."
+          (filterChange)="onFilterChange($event)"
+        ></eui-table-filter>
       </div>
     </div>
     <app-proposal-collaborators-dialog></app-proposal-collaborators-dialog>
   </div>
-  <table euiTable euiTableResponsive class="w-100" [rows]="dataSource">
+  <table
+    #collaboratos
+    euiTable
+    euiTableResponsive
+    class="w-100"
+    [rows]="dataSource"
+    [filter]="filter"
+  >
     <ng-template euiTemplate="header">
       <tr>
         <th>{{ 'page.collection.collaborators.table.td-name' | translate }}</th>
@@ -34,25 +35,25 @@
     <ng-template let-row euiTemplate="body">
       <tr>
         <td>{{ row.login }}</td>
-        <td>{{ row.entity }}</td>
+        <td>{{ row.entity.organizationName }}</td>
         <td>
           <ng-container
-            *ngIf="isEditRole && editUserId === row.id; else tdRole"
+            *ngIf="isEditRole && editUserId === row.login; else tdRole"
           >
             <select
               euiSelect
               (change)="hanldeOnChange($event)"
-              [selectedIndex]="getRoleOfCallaborator()"
+              [selectedIndex]="getIndexByRole()"
             >
-              <option value="Author">
+              <option value="OWNER">
                 {{ 'page.collection.collaborators.role.author' | translate }}
               </option>
-              <option value="Contributor">
+              <option value="CONTRIBUTOR">
                 {{
                   'page.collection.collaborators.role.contributor' | translate
                 }}
               </option>
-              <option value="Reviewer">
+              <option value="REVIEWER">
                 {{ 'page.collection.collaborators.role.reviewer' | translate }}
               </option>
             </select>
@@ -79,7 +80,7 @@
                 <button
                   euiListItem
                   class="eui-u-p-s"
-                  (click)="editCollaborator(row.id)"
+                  (click)="editCollaborator(row.login, row.entity, row.role)"
                 >
                   {{
                     'page.collection.collaborators.table.actions.edit-role'
@@ -90,7 +91,7 @@
                   euiListItem
                   class="eui-u-p-s"
                   euiDanger
-                  (click)="deleteCollaborator(row.id)"
+                  (click)="deleteCollaborator(row)"
                 >
                   {{
                     'page.collection.collaborators.table.actions.delete'

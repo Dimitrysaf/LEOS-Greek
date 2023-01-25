@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Collaborator, User } from '@leos/shared';
+import { EuiTableComponent } from '@eui/components/eui-table';
+import { Collaborator, Entity, User, UserEntity } from '@leos/shared';
 import { debounceTime, filter, Subject, take, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -13,10 +14,15 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   roles = ['Author', 'Contributor', 'Reviewer'];
   dataSource: Collaborator[] = [];
+  filteredData: Collaborator[] = [];
   userInputForm: FormGroup;
   isEditRole = false;
   editUserId = null;
   destory$: Subject<any> = new Subject();
+  entity: string;
+  selectedRole: string;
+
+  @ViewChild('collaboratos') collaboratorsTable: EuiTableComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -37,47 +43,45 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.destory$.next(null);
   }
 
-  ngOnInit(): void {
-    this.userInputForm.valueChanges
-      .pipe(
-        filter((s) => s.searchTerm.length > 2),
-        debounceTime(400),
-        takeUntil(this.destory$),
-      )
-      .subscribe((value) => {
-        //call api
-        // console.log(value.searchTerm);
-      });
-  }
+  ngOnInit(): void {}
 
-  handleSearchUserInput(value: string) {
-    //TODO :hanlde search either on FE or BE[to be discused]
-    console.log(value);
-  }
-
-  editCollaborator(id: number) {
+  editCollaborator(id: number, entity: Entity, role: string) {
     this.isEditRole = true;
     this.editUserId = id;
+    this.entity = entity.organizationName;
+    this.selectedRole = role;
   }
 
-  getRoleOfCallaborator() {
-    const collaborator = this.dataSource.find((x) => x.id === this.editUserId);
-    if (collaborator) {
-      return this.roles.indexOf(collaborator.role);
-    }
-  }
-
-  deleteCollaborator(id: string) {
-    this.detailsService.deleteCollaborator(id);
+  deleteCollaborator(row) {
+    this.detailsService.deleteCollaborator({
+      userId: row.login,
+      roleName: row.role,
+      connectedDG: row.entity.organizationName,
+    });
   }
 
   hanldeOnChange(event) {
     //reset previous state
-    this.detailsService.setCollaboratorsRole(
-      this.editUserId,
-      event.target.value,
-    );
+    this.detailsService.setCollaboratorsRole({
+      userId: this.editUserId,
+      roleName: event.target.value,
+      connectedDG: this.entity,
+    });
     this.isEditRole = false;
     this.editUserId = null;
+  }
+
+  public onFilterChange(event: any) {
+    this.filteredData = this.collaboratorsTable.filterRows(
+      event,
+      this.dataSource,
+    );
+    // this._refreshTotalPopulation();
+  }
+
+  getIndexByRole() {
+    if (this.selectedRole === 'OWNER') return 0;
+    if (this.selectedRole === 'CONTRIBUTOR') return 1;
+    if (this.selectedRole === 'REVIEWER') return 2;
   }
 }

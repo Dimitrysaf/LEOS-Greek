@@ -7,16 +7,24 @@
     <eui-dropdown-content>
       <ul euiList>
         <li euiListItem (click)="handleDownload()">
-          <button euiListItem>Download</button>
+          <button euiListItem>
+            {{ 'page.collection.actions-dropdown.donwload' | translate }}
+          </button>
         </li>
         <li euiListItem (click)="handleExport()">
-          <button euiListItem>Export</button>
+          <button euiListItem>
+            {{ 'page.collection.actions-dropdown.export' | translate }}
+          </button>
         </li>
         <li euiListItem (click)="handleShare()">
-          <button euiListItem>Share</button>
+          <a euiListItem target="_blank" [href]="getStringifiedMailTo()">{{
+            'page.collection.actions-dropdown.share' | translate
+          }}</a>
         </li>
         <li euiListItem (click)="handleDelete()">
-          <button euiListItem euiDanger>Delete</button>
+          <button euiListItem euiDanger>
+            {{ 'page.collection.actions-dropdown.delete' | translate }}
+          </button>
         </li>
       </ul>
     </eui-dropdown-content>

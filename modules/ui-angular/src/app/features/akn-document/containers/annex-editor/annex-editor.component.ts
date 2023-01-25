@@ -23,6 +23,7 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   isVersionsColumnCollapsed = true;
 
   id: string;
+  isEditMode = false;
   private unloadStyleSheet?: () => void;
 
   constructor(
@@ -60,6 +61,20 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
 
   onToggleVersionsColumn() {
     this.isVersionsColumnCollapsed = !this.isVersionsColumnCollapsed;
+  }
+
+  handleEdit() {
+    this.isEditMode = true;
+  }
+  handleUndo() {
+    //TODO : implement undo
+  }
+  handleSave() {
+    //TODO : implememt save
+  }
+  handleCancel() {
+    //TODO : implement cancel
+    this.isEditMode = false;
   }
 
   private loadDocument(xml: string) {

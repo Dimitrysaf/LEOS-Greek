@@ -15,7 +15,5 @@ export class ProposalDetailsComponent implements OnInit {
     this.eeaRelevance = this.proposal.metadata.eeaRelevance;
   }
 
-  handleEEAChange(e) {
-    console.log('hey');
-  }
+  handleEEAChange(e) {}
 }

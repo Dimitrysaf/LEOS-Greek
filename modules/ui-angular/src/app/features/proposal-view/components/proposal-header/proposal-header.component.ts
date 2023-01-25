@@ -7,9 +7,10 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import {
   EuiDialogComponent,
-  EuiDialogConfig,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 
@@ -26,7 +27,7 @@ export class ProposalHeaderComponent implements OnInit {
   @ViewChild('editTitle') dialog: EuiDialogComponent;
 
   title: string;
-  constructor(private euiDialogService: EuiDialogService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.title = this.editableTitle;
@@ -37,7 +38,6 @@ export class ProposalHeaderComponent implements OnInit {
   }
 
   handleSave() {
-    console.log('save');
     this.dialog.closeDialog();
     this.saveTitle.emit(this.title);
   }

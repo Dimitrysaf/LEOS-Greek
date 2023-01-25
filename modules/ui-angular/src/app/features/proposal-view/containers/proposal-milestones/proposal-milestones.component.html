@@ -20,7 +20,7 @@
       <label
         for="milestone_type"
         class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
-        >Milestone Type</label
+        >{{ 'page.collection.milestones.table.type' | translate }}</label
       >
       <select
         euiSelect
@@ -60,7 +60,10 @@
       <label
         for="milestone_title"
         class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
-        >Title</label
+        >{{
+          'page.collection.milestones.table.add-milestone-dialog.title'
+            | translate
+        }}</label
       >
     </div>
   </form>
@@ -73,10 +76,16 @@
         euiSecondary
         (click)="onDismiss()"
       >
-        Cancel
+        {{
+          'page.collection.milestones.table.add-milestone-dialog.cancel'
+            | translate
+        }}
       </button>
       <button type="button" euiButton euiPrimary (click)="onAccept()">
-        Create Milestone
+        {{
+          'page.collection.milestones.table.add-milestone-dialog.create'
+            | translate
+        }}
       </button>
     </div>
   </eui-dialog-footer>
@@ -93,7 +102,7 @@
   <ng-template let-row euiTemplate="body">
     <tr>
       <td data-col-label="Title">{{ row.title }}</td>
-      <td data-col-label="Date">{{ row.date }}</td>
+      <td data-col-label="Date">{{ row.updatedDate | date }}</td>
       <td data-col-label="Status" [class]="findStatusColor(row.status)">
         {{ row.status }}
       </td>
@@ -122,7 +131,9 @@
   </ng-template>
   <ng-template euiTemplate="emptyMessage">
     <tr>
-      <td class="eui-u-text-center" colspan="5">No data</td>
+      <td class="eui-u-text-center" colspan="5">
+        {{ 'page.collection.milestones.table.no-milestone' | translate }}
+      </td>
     </tr>
   </ng-template>
 </table>

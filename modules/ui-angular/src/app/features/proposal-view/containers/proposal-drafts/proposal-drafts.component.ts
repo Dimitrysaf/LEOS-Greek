@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   Component,
   Input,
@@ -24,6 +25,8 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   annexes: Document[] = [];
 
   @ViewChild('editTitle') dialog: EuiDialogComponent;
+  @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
+
   title: string;
   activeAnnexId: string;
 
@@ -44,7 +47,7 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   }
 
   handleAnnexReorder() {
-    console.warn('stub:', 'handleAnnexReorder'); // FIXME
+    this.annexOrderDialog.openDialog();
   }
 
   handleAnnexEditTitle(annex: Document) {
@@ -66,6 +69,25 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   }
   handleClose() {
     this.dialog.closeDialog();
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.annexes, event.previousIndex, event.currentIndex);
+    const annexRef = this.annexes[event.currentIndex].id;
+    //if droped in the same position do nothing
+    if (event.currentIndex === event.previousIndex) return;
+    //get whether the droped element went up or down to decide the moveDirection
+    let moveDirection = 'UP';
+    if (event.currentIndex > event.previousIndex) {
+      moveDirection = 'DOWN';
+    }
+    //because the backend works only for one up or one down we calculate how many times we have to repeat the function
+    const timesToMove = Math.abs(event.currentIndex - event.previousIndex);
+    this.proposalDetailsService.updateAnnexOrder(
+      annexRef,
+      moveDirection,
+      timesToMove,
+    );
   }
 
   private populateView() {

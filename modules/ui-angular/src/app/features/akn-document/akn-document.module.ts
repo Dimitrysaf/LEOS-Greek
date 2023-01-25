@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatTreeModule } from '@angular/material/tree';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
 import { AnnotateService } from '@/features/akn-document/services/annotate.service';
@@ -37,6 +38,8 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     ReactiveFormsModule,
     AknDocumentRoutingModule,
     LeosLegacyModule,
+    SharedModule,
+    MatTreeModule,
   ],
   providers: [AnnotateService],
 })

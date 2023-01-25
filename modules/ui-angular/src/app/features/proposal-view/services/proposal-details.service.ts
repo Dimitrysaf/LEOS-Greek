@@ -1,36 +1,39 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
-import { UxAppShellService } from '@eui/core';
-import { Collaborator, Document, User } from '@leos/shared';
+import {
+  Collaborator,
+  CollaboratorRequest,
+  Document,
+  User,
+} from '@leos/shared';
 import {
   BehaviorSubject,
-  catchError,
   filter,
+  forkJoin,
   map,
   Observable,
-  of,
   switchMap,
-  take,
   tap,
 } from 'rxjs';
 
+import { LoadingService } from '@/shared/services/loading.service';
+
+import { Milestone } from '../models/milestone.model';
+
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService {
-  userAutocompleteData$: Observable<EuiAutoCompleteItem[]>;
+  userAutocompleteData$: Observable<any[]>;
   proposalDetails$: Observable<Document>;
   userInputFieldChange$: Observable<string>;
   addCollaborator$: Observable<Collaborator>;
-  loading$: Observable<boolean>;
   error$: Observable<string>;
 
-  private loadingBS = new BehaviorSubject<boolean>(false);
   private errorBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject<string>(null);
   private proposalRefBS = new BehaviorSubject<string>(null);
-
+  private milestonesBS = new BehaviorSubject<Milestone[]>([]);
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
     switchMap((ref) => this.getProposalDetails(ref)),
   );
@@ -43,36 +46,27 @@ export class ProposalDetailsService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private uxAppService: UxAppShellService,
+    private loadingService: LoadingService,
   ) {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
-    this.loadingBS.asObservable().subscribe((val) => {
-      this.uxAppService.isBlockDocumentActive = val;
-    });
+
     this.proposalDetails$ = this.proposalDetailsResponse$.pipe(
-      tap((res) => this.collaboratorsBS.next(res.collaborators)),
-      tap((res) => this.loadingBS.next(false)),
-      map((res: any) => res),
+      tap((res) => this.getAllCollaborators(this.proposalRef)),
+      tap((res) => this.loadingService.setLoading(false)),
+      tap((res) => this.getProposalMilestones(this.proposalRef)),
     );
 
     this.userAutocompleteData$ = this.userAutocompleteDataResponse$.pipe(
-      map((users: any) =>
-        users.map(
-          (user) =>
-            new EuiAutoCompleteItem({
-              id: user.id,
-              label: user.fullName,
-              roles: user.role,
-              entity: user.organisationRef.abbreviation,
-              entityId: user.organisationRef.id,
-            }),
-        ),
-      ),
+      map((users: any) => users),
     );
   }
 
   get collaborators$() {
     return this.collaboratorsBS.asObservable();
+  }
+
+  get milestones$() {
+    return this.milestonesBS.asObservable();
   }
 
   setUserAutocompleteInputChange(name: string) {
@@ -91,17 +85,17 @@ export class ProposalDetailsService {
   }
 
   createAnnex() {
-    this.loadingBS.next(true);
+    this.loadingService.setLoading(true);
     this.http
       .post<any>(`api/secured/proposals/${this.proposalRef}/createAnnex`, {})
       .subscribe((val) => {
         this.setProposalRef(this.proposalRef);
-        this.loadingBS.next(false);
+        this.loadingService.setLoading(false);
       });
   }
 
   updateAnnexTitle(annexId: string, annexTitle: string) {
-    this.loadingBS.next(true);
+    this.loadingService.setLoading(true);
     this.http
       .put<any>(
         `api/secured/proposals/${this.proposalRef}/update-annex-title/${annexId}`,
@@ -110,18 +104,35 @@ export class ProposalDetailsService {
       )
       .subscribe((val) => {
         this.setProposalRef(this.proposalRef);
-        this.loadingBS.next(false);
+        this.loadingService.setLoading(false);
       });
   }
 
   deleteAnnex(annexRef: string) {
-    this.loadingBS.next(true);
+    this.loadingService.setLoading(true);
     this.http
       .delete<any>(
         `api/secured/proposals/${this.proposalRef}/deleteAnnex/${annexRef}`,
         {},
       )
       .subscribe((val) => {
+        this.setProposalRef(this.proposalRef);
+      });
+  }
+
+  updateAnnexOrder(
+    annexRef: string,
+    moveDirection: string,
+    timesToMove: number,
+  ) {
+    this.loadingService.setLoading(true);
+    this.http
+      .post<any>(
+        `api/secured/updateAnnexOrder/${this.proposalRef}/annex/${annexRef}?moveDirection=${moveDirection}&timesToMove=${timesToMove}`,
+        {},
+      )
+      .subscribe(() => {
+        this.loadingService.setLoading(false);
         this.setProposalRef(this.proposalRef);
       });
   }
@@ -144,7 +155,7 @@ export class ProposalDetailsService {
         responseType: 'blob',
       })
       .pipe(
-        tap(() => this.loadingBS.next(true)),
+        tap(() => this.loadingService.setLoading(true)),
         map((res) => {
           this.downloadFile(
             res,
@@ -154,7 +165,7 @@ export class ProposalDetailsService {
         }),
       )
       .subscribe(() => {
-        this.loadingBS.next(false);
+        this.loadingService.setLoading(false);
       });
   }
 
@@ -168,97 +179,129 @@ export class ProposalDetailsService {
           // TODO : service is unvailable
           console.log('exporting'),
         error: (err) => {
-          this.uxAppService.growlError(err.error);
+          // TODO : handle errors
+          // this.uxAppService.growlError(err.error);
         },
       });
   }
 
   deleteProposal() {
-    this.loadingBS.next(true);
+    this.loadingService.setLoading(true);
     this.http
       .delete<string>(`api/secured/proposal/${this.proposalRef}`)
       .subscribe(() => {
-        this.loadingBS.next(false);
+        this.loadingService.setLoading(false);
         this.router.navigate(['/workspace']);
       });
   }
 
-  addCallaborators(collaboratorsToAdd: Collaborator[]) {
+  addCallaborators(collaboratorsToAdd: CollaboratorRequest[]) {
     const proposalId = this.proposalRefBS.getValue();
     if (collaboratorsToAdd === null) {
       return;
     }
-    this.addCollaborators(proposalId, collaboratorsToAdd)
-      .pipe(
-        tap((col) => this.collaboratorsBS.next(col as Collaborator[])),
-        take(1),
-      )
-      .subscribe((col) => {});
+    forkJoin(
+      collaboratorsToAdd.map((col) => this.addCollaborators(proposalId, col)),
+    ).subscribe(() => {
+      console.log('added');
+      this.getAllCollaborators(proposalId);
+    });
   }
 
-  setCollaboratorsRole(userId: string, role: string) {
+  setCollaboratorsRole(collaboratorToUpdate: CollaboratorRequest) {
     const proposalId = this.proposalRefBS.getValue();
-    this.setCollaboratorRole(proposalId, userId, role)
-      .pipe(
-        tap((col) => this.collaboratorsBS.next(col)),
-        take(1),
-      )
-      .subscribe((col) => {});
+    this.updateCollaboratorRole(proposalId, collaboratorToUpdate);
   }
 
-  deleteCollaborator(userId: string) {
+  deleteCollaborator(req: CollaboratorRequest) {
     const proposalId = this.proposalRefBS.getValue();
-    const collaborators = this.collaboratorsBS.getValue();
-    const collaboratorsAfterDelete = collaborators.filter(
-      (c) => c.id !== userId,
-    );
-    this.deleteProposalCollaborators(proposalId, userId)
-      .pipe(
-        tap(() => this.collaboratorsBS.next(collaboratorsAfterDelete)),
-        take(1),
-      )
-      .subscribe(() => {});
+    this.deleteProposalCollaborators(req)
+      .pipe()
+      .subscribe(() => {
+        console.log('fethcijg collaborators');
+        this.getAllCollaborators(proposalId);
+      });
+  }
+
+  getProposalMilestones(documentRef: string) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .get<Milestone[]>(`api/secured/proposals/${documentRef}/milestones`)
+      .subscribe((miles) => {
+        this.milestonesBS.next(miles);
+        this.loadingService.setLoading(false);
+      });
+  }
+
+  createMilestone(documentRef: string, milestoneComment: string) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .post(`api/secured/proposals/${documentRef}/milestones`, milestoneComment)
+      .subscribe((val) => this.getProposalMilestones(documentRef));
   }
 
   private getProposalDetails(proposalRef: string): Observable<Document> {
-    this.loadingBS.next(true);
+    this.loadingService.setLoading(true);
     return this.http.get<Document>(`api/secured/proposals/${proposalRef}`);
   }
 
-  private addCollaborators(proposalId: string, collaborators: Collaborator[]) {
-    return this.http.post<Collaborator[]>(
-      `api/secured/proposals/${proposalId}/addCollaborator`,
+  private getAllCollaborators(prposalRef: string) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .get<Collaborator[]>(`api/secured/proposal/${[prposalRef]}/collaborators`)
+      .subscribe((col) => {
+        this.loadingService.setLoading(false);
+        this.collaboratorsBS.next(col);
+      });
+  }
+
+  private addCollaborators(
+    proposalId: string,
+    collaborators: CollaboratorRequest,
+  ) {
+    return this.http.post<any>(
+      `api/secured/proposal/${proposalId}/collaborators`,
       {
-        collaborators,
+        userId: collaborators.userId,
+        roleName: collaborators.roleName,
+        connectedDG: collaborators.connectedDG,
       },
     );
   }
 
-  private setCollaboratorRole(
+  private updateCollaboratorRole(
     proposalId: string,
-    userId: string,
-    role: string,
+    collaborator: CollaboratorRequest,
   ) {
-    return this.http.put<Collaborator[]>(
-      `api/secured/proposals/${proposalId}/collaborators/${userId}`,
-      {
-        role,
-      },
-    );
+    return this.http
+      .post<any>(`api/secured/proposal/${proposalId}/collaborators`, {
+        userId: collaborator.userId,
+        roleName: collaborator.roleName,
+        connectedDG: collaborator.connectedDG,
+      })
+      .subscribe((col) => {
+        this.getAllCollaborators(this.proposalRef);
+      });
   }
 
   private deleteProposalCollaborators(
-    proposalId: string,
-    userId: string,
+    collaborator: CollaboratorRequest,
   ): Observable<Collaborator[]> {
     return this.http.delete<any>(
-      `api/secured/proposals/${proposalId}/collaborators/${userId}`,
+      `api/secured/proposal/${this.proposalRef}/collaborators`,
+      {
+        body: {
+          userId: collaborator.userId,
+          roleName: collaborator.roleName,
+          connectedDG: collaborator.connectedDG,
+        },
+      },
     );
   }
 
   private searchUsers(name: string): Observable<User[]> {
-    return this.http.get<User[]>(`api/secured/users/searchUsers`, {
-      params: { name },
+    return this.http.get<User[]>(`api/secured/proposal/searchUser`, {
+      params: { searchKey: name },
     });
   }
 

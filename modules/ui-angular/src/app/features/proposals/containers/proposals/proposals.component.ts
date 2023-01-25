@@ -83,7 +83,6 @@ export class ProposalsComponent implements OnInit {
     return queryParams;
   }
 
-  loading$ = this.proposalService.loading$;
   filters$ = this.proposalService.filters$;
   page$ = this.proposalService.page$;
   limit$ = this.proposalService.limit$;

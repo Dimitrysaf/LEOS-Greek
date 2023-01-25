@@ -47,7 +47,6 @@
               'page.collection.collaborators.dialog.form.name' | translate
             }}</label>
             <eui-autocomplete
-              async
               [autocompleteData]="userAutocompleteData"
               name="item"
               id="item"
@@ -77,15 +76,15 @@
               formControlName="role"
               (change)="handleRoleSelect($event, i)"
             >
-              <option value="Author">
+              <option value="OWNER">
                 {{ 'page.collection.collaborators.role.author' | translate }}
               </option>
-              <option value="Contributor">
+              <option value="CONTRIBUTOR">
                 {{
                   'page.collection.collaborators.role.contributor' | translate
                 }}
               </option>
-              <option value="Reviewer">
+              <option value="REVIEWER">
                 {{ 'page.collection.collaborators.role.reviewer' | translate }}
               </option>
             </select>

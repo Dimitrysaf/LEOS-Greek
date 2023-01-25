@@ -1,7 +1,11 @@
 export interface Milestone {
-  id: number;
-  title: string;
-  date: string;
+  clone: boolean;
+  clonedMilestone: boolean;
+  contributionChanged: boolean;
+  createdDate: string;
+  legDocumentName: string;
+  proposalRef: string;
   status: string;
-  link: string;
+  title: string;
+  updatedDate: number;
 }

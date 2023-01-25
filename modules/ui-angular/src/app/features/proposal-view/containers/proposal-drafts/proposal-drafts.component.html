@@ -2,7 +2,9 @@
   <eui-card-header>
     <eui-card-header-title>
       <a [routerLink]="['/coverpage', coverpage.metadata.internalRef]"
-        ><strong>Cover page</strong></a
+        ><strong>{{
+          'page.collection.drafts.coverPage' | translate
+        }}</strong></a
       >
     </eui-card-header-title>
     <eui-card-header-subtitle
@@ -22,7 +24,9 @@
       <a
         [routerLink]="['/memorandum', memorandum.metadata.internalRef]"
         (click)="$event.preventDefault()"
-        ><strong>Explanatory Memorandum</strong></a
+        ><strong>{{
+          'page.collection.drafts.explanatory-memorandum' | translate
+        }}</strong></a
       >
     </eui-card-header-title>
     <eui-card-header-subtitle
@@ -48,7 +52,9 @@
       <a
         [routerLink]="['/document', document.metadata.internalRef]"
         (click)="$event.preventDefault()"
-        ><strong>Legal Act</strong></a
+        ><strong>{{
+          'page.collection.drafts.legal-act' | translate
+        }}</strong></a
       >
     </eui-card-header-title>
     <eui-card-header-subtitle *ngIf="document.updatedOn && document.updatedBy">
@@ -64,9 +70,12 @@
         <div class="flex-grow-1">
           <div><strong>Annexes</strong></div>
           <div *ngIf="annexes.length">
-            <strong>{{ annexes.length }}</strong> annexes found
+            <strong>{{ annexes.length }}</strong>
+            {{ 'page.collection.drafts.annex.annex-found' | translate }}
           </div>
-          <div *ngIf="!annexes.length">There is no annex to this document</div>
+          <div *ngIf="!annexes.length">
+            {{ 'page.collection.drafts.annex.no-annex' | translate }}
+          </div>
         </div>
         <button
           class="eui-u-ml-l"
@@ -152,14 +161,43 @@
 
 <eui-dialog #editTitle title="Edit title">
   <div euiInputGroup class="flex-row align-items-center">
-    <label class="label"> New annex title</label>
+    <label class="label">
+      {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}</label
+    >
     <input euiInputText [(ngModel)]="title" />
   </div>
   <eui-dialog-footer>
     <div class="d-flex flex-row justify-content-end">
-      <button euiButton euiSecondary (click)="handleClose()">Cancel</button>
+      <button euiButton euiSecondary (click)="handleClose()">
+        {{ 'page.collection.drafts.annex.title-dialog.cancel' | translate }}
+      </button>
       <button euiButton euiPrimary class="save-button" (click)="handleSave()">
-        Save
+        {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>
+
+<eui-dialog #editAnnexOrder title="Edit annex order">
+  <div class="flex flex-col mb-5">
+    <p class="">
+      {{ 'page.collection.drafts.annex-reorder-dialog.hint' | translate }}
+    </p>
+    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+      <div
+        class="example-box"
+        *ngFor="let annex of annexes; let i = index"
+        cdkDrag
+      >
+        <span class="eui-icon eui-icon-bars"></span>
+        <div class="" [attr.data-index]="i">{{ annex.title }}</div>
+      </div>
+    </div>
+  </div>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end">
+      <button euiButton euiSecondary (click)="handleClose()">
+        {{ 'page.collection.drafts.annex.reorder-dialog.cancel' | translate }}
       </button>
     </div>
   </eui-dialog-footer>
