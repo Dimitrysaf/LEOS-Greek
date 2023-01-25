@@ -816,7 +816,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (originAttr.equals(parentOrigin) && !node.getNodeName().equalsIgnoreCase(LIST)) {
             XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
-            if (softAction == null && !StringUtils.isEmpty(originOfDocument) && !CN.equals(originOfDocument)) {
+            if (softAction == null && !CN.equals(originOfDocument) && !node.getNodeName().equalsIgnoreCase(MAIN_BODY)) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
                 XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
                 XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
