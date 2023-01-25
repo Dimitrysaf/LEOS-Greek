@@ -8,7 +8,7 @@
       <ul euiList>
         <li euiListItem (click)="handleDownload()">
           <button euiListItem>
-            {{ 'page.collection.actions-dropdown.download' | translate }}
+            {{ 'page.collection.actions-dropdown.donwload' | translate }}
           </button>
         </li>
         <li euiListItem (click)="handleExport()">
@@ -22,7 +22,9 @@
           }}</a>
         </li>
         <li euiListItem (click)="handleDelete()">
-          <button euiListItem euiDanger>Delete</button>
+          <button euiListItem euiDanger>
+            {{ 'page.collection.actions-dropdown.delete' | translate }}
+          </button>
         </li>
       </ul>
     </eui-dropdown-content>

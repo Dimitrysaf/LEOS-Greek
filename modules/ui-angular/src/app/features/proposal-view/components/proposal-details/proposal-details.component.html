@@ -2,7 +2,9 @@
   <div class="col-md-6">
     <div class="row">
       <div class="col-sm-4 label-column">
-        <label>Package Title</label>
+        <label>{{
+          'page.collection.actions-dropdown.label' | translate
+        }}</label>
       </div>
       <div class="col-sm-8">{{ proposal.metadata.packageTitle }}</div>
     </div>
@@ -18,7 +20,7 @@
   <div class="col-md-6">
     <div class="row">
       <div class="col-sm-4 label-column">
-        <label>Confidentiality Level</label>
+        <label>{{ 'page.collection.confidentiality-level' | translate }}</label>
       </div>
       <div class="col-sm-8">{{ proposal.metadata.securityLevel }}</div>
     </div>
@@ -41,7 +43,9 @@
           ><!--keep checkbox vertically aligned--></label
         >
       </div>
-      <div class="col-sm-8">EEA Relevance</div>
+      <div class="col-sm-8">
+        {{ 'page.collection.eea-relevance' | translate }}
+      </div>
     </div>
   </div>
 </div>

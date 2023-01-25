@@ -11,12 +11,16 @@
     class="eui-u-ml-s"
     (click)="handleEdit()"
   >
-    Edit
+    {{ 'page.collection.proposal-header.edit' | translate }}
   </button>
 
   <eui-dialog #editTitle title="Edit title">
     <div euiInputGroup class="flex-row">
-      <label class="label"> New title</label>
+      <label class="label">
+        {{
+          'page.collection.proposal-header.edit-title-dialog.title' | translate
+        }}</label
+      >
       <div class="d-flex flex-wrap">
         <span>{{ nonEditablePartOfTitle }}</span>
         <input euiInputText [(ngModel)]="title" />
@@ -24,9 +28,17 @@
     </div>
     <eui-dialog-footer>
       <div class="d-flex flex-row justify-content-end">
-        <button euiButton euiSecondary (click)="handleClose()">Cancel</button>
+        <button euiButton euiSecondary (click)="handleClose()">
+          {{
+            'page.collection.proposal-header.edit-title-dialog.cancel'
+              | translate
+          }}
+        </button>
         <button euiButton euiPrimary (click)="handleSave()" class="save-button">
-          Save
+          {{
+            'page.collection.proposal-header.edit-title-dialog.cancel'
+              | translate
+          }}
         </button>
       </div>
     </eui-dialog-footer>

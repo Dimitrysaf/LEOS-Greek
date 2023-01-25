@@ -30,11 +30,11 @@
     <eui-page-columns>
       <eui-page-column
         [label]="'page.editor.toc-column.label' | translate"
-        size="2xl"
         isCollapsible
         [isCollapsed]="isTOCColumnCollapsed"
         interactiveScrollbars
         (collapsed)="onToggleTOCColumnCollapsed()"
+        class="scrollable-page-column"
       >
         <eui-page-column-header-right-content>
           <button
@@ -48,10 +48,38 @@
           >
             Edit
           </button>
-          <div class="flex flex-row " *ngIf="isEditMode">
-            <span class="" (click)="handleUndo()">Undo</span>
-            <span class="" (click)="handleSave()">Save</span>
-            <span class="" (click)="handleCancel()">Cancel</span>
+          <div
+            class="d-flex flex-row justify-content-around align-items-center mt-10"
+            style="width: 230px"
+            *ngIf="isEditMode"
+          >
+            <button
+              euiButton
+              euiBasicButton
+              euiPrimary
+              class="eui-u-mr-s"
+              (click)="handleUndo()"
+            >
+              Undo
+            </button>
+            <button
+              euiButton
+              euiBasicButton
+              euiPrimary
+              class="eui-u-mr-s"
+              (click)="handleSave()"
+            >
+              Save
+            </button>
+            <button
+              euiButton
+              euiBasicButton
+              euiPrimary
+              class="eui-u-mr-s"
+              (click)="handleCancel()"
+            >
+              Cancel
+            </button>
           </div>
         </eui-page-column-header-right-content>
         <eui-page-column-body>

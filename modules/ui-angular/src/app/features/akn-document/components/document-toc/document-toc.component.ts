@@ -2,12 +2,12 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { ActivatedRoute, Router } from '@angular/router';
+import { cloneDeep } from 'lodash-es';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { TocService } from '@/shared/services/toc.service';
 
 import { TableOfContentItemVO } from '../../models/toc.model';
-import { TocNode } from '../../models/TocNode';
 import { CKEditorService } from '../../services/ckeditor.service';
 
 @Component({
@@ -19,6 +19,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   @Input() isEdit: boolean;
   annexRef: string;
   tocItem: TableOfContentItemVO[];
+  selectedNodeToMove: TableOfContentItemVO = null;
 
   treeControl: NestedTreeControl<TableOfContentItemVO>;
   levels = new Map<TableOfContentItemVO, number>();
@@ -58,11 +59,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     });
   }
 
-  getChildren = (node: TocNode) => node.childItems;
+  getChildren = (node: TableOfContentItemVO) => node.childItems;
 
-  hasChildren = (index: number, node: TocNode) => node.childItems.length > 0;
+  hasChildren = (index: number, node: TableOfContentItemVO) =>
+    node.childItems.length > 0;
 
-  getLabel(node: TocNode) {
+  getParent = (node: TableOfContentItemVO) =>
+    this.findNodeById(node, node.parentItem);
+
+  getLabel(node: TableOfContentItemVO) {
     if (node.tocItem.aknTag === 'PREFACE') {
       return 'Preface';
     }
@@ -72,15 +77,113 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     return `${node.number} ${node.content}`;
   }
 
+  isEditMode() {
+    return this.isEdit;
+  }
+
+  handlePlaceBefore(node: TableOfContentItemVO) {
+    //TODO : handle place before TOC
+    this.insertBefore(node);
+    this.removeNode(this.selectedNodeToMove);
+    this.selectedNodeToMove = null;
+  }
+
+  handlePlaceChild(node: TableOfContentItemVO) {
+    //TODO : handle place as child TOC
+    this.insertChild(node);
+    this.removeNode(this.selectedNodeToMove);
+    this.selectedNodeToMove = null;
+  }
+  handlePlaceAfter(node: TableOfContentItemVO) {
+    //TODO : handle place afer TOC
+    this.insertAfter(node);
+    this.removeNode(this.selectedNodeToMove);
+    this.selectedNodeToMove = null;
+  }
+
+  handleMove(node: TableOfContentItemVO) {
+    this.selectedNodeToMove = node;
+  }
+
+  isNodeSelected() {
+    return this.selectedNodeToMove !== null;
+  }
+
   saveExpanded(node: TableOfContentItemVO) {
     if (this.expandedNodes.some((n) => n.id === node.id)) {
       this.expandedNodes.filter((n) => n.id !== node.id);
-      console.log(this.expandedNodes);
-
       return;
     }
     this.expandedNodes.push(node);
-    console.log(this.expandedNodes);
+  }
+
+  expandAll() {
+    this.treeControl.expandAll();
+  }
+
+  colllapseAll() {
+    this.treeControl.collapseAll();
+  }
+
+  insertNode() {}
+
+  removeNode(target: TableOfContentItemVO) {
+    const newTree = cloneDeep(this.treeControl.dataNodes);
+    const parentNode = this.findNodeById(newTree[1], target.parentItem);
+    parentNode.childItems = parentNode.childItems.filter(
+      (n) => !n.id.includes('_delete'),
+    );
+    this.tocService.setToc(newTree);
+  }
+
+  private insertAfter(target: TableOfContentItemVO) {
+    const newTree = cloneDeep(this.treeControl.dataNodes);
+    const parentNode = this.findNodeById(newTree[1], target.parentItem);
+    const targetIndex = parentNode.childItems.findIndex(
+      (x) => x.id === target.id,
+    );
+    parentNode.childItems.splice(targetIndex + 1, 0, this.selectedNodeToMove);
+    const findSelectedAndMarkItForDelete = this.findNodeById(
+      newTree[1],
+      this.selectedNodeToMove.id,
+    );
+    findSelectedAndMarkItForDelete.id =
+      findSelectedAndMarkItForDelete.id + '_delete';
+    this.tocService.setToc(newTree);
+  }
+
+  private insertBefore(target: TableOfContentItemVO) {
+    const newTree = cloneDeep(this.treeControl.dataNodes);
+    const parentNode = this.findNodeById(newTree[1], target.parentItem);
+    const targetIndex = parentNode.childItems.findIndex(
+      (x) => x.id === target.id,
+    );
+    console.log(targetIndex);
+    if (targetIndex === 0) {
+      parentNode.childItems.unshift(this.selectedNodeToMove);
+    } else {
+      parentNode.childItems.splice(targetIndex, 0, this.selectedNodeToMove);
+    }
+    const findSelectedAndMarkItForDelete = this.findNodeById(
+      newTree[1],
+      this.selectedNodeToMove.id,
+    );
+    findSelectedAndMarkItForDelete.id =
+      findSelectedAndMarkItForDelete.id + '_delete';
+    this.tocService.setToc(newTree);
+  }
+
+  private insertChild(target: TableOfContentItemVO) {
+    const newTree = cloneDeep(this.treeControl.dataNodes);
+    const node = this.findNodeById(newTree[1], target.id);
+    node.childItems.push(this.selectedNodeToMove);
+    const findSelectedAndMarkItForDelete = this.findNodeById(
+      newTree[1],
+      this.selectedNodeToMove.id,
+    );
+    findSelectedAndMarkItForDelete.id =
+      findSelectedAndMarkItForDelete.id + '_delete';
+    this.tocService.setToc(newTree);
   }
 
   private restoreExpanded() {
@@ -89,5 +192,23 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         this.treeControl.dataNodes.find((x) => x.id === node.id),
       );
     });
+  }
+
+  private findNodeById(
+    node: TableOfContentItemVO,
+    id: string,
+  ): TableOfContentItemVO | null {
+    if (node.id === id) {
+      return node;
+    }
+    if (node.childItems) {
+      for (const n of node.childItems) {
+        const found = this.findNodeById(n, id);
+        if (found) {
+          return found;
+        }
+      }
+    }
+    return null;
   }
 }

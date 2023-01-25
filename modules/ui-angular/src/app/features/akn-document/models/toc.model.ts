@@ -17,7 +17,7 @@ export class TableOfContentItemVO {
   isCrossHeadingInList: boolean;
   tocItemType: string;
   childItems: TableOfContentItemVO[];
-  parent: TableOfContentItemVO;
+  parentItem: string;
   softActionAttr: string;
   isSoftActionRoot: string;
   softMoveTo: string;
@@ -35,9 +35,9 @@ export class TableOfContentItemVO {
   indentOriginNumId: string = null;
   indentOriginNumValue: string = null;
   indentOriginNumOrigin: string = null;
-
   style: string;
   isAutoNumOverwritten = false;
+  moved: boolean;
 }
 
 export class TocItem {

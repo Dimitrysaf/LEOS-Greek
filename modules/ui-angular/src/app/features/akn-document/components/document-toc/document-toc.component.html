@@ -5,7 +5,54 @@
 >
   <mat-nested-tree-node *matTreeNodeDef="let node">
     <li>
-      <div class="mat-tree-node" euiLabel euiPrimary>{{ getLabel(node) }}</div>
+      <div class="mat-tree-node" euiLabel euiPrimary>
+        <span>{{ getLabel(node) }}</span>
+        <eui-dropdown *ngIf="isEditMode()">
+          <button
+            euiButton
+            euiRounded
+            euiIconButton
+            euiBasicButton
+            euiSecondary
+            euiTooltip="More options"
+            [attr.aria-label]="'More options'"
+          >
+            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+          </button>
+          <eui-dropdown-content>
+            <div euiList>
+              <button
+                euiListItem
+                (click)="handleMove(node)"
+                *ngIf="!isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.move' | translate }}
+              </button>
+              <button
+                euiListItem
+                (click)="handlePlaceBefore(node)"
+                *ngIf="isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.place-before' | translate }}
+              </button>
+              <button
+                euiListItem
+                (click)="handlePlaceChild(node)"
+                *ngIf="isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.place-child' | translate }}
+              </button>
+              <button
+                euiListItem
+                (click)="handlePlaceAfter(node)"
+                *ngIf="isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.place-after' | translate }}
+              </button>
+            </div>
+          </eui-dropdown-content>
+        </eui-dropdown>
+      </div>
     </li>
   </mat-nested-tree-node>
   <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChildren">
@@ -25,6 +72,51 @@
           (click)="saveExpanded(node)"
         ></eui-icon>
         <span euiLabel euiPrimary>{{ getLabel(node) }}</span>
+        <eui-dropdown *ngIf="isEditMode()">
+          <button
+            euiButton
+            euiRounded
+            euiIconButton
+            euiBasicButton
+            euiSecondary
+            euiTooltip="More options"
+            [attr.aria-label]="'More options'"
+          >
+            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+          </button>
+          <eui-dropdown-content>
+            <div euiList>
+              <button
+                euiListItem
+                (click)="handleMove(node)"
+                *ngIf="!isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.move' | translate }}
+              </button>
+              <button
+                euiListItem
+                (click)="handlePlaceBefore(node)"
+                *ngIf="isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.place-before' | translate }}
+              </button>
+              <button
+                euiListItem
+                (click)="handlePlaceChild(node)"
+                *ngIf="isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.place-child' | translate }}
+              </button>
+              <button
+                euiListItem
+                (click)="handlePlaceAfter(node)"
+                *ngIf="isNodeSelected()"
+              >
+                {{ 'page.editor.toc.move-actions.place-after' | translate }}
+              </button>
+            </div>
+          </eui-dropdown-content>
+        </eui-dropdown>
       </div>
       <ul class="example-tree-nested-node">
         <div *ngIf="treeControl.isExpanded(node)">

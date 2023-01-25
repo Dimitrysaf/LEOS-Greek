@@ -15,19 +15,25 @@
 
     <eui-tabs class="eui-u-display-block eui-u-mt-l">
       <eui-tab>
-        <eui-tab-label>Drafts</eui-tab-label>
+        <eui-tab-label>{{
+          'page.collection.tabs.drafts' | translate
+        }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-drafts [proposal]="proposal"></app-proposal-drafts>
         </eui-tab-content>
       </eui-tab>
       <eui-tab>
-        <eui-tab-label>Milestones</eui-tab-label>
+        <eui-tab-label>{{
+          'page.collection.tabs.milestones' | translate
+        }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-milestones></app-proposal-milestones>
         </eui-tab-content>
       </eui-tab>
       <eui-tab>
-        <eui-tab-label>Collaborators</eui-tab-label>
+        <eui-tab-label>{{
+          'page.collection.tabs.collaborators' | translate
+        }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-collaborators></app-proposal-collaborators>
         </eui-tab-content>
@@ -36,14 +42,13 @@
   </ng-container>
   <ng-container *ngSwitchCase="'error'" [ngSwitch]="proposalErrorCode">
     <eui-alert euiDanger *ngSwitchCase="403">
-      You do not have permission to access the requested proposal.
+      {{ 'page.collection.permision-error' | translate }}
     </eui-alert>
     <eui-alert euiDanger *ngSwitchCase="404">
-      The requested proposal does not exist.
+      {{ 'page.collection.404' | translate }}
     </eui-alert>
     <eui-alert euiDanger *ngSwitchDefault>
-      Something went wrong. Please try again and if the problem persists contact
-      with support team.
+      {{ 'page.collection.default-error' | translate }}
     </eui-alert>
   </ng-container>
 </section>
