@@ -323,6 +323,12 @@ define(function elementEditorModule(require) {
             }
             return false;
         }).remove();
+        $("#" + elementId).parent().contents().filter(function() {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+         }).remove();
     }
 
     function _isEmptyElement(elementId, editor) {
