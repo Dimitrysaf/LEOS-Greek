@@ -29,10 +29,14 @@
     <#local billRef = bill.getResourceId()>
     <#local annexes = bill.getChildResources('annex')>
     <#local annexRef = annex.getResourceId()>
+    <#assign proposalCoverpageRef = proposal.getComponentId('coverPage')>
     <importJob filename="${annex.getLeosCategory().name()?capitalize}_${annex.getDocNumber()}"
                convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}">
         <leos>
             <resource ref="${proposalRef}">
+                <includes>
+                    <include ref="${proposalCoverpageRef}"/>
+                </includes>
                 <resource ref="${billRef}">
                     <resource ref="${annexRef}">
                     </resource>
