@@ -121,6 +121,11 @@ import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
 import eu.europa.ec.leos.web.event.window.CancelElementEditorEvent;
 import eu.europa.ec.leos.web.event.window.CloseElementEditorEvent;
+
+import eu.europa.ec.leos.ui.event.search.SearchBarClosedEvent;
+import eu.europa.ec.leos.ui.event.search.ReplaceMatchRequestEvent;
+import eu.europa.ec.leos.ui.event.search.SaveAfterReplaceEvent;
+import eu.europa.ec.leos.ui.event.search.SaveAndCloseAfterReplaceEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
@@ -784,7 +789,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "Error while searching{1}", e.getMessage()));
         }
-
         financialStatementScreen.showMatchResults(event.searchID, matches);
     }
 
@@ -794,15 +798,13 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         if (financialStatement == null) {
             financialStatement = getDocument();
         }
-
         byte[] updatedContent = searchService.replaceText(
                 getContent(financialStatement),
                 event.getSearchText(),
                 event.getReplaceText(),
                 event.getSearchMatchVOs());
-
         FinancialStatement financialStatementUpdated = copyIntoNew(financialStatement, updatedContent);
-        httpSession.setAttribute("financialStatementUpdated#" + getDocumentRef(), financialStatementUpdated);
+        httpSession.setAttribute("financialStatement#" + getDocumentRef(), financialStatementUpdated);
         financialStatementScreen.setContent(getEditableXml(financialStatementUpdated));
         eventBus.post(new ReplaceAllMatchResponseEvent(true));
     }
@@ -840,6 +842,66 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
+    void saveAndCloseAfterReplace(SaveAndCloseAfterReplaceEvent event){
+        // save document into repository
+        FinancialStatement financialStatement = getDocument();
+        FinancialStatement financialStatementFromSession = (FinancialStatement) httpSession.getAttribute("financialStatement#" + getDocumentRef());
+        httpSession.removeAttribute("financialStatement#" + getDocumentRef());
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, financialStatementFromSession.getContent().get().getSource().getBytes(),
+                VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
+        if (financialStatement != null) {
+            eventBus.post(new RefreshDocumentEvent());
+            eventBus.post(new DocumentUpdatedEvent());
+            leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.replace.success"));
+        }
+    }
+
+    @Subscribe
+    void saveAfterReplace(SaveAfterReplaceEvent event){
+        // save document into repository
+        FinancialStatement financialStatement = getDocument();
+        FinancialStatement financialStatementFromSession = (FinancialStatement) httpSession.getAttribute("financialStatement#" + getDocumentRef());
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, financialStatementFromSession.getContent().get().getSource().getBytes(),
+                VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
+        if (financialStatement != null) {
+            httpSession.setAttribute("financialStatement#"+getDocumentRef(), financialStatement);
+            eventBus.post(new DocumentUpdatedEvent());
+            leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.replace.success"));
+        }
+    }
+
+    @Subscribe
+    void replaceOneTextInDocument(ReplaceMatchRequestEvent event) {
+        if (event.getSearchMatchVO().isReplaceable()) {
+            FinancialStatement financialStatementFromSession = getFinancialStatementFromSession();
+            if (financialStatementFromSession == null) {
+                financialStatementFromSession = getDocument();
+            }
+            byte[] updatedContent = searchService.replaceText(
+                    getContent(financialStatementFromSession),
+                    event.getSearchText(),
+                    event.getReplaceText(),
+                    Arrays.asList(event.getSearchMatchVO()));
+            FinancialStatement financialStatementUpdated = copyIntoNew(financialStatementFromSession, updatedContent);
+            httpSession.setAttribute("financialStatement#" + getDocumentRef(), financialStatementUpdated);
+            financialStatementScreen.setContent(getEditableXml(financialStatementUpdated));
+            financialStatementScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), true);
+        } else {
+            financialStatementScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), false);
+        }
+    }
+
+    @Subscribe
+    void closeSearchBar(SearchBarClosedEvent event) {
+        //Cleanup the session etc
+        financialStatementScreen.closeSearchBar();
+        httpSession.removeAttribute("financialStatement#"+getDocumentRef());
+        eventBus.post(new RefreshDocumentEvent());
+    }
+    
+    @Subscribe
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
         financialStatementScreen.refreshVersions(allVersions, comparisonMode);
@@ -851,19 +913,16 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         eventBus.post(new VersionListResponseEvent(new ArrayList<>(memoVersions)));
     }
 
-
     @Subscribe
     void downloadXmlFiles(DownloadXmlFilesRequestEvent event) {
         final ExportVersions<FinancialStatement> exportVersions = event.getExportOptions().getExportVersions();
         final FinancialStatement current = exportVersions.getCurrent();
         final FinancialStatement original = exportVersions.getOriginal();
         final FinancialStatement intermediate = exportVersions.getIntermediate();
-
         final String leosComparedContent;
         final String docuWriteComparedContent;
         final String comparedInfo;
         String language = original.getMetadata().get().getLanguage();
-
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         if(intermediate != null){
             comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
@@ -883,7 +942,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
             final FinancialStatement chosenDocument = financialStatementService.findFinancialStatementVersion(event.getVersionId());
             final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
-
             DownloadStreamResource downloadStreamResource = new DownloadStreamResource(fileName, new ByteArrayInputStream(chosenDocument.getContent().get().getSource().getBytes()));
             financialStatementScreen.setDownloadStreamResourceForVersion(downloadStreamResource, chosenDocument.getId());
         } catch (Exception e) {
