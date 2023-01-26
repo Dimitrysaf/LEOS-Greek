@@ -49,7 +49,6 @@ public class CheckDeleteLastEditingChildTypeConsumer implements BiConsumer<Strin
 
     private boolean isDeletingLastEditingChildType(String elementId) {
         Node itemNode = XercesUtils.getElementById(xmlContent, elementId);
-        // the TableOfContentItemVO.getNode() method returns either the current element or the parent (if it is the last one).
         String nodeId = XercesUtils.getId(itemNode);
         String nodeName = itemNode.getNodeName();
         Node nodeForSearch = itemNode.getParentNode();

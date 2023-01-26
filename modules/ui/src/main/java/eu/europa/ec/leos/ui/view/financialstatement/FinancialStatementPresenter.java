@@ -1174,8 +1174,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     public void checkDeleteLastEditingChildType(CheckDeleteLastEditingChildTypeEvent event) {
         FinancialStatement financialStatement = getDocument();
         byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
-        CheckDeleteLastEditingChildTypeConsumer checkDeleteLastEditingChildTypeConsumer =
-                new CheckDeleteLastEditingChildTypeConsumer(xmlContent, xmlContentProcessor, messageHelper, eventBus);
-        checkDeleteLastEditingChildTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
+        new CheckDeleteLastEditingChildTypeConsumer(xmlContent, xmlContentProcessor, messageHelper, eventBus).
+                accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
     }
 }
