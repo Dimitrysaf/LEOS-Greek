@@ -25,6 +25,11 @@ define(function mergeContributionExtensionModule(require) {
     var LEOS_CONTENT_REMOVED = "leos-content-removed";
     var LEOS_CONTENT_NEW = "leos-content-new";
     var MERGE_CONTRIBUTION = "merge-contribution-wrapper";
+    var AKNP = "aknp";
+    var BLOCK = "block";
+    var DELETED = "deleted_";
+    var REVISION = "revision-";
+    var REVISION_DELETED = "revision-deleted_";
     var REVISION_MOVED = "revision-moved_";
     var MERGE_ACTION_WRAPPER = ".merge-actions-wrapper";
     var MOVE_FROM = "move_from",MOVE_TO = "move_to", PARENT_AFFECTED = "parent_affected";
@@ -72,23 +77,23 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _getParentElement(elementParentName, $element) {
-        if ((elementParentName === "aknp" || elementParentName === "block")) {
-            if ($element.hasClass('leos-content-removed')) {
+        if ((elementParentName === AKNP || elementParentName === BLOCK)) {
+            if ($element.hasClass(LEOS_CONTENT_REMOVED)) {
                 var childId = $($element.get()).children().get()[0] && $($element.get()).children().get()[0].id;
-                if (childId && childId.startsWith('revision-deleted_')) {
-                    var findId = childId.replace('deleted_', '');
+                if (childId && childId.startsWith(REVISION_DELETED)) {
+                    var findId = childId.replace(DELETED, '');
                     var $findElement = findId && $('#' + findId);
-                    if ($findElement && $($findElement.get()).parent().hasClass('leos-content-new')) {
+                    if ($findElement && $($findElement.get()).parent().hasClass(LEOS_CONTENT_NEW)) {
                         return;
                     } else {
                         return $element.parent();
                     }
                 }
-            } else if ($element.hasClass('leos-content-new')) {
+            } else if ($element.hasClass(LEOS_CONTENT_NEW)) {
                 var childId = $($element.get()).children().get()[0] && $($element.get()).children().get()[0].id;
-                var findId = childId && childId.replace('revision-', 'revision-deleted_',);
+                var findId = childId && childId.replace(REVISION, REVISION_DELETED,);
                 var $findElement = findId && $('#' + findId);
-                if ($findElement && $($findElement.get()).parent().hasClass('leos-content-removed')) {
+                if ($findElement && $($findElement.get()).parent().hasClass(LEOS_CONTENT_REMOVED)) {
                     return;
                 } else {
                     return $element.parent();
