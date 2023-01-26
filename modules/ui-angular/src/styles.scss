@@ -57,3 +57,13 @@ eui-icon-svg > svg > use {
 .eui-u-text-wrap {
   white-space: normal !important;
 }
+
+
+@font-face {
+  font-family: "Vaadin-Icons";
+  src: url("../src/assets/fonts/Vaadin-Icons.woff");
+}
+
+.Vaadin-Icons {
+  font-family: "Vaadin-Icons";
+}
