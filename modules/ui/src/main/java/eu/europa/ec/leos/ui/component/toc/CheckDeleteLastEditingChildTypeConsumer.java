@@ -3,23 +3,27 @@ package eu.europa.ec.leos.ui.component.toc;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.UI;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.w3c.dom.Node;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 
 public class CheckDeleteLastEditingChildTypeConsumer implements BiConsumer<String, Runnable> {
 
-    private final MultiSelectTreeGrid<TableOfContentItemVO> tocTree;
+    private final byte[] xmlContent;
+    private final XmlContentProcessor xmlContentProcessor;
     private final MessageHelper messageHelper;
     private final EventBus eventBus;
 
-    public CheckDeleteLastEditingChildTypeConsumer(MultiSelectTreeGrid<TableOfContentItemVO> tocTree, MessageHelper messageHelper, EventBus eventBus) {
-        this.tocTree = tocTree;
+    public CheckDeleteLastEditingChildTypeConsumer(byte[] xmlContent, XmlContentProcessor xmlContentProcessor,
+                                                   MessageHelper messageHelper, EventBus eventBus) {
+        this.xmlContent = xmlContent;
+        this.xmlContentProcessor = xmlContentProcessor;
         this.messageHelper = messageHelper;
         this.eventBus = eventBus;
     }
@@ -44,37 +48,14 @@ public class CheckDeleteLastEditingChildTypeConsumer implements BiConsumer<Strin
     }
 
     private boolean isDeletingLastEditingChildType(String elementId) {
-        TableOfContentItemVO item = findElementById(elementId, tocTree.getTreeData().getRootItems()).orElseThrow(() -> new IllegalArgumentException("Element not found by id: " + elementId));
+        Node itemNode = XercesUtils.getElementById(xmlContent, elementId);
         // the TableOfContentItemVO.getNode() method returns either the current element or the parent (if it is the last one).
-        Node itemNode = item.getNode();
-        String itemId = item.getId();
         String nodeId = XercesUtils.getId(itemNode);
         String nodeName = itemNode.getNodeName();
         Node nodeForSearch = itemNode.getParentNode();
-        if(!nodeId.equals(itemId)){
-            // the node is not corresponding to the item Id; maybe is the first in list
-            Node rightNode =  XercesUtils.getElementById(itemNode,  itemId,  true);
-            nodeName = rightNode.getNodeName();
-            nodeForSearch = itemNode;
-        }
         List<Node> nodeList =  XercesUtils.getChildren(nodeForSearch, nodeName);
         // remove the node corresponding to elementID and also the nodes that are not editable.
-        nodeList.removeIf(node -> XercesUtils.getId(node).equals(itemId) || !XercesUtils.getAttributeValueAsSimpleBoolean(node, "leos:editable") );
+        nodeList.removeIf(node -> XercesUtils.getId(node).equals(nodeId) || !XercesUtils.getAttributeValueAsSimpleBoolean(node, LEOS_EDITABLE_ATTR));
         return nodeList.isEmpty();
-    }
-    private Optional<TableOfContentItemVO> findElementById(String elementId, List<TableOfContentItemVO> children) {
-        for (TableOfContentItemVO child : children) {
-            if (child.getId().equals(elementId)) {
-                return Optional.of(child);
-            } else {
-                if (child.getChildItems().size() > 0) {
-                    Optional<TableOfContentItemVO> item = findElementById(elementId, child.getChildItems());
-                    if (item.isPresent()) {
-                        return item;
-                    }
-                }
-            }
-        }
-        return Optional.empty();
     }
 }

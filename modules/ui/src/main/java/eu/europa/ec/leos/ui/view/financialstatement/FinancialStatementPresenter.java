@@ -68,6 +68,7 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
+import eu.europa.ec.leos.ui.component.toc.CheckDeleteLastEditingChildTypeConsumer;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
 import eu.europa.ec.leos.ui.event.DownloadActualVersionRequestEvent;
@@ -107,6 +108,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.NavigationRequestEvent;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingChildTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
@@ -900,7 +902,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         httpSession.removeAttribute("financialStatement#"+getDocumentRef());
         eventBus.post(new RefreshDocumentEvent());
     }
-    
+
     @Subscribe
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
@@ -1166,5 +1168,14 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         final byte[] sourceXmlContent = sourceDocument.getContent().get().getSource().getBytes();
         Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(reference), sourceDocument.getMetadata().get().getRef(), sourceXmlContent);
         return updatedLabel.get();
+    }
+
+    @Subscribe
+    public void checkDeleteLastEditingChildType(CheckDeleteLastEditingChildTypeEvent event) {
+        FinancialStatement financialStatement = getDocument();
+        byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
+        CheckDeleteLastEditingChildTypeConsumer checkDeleteLastEditingChildTypeConsumer =
+                new CheckDeleteLastEditingChildTypeConsumer(xmlContent, xmlContentProcessor, messageHelper, eventBus);
+        checkDeleteLastEditingChildTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
     }
 }

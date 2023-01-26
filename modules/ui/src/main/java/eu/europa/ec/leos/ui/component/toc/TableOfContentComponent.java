@@ -13,61 +13,6 @@
  */
 package eu.europa.ec.leos.ui.component.toc;
 
-import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
-import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getFirstAscendant;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateDepthOfTocItems;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateUserInfo;
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
-import static eu.europa.ec.leos.services.support.XmlHelper.EC;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.HASH_NUM_VALUE;
-
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.inject.Provider;
-
-import eu.europa.ec.leos.vo.toc.AknTag;
-import eu.europa.ec.leos.vo.toc.TocItemTypeName;
-import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingChildTypeEvent;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.vaadin.dialogs.ConfirmDialog;
-import org.vaadin.teemusa.gridextensions.client.tableselection.TableSelectionState.TableSelectionMode;
-import org.vaadin.teemusa.gridextensions.tableselection.TableSelectionModel;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.DesignRoot;
@@ -107,7 +52,6 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.declarative.Design;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ActionType;
@@ -134,18 +78,68 @@ import eu.europa.ec.leos.ui.event.toc.TocResizedEvent;
 import eu.europa.ec.leos.ui.extension.dndscroll.TreeGridScrollDropTargetExtension;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
+import eu.europa.ec.leos.vo.toc.AknTag;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.NumberingType;
 import eu.europa.ec.leos.vo.toc.OptionsType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
 import eu.europa.ec.leos.web.ui.themes.LeosTheme;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.teemusa.gridextensions.client.tableselection.TableSelectionState.TableSelectionMode;
+import org.vaadin.teemusa.gridextensions.tableselection.TableSelectionModel;
+
+import javax.inject.Provider;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
+import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getFirstAscendant;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateDepthOfTocItems;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateUserInfo;
+import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
+import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
+import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
+import static eu.europa.ec.leos.services.support.XmlHelper.EC;
+import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
+import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.HASH_NUM_VALUE;
 
 @SpringComponent
 @Scope("prototype")
@@ -374,7 +368,6 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         Design.read(this);
         buildToc();
         this.checkDeleteLastEditingTypeConsumer = new CheckDeleteLastEditingTypeConsumer(tocTree, messageHelper, eventBus);
-        this.checkDeleteLastEditingChildTypeConsumer = new CheckDeleteLastEditingChildTypeConsumer(tocTree, messageHelper, eventBus);
     }
 
     @Override
@@ -2051,12 +2044,5 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     @Subscribe
     public void checkDeleteLastEditingType(CheckDeleteLastEditingTypeEvent event) {
         checkDeleteLastEditingTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
-    }
-
-    private CheckDeleteLastEditingChildTypeConsumer checkDeleteLastEditingChildTypeConsumer;
-
-    @Subscribe
-    public void checkDeleteLastEditingChildType(CheckDeleteLastEditingChildTypeEvent event) {
-        checkDeleteLastEditingChildTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
     }
 }
