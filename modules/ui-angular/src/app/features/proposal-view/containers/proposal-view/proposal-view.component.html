@@ -11,7 +11,10 @@
       (saveTitle)="onSaveTitle($event)"
     ></app-proposal-header>
 
-    <app-proposal-details [proposal]="proposal"></app-proposal-details>
+    <app-proposal-details
+      [proposal]="proposal"
+      (eeaRelevanceChanged)="onSaveEEA($event)"
+    ></app-proposal-details>
 
     <eui-tabs class="eui-u-display-block eui-u-mt-l">
       <eui-tab>

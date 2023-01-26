@@ -30,7 +30,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   listItems = [
     { id: '1', label: 'View' },
     { id: '2', label: 'Send a copy for contribution' },
-    { id: '3', label: 'Delete' },
   ];
 
   status = [

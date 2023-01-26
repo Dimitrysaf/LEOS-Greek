@@ -1,51 +1,54 @@
-<div class="row mt-4">
-  <div class="col-md-6">
-    <div class="row">
-      <div class="col-sm-4 label-column">
-        <label>{{
-          'page.collection.actions-dropdown.label' | translate
-        }}</label>
+<eui-fieldset label="Details" isExpandable>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>{{
+            'page.collection.details.package-title' | translate
+          }}</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.packageTitle }}</div>
       </div>
-      <div class="col-sm-8">{{ proposal.metadata.packageTitle }}</div>
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>{{ 'page.collection.details.template' | translate }}</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.template }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>{{ 'page.collection.details.language' | translate }}</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.language }}</div>
+      </div>
     </div>
-    <div class="row">
-      <div class="col-sm-4 label-column"><label>Template</label></div>
-      <div class="col-sm-8">{{ proposal.metadata.template }}</div>
-    </div>
-    <div class="row">
-      <div class="col-sm-4 label-column"><label>Language</label></div>
-      <div class="col-sm-8">{{ proposal.metadata.language }}</div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>{{
+            'page.collection.confidentiality-level' | translate
+          }}</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.securityLevel }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 label-column">
+          <label>{{ 'page.collection.internal-reference' | translate }}</label>
+        </div>
+        <div class="col-sm-8">{{ proposal.metadata.internalRef }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-8">
+          <input
+            name="checkbox-en"
+            euiInputCheckBox
+            label="EEA Relevance"
+            [(ngModel)]="eeaRelevance"
+            (ngModelChange)="handleEEAChange($event)"
+          />
+        </div>
+      </div>
     </div>
   </div>
-  <div class="col-md-6">
-    <div class="row">
-      <div class="col-sm-4 label-column">
-        <label>{{ 'page.collection.confidentiality-level' | translate }}</label>
-      </div>
-      <div class="col-sm-8">{{ proposal.metadata.securityLevel }}</div>
-    </div>
-    <div class="row">
-      <div class="col-sm-4 label-column">
-        <label>{{ 'page.collection.internal-reference' | translate }}</label>
-      </div>
-      <div class="col-sm-8">{{ proposal.metadata.internalRef }}</div>
-    </div>
-    <div class="row">
-      <div class="col-sm-4 label-column">
-        <input
-          euiInputCheckBox
-          id="eearelevance"
-          aria-label="EEA Relevance"
-          [(ngModel)]="eeaRelevance"
-          (ngModelChange)="handleEEAChange($event)"
-        />
-        <label class="eui-u-p-none"
-          ><!--keep checkbox vertically aligned--></label
-        >
-      </div>
-      <div class="col-sm-8">
-        {{ 'page.collection.eea-relevance' | translate }}
-      </div>
-    </div>
-  </div>
-</div>
+</eui-fieldset>

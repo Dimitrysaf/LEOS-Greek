@@ -50,7 +50,10 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   }
 
   onSaveEEA(eea: boolean) {
-    //TODO : implement eea save
+    this.proposalDetailsService.updateProposalMetadata(
+      this.proposal.metadata.docPurpose,
+      eea,
+    );
   }
 
   ngOnDestroy() {

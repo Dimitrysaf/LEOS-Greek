@@ -115,10 +115,21 @@
           <tr>
             <td>
               <a
+                *ngIf="row.title"
                 [routerLink]="['/annex', row.metadata.internalRef]"
                 (click)="$event.preventDefault()"
                 ><strong>{{ row.title }}</strong></a
               >
+              <button
+                *ngIf="!row.title"
+                euiButton
+                euiBasicButton
+                euiPrimary
+                class="eui-u-mr-s"
+                (click)="handleAnnexEditTitle(row)"
+              >
+                Edit title
+              </button>
             </td>
             <td>{{ row.updatedBy }}</td>
             <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
@@ -172,7 +183,9 @@
         {{ 'page.collection.drafts.annex.title-dialog.cancel' | translate }}
       </button>
       <button euiButton euiPrimary class="save-button" (click)="handleSave()">
-        {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}
+        <span>{{
+          'page.collection.drafts.annex.title-dialog.save' | translate
+        }}</span>
       </button>
     </div>
   </eui-dialog-footer>

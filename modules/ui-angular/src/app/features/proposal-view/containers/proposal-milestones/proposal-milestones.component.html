@@ -115,11 +115,7 @@
             <!-- This can be a dynamic injected component -->
             <ul euiList>
               <li euiListItem *ngFor="let item of listItems; let i = index">
-                <button
-                  euiListItem
-                  class="{{ i === 2 ? 'eui-u-color-danger-100' : '' }}"
-                  (click)="i === 2 ? deleteMilestone(row.id) : false"
-                >
+                <button euiListItem>
                   {{ item.label }}
                 </button>
               </li>
