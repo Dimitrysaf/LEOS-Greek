@@ -93,7 +93,7 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
-import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingChildTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -449,7 +449,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
             confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
         } else {
             if (action == CheckElementCoEditionEvent.Action.DELETE) {
-                eventBus.post(new CheckDeleteLastEditingTypeEvent(((DeleteElementRequestEvent) actionEvent).getElementId(), actionEvent));
+                eventBus.post(new CheckDeleteLastEditingChildTypeEvent(((DeleteElementRequestEvent)actionEvent).getElementId(), actionEvent));
             } else {
                 eventBus.post(actionEvent);
             }
@@ -468,7 +468,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         confirmDialog.show(getUI(), dialog -> {
             if (dialog.isConfirmed()) {
                 if (action == CheckElementCoEditionEvent.Action.DELETE) {
-                    eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, actionEvent));
+                    eventBus.post(new CheckDeleteLastEditingChildTypeEvent(elementId, actionEvent));
                 } else {
                     eventBus.post(actionEvent);
                 }

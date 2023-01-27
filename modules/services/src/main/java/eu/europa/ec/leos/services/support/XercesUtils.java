@@ -230,6 +230,11 @@ public class XercesUtils {
         return sb.toString();
     }
 
+    public static Node getElementById(byte[] xmlContent, String elementId) {
+        Document document = createXercesDocument(xmlContent);
+        return getElementById(document, elementId, true);
+    }
+
     public static Node getElementById(Node node, String elementId) {
         return getElementById(node, elementId, true);
     }
