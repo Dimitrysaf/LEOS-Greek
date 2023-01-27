@@ -754,10 +754,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         updateReferences(document);
         long mrefUpdateTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
-        moveSubparagraphsInList(document);
+        // Convert alineas to subparagraphs
+        convertAlineasToSubparagraphs(document);
+        long convertAlineasToSubparagraphsTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
-        LOG.trace("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, mref udpated at {}ms, Total time elapsed {}ms",
-                injectIdTime, authNoteTime, mrefUpdateTime, (System.currentTimeMillis() - startTime));
+        // Move subparagraphs as intro and conclusion
+        moveSubparagraphsInList(document);
+        long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        LOG.trace("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, mref udpated at {}ms, convert alineas to subparagraphs " +
+                        "at {}ms, move subparagraphs as intro and conclusion at {}ms, Total time " +
+                        "elapsed {}ms",
+                injectIdTime, authNoteTime, mrefUpdateTime, convertAlineasToSubparagraphsTime, moveSubparagraphsInListTime,
+                (System.currentTimeMillis() - startTime));
         return document;
     }
 
@@ -788,6 +797,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
         }
+    }
+
+    private void addTransformationAttr(Node node) {
+        XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
+        XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
+        String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
+        if (origin == null) {
+            XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, EC);
+        }
+        XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.TRANSFORM.getSoftAction());
     }
 
     private void createTransformationNode(Node node, Node subElement) {
@@ -823,6 +842,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
         }
         return originAttr;
+    }
+
+    private void convertAlineasToSubparagraphs(Document document) {
+        int nbAlineas = XercesUtils.getElementCountByXpath(document, "//akn:" + SUBPOINT, true);
+        for (int i = 0; i < nbAlineas; i++) {
+            Node alinea = XercesUtils.getFirstElementByName(document, SUBPOINT);
+            addTransformationAttr(alinea);
+            XercesUtils.renameNode(document, alinea, SUBPARAGRAPH);
+        }
     }
 
     private void moveSubparagraphsInList(Node node) {
