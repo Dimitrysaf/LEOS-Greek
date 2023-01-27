@@ -365,7 +365,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     private Node convertToSubParagraph(List<TocItem> tocItems, Node node, TableOfContentItemVO tocVo, User user) {
         Node subParNode = convertToElement(tocItems, node, SUBPARAGRAPH);
-        updateSoftInfo(subParNode, SoftActionType.ADD, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null);
+        updateSoftInfo(subParNode, SoftActionType.ADD, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null, getOriginOfDocument(subParNode));
         return subParNode;
     }
 
@@ -493,7 +493,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     private Node convertToSubPoint(List<TocItem> tocItems, Node node, TableOfContentItemVO tocVo, User user) {
         Node subPointNode = convertToElement(tocItems, node, SUBPARAGRAPH);
-        updateSoftInfo(subPointNode, SoftActionType.ADD, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null);
+        updateSoftInfo(subPointNode, SoftActionType.ADD, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null, getOriginOfDocument(subPointNode));
         XercesUtils.insertOrUpdateAttributeValue(subPointNode, LEOS_ORIGIN_ATTR, CN);
         return subPointNode;
     }
@@ -501,7 +501,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     private Node wrapWithList(Node node, TableOfContentItemVO tocVo, User user) {
         Node listNode = createElement(node.getOwnerDocument(), LIST, IdGenerator.generateId(LIST.substring(0, 3), 7), EMPTY_STRING);
         SoftActionType softActionType = isParentListSoftMoved(tocVo) ? tocVo.getSoftActionAttr() : SoftActionType.ADD;
-        updateSoftInfo(listNode, softActionType, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null);
+        updateSoftInfo(listNode, softActionType, Boolean.TRUE, user, CN, null, tocVo.getTocItem().getAknTag().value(), null, getOriginOfDocument(listNode));
         XercesUtils.insertOrUpdateAttributeValue(listNode, LEOS_ORIGIN_ATTR, CN);
         appendChildIfNotNull(node, listNode);
         return listNode;
@@ -537,7 +537,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     private Node wrapWithPoint(List<NumberingConfig> numberingConfigs, Node node, TableOfContentItemVO tocVo, User user) {
         Node pointNode = createElement(node.getOwnerDocument(), isIndent(numberingConfigs, tocVo) ? INDENT : POINT, tocVo.getId(), EMPTY_STRING);
-        updateSoftInfo(pointNode, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo), tocVo.getTocItem().getAknTag().value(), null);
+        updateSoftInfo(pointNode, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo), tocVo.getTocItem().getAknTag().value(), null, getOriginOfDocument(pointNode));
         XercesUtils.insertOrUpdateAttributeValue(pointNode, LEOS_AFFECTED_ATTR, tocVo.isAffected() ? Boolean.TRUE.toString() : null);
         XercesUtils.insertOrUpdateAttributeValue(pointNode, LEOS_ORIGIN_ATTR, tocVo.getOriginAttr());
         appendChildrenIfNotNull(XercesUtils.getChildren(node), pointNode);
@@ -734,7 +734,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
 
         updateSoftInfo(node, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo),
-                tocVo.getTocItem().getAknTag().value(), tocVo);
+                tocVo.getTocItem().getAknTag().value(), tocVo, getOriginOfDocument(node));
 
         /*
          * As the method updateSoftInfo removes all "deleted_" from the ids for undeleted nodes,

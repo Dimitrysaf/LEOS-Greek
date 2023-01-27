@@ -801,13 +801,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     protected String modifySubElement(Node node, String parentOrigin) {
 
-        String originOfDocument = "";
-        if (node instanceof Document) {
-            originOfDocument = getOriginOfDocument((Document) node);
-        } else if (node instanceof Node) {
-            originOfDocument = getOriginOfDocument(node.getOwnerDocument());
-        }
-
+        String originOfDocument = getOriginOfDocument(node);
         String originAttr = getAttributeValue(node, LEOS_ORIGIN_ATTR);
         if (originAttr == null) {
             originAttr = parentOrigin;
@@ -2012,12 +2006,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public String getOriginOfDocument(Document document) {
+    public String getOriginOfDocument(Node node) {
         String origin = "";
-        NodeList nodes = document.getElementsByTagName(DOC);
-        if(nodes != null && nodes.getLength() > 0) {
-            Node child = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
-            origin = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
+        Document document = null;
+        if (node instanceof Document) {
+            document = (Document) node;
+        } else if (node instanceof Node) {
+            document = node.getOwnerDocument();
+        }
+        if (document != null) {
+            NodeList nodes = document.getElementsByTagName(DOC);
+            if (nodes != null && nodes.getLength() > 0) {
+                Node child = XercesUtils.getFirstChild(nodes.item(0), MAIN_BODY);
+                origin = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
+            }
         }
         return origin;
     }
