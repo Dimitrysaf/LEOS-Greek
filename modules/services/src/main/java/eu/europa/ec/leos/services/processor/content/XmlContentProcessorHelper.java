@@ -31,6 +31,7 @@ import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -463,7 +464,7 @@ public class XmlContentProcessorHelper {
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
             headingNode = extractOrBuildHeaderElement(node, EMPTY_STRING);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
-            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
+            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null, null);
         }
         return headingNode;
     }
@@ -541,7 +542,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static void updateSoftInfo(Node node, SoftActionType action, Boolean isSoftActionRoot, User user, String originAttrValue,
-                                      String moveId, String tagName, TableOfContentItemVO tocVo) {
+                                      String moveId, String tagName, TableOfContentItemVO tocVo, String originOfDocument) {
         if (originAttrValue == null) {
             return;
         }
@@ -577,7 +578,9 @@ public class XmlContentProcessorHelper {
                     removeAttribute(node, LEOS_SOFT_MOVE_FROM);
                     removeAttribute(node, LEOS_SOFT_MOVE_TO);
             }
-            addAttribute(node, LEOS_SOFT_ACTION_ATTR, action.getSoftAction());
+            if (!CN.equals(originOfDocument)) {
+                addAttribute(node, LEOS_SOFT_ACTION_ATTR, action.getSoftAction());
+            }
         } else {
             removeAttribute(node, LEOS_SOFT_ACTION_ATTR);
             removeAttribute(node, LEOS_SOFT_USER_ATTR);
@@ -589,10 +592,14 @@ public class XmlContentProcessorHelper {
             removeAttribute(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         }
 
-        updateUserDetails(node, tocVo, action, user);
+        if (!CN.equals(originOfDocument)) {
 
-        if (isSoftActionRoot != null) {
-            insertOrUpdateAttributeValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, isSoftActionRoot.toString());
+            updateUserDetails(node, tocVo, action, user);
+
+            if (isSoftActionRoot != null) {
+                insertOrUpdateAttributeValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, isSoftActionRoot.toString());
+            }
+
         }
     }
 

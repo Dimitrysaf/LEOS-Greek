@@ -39,7 +39,9 @@ import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
+import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
@@ -161,6 +163,7 @@ import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -180,6 +183,7 @@ import eu.europa.ec.leos.web.event.view.document.ReferenceLabelRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.ReferenceLabelResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshContributionEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
+import eu.europa.ec.leos.web.event.view.document.RenumberingEvent;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.ResponseFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
@@ -677,6 +681,31 @@ class AnnexPresenter extends AbstractLeosPresenter {
             LOG.error("Unexpected error occurred while using ToolBoxExportService", e);
             eventBus.post(new NotificationEvent(Type.ERROR, "export.legiswrite.error.message", e.getMessage()));
         }
+    }
+
+    @Subscribe
+    void confirmRenumberDocument(ConfirmRenumberingEvent event) {
+        annexScreen.confirmRenumberDocument();
+    }
+
+    @Subscribe
+    void renumberDocument(RenumberingEvent event) {
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final Annex annex = getDocument();
+
+        AnnexStructureType structureType = getStructureType();
+        final byte[] newXmlContent = annexProcessor.renumberDocument(annex, structureType);
+
+        final String title = messageHelper.getMessage("operation.element.document_renumbered");
+        final String description = messageHelper.getMessage("operation.checkin.minor");
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.DOCUMENT_RENUMBERED));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+
+        updateAnnexContent(annex, newXmlContent, checkinCommentJson, "document.renumbered");
+        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
+        LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+
     }
 
     private void createDocuWritePackageForExport(ExportOptions exportOptions) throws Exception {

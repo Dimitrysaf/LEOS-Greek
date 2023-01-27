@@ -311,6 +311,6 @@ public interface XmlContentProcessor {
     
     boolean isRevisionAnnex(byte[] contentBytes);
 
-    public String getOriginOfDocument(Document document);
+    public String getOriginOfDocument(Node node);
 
 }
