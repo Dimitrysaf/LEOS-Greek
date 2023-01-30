@@ -45,7 +45,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
-    private tranlsate: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -174,10 +173,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
 
   showCreateHideNext() {
     return this.currentStepIndex === 2;
-  }
-
-  getProposalTitle() {
-    return this.tranlsate.instant('page.workspace.create-title');
   }
 
   private getDataForCreate(): CreateProposalBody {

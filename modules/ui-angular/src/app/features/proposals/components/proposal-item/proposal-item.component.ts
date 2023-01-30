@@ -11,7 +11,7 @@ export class ProposalItemComponent implements OnInit {
   @Input() proposal: Document;
   @Input() status: string;
 
-  constructor(private tranlsateService: TranslateService) {}
+  constructor(private translateService: TranslateService) {}
 
   ngOnInit() {
     console.log('[ProposalItemComponent] proposal => ', this.proposal);
@@ -19,10 +19,10 @@ export class ProposalItemComponent implements OnInit {
 
   getStatus(status: string) {
     return status === 'ready'
-      ? this.tranlsateService.instant(
+      ? this.translateService.instant(
           'page.workspace.proposal-item.ready-status',
         )
-      : this.tranlsateService.instant(
+      : this.translateService.instant(
           'page.workspace.proposal-item.sent-status',
         );
   }
