@@ -799,16 +799,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private void addTransformationAttr(Node node) {
-        XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
-        XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
-        String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
-        if (origin == null) {
-            XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, EC);
-        }
-        XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.TRANSFORM.getSoftAction());
-    }
-
     private void createTransformationNode(Node node, Node subElement) {
         final String elementId = XercesUtils.getId(node);
         XercesUtils.addAttribute(subElement, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
@@ -838,11 +828,35 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return originAttr;
     }
 
+    public byte[] convertAlineasInDocumentContent(byte[] xmlContent) {
+        long startTime = System.currentTimeMillis();
+        Document document = createXercesDocument(xmlContent);
+
+        // Convert alineas to subparagraphs
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        convertAlineasToSubparagraphs(document);
+        long convertAlineaToSubparagraphsTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        // Move subparagraphs as intros
+        moveSubparagraphsInList(document);
+        long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+
+        LOG.trace("Finished conversion: Convert Alineas to Subparagraphs at {}ms, Move Subparagraphs as Intros at {}ms, Total time " +
+                        "elapsed {}ms",
+                convertAlineaToSubparagraphsTime, moveSubparagraphsInListTime, (System.currentTimeMillis() - startTime));
+        return nodeToByteArray(document);
+    }
+
+    public boolean containsAlineas(Node node) {
+        NodeList nodeList = XercesUtils.getElementsByName(node, SUBPOINT);
+        return nodeList.getLength() > 0;
+    }
+
     private void convertAlineasToSubparagraphs(Document document) {
         int nbAlineas = XercesUtils.getElementCountByXpath(document, "//akn:" + SUBPOINT, true);
         for (int i = 0; i < nbAlineas; i++) {
             Node alinea = XercesUtils.getFirstElementByName(document, SUBPOINT);
-            addTransformationAttr(alinea);
             XercesUtils.renameNode(document, alinea, SUBPARAGRAPH);
         }
     }

@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
@@ -26,11 +27,13 @@ import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.util.VersionComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,9 @@ import java.util.List;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
+import static eu.europa.ec.leos.services.support.XPathCatalog.AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS;
+import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 
 @Service
 public abstract class DocumentContentServiceImpl implements DocumentContentService {
@@ -58,14 +64,15 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     protected FinancialStatementService financialStatementService;
     protected ProposalService proposalService;
     protected XmlContentProcessor xmlContentProcessor;
+    protected XmlNodeProcessor xmlNodeProcessor;
     protected final XPathCatalog xPathCatalog;
 
     @Autowired
     public DocumentContentServiceImpl(TransformationService transformationService,
                                       ContentComparatorService compareService, AnnexService annexService,
                                       BillService billService, MemorandumService memorandumService, ExplanatoryService explanatoryService,
-                                      ProposalService proposalService, XmlContentProcessor xmlContentProcessor, XPathCatalog xPathCatalog,
-                                      FinancialStatementService financialStatementService) {
+                                      FinancialStatementService financialStatementService, ProposalService proposalService,
+                                      XmlContentProcessor xmlContentProcessor, XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
         this.transformationService = transformationService;
         this.compareService = compareService;
         this.annexService = annexService;
@@ -74,6 +81,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         this.explanatoryService = explanatoryService;
         this.proposalService = proposalService;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.xmlNodeProcessor = xmlNodeProcessor;
         this.xPathCatalog = xPathCatalog;
         this.financialStatementService = financialStatementService;
     }
@@ -267,6 +275,48 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return coverPageContent.getBytes(StandardCharsets.UTF_8);
     }
 
+    private String getAkn4euVersion(byte[] xmlContent) {
+        String akn4euVersionContent = "";
+        String akn4euVersionXPath = xPathCatalog.getXPathAkn4euVersion();
+        boolean akn4euVersionPresent = xmlContentProcessor.evalXPath(xmlContent, akn4euVersionXPath, true);
+        if (akn4euVersionPresent) {
+            akn4euVersionContent = xmlContentProcessor.getElementValue(xmlContent, akn4euVersionXPath, true);
+        }
+        return akn4euVersionContent;
+    }
+
+    public byte[] setAkn4euVersion(byte[] xmlContent, String akn4euVersion) {
+        String akn4euVersionXPath = xPathCatalog.getXPathAkn4euVersion();
+        String akn4euAttributeXPath = xPathCatalog.getXPathAkn4euAttribute();
+        xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, akn4euAttributeXPath, NAMESPACE_AKN4EU_URI);
+        xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, akn4euVersionXPath, akn4euVersion);
+        return xmlContent;
+    }
+
+    @Override
+    public void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment) {
+        for (XmlDocument doc: documents) {
+            byte[] xmlContent = getDocumentContent(doc);
+            xmlContent = setAkn4euVersion(xmlContent, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS);
+            xmlContent = xmlContentProcessor.convertAlineasInDocumentContent(xmlContent);
+            updateDocumentContent(doc, xmlContent, versionComment);
+        }
+    }
+
+    @Override
+    public boolean isDeprecatedDocument(XmlDocument xmlDocument) {
+        // Should be temporary as for performance reason, getting content for each document while opening proposal screen is not good
+        byte[] xmlContent = getDocumentContent(xmlDocument);
+        Document document = createXercesDocument(xmlContent);
+        if (!xmlContentProcessor.containsAlineas(document)) {
+            String akn4euVersion = getAkn4euVersion(xmlContent);
+            VersionComparator comparator = new VersionComparator();
+            return comparator.compare(akn4euVersion, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS) >= 0;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public boolean isCoverPageExists(byte[] xmlContent) {
         String coverPageXPath = xPathCatalog.getXPathCoverPage();
@@ -308,6 +358,63 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 throw new UnsupportedOperationException("Category not supported");
         }
         return contentBytes;
+    }
+
+    private byte[] getDocumentContent(XmlDocument xmlDocument) {
+        byte[] contentBytes;
+        if (xmlDocument.getContent().isEmpty()) {
+            switch (xmlDocument.getCategory()) {
+                case MEMORANDUM:
+                    contentBytes =
+                            getContent(memorandumService.findMemorandumByRef(xmlDocument.getMetadata().get().getRef()));
+                    break;
+                case COUNCIL_EXPLANATORY:
+                    contentBytes = getContent(explanatoryService.findExplanatoryByRef(xmlDocument.getMetadata().get().getRef()));
+                    break;
+                case ANNEX:
+                    contentBytes = getContent(annexService.findAnnexByRef(xmlDocument.getMetadata().get().getRef()));
+                    break;
+                case BILL:
+                    contentBytes = getContent(billService.findBillByRef(xmlDocument.getMetadata().get().getRef()));
+                    break;
+                case STAT_FINANC_LEGIS:
+                    contentBytes = getContent(financialStatementService.findFinancialStatementByRef(xmlDocument.getMetadata().get().getRef()));
+                    break;
+                case PROPOSAL:
+                    contentBytes = getContent(proposalService.findProposalByRef(xmlDocument.getMetadata().get().getRef()));
+                    break;
+                default:
+                    throw new UnsupportedOperationException("No transformation supported for this category");
+            }
+        } else {
+            contentBytes = getContent(xmlDocument);
+        }
+        return contentBytes;
+    }
+
+    private void updateDocumentContent(XmlDocument xmlDocument, byte[] xmlContent, String versionComment) {
+        switch (xmlDocument.getCategory()) {
+            case MEMORANDUM:
+                memorandumService.updateMemorandum((Memorandum) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
+                break;
+            case COUNCIL_EXPLANATORY:
+                explanatoryService.updateExplanatory((Explanatory) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
+                break;
+            case ANNEX:
+                annexService.updateAnnex((Annex) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
+                break;
+            case BILL:
+                billService.updateBill((Bill) xmlDocument, xmlContent, versionComment);
+                break;
+            case STAT_FINANC_LEGIS:
+                financialStatementService.updateFinancialStatement((FinancialStatement) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
+                break;
+            case PROPOSAL:
+                proposalService.updateProposal((Proposal) xmlDocument, xmlContent, VersionType.MINOR, versionComment);
+                break;
+            default:
+                throw new UnsupportedOperationException("No transformation supported for this category");
+        }
     }
 
     private byte[] getContent(XmlDocument xmlDocument) {

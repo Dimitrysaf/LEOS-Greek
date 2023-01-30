@@ -22,12 +22,10 @@ import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.xerces.dom.DeferredElementImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.MethodOverrides;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -35,7 +33,6 @@ import org.w3c.dom.Node;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.findElementInOtherContext;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.getAllowedTags;
@@ -377,12 +374,13 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                 } else if (containsSoftMoveToElement(context.getNewContentElements(), context.getOldElement())) {
                     //append the soft movedTo element content
                     appendMovedToElementWithoutContent(context);
-                } else if (!isSoftAction(context.getNewElement().getNode(), SoftActionType.TRANSFORM)
+                } else if ((!isConvertedAlineaToIntro(context.getOldElement(), context.getNewElement()))
+                        && (!isSoftAction(context.getNewElement().getNode(), SoftActionType.TRANSFORM)
                         && !isSoftAction(context.getOldElement().getNode(), SoftActionType.TRANSFORM)
                         && (!isRemovedSubparagraphFromIndentedElement(context.getOldElement(), context.getNewElement()))
                         && !context.getNewContentElements().containsKey(context.getOldElement().getTagId())
                         && !emptyListInOldContext(context)
-                        && !(isRemovedNumInUnumbered(context))) {
+                        && !(isRemovedNumInUnumbered(context)))) {
                     //Element is added/present in old content but deleted from new content, so just display the deleted content
                     String attrValue = getStartTagValueForRemovedElementFromAncestor(context.getOldElement(), context);
                     Node node = getChangedElementContent(context.getOldContentNode(), context.getOldElement(), context.getAttrName(), attrValue);

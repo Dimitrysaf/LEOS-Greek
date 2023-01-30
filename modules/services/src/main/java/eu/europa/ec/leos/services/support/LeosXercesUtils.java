@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import org.w3c.dom.NodeList;
 
 import java.util.List;
 
@@ -115,7 +116,11 @@ public class LeosXercesUtils {
         Element landscapeDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
         Element portraitDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
 
-        Node mainBody = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(MAIN_BODY)).item(0);
+        NodeList bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(MAIN_BODY));
+        if (bodyNodes.getLength() == 0) {
+            return XercesUtils.nodeToByteArray(document);
+        }
+        Node mainBody = bodyNodes.item(0);
         List<Node> children = XercesUtils.getChildren(mainBody);
         String prevElement = null;
         mainBody.setTextContent("");

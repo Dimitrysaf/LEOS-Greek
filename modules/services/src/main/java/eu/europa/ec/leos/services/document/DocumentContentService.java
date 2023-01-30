@@ -78,6 +78,10 @@ public interface DocumentContentService {
 
     byte[] getCoverPageContent(byte[] xmlContent);
 
+    boolean isDeprecatedDocument(XmlDocument document);
+
+    void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment);
+
     /**
      * This method is used for backward compatibility of old documents containing cover page to remove it.
      * @param xmlContent

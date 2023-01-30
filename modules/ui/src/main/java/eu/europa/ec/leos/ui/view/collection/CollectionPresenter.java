@@ -84,10 +84,12 @@ import eu.europa.ec.leos.ui.event.RevisionDoneEvent;
 import eu.europa.ec.leos.ui.event.UpdateCommentsExportPackageEvent;
 import eu.europa.ec.leos.ui.event.contribution.ViewContributionEvent;
 import eu.europa.ec.leos.ui.event.revision.OpenAndViewContibutionEvent;
+import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
 import eu.europa.ec.leos.ui.event.view.collection.*;
 import eu.europa.ec.leos.ui.model.ExportPackageVO;
 import eu.europa.ec.leos.ui.model.MilestonesVO;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
+import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
 import eu.europa.ec.leos.ui.view.ComparisonDelegate;
 import eu.europa.ec.leos.ui.window.milestone.MilestoneExplorer;
@@ -101,6 +103,7 @@ import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.annex.OpenAnnexEvent;
 import eu.europa.ec.leos.web.event.view.document.CollaboratorsUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.CollaboratorsUpdatedEvent.Operation;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionProposal;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.OpenCoverPageEvent;
 import eu.europa.ec.leos.web.event.view.document.OpenLegalTextEvent;
@@ -113,6 +116,7 @@ import eu.europa.ec.leos.web.event.window.SaveMetaDataRequestEvent;
 import eu.europa.ec.leos.web.model.UserVO;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UuidHelper;
+import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.log.LogUtil;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
@@ -202,6 +206,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
     private final CloneContext cloneContext;
     private UserAuthentication userAuthentication;
     private final DocumentContentService documentContentService;
+    private final ConfigurationHelper cfgHelper;
     private final ComparisonDelegate comparisonDelegate;
     private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
@@ -228,7 +233,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         UpdateInternalReferencesProducer updateInternalReferencesProducer, CreateCollectionService createCollectionService, CollaboratorService collaboratorService, UserService userService,
                         ExportPackageService exportPackageService, ArchiveService archiveService, CloneContext cloneContext, UserAuthentication userAuthentication,
                         DocumentContentService documentContentService, ComparisonDelegate comparisonDelegate,
-                        ProposalConverterService proposalConverterService, XmlContentProcessor xmlContentProcessor) {
+                        ProposalConverterService proposalConverterService, XmlContentProcessor xmlContentProcessor, ConfigurationHelper cfgHelper) {
 
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
 
@@ -263,6 +268,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         this.comparisonDelegate = comparisonDelegate;
         this.proposalConverterService = proposalConverterService;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.cfgHelper = cfgHelper;
     }
 
     @Override
@@ -332,9 +338,11 @@ class CollectionPresenter extends AbstractLeosPresenter {
     }
 
     private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent) {
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
         DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
         List<DocumentVO> annexVOList = new ArrayList<>();
         docVersionSeriesIds = new HashSet<>();
+        boolean isValid = true;
         //We have the latest version of the document, no need to search for them again
         for (XmlDocument document : documents) {
             switch (document.getCategory()) {
@@ -351,6 +359,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO));
                     }
+                    if (akn4euConversionDocumentsEnabled) {
+                        isValid = documentContentService.isDeprecatedDocument(proposal) ? isValid : false;
+                    }
                     break;
                 }
                 case COUNCIL_EXPLANATORY: {
@@ -362,6 +373,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     explanatoryVO.setTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getTemplate());
                     proposalVO.addChildDocument(explanatoryVO);
                     docVersionSeriesIds.add(explanatory.getVersionSeriesId());
+                    if (akn4euConversionDocumentsEnabled) {
+                        isValid = documentContentService.isDeprecatedDocument(explanatory) ? isValid : false;
+                    }
                     break;
                 }
                 case MEMORANDUM: {
@@ -372,6 +386,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     memorandumVO.getMetadata().setInternalRef(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is not available!").getRef());
                     memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
                     docVersionSeriesIds.add(memorandum.getVersionSeriesId());
+                    if (akn4euConversionDocumentsEnabled) {
+                        isValid = documentContentService.isDeprecatedDocument(memorandum) ? isValid : false;
+                    }
                     break;
                 }
                 case BILL: {
@@ -382,6 +399,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     billVO.getMetadata().setInternalRef(bill.getMetadata().getOrError(() -> "Legal text metadata is not available!").getRef());
                     billVO.setVersionSeriesId(bill.getVersionSeriesId());
                     docVersionSeriesIds.add(bill.getVersionSeriesId());
+                    if (akn4euConversionDocumentsEnabled) {
+                        isValid = documentContentService.isDeprecatedDocument(bill) ? isValid : false;
+                    }
                     break;
                 }
                 case ANNEX: {
@@ -392,6 +412,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     annexVOList.add(annexVO);
                     annexVO.setVersionSeriesId(annex.getVersionSeriesId());
                     docVersionSeriesIds.add(annex.getVersionSeriesId());
+                    if (akn4euConversionDocumentsEnabled) {
+                        isValid = documentContentService.isDeprecatedDocument(annex) ? isValid : false;
+                    }
                     break;
                 }
                 case STAT_FINANC_LEGIS: {
@@ -402,6 +425,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     financialStatementVO.getMetadata().setInternalRef(financialStatement.getMetadata().getOrError(() -> "financialStatement metadata is not available!").getRef());
                     financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
                     docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
+                    isValid = documentContentService.isDeprecatedDocument(financialStatement) ? isValid : false;
                     break;
                 }
                 default:
@@ -410,6 +434,10 @@ class CollectionPresenter extends AbstractLeosPresenter {
             }
         }
 
+        if (!isValid) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionProposal(documents), null),
+                    this.eventBus, this.messageHelper);
+        }
         annexVOList.sort(Comparator.comparingInt(DocumentVO::getDocNumber));
         DocumentVO legalText = proposalVO.getChildDocument(LeosCategory.BILL);
         if (legalText != null) {
@@ -1503,6 +1531,15 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
     private LegDocument getLegDocument(String legFileName, LeosPackage leosPackage) {
         return packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+    }
+
+    @Subscribe
+    public void convertProposal(ConvertAkn4euVersionProposal convertAkn4euVersionProposal) {
+        documentContentService.akn4euVersionDocumentConversion(convertAkn4euVersionProposal.getDocuments(), messageHelper.getMessage("operation.akn4eu.version.conversion"));
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
     }
 
     @Subscribe

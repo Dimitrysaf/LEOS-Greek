@@ -307,10 +307,13 @@ public interface XmlContentProcessor {
 
     byte[] updateInitialNumberForArticles(byte[] xmlContent);
     
-    public byte[] insertSoftAddedClassAttribute(byte[] contentBytes);
+    byte[] insertSoftAddedClassAttribute(byte[] contentBytes);
     
     boolean isRevisionAnnex(byte[] contentBytes);
 
-    public String getOriginOfDocument(Node node);
+    String getOriginOfDocument(Node node);
 
+    boolean containsAlineas(Node node);
+
+    byte[] convertAlineasInDocumentContent(byte[] xmlContent);
 }

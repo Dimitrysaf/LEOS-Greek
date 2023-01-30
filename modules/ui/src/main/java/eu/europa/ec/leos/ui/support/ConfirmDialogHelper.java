@@ -26,4 +26,17 @@ public class ConfirmDialogHelper {
                 }
         );
     }
+
+    public static void showConvertEditorDialog( final UI ui, final ShowConfirmDialogEvent event, final EventBus eventBus, final MessageHelper messageHelper) {
+        LeosConfirmDialog dialog = new LeosConfirmDialog(messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                messageHelper.getMessage("document.akn4eu.version.convert.confirm"), null, null);
+        dialog.show(ui, new ConfirmDialog.Listener() {
+            private static final long serialVersionUID = -2086246080635984781L;
+
+            public void onClose(ConfirmDialog dialog) {
+                eventBus.post(event.getPostConfirmEvent());
+            }
+        }, true);
+    }
 }
