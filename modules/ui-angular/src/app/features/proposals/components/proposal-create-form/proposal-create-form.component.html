@@ -1,9 +1,11 @@
 <form [formGroup]="createForm">
-  <p>Enter document metadata</p>
+  <p>{{ 'page.workspace.create-form.title' | translate }}</p>
 
   <div euiInputGroup class="row eui-u-mt-m">
     <div class="col-md-3">
-      <label euiLabel for="templateName">Document Template</label>
+      <label euiLabel for="templateName">{{
+        'page.workspace.create-form.document-template' | translate
+      }}</label>
     </div>
     <div class="col-md-9 eui-inline-edit">
       <textarea
@@ -16,7 +18,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel euiRequired for="docPurpose">Document Title</label>
+      <label euiLabel euiRequired for="docPurpose">{{
+        'page.workspace.create-form.document-title' | translate
+      }}</label>
     </div>
     <div class="col-md-9">
       <input id="docPurpose" euiInputText formControlName="docPurpose" />
@@ -24,7 +28,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel for="documentLanguage">Document Language</label>
+      <label euiLabel for="documentLanguage">{{
+        'page.workspace.create-form.document-language' | translate
+      }}</label>
     </div>
     <div class="col-md-9">
       <input
@@ -37,7 +43,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel for="confidentialityLevel">Confidentiality Level</label>
+      <label euiLabel for="confidentialityLevel">{{
+        'page.workspace.create-form.confidentiality-level' | translate
+      }}</label>
     </div>
     <div class="col-md-9">
       <input
@@ -50,7 +58,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel for="internalReference">Internal Reference</label>
+      <label euiLabel for="internalReference">{{
+        'page.workspace.create-form.internal-ref' | translate
+      }}</label>
     </div>
     <div class="col-md-9">
       <input
@@ -62,9 +72,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel for="interInstitutionalReference"
-        >Inter-institutional Reference</label
-      >
+      <label euiLabel for="interInstitutionalReference">{{
+        'page.workspace.create-form.inter-ref' | translate
+      }}</label>
     </div>
     <div class="col-md-9">
       <input
@@ -76,7 +86,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel for="packageTitle">Package Title</label>
+      <label euiLabel for="packageTitle">{{
+        'page.workspace.create-form.package-title' | translate
+      }}</label>
     </div>
     <div class="col-md-1">
       <input
@@ -92,7 +104,9 @@
   </div>
   <div euiInputGroup class="row">
     <div class="col-md-3">
-      <label euiLabel for="eeaRelevance">EEA Relevance</label>
+      <label euiLabel for="eeaRelevance">{{
+        'page.workspace.create-form.eea-relevance' | translate
+      }}</label>
     </div>
     <div class="col-md-1">
       <input

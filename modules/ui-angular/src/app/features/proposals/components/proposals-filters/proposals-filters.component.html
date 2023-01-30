@@ -5,7 +5,9 @@
     <div
       class="filters-title eui-u-pb-2xs eui-u-flex eui-u-flex-align-items-center eui-u-flex-justify-content-between eui-u-shadow-z-depth-0"
     >
-      <h4 class="eui-u-font-xl eui-u-font-bold">Filters</h4>
+      <h4 class="eui-u-font-xl eui-u-font-bold">
+        {{ 'page.workspace.filter.filters' | translate }}
+      </h4>
       <div class="filters-title--actions">
         <button
           euiButton
@@ -13,7 +15,9 @@
           class="eui-u-font-s eui-u-ph-none"
           (click)="resetFilters()"
         >
-          <span class="eui-u-color-primary-100">Reset</span>
+          <span class="eui-u-color-primary-100">
+            {{ 'page.workspace.filter.reset' | translate }}
+          </span>
           <span
             class="eui-icon eui-icon-angle-left eui-u-font-size-s eui-u-pl-xl eui-u-color-grey-100"
           ></span>
@@ -29,8 +33,9 @@
           euiLabel
           for="with_action-button_disabled"
           class="eui-u-mt-s eui-u-mb-xs eui-u-font-l eui-u-font-bold"
-          >Search by title</label
         >
+          {{ 'page.workspace.filter.search' | translate }}
+        </label>
         <div class="eui-input-group-addon eui-u-pr-3xl">
           <input
             euiInputText

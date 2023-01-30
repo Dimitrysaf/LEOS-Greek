@@ -1,10 +1,10 @@
 <button euiButton euiPrimary (click)="openCreateWizard()">
-  Create Proposal
+  {{ 'page.workspace.create-button' | translate }}
 </button>
 
 <eui-dialog
   #createWizardDialog
-  [title]="'Create new legislative document'"
+  [title]="getProposalTitle()"
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
   (close)="onClose()"
@@ -36,7 +36,9 @@
   </ux-wizard-steps>
   <eui-dialog-footer>
     <div class="dialog-footer-content">
-      <button euiButton (click)="closeDialog()">Cancel</button>
+      <button euiButton (click)="closeDialog()">
+        {{ 'page.workspace.create-form.cancel' | translate }}
+      </button>
       <button
         euiButton
         type="button"
@@ -44,7 +46,9 @@
         (click)="onNavigation(-1)"
       >
         <span class="eui-icon eui-icon-chevron-left"></span>
-        <span euiLabel>Previous</span>
+        <span euiLabel>
+          {{ 'page.workspace.create-form.previous' | translate }}
+        </span>
       </button>
       <button
         euiButton
@@ -53,7 +57,9 @@
         (click)="onNavigation(+1)"
         [hidden]="showCreateHideNext()"
       >
-        <span euiLabel>Next</span>
+        <span euiLabel>
+          {{ 'page.workspace.create-form.next' | translate }}
+        </span>
         <span class="eui-icon eui-icon-chevron-right"></span>
       </button>
       <button
@@ -63,7 +69,7 @@
         euiPrimary
         (click)="onCreate()"
       >
-        Create
+        {{ 'page.workspace.create-form.create' | translate }}
       </button>
     </div>
   </eui-dialog-footer>

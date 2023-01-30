@@ -12,14 +12,10 @@
       <div
         class="upload-create-buttons eui-u-flex eui-u-flex-justify-content-end eui-u-flex-align-items-center"
       >
-        <button
-          class="eui-u-mr-s upload-btn"
-          euiButton
-          [euiTooltip]="'page.workspace.upload.button.tooltip' | translate"
-        >
-          {{ 'page.workspace.upload.button.text' | translate }}
-        </button>
-        <app-proposal-create-wizard></app-proposal-create-wizard>
+        <div class="d-flex flex-row justify-content-between" style="gap: 1rem">
+          <app-proposal-upload-wizard></app-proposal-upload-wizard>
+          <app-proposal-create-wizard></app-proposal-create-wizard>
+        </div>
       </div>
       <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
         <div
@@ -29,11 +25,16 @@
             <h4 class="eui-u-font-bold">
               {{ 'page.workspace.results.title' | translate }}
             </h4>
-            <div>{{ totalResults$ | async }} proposals found</div>
+            <div>
+              {{ totalResults$ | async }}
+              {{ 'page.workspace.results.proposals-found' | translate }}
+            </div>
           </div>
           <div class="sort-btn">
             <button euiButton (click)="toggleSortOrder()">
-              <span euiLabel>Sort by</span>
+              <span euiLabel>{{
+                'page.workspace.results.sort' | translate
+              }}</span>
               <span
                 euiIcon
                 iconClass="eui-icon"

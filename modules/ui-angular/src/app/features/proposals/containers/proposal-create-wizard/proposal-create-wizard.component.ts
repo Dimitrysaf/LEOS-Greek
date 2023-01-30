@@ -8,6 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import { createPromise } from '@/shared/utils';
@@ -44,6 +45,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
+    private tranlsate: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -172,6 +174,10 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
 
   showCreateHideNext() {
     return this.currentStepIndex === 2;
+  }
+
+  getProposalTitle() {
+    return this.tranlsate.instant('page.workspace.create-title');
   }
 
   private getDataForCreate(): CreateProposalBody {
