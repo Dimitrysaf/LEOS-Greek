@@ -8,6 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import { createPromise } from '@/shared/utils';

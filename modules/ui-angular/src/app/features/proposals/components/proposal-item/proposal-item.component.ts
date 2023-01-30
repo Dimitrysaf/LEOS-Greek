@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Document } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proposal-item',
@@ -10,9 +11,19 @@ export class ProposalItemComponent implements OnInit {
   @Input() proposal: Document;
   @Input() status: string;
 
-  constructor() {}
+  constructor(private translateService: TranslateService) {}
 
   ngOnInit() {
     console.log('[ProposalItemComponent] proposal => ', this.proposal);
+  }
+
+  getStatus(status: string) {
+    return status === 'ready'
+      ? this.translateService.instant(
+          'page.workspace.proposal-item.ready-status',
+        )
+      : this.translateService.instant(
+          'page.workspace.proposal-item.sent-status',
+        );
   }
 }

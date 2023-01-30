@@ -7,8 +7,14 @@
       <a [routerLink]="['/collection', proposal.ref]">{{ proposal.title }}</a>
     </eui-card-header-title>
     <eui-card-header-subtitle>
-      Updated on {{ proposal.updatedOn | date: 'dd/MM/yyyy h:mm' }} by
-      {{ proposal.updatedBy }}
+      {{
+        'page.workspace.proposal-item.updated-by'
+          | translate
+            : {
+                updatedOn: proposal.updatedOn | date: 'dd/MM/yyyy h:mm',
+                updatedBy: proposal.updatedBy
+              }
+      }}
     </eui-card-header-subtitle>
     <eui-card-header-right-content
       class="eui-u-flex-column col-2 eui-u-flex-align-items-start"
@@ -16,10 +22,11 @@
       <div
         class="eui-u-font-m eui-u-font-bold eui-u-color-grey-75 eui-u-mb-2xs"
       >
+        <!-- TODO : // This shouldn'y be hardcoded -->
         ISC/2022/0330
       </div>
       <div class="eui-u-font-m eui-u-font-bold eui-u-color-grey-100">
-        Contribution status
+        {{ 'page.workspace.proposal-item.contribution-status' | translate }}
       </div>
       <eui-chip
         euiSizeS
@@ -28,9 +35,7 @@
         [euiSecondary]="status === 'pending'"
         class="eui-u-mr-2xs eui-u-mb-2xs"
       >
-        <span euiLabel *ngIf="status">{{
-          status === 'ready' ? 'Ready to merge' : 'Sent for contribution'
-        }}</span>
+        <span euiLabel *ngIf="status">{{ getStatus(status) }}</span>
       </eui-chip>
     </eui-card-header-right-content>
   </eui-card-header>
