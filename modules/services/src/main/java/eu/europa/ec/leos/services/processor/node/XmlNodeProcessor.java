@@ -41,6 +41,8 @@ public interface XmlNodeProcessor {
      */
     byte[] setValuesInXml(byte[] xmlContent, Map<String,String> keyValue, Map<String, XmlNodeConfig> configuration, Map<String, XmlNodeConfig> oldConfiguration);
 
+    byte[] setValuesInXml(byte[] xmlContent, String xPath, String value);
+
     /**
      * This method returns the map of values found for the key for the configuration.
      * (Key->XPATH from config-> value from XML.)

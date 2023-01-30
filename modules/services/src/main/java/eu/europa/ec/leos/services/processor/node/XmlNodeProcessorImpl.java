@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,6 +107,22 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
     @Override
     public byte[] setValuesInXml(byte[] xmlContent, Map<String, String> keyValue, Map<String, XmlNodeConfig> config) {
         return this.setValuesInXml(xmlContent, keyValue, config, null);
+    }
+
+    @Override
+    public byte[] setValuesInXml(byte[] xmlContent, String xPath, String value) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Document document = createXercesDocument(xmlContent);
+
+        Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+        if (node != null) {
+            // Update existing node
+            updateNode(node, value);
+        } else if (!value.isEmpty()) {
+            // Create the node
+            createAndUpdateNode(document, xPath, Arrays.asList(), value);
+        }
+        return XercesUtils.nodeToByteArraySimple(document);
     }
 
     private void updateNode(Node node, String value) {

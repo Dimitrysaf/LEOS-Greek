@@ -7,6 +7,9 @@ public class XPathCatalog {
 
     public static final String NAMESPACE_AKN_NAME = "akn";
     public static final String NAMESPACE_AKN_URI = "http://docs.oasis-open.org/legaldocml/ns/akn/3.0";
+    public static final String NAMESPACE_AKN4EU_NAME = "akn4eu";
+    public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
+    public static final String AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS = "4.0.0.0";
 
     public static String getXPathElement(String element) {
         return "//akn:" + element;
@@ -134,6 +137,14 @@ public class XPathCatalog {
 
     public String getXPathElementWithSoftAction() {
         return "//akn:*[@leos:softaction]";
+    }
+
+    public String getXPathAkn4euVersion() {
+        return "//akn:meta/akn:identification/akn:FRBRManifestation/akn:preservation/akn4eu:akn4euVersion/@value";
+    }
+
+    public String getXPathAkn4euAttribute() {
+        return "//akn:meta/akn:identification/akn:FRBRManifestation/akn:preservation/@xmlns:akn4eu";
     }
 
     public static String removeNamespaceFromXml(String xml) {

@@ -202,7 +202,8 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
     protected void appendRemovedElementContent(ContentComparatorContext context) {
         if (isClonedProposalOrContribution()) {
             appendSoftRemovedElementContent(context);
-        } else {
+        } else if (!isConvertedAlineaToIntro(context.getOldElement(), context.getNewElement())
+                && !isConvertedSubparagraphToIntro(context.getOldElement(), context.getNewElement())) {
             Node node = getChangedElementContent(context.getOldElement().getNode(), context.getOldElement(), context.getAttrName(), context.getRemovedValue());
             addToResultNode(context, node);
         }

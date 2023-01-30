@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.buildElement;
@@ -69,6 +70,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLD
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
@@ -1260,5 +1262,29 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             }
         }
         return null;
+    }
+
+    protected boolean isConvertedAlineaToIntro(Element oldElement, Element newElement) {
+        if (oldElement.getTagName().equals(SUBPOINT)) {
+            Optional<Element> convertedElement = newElement.getChildren().stream()
+                    .filter(e -> e.getTagName().equals(SUBPARAGRAPH))
+                    .findFirst();
+            if (convertedElement.isPresent()) {
+                return convertedElement.get().getTagId().equals(oldElement.getTagId());
+            }
+        }
+        return false;
+    }
+
+    protected boolean isConvertedSubparagraphToIntro(Element oldElement, Element newElement) {
+        if (oldElement.getTagName().equals(SUBPARAGRAPH) && newElement.getTagName().equals(LIST)) {
+            Optional<Element> convertedElement = newElement.getChildren().stream()
+                    .filter(e -> e.getTagName().equals(SUBPARAGRAPH))
+                    .findFirst();
+            if (convertedElement.isPresent()) {
+                return convertedElement.get().getTagId().equals(oldElement.getTagId());
+            }
+        }
+        return false;
     }
 }

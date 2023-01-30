@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.web.support;
+package eu.europa.ec.leos.util;
 
 import java.util.Comparator;
 import java.util.StringTokenizer;
@@ -43,11 +43,19 @@ public class VersionComparator implements Comparator<String> {
         }
 
         // a version left with extra token handled here
-        if (st1.hasMoreTokens())
-            return 1;
-        else if (st2.hasMoreTokens())
-            return -1;
-        else
+        if (st1.hasMoreTokens()) {
+            while (st1.hasMoreTokens()) {
+                Integer token1 = Integer.parseInt(st1.nextToken());
+                if (!token1.equals(0)) return 1;
+            }
+            return 0;
+        } else if (st2.hasMoreTokens()) {
+            while (st2.hasMoreTokens()) {
+                Integer token2 = Integer.parseInt(st2.nextToken());
+                if (!token2.equals(0)) return -1;
+            }
+            return 0;
+        } else
             return 0;// equal
     }
 }

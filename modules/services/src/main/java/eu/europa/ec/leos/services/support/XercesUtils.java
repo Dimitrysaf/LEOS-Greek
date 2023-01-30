@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.services.support;
 
+import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_NAME;
+import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
@@ -352,6 +354,7 @@ public class XercesUtils {
         SimpleNamespaceContext nsc = new SimpleNamespaceContext();
         nsc.bindNamespaceUri("xml", "http://www.w3.org/XML/1998/namespace");
         nsc.bindNamespaceUri("leos", "urn:eu:europa:ec:leos");
+        nsc.bindNamespaceUri(NAMESPACE_AKN4EU_NAME, NAMESPACE_AKN4EU_URI);
         nsc.bindNamespaceUri(NAMESPACE_AKN_NAME, NAMESPACE_AKN_URI); //fake to trick the parser for the default ns
         return nsc;
     }

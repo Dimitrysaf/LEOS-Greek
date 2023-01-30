@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.web.support;
 
 import eu.europa.ec.leos.test.support.LeosTest;
+import eu.europa.ec.leos.util.VersionComparator;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.greaterThan;

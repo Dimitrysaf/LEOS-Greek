@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,12 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
     @Autowired
     public DocumentContentServiceProposalImpl(TransformationService transformationService,
                                               ContentComparatorService compareService, AnnexService annexService, BillService billService,
-                                              MemorandumService memorandumService, ProposalService proposalService, XmlContentProcessor xmlContentProcessor,
-                                              CloneContext cloneContext, XPathCatalog xPathCatalog, FinancialStatementService financialStatementService) {
-        super(transformationService, compareService, annexService, billService, memorandumService, null, proposalService,
-                xmlContentProcessor, xPathCatalog, financialStatementService);
+                                              MemorandumService memorandumService, ProposalService proposalService, FinancialStatementService financialStatementService,
+                                              XmlContentProcessor xmlContentProcessor,
+                                              XmlNodeProcessor xmlNodeProcessor,
+                                              CloneContext cloneContext, XPathCatalog xPathCatalog) {
+        super(transformationService, compareService, annexService, billService, memorandumService, null, financialStatementService, proposalService,
+                xmlContentProcessor, xmlNodeProcessor, xPathCatalog);
         this.cloneContext = cloneContext;
     }
 
