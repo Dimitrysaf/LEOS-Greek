@@ -128,16 +128,13 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
 
   handleAddUsers() {
     const collaboratorRawValue = this.collaboratorsFormList.getRawValue();
-    const collaboratorsToAdd = collaboratorRawValue.map(
-      (value) =>
-        ({
-          userId: value.login,
-          roleName: value.role,
-          connectedDG: value.entity,
-        } as CollaboratorRequest),
-    );
+    const collaboratorsToAdd = collaboratorRawValue.map((value) => ({
+      userId: value.login,
+      roleName: value.role,
+      connectedDG: value.entity,
+    }));
 
-    this.detailsService.addCallaborators(collaboratorsToAdd);
+    this.detailsService.addCallaborators({ collaborators: collaboratorsToAdd });
     this.resetModal();
     this.closeDialog();
   }

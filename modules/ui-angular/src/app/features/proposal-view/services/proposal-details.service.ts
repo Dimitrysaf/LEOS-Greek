@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {
   Collaborator,
   CollaboratorRequest,
+  CollaboratorsBulkRequest,
   Document,
   User,
 } from '@leos/shared';
@@ -195,17 +196,12 @@ export class ProposalDetailsService {
       });
   }
 
-  addCallaborators(collaboratorsToAdd: CollaboratorRequest[]) {
+  addCallaborators(collaboratorsToAdd: CollaboratorsBulkRequest) {
     const proposalId = this.proposalRefBS.getValue();
     if (collaboratorsToAdd === null) {
       return;
     }
-    forkJoin(
-      collaboratorsToAdd.map((col) => this.addCollaborators(proposalId, col)),
-    ).subscribe(() => {
-      console.log('added');
-      this.getAllCollaborators(proposalId);
-    });
+    this.addCollaborators(proposalId, collaboratorsToAdd);
   }
 
   setCollaboratorsRole(collaboratorToUpdate: CollaboratorRequest) {
@@ -257,16 +253,13 @@ export class ProposalDetailsService {
 
   private addCollaborators(
     proposalId: string,
-    collaborators: CollaboratorRequest,
+    collaboratorsBulkReq: CollaboratorsBulkRequest,
   ) {
-    return this.http.post<any>(
-      `api/secured/proposal/${proposalId}/collaborators`,
-      {
-        userId: collaborators.userId,
-        roleName: collaborators.roleName,
-        connectedDG: collaborators.connectedDG,
-      },
-    );
+    return this.http
+      .post<any>(`api/secured/proposal/${proposalId}/bulkCollaborators`, {
+        collaborators: collaboratorsBulkReq.collaborators,
+      })
+      .subscribe(() => this.getAllCollaborators(this.proposalRef));
   }
 
   private updateCollaboratorRole(

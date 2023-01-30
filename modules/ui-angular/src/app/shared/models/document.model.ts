@@ -114,4 +114,8 @@ export interface CollaboratorRequest {
   connectedDG: string;
 }
 
+export interface CollaboratorsBulkRequest {
+  collaborators: CollaboratorRequest[];
+}
+
 export type SecurityLevel = 'STANDARD' | 'SENSITIVE';
