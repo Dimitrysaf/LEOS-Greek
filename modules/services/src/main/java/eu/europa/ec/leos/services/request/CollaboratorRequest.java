@@ -38,4 +38,13 @@ public class CollaboratorRequest {
     public void setConnectedDG(String connectedDG) {
         this.connectedDG = connectedDG;
     }
+
+    @Override
+    public String toString() {
+        return "CollaboratorRequest{" +
+                "userId='" + userId + '\'' +
+                ", roleName='" + roleName + '\'' +
+                ", connectedDG='" + connectedDG + '\'' +
+                '}';
+    }
 }
