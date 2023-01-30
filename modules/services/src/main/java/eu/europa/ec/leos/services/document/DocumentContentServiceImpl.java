@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.util.VersionComparator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -288,8 +289,14 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     public byte[] setAkn4euVersion(byte[] xmlContent, String akn4euVersion) {
         String akn4euVersionXPath = xPathCatalog.getXPathAkn4euVersion();
         String akn4euAttributeXPath = xPathCatalog.getXPathAkn4euAttribute();
-        xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, akn4euAttributeXPath, NAMESPACE_AKN4EU_URI);
-        xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, akn4euVersionXPath, akn4euVersion);
+        String existingAkn4euVersion = getAkn4euVersion(xmlContent);
+        VersionComparator comparator = new VersionComparator();
+        if (comparator.compare(existingAkn4euVersion, akn4euVersion) < 0) {
+            if (StringUtils.isBlank(existingAkn4euVersion)) {
+                xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, akn4euAttributeXPath, NAMESPACE_AKN4EU_URI);
+            }
+            xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, akn4euVersionXPath, akn4euVersion);
+        }
         return xmlContent;
     }
 

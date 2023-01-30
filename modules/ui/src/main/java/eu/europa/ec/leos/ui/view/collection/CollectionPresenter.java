@@ -425,7 +425,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     financialStatementVO.getMetadata().setInternalRef(financialStatement.getMetadata().getOrError(() -> "financialStatement metadata is not available!").getRef());
                     financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
                     docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
-                    isValid = documentContentService.isDeprecatedDocument(financialStatement) ? isValid : false;
+                    if (akn4euConversionDocumentsEnabled) {
+                        isValid = documentContentService.isDeprecatedDocument(financialStatement) ? isValid : false;
+                    }
                     break;
                 }
                 default:
