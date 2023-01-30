@@ -18,6 +18,10 @@
   inline[name=date] {
     display: inline;
   }
+
+  inline[name=unchecked], inline[name=checked] {
+    cursor: pointer;
+  }
 }
 //------------------------------- Editor Styles -----------------------------//
 %editorInline {

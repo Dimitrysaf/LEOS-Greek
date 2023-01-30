@@ -62,7 +62,7 @@ define(function checkBoxesExtensionModule(require) {
 
     function _toggleCheckBox(connector, event) {
         event.stopImmediatePropagation();
-        (this.text() == UNCHECKED) ? this.text(CHECKED) : this.text(UNCHECKED);
+        (this.text().includes(UNCHECKED)) ? this.html(this.html().replace(UNCHECKED, CHECKED)) : this.html(this.html().replace(CHECKED, UNCHECKED));
         (this.attr(NAME_ATTR) == NAME_ATTR_UNCHECKED) ? this.attr(NAME_ATTR, NAME_ATTR_CHECKED) : this.attr(NAME_ATTR, NAME_ATTR_UNCHECKED);
         let data = {
             elementId: this.attr("id"),
