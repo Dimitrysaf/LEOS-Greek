@@ -27,13 +27,14 @@ public class LeosConfirmDialog extends ConfirmDialog {
     private static final double MIN_HEIGHT = 1.0D;
     private static final double MAX_HEIGHT = 30.0D;
 
-    public LeosConfirmDialog(String caption, String message, String okCaption, String cancelCaption, String notOkCaption) {
+    public LeosConfirmDialog(String caption, String message, String okCaption, String cancelCaption, String notOkCaption, Boolean isClosable) {
         super();
         boolean threeWay = notOkCaption != null;
         boolean twoWay = cancelCaption != null;
         setId("confirmdialog-window");
         setCaption(caption != null ? caption : DEFAULT_CAPTION);
         ConfirmDialog confirm = this;
+        this.setClosable(isClosable);
         addCloseListener(new Window.CloseListener() {
             private static final long serialVersionUID = 1971800928047045825L;
 
