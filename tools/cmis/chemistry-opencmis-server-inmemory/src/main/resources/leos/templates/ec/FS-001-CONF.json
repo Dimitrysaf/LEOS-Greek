@@ -30,6 +30,15 @@
     {
       "targets": [
         {
+          "destinationId": "_17__p",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_17__p\" class=\"guidance-green-block\"><span id=\"_17__p-guidance\">[If more than one management mode is indicated, please provide details in the ‘Comments’ section]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
           "destinationId": "_221__p",
           "position": "AFTER-WRAPPER"
         }

@@ -524,12 +524,9 @@
                         </list>
                     </indent>
                 </list>
-                <!-- guidance for 1.7
-			If more than one management mode is indicated, please provide details in the ‘Comments’ section
-			 /guidance for 1.7-->
                 <subparagraph>
                     <content>
-                        <p>Comments</p>
+                        <p xml:id="_17__p">Comments</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true">
