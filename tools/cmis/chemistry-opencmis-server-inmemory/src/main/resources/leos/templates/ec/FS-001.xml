@@ -406,31 +406,33 @@
                         <num>
                             <inline name="unchecked">☐</inline>
                         </num>
-                        <content>
-                            <p>
-                                <b>Direct management</b>
-                                by the Commission
-                            </p>
-                        </content>
+                        <subparagraph>
+                            <content>
+                                <p>
+                                    <b>Direct management</b>
+                                    by the Commission
+                                </p>
+                            </content>
+                        </subparagraph>
+                        <list class="~CHECK">
+                            <indent>
+                                <num>
+                                    <inline name="unchecked">☐</inline>
+                                </num>
+                                <content>
+                                    <p>by its departments, including by its staff in the Union delegations;</p>
+                                </content>
+                            </indent>
+                            <indent>
+                                <num>
+                                    <inline name="unchecked">☐</inline>
+                                </num>
+                                <content>
+                                    <p>by the executive agencies</p>
+                                </content>
+                            </indent>
+                        </list>
                     </indent>
-                    <list class="~CHECK">
-                        <indent>
-                            <num>
-                                <inline name="unchecked">☐</inline>
-                            </num>
-                            <content>
-                                <p>by its departments, including by its staff in the Union delegations;</p>
-                            </content>
-                        </indent>
-                        <indent>
-                            <num>
-                                <inline name="unchecked">☐</inline>
-                            </num>
-                            <content>
-                                <p>by the executive agencies</p>
-                            </content>
-                        </indent>
-                    </list>
                     <indent>
                         <num>
                             <inline name="unchecked">☐</inline>
@@ -3777,4 +3779,4 @@
         </mainBody>
     </doc>
 </akomaNtoso>
-<!--/legislative_financial_statement-->
+        <!--/legislative_financial_statement-->
