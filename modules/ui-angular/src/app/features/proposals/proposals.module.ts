@@ -13,6 +13,7 @@ import {
   ProposalCreateWizardComponent,
   ProposalsComponent,
 } from './containers';
+import { ProposalUploadWizardComponent } from './containers/proposal-upload-wizard/proposal-upload-wizard.component';
 import { ProposalsRoutingModule } from './proposals-routing.module';
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ProposalsRoutingModule } from './proposals-routing.module';
     ProposalCreateWizardComponent,
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
+    ProposalUploadWizardComponent,
   ],
   imports: [SharedModule, ReactiveFormsModule, ProposalsRoutingModule],
 })

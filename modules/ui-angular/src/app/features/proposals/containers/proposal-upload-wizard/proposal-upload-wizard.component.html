@@ -1,0 +1,96 @@
+<button euiButton euiSecondary (click)="openUploadWizard()">
+  {{ 'page.workspace.upload.button.text' | translate }}
+</button>
+
+<eui-dialog
+  #uploadWizard
+  [title]="'Upload new legislative document'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  (close)="onClose()"
+>
+  <ux-wizard-steps
+    (selectStep)="onSelectStepRemoteNav($event)"
+    [activeStepIndex]="currentStepIndex"
+    [isNavigationAllowed]="isNavigationAllowed"
+  >
+    <ux-wizard-step
+      label="Upload a legislative document"
+      [isCompleted]="step1Complete"
+    >
+      <uxWizardStepContent>
+        <form [formGroup]="uploadForm" enctype="multipart/form-data">
+          <eui-file-upload
+            hasDragArea
+            [isMultiple]="false"
+            formControlName="legFile"
+            [progress]="progress"
+            (drop)="onDrop()"
+          ></eui-file-upload>
+        </form>
+        <eui-card *ngIf="errorsVO">
+          <eui-card-header
+            ><eui-card-header-title>
+              <span
+                >Filename: {{ fileName }} not valid</span
+              ></eui-card-header-title
+            ></eui-card-header
+          >
+          <eui-card-content>
+            <div class="" *ngFor="let error of errorsVO">
+              <span class=""
+                >{{ error.objects[0] }} - {{ error.objects[1] }}</span
+              >
+            </div>
+          </eui-card-content>
+        </eui-card>
+      </uxWizardStepContent>
+    </ux-wizard-step>
+    <ux-wizard-step label="Document metadata" [isCompleted]="uploadForm.valid">
+      <uxWizardStepContent
+        ><app-proposal-create-form
+          [createForm]="uploadForm"
+        ></app-proposal-create-form
+      ></uxWizardStepContent>
+    </ux-wizard-step>
+  </ux-wizard-steps>
+  <eui-dialog-footer>
+    <div class="dialog-footer-content">
+      <button euiButton (click)="closeDialog()">
+        {{ 'page.workspace.create-form.cancel' | translate }}
+      </button>
+      <button
+        euiButton
+        type="button"
+        [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
+        (click)="onNavigation(-1)"
+      >
+        <span class="eui-icon eui-icon-chevron-left"></span>
+        <span euiLabel>
+          {{ 'page.workspace.create-form.previous' | translate }}
+        </span>
+      </button>
+      <button
+        euiButton
+        type="button"
+        [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"
+        (click)="onNavigation(+1)"
+        [hidden]="showCreateHideNext()"
+      >
+        <span euiLabel>
+          {{ 'page.workspace.create-form.next' | translate }}
+        </span>
+        <span class="eui-icon eui-icon-chevron-right"></span>
+      </button>
+      <button
+        [hidden]="!showCreateHideNext()"
+        [disabled]="!isFormValid()"
+        euiButton
+        euiPrimary
+        (click)="onCreate()"
+      >
+        {{ 'page.workspace.create-form.create' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

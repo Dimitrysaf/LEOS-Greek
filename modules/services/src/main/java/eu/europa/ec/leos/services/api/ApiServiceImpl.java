@@ -16,10 +16,8 @@ import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.cmis.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
-import eu.europa.ec.leos.domain.vo.DocumentVO;
-import eu.europa.ec.leos.domain.vo.MetadataVO;
-import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.vo.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
@@ -32,12 +30,11 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper;
-import eu.europa.ec.leos.services.document.AnnexService;
-import eu.europa.ec.leos.services.document.BillService;
-import eu.europa.ec.leos.services.document.DocumentContentService;
-import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.converter.ProposalConverterService;
+import eu.europa.ec.leos.services.document.*;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -49,6 +46,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.io.FileUtils;
@@ -97,6 +95,9 @@ public class ApiServiceImpl implements ApiService {
     private final MilestoneService milestoneService;
     private final CloneContext cloneContext;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
+    private ProposalConverterService proposalConverterService;
+    private PostProcessingDocumentService postProcessingDocumentService;
+    private ValidationService validationService;
 
 
     @Autowired
@@ -118,7 +119,10 @@ public class ApiServiceImpl implements ApiService {
                           ArchiveService archiveService,
                           AnnexService annexService,
                           CloneContext cloneContext,
-                          MilestoneService milestoneService) {
+                          MilestoneService milestoneService,
+                          ProposalConverterService proposalConverterService,
+                          PostProcessingDocumentService postProcessingDocumentService,
+                          ValidationService validationService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -138,6 +142,9 @@ public class ApiServiceImpl implements ApiService {
         this.annexService = annexService;
         this.cloneContext = cloneContext;
         this.milestoneService = milestoneService;
+        this.proposalConverterService = proposalConverterService;
+        this.postProcessingDocumentService = postProcessingDocumentService;
+        this.validationService = validationService;
     }
 
     @Override
@@ -165,6 +172,23 @@ public class ApiServiceImpl implements ApiService {
     @Override
     public CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException {
         return createCollectionService.createCollectionFromLeg(legDocument);
+    }
+
+    @Override
+    public LegFileValidation validateLegFile(File legDocument)  {
+        LegFileValidation legFileValidation = new LegFileValidation();
+        DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
+        DocumentVO updatedDocumentVO = proposalConverterService.createProposalFromLegFile(legDocument, proposal, true);
+        Result result = postProcessingDocumentService.processDocument(updatedDocumentVO);
+        if(result.isOk()) {
+                legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
+                ValidationVO validation = new ValidationVO();
+                validation.addErrors(validationService.validateDocument(updatedDocumentVO));
+                if(validation.hasErrors()) {
+                    legFileValidation.setErrors(validation.getErrors());
+                }
+        }
+        return legFileValidation;
     }
 
     @Override

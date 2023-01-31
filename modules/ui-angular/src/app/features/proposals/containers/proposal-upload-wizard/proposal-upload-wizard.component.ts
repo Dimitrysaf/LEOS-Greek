@@ -1,0 +1,218 @@
+import { HttpEventType } from '@angular/common/http';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { EuiFileUploadUtilsService } from '@eui/components/eui-file-upload';
+import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
+import { Subject, tap } from 'rxjs';
+
+import { CatalogItem, CreateProposalBody } from '../../models';
+import {
+  ErrorVO,
+  UploadProposalResposne,
+} from '../../models/upload-response.model';
+import { ProposalService } from '../../services/proposal.service';
+
+@Component({
+  selector: 'app-proposal-upload-wizard',
+  templateUrl: './proposal-upload-wizard.component.html',
+  styleUrls: ['./proposal-upload-wizard.component.scss'],
+})
+export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
+  stepSelected: any;
+  isNavigationAllowed = false;
+  currentStepIndex = 1;
+  stepsCount = 2;
+
+  uploadForm: FormGroup;
+  selectedTemplate: CatalogItem | null;
+  selectedLanguage: string;
+  errorsVO: ErrorVO[];
+  step1Complete = false;
+  fileName = '';
+  @ViewChild('uploadWizard') uploadWizard: EuiDialogComponent;
+  public progress = 0;
+
+  private destroy$ = new Subject();
+
+  constructor(
+    private fb: FormBuilder,
+    private proposalService: ProposalService,
+    private router: Router,
+  ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
+  ngOnInit() {
+    this.uploadForm = this.fb.group({
+      legFile: new FormControl(null, Validators.required),
+      templateName: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      documentLanguage: new FormControl({ value: '', disabled: true }),
+      confidentialityLevel: new FormControl({ value: '', disabled: true }),
+      docPurpose: new FormControl('', { validators: Validators.required }),
+      templateId: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      langCode: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      internalReference: new FormControl({ value: '', disabled: true }),
+      interInstitutionalReference: new FormControl({
+        value: '',
+        disabled: true,
+      }),
+      packageTitleCheck: new FormControl({ value: false, disabled: true }),
+      packageTitle: new FormControl({ value: '', disabled: true }),
+      eeaRelevance: new FormControl(
+        { value: false, disabled: true },
+        { validators: Validators.required },
+      ),
+      eeaRelevanceText: new FormControl({ value: '', disabled: true }),
+    });
+  }
+
+  handleSelectTemplate(template: CatalogItem | null) {
+    this.selectedTemplate = template;
+    this.updateTemplateAndLanguage();
+  }
+
+  handleSelectLanguage(langCode: string) {
+    this.selectedLanguage = langCode;
+    this.updateTemplateAndLanguage();
+  }
+
+  updateTemplateAndLanguage() {
+    const template = this.selectedTemplate;
+    const langCode = this.selectedLanguage;
+    if (template && langCode) {
+      const templateName = this.proposalService.getTranslation(
+        template.names,
+        langCode,
+      );
+      const documentLanguage = this.proposalService.getTranslation(
+        template.languages,
+        langCode,
+      );
+      this.uploadForm.patchValue({
+        templateId: template.id,
+        templateName,
+        langCode,
+        documentLanguage,
+      });
+      this.isNavigationAllowed = true;
+    } else {
+      this.uploadForm.patchValue({
+        templateId: '',
+        templateName: '',
+        langCode: '',
+        documentLanguage: '',
+      });
+      this.isNavigationAllowed = false;
+    }
+  }
+
+  onNavigation(increment: number) {
+    const newIndex: number = this.currentStepIndex + increment;
+    if (newIndex >= 1 && newIndex <= this.stepsCount) {
+      this.currentStepIndex = newIndex;
+    }
+  }
+
+  onSelectStepRemoteNav(event: any) {
+    this.currentStepIndex = event.index;
+  }
+
+  onSelectStep(event: UxWizardStep) {
+    this.stepSelected = event;
+  }
+
+  openUploadWizard() {
+    this.uploadWizard.openDialog();
+  }
+
+  onCreate() {
+    const legFile = this.uploadForm.get('legFile').value[0];
+    this.proposalService.uploadProposal(legFile).subscribe((e) => {
+      if (e.type === HttpEventType.UploadProgress) {
+        this.progress = Math.round((100 * e.loaded) / e.total);
+      }
+      if (e.type === HttpEventType.Response) {
+        if (e.ok) {
+          this.router.navigate([`collection/${e.body.proposalId}`]);
+          this.resetInitials();
+          this.closeDialog();
+        }
+      }
+    });
+  }
+
+  onClose() {}
+
+  closeDialog() {
+    this.uploadWizard.closeDialog();
+    this.resetInitials();
+  }
+
+  isFormValid(): boolean {
+    return this.uploadForm.valid;
+  }
+
+  showCreateHideNext() {
+    return this.currentStepIndex === 2;
+  }
+
+  onDrop() {
+    this.validateLegFile();
+  }
+
+  resetInitials() {
+    this.uploadForm.reset();
+    this.errorsVO = null;
+    this.stepSelected = null;
+    this.currentStepIndex = 1;
+  }
+
+  private getDataForCreate(): CreateProposalBody {
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance } =
+      this.uploadForm.getRawValue();
+    return { templateId, templateName, langCode, docPurpose, eeaRelevance };
+  }
+
+  private validateLegFile() {
+    const legFile = this.uploadForm.get('legFile').value[0];
+    this.proposalService.validateLegFile(legFile).subscribe((res) => {
+      if (res.errors) {
+        this.errorsVO = res.errors;
+        this.fileName = (legFile as File).name;
+      }
+      if (res.errors === null && res.documentToBeCreated) {
+        this.isNavigationAllowed = true;
+        this.step1Complete = true;
+        this.currentStepIndex = 2;
+        this.uploadForm.patchValue({
+          templateName: res.documentToBeCreated.metadata.templateName,
+          documentLanguage: res.documentToBeCreated.metadata.language,
+          docPurpose: res.documentToBeCreated.metadata.docPurpose,
+          eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
+          confidentialityLevel: res.documentToBeCreated.metadata.securityLevel,
+          packageTitle: res.documentToBeCreated.metadata.packageTitle,
+          internalReference: res.documentToBeCreated.metadata.internalRef,
+        });
+      }
+    });
+  }
+}
