@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.ExportPdfRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,5 +142,18 @@ public class ProposalApiController {
             LOG.error("Error occurred while creating proposal " + ex.getMessage());
             return new ResponseEntity<>("Error occurred while creating proposal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @RequestMapping(value = "/validateLegFile", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
+            File content = new File(legFile.getName());
+            try (FileOutputStream fos = new FileOutputStream(content)) {
+                fos.write(legFile.getBytes());
+            } catch (IOException ioe) {
+                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            LegFileValidation result = this.apiService.validateLegFile(content);
+            return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

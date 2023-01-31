@@ -9,6 +9,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 
@@ -27,6 +28,9 @@ public interface ApiService {
                                           boolean eeaRelevance) throws CreateCollectionException;
 
     CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException;
+
+    LegFileValidation validateLegFile(File legDocument);
+
     void deleteAnnex(String proposalRef, String annexRef) throws Exception;
 
     DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request);

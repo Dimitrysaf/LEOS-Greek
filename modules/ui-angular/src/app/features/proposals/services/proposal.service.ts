@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Document } from '@leos/shared';
 import {
@@ -29,6 +29,10 @@ import {
   ListProposalsWithFilterResponse,
   ProposalFilter,
 } from '../models';
+import {
+  LegFileValidationResponse,
+  UploadProposalResposne,
+} from '../models/upload-response.model';
 
 const initialFilters: ProposalFilter = {
   searchTerm: '',
@@ -195,5 +199,31 @@ export class ProposalService {
     return this.http
       .post<CreateProposalResponse>(`api/secured/createPackage`, data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
+  }
+
+  uploadProposal(data: File) {
+    const formData: FormData = new FormData();
+    formData.append('legFile', data);
+    return this.http
+      .post<UploadProposalResposne>(`api/secured/proposal/upload`, formData, {
+        reportProgress: true,
+        observe: 'events',
+      })
+      .pipe(
+        tap(() => this.loadingService.setLoading(true)),
+        finalize(() => this.loadingService.setLoading(false)),
+      );
+  }
+
+  validateLegFile(data: File) {
+    const formData: FormData = new FormData();
+    formData.append('legFile', data);
+    return this.http.post<LegFileValidationResponse>(
+      `api/secured/proposal/validateLegFile`,
+      formData,
+      {
+        reportProgress: true,
+      },
+    );
   }
 }
