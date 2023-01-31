@@ -14,8 +14,8 @@ import {
   tap,
 } from 'rxjs';
 
-import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentService } from '@/features/akn-document/services/document.service';
+import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { TocService } from '@/shared/services/toc.service';
 
 // FIXME: mockdata
@@ -727,26 +727,37 @@ export class CKEditorService implements OnDestroy {
       elementId: string;
       elementType: string;
     }) => {
-      const {
-        elementId,
-        elementType,
-        elementFragment,
-        docType,
-        instanceType,
-        alternatives,
-        levelItemVo,
-        isClonedProposal,
-      } = params;
-      this.connector.editElement(
-        elementId,
-        elementType,
-        elementFragment,
-        docType,
-        instanceType,
-        alternatives,
-        levelItemVo,
-        isClonedProposal,
-      );
+      const documentRef = this.documentRefBS.value;
+      this.getAnnexElement(
+        documentRef,
+        data.elementId,
+        data.elementType.toLowerCase(),
+      ).subscribe((response) => {
+        //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
+        const {
+          elementId,
+          elementType,
+          elementFragment,
+          docType,
+          instanceType,
+          alternatives,
+          levelItemVo,
+          isClonedProposal,
+        } = params;
+
+        const res = JSON.parse(response);
+
+        this.connector.editElement(
+          res.elementId,
+          res.elementTagName,
+          res.element,
+          docType,
+          instanceType,
+          alternatives,
+          JSON.stringify(res.levelItem),
+          isClonedProposal,
+        );
+      });
     },
     saveElement: (elemData: {
       elementId: string;
@@ -954,5 +965,18 @@ export class CKEditorService implements OnDestroy {
 
   setAnnexRef(annexRef: string) {
     this.annexRefBS.next(annexRef);
+  }
+
+  getAnnexElement(documentRef: string, elementName: string, elementId: string) {
+    return this.http
+      .get(
+        `api/secured/annex/${documentRef}/element/${elementName}/${elementId}`,
+        { responseType: 'text' },
+      )
+      .pipe(
+        tap(() => {
+          console.log('getAnnexElement run');
+        }),
+      );
   }
 }
