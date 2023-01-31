@@ -58,12 +58,11 @@ eui-icon-svg > svg > use {
   white-space: normal !important;
 }
 
-
 @font-face {
-  font-family: "Vaadin-Icons";
-  src: url("../src/assets/fonts/Vaadin-Icons.woff");
+  font-family: 'Vaadin-Icons';
+  src: url('../src/assets/fonts/Vaadin-Icons.woff');
 }
 
 .Vaadin-Icons {
-  font-family: "Vaadin-Icons";
+  font-family: 'Vaadin-Icons';
 }
