@@ -59,6 +59,11 @@ $EDITOR_MARGIN_OFFSET: 40px;
         text-decoration: line-through;
         color: $GREY_COLOR;
     }
+
+    //strike-through deleted elements [core#147]
+    [contenteditable="false"][data-akn-attr-softaction="del"][id^="deleted_"] {
+        text-decoration: line-through;
+    }
 }
 
 %editorFocus {
