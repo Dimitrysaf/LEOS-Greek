@@ -67,7 +67,7 @@ define(function checkBoxesExtensionModule(require) {
         let data = {
             elementId: this.attr("id"),
             elementType: this.prop("tagName").toLowerCase(),
-            elementFragment: this.prop('outerHTML').replace(" id=", " xml:id="),
+            elementFragment: this.prop('outerHTML').replaceAll(" id=", " xml:id="),
         };
         connector.saveElement(data);
     }
