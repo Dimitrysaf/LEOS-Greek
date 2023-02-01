@@ -15,23 +15,31 @@
 
 //------------------------------- XML Styles --------------------------------//
 %xmlPreface {
-    preface container[name="headerOfAnnex"] {
-        text-align: center;
-        & > aknp, & > p {
-            text-decoration: none;
+    preface:not([leos\:imported]) container[name="headerOfAnnex"] {
+        font-weight: bold;
+        @extend %xmlPrefaceBase;
+    }
+    preface[leos\:imported] container[name="headerOfAnnex"] {
+        @extend %xmlPrefaceBase;
+    }
+}
+
+%xmlPrefaceBase {
+    text-align: center;
+    & > aknp, & > p {
+        text-decoration: none;
+        display: block;
+        & > * {
             display: block;
-            & > * {
-                display: block;
-                @extend %paddedText;
-            }
+            @extend %paddedText;
+        }
 
-            & > docstage {
-                font-weight: normal;
-            }
+        & > docstage {
+            font-weight: normal;
+        }
 
-            & > doctype {
-                text-transform: uppercase;
-            }
+        & > doctype {
+            text-transform: uppercase;
         }
     }
 }
