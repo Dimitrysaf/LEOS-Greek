@@ -20,6 +20,10 @@ define(function datePickerExtensionModule(require) {
     var $ = require("jquery");
     var jqueryUi = require("jqueryUi");
     var UTILS = require("core/leosUtils");
+    var dateFormats = new Map();
+    dateFormats.set('yy', 'YYYY');
+    dateFormats.set('dd/mm/yy', '[DD/MM]YYYY');
+
 
     function _initDatePicker(connector) {
         log.debug("Initializing DatePicker extension...");
@@ -42,6 +46,7 @@ define(function datePickerExtensionModule(require) {
             var format = $(this).attr('period');
             var formName = $(this).attr('name');
             var hiddenInput = document.createElement('input');
+            var isDateSelected = false;
             hiddenInput.name = formName;
             hiddenInput.type = 'hidden';
             $(this).after(hiddenInput);
@@ -51,7 +56,21 @@ define(function datePickerExtensionModule(require) {
                 showOn: "button",
                 dateFormat: format,
                 constrainInput: true,
-                onClose : function(dateText, inst) {
+                showButtonPanel: true,
+                closeText: 'Reset',
+                onClose: function (dateText, inst) {
+                    let dateFormat = dateFormats.get(element.attr('period'));
+                    if (!isDateSelected && dateFormat && !(dateFormat === element.text())) {
+                        element.text(dateFormat);
+                        var data = {
+                            elementId: element.attr('id'),
+                            elementFragment: element[0].outerHTML,
+                            elementType: element[0].localName
+                        }
+                        connector.saveDocument(data);
+                    }
+                },
+                onSelect : function(dateText, inst) {
                     var dateVal = $(this).attr('value');
                     if(dateVal && !(dateVal === element.text())) {
                         element.text(dateVal);
@@ -60,11 +79,18 @@ define(function datePickerExtensionModule(require) {
                             elementFragment: element[0].outerHTML,
                             elementType: element[0].localName
                         }
+                        isDateSelected = true;
                         connector.saveDocument(data);
                     }
+                },
+                beforeShow: function(input, instance) {
+                    isDateSelected = false;
                 }
             });
+
         });
+
+
     }
 
     // handle connector un-registration on client-side
