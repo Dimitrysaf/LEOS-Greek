@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.processor;
 
-import eu.europa.ec.leos.services.document.TransformationServiceImpl;
+import eu.europa.ec.leos.services.document.TransformationProposalService;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import freemarker.template.Configuration;
@@ -22,7 +22,7 @@ public class TransformationServiceTest extends LeosTest {
     @Mock
     private TemplateHashModel enumModels;
     @InjectMocks
-    private TransformationServiceImpl transformationService = new TransformationServiceImpl(freemarkerConfiguration, enumModels);
+    private TransformationProposalService transformationService = new TransformationProposalService(freemarkerConfiguration, enumModels);
 
     private final String FILE_PREFIX = "/transformation/";
 

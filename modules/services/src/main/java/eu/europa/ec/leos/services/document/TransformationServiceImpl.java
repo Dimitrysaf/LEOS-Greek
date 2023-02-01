@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 European Commission
+ * Copyright 2017 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,17 +37,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Service
-public class TransformationServiceImpl implements TransformationService {
+public abstract class TransformationServiceImpl implements TransformationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransformationServiceImpl.class);
-    
+
     @Value("${leos.freemarker.ftl.documentView}")
     private String editableXHtmlTemplate;
 
     @Value("${leos.freemarker.ftl.fragmentXmlWrapper}")
     private String nonEditableFragmentTemplate;
-    
+
     @Value("${leos.freemarker.ftl.import}")
     private String importXHtmlTemplate;
 
@@ -61,48 +59,26 @@ public class TransformationServiceImpl implements TransformationService {
         this.freemarkerConfiguration = freemarkerConfiguration;
         this.enumModels = enumModels;
     }
-    
-    @Override
-    public String toEditableXml(final InputStream documentStream, String contextPath, LeosCategory category,
-                                List<LeosPermission> permissions, InputStream coverPageStream) {
-        String template;
-        switch (category){
-            case ANNEX:
-            case COUNCIL_EXPLANATORY:
-            case MEMORANDUM:
-            case BILL:
-            case COVERPAGE:
-            case PROPOSAL:
-            case STAT_FINANC_LEGIS:
-                template = editableXHtmlTemplate;
-                break;
-            default:
-                throw new UnsupportedOperationException("No transformation supported for this category");
-        }
-        return transform(documentStream, template, contextPath, permissions, coverPageStream);
-    }
 
-    @Override
+    public abstract String toEditableXml(final InputStream documentStream, String contextPath, LeosCategory category,
+            List<LeosPermission> permissions, InputStream coverPageStream);
+
     public String toXmlFragmentWrapper(InputStream documentStream, String contextPath, List<LeosPermission> permissions, InputStream coverPageStream) {
         return transform(documentStream, nonEditableFragmentTemplate, contextPath, permissions, coverPageStream);
     }
 
-    @Override
     public String toXmlFragmentWrapper(InputStream documentStream, String contextPath, List<LeosPermission> permissions) {
         return transform(documentStream, nonEditableFragmentTemplate, contextPath, permissions, null);
     }
 
-    @Override
     public String toImportXml(InputStream documentStream, String contextPath, List<LeosPermission> permissions, InputStream coverPageStream) {
         return transform(documentStream, importXHtmlTemplate, contextPath, permissions, coverPageStream);
     }
 
-    @Override
     public String toImportXml(InputStream documentStream, String contextPath, List<LeosPermission> permissions) {
         return transform(documentStream, importXHtmlTemplate, contextPath, permissions, null);
     }
 
-    @Override
     public String formatToHtml(XmlDocument versionDocument, String contextPath, List<LeosPermission> permissions, InputStream coverPageStream) {
         LOG.debug("formatToHtml service invoked for version id:{})", versionDocument.getId());
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream
@@ -113,8 +89,7 @@ public class TransformationServiceImpl implements TransformationService {
             throw new RuntimeException("Unable to format to HTML", e);
         }
     }
-    
-    @Override
+
     public String formatToHtml(XmlDocument versionDocument, String contextPath, List<LeosPermission> permissions) {
         LOG.debug("formatToHtml service invoked for version id:{})", versionDocument.getId());
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream
@@ -126,7 +101,6 @@ public class TransformationServiceImpl implements TransformationService {
         }
     }
 
-    @Override
     public String formatToHtml(InputStream documentStream, String contextPath, List<LeosPermission> permissions, InputStream coverPageStream) {
         try {
             return transform(documentStream, editableXHtmlTemplate, contextPath, permissions, coverPageStream);
@@ -135,7 +109,6 @@ public class TransformationServiceImpl implements TransformationService {
         }
     }
 
-    @Override
     public String formatToHtml(InputStream documentStream, String contextPath, List<LeosPermission> permissions) {
         try {
             return transform(documentStream, editableXHtmlTemplate, contextPath, permissions, null);
@@ -143,9 +116,9 @@ public class TransformationServiceImpl implements TransformationService {
             throw new RuntimeException("Unable to format to HTML");
         }
     }
-    
+
     /**
-     *  Transforms a documentStream using a freemarker template 
+     *  Transforms a documentStream using a freemarker template
      * @param documentStream
      * @param templateName
      * @param contextPath
@@ -153,7 +126,7 @@ public class TransformationServiceImpl implements TransformationService {
      * @param coverPageStream
      * @return
      */
-    private String transform(InputStream documentStream, String templateName, String contextPath, List<LeosPermission>
+    protected String transform(InputStream documentStream, String templateName, String contextPath, List<LeosPermission>
             permissions, InputStream coverPageStream) {
         LOG.trace("Transforming document using {} template...", templateName);
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -186,10 +159,15 @@ public class TransformationServiceImpl implements TransformationService {
             try {
                 documentStream.close();
             } catch (IOException ioe){
-                 //omitted
+                //omitted
             }
             stopwatch.stop();
             LOG.trace("Transformation finished! ({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         }
     }
+
+    public String getEditableXHtmlTemplate() {
+        return editableXHtmlTemplate;
+    }
+
 }
