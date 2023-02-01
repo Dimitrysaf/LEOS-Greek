@@ -70,7 +70,8 @@ define(function aknSubParagraphMandatePluginModule(require) {
 
     function _transformSubParagraph(event) {
         if (event.data.dataValue.includes("<subparagraph>")) {
-            event.data.dataValue = (event.data.dataValue + '?').replace("<subparagraph>", "").replace("</subparagraph>?", "");
+            event.data.dataValue = (event.data.dataValue + '?').replace("<subparagraph>", "").
+            replace("</subparagraph>?", "");
         }
     }
 
@@ -88,7 +89,6 @@ define(function aknSubParagraphMandatePluginModule(require) {
         var paragraphElement = currentElement.getAscendant('paragraph');
         var firstChildElementName = paragraphElement && paragraphElement.getFirst().getName && paragraphElement.getFirst().getName();
         return (firstChildElementName && firstChildElementName !== 'num');
-
 
     }
 
