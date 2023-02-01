@@ -25,7 +25,8 @@ import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
 import eu.europa.ec.leos.web.support.LeosCacheToken;
 import org.apache.commons.lang3.Validate;
 
-@StyleSheet({"vaadin://../lib/jquery-ui-1.13.2/jquery-ui.css" + LeosCacheToken.TOKEN,
+@StyleSheet({"vaadin://../assets/css/leos-datepicker.css"+ LeosCacheToken.TOKEN,
+        "vaadin://../lib/jquery-ui-1.13.2/jquery-ui.css" + LeosCacheToken.TOKEN,
         "vaadin://../lib/jquery-ui-1.13.2/jquery-ui.structure.css"+ LeosCacheToken.TOKEN,
         "vaadin://../lib/jquery-ui-1.13.2/jquery-ui.theme.css"+ LeosCacheToken.TOKEN})
 @JavaScript({"vaadin://../js/ui/extension/datePickerConnector.js"+ LeosCacheToken.TOKEN })
