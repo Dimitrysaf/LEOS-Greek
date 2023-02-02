@@ -477,9 +477,10 @@ define(function leosPluginUtilsModule(require) {
                 && !!crossheading.getParent().is
                 && crossheading.getParent().is('li')) {
                 if (!!crossheading.getParent().getAttribute(DATA_AKN_ELEMENT)
-                    && crossheading.getParent().getAttribute(DATA_AKN_ELEMENT) == LEVEL) {
+                    && (crossheading.getParent().getAttribute(DATA_AKN_ELEMENT) == LEVEL || crossheading.getParent().getAttribute(DATA_AKN_ELEMENT) == PARAGRAPH)) {
                     crossheading.renameNode('p');
                     crossheading.removeAttribute(CROSSHEADING_LIST_ATTR);
+                    crossheading.setAttribute("data-akn-heading-content", "");
                 } else {
                     var foundSubparagraph = false;
                     var prev = crossheading;

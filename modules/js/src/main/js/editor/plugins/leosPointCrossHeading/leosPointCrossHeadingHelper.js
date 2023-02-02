@@ -41,6 +41,7 @@ define(function leosListCrossHeadingHelper(require) {
         }
         if (rootElt && currentConfig.rootEltCrossheadingType == "none") {
             rootElt.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
+            rootElt.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.POINT);
             rootElt.removeAttribute(leosPluginUtils.CROSSHEADING_LIST_ATTR);
             rootElt.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
             rootElt.removeAttribute(leosPluginUtils.DATA_INDENT_LEVEL_ATTR);
@@ -52,6 +53,7 @@ define(function leosListCrossHeadingHelper(require) {
             leosPluginUtils.setCrossheadingIndentAttribute(rootElt, indentLevel);
             rootElt.setAttribute(leosPluginUtils.CROSSHEADING_LIST_ATTR, currentConfig.rootEltCrossheadingType);
             rootElt.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.CROSSHEADING);
+            rootElt.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.CROSSHEADING);
             rootElt.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
             rootElt.removeAttribute(DATA_AKN_NUM_ID);
             rootElt.removeAttribute(DATA_AKN_NUM_ORIGIN);
