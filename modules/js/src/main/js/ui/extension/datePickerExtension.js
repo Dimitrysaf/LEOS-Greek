@@ -46,7 +46,6 @@ define(function datePickerExtensionModule(require) {
             var format = $(this).attr('period');
             var formName = $(this).attr('name');
             var hiddenInput = document.createElement('input');
-            var isDateSelected = false;
             hiddenInput.name = formName;
             hiddenInput.type = 'hidden';
             $(this).after(hiddenInput);
@@ -60,7 +59,7 @@ define(function datePickerExtensionModule(require) {
                 closeText: 'Reset',
                 onClose: function (dateText, inst) {
                     let dateFormat = dateFormats.get(element.attr('period'));
-                    if (!isDateSelected && dateFormat && !(dateFormat === element.text())) {
+                    if ($(event.srcElement).hasClass('ui-datepicker-close') && !(dateFormat === element.text())) {
                         element.text(dateFormat);
                         var data = {
                             elementId: element.attr('id'),
@@ -79,12 +78,8 @@ define(function datePickerExtensionModule(require) {
                             elementFragment: element[0].outerHTML,
                             elementType: element[0].localName
                         }
-                        isDateSelected = true;
                         connector.saveDocument(data);
                     }
-                },
-                beforeShow: function(input, instance) {
-                    isDateSelected = false;
                 }
             });
 
