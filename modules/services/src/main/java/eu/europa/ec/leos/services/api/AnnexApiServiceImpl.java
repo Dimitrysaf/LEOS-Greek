@@ -142,6 +142,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
+    public Annex saveAnnexDocument(String documentRef,String checkInComment,VersionType versionType) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        Annex newVersion = this.annexService.createVersion(documentRef,versionType,checkInComment);
+        return newVersion;
+    }
+
+    @Override
     public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         List<SearchMatchVO> matches = Collections.emptyList();

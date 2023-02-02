@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -20,6 +21,7 @@ public interface AnnexApiService {
     List<VersionVO> getVersionsData(String documentId, String documentRef);
     List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode);
     byte[] getAnnex(String documentRef);
+    Annex saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords);
     String showVersion(String versionId);
     String compare(String newVersionId, String oldVersionId);
