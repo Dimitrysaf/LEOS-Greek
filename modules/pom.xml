@@ -37,7 +37,7 @@
         <module>i18n</module>
         <module>services</module>
         <module>ui</module>
-        <!--module>ui-angular</module-->
+        <module>ui-angular</module>
         <module>testSupport</module>
         <module>js</module>
         <module>config</module>
