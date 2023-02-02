@@ -119,6 +119,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 	        	return getOriginalBill((Bill) xmlDocument);
 	        case PROPOSAL:
 	        	return getOriginalProposal((Proposal) xmlDocument);
+            case STAT_FINANC_LEGIS:
+                return getOriginalFinancialStatement((FinancialStatement) xmlDocument);
 	        default:
 	            throw new UnsupportedOperationException("No transformation supported for this category");
 	    }
@@ -149,6 +151,13 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case ANNEX:
                 if (isAnnexComparisonRequired((Annex) xmlDocument, securityContext)) {
                     originalDocument = getOriginalAnnex((Annex) xmlDocument);
+                } else {
+                    return new String[]{currentDocumentEditableXml};
+                }
+                break;
+            case STAT_FINANC_LEGIS:
+                if (isComparisonRequired(xmlDocument, securityContext)) {
+                    originalDocument = getOriginalFinancialStatement((FinancialStatement) xmlDocument);
                 } else {
                     return new String[]{currentDocumentEditableXml};
                 }
@@ -195,8 +204,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
 
     @Override
-    public XmlDocument getOriginalFinancialStatement(FinancialStatement explanatory) {
-        return financialStatementService.findFirstVersion(explanatory.getMetadata().get().getRef());
+    public XmlDocument getOriginalFinancialStatement(FinancialStatement financialStatement) {
+        return financialStatementService.findFirstVersion(financialStatement.getMetadata().get().getRef());
     }
 
     @Override
@@ -360,6 +369,10 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                     originalDocument = getOriginalProposal((Proposal) xmlDocument);
                     contentBytes = getCoverPageContent(getContent(originalDocument));
                 }
+                break;
+            case STAT_FINANC_LEGIS:
+                originalDocument = getOriginalFinancialStatement((FinancialStatement) xmlDocument);
+                contentBytes = getContent(originalDocument);
                 break;
             default:
                 throw new UnsupportedOperationException("Category not supported");
