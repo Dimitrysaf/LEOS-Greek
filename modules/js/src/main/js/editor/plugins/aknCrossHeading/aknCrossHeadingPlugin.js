@@ -27,6 +27,8 @@ define(function aknCrossHeadingPluginModule(require) {
     var ITALIC = CKEDITOR.CTRL + 73;
     var DATA_AKN_NAME = "data-akn-name";
     var CROSS_HEADING = "crossHeading";
+    var DATA_AKN_ELEMENT = "data-akn-element";
+    var PARAGRAPH = "paragraph";
 
     var pluginDefinition = {
         requires : "widget,leosWidget",
@@ -72,7 +74,7 @@ define(function aknCrossHeadingPluginModule(require) {
     function _onEnterKey(context) {
         var selection = context.event.editor.getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
-        if(startElement.getAttribute(DATA_AKN_NAME) === CROSS_HEADING) {
+        if(startElement.getAttribute(DATA_AKN_NAME) === CROSS_HEADING && (!startElement.getParent() || startElement.getParent().getAttribute(DATA_AKN_ELEMENT) != PARAGRAPH)) {
             context.event.cancel();
         }
     }

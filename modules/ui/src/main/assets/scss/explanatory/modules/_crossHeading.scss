@@ -85,8 +85,7 @@ $LEVEL_SPACING: 27px;
   li[data-akn-element="paragraph"] {
     li[data-akn-element="crossheading" i]
     , p[data-akn-element="crossheading" i] {
-      margin-left: calc(-#{$LIST_SPACING} * 1);
-      margin-right: 10px;
+      margin-right: 5px;
     }
   }
   li[data-akn-element="point"] li[data-akn-element="crossheading" i]
