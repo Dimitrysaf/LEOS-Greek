@@ -7,6 +7,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
+import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
@@ -15,15 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -110,6 +112,21 @@ public class AnnexController {
         try {
             List<Annex> annexes = this.annexAPIService.getRecentMinorVersions(documentId,documentRef);
             return  ResponseEntity.ok().body(annexes);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting recent changes - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<Object> saveAnnexVersion(@PathVariable("documentRef") String documentRef,
+                                                    @RequestBody SaveIntermediateVersionRequest saveEvent
+    ) {
+        try {
+            Annex annex = this.annexAPIService.saveAnnexDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
             return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
