@@ -127,11 +127,15 @@ public class XmlContentProcessorHelper {
         return itemVOList;
     }
 
-
     public static boolean isSoftDeletedOrMovedTo(Node node) {
         return node != null && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
                 && (XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(DELETE.getSoftAction()) || XercesUtils.getAttributeValue(node,
                 LEOS_SOFT_ACTION_ATTR).equals(DELETE_TRANSFORM.getSoftAction()) || XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(MOVE_TO.getSoftAction()));
+    }
+
+    public static boolean isSoftAdded(Node node) {
+        return node != null && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
+                && (XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(SoftActionType.ADD.getSoftAction()));
     }
 
     private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node, List<TableOfContentItemVO> itemVOList, TocMode mode) {
@@ -168,17 +172,21 @@ public class XmlContentProcessorHelper {
                         boolean isSubparagraph = SUBPARAGRAPH.equalsIgnoreCase(getTagValueFromTocItemVo(child));
                         if (!isSubparagraph && !foundNumbered) {
                             foundNumbered = true;
-                            itemVOList.add(tableOfContentItemVO);
+                            if (!itemVOList.contains(tableOfContentItemVO)) {
+                                itemVOList.add(tableOfContentItemVO);
+                            }
                         }
                         if (!isSubparagraph) {
                             tableOfContentItemVO.addChildItem(child);
                         }
-                        if (isSubparagraph) {
+                        if (isSubparagraph && !itemVOList.contains(child)) {
                             itemVOList.add(child);
                         }
                     }
                 } else {
-                    itemVOList.add(tableOfContentItemVO);
+                    if (!itemVOList.contains(tableOfContentItemVO)) {
+                        itemVOList.add(tableOfContentItemVO);
+                    }
                     tableOfContentItemVO.addAllChildItems(itemVOChildrenList);
                 }
             } else if (tableOfContentItemVO.getParentItem() != null) {
