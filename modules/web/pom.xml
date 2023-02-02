@@ -68,11 +68,11 @@
             <artifactId>leos-ui</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>eu.europa.ec.leos.pilot</groupId>
             <artifactId>leos-ui-angular</artifactId>
             <version>${project.version}</version>
-        </dependency-->
+        </dependency>
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

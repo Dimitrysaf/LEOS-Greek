@@ -34,6 +34,7 @@
         <project.final.name>leos-js</project.final.name>
         <resourcesOutputDirectory>META-INF/resources</resourcesOutputDirectory>
         <testResourcesOutputDirectory>META-INF/resources</testResourcesOutputDirectory>
+        <sonar.sources>src/main</sonar.sources>
     </properties>
 
     <dependencies>
