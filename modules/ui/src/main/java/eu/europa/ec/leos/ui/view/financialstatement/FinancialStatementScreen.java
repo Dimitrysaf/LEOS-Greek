@@ -146,4 +146,6 @@ public interface FinancialStatementScreen {
     void setUserGuidance(String guidance);
 
     boolean isCleanVersionShowed();
+
+    void initDatepickerExtension();
 }

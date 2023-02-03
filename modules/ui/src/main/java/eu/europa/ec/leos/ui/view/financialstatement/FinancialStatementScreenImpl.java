@@ -264,7 +264,6 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
         new UserGuidanceExtension<>(financialStatementContent, eventBus);
         new MathJaxExtension<>(financialStatementContent);
-        new DatePickerExtension<>(financialStatementContent, eventBus);
         new RefToLinkExtension<>(financialStatementContent);
         userCoEditionExtension = new UserCoEditionExtension<>(financialStatementContent, messageHelper, securityContext, cfgHelper);
         new ChangeDetailsExtension<>(financialStatementContent, eventBus);

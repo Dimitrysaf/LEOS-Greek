@@ -23,6 +23,7 @@ define(function datePickerExtensionModule(require) {
     var dateFormats = new Map();
     dateFormats.set('yy', 'YYYY');
     dateFormats.set('dd/mm/yy', '[DD/MM]YYYY');
+    var selector = "inline[name='date']";
 
 
     function _initDatePicker(connector) {
@@ -31,7 +32,7 @@ define(function datePickerExtensionModule(require) {
         // restrict scope to the extended target
         connector.target = UTILS.getParentElement(connector);
 
-        htmlDatePickerize("inline[name='date']", connector);
+        _initDatePickerWidget(connector);
         log.debug("Registering DatePicker extension un-registration listener...");
         connector.onUnregister = _connectorUnregistrationListener;
 
@@ -39,7 +40,7 @@ define(function datePickerExtensionModule(require) {
         connector.onStateChange = _connectorStateChangeListener;
     }
 
-    function htmlDatePickerize(selector, connector) {
+    function _initDatePickerWidget(connector) {
         $(selector).each(function(e) {
             var idAttr = $(this).attr('id');
             var element = $('#'+idAttr);
