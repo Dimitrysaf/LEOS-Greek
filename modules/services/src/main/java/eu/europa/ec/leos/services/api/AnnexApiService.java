@@ -19,6 +19,7 @@ public interface AnnexApiService {
     byte[] mergeElement(String documentRef, String elementContent , String  elementTag , String elementId) throws  Exception;
     List<Annex> getRecentMinorVersions(String documentId, String  documentRef);
     List<VersionVO> getVersionsData(String documentId, String documentRef);
+    void saveDocumentVersion(String documentRef);
     List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode);
     byte[] getAnnex(String documentRef);
     Annex saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);

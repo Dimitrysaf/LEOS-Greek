@@ -130,6 +130,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
+    public void saveDocumentVersion(String documentRef) {
+
+    }
+
+    @Override
     public List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
