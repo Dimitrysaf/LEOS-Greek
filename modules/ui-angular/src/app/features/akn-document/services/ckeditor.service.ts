@@ -782,6 +782,21 @@ export class CKEditorService implements OnDestroy {
       const documentRef = this.documentRefBS.value;
       this.documentService.setDocumentId(documentRef);
     },
+    deleteElementAction: (elementData: {
+      action: string;
+      elementId: string;
+      elementType: string;
+    }) => {
+      const documentRef = this.documentRefBS.value;
+      console.log(elementData, documentRef);
+      this.deleteAnnexElement(
+        documentRef,
+        elementData.elementType,
+        elementData.elementId,
+      ).subscribe((response) => {
+        this.documentService.setDocumentId(documentRef);
+      });
+    },
   };
 
   private destroy$ = new Subject<void>();
@@ -979,5 +994,16 @@ export class CKEditorService implements OnDestroy {
           console.log('getAnnexElement run');
         }),
       );
+  }
+
+  deleteAnnexElement(
+    documentRef: string,
+    elementName: string,
+    elementId: string,
+  ) {
+    return this.http.delete(
+      `api/secured/annex/${documentRef}/element/${elementName}/${elementId}`,
+      { responseType: 'arraybuffer' },
+    );
   }
 }

@@ -66,12 +66,15 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   handleEdit() {
     this.isEditMode = true;
   }
+
   handleUndo() {
     //TODO : implement undo
   }
+
   handleSave() {
     //TODO : implememt save
   }
+
   handleCancel() {
     //TODO : implement cancel
     this.isEditMode = false;
