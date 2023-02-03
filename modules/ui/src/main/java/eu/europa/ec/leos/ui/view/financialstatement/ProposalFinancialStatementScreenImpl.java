@@ -35,6 +35,7 @@ import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.component.versions.VersionComparator;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
+import eu.europa.ec.leos.ui.extension.DatePickerExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -291,6 +292,11 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public boolean isCleanVersionShowed() {
         return markedTextComponent != null && markedTextComponent.isCleanVersion();
+    }
+
+    @Override
+    public void initDatepickerExtension() {
+        new DatePickerExtension<>(financialStatementContent, eventBus);
     }
 
     private boolean isClonedProposal() {

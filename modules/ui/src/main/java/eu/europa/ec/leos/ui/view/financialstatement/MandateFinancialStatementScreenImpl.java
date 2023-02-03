@@ -249,4 +249,8 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
         return false;
     }
 
+    @Override
+    public void initDatepickerExtension() {
+    }
+
 }

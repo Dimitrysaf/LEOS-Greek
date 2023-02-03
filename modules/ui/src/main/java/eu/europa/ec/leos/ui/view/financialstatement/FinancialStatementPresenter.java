@@ -420,6 +420,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             financialStatementScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(financialStatement.getVersionSeriesId()), id);
             financialStatementScreen.setPermissions(financialStatementVO, isClonedProposal());
             financialStatementScreen.initAnnotations(financialStatementVO, proposalRef, connectedEntity);
+            financialStatementScreen.initDatepickerExtension();
             if(isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
             }
