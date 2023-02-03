@@ -57,7 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import javax.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
