@@ -41,6 +41,11 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
       this.id = params.id;
       this.doc.setDocumentId(params.id);
       this.cdkEditor.setDocumentRef(params.id);
+      this.doc.setDocumentRef(params.id);
+    });
+
+    this.route.data.subscribe((data) => {
+      this.doc.setDocumentType(data.category);
     });
     this.doc.documentXML$.subscribe((xml) => {
       this.loadDocument(xml);
@@ -72,7 +77,8 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   }
 
   handleSave() {
-    //TODO : implememt save
+    //Todo update this when function is implemented
+    this.doc.saveDocumentVersion();
   }
 
   handleCancel() {

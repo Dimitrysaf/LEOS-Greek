@@ -32,7 +32,9 @@ export class DocumentService implements OnDestroy {
   annotationsEnabled$: Observable<boolean>;
   compareModeEnabled$: Observable<boolean>;
   documentId$: Observable<string | null>;
+  documentRef$: Observable<string | null>;
   documentXML$: Observable<string | null>;
+  documentType$: Observable<string | null>;
   guidelinesEnabled$: Observable<boolean>;
   highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
@@ -43,6 +45,8 @@ export class DocumentService implements OnDestroy {
   private annotationsEnabledBS = new BehaviorSubject(true);
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
+  private documentRefBS = new BehaviorSubject<string | null>(null);
+  private documentTypeBS = new BehaviorSubject<string | null>(null);
   private guidelinesEnabledBS = new BehaviorSubject(true);
   private highlightsEnabledBS = new BehaviorSubject(true);
   private searchPaneOpenBS = new BehaviorSubject(false);
@@ -57,6 +61,8 @@ export class DocumentService implements OnDestroy {
 
   constructor(private http: HttpClient) {
     this.documentId$ = this.documentIdBS.asObservable();
+    this.documentRef$ = this.documentRefBS.asObservable();
+    this.documentType$ = this.documentTypeBS.asObservable();
     this.documentXML$ = this.documentId$.pipe(
       // FIXME: use proper API
       mergeMap((ref) => (ref ? this.findById(ref) : null)),
@@ -170,10 +176,18 @@ export class DocumentService implements OnDestroy {
     this.documentIdBS.next(id);
   }
 
+  setDocumentRef(ref: string) {
+    this.documentRefBS.next(ref);
+  }
+
   setSearchParams(values: Partial<DocumentSearchParams>) {
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.searchParamsBS.next({ ...oldVal, ...values });
     });
+  }
+
+  setDocumentType(docType: string) {
+    this.documentTypeBS.next(docType);
   }
 
   toggleAnnotations(enabled?: boolean) {
@@ -213,6 +227,10 @@ export class DocumentService implements OnDestroy {
 
   versionView(versionNumber: string) {
     console.warn('stub:', 'versionView', versionNumber); // FIXME
+  }
+
+  saveDocumentVersion() {
+    //todo IMPLEMENT this
   }
 
   private doSearch(params: DocumentSearchParams) {
