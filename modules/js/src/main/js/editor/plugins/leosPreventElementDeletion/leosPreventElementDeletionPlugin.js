@@ -62,7 +62,7 @@ define(function leosPreventElementDeletionPluginModule(require) {
 
     function removeEmptyElement(event) {
         var topEditorElement = event.data.dataValue;
-        if(topEditorElement && topEditorElement.children.length > 0){
+        if(topEditorElement && topEditorElement.children.length > 0 && typeof topEditorElement.find === 'function'){
             topEditorElement.find(function(child){
                 return child.hasClass && child.hasClass(leosNonEditableEmptyWidget.elementClass);
             }, true).forEach(function (emptyElement) {
@@ -73,7 +73,7 @@ define(function leosPreventElementDeletionPluginModule(require) {
 
     function removeEmptySpaces(event) {
         var topEditorElement = event.data.dataValue;
-        if(topEditorElement && topEditorElement.children.length > 0){
+        if(topEditorElement && topEditorElement.children.length > 0 && typeof topEditorElement.find === 'function'){
             topEditorElement.find(function(child){
                 return child.type == CKEDITOR.NODE_TEXT && (!!child.previous || !!child.next) && !child.value.replace(/\s/g, "").length;
             }, true).forEach(function (emptyElement) {
