@@ -30,7 +30,9 @@
           'page.collection.tabs.milestones' | translate
         }}</eui-tab-label>
         <eui-tab-content>
-          <app-proposal-milestones></app-proposal-milestones>
+          <app-proposal-milestones
+            [proposal]="proposal"
+          ></app-proposal-milestones>
         </eui-tab-content>
       </eui-tab>
       <eui-tab>

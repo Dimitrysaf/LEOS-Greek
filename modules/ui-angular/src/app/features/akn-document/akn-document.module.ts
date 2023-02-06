@@ -17,6 +17,7 @@ import { VersionActionsDropdownComponent } from './components/version-actions-dr
 import { VersionsPaneGroupComponent } from './components/versions-pane-group/versions-pane-group.component';
 import { AknDocumentComponent } from './containers/akn-document/akn-document.component';
 import { AnnexEditorComponent } from './containers/annex-editor/annex-editor.component';
+import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
 
 @NgModule({
@@ -32,6 +33,8 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     VersionActionsDropdownComponent,
     VersionsPaneComponent,
     VersionsPaneGroupComponent,
+    DocumentAnnotationsComponent,
+    DocumentEditorComponent,
   ],
   imports: [
     SharedModule,

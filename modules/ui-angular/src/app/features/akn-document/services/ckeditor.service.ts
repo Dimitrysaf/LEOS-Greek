@@ -15,9 +15,8 @@ import {
   tap,
 } from 'rxjs';
 
-import { DocumentService } from '@/features/akn-document/services/document.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import { TocService } from '@/shared/services/toc.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 // FIXME: mockdata
 const tocItemsList = [
@@ -805,7 +804,6 @@ export class CKEditorService implements OnDestroy {
     private leosLegacyService: LeosLegacyService,
     private http: HttpClient,
     private documentService: DocumentService,
-    private tocService: TocService,
   ) {}
 
   ngOnDestroy() {
@@ -965,7 +963,7 @@ export class CKEditorService implements OnDestroy {
       .pipe(
         tap(() => {
           console.log('dep');
-          this.tocService.getTocItems(this.annexRefBS.value);
+          this.documentService.getTocItems(this.annexRefBS.value);
         }),
         tap(() => this.connector.closeElement()),
       );

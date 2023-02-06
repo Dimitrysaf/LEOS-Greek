@@ -5,6 +5,7 @@ import { ProposalActionsDropdownComponent } from './components/proposal-actions-
 import { ProposalDetailsComponent } from './components/proposal-details/proposal-details.component';
 import { ProposalHeaderComponent } from './components/proposal-header/proposal-header.component';
 import { ProposalLastUpdatedOnComponent } from './components/proposal-last-updated-on/proposal-last-updated-on.component';
+import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
 import { ProposalCollaboratorsComponent } from './containers/proposal-collaborators/proposal-collaborators.component';
 import { ProposalCollaboratorsDialogComponent } from './containers/proposal-collaborators-dialog/proposal-collaborators-dialog.component';
 import { ProposalDraftsComponent } from './containers/proposal-drafts/proposal-drafts.component';
@@ -23,6 +24,7 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalCollaboratorsDialogComponent,
     ProposalHeaderComponent,
     ProposalLastUpdatedOnComponent,
+    ProposalMilestoneViewComponent,
   ],
   imports: [ProposalViewRoutingModule, SharedModule],
 })

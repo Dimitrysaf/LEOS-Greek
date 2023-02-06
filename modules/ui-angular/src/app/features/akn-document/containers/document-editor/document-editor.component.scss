@@ -1,0 +1,21 @@
+:host ::ng-deep {
+  .eui-page-column__header-right-content {
+    align-self: start;
+  }
+
+  .eui-page-column--right-column .eui-page-column__header-toggle .eui-icon {
+    transform: rotate(180deg);
+  }
+
+  .scrollable-page-column {
+    width: 35%;
+    overflow: scroll;
+  }
+
+  .eui-page-column__header-right-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+}

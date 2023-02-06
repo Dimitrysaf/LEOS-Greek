@@ -8,6 +8,11 @@
     Add
   </button>
 </div>
+
+<app-proposal-milestone-view
+  [proposal]="proposal"
+></app-proposal-milestone-view>
+
 <eui-dialog
   #milestonesDialog
   [title]="'Add Milestones'"
@@ -114,10 +119,13 @@
           <eui-dropdown-content>
             <!-- This can be a dynamic injected component -->
             <ul euiList>
-              <li euiListItem *ngFor="let item of listItems; let i = index">
-                <button euiListItem>
-                  {{ item.label }}
+              <li euiListItem>
+                <button euiListItem (click)="handleMilestoneView()">
+                  View
                 </button>
+              </li>
+              <li euiListItem>
+                <button euiListItem>Send a copy for contribution</button>
               </li>
             </ul>
           </eui-dropdown-content>
