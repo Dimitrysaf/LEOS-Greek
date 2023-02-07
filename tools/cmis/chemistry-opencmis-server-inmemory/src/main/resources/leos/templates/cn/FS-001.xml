@@ -92,8 +92,8 @@
                 <list class="~CHECK" xml:id="_body__level_13__list">
                     <indent xml:id="_body__level_13__list__indent_1">
                         <num xml:id="_body__level_13__list__indent_1__num">
-                            <inline name="checked" xml:id="_body__level_13__list__indent_1__num__inline">
-                                <b xml:id="_body__level_13__list__indent_1__num__inline__b">☑</b>
+                            <inline name="unchecked" xml:id="_body__level_13__list__indent_1__num__inline">
+                                <b xml:id="_body__level_13__list__indent_1__num__inline__b">☐</b>
                             </inline>
                         </num>
                         <content xml:id="_body__level_13__list__indent_1__content">
@@ -482,7 +482,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_4_4">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_4_4__num">
-                                    <inline name="checked" xml:id="_body__level_17__list__indent_3__list__indent_4_4__num__inline">☑</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_4_4__num__inline">☐</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_4_4__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_4_4__content__p">bodies referred to in Articles 70 and 71 of the Financial Regulation</p>
@@ -2632,7 +2632,7 @@
                     </indent>
                     <indent xml:id="_body__level_323__list__indent_2">
                         <num xml:id="_body__level_323__list__indent_2__num">
-                            <inline name="checked" xml:id="_body__level_323__list__indent_2__num__inline">☑</inline>
+                            <inline name="unchecked" xml:id="_body__level_323__list__indent_2__num__inline">☐</inline>
                         </num>
                         <content xml:id="_body__level_323__list__indent_2__content">
                             <p xml:id="_body__level_323__list__indent_2__content__p">The proposal/initiative requires the use of appropriations of an administrative nature, as explained below:</p>

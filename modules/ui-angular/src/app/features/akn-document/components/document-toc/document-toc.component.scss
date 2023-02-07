@@ -13,10 +13,10 @@ mat-tree.document-toc-tree {
 
 .mat-tree-node .document-toc-tree-node {
   background-color: transparent;
-  padding: 0;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  padding: 0;
 }
 
 .mat-nested-tree-node .document-toc-tree-nested-node {
