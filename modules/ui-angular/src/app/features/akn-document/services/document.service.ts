@@ -137,6 +137,9 @@ export class DocumentService implements OnDestroy {
 
   saveVersion() {
     console.warn('stub:', 'saveVersion'); // FIXME
+    this.documentXML$.subscribe((data) => {
+      console.log(data);
+    });
   }
 
   searchNext() {
@@ -229,9 +232,10 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'versionView', versionNumber); // FIXME
   }
 
-  saveDocumentVersion() {
-    //todo IMPLEMENT this
-  }
+  // saveDocumentVersion() {
+  //   console.log('save document version clicked');
+  //   //todo IMPLEMENT this
+  // }
 
   private doSearch(params: DocumentSearchParams) {
     console.warn('stub:', 'doSearch', params); // FIXME

@@ -77,8 +77,7 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   }
 
   handleSave() {
-    //Todo update this when function is implemented
-    this.doc.saveDocumentVersion();
+    //TODO : implement save
   }
 
   handleCancel() {
