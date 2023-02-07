@@ -7,36 +7,35 @@ input {
 }
 
 .example-list {
-  width: 500px;
-  max-width: 100%;
-  border: solid 1px #ccc;
-  min-height: 60px;
-  display: block;
   background: white;
+  border: solid 1px #ccc;
   border-radius: 4px;
+  display: block;
+  max-width: 100%;
+  min-height: 60px;
   overflow: hidden;
+  width: 500px;
 }
 
 .example-box {
-  padding: 20px 10px;
+  background: white;
   border-bottom: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  color: rgba(0 0 0 87%);
+  cursor: move;
   display: flex;
   flex-direction: row;
-  box-sizing: border-box;
-  gap: 1rem;
-  cursor: move;
-  background: white;
   font-size: 14px;
+  gap: 1rem;
+  padding: 20px 10px;
 }
 
 .cdk-drag-preview {
-  opacity: 1;
-  z-index: 10000 !important;
-  box-sizing: border-box;
   border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 5px -3px rgba(0 0 0 20%), 0 8px 10px 1px rgba(0 0 0 14%),
+    0 3px 14px 2px rgba(0 0 0 12%);
+  box-sizing: border-box;
+  opacity: 1;
 }
 
 .cdk-drag-placeholder {

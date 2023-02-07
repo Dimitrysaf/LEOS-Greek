@@ -5,8 +5,10 @@
     <title>Application name</title>
 
     <script>
-      var locationHref = window.location.href.split("/");
-      document.write("<base href='/" + locationHref[3] + "/" + locationHref[4] + "/'/>");
+      var locationHref = window.location.href.split('/');
+      document.write(
+        "<base href='/" + locationHref[3] + '/' + locationHref[4] + "/'/>",
+      );
     </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
