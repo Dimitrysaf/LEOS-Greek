@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AknDocumentComponent } from './akn-document.component';
@@ -8,6 +9,7 @@ describe('AknDocumentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [AknDocumentComponent],
     }).compileComponents();
 
