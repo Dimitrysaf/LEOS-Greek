@@ -121,11 +121,11 @@
             <ul euiList>
               <li euiListItem>
                 <button euiListItem (click)="handleMilestoneView()">
-                  View
+                  {{
+                    'page.collection.milestones.actions.view-milestone'
+                      | translate
+                  }}
                 </button>
-              </li>
-              <li euiListItem>
-                <button euiListItem>Send a copy for contribution</button>
               </li>
             </ul>
           </eui-dropdown-content>

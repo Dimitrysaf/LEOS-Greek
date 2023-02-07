@@ -1,13 +1,12 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { ViewportScroller } from '@angular/common';
-import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { cloneDeep } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
-import { Document } from '@/shared/models';
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TableOfContentItemVO } from '../../models/toc.model';
@@ -147,7 +146,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private insertBefore(target: TableOfContentItemVO) {
+    //deep clone the tree
     const newTree = cloneDeep(this.treeControl.dataNodes);
+    //remove the already existing node
     this.removeNode(newTree[1], this.selectedNodeToMove);
     const parentNode = this.findNodeById(newTree[1], target.parentItem);
     const targetIndex = parentNode.childItems.findIndex(

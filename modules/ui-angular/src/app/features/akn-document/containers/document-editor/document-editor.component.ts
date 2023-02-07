@@ -39,11 +39,10 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.route.params.subscribe((params) => {
       this.documentRef = params.id;
       this.documentType = this.route.snapshot.data['category'];
-      console.log(this.documentType);
       this.doc.setDocumentCategory(this.documentType);
-      this.doc.setDocumentId(params.id);
-      this.doc.setDocumentCategory(this.route.snapshot.data['category']);
-      this.cdkEditor.setDocumentRef(params.id);
+      this.doc.setDocumentId(this.documentRef);
+      this.doc.setDocumentCategory(this.documentType);
+      this.cdkEditor.setDocumentRef(this.documentRef);
     });
 
     this.loadStyleSheet();
@@ -101,13 +100,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       this.documentType === 'coverPage' ? 'coverpage' : this.documentType;
     const leosBuildTimestamp = 1667202194805; // FIXME: get this from server at runtime
     const legacyAssetsPrefix = 'legacy/assets'; // FIXME: import stylesheets to ngui?
-    const coverPageCSS = `assets/scss/_coverPage.scss?cacheToken_${leosBuildTimestamp}`;
-    const coverPageVIEWCSS = `assets/scss/_coverpageView.scss?cacheToken_${leosBuildTimestamp}`;
     const cssUrl = `${legacyAssetsPrefix}/css/${category}.css?cacheToken_${leosBuildTimestamp}`;
-    if (category === 'coverage') {
-      this.unloadStyleSheet = this.domService.setDynamicStyle(coverPageCSS);
-      this.unloadStyleSheet = this.domService.setDynamicStyle(coverPageVIEWCSS);
-    }
     this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
   }
 
