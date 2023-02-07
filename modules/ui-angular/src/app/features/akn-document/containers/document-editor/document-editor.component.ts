@@ -9,7 +9,7 @@ import { DomService } from '@/shared/services/dom.service';
 import { CKEditorService } from '../../services/ckeditor.service';
 
 @Component({
-  selector: 'app-annex-editor',
+  selector: 'app-document-editor',
   templateUrl: './document-editor.component.html',
   styleUrls: ['./document-editor.component.scss'],
 })

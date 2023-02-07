@@ -7,15 +7,16 @@
 }
 
 mat-tree {
-  margin-left: 40px;
   background-color: transparent !important;
+  margin-left: 40px;
 }
+
 .mat-tree-node {
-  padding: 0;
   background-color: transparent !important;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  padding: 0;
 }
 
 .mat-nested-tree-node {
@@ -38,8 +39,8 @@ ul {
 }
 
 li {
-  padding-left: 40px;
   border-width: 0 0 1px 1px;
+  padding-left: 40px;
   position: relative;
   top: -24px;
 }

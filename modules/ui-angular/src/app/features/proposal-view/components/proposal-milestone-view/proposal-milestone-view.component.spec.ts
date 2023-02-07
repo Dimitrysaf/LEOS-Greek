@@ -8,9 +8,8 @@ describe('ProposalMilestoneViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProposalMilestoneViewComponent ]
-    })
-    .compileComponents();
+      declarations: [ProposalMilestoneViewComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProposalMilestoneViewComponent);
     component = fixture.componentInstance;

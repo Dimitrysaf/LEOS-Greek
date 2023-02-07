@@ -8,14 +8,14 @@
   }
 
   .scrollable-page-column {
-    width: 35%;
     overflow: scroll;
+    width: 35%;
   }
 
   .eui-page-column__header-right-content {
+    align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
   }
 }

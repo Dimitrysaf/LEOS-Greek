@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 /**
  * Copyright 2019 European Commission
  *
@@ -17,14 +18,14 @@
 %xmlCoverPage {
   container[name='eeaRelevance'] {
     & > * {
-      text-align: center;
-      text-decoration: none;
       display: block;
       font-weight: normal;
+      text-align: center;
+      text-decoration: none;
     }
   }
 
-  coverPage {
+  coverpage {
     display: block;
 
     @extend %pageLayout;
@@ -32,17 +33,19 @@
     // AKN4EU 4.0: mainDocLanguage, language for compatibility reasons
     container[name='language'],
     container[name='mainDocLanguage'] {
+      bottom: $PAGE-MARGIN-VERTICAL;
+      font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+      font-size: 24pt;
       font-weight: bold;
       position: absolute;
-      font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
-      font-size: 24pt;
-      bottom: $PAGE-MARGIN-VERTICAL;
-      &:before {
+
+      &::before {
         content: attr(data-lang);
         float: left;
         margin-left: -1.2cm;
       }
-      &:after {
+
+      &::after {
         content: attr(data-lang);
         float: right;
         margin-left: 15.8cm;
@@ -50,29 +53,29 @@
     }
 
     container[name='logo'] {
-      padding-bottom: 4.65cm; // did it because in this case missing information from metadata (Brussels 2017 draft)
       display: inline-block;
+      padding-bottom: 4.65cm; // did it because in this case missing information from metadata (Brussels 2017 draft)
       // Style for logo image
       & > * > img {
-        width: 180px;
         height: 90px;
+        width: 180px;
       }
     }
 
     container[name='actingEntity'] {
       & > * {
+        display: inline-block;
+        font-family: Arial;
         font-size: 14pt;
         margin-left: 0.5em;
-        display: inline-block;
         max-width: 35%;
-        font-family: Arial;
       }
     }
 
     container[name='mainDoc'] {
       display: block;
-      margin-top: 52pt;
       margin-left: 8.99cm;
+      margin-top: 52pt;
 
       & > block[name='placeAndDate'] {
         display: inline;
@@ -90,7 +93,7 @@
       & > block[name='reference'] {
         display: block;
 
-        & > docNumber {
+        & > docnumber {
           display: inline;
         }
       }
@@ -98,11 +101,11 @@
 
     container[name='procedureIdentifier'] {
       display: block;
-      margin-left: 8.99cm;
       margin-bottom: 24pt;
+      margin-left: 8.99cm;
 
       & > p {
-        & > docketNumber {
+        & > docketnumber {
           display: inline;
         }
       }
@@ -119,10 +122,10 @@
 
     container[name='associatedReferences'] {
       & > * {
-        text-align: center;
-        text-decoration: none;
         display: block;
         font-weight: normal;
+        text-align: center;
+        text-decoration: none;
       }
     }
 

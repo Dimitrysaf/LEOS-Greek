@@ -3,9 +3,9 @@
 @mixin coverpageView {
   .leos-coverpage-view {
     .close-button {
+      border: 1px solid $G_BORDER_COLOR;
       float: right;
       font-weight: normal;
-      border: 1px solid $G_BORDER_COLOR;
 
       .v-icon {
         color: #b92222;
@@ -18,9 +18,9 @@
 
     .leos-coverpageview-icon {
       color: $G_ORANGE_COLOR;
+      font-family: Vaadin-Icons;
       font-size: 32px;
       padding-left: 5px;
-      font-family: Vaadin-Icons;
     }
 
     .leos-padbar {

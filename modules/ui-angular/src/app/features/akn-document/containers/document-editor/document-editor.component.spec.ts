@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AnnexEditorComponent } from './document-editor.component';
+import { DocumentEditorComponent } from './document-editor.component';
 
-describe('AnnexEditorComponent', () => {
-  let component: AnnexEditorComponent;
-  let fixture: ComponentFixture<AnnexEditorComponent>;
+describe('DocumentEditorComponent', () => {
+  let component: DocumentEditorComponent;
+  let fixture: ComponentFixture<DocumentEditorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AnnexEditorComponent],
+      declarations: [DocumentEditorComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AnnexEditorComponent);
+    fixture = TestBed.createComponent(DocumentEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
