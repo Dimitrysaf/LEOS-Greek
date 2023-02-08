@@ -20,9 +20,10 @@ import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.s
 import { TocService } from '@/shared/services/toc.service';
 
 // FIXME: mockdata
+// TODO This must be fetch from a backend Api. Keep in mind that aktTag must always be lowercase
 const tocItemsList = [
   {
-    aknTag: 'PREFACE',
+    aknTag: 'preface',
     root: true,
     higherElement: null,
     draggable: false,
@@ -49,7 +50,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'MAINBODY',
+    aknTag: 'mainbody',
     root: true,
     higherElement: null,
     draggable: false,
@@ -76,7 +77,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'PART',
+    aknTag: 'part',
     rootl: false,
     higherElementl: true,
     draggablel: true,
@@ -105,7 +106,7 @@ const tocItemsList = [
     actionsPositionl: null,
   },
   {
-    aknTag: 'TITLE',
+    aknTag: 'title',
     root: false,
     higherElement: true,
     draggable: true,
@@ -134,7 +135,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'CHAPTER',
+    aknTag: 'chapter',
     root: false,
     higherElement: true,
     draggable: true,
@@ -163,7 +164,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'SECTION',
+    aknTag: 'section',
     root: false,
     higherElement: true,
     draggable: true,
@@ -192,7 +193,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'HEADING',
+    aknTag: 'heading',
     root: false,
     higherElement: null,
     draggable: false,
@@ -226,7 +227,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'LEVEL',
+    aknTag: 'level',
     root: false,
     higherElement: null,
     draggable: true,
@@ -260,7 +261,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'PARAGRAPH',
+    aknTag: 'paragraph',
     root: false,
     higherElement: null,
     draggable: true,
@@ -294,7 +295,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'SUBPARAGRAPH',
+    aknTag: 'subparagraph',
     root: false,
     higherElement: null,
     draggable: false,
@@ -321,7 +322,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'LIST',
+    aknTag: 'list',
     root: false,
     higherElement: null,
     draggable: false,
@@ -348,7 +349,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'POINT',
+    aknTag: 'point',
     root: false,
     higherElement: null,
     draggable: false,
@@ -375,7 +376,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'INDENT',
+    aknTag: 'indent',
     root: false,
     higherElement: null,
     draggable: false,
@@ -402,7 +403,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'ALINEA',
+    aknTag: 'alinea',
     root: false,
     higherElement: null,
     draggable: false,
@@ -728,6 +729,7 @@ export class CKEditorService implements OnDestroy {
       elementId: string;
       elementType: string;
     }) => {
+      console.log(data);
       const documentRef = this.documentRefBS.value;
       this.getAnnexElement(
         documentRef,
