@@ -18,20 +18,20 @@
       label="Template selection"
       [isCompleted]="!!(selectedTemplate && selectedLanguage)"
     >
-      <uxWizardStepContent
-        ><app-proposal-create-template-selector
+      <uxWizardStepContent>
+        <app-proposal-create-template-selector
           #templateSelector
           (selectTemplate)="handleSelectTemplate($event)"
           (selectLanguage)="handleSelectLanguage($event)"
-        ></app-proposal-create-template-selector
-      ></uxWizardStepContent>
+        ></app-proposal-create-template-selector>
+      </uxWizardStepContent>
     </ux-wizard-step>
     <ux-wizard-step label="Document metadata" [isCompleted]="createForm.valid">
-      <uxWizardStepContent
-        ><app-proposal-create-form
+      <uxWizardStepContent>
+        <app-proposal-create-form
           [createForm]="createForm"
-        ></app-proposal-create-form
-      ></uxWizardStepContent>
+        ></app-proposal-create-form>
+      </uxWizardStepContent>
     </ux-wizard-step>
   </ux-wizard-steps>
   <eui-dialog-footer>
