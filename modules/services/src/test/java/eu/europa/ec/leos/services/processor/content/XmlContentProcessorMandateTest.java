@@ -20,6 +20,7 @@ import io.atlassian.fugue.Pair;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.mockito.InjectMocks;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -61,6 +62,19 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "art486");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(returnedElement)));
+    }
+
+    @Test
+    public void test_remove_cn_point() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_cn_point_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
     @Test
