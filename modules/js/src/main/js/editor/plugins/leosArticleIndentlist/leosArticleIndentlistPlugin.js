@@ -39,12 +39,12 @@ define(function leosArticleIndentListPluginModule(require) {
         isNotBookmark = CKEDITOR.dom.walker.bookmark( false, true ),
         TRISTATE_DISABLED = CKEDITOR.TRISTATE_DISABLED,
         TRISTATE_OFF = CKEDITOR.TRISTATE_OFF;
-
+    var LOCAL_MAX_LEVEL_LIST;
     var pluginDefinition = {
         requires: 'indent',
         init: function init(editor) {
             var globalHelpers = CKEDITOR.plugins.indent;
-
+            LOCAL_MAX_LEVEL_LIST =  leosPluginUtils.getMaxListLevel(editor);
             // Register commands.
             globalHelpers.registerCommands( editor, {
                 aknindentlist: new commandDefinition( editor, 'aknindentlist', true ),
@@ -120,7 +120,7 @@ define(function leosArticleIndentListPluginModule(require) {
                                 return TRISTATE_OFF;
                             } else if (!list
                                 || firstItemInPath( this.context, path, list )
-                                || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), leosPluginUtils.MAX_LIST_LEVEL) ) {
+                                || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST) ) {
                                 return TRISTATE_DISABLED;
                             } else {
                                 return TRISTATE_OFF;
@@ -168,7 +168,8 @@ define(function leosArticleIndentListPluginModule(require) {
                 endContainer = endContainer.getParent();
 
             if (!startContainer || !endContainer
-                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer) && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL))){
+                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer)
+                    && _isListDepthMoreThanThreshold(startContainer, endContainer, LOCAL_MAX_LEVEL_LIST))){
                 return false;
             }
 

@@ -47,7 +47,8 @@ define(function leosAnnexIndentListPluginModule(require) {
     var levelItemVo;
 
     var pluginName = "leosAnnexIndentListPlugin";
-
+    var LOCAL_MAX_LEVEL_LIST;
+    var LOCAL_MAX_LEVEL_LIST_DEPTH;
     var indentationStatus = {
         original: {
             num: undefined,
@@ -87,6 +88,8 @@ define(function leosAnnexIndentListPluginModule(require) {
                 aknindentsubpararaph: new commandDefinition( editor, 'aknindentsubparagraph', true ),
                 aknoutdentsubpararaph: new commandDefinition( editor, 'aknoutdentsubparagraph' )
             } );
+
+            setMaxListLevel(editor);
 
             function commandDefinition(editor) {
                 globalHelpers.specificDefinition.apply( this, arguments );
@@ -159,12 +162,13 @@ define(function leosAnnexIndentListPluginModule(require) {
                                 return TRISTATE_OFF;
                             } else {
                                 var type = list ? list.getAttribute(DATA_AKN_NAME_ELEMENT) : null;
+
                                 var isLevelNumberIndentable = list
                                     && list.getAttribute(DATA_AKN_NAME_ATTR) === AKN_ANNEX_LIST
                                     && !!list.getAttribute(DATA_AKN_NAME_ELEMENT)
                                     && list.getAttribute(DATA_AKN_NAME_ELEMENT) === LEVEL
                                     && !_isFirstLevelListAtLastIndentPosition(list, path)
-                                    && !_isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), leosPluginUtils.MAX_LIST_LEVEL);
+                                    && !_isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST);
                                 var isListIntro = leosPluginUtils.isListIntro(path.lastElement);
                                 var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
                                 var isNotFirstLevelElement = _isNotFirstLevelElement(path);
@@ -210,7 +214,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                                 } else if (_checkLevelListDepthMoreThanThreshold(list, range) && !_isOnlyLevelElementSelected(range.startContainer, range.endContainer)) {
                                     return TRISTATE_OFF;
                                 } else if (!list || firstItemInPath(this.context, path, list)
-                                    || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), leosPluginUtils.MAX_LIST_LEVEL)
+                                    || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)
                                     || _isFirstPointOrIndentInList(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer))) {
                                     return TRISTATE_DISABLED;
                                 } else {
@@ -267,13 +271,19 @@ define(function leosAnnexIndentListPluginModule(require) {
         }
     };
 
+
+    function setMaxListLevel(editor) {
+        LOCAL_MAX_LEVEL_LIST = leosPluginUtils.getMaxListLevel(editor);
+        LOCAL_MAX_LEVEL_LIST_DEPTH = leosPluginUtils.getMaxListLevelDepth(editor);
+    }
+
     function _shouldIndent(ol) {
         if (indentationStatus.current.move < 0) {
             return true;
         }
         if (!ol.length
             || !(_checkParentAndPosition())
-            || (leosPluginUtils.isListDepthMoreThanThreshold(indentationStatus, leosPluginUtils.MAX_LEVEL_LIST_DEPTH))) {
+            || (leosPluginUtils.isListDepthMoreThanThreshold(indentationStatus, LOCAL_MAX_LEVEL_LIST_DEPTH))) {
             return false;
         } else {
             return true;
@@ -411,7 +421,7 @@ define(function leosAnnexIndentListPluginModule(require) {
     function _checkLevelListDepthMoreThanThreshold(list, range) {
         var isDepthMoreThanThreshold = list && list.getName() === 'ol' && leosPluginUtils.isAnnexList(list)
                         && !_isLevelListDepthMoreThanThreshold(getEnclosedLevelElement(range.startContainer),
-                        getEnclosedLevelElement(range.endContainer), leosPluginUtils.MAX_LEVEL_LIST_DEPTH);
+                        getEnclosedLevelElement(range.endContainer), LOCAL_MAX_LEVEL_LIST_DEPTH);
         return isDepthMoreThanThreshold;
     }
 
@@ -660,7 +670,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                 endContainer = endContainer.getParent();
 
             if (!startContainer || !endContainer
-                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer) && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL)) && !_isOnlyLevelElementSelected(startContainer, endContainer)){
+                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer) && _isListDepthMoreThanThreshold(startContainer, endContainer, LOCAL_MAX_LEVEL_LIST)) && !_isOnlyLevelElementSelected(startContainer, endContainer)){
                 return false;
             }
 
@@ -846,7 +856,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         function indentParagraph() {
             var prevLevel = indentationStatus.current.level;
             // Do Indent
-            if (that.isIndent && (indentationStatus.current.level < leosPluginUtils.MAX_LIST_LEVEL || !indentationStatus.current.numbered)) {
+            if (that.isIndent && (indentationStatus.current.level < LOCAL_MAX_LEVEL_LIST || !indentationStatus.current.numbered)) {
                 if (indentationStatus.current.move < 0) {
                     indentationStatus.current.numbered = indentationStatus.current.prevNumbered.pop();
 
