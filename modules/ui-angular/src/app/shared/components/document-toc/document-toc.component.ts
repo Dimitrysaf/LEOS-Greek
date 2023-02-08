@@ -135,13 +135,19 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private insertAfter(target: TableOfContentItemVO) {
+    //clone the tree
     const newTree = cloneDeep(this.treeControl.dataNodes);
+    //remove the node from the tree
     this.removeNode(newTree[1], this.selectedNodeToMove);
+    //get parent of the node droped / to moved at
     const parentNode = this.findNodeById(newTree[1], target.parentItem);
+    //set the selected / dragged  node to have the same id as the node droped/moved at
+    this.selectedNodeToMove.parentItem = parentNode.id;
     const targetIndex = parentNode.childItems.findIndex(
       (x) => x.id === target.id,
     );
     parentNode.childItems.splice(targetIndex + 1, 0, this.selectedNodeToMove);
+    //set the new tree
     this.documentService.setToc(newTree);
   }
 
@@ -154,6 +160,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     const targetIndex = parentNode.childItems.findIndex(
       (x) => x.id === target.id,
     );
+    //set the selected / dragged  node to have the same id as the node droped/moved at
+    this.selectedNodeToMove.parentItem = parentNode.id;
+
     if (targetIndex === 0) {
       parentNode.childItems.unshift(this.selectedNodeToMove);
     } else {
@@ -165,8 +174,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   private insertChild(target: TableOfContentItemVO) {
     const newTree = cloneDeep(this.treeControl.dataNodes);
     this.removeNode(newTree[1], this.selectedNodeToMove);
-    const node = this.findNodeById(newTree[1], target.id);
-    node.childItems.push(this.selectedNodeToMove);
+    //get node to insert to as child
+    const parentToBeNode = this.findNodeById(newTree[1], target.id);
+    //set the selected / dragged  node to have the same id as the node droped/moved at
+    this.selectedNodeToMove.parentItem = parentToBeNode.id;
+    parentToBeNode.childItems.push(this.selectedNodeToMove);
     this.documentService.setToc(newTree);
   }
 
