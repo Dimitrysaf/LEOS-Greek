@@ -7,8 +7,10 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Document, DocumentType } from '@leos/shared';
+import { takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
@@ -23,6 +25,7 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   memorandum: Document | null = null;
   document: Document | null = null;
   annexes: Document[] = [];
+  proposalId: string;
 
   @ViewChild('editTitle') dialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -30,7 +33,10 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   title: string;
   activeAnnexId: string;
 
-  constructor(private proposalDetailsService: ProposalDetailsService) {}
+  constructor(
+    private proposalDetailsService: ProposalDetailsService,
+    private route: ActivatedRoute,
+  ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if ('proposal' in changes) {
       this.populateView();
@@ -40,6 +46,9 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   ngOnInit() {
     // FIXME: Validate document selection method
     this.populateView();
+    this.route.params.pipe().subscribe((params) => {
+      this.proposalId = params['proposalId'];
+    });
   }
 
   handleAnnexAdd() {
@@ -93,7 +102,6 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   private populateView() {
     const getChildDocument = (type: DocumentType) =>
       this.proposal.childDocuments.find((d) => d.category === type) ?? null;
-
     this.coverpage = getChildDocument('COVERPAGE');
     this.memorandum = getChildDocument('MEMORANDUM');
     this.document = getChildDocument('BILL');

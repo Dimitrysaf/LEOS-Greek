@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,8 +191,7 @@ public class MandateTocEditor extends AbstractTocEditor {
             super.addOrMoveItem(true, sourceItem, targetItem, tocTree, actualTargetItem, position);
             moveOriginAttribute(sourceItem, targetItem);
             setNumber(sourceItem, targetItem);
-            Document document = targetItem.getNode().getOwnerDocument();
-            String origin = xmlContentProcessor.getOriginOfDocument(document);
+            String origin = getOriginOfDocument(targetItem);
             if ((sourceItem.getTocItem().isAddSoftAttr() == null || sourceItem.getTocItem().isAddSoftAttr()) && !CN.equals(origin)) {
                 sourceItem.setSoftActionAttr(ADD);
                 sourceItem.setSoftActionRoot(Boolean.TRUE);
@@ -214,6 +214,18 @@ public class MandateTocEditor extends AbstractTocEditor {
         setAffectedAttribute(sourceItem, tocTree.getTreeData());
         setBlockOrCrossHeading(sourceItem);
         resetUserInfo(sourceItem);
+    }
+
+    private String getOriginOfDocument(TableOfContentItemVO targetItem) {
+        Document document;
+        Node node = targetItem.getNode();
+        TableOfContentItemVO parentTableOfContentItemVO = targetItem.getParentItem();
+        while (node == null && parentTableOfContentItemVO != null) {
+            node = parentTableOfContentItemVO.getNode();
+            parentTableOfContentItemVO = parentTableOfContentItemVO.getParentItem();
+        }
+        document = node.getOwnerDocument();
+        return xmlContentProcessor.getOriginOfDocument(document);
     }
 
     private void setBlockOrCrossHeading(TableOfContentItemVO sourceItem) {

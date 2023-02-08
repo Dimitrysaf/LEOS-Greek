@@ -1,0 +1,49 @@
+<eui-dialog
+  #milestoneView
+  title="Milestone View"
+  [height]="'100vh'"
+  [width]="'85vw'"
+>
+  <eui-tabs>
+    <eui-tab *ngFor="let doc of documents; let i = index">
+      <ng-container>
+        <eui-tab-label>{{ getDocTitle(doc) }}</eui-tab-label>
+        <eui-page>
+          <eui-tab-content>
+            <eui-page-content>
+              <eui-page-columns>
+                <eui-page-column isCollapsible interactiveScrollbars size="4xl"
+                  ><eui-page-column-body
+                    ><app-document-toc
+                      [documentType]="doc.documentType"
+                      [documentRef]="doc.metadata.internalRef"
+                    ></app-document-toc></eui-page-column-body
+                ></eui-page-column>
+                <eui-page-column interactiveScrollbars
+                  ><eui-page-column-body
+                    ><app-akn-document
+                      [docId]="doc.metadata.internalRef"
+                      [docCategory]="doc.documentType"
+                    ></app-akn-document></eui-page-column-body
+                ></eui-page-column>
+                <!-- <eui-page-column
+                  class="eui-page-column--right-column"
+                  [label]="'page.editor.annotations-column.label' | translate"
+                  isCollapsible
+                  interactiveScrollbars
+                  style="width: calc(620px + 330px)"
+                >
+                  <eui-page-column-body class="flex-grow-1">
+                    <app-document-annotations
+                      [documentId]="doc.id"
+                    ></app-document-annotations>
+                  </eui-page-column-body>
+                </eui-page-column> -->
+              </eui-page-columns>
+            </eui-page-content>
+          </eui-tab-content>
+        </eui-page>
+      </ng-container></eui-tab
+    >
+  </eui-tabs>
+</eui-dialog>

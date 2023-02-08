@@ -54,7 +54,10 @@ $LIST_SPACING: 40px;
             @extend %padList;
         }
     }
-    paragraph > list:not(:first-child) > subparagraph {
+    paragraph > list:not(:nth-child(1)):not(:nth-child(2)) > subparagraph {
+        padding-left: $LIST_SPACING;
+    }
+    paragraph > list > subparagraph:not(:nth-child(1)) {
         padding-left: $LIST_SPACING;
     }
 }

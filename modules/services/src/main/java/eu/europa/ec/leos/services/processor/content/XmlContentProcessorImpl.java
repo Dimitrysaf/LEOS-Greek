@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_SOFT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.isElementInToc;
+import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftAdded;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftDeletedOrMovedTo;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.addSibling;
@@ -787,7 +788,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     List<Node> listSubElements = XercesUtils.getChildren(subElement, subElementTagName);
                     for (int k = 0; k < listSubElements.size(); k++) {
                         Node listSubElement = listSubElements.get(k);
-                        modifySubElement(listSubElement, origin);
+                        String listSubElementOrigin = getAttributeValue(listSubElement, LEOS_ORIGIN_ATTR);
+                        String listSubElementSoftAction = getAttributeValue(listSubElement, LEOS_SOFT_ACTION_ATTR);
+                        if (k==0 && j==0 && listSubElement.getNodeName().equalsIgnoreCase(SUBPARAGRAPH) && elementOrigin.equals(EC) && (listSubElementOrigin == null
+                                || !listSubElementOrigin.equals(EC))
+                                && (listSubElementSoftAction == null
+                                || isSoftAdded(listSubElement))) {
+                            createTransformationNode(node, listSubElement);
+                        } else {
+                            modifySubElement(listSubElement, origin);
+                        }
                     }
                 } else {
                     modifySubElement(subElement, origin);
@@ -872,8 +882,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     && nextSiblingList.getNodeName().equalsIgnoreCase(LIST)) {
                 Node firstChildList = XercesUtils.getFirstChild(nextSiblingList);
                 if ((firstChildList == null
-                        || !firstChildList.getNodeName().equalsIgnoreCase(SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && compareSoftAction(subpara,
-                        nextSiblingList) ) {
+                        || !firstChildList.getNodeName().equalsIgnoreCase(SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && (compareSoftAction(subpara,
+                        nextSiblingList) || isSoftAdded(nextSiblingList))) {
                     if (nextSiblingList.getFirstChild() != null) {
                         nextSiblingList.insertBefore(subpara, nextSiblingList.getFirstChild());
                     } else {
@@ -1615,7 +1625,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         boolean isSoftMovedFrom = isSoftMovedFrom(node);
         boolean isProposalElement = isProposalElement(node);
         Node parentNode = node.getParentNode();
-        List<Node> siblings =  XercesUtils.getChildren(parentNode, node.getNodeName());
+        List<Node> siblings =  XercesUtils.getChildren(parentNode, Arrays.asList(SUBPARAGRAPH, POINT, INDENT, LIST, CROSSHEADING));
         boolean singleChild = siblings.size() <= 1;
         boolean firstChild = siblings.indexOf(node) == 0;
 
@@ -1768,10 +1778,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
      * </paragraph>
      */
     protected void restoreTransformedNodeToContent(Node node) {
+        String parentTag = node.getParentNode().getNodeName().toLowerCase();
         Node prevSibling = XercesUtils.getPrevSibling(node);
         if (prevSibling != null) {
             SoftActionType actionType = XercesUtils.getAttributeForSoftAction(prevSibling, LEOS_SOFT_ACTION_ATTR);
             if (Arrays.asList(SoftActionType.TRANSFORM, SoftActionType.DELETE).contains(actionType)) {
+                if (parentTag.equals(LIST)) {
+                    node.getParentNode().getParentNode().insertBefore(prevSibling, node.getParentNode());
+                }
                 Node contentNode = XercesUtils.getFirstChild(prevSibling, CONTENT);
                 XercesUtils.replaceElement(contentNode, prevSibling);
             }

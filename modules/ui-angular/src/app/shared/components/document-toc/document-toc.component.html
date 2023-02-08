@@ -1,15 +1,12 @@
 <mat-tree
   [dataSource]="dataSource"
   [treeControl]="treeControl"
-  class="eui-primary document-toc-tree"
+  class="eui-primary"
 >
-  <mat-nested-tree-node
-    class="document-toc-tree-nested-node"
-    *matTreeNodeDef="let node"
-  >
+  <mat-nested-tree-node *matTreeNodeDef="let node">
     <li>
-      <div class="mat-tree-node document-toc-tree-node" euiLabel euiPrimary>
-        <span>{{ getLabel(node) }}</span>
+      <div class="mat-tree-node" euiLabel euiPrimary>
+        <span (click)="hanldeNodeClick(node)">{{ getLabel(node) }}</span>
         <eui-dropdown *ngIf="isEditMode()">
           <button
             euiButton
@@ -74,7 +71,9 @@
           iconClass="eui-icon eui-icon-angle-down"
           (click)="saveExpanded(node)"
         ></eui-icon>
-        <span euiLabel euiPrimary>{{ getLabel(node) }}</span>
+        <span euiLabel euiPrimary (click)="hanldeNodeClick(node)">{{
+          getLabel(node)
+        }}</span>
         <eui-dropdown *ngIf="isEditMode()">
           <button
             euiButton
