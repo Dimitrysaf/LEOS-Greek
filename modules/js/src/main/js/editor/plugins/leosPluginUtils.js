@@ -16,6 +16,7 @@ define(function leosPluginUtilsModule(require) {
     "use strict";
 
     var CKEDITOR = require("promise!ckEditor");
+
     var TEXT = "text";
     var BOGUS = "br";
     var UNKNOWN = "unknown";
@@ -33,6 +34,7 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_LEVEL_ATTR = "data-indent-level";
     var AKN_ORDERED_ANNEX_LIST = "aknAnnexOrderedList";
     var AKN_ORDERED_LIST = "aknOrderedList";
+    var AKN_NUMBERED_PARAGRAPH = "aknNumberedParagraph";
     var INDENT_LEVEL_ATTR = "--indent-level"
     var INLINE_NUM_ATTR = "--inline-num"
     var ORDER_LIST_ELEMENT = "ol";
@@ -407,6 +409,14 @@ define(function leosPluginUtilsModule(require) {
         cursor.select();
     }
 
+    function _isSubparagraphInPath(path) {
+        if (!!path) {
+            var currentElement = path.lastElement;
+            return _isSubparagraph(currentElement);
+        }
+        return false;
+    }
+
     function _isListIntroAndFirstSubelement(element) {
         if (element.type == CKEDITOR.NODE_TEXT) {
             var tmpElement = element;
@@ -542,10 +552,15 @@ define(function leosPluginUtilsModule(require) {
                 point.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
                 if (!!point.is && point.is('li') && !point.getParent().is('ol')) {
                     point.renameNode('p');
-					point.removeAttribute('data-akn-name');
+					point.removeAttribute(DATA_AKN_NAME);
                 } else if (!!point.is && point.is('p') && point.getParent().is('ol')) {
                     point.renameNode('li');
                 }
+            }
+            // Case when point has been outdented to paragraph
+            if (_isPointOrIndent(point) && !point.getAscendant('li')) {
+                point.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
+                point.setAttribute(DATA_AKN_NAME, AKN_NUMBERED_PARAGRAPH);
             }
         }
     }
@@ -1008,6 +1023,7 @@ define(function leosPluginUtilsModule(require) {
 		isAnnexUnnumberedCNParagraph: _isAnnexUnnumberedCNParagraph,
 		isAnnexSubparagraphElement: _isAnnexSubparagraphElement,
         isSubparagraph: _isSubparagraph,
+        isSubparagraphInPath: _isSubparagraphInPath,
         isPointOrIndent: _isPointOrIndent,
         isListIntroAndFirstSubparaOfPointOrPara: _isListIntroAndFirstSubparaOfPointOrPara,
         isSubParaButNotListIntroOrFirstSubparaOfPointOrPara: _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara,
