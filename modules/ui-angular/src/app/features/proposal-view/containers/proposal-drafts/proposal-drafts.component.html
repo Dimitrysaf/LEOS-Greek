@@ -1,7 +1,9 @@
 <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="coverpage">
   <eui-card-header>
     <eui-card-header-title>
-      <a [routerLink]="['/coverpage', coverpage.metadata.internalRef]"
+      <a
+        [routerLink]="['/coverpage', proposalId]"
+        (click)="$event.preventDefault()"
         ><strong>{{
           'page.collection.drafts.coverPage' | translate
         }}</strong></a
