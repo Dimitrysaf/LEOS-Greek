@@ -5,9 +5,17 @@ import { AknDocumentComponent } from '@/features/akn-document/containers/akn-doc
 import { AnnexEditorComponent } from '@/features/akn-document/containers/annex-editor/annex-editor.component';
 
 const routes: Routes = [
-  { path: 'annex/:id', component: AnnexEditorComponent },
+  {
+    path: 'annex/:id',
+    component: AnnexEditorComponent,
+    data: { category: 'annex' },
+  },
   // { path: 'coverpage:/id'), component: CoverpageEditorComponent },
-  { path: 'document/:id', component: AknDocumentComponent },
+  {
+    path: 'document/:id',
+    component: AknDocumentComponent,
+    data: { category: 'akndocument' },
+  },
   // { path: 'explanatory:/id'), component: ExplanatoryEditorComponent },
   // { path: 'memorandum:/id'), component: MemorandumEditorComponent },
 ];

@@ -27,6 +27,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   expandedNodes: TableOfContentItemVO[] = [];
 
   destroy$: Subject<any> = new Subject();
+
   constructor(
     private tocService: TocService,
     private route: ActivatedRoute,
@@ -94,6 +95,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.removeNode(this.selectedNodeToMove);
     this.selectedNodeToMove = null;
   }
+
   handlePlaceAfter(node: TableOfContentItemVO) {
     //TODO : handle place afer TOC
     this.insertAfter(node);
@@ -158,7 +160,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     const targetIndex = parentNode.childItems.findIndex(
       (x) => x.id === target.id,
     );
-    console.log(targetIndex);
     if (targetIndex === 0) {
       parentNode.childItems.unshift(this.selectedNodeToMove);
     } else {
