@@ -821,7 +821,7 @@
                     </content>
                 </subparagraph>
             </level>
-            <level xml:id="_body__level_32">
+            <level class="landscape" xml:id="_body__level_32">
                 <num xml:id="_body__level_32__num">
                     <b xml:id="_body__level_32__num__b">3.2.</b>
                 </num>
@@ -1926,11 +1926,9 @@
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_5_5">
                                     <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_5_5__p_1">[...]</p>
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_5_5__p_2">&gt;</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_6_6">
                                     <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_6_6__p_1">[...]</p>
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_6_6__p_2">&gt;</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_7_7">
                                     <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_7_7__p">[...]</p>
