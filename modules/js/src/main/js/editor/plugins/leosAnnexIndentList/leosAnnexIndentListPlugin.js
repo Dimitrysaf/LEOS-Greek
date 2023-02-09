@@ -221,7 +221,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                             var range = getSelectedRange(editor);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
-                            var isSubparagraph = _isSubparagraph(path);
+                            var isSubparagraph = leosPluginUtils.isSubparagraphInPath(path);
                             var crossheading = _getCrossHeading(path);
                             if (!!crossheading && leosPluginUtils.isCrossHeading(crossheading)) {
                                 var indentLevel = _getCrossheadingIndentAttribute(crossheading) ? _getCrossheadingIndentAttribute(crossheading): 0;
@@ -1121,16 +1121,6 @@ define(function leosAnnexIndentListPluginModule(require) {
         return (!!currentElement && (currentElement.is('p') || currentElement.is('li'))
             && !!currentElement.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
             && currentElement.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) == leosPluginUtils.SUBPARAGRAPH);
-        return false;
-    }
-
-    function _isSubparagraph(path) {
-        if (!!path) {
-            var currentElement = path.lastElement;
-            return (!!currentElement && (currentElement.is('p') || currentElement.is('li'))
-                && !!currentElement.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
-                && currentElement.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) == leosPluginUtils.SUBPARAGRAPH);
-        }
         return false;
     }
 
