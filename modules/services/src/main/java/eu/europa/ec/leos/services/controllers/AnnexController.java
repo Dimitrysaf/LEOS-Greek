@@ -122,11 +122,11 @@ public class AnnexController {
     @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
     public ResponseEntity<Object> saveAnnexVersion(@PathVariable("documentRef") String documentRef,
-                                                    @RequestBody SaveIntermediateVersionRequest saveEvent
+                                                            @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            Annex annex = this.annexAPIService.saveAnnexDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
-            return  ResponseEntity.ok().body(annex);
+            List<VersionVO> versions = this.annexAPIService.saveAnnexDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            return  ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
             return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);

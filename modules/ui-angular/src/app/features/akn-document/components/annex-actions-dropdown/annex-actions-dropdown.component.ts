@@ -58,11 +58,11 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
 
   private populateDataForVersionSave() {
     //TODO when version Type is defined refactor this.
-    const { title1, description1 } = this.createForm.getRawValue();
+    const { title, description } = this.createForm.getRawValue();
     return {
       checkinComment: JSON.stringify({
-        title: title1,
-        description: description1,
+        title,
+        description,
       }),
       versionType: 'INTERMEDIATE',
     };
