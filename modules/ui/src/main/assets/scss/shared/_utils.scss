@@ -68,6 +68,10 @@ $EDITOR_MARGIN_OFFSET: 40px;
     li > ol > li[id^="deleted_"][data-akn-num]:before   {
         text-decoration: line-through;
     }
+    //strike-through deleted elements [core#147]
+    li > ol > li[id^="deleted_"]:before   {
+        text-decoration: line-through;
+    }
 }
 
 %editorFocus {
