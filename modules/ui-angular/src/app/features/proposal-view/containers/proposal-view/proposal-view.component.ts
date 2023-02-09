@@ -29,9 +29,11 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.pipe(takeUntil(this.destroy$)).subscribe(({ id }) => {
-      this.loadProposal(id);
-    });
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ proposalId }) => {
+        this.loadProposal(proposalId);
+      });
 
     this.proposalDetailsService.proposalDetails$
       .pipe(takeUntil(this.destroy$))

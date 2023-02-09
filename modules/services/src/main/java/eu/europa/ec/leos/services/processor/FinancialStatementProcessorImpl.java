@@ -74,14 +74,14 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         List<TocItem> items = structureContextProvider.get().getTocItems();
         switch (tagName) {
             case SUBPARAGRAPH:
-                template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
+                template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(financialStatement), template,
                         tagName, elementId, before);
                 break;
             case CONTENT:
                 Element contentElement = xmlContentProcessor.getElementById(getContent(financialStatement), elementId);
-                template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
+                template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
                 String updatedElementContent = convertToSubparagraph(contentElement, template);
                 try {

@@ -27,10 +27,7 @@ export class AppStarterService {
   start(): Observable<any> {
     return zip(
       this.initUserService().pipe(
-        switchMap((userStatus) => {
-          console.log(userStatus);
-          return this.i18nService.init();
-        }),
+        switchMap((userStatus) => this.i18nService.init()),
       ),
     );
   }

@@ -6,20 +6,20 @@
   padding-left: 30px;
 }
 
-mat-tree.document-toc-tree {
-  background-color: transparent;
+mat-tree {
+  background-color: transparent !important;
   margin-left: 40px;
 }
 
-.mat-tree-node .document-toc-tree-node {
-  background-color: transparent;
+.mat-tree-node {
+  background-color: transparent !important;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   padding: 0;
 }
 
-.mat-nested-tree-node .document-toc-tree-nested-node {
+.mat-nested-tree-node {
   top: -24px;
 }
 

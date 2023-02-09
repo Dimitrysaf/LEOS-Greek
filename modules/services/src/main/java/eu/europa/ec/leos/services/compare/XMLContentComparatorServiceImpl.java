@@ -303,7 +303,8 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                     newContentChildIndex++;
                     newContentIncremented = true;
                 } else {
-                    if (ignoredElementIndex != -1) {
+                    if (ignoredElementIndex != -1 && (!isConvertedSubparagraphToIntro(context.getNewElement(), context.getOldContentElements())
+                            || (newContentChildIndex != oldContentChildIndex))) {
                         appendRemovedElementContentIfRequired(context);
                     } else if ((isElementUnWrapped(context) || isElementWrapped(context))
                             && !elementImpactedByIndentation(context)
@@ -327,11 +328,6 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         oldContentChildIndex++;
                         newContentChildIndex++;
                     } else if (oldContentChildIndex == newContentChildIndex) {
-                        /*if (isList(context.getOldElement()) && isList(context.getNewElement())
-                                && hasIndentedChild(context.getNewElement())
-                                && context.getNewElement().getParent().getTagId().equals(context.getOldElement().getParent().getTagId())) {
-                            compareElementContents(context);
-                        }*/
                         if (getIntroFromFirstList(context.getNewElement()) != null && context.getOldElement().getTagName().equals(XmlHelper.CONTENT)) {
                             appendRemovedElementContentIfRequired(context);
                             appendAddedElementContentIfRequired(context);
@@ -1271,6 +1267,16 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                     .findFirst();
             if (convertedElement.isPresent()) {
                 return convertedElement.get().getTagId().equals(oldElement.getTagId());
+            }
+        }
+        return false;
+    }
+
+    protected boolean isConvertedSubparagraphToIntro(Element newElement, Map<String, Element> otherContextElements) {
+        if (newElement.getTagName().equals(SUBPARAGRAPH) && newElement.getParent().getTagName().equals(LIST)) {
+            Element originalElement = otherContextElements.get(newElement.getTagId());
+            if (originalElement != null) {
+                return !originalElement.getParent().getTagName().equals(LIST);
             }
         }
         return false;

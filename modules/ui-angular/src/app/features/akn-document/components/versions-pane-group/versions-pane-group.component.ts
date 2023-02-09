@@ -24,12 +24,12 @@ export class VersionsPaneGroupComponent implements OnInit {
   constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
-    const { versionType, cmisVersionNumber, checkinComment } = this.group;
+    const { versionType, cmisVersionNumber, checkinCommentVO } = this.group;
     this.isMilestone = versionType === 'MAJOR';
     this.isCreation =
       versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
     this.isRecents = !cmisVersionNumber;
-    this.description = checkinComment.description;
+    this.description = checkinCommentVO.description;
     this.setTitle();
     this.setSubtitle();
   }
@@ -44,8 +44,8 @@ export class VersionsPaneGroupComponent implements OnInit {
     } else {
       this.translate
         .get('page.editor.versions.group-title', {
-          version: this.group.versionNumber,
-          title: this.group.checkinComment.title,
+          version: this.group.cmisVersionNumber,
+          title: this.group.checkinCommentVO.title,
         })
         .subscribe((title: string) => {
           this.title = title;
@@ -63,11 +63,19 @@ export class VersionsPaneGroupComponent implements OnInit {
   }
 
   private getGroupSubtitle() {
-    const date = formatDate(
-      this.group.updatedDate,
-      'dd/mm/yyyy HH:MM',
-      'en-US',
+    const [dateString, timeSting] = this.group.updatedDate
+      .toString()
+      .split(' ');
+    const [day, month, year] = dateString.split('/');
+    const [hours, minutes] = timeSting.split(':');
+    const dateToBeFormatted = new Date(
+      +year,
+      +month - 1,
+      +day,
+      +hours,
+      +minutes,
     );
+    const date = formatDate(dateToBeFormatted, 'dd/mm/yyyy HH:MM', 'en-US');
     const user = this.group.username;
 
     return of(`${date} ${user}`);
@@ -75,11 +83,19 @@ export class VersionsPaneGroupComponent implements OnInit {
 
   private getRecentsSubtitle() {
     if (this.group.subVersions.length) {
-      const date = formatDate(
-        this.group.subVersions[0].updatedDate,
-        'dd/mm/yyyy HH:MM',
-        'en-US',
+      const [dateString, timeSting] = this.group.subVersions[0].updatedDate
+        .toString()
+        .split(' ');
+      const [day, month, year] = dateString.split('/');
+      const [hours, minutes] = timeSting.split(':');
+      const dateToBeFormatted = new Date(
+        +year,
+        +month - 1,
+        +day,
+        +hours,
+        +minutes,
       );
+      const date = formatDate(dateToBeFormatted, 'dd/mm/yyyy HH:MM', 'en-US');
       return this.translate.get('page.editor.versions.group-recents-subtitle', {
         date,
       });

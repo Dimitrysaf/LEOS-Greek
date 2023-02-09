@@ -1,22 +1,31 @@
 import { formatDate } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DocumentService } from '@/features/akn-document/services/document.service';
+import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
-import { CKEditorService } from '../../services/ckeditor.service';
-
 @Component({
-  selector: 'app-annex-editor',
-  templateUrl: './annex-editor.component.html',
-  styleUrls: ['./annex-editor.component.scss'],
+  selector: 'app-akn-document',
+  templateUrl: './akn-document.component.html',
+  styleUrls: ['./akn-document.component.scss'],
 })
-export class AnnexEditorComponent implements OnDestroy, OnInit {
+export class AknDocumentComponent implements OnInit, AfterViewInit {
+  @Input() docId: string;
+  @Input() docCategory: string;
+  xml: string;
+
   pageTitle: string;
   pageSubTitle: string;
-  xml: string;
 
   isTOCColumnCollapsed = true;
   isAnnotationsColumnCollapsed = true;
@@ -24,65 +33,29 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
 
   id: string;
   isEditMode = false;
+  @ViewChild('xmlView', { static: false }) xmlView: ElementRef<HTMLElement>;
+
   private unloadStyleSheet?: () => void;
 
   constructor(
+    private documentService: DocumentService,
     private domService: DomService,
     public doc: DocumentService,
     private route: ActivatedRoute,
     private translate: TranslateService,
     private cdkEditor: CKEditorService,
-  ) {}
-
+  ) {
+    console.log(this.xml);
+  }
   ngOnInit(): void {
+    this.docCategory = this.docCategory.toLowerCase();
     this.loadStyleSheet();
-
-    this.route.params.subscribe((params) => {
-      this.id = params.id;
-      this.doc.setDocumentId(params.id);
-      this.cdkEditor.setDocumentRef(params.id);
-      this.doc.setDocumentRef(params.id);
-    });
-
-    this.route.data.subscribe((data) => {
-      this.doc.setDocumentType(data.category);
-    });
-    this.doc.documentXML$.subscribe((xml) => {
-      this.loadDocument(xml);
-    });
   }
 
-  ngOnDestroy() {
-    this.unloadStyleSheet?.();
-  }
-
-  onToggleTOCColumnCollapsed() {
-    this.isTOCColumnCollapsed = !this.isTOCColumnCollapsed;
-  }
-
-  onToggleAnnotationsColumnCollapsed() {
-    this.isAnnotationsColumnCollapsed = !this.isAnnotationsColumnCollapsed;
-  }
-
-  onToggleVersionsColumn() {
-    this.isVersionsColumnCollapsed = !this.isVersionsColumnCollapsed;
-  }
-
-  handleEdit() {
-    this.isEditMode = true;
-  }
-
-  handleUndo() {
-    //TODO : implement undo
-  }
-
-  handleSave() {
-    //TODO : implememt save
-  }
-
-  handleCancel() {
-    //TODO : implement cancel
-    this.isEditMode = false;
+  ngAfterViewInit(): void {
+    this.documentService
+      .getDocumentByRef(this.docId, this.docCategory)
+      .subscribe((xml) => this.loadDocument(xml));
   }
 
   private loadDocument(xml: string) {
@@ -94,20 +67,28 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
       updatedByFull: 'MICHOTTE Alexandra (DIGIT)',
       updatedOn: 1664193765137,
     });
-    this.xml = this.cleanupAndSerializeXML(xmlDoc);
+    const elem = this.xmlView.nativeElement;
+    elem.innerHTML = this.cleanupAndSerializeXML(xmlDoc);
   }
 
   private loadStyleSheet() {
     // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
     const leosBuildTimestamp = 1667202194805; // FIXME: get this from server at runtime
     const legacyAssetsPrefix = 'legacy/assets'; // FIXME: import stylesheets to ngui?
-    const cssUrl = `${legacyAssetsPrefix}/css/annex.css?cacheToken_${leosBuildTimestamp}`;
+    const cssUrl = `${legacyAssetsPrefix}/css/${this.docCategory.toLowerCase()}.css?cacheToken_${leosBuildTimestamp}`;
+    const coverPageCSS = `assets/scss/_coverPage.scss?cacheToken_${leosBuildTimestamp}`;
+    const coverPageVIEWCSS = `assets/scss/_coverpageView.scss?cacheToken_${leosBuildTimestamp}`;
     this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
+    if (this.docCategory === 'coverpage') {
+      this.unloadStyleSheet = this.domService.setDynamicStyle(coverPageCSS);
+      this.unloadStyleSheet = this.domService.setDynamicStyle(coverPageVIEWCSS);
+    }
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
-    xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
-    xmlDoc.querySelector('akomaNtoso').id = this.id;
+    if (this.docCategory !== 'coverpage') {
+      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
+    }
     return new XMLSerializer()
       .serializeToString(xmlDoc)
       .replace(/<\?xml(-stylesheet)?.+\?>/g, '');

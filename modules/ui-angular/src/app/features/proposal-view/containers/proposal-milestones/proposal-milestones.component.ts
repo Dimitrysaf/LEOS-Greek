@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,10 +9,12 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
+import { Document } from '@/shared';
 
+import { ProposalMilestoneViewComponent } from '../../components/proposal-milestone-view/proposal-milestone-view.component';
 import { Milestone } from '../../models/milestone.model';
 import { ProposalMilestonesService } from '../../services/proposal-milestones.service';
 
@@ -22,15 +24,13 @@ import { ProposalMilestonesService } from '../../services/proposal-milestones.se
   styleUrls: ['./proposal-milestones.component.scss'],
 })
 export class ProposalMilestonesComponent implements OnInit, OnDestroy {
+  @Input() proposal: Document;
   @ViewChild('milestonesDialog') milestonesDialog: EuiDialogComponent;
+  @ViewChild(ProposalMilestoneViewComponent)
+  viewMilestone: ProposalMilestoneViewComponent;
   form: FormGroup;
   dataSource: Milestone[] = [];
   destroy$: Subject<any> = new Subject();
-
-  listItems = [
-    { id: '1', label: 'View' },
-    { id: '2', label: 'Send a copy for contribution' },
-  ];
 
   status = [
     { value: 'File error', color: 'eui-u-color-danger-100' },
@@ -48,7 +48,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buildForm();
     this.handleChanges();
-    const proposalRef = this.proposalDetailsService.proposalRef;
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -106,6 +105,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   onDismiss(): void {
     console.log('dismiss from output');
     this.milestonesDialog.closeDialog();
+  }
+
+  handleMilestoneView(): void {
+    this.viewMilestone.openDialog();
   }
 
   private buildForm() {

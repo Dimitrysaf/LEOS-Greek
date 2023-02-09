@@ -3,17 +3,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DocumentService } from '@/features/akn-document/services/document.service';
+import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
 import { CKEditorService } from '../../services/ckeditor.service';
 
 @Component({
-  selector: 'app-annex-editor',
-  templateUrl: './annex-editor.component.html',
-  styleUrls: ['./annex-editor.component.scss'],
+  selector: 'app-document-editor',
+  templateUrl: './document-editor.component.html',
+  styleUrls: ['./document-editor.component.scss'],
 })
-export class AnnexEditorComponent implements OnDestroy, OnInit {
+export class DocumentEditorComponent implements OnDestroy, OnInit {
+  documentRef: string;
+  documentType: string;
   pageTitle: string;
   pageSubTitle: string;
   xml: string;
@@ -22,7 +24,6 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   isAnnotationsColumnCollapsed = true;
   isVersionsColumnCollapsed = true;
 
-  id: string;
   isEditMode = false;
   private unloadStyleSheet?: () => void;
 
@@ -35,18 +36,17 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.documentRef = params.id;
+      this.documentType = this.route.snapshot.data['category'];
+      this.doc.setDocumentCategory(this.documentType);
+      this.doc.setDocumentId(this.documentRef);
+      this.doc.setDocumentCategory(this.documentType);
+      this.cdkEditor.setDocumentRef(this.documentRef);
+    });
+
     this.loadStyleSheet();
 
-    this.route.params.subscribe((params) => {
-      this.id = params.id;
-      this.doc.setDocumentId(params.id);
-      this.cdkEditor.setDocumentRef(params.id);
-      this.doc.setDocumentRef(params.id);
-    });
-
-    this.route.data.subscribe((data) => {
-      this.doc.setDocumentType(data.category);
-    });
     this.doc.documentXML$.subscribe((xml) => {
       this.loadDocument(xml);
     });
@@ -71,15 +71,12 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
   handleEdit() {
     this.isEditMode = true;
   }
-
   handleUndo() {
     //TODO : implement undo
   }
-
   handleSave() {
     //TODO : implememt save
   }
-
   handleCancel() {
     //TODO : implement cancel
     this.isEditMode = false;
@@ -99,15 +96,19 @@ export class AnnexEditorComponent implements OnDestroy, OnInit {
 
   private loadStyleSheet() {
     // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
+    const category =
+      this.documentType === 'coverPage' ? 'coverpage' : this.documentType;
     const leosBuildTimestamp = 1667202194805; // FIXME: get this from server at runtime
     const legacyAssetsPrefix = 'legacy/assets'; // FIXME: import stylesheets to ngui?
-    const cssUrl = `${legacyAssetsPrefix}/css/annex.css?cacheToken_${leosBuildTimestamp}`;
+    const cssUrl = `${legacyAssetsPrefix}/css/${category}.css?cacheToken_${leosBuildTimestamp}`;
     this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
-    xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
-    xmlDoc.querySelector('akomaNtoso').id = this.id;
+    if (this.documentType !== 'coverPage') {
+      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
+    }
+    xmlDoc.querySelector('akomaNtoso').id = this.documentRef;
     return new XMLSerializer()
       .serializeToString(xmlDoc)
       .replace(/<\?xml(-stylesheet)?.+\?>/g, '');

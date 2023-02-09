@@ -42,6 +42,7 @@
   "page.collection.tabs.drafts": "Drafts",
   "page.collection.tabs.milestones": "Milestones",
   "page.collection.tabs.collaborators": "Collaborators",
+  "page.collection.milestones.actions.view-milestone": "View",
   "page.collection.milestones.table.title": "Title",
   "page.collection.milestones.table.date": "Date",
   "page.collection.milestones.table.status": "Status",

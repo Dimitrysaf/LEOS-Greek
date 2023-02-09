@@ -2,53 +2,43 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
-  combineLatestWith,
   distinctUntilChanged,
   filter,
-  forkJoin,
-  map,
   mergeMap,
   Observable,
   skip,
   Subject,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 
+import { TableOfContentItemVO } from '../models/toc.model';
+
 @Injectable({
   providedIn: 'root',
 })
 export class DocumentService implements OnDestroy {
-  private static searchStateComparator(a, b) {
-    const aKeys = Object.keys(a);
-    return (
-      aKeys.length === Object.keys(b).length &&
-      aKeys.every((k) => a[k] === b[k])
-    );
-  }
-
+  documentCategory: Observable<boolean>;
   annotationsEnabled$: Observable<boolean>;
   compareModeEnabled$: Observable<boolean>;
   documentId$: Observable<string | null>;
-  documentRef$: Observable<string | null>;
   documentXML$: Observable<string | null>;
-  documentType$: Observable<string | null>;
   guidelinesEnabled$: Observable<boolean>;
   highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
+  tocItems$: Observable<TableOfContentItemVO[]>;
 
+  private documentCategoryBS = new BehaviorSubject(null);
+  private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
   private annotationsEnabledBS = new BehaviorSubject(true);
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
-  private documentRefBS = new BehaviorSubject<string | null>(null);
-  private documentTypeBS = new BehaviorSubject<string | null>(null);
   private guidelinesEnabledBS = new BehaviorSubject(true);
   private highlightsEnabledBS = new BehaviorSubject(true);
   private searchPaneOpenBS = new BehaviorSubject(false);
@@ -63,11 +53,12 @@ export class DocumentService implements OnDestroy {
 
   constructor(private http: HttpClient) {
     this.documentId$ = this.documentIdBS.asObservable();
-    this.documentRef$ = this.documentRefBS.asObservable();
-    this.documentType$ = this.documentTypeBS.asObservable();
+    this.tocItems$ = this.tocItemBS.asObservable();
     this.documentXML$ = this.documentId$.pipe(
       // FIXME: use proper API
-      mergeMap((ref) => (ref ? this.findById(ref) : null)),
+      mergeMap((ref) =>
+        ref ? this.getDocumentByRef(ref, this.documentCategoryBS.value) : null,
+      ),
     );
 
     this.annotationsEnabled$ = this.annotationsEnabledBS.asObservable();
@@ -78,12 +69,12 @@ export class DocumentService implements OnDestroy {
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
-
-    this.versions$ = this.documentRef$.pipe(
-      combineLatestWith(this.documentType$),
-      mergeMap(([ref, type]) => this.getDocumentVersionsData(type, ref)),
+    this.versions$ = this.documentId$.pipe(
+      // FIXME: use proper API
+      mergeMap((id) =>
+        this.http.get<Version[]>(`api/secured/documents/${id}/versions/`),
+      ),
     );
-
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
     this.searchPaneOpen$
@@ -123,9 +114,10 @@ export class DocumentService implements OnDestroy {
     return this.documentXML$;
   }
 
-  findById(ref: string) {
+  getDocumentByRef(ref: string, category: string) {
+    category = category === 'coverpage' ? 'coverPage' : category;
     return this.http
-      .get(`api/secured/annex/${ref}`, { responseType: 'text' })
+      .get(`api/secured/${category}/${ref}`, { responseType: 'text' })
       .pipe(take(1));
   }
 
@@ -178,18 +170,14 @@ export class DocumentService implements OnDestroy {
     this.documentIdBS.next(id);
   }
 
-  setDocumentRef(ref: string) {
-    this.documentRefBS.next(ref);
+  setDocumentCategory(category: string) {
+    this.documentCategoryBS.next(category);
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.searchParamsBS.next({ ...oldVal, ...values });
     });
-  }
-
-  setDocumentType(docType: string) {
-    this.documentTypeBS.next(docType);
   }
 
   toggleAnnotations(enabled?: boolean) {
@@ -231,11 +219,19 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'versionView', versionNumber); // FIXME
   }
 
-  getDocumentVersionsData(documentType: string, documentRef: string) {
-    //FIXME modify this when backend api for version-data is modified not to contain documentId param.
-    return this.http.get<Version[]>(
-      `api/secured/${documentType}/${documentRef}/${documentRef}/version-data/`,
+  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+    let category = this.documentCategoryBS.value;
+    category = category === 'coverpage' ? 'coverPage' : category;
+    return this.http.get<TableOfContentItemVO[]>(
+      `api/secured/${category}/${annexRef}/getTocItems`,
+      {
+        params: { tocMode },
+      },
     );
+  }
+
+  setToc(toc: TableOfContentItemVO[]) {
+    this.tocItemBS.next(toc);
   }
 
   private doSearch(params: DocumentSearchParams) {
@@ -247,5 +243,19 @@ export class DocumentService implements OnDestroy {
       const nextVal = value ?? !oldVal;
       subj.next(nextVal);
     });
+  }
+
+  private getDocument(documentRef: string, category: string) {
+    return this.http
+      .get(`api/secured/${category}/${documentRef}`, { responseType: 'text' })
+      .pipe(take(1));
+  }
+
+  private static searchStateComparator(a, b) {
+    const aKeys = Object.keys(a);
+    return (
+      aKeys.length === Object.keys(b).length &&
+      aKeys.every((k) => a[k] === b[k])
+    );
   }
 }

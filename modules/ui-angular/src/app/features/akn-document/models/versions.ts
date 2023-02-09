@@ -8,7 +8,7 @@ export type Version = {
   username: string; // eg "jane"
   versionedReference: string; // eg "ANNEX-cla25fbhm0000le22avk9zlps-en_1.0.0"
   subVersions: Version[];
-  checkinComment: CheckinComment;
+  checkinCommentVO: CheckinComment;
   mostRecentVersion: boolean;
 };
 

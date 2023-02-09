@@ -246,6 +246,9 @@ define(function aknNumberedParagraphPluginModule(require) {
                 }
             }
         }
+        if (!!event.editor.getCommand('indent')) {
+            event.editor.getCommand('indent').refresh(event.editor, event.editor.elementPath());
+        }
         event.editor.fire('unlockSnapshot');
     }
 
@@ -274,7 +277,7 @@ define(function aknNumberedParagraphPluginModule(require) {
 
     // This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
     var transformSubparagraphs = function transformSubparagraphs(editor) {
-        // transforms subparagraphs to paragraphs 
+        // transforms subparagraphs to paragraphs
         editor.fire('lockSnapshot');
         var firstLevelOlElt = _getFirstLevelOlElement(editor);
         if (firstLevelOlElt) {
@@ -296,6 +299,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                         else if ((leosPluginUtils.getElementName(currentNode) === HTML_SUB_PARAGRAPH) && (!LIST_FROM_MATCH.test(leosPluginUtils.getElementName(nextNode)))) {
                             currentNode.renameNode(HTML_PARAGRAPH);
                             currentNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
+                            currentNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                             if (childNodeIndex>0) {
                                 currentNode.insertAfter(paragraphNodes.getItem(paragraphNodeIndex));childNodeIndex--;paragraphNodeIndex++;
                             }
@@ -314,13 +318,15 @@ define(function aknNumberedParagraphPluginModule(require) {
                             if (grandChildNodes.count() > 0) {
                                 var firstListNode = grandChildNodes.getItem(0);
                                 var lastListNode = grandChildNodes.getItem(grandChildNodes.count() - 1);
-                                if (leosPluginUtils.isSubparagraph(firstListNode)) {
+                                if (childNodeIndex>0 && leosPluginUtils.isSubparagraph(firstListNode)) {
                                     firstListNode.renameNode(HTML_PARAGRAPH);
+                                    firstListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     firstListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
                                     firstListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
                                 }
                                 if (leosPluginUtils.isSubparagraph(lastListNode)) {
                                     lastListNode.renameNode(HTML_PARAGRAPH);
+                                    lastListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     lastListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
                                     lastListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
                                 }
@@ -334,14 +340,14 @@ define(function aknNumberedParagraphPluginModule(require) {
                         }
                     }
                     if (currentParagraphNodeToBeDeleted) {
+                        var sel = editor.getSelection(),
+                            range = sel.getRanges()[ 0 ],
+                            cursor = range.clone();
+                        var startContainerParents = cursor.startContainer.getParents();
+                        var endContainerParents = cursor.endContainer.getParents();
                         paragraphNode.remove();paragraphNodeIndex--;
                         // To avoid bug of ticket LEOS-2734: when removing a selectable node, move the cursor to avoid bad positioning of it. Move cursor to the beginning of the paragrpah
-                        var nodeToBeSelected = firstLevelOlElt.getFirst();
-                        if (nodeToBeSelected) {
-                            var rangeToSelect = editor.createRange();
-                            rangeToSelect.moveToElementEditablePosition(nodeToBeSelected, false);
-                            rangeToSelect.select();
-                        }
+                        leosPluginUtils.keepCursorPosition(startContainerParents, endContainerParents, editor, cursor);
                     }
                 }
             }

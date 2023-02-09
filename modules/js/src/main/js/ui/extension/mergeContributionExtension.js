@@ -100,7 +100,7 @@ define(function mergeContributionExtensionModule(require) {
                 }
             }
         } else {
-            UTILS.getParentWrapper($element, wrapperElementsList);
+            return UTILS.getParentWrapper($element, wrapperElementsList);
         }
     }
 
