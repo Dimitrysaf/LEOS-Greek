@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -52,6 +52,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   onSaveVersion() {
     const requestBody = this.populateDataForVersionSave();
     this.doc.saveVersion(requestBody).subscribe((response) => {
+      this.doc.versions$ = of(response);
       this.closeVersionModal();
     });
   }

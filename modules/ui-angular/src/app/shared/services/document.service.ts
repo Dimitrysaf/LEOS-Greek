@@ -255,7 +255,7 @@ export class DocumentService implements OnDestroy {
     documentRef: string,
     data: any,
   ) {
-    return this.http.post(
+    return this.http.post<Version[]>(
       `api/secured/${documentType}/${documentRef}/save-version`,
       {
         ...data,

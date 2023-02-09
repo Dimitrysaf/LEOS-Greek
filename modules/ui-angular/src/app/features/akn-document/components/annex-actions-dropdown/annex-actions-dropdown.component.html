@@ -59,6 +59,8 @@
   [isHandleCloseOnDismiss]="true"
   [hasCloseButton]="false"
   (close)="closeVersionModal()"
+  (accept)="onSaveVersion()"
+  (dismiss)="closeVersionModal()"
 >
   <form [formGroup]="createForm">
     <div class="row eui-u-mt-m">
@@ -84,14 +86,4 @@
       </div>
     </div>
   </form>
-  <eui-dialog-footer>
-    <div class="modal-footer-content">
-      <button euiButton (click)="closeVersionModal()">
-        {{ 'page.workspace.create-form.cancel' | translate }}
-      </button>
-      <button euiButton euiPrimary (click)="onSaveVersion()">
-        {{ 'page.collection.drafts.annex.title-dialog.save' | translate }}
-      </button>
-    </div>
-  </eui-dialog-footer>
 </eui-dialog>
