@@ -676,10 +676,12 @@ export class CKEditorService implements OnDestroy {
   private annexRefBS = new BehaviorSubject<string>(null);
   private documentRefBS = new BehaviorSubject<string>(null);
   private xmlBS = new BehaviorSubject<string>('');
+  private documentTypeBS = new BehaviorSubject<string>(null);
   elementEditor$: Observable<any>;
   xml$ = this.xmlBS.asObservable();
   documentRef$ = this.documentRefBS.asObservable();
   annexRef$ = this.annexRefBS.asObservable();
+  documentType$ = this.documentTypeBS.asObservable();
 
   connector: any = {
     getParentId: () => 123,
@@ -794,6 +796,25 @@ export class CKEditorService implements OnDestroy {
         documentRef,
         elementData.elementType,
         elementData.elementId,
+      ).subscribe((response) => {
+        this.documentService.setDocumentId(documentRef);
+      });
+    },
+    insertElementAction: (elementData: {
+      action: string;
+      elementId: string;
+      elementType: string;
+      position: string;
+    }) => {
+      console.log(elementData);
+      const documentRef = this.documentRefBS.value;
+      const documentType = this.documentTypeBS.value;
+      this.insertDocumentElement(
+        documentRef,
+        elementData.elementType,
+        elementData.elementId,
+        documentType,
+        elementData.position,
       ).subscribe((response) => {
         this.documentService.setDocumentId(documentRef);
       });
@@ -979,6 +1000,10 @@ export class CKEditorService implements OnDestroy {
     this.documentRefBS.next(documentRef);
   }
 
+  setDocumentType(documentType: string) {
+    this.documentTypeBS.next(documentType);
+  }
+
   setAnnexRef(annexRef: string) {
     this.annexRefBS.next(annexRef);
   }
@@ -1003,6 +1028,20 @@ export class CKEditorService implements OnDestroy {
   ) {
     return this.http.delete(
       `api/secured/annex/${documentRef}/element/${elementName}/${elementId}`,
+      { responseType: 'arraybuffer' },
+    );
+  }
+
+  insertDocumentElement(
+    documentRef: string,
+    elementName: string,
+    elementId: string,
+    documentType: string,
+    position: string,
+  ) {
+    return this.http.put(
+      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+      { elementId, elementName, position },
       { responseType: 'arraybuffer' },
     );
   }
