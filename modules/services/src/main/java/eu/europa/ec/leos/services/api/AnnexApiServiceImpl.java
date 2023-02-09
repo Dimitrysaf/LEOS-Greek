@@ -147,10 +147,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public Annex saveAnnexDocument(String documentRef,String checkInComment,VersionType versionType) {
+    public List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        Annex newVersion = this.annexService.createVersion(documentRef,versionType,checkInComment);
-        return newVersion;
+        Annex newVersion = this.annexService.createVersion(annex.getId(),versionType,checkInComment);
+        return this.annexService.getAllVersions(annex.getId(),documentRef);
     }
 
     @Override

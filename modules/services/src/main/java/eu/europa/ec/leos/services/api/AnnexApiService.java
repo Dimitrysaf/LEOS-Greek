@@ -22,7 +22,7 @@ public interface AnnexApiService {
     void saveDocumentVersion(String documentRef);
     List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode);
     byte[] getAnnex(String documentRef);
-    Annex saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);
+    List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords);
     String showVersion(String versionId);
     String compare(String newVersionId, String oldVersionId);
