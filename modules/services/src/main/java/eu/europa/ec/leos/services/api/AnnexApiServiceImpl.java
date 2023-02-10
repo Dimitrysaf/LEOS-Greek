@@ -67,7 +67,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public String getAnnexElement(String documentRef, String elementName, String elementId) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        String element = this.elementProcessor.getElement(annex,elementName,elementId);
+        String element = this.elementProcessor.getElement(annex, elementName, elementId);
         return element;
     }
 
@@ -75,37 +75,37 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public byte[] deleteAnnexBlock(String documentRef, String elementName, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex,elementId,elementName);
-        annex = annexService.updateAnnex(annex,updatedXmlContent, VersionType.MINOR,messageHelper.getMessage("operation.annex.block.deleted"));
+        byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex, elementId, elementName);
+        annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
         return getContent(annex);
 
     }
 
     @Override
-    public byte[] saveAnnexElement(String documentRef, String elementId , String elementName, String elementContent) {
+    public byte[] saveAnnexElement(String documentRef, String elementId, String elementName, String elementContent) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex,elementId,elementName , elementContent);
+        byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
 
         //TODO add splitted content functionality since
-        annex = annexService.updateAnnex(annex,updatedXmlContent,VersionType.MINOR,messageHelper.getMessage("operation.annex.block.updated"));
-        return  getContent(annex);
+        annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
+        return getContent(annex);
     }
 
     @Override
     public byte[] insertAnnexElement(String documentRef, String elementName, String elementId, Position position) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        byte[] updatedXmlContent = this.annexProcessor.insertAnnexBlock(annex,elementId,elementName,position.equals(Position.BEFORE));
-        annex = annexService.updateAnnex(annex,updatedXmlContent,VersionType.MINOR,messageHelper.getMessage("operation.annex.block.inserted"));
+        byte[] updatedXmlContent = this.annexProcessor.insertAnnexBlock(annex, elementId, elementName, position.equals(Position.BEFORE));
+        annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
 
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
         return getContent(annex);
     }
 
     @Override
-    public byte[] mergeElement(String documentRef, String elementContent , String  elementTag , String elementId) throws Exception {
+    public byte[] mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         Element mergeOnElement = annexProcessor.getMergeOnElement(annex, elementContent, elementTag, elementId);
@@ -120,13 +120,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     @Override
     public List<Annex> getRecentMinorVersions(String documentId, String documentRef) {
-        Integer recentCount = this.annexService.findRecentMinorVersionsCount(documentId,documentRef);
-        return this.annexService.findRecentMinorVersions(documentId,documentRef,0,recentCount);
+        Integer recentCount = this.annexService.findRecentMinorVersionsCount(documentId, documentRef);
+        return this.annexService.findRecentMinorVersions(documentId, documentRef, 0, recentCount);
     }
 
     @Override
     public List<VersionVO> getVersionsData(String documentId, String documentRef) {
-        return this.annexService.getAllVersions(documentId,documentRef);
+        return this.annexService.getAllVersions(documentId, documentRef);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        return this.annexService.getTableOfContent(annex,mode);
+        return this.annexService.getTableOfContent(annex, mode);
     }
 
     @Override
@@ -149,8 +149,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        Annex newVersion = this.annexService.createVersion(annex.getId(),versionType,checkInComment);
-        return this.annexService.getAllVersions(annex.getId(),documentRef);
+        Annex newVersion = this.annexService.createVersion(annex.getId(), versionType, checkInComment);
+        return this.annexService.getAllVersions(annex.getId(), documentRef);
     }
 
     @Override
@@ -162,27 +162,27 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         } catch (Exception e) {
             LOG.error("couldn't fetch results");
         }
-        return  matches;
+        return matches;
     }
 
     @Override
     public String showVersion(String versionId) {
-        Annex annex =  this.annexService.findAnnexVersion(versionId);
+        Annex annex = this.annexService.findAnnexVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(annex,
                 "",
                 securityContext.getPermissions(annex));
-        return  versionContent;
+        return versionContent;
     }
 
     @Override
     public String compare(String newVersionId, String oldVersionId) {
         Annex oldVersion = annexService.findAnnexVersion(oldVersionId);
         Annex newVersion = annexService.findAnnexVersion(newVersionId);
-        return this.compareTwoVersion(oldVersion,newVersion);
+        return this.compareTwoVersion(oldVersion, newVersion);
     }
 
     @Override
-    public byte[] restoreToVersion(String documentRef,String versionId) {
+    public byte[] restoreToVersion(String documentRef, String versionId) {
         Annex version = annexService.findAnnexVersion(versionId);
         Annex annex = annexService.findAnnexByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
@@ -195,12 +195,12 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         try {
             LevelItemVO levelItemVO = new LevelItemVO();
-            String element = elementProcessor.getElement(annex,elementTagName,elementId);
+            String element = elementProcessor.getElement(annex, elementTagName, elementId);
             if (AnnexStructureType.LEVEL.getType().equalsIgnoreCase(elementTagName)
                     || NUM.equalsIgnoreCase(elementTagName)) {
                 levelItemVO = annexProcessor.getLevelItemVO(annex, elementId, elementTagName);
             }
-            return new EditElementResponse(elementId,elementTagName,element,levelItemVO);
+            return new EditElementResponse(elementId, elementTagName, element, levelItemVO);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);
