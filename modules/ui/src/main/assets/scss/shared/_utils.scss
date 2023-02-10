@@ -44,6 +44,10 @@ $EDITOR_MARGIN_OFFSET: 40px;
     }
 }
 
+%editorDeletedElementsTextStyle {
+    text-decoration: line-through;
+}
+
 %editorContentColor {
     //Styles for Non-editable Elements
     *[contenteditable="false"] {
@@ -62,11 +66,10 @@ $EDITOR_MARGIN_OFFSET: 40px;
 
     //strike-through deleted elements [core#147]
     [contenteditable="false"][data-akn-attr-softaction="del"][id^="deleted_"] {
-        text-decoration: line-through;
+       @extend %editorDeletedElementsTextStyle;
     }
-    //strike-through deleted elements [core#147]
-    li > ol > li[id^="deleted_"][data-akn-num]:before   {
-        text-decoration: line-through;
+    ol > li[id^="deleted_"]:before   {
+        @extend %editorDeletedElementsTextStyle;
     }
 }
 
