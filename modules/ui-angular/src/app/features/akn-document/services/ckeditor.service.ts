@@ -1040,8 +1040,8 @@ export class CKEditorService implements OnDestroy {
     position: string,
   ) {
     return this.http.put(
-      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
-      { elementId, elementName, position },
+      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-element`,
+      { position: position.toUpperCase() },
       { responseType: 'arraybuffer' },
     );
   }
