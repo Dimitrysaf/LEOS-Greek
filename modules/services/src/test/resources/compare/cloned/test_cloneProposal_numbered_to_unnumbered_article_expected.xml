@@ -1,0 +1,29 @@
+<article xmlns:leos="urn:eu:europa:ec:leos" xml:id="__akn_article_xSoDxn">
+    <num xml:id="__akn_article_xSoDxn_H0FXMi">Article 3</num>
+    <heading xml:id="__akn_article_xSoDxn_cVszLt">Article heading...</heading>
+    <paragraph leos:softaction="trans" leos:softtrans_from="__akn_article_xSoDxn_r6fHrJ"
+               xml:id="__akn_article_xSoDxn_Blf4X9">
+        <num leos:deletable="false" leos:editable="false" leos:softaction="del" leos:softactionroot="true"
+             leos:softdate="2023-01-31T16:24:53.356+01:00" leos:softuser=" jane(DIGIT)"
+             xml:id="deleted___akn_article_xSoDxn_huV6tL">3.
+        </num>
+        <content xml:id="__akn_article_xSoDxn_xPOtqH">
+            <p xml:id="__akn_article_xSoDxn_eLBMb5">Para 3</p>
+        </content>
+    </paragraph>
+    <paragraph xml:id="__akn_article_xSoDxn_flzxBN">
+        <content xml:id="__akn_article_xSoDxn_Pyk7Ss">
+            <p xml:id="__akn_article_xSoDxn_Emf0ZO">Subpara 31</p>
+        </content>
+    </paragraph>
+    <paragraph xml:id="__akn_article_xSoDxn_gU7Uph">
+        <content xml:id="__akn_article_xSoDxn_0MdoXJ">
+            <p xml:id="__akn_article_xSoDxn_AecWvf">Subpara 32</p>
+        </content>
+    </paragraph>
+    <paragraph xml:id="__akn_article_xSoDxn_Pm48PJ">
+        <content xml:id="__akn_article_xSoDxn_OJHqTu">
+            <p xml:id="__akn_article_xSoDxn_hWpWGL">Subpara 33</p>
+        </content>
+    </paragraph>
+</article>

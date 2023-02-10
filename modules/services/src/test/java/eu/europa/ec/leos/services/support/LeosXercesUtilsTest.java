@@ -27,5 +27,17 @@ public class LeosXercesUtilsTest extends LeosTest {
 
         assertEquals(expected, nodeActualAsString);
     }
+    @Test
+    public void test_removeElementWithIdDeleted() {
+        byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/test_removeElementWithIdDeleted.xml");
+        byte[] fileContentExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_removeElementWithIdDeleted_expected.xml");
 
+        String nodeActualAsString = LeosXercesUtils.removeSoftDeletedNodes(new String(fileContent, UTF_8));
+
+        String expected = new String(fileContentExpected, UTF_8);
+        expected = squeezeXml(expected);
+        nodeActualAsString = squeezeXml(nodeActualAsString);
+
+        assertEquals(expected, nodeActualAsString);
+    }
 }

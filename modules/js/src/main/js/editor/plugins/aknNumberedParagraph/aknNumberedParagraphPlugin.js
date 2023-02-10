@@ -55,6 +55,12 @@ define(function aknNumberedParagraphPluginModule(require) {
     var PARA_MODE = NUMBERED;
     var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
 
+    const DELETED = "deleted_";
+    const TRANSFORMED = "trans";
+    const DATA_AKN_ATTR_SOFTACTION = "data-akn-attr-softaction";
+    const DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";
+    var DATA_REFERS_TO = "refersto";
+    var INP = "~_INP";
 
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
@@ -238,7 +244,9 @@ define(function aknNumberedParagraphPluginModule(require) {
                 for (var ii = 0; ii < paragraphs.length; ii++) {
                     if (paragraphs[ii].getAttribute(DATA_ORIGIN) === "ec") {
                         var numId = paragraphs[ii].getAttribute(DATA_AKN_NUM_ID);
-                        paragraphs[ii].setAttribute(DATA_AKN_NUM_ID, "deleted_" + numId)
+                        if(numId == null || !numId.startsWith(DELETED)){
+                            paragraphs[ii].setAttribute(DATA_AKN_NUM_ID, DELETED + numId);
+                        }
                     } else {
                         paragraphs[ii].removeAttribute(DATA_AKN_NUM);
                         paragraphs[ii].removeAttribute(DATA_AKN_NUM_ID);
@@ -275,7 +283,16 @@ define(function aknNumberedParagraphPluginModule(require) {
         return commonElementAncestor;
     }
 
-    // This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
+    function insertBeforeNode(parentNodeIndex, listNode, currentNode, childNodeIndex) {
+        parentNodeIndex++;
+        if (!_isIntroductoryPart(listNode)) {
+            listNode.insertBefore(currentNode);
+            childNodeIndex--;
+        }
+        return {parentNodeIndex, childNodeIndex};
+    }
+
+// This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
     var transformSubparagraphs = function transformSubparagraphs(editor) {
         // transforms subparagraphs to paragraphs
         editor.fire('lockSnapshot');
@@ -286,8 +303,11 @@ define(function aknNumberedParagraphPluginModule(require) {
                 var paragraphNode = paragraphNodes.getItem(paragraphNodeIndex);
                 var currentParagraphNodeToBeDeleted = false;
                 if (leosPluginUtils.getElementName(paragraphNode) === HTML_PARAGRAPH) {
+                    if(paragraphNode.getAttribute("contenteditable") === "false"){
+                        continue;
+                    }
                     var childNodes = paragraphNode.getChildren();
-
+                    var isFirstOccurrence = true;
                     for (var childNodeIndex=0; childNodeIndex < childNodes.count(); childNodeIndex++) {
                         var currentNode = childNodes.getItem(childNodeIndex);
                         var nextNode = currentNode.hasNext() ? currentNode.getNext() : null;
@@ -300,6 +320,15 @@ define(function aknNumberedParagraphPluginModule(require) {
                             currentNode.renameNode(HTML_PARAGRAPH);
                             currentNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
                             currentNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+
+                            if(isFirstOccurrence){
+                                currentNode.setAttribute("data-akn-num", paragraphNode.getAttribute("data-akn-num"));
+                                currentNode.setAttribute("data-akn-num-id", paragraphNode.getAttribute("data-akn-num-id"));
+                                currentNode.setAttribute(DATA_AKN_ATTR_SOFTACTION, TRANSFORMED);
+                                currentNode.setAttribute(DATA_AKN_ATTR_SOFTTRANSFROM, paragraphNode.getAttribute("id"));
+                                isFirstOccurrence = false;
+                            }
+
                             if (childNodeIndex>0) {
                                 currentNode.insertAfter(paragraphNodes.getItem(paragraphNodeIndex));childNodeIndex--;paragraphNodeIndex++;
                             }
@@ -322,13 +351,17 @@ define(function aknNumberedParagraphPluginModule(require) {
                                     firstListNode.renameNode(HTML_PARAGRAPH);
                                     firstListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     firstListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
-                                    firstListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
+                                    const result = insertBeforeNode(paragraphNodeIndex, firstListNode, currentNode, childNodeIndex);
+                                    paragraphNodeIndex = result.parentNodeIndex;
+                                    childNodeIndex = result.childNodeIndex;
                                 }
                                 if (leosPluginUtils.isSubparagraph(lastListNode)) {
                                     lastListNode.renameNode(HTML_PARAGRAPH);
                                     lastListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     lastListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
-                                    lastListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
+                                    const result = insertBeforeNode(paragraphNodeIndex, lastListNode, currentNode, childNodeIndex);
+                                    paragraphNodeIndex = result.parentNodeIndex;
+                                    childNodeIndex = result.childNodeIndex;
                                 }
                             }
                         }
@@ -354,6 +387,10 @@ define(function aknNumberedParagraphPluginModule(require) {
         }
         editor.fire('unlockSnapshot');
     };
+
+    function _isIntroductoryPart(element) {
+        return (INP === element.getAttribute(DATA_REFERS_TO));
+    }
 
     function _getFirstLevelOlElement(editor) {
         var jqEditor = $(editor.editable().$);
@@ -432,6 +469,9 @@ define(function aknNumberedParagraphPluginModule(require) {
                 akn: 'leos:softmove_label',
                 html: 'data-akn-attr-softmove_label'
             }, {
+                akn: 'leos:softtrans_from',
+                html: 'data-akn-attr-softtrans_from'
+            }, {
                 akn: LEOS_INDENT_ORIGIN_TYPE,
                 html: DATA_INDENT_ORIGIN_TYPE
             }, {
@@ -461,7 +501,7 @@ define(function aknNumberedParagraphPluginModule(require) {
         rootElementsForFrom: ['paragraph'],
         contentWrapperForFrom: 'subparagraph',
         rootElementsForTo: ['li']
-    })
+    });
     
     var transformationConfig = leosHierarchicalElementTransformer.getTransformationConfig();
     
