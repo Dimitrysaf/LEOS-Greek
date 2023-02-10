@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.removeAllNameSpaces;
 
@@ -36,6 +37,15 @@ public class TestUtils {
             return content;
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read bytes from file: " + fileName);
+        }
+    }
+
+    public static Object getDeserializeObject(String fileName) {
+        try {
+            InputStream inputStream = TestUtils.class.getResource(fileName).openStream();
+            return new ObjectInputStream(inputStream).readObject();
+        } catch (ClassNotFoundException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
@@ -54,4 +55,24 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
         expected = squeezeXmlAndRemoveAllNS(expected);
         assertEquals(expected, result);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_addSubParagraphInPointAUsingTOC() throws IOException, ClassNotFoundException {
+
+        byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC.xml");
+        List<TableOfContentItemVO> tocList = (List<TableOfContentItemVO>) TestUtils.getDeserializeObject(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_TocObject.obj");
+
+        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser());
+        xmlResult = xercesXmlContentProcessor.doXMLPostProcessing(xmlResult);
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_expected.xml");
+
+        String result = new String(xmlResult);
+        String expected = new String(xmlExpected);
+        result = squeezeXmlAndRemoveAllNS(result);
+        expected = squeezeXmlAndRemoveAllNS(expected);
+        assertEquals(expected, result);
+
+    }
+
 }

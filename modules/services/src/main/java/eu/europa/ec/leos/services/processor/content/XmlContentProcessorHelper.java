@@ -31,7 +31,6 @@ import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -472,7 +471,7 @@ public class XmlContentProcessorHelper {
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
             headingNode = extractOrBuildHeaderElement(node, EMPTY_STRING);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
-            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null, null);
+            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
         }
         return headingNode;
     }
@@ -550,7 +549,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static void updateSoftInfo(Node node, SoftActionType action, Boolean isSoftActionRoot, User user, String originAttrValue,
-                                      String moveId, String tagName, TableOfContentItemVO tocVo, String originOfDocument) {
+                                      String moveId, TableOfContentItemVO tocVo, String originOfDocument) {
         if (originAttrValue == null) {
             return;
         }
