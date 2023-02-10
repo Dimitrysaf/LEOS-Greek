@@ -43,6 +43,8 @@ define(function leosPluginUtilsModule(require) {
     var MAX_LEVEL_DEPTH = 7;
     var MAX_LIST_LEVEL = 5;
     var MAX_LEVEL_LIST_DEPTH = 4;
+    var MAX_LIST_LEVEL_DEF = 4;
+    var MAX_LEVEL_LIST_DEPTH_DEF = 3;
     var MAINBODY = "mainbody";
     var INDENT = "indent";
     var POINT = "point";
@@ -83,8 +85,7 @@ define(function leosPluginUtilsModule(require) {
     var MOVETO = "move_to";
 
     var COUNCIL_INSTANCE = "COUNCIL";
-
-
+    const ART_DEF = "~_ART_DEF";
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -1010,6 +1011,23 @@ define(function leosPluginUtilsModule(require) {
         return type;
     }
 
+    function _isDefinitionArticle(editor){
+        let editorData = $(editor.getData());
+        let rootElt = editorData.length && editorData.prop("tagName").toLowerCase() ===  ARTICLE ? editorData : $(editor.element.$).closest(ARTICLE);
+        if(rootElt.length){
+            return rootElt.attr("refersto") === ART_DEF;
+        }
+        return false;
+    }
+
+    function _getMaxListLevel(editor) {
+        return _isDefinitionArticle(editor) ? MAX_LIST_LEVEL_DEF : MAX_LIST_LEVEL;
+    }
+
+    function _getMaxListLevelDepth(editor) {
+        return _isDefinitionArticle(editor) ? MAX_LEVEL_LIST_DEPTH_DEF : MAX_LEVEL_LIST_DEPTH;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1065,9 +1083,14 @@ define(function leosPluginUtilsModule(require) {
         copyContentAndMpAttributeToElement: _copyContentAndMpAttributeToElement,
         hasPointAttribute: _hasPointAttribute,
         getArticleType: _getArticleType,
+        isDefinitionArticle: _isDefinitionArticle,
+        getMaxListLevel: _getMaxListLevel,
+        getMaxListLevelDepth: _getMaxListLevelDepth,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
+        MAX_LIST_LEVEL_DEF: MAX_LIST_LEVEL_DEF,
+        MAX_LEVEL_LIST_DEPTH_DEF: MAX_LEVEL_LIST_DEPTH_DEF,
         HTML_POINT: HTML_POINT,
         HTML_SUB_POINT: HTML_SUB_POINT,
         DATA_ORIGIN: DATA_ORIGIN,

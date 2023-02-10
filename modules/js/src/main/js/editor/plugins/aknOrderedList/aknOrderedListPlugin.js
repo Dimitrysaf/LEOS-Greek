@@ -32,7 +32,7 @@ define(function aknOrderedListPluginModule(require) {
     var ENTER_KEY = 13;
     var TAB_KEY = 9;
     var config = { attributes: false, childList: true, subtree: true };
-
+    var LOCAL_MAX_LEVEL_LIST;
     var pluginDefinition = {
         lang: 'en',
         init: function init(editor) {
@@ -55,6 +55,7 @@ define(function aknOrderedListPluginModule(require) {
                 key : TAB_KEY,
                 action : _onTabKey
             });
+            LOCAL_MAX_LEVEL_LIST =  leosPluginUtils.getMaxListLevel(editor);
         }
     };
 
@@ -76,7 +77,7 @@ define(function aknOrderedListPluginModule(require) {
         var selectedElement = leosKeyHandler.getSelectedElement(selection);
 
         var actualLevel = leosPluginUtils.calculateListLevel(selectedElement);
-        if (actualLevel > leosPluginUtils.MAX_LIST_LEVEL){
+        if (actualLevel > LOCAL_MAX_LEVEL_LIST){
             context.event.cancel();
         }
     }
@@ -338,7 +339,7 @@ define(function aknOrderedListPluginModule(require) {
             && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.SUBPARAGRAPH)) {
             return 2;
         } else {
-            return leosPluginUtils.calculateListLevel(element) >= leosPluginUtils.MAX_LIST_LEVEL ? 1 : 0;
+            return leosPluginUtils.calculateListLevel(element) >= LOCAL_MAX_LEVEL_LIST ? 1 : 0;
         }
     }
 

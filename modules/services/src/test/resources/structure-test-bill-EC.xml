@@ -639,10 +639,6 @@
                     <depth>3</depth>
                     <numberingType>ROMAN_LOWER_PARENTHESIS</numberingType>
                 </level>
-                <level>
-                    <depth>4</depth>
-                    <numberingType>INDENT</numberingType>
-                </level>
             </levels>
         </numberingConfig>
     </numberingConfigs>

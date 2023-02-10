@@ -23,10 +23,11 @@ define(function listUnumberModule(require) {
 
     var unumberedListNumberConfig;
     var numberingConfigs;
-
+    var LOCAL_MAX_LEVEL_LIST_DEPTH;
     function initialize(editor) {
         ckEditor = editor;
         _initializeLists(editor);
+        LOCAL_MAX_LEVEL_LIST_DEPTH =  leosPluginUtils.getMaxListLevelDepth(editor);
     }
 
     /*
@@ -274,7 +275,7 @@ define(function listUnumberModule(require) {
     function _getOverallNumberingConfigFromSequence(firstListItem, numValue, currentNestingLevel) {
         for (var numberingConfig of unumberedListNumberConfig) {
             if (!!numberingConfig.sequence && numValue == numberingConfig.sequence) {
-                if (currentNestingLevel == leosPluginUtils.MAX_LEVEL_LIST_DEPTH) {
+                if (currentNestingLevel == LOCAL_MAX_LEVEL_LIST_DEPTH) {
                     var parentIndent = _getParentIndent(firstListItem);
                     if (!!parentIndent && !!parentIndent.attributes[leosPluginUtils.DATA_AKN_NUM]) {
                         var numValue = parentIndent.attributes[leosPluginUtils.DATA_AKN_NUM].value;
@@ -289,7 +290,7 @@ define(function listUnumberModule(require) {
                 var foundNumberingType = numberingConfig.levels.levels[currentNestingLevel-1];
                 var foundNumberingConfig = numberingConfigs.find(n => n.type == foundNumberingType.numberingType);
                 if (!!foundNumberingConfig.sequence && numValue == foundNumberingConfig.sequence) {
-                    if (currentNestingLevel == leosPluginUtils.MAX_LEVEL_LIST_DEPTH) {
+                    if (currentNestingLevel == LOCAL_MAX_LEVEL_LIST_DEPTH) {
                         var parentIndent = _getParentIndent(firstListItem);
                         if (!!parentIndent && !!parentIndent.attributes[leosPluginUtils.DATA_AKN_NUM]) {
                             var numValue = parentIndent.attributes[leosPluginUtils.DATA_AKN_NUM].value;
