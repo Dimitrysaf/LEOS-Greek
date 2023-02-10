@@ -60,6 +60,19 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
     @SuppressWarnings("unchecked")
     public void test_addSubParagraphInPointAUsingTOC() throws IOException, ClassNotFoundException {
 
+        /*
+         * The file test_addSubParagraphInPointAUsingTOC.xml has an annex with this structure:
+         * - Level with text "Text of Level 1"
+         *    - Point (a) with text "Text of Point (a)"
+         *
+         * The test_addSubParagraphInPointAUsingTOC_TocObject.obj contains a java object that represents a toc in annex with
+         * the previous structure, and adding a Subparagraph:
+         * - Level with text "Text of Level 1"
+         *    - Point (a) with text "Text of Point (a)"
+         *       - Subparagraph with text "Text..." (simulating adding by TOC)
+         *
+         */
+
         byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC.xml");
         List<TableOfContentItemVO> tocList = (List<TableOfContentItemVO>) TestUtils.getDeserializeObject(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_TocObject.obj");
 
