@@ -112,4 +112,8 @@ public class ComparisonHelper {
         return XercesUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, softActionType.getSoftAction());
     }
 
+    public static boolean isElementTransformedFrom(Node node, String attrName, String attrValue) {
+        Node foundNode = XercesUtils.getNodeContainingAttributeValue(node, attrName, attrValue);
+        return foundNode != null;
+    }
 }

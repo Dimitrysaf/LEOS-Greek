@@ -1070,4 +1070,22 @@ public class XercesUtils {
     	}
     }
 
+    public static Node getNodeContainingAttributeValue(Node node, String attrName, String attrValue) {
+        if (hasAttributeValue(attrName, attrValue, node)) {
+            return node;
+        } else if (node.hasChildNodes()) {
+            for (Node childNode : getChildren(node)) {
+                if (hasAttributeValue(attrName, attrValue, childNode)) {
+                    return childNode;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasAttributeValue(String attrName, String attrValue, Node childNode) {
+        String attributeValue;
+        attributeValue = getAttributeValue(childNode, attrName);
+        return (attributeValue != null && attributeValue.equalsIgnoreCase(attrValue));
+    }
 }

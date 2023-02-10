@@ -1,0 +1,49 @@
+<article leos:origin="ec" xml:id="_bill__akn_article_ZByX87"  xmlns:leos="urn:eu:europa:ec:leos">
+    <num leos:editable="false" leos:origin="ec" xml:id="_bill__akn_article_ZByX87_ogyMfn">Article 4</num>
+    <heading leos:origin="ec" xml:id="_bill__akn_article_ZByX87_apnCKC">Article heading...</heading>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87-par1" leos:softuser="DOE John(CNECT)" leos:softdate="2023-01-19T13:52:45+02:00">
+        <num leos:origin="ec" xml:id="deleted__bill__akn_article_ZByX87_W2PIdf">1.</num>
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_w9KDbL">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_IiRuo5">Text 1</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_gUBHpr">
+        <num leos:origin="ec" xml:id="deleted__bill__akn_article_ZByX87_bRJoee">2.</num>
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_yuyuI3">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_5sI2Fy">Text 2</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_9JQxLS">
+        <num xml:id="deleted__bill__akn_article_ZByX87_8GUPFM">3.</num>
+        <content xml:id="_bill__akn_article_ZByX87_DquFJp" leos:origin="ec">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_8ULiCL">Text 3</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_Mi0Qc8">
+        <content xml:id="_bill__akn_article_ZByX87_zZ8O3N" leos:origin="ec">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_yG1HEA">Text 3 Bis</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_LPw2mK">
+        <content xml:id="_bill__akn_article_ZByX87_h9F2UO" leos:origin="ec">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_KSR5lK">Text 3 Third</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_0iqrqQ">
+        <num leos:origin="ec" xml:id="deleted__bill__akn_article_ZByX87_GVHFta">4.</num>
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_LOrh9P">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_vr1wK0">Text 4</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_ZEYXae">
+        <num xml:id="deleted__bill__akn_article_ZByX87_DDWdHd">5.</num>
+        <content xml:id="_bill__akn_article_ZByX87_JMkyFz" leos:origin="ec">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_PyC4GJ">Text5</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_4gAAcU">
+        <content xml:id="_bill__akn_article_ZByX87_J1VV7v" leos:origin="ec">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_LVI6ig">Text5 bis</p>
+        </content>
+    </paragraph>
+</article>

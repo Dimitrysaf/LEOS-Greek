@@ -1,0 +1,56 @@
+<article leos:origin="ec" xml:id="__akn_article_xSoDxn">
+    <num leos:editable="false" leos:origin="ec" xml:id="__akn_article_xSoDxn_H0FXMi">Article 3</num>
+    <heading leos:origin="ec" xml:id="__akn_article_xSoDxn_cVszLt">Article heading...</heading>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn-par1" leos:softuser="DOE Jane(DGT)"
+               leos:softdate="2023-02-01T11:14:48+01:00">
+        <num leos:origin="ec" xml:id="deleted___akn_article_xSoDxn_S0c5dT">1.</num>
+        <content leos:origin="ec" xml:id="__akn_article_xSoDxn_xIjADO">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_fnYndZ">Para 1</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_OOcoC9" leos:softaction="trans"
+               leos:softtrans_from="__akn_article_xSoDxn_sjWrjq">
+        <num xml:id="deleted___akn_article_xSoDxn_lUWNT3">2.</num>
+        <content xml:id="__akn_article_xSoDxn_88UOXx" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_rN9FAR">Para 2</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_yLweON">
+        <content xml:id="__akn_article_xSoDxn_FtAjbK" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_0CGinE">Subpara 21</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_rk6u3w">
+        <content xml:id="__akn_article_xSoDxn_qQPaXD" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_krWxOF">Subpara 22</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_Blf4X9" leos:softaction="trans"
+               leos:softtrans_from="__akn_article_xSoDxn_r6fHrJ">
+        <num xml:id="deleted___akn_article_xSoDxn_huV6tL">3.</num>
+        <content xml:id="__akn_article_xSoDxn_xPOtqH" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_eLBMb5">Para 3</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_flzxBN">
+        <content xml:id="__akn_article_xSoDxn_Pyk7Ss" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_Emf0ZO">Subpara 31</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_gU7Uph">
+        <content xml:id="__akn_article_xSoDxn_0MdoXJ" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_AecWvf">Subpara 32</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_Pm48PJ">
+        <content xml:id="__akn_article_xSoDxn_OJHqTu" leos:origin="ec">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_hWpWGL">Subpara 33</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="__akn_article_xSoDxn_x0lCRO">
+        <num leos:origin="ec" xml:id="deleted___akn_article_xSoDxn_SLkQKU">4.</num>
+        <content leos:origin="ec" xml:id="__akn_article_xSoDxn_pVhof6">
+            <p leos:origin="ec" xml:id="__akn_article_xSoDxn_IHeecT">Para 4</p>
+        </content>
+    </paragraph>
+</article>

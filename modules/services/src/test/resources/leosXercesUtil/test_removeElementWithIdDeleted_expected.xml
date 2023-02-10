@@ -1,0 +1,49 @@
+<article leos:origin="ec" xml:id="_bill__akn_article_ZByX87" xmlns:leos="urn:eu:europa:ec:leos">
+    <num leos:editable="false" leos:origin="ec" xml:id="_bill__akn_article_ZByX87_ogyMfn">Article 4</num>
+    <heading leos:origin="ec" xml:id="_bill__akn_article_ZByX87_apnCKC">Article heading...</heading>
+    <paragraph leos:origin="ec" leos:softdate="2023-01-19T13:52:45+02:00" leos:softuser="DOE John(CNECT)" xml:id="_bill__akn_article_ZByX87-par1">
+
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_w9KDbL">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_IiRuo5">Text 1</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_gUBHpr">
+
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_yuyuI3">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_5sI2Fy">Text 2</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_9JQxLS">
+
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_DquFJp">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_8ULiCL">Text 3</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_Mi0Qc8">
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_zZ8O3N">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_yG1HEA">Text 3 Bis</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_LPw2mK">
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_h9F2UO">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_KSR5lK">Text 3 Third</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_0iqrqQ">
+
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_LOrh9P">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_vr1wK0">Text 4</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_ZEYXae">
+
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_JMkyFz">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_PyC4GJ">Text5</p>
+        </content>
+    </paragraph>
+    <paragraph leos:origin="ec" xml:id="_bill__akn_article_ZByX87_4gAAcU">
+        <content leos:origin="ec" xml:id="_bill__akn_article_ZByX87_J1VV7v">
+            <p leos:origin="ec" xml:id="_bill__akn_article_ZByX87_LVI6ig">Text5 bis</p>
+        </content>
+    </paragraph>
+</article>

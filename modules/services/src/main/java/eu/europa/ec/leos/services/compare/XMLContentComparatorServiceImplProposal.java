@@ -28,12 +28,14 @@ import org.w3c.dom.Node;
 
 import java.util.Map;
 
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.isElementTransformedFrom;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftAction;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.withPlaceholderPrefix;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isElementIndented;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.elementImpactedByIndentation;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isElementIndentedInOtherContext;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
@@ -166,7 +168,8 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
                 if (context.getOldContentElements().containsKey(newElementTagId.replace(
                         SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
                     //append the soft movedFrom element content compared to the original content and ignore its renumbering
-                    Element transformedElementInOldContent = context.getOldContentElements().get(context.getNewElement().getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
+                    Element transformedElementInOldContent = context.getOldContentElements().get(context.getNewElement().
+                            getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
                     compareElementContents(new ContentComparatorContext.Builder(context)
                             .withOldElement(transformedElementInOldContent)
                             .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
@@ -340,7 +343,8 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
                             .withStartTagAttrValue(getStartTagValueForRemovedElement(softDeletedNewElement, context))
                             .build());
                 } else if (!isSoftAction(context.getNewElement().getNode(), SoftActionType.TRANSFORM) && !isSoftAction(context.getOldElement().getNode(), SoftActionType.TRANSFORM)
-                        && !context.getNewContentElements().containsKey(context.getOldElement().getTagId())) {
+                        && !context.getNewContentElements().containsKey(context.getOldElement().getTagId()) &&
+                        !isElementTransformedFrom(context.getNewContentRoot().getNode(), LEOS_SOFT_TRANS_FROM, context.getOldElement().getTagId())) {
                     //Element is added/present in old content but deleted from new content, so just display the deleted content
                     String attrValue = getStartTagValueForRemovedElementFromAncestor(context.getOldElement(), context);
                     Node node = getChangedElementContent(context.getOldContentNode(), context.getOldElement(), context.getAttrName(), attrValue);
@@ -382,7 +386,10 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
         }
     }
 
-    private String getStartTagValueForRemovedElement(Element newElement, ContentComparatorContext context) {
+    protected String getStartTagValueForRemovedElement(Element newElement, ContentComparatorContext context) {
+        if(isClonedProposalOrContribution()) {
+            super.getStartTagValueForRemovedElement(newElement, context);
+        }
         return context.getRemovedValue();
     }
 
@@ -424,9 +431,5 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
                 || IndentContentComparatorHelper.hasIndentedParent(otherContextElements, element)
                 || IndentContentComparatorHelper.hasIndentedChild(otherContextElements, element)
                 || IndentContentComparatorHelper.hasIndentedChild(otherContextElements, element.getParent()));
-    }
-
-    @Override
-    protected void appendMovedToOrDeletedElement(ContentComparatorContext context) {
     }
 }
