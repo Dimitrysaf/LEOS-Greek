@@ -978,8 +978,8 @@ define(function hierarchicalElementTransformer(require) {
                                             to: LEOS_INDENT_UNUMBERED_PARAGRAPH,
                                             action: "passAttributeTransformer"
                                         }, {
-                                            from: LEOS_REFERS_TO,
-                                            to: DATA_REFERS_TO,
+                                            from: DATA_REFERS_TO,
+                                            to: LEOS_REFERS_TO,
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: DATA_AKN_SOFTACTION,

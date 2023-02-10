@@ -41,9 +41,6 @@ define(function aknNumberedParagraphPluginModule(require) {
     var UNDERLINE = CKEDITOR.CTRL + 85;
 
     var pluginName = "aknNumberedParagraph";
-    var DATA_ORIGIN = "data-origin";
-    var DATA_AKN_NUM = "data-akn-num";
-    var DATA_AKN_NUM_ID = "data-akn-num-id";
     var LIST_FROM_MATCH = /^(ul|ol)$/;
     var HTML_SUB_PARAGRAPH = "p";
     var HTML_PARAGRAPH = "li";
@@ -55,10 +52,10 @@ define(function aknNumberedParagraphPluginModule(require) {
     var PARA_MODE = NUMBERED;
     var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
 
-    const DELETED = "deleted_";
-    const TRANSFORMED = "trans";
-    const DATA_AKN_ATTR_SOFTACTION = "data-akn-attr-softaction";
-    const DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";
+    var DELETED = "deleted_";
+    var TRANSFORMED = "trans";
+    var DATA_AKN_ATTR_SOFTACTION = "data-akn-attr-softaction";
+    var DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";
     var DATA_REFERS_TO = "refersto";
     var INP = "~_INP";
 
@@ -213,8 +210,8 @@ define(function aknNumberedParagraphPluginModule(require) {
         var jqEditor = $(event.editor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
         if (paragraphs.length > 0) {
-            PARA_MODE = paragraphs[0].getAttribute(DATA_AKN_NUM)
-            && !(paragraphs[0].getAttribute(DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(DATA_AKN_NUM_ID).startsWith("deleted_"))
+            PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
+            && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
                 ? NUMBERED : UNNUMBERED;
         }
         cmd.setState(PARA_MODE);
@@ -242,14 +239,14 @@ define(function aknNumberedParagraphPluginModule(require) {
                 renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
             } else {
                 for (var ii = 0; ii < paragraphs.length; ii++) {
-                    if (paragraphs[ii].getAttribute(DATA_ORIGIN) === "ec") {
-                        var numId = paragraphs[ii].getAttribute(DATA_AKN_NUM_ID);
+                    if (paragraphs[ii].getAttribute(leosPluginUtils.DATA_ORIGIN) === "ec") {
+                        var numId = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                         if(numId == null || !numId.startsWith(DELETED)){
-                            paragraphs[ii].setAttribute(DATA_AKN_NUM_ID, DELETED + numId);
+                            paragraphs[ii].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, DELETED + numId);
                         }
                     } else {
-                        paragraphs[ii].removeAttribute(DATA_AKN_NUM);
-                        paragraphs[ii].removeAttribute(DATA_AKN_NUM_ID);
+                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                     }
                 }
             }
@@ -289,10 +286,13 @@ define(function aknNumberedParagraphPluginModule(require) {
             listNode.insertBefore(currentNode);
             childNodeIndex--;
         }
-        return {parentNodeIndex, childNodeIndex};
+        return {
+            parentNodeIndex: parentNodeIndex,
+            childNodeIndex: childNodeIndex
+        };
     }
 
-// This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
+    // This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
     var transformSubparagraphs = function transformSubparagraphs(editor) {
         // transforms subparagraphs to paragraphs
         editor.fire('lockSnapshot');
@@ -322,8 +322,8 @@ define(function aknNumberedParagraphPluginModule(require) {
                             currentNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
 
                             if(isFirstOccurrence){
-                                currentNode.setAttribute("data-akn-num", paragraphNode.getAttribute("data-akn-num"));
-                                currentNode.setAttribute("data-akn-num-id", paragraphNode.getAttribute("data-akn-num-id"));
+                                currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                                currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID));
                                 currentNode.setAttribute(DATA_AKN_ATTR_SOFTACTION, TRANSFORMED);
                                 currentNode.setAttribute(DATA_AKN_ATTR_SOFTTRANSFROM, paragraphNode.getAttribute("id"));
                                 isFirstOccurrence = false;
@@ -351,7 +351,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                                     firstListNode.renameNode(HTML_PARAGRAPH);
                                     firstListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     firstListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
-                                    const result = insertBeforeNode(paragraphNodeIndex, firstListNode, currentNode, childNodeIndex);
+                                    var result = insertBeforeNode(paragraphNodeIndex, firstListNode, currentNode, childNodeIndex);
                                     paragraphNodeIndex = result.parentNodeIndex;
                                     childNodeIndex = result.childNodeIndex;
                                 }
@@ -359,7 +359,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                                     lastListNode.renameNode(HTML_PARAGRAPH);
                                     lastListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     lastListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
-                                    const result = insertBeforeNode(paragraphNodeIndex, lastListNode, currentNode, childNodeIndex);
+                                    var result = insertBeforeNode(paragraphNodeIndex, lastListNode, currentNode, childNodeIndex);
                                     paragraphNodeIndex = result.parentNodeIndex;
                                     childNodeIndex = result.childNodeIndex;
                                 }
