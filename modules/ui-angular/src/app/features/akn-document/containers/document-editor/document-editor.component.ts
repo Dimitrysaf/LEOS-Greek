@@ -43,6 +43,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       this.doc.setDocumentId(this.documentRef);
       this.doc.setDocumentCategory(this.documentType);
       this.cdkEditor.setDocumentRef(this.documentRef);
+      this.cdkEditor.setDocumentType(this.documentType);
     });
 
     this.loadStyleSheet();

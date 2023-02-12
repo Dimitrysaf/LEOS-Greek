@@ -6,12 +6,11 @@ public class InsertElementRequest {
 
     private Position position;
 
-    public InsertElementRequest(Position position) {
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
         this.position = position;
     }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
 }

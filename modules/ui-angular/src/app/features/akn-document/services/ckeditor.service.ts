@@ -19,9 +19,10 @@ import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.s
 import { DocumentService } from '@/shared/services/document.service';
 
 // FIXME: mockdata
+// TODO This must be fetch from a backend Api. Keep in mind that aktTag must always be lowercase
 const tocItemsList = [
   {
-    aknTag: 'PREFACE',
+    aknTag: 'preface',
     root: true,
     higherElement: null,
     draggable: false,
@@ -48,7 +49,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'MAINBODY',
+    aknTag: 'mainbody',
     root: true,
     higherElement: null,
     draggable: false,
@@ -75,7 +76,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'PART',
+    aknTag: 'part',
     rootl: false,
     higherElementl: true,
     draggablel: true,
@@ -104,7 +105,7 @@ const tocItemsList = [
     actionsPositionl: null,
   },
   {
-    aknTag: 'TITLE',
+    aknTag: 'title',
     root: false,
     higherElement: true,
     draggable: true,
@@ -133,7 +134,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'CHAPTER',
+    aknTag: 'chapter',
     root: false,
     higherElement: true,
     draggable: true,
@@ -162,7 +163,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'SECTION',
+    aknTag: 'section',
     root: false,
     higherElement: true,
     draggable: true,
@@ -191,7 +192,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'HEADING',
+    aknTag: 'heading',
     root: false,
     higherElement: null,
     draggable: false,
@@ -225,7 +226,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'LEVEL',
+    aknTag: 'level',
     root: false,
     higherElement: null,
     draggable: true,
@@ -259,7 +260,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'PARAGRAPH',
+    aknTag: 'paragraph',
     root: false,
     higherElement: null,
     draggable: true,
@@ -293,7 +294,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'SUBPARAGRAPH',
+    aknTag: 'subparagraph',
     root: false,
     higherElement: null,
     draggable: false,
@@ -320,7 +321,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'LIST',
+    aknTag: 'list',
     root: false,
     higherElement: null,
     draggable: false,
@@ -347,7 +348,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'POINT',
+    aknTag: 'point',
     root: false,
     higherElement: null,
     draggable: false,
@@ -374,7 +375,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'INDENT',
+    aknTag: 'indent',
     root: false,
     higherElement: null,
     draggable: false,
@@ -401,7 +402,7 @@ const tocItemsList = [
     actionsPosition: null,
   },
   {
-    aknTag: 'ALINEA',
+    aknTag: 'alinea',
     root: false,
     higherElement: null,
     draggable: false,
@@ -675,10 +676,12 @@ export class CKEditorService implements OnDestroy {
   private annexRefBS = new BehaviorSubject<string>(null);
   private documentRefBS = new BehaviorSubject<string>(null);
   private xmlBS = new BehaviorSubject<string>('');
+  private documentTypeBS = new BehaviorSubject<string>(null);
   elementEditor$: Observable<any>;
   xml$ = this.xmlBS.asObservable();
   documentRef$ = this.documentRefBS.asObservable();
   annexRef$ = this.annexRefBS.asObservable();
+  documentType$ = this.documentTypeBS.asObservable();
 
   connector: any = {
     getParentId: () => 123,
@@ -727,6 +730,7 @@ export class CKEditorService implements OnDestroy {
       elementId: string;
       elementType: string;
     }) => {
+      console.log(data);
       const documentRef = this.documentRefBS.value;
       this.getAnnexElement(
         documentRef,
@@ -792,6 +796,25 @@ export class CKEditorService implements OnDestroy {
         documentRef,
         elementData.elementType,
         elementData.elementId,
+      ).subscribe((response) => {
+        this.documentService.setDocumentId(documentRef);
+      });
+    },
+    insertElementAction: (elementData: {
+      action: string;
+      elementId: string;
+      elementType: string;
+      position: string;
+    }) => {
+      console.log(elementData);
+      const documentRef = this.documentRefBS.value;
+      const documentType = this.documentTypeBS.value;
+      this.insertDocumentElement(
+        documentRef,
+        elementData.elementType,
+        elementData.elementId,
+        documentType,
+        elementData.position,
       ).subscribe((response) => {
         this.documentService.setDocumentId(documentRef);
       });
@@ -977,6 +1000,10 @@ export class CKEditorService implements OnDestroy {
     this.documentRefBS.next(documentRef);
   }
 
+  setDocumentType(documentType: string) {
+    this.documentTypeBS.next(documentType);
+  }
+
   setAnnexRef(annexRef: string) {
     this.annexRefBS.next(annexRef);
   }
@@ -1001,6 +1028,20 @@ export class CKEditorService implements OnDestroy {
   ) {
     return this.http.delete(
       `api/secured/annex/${documentRef}/element/${elementName}/${elementId}`,
+      { responseType: 'arraybuffer' },
+    );
+  }
+
+  insertDocumentElement(
+    documentRef: string,
+    elementName: string,
+    elementId: string,
+    documentType: string,
+    position: string,
+  ) {
+    return this.http.put(
+      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-element`,
+      { position: position.toUpperCase() },
       { responseType: 'arraybuffer' },
     );
   }
