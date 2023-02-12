@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { DocumentService } from '@/features/akn-document/services/document.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-versions-pane',

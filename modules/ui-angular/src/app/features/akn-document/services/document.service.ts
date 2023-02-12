@@ -15,6 +15,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
@@ -137,8 +138,14 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'reloadDocument'); // FIXME
   }
 
-  saveVersion() {
+  saveVersion(requestBody: any) {
     console.warn('stub:', 'saveVersion'); // FIXME
+    this.documentRef$.pipe(
+      combineLatestWith(this.documentType$),
+      mergeMap(([ref, type]) =>
+        this.saveDocumentVersionWithData(type, ref, requestBody),
+      ),
+    );
   }
 
   searchNext() {
@@ -235,6 +242,17 @@ export class DocumentService implements OnDestroy {
     //FIXME modify this when backend api for version-data is modified not to contain documentId param.
     return this.http.get<Version[]>(
       `api/secured/${documentType}/${documentRef}/${documentRef}/version-data/`,
+    );
+  }
+
+  saveDocumentVersionWithData(
+    documentType: string,
+    documentRef: string,
+    data: any,
+  ) {
+    return this.http.post(
+      `api/secured/${documentType}/${documentRef}/save-version`,
+      data,
     );
   }
 

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
+  combineLatestWith,
   distinctUntilChanged,
   filter,
   mergeMap,
@@ -21,7 +22,7 @@ import { TableOfContentItemVO } from '../models/toc.model';
   providedIn: 'root',
 })
 export class DocumentService implements OnDestroy {
-  documentCategory: Observable<boolean>;
+  documentCategory$: Observable<string | null>;
   annotationsEnabled$: Observable<boolean>;
   compareModeEnabled$: Observable<boolean>;
   documentId$: Observable<string | null>;
@@ -53,11 +54,13 @@ export class DocumentService implements OnDestroy {
 
   constructor(private http: HttpClient) {
     this.documentId$ = this.documentIdBS.asObservable();
+    this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
     this.documentXML$ = this.documentId$.pipe(
       // FIXME: use proper API
-      mergeMap((ref) =>
-        ref ? this.getDocumentByRef(ref, this.documentCategoryBS.value) : null,
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([ref, category]) =>
+        ref ? this.getDocumentByRef(ref, category) : null,
       ),
     );
 
@@ -70,9 +73,9 @@ export class DocumentService implements OnDestroy {
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
     this.versions$ = this.documentId$.pipe(
-      // FIXME: use proper API
-      mergeMap((id) =>
-        this.http.get<Version[]>(`api/secured/documents/${id}/versions/`),
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([ref, category]) =>
+        this.getDocumentVersionsData(category, ref),
       ),
     );
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
@@ -129,8 +132,14 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'reloadDocument'); // FIXME
   }
 
-  saveVersion() {
+  saveVersion(requestBody: any) {
     console.warn('stub:', 'saveVersion'); // FIXME
+    return this.documentId$.pipe(
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([ref, category]) =>
+        this.saveDocumentVersionWithData(category, ref, requestBody),
+      ),
+    );
   }
 
   searchNext() {
@@ -232,6 +241,26 @@ export class DocumentService implements OnDestroy {
 
   setToc(toc: TableOfContentItemVO[]) {
     this.tocItemBS.next(toc);
+  }
+
+  getDocumentVersionsData(documentType: string, documentRef: string) {
+    //FIXME modify this when backend api for version-data is modified not to contain documentId param.
+    return this.http.get<Version[]>(
+      `api/secured/${documentType}/${documentRef}/${documentRef}/version-data/`,
+    );
+  }
+
+  saveDocumentVersionWithData(
+    documentType: string,
+    documentRef: string,
+    data: any,
+  ) {
+    return this.http.post<Version[]>(
+      `api/secured/${documentType}/${documentRef}/save-version`,
+      {
+        ...data,
+      },
+    );
   }
 
   private doSearch(params: DocumentSearchParams) {

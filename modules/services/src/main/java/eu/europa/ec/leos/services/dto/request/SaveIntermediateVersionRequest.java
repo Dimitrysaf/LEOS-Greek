@@ -19,19 +19,21 @@ public class SaveIntermediateVersionRequest {
 
     private String checkinComment;
     private VersionType versionType;
-    
-    public SaveIntermediateVersionRequest(String checkinComment, VersionType versionType) {
-        super();
-        this.checkinComment = checkinComment;
-        this.versionType = versionType;
-    }
 
     public String getCheckinComment() {
         return checkinComment;
     }
 
+    public void setCheckinComment(String checkinComment) {
+        this.checkinComment = checkinComment;
+    }
+
     public VersionType getVersionType() {
         return versionType;
-    }    
+    }
+
+    public void setVersionType(VersionType versionType) {
+        this.versionType = versionType;
+    }
     
 }

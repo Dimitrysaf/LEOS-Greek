@@ -10,7 +10,7 @@
     </button>
     <eui-dropdown-content>
       <ul euiList>
-        <li euiListItem (click)="doc.saveVersion()">
+        <li euiListItem (click)="openVersionModal()">
           <button
             euiListItem
             translate="page.editor.actions-dropdown.save-version"
@@ -50,3 +50,40 @@
     </eui-dropdown-content>
   </eui-dropdown>
 </div>
+
+<eui-dialog
+  #createVersionDialog
+  [title]="'page.editor.actions-dropdown.save-version.modal' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (close)="closeVersionModal()"
+  (accept)="onSaveVersion()"
+  (dismiss)="closeVersionModal()"
+>
+  <form [formGroup]="createForm">
+    <div class="row eui-u-mt-m">
+      <div class="col-md-3">
+        <label euiLabel for="title">{{
+          'page.editor.actions-dropdown.save-version.modal.title' | translate
+        }}</label>
+      </div>
+      <div class="col-md-9 eui-inline-edit">
+        <input id="title" euiInputText formControlName="title" />
+      </div>
+    </div>
+
+    <div class="row eui-u-mt-m">
+      <div class="col-md-3">
+        <label euiLabel for="description">{{
+          'page.editor.actions-dropdown.save-version.modal.description'
+            | translate
+        }}</label>
+      </div>
+      <div class="col-md-9 eui-inline-edit">
+        <input id="description" euiInputText formControlName="description" />
+      </div>
+    </div>
+  </form>
+</eui-dialog>
