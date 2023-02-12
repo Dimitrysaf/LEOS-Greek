@@ -29,7 +29,7 @@ define(function testTransformerModule(require) {
     var aknOrderedListNormalizedConfig = configNormalizerStampToTest().getNormalizedConfig({
         rawConfig : aknOrderedList.transformationConfig
     });
-    
+
     var allConfigs = [ configs.aknArticle.normalizedConfig, configs.aknAlinea.normalizedConfig, configs.aknAuthorialNote.normalizedConfig,
             configs.aknHtmlItalic.normalizedConfig, configs.aknHtmlUnderline.normalizedConfig, configs.aknHtmlBold.normalizedConfig,
             configs.aknArticle.normalizedConfig, configs.aknHtmlAnchor.normalizedConfig, aknParagraphNormalizedConfig, aknOrderedListNormalizedConfig ];

@@ -296,9 +296,20 @@ public class XmlHelper {
                 HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, heading), CONTENT, Collections.singletonMap(CONTENT_TEXT_PLACEHOLDER_ESCAPED, getDefaultContentText(tocItem.getAknTag().value(), messageHelper))));
     }
 
+    public static String getTemplateForFinancialStatement(TocItem tocItem, MessageHelper messageHelper) {
+    	Map<String, Map<String, String>> templateItems = ImmutableMap.of(NUM, Collections.emptyMap(), HEADING, Collections.emptyMap(),
+                CONTENT, Collections.singletonMap(CONTENT_TEXT_PLACEHOLDER_ESCAPED, getDefaultContentText(tocItem.getAknTag().value(), messageHelper)));
+        StringBuilder template = tocItem.getTemplate() != null ? new StringBuilder(tocItem.getTemplate()) : getDefaultTemplateForFinancialStatement(tocItem);
+        return replaceContent(tocItem, templateItems, template);
+    }
+
     private static String getTemplate(TocItem tocItem, Map<String, Map<String, String>> templateItems) {
         StringBuilder template = tocItem.getTemplate() != null ? new StringBuilder(tocItem.getTemplate()) : getDefaultTemplate(tocItem);
-        replaceAll(template, ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + tocItem.getAknTag().value(), 7));
+        return replaceContent(tocItem, templateItems, template);
+    }
+    
+    private static String replaceContent(TocItem tocItem, Map<String, Map<String, String>> templateItems, StringBuilder template) {
+    	replaceAll(template, ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + tocItem.getAknTag().value(), 7));
 
         replaceTemplateItems(template, NUM, tocItem.getItemNumber(), templateItems.get(NUM));
         replaceTemplateItems(template, HEADING, tocItem.getItemHeading(), templateItems.get(HEADING));
@@ -307,10 +318,19 @@ public class XmlHelper {
         return template.toString();
     }
 
-    private static StringBuilder getDefaultTemplate(TocItem tocItem) {
+    private static StringBuilder getDefaultTemplateForFinancialStatement(TocItem tocItem) {
         StringBuilder defaultTemplate = new StringBuilder("<" + tocItem.getAknTag().value() + " xml:id=\"" + ID_PLACEHOLDER + "\" " +
                 LEOS_EDITABLE_ATTR+"=\"true\">");
-        if (OptionsType.MANDATORY.equals(tocItem.getItemNumber()) || OptionsType.OPTIONAL.equals(tocItem.getItemNumber())) {
+        return appendContent(tocItem, defaultTemplate);
+    }
+
+    private static StringBuilder getDefaultTemplate(TocItem tocItem) {
+        StringBuilder defaultTemplate = new StringBuilder("<" + tocItem.getAknTag().value() + " xml:id=\"" + ID_PLACEHOLDER + "\">");
+        return appendContent(tocItem, defaultTemplate);
+    }
+    
+    private static StringBuilder appendContent(TocItem tocItem, StringBuilder defaultTemplate) {
+    	if (OptionsType.MANDATORY.equals(tocItem.getItemNumber()) || OptionsType.OPTIONAL.equals(tocItem.getItemNumber())) {
             defaultTemplate.append(tocItem.isNumberEditable() ? "<num>" + NUM_PLACEHOLDER + "</num>" : "<num leos:editable=\"false\">" + NUM_PLACEHOLDER + "</num>");
         }
         if (OptionsType.MANDATORY.equals(tocItem.getItemHeading()) || OptionsType.OPTIONAL.equals(tocItem.getItemHeading())) {

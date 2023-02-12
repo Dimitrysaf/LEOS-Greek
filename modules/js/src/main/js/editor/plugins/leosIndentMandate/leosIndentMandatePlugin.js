@@ -37,6 +37,8 @@ define(function leosIndentMandatePluginModule(require) {
     const PARAGRAPH = "paragraph";
     const LEVEL = "level";
     const ITEMS_SELECTOR = leosPluginUtils.LIST + "," + NUMBERED_ITEM + "," + UNUMBERED_ITEM;
+    let LOCAL_MAX_LEVEL_LIST;
+    let LOCAL_MAX_LEVEL_LIST_DEPTH;
 
     let modeRealTimeIndent = true;
 
@@ -80,7 +82,7 @@ define(function leosIndentMandatePluginModule(require) {
         init: function init(editor) {
             let globalHelpers = CKEDITOR.plugins.indent;
             modeRealTimeIndent = true;
-
+            setMaxListLevel(editor);
             resetIndentStatus();
             
             // Register commands.
@@ -163,10 +165,15 @@ define(function leosIndentMandatePluginModule(require) {
         }
     };
 
+    function setMaxListLevel(editor) {
+        LOCAL_MAX_LEVEL_LIST = leosPluginUtils.getMaxListLevel(editor);
+        LOCAL_MAX_LEVEL_LIST_DEPTH = leosPluginUtils.getMaxListLevelDepth(editor);
+    }
+
     function aknIndent(editor) {
         const prevLevel = indentationStatus.current.level;
         // Do Indent
-        if (this.isIndent && (indentationStatus.current.level < leosPluginUtils.MAX_LIST_LEVEL || !indentationStatus.current.numbered)) {
+        if (this.isIndent && (indentationStatus.current.level < LOCAL_MAX_LEVEL_LIST || !indentationStatus.current.numbered)) {
             if (indentationStatus.current.move < 0) {
                 indentationStatus.current.numbered = indentationStatus.current.prevNumbered.pop();
 
@@ -291,7 +298,7 @@ define(function leosIndentMandatePluginModule(require) {
 
         if (!ol.length
             || !(_checkParentAndPosition())
-            || (leosPluginUtils.isListDepthMoreThanThreshold(indentationStatus, leosPluginUtils.MAX_LEVEL_LIST_DEPTH))) {
+            || (leosPluginUtils.isListDepthMoreThanThreshold(indentationStatus, LOCAL_MAX_LEVEL_LIST_DEPTH))) {
             return false;
         } else {
             return true;

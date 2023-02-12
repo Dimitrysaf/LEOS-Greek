@@ -34,11 +34,13 @@ define(function leosAnnexOrderedListPluginModule(require) {
     var TAB_KEY = 9;
     var config = { attributes: false, childList: true, subtree: true };
 
+    var LOCAL_MAX_LEVEL_LIST;
     var pluginDefinition = {
         lang: 'en',
         init: function init(editor) {
             numberModule.init(editor);
             unumberModule.init(editor);
+            LOCAL_MAX_LEVEL_LIST =  leosPluginUtils.getMaxListLevel(editor);
             editor.on("beforeAknIndentList", _resetDataNumOnIndent);
             editor.on("change", resetDataAknNameForOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
@@ -57,6 +59,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 key : TAB_KEY,
                 action : _onTabKey
             });
+
         }
     };
 
@@ -81,7 +84,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
         var selectedElement = leosKeyHandler.getSelectedElement(selection);
 
         var actualLevel = leosPluginUtils.calculateListLevel(selectedElement);
-        if (actualLevel > leosPluginUtils.MAX_LIST_LEVEL){
+        if (actualLevel > LOCAL_MAX_LEVEL_LIST){
             context.event.cancel();
         }
     }
@@ -428,7 +431,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
          && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.SUBPARAGRAPH)) {
             return 2;
         } else {
-            return leosPluginUtils.calculateListLevel(element) >= leosPluginUtils.MAX_LIST_LEVEL ? 1 : 0;
+            return leosPluginUtils.calculateListLevel(element) >= LOCAL_MAX_LEVEL_LIST ? 1 : 0;
         }
     }
 

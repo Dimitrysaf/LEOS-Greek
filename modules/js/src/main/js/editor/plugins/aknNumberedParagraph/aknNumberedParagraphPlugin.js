@@ -41,9 +41,6 @@ define(function aknNumberedParagraphPluginModule(require) {
     var UNDERLINE = CKEDITOR.CTRL + 85;
 
     var pluginName = "aknNumberedParagraph";
-    var DATA_ORIGIN = "data-origin";
-    var DATA_AKN_NUM = "data-akn-num";
-    var DATA_AKN_NUM_ID = "data-akn-num-id";
     var LIST_FROM_MATCH = /^(ul|ol)$/;
     var HTML_SUB_PARAGRAPH = "p";
     var HTML_PARAGRAPH = "li";
@@ -55,6 +52,12 @@ define(function aknNumberedParagraphPluginModule(require) {
     var PARA_MODE = NUMBERED;
     var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
 
+    var DELETED = "deleted_";
+    var TRANSFORMED = "trans";
+    var DATA_AKN_ATTR_SOFTACTION = "data-akn-attr-softaction";
+    var DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";
+    var DATA_REFERS_TO = "refersto";
+    var INP = "~_INP";
 
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
@@ -207,8 +210,8 @@ define(function aknNumberedParagraphPluginModule(require) {
         var jqEditor = $(event.editor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
         if (paragraphs.length > 0) {
-            PARA_MODE = paragraphs[0].getAttribute(DATA_AKN_NUM)
-            && !(paragraphs[0].getAttribute(DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(DATA_AKN_NUM_ID).startsWith("deleted_"))
+            PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
+            && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
                 ? NUMBERED : UNNUMBERED;
         }
         cmd.setState(PARA_MODE);
@@ -236,15 +239,20 @@ define(function aknNumberedParagraphPluginModule(require) {
                 renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
             } else {
                 for (var ii = 0; ii < paragraphs.length; ii++) {
-                    if (paragraphs[ii].getAttribute(DATA_ORIGIN) === "ec") {
-                        var numId = paragraphs[ii].getAttribute(DATA_AKN_NUM_ID);
-                        paragraphs[ii].setAttribute(DATA_AKN_NUM_ID, "deleted_" + numId)
+                    if (paragraphs[ii].getAttribute(leosPluginUtils.DATA_ORIGIN) === "ec") {
+                        var numId = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                        if(numId == null || !numId.startsWith(DELETED)){
+                            paragraphs[ii].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, DELETED + numId);
+                        }
                     } else {
-                        paragraphs[ii].removeAttribute(DATA_AKN_NUM);
-                        paragraphs[ii].removeAttribute(DATA_AKN_NUM_ID);
+                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                     }
                 }
             }
+        }
+        if (!!event.editor.getCommand('indent')) {
+            event.editor.getCommand('indent').refresh(event.editor, event.editor.elementPath());
         }
         event.editor.fire('unlockSnapshot');
     }
@@ -272,9 +280,21 @@ define(function aknNumberedParagraphPluginModule(require) {
         return commonElementAncestor;
     }
 
+    function insertBeforeNode(parentNodeIndex, listNode, currentNode, childNodeIndex) {
+        parentNodeIndex++;
+        if (!_isIntroductoryPart(listNode)) {
+            listNode.insertBefore(currentNode);
+            childNodeIndex--;
+        }
+        return {
+            parentNodeIndex: parentNodeIndex,
+            childNodeIndex: childNodeIndex
+        };
+    }
+
     // This method transforms subparagraphs into paragraphs when included in unnumbered paragraphs: ol/li/p to ol/li
     var transformSubparagraphs = function transformSubparagraphs(editor) {
-        // transforms subparagraphs to paragraphs 
+        // transforms subparagraphs to paragraphs
         editor.fire('lockSnapshot');
         var firstLevelOlElt = _getFirstLevelOlElement(editor);
         if (firstLevelOlElt) {
@@ -283,8 +303,11 @@ define(function aknNumberedParagraphPluginModule(require) {
                 var paragraphNode = paragraphNodes.getItem(paragraphNodeIndex);
                 var currentParagraphNodeToBeDeleted = false;
                 if (leosPluginUtils.getElementName(paragraphNode) === HTML_PARAGRAPH) {
+                    if(paragraphNode.getAttribute("contenteditable") === "false"){
+                        continue;
+                    }
                     var childNodes = paragraphNode.getChildren();
-
+                    var isFirstOccurrence = true;
                     for (var childNodeIndex=0; childNodeIndex < childNodes.count(); childNodeIndex++) {
                         var currentNode = childNodes.getItem(childNodeIndex);
                         var nextNode = currentNode.hasNext() ? currentNode.getNext() : null;
@@ -296,6 +319,16 @@ define(function aknNumberedParagraphPluginModule(require) {
                         else if ((leosPluginUtils.getElementName(currentNode) === HTML_SUB_PARAGRAPH) && (!LIST_FROM_MATCH.test(leosPluginUtils.getElementName(nextNode)))) {
                             currentNode.renameNode(HTML_PARAGRAPH);
                             currentNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
+                            currentNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+
+                            if(isFirstOccurrence){
+                                currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                                currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID));
+                                currentNode.setAttribute(DATA_AKN_ATTR_SOFTACTION, TRANSFORMED);
+                                currentNode.setAttribute(DATA_AKN_ATTR_SOFTTRANSFROM, paragraphNode.getAttribute("id"));
+                                isFirstOccurrence = false;
+                            }
+
                             if (childNodeIndex>0) {
                                 currentNode.insertAfter(paragraphNodes.getItem(paragraphNodeIndex));childNodeIndex--;paragraphNodeIndex++;
                             }
@@ -314,15 +347,21 @@ define(function aknNumberedParagraphPluginModule(require) {
                             if (grandChildNodes.count() > 0) {
                                 var firstListNode = grandChildNodes.getItem(0);
                                 var lastListNode = grandChildNodes.getItem(grandChildNodes.count() - 1);
-                                if (leosPluginUtils.isSubparagraph(firstListNode)) {
+                                if (childNodeIndex>0 && leosPluginUtils.isSubparagraph(firstListNode)) {
                                     firstListNode.renameNode(HTML_PARAGRAPH);
+                                    firstListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     firstListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
-                                    firstListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
+                                    var result = insertBeforeNode(paragraphNodeIndex, firstListNode, currentNode, childNodeIndex);
+                                    paragraphNodeIndex = result.parentNodeIndex;
+                                    childNodeIndex = result.childNodeIndex;
                                 }
                                 if (leosPluginUtils.isSubparagraph(lastListNode)) {
                                     lastListNode.renameNode(HTML_PARAGRAPH);
+                                    lastListNode.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                                     lastListNode.setAttribute(leosPluginUtils.DATA_AKN_NAME, "aknNumberedParagraph");
-                                    lastListNode.insertBefore(currentNode);childNodeIndex--;paragraphNodeIndex++;
+                                    var result = insertBeforeNode(paragraphNodeIndex, lastListNode, currentNode, childNodeIndex);
+                                    paragraphNodeIndex = result.parentNodeIndex;
+                                    childNodeIndex = result.childNodeIndex;
                                 }
                             }
                         }
@@ -334,20 +373,24 @@ define(function aknNumberedParagraphPluginModule(require) {
                         }
                     }
                     if (currentParagraphNodeToBeDeleted) {
+                        var sel = editor.getSelection(),
+                            range = sel.getRanges()[ 0 ],
+                            cursor = range.clone();
+                        var startContainerParents = cursor.startContainer.getParents();
+                        var endContainerParents = cursor.endContainer.getParents();
                         paragraphNode.remove();paragraphNodeIndex--;
                         // To avoid bug of ticket LEOS-2734: when removing a selectable node, move the cursor to avoid bad positioning of it. Move cursor to the beginning of the paragrpah
-                        var nodeToBeSelected = firstLevelOlElt.getFirst();
-                        if (nodeToBeSelected) {
-                            var rangeToSelect = editor.createRange();
-                            rangeToSelect.moveToElementEditablePosition(nodeToBeSelected, false);
-                            rangeToSelect.select();
-                        }
+                        leosPluginUtils.keepCursorPosition(startContainerParents, endContainerParents, editor, cursor);
                     }
                 }
             }
         }
         editor.fire('unlockSnapshot');
     };
+
+    function _isIntroductoryPart(element) {
+        return (INP === element.getAttribute(DATA_REFERS_TO));
+    }
 
     function _getFirstLevelOlElement(editor) {
         var jqEditor = $(editor.editable().$);
@@ -426,6 +469,9 @@ define(function aknNumberedParagraphPluginModule(require) {
                 akn: 'leos:softmove_label',
                 html: 'data-akn-attr-softmove_label'
             }, {
+                akn: 'leos:softtrans_from',
+                html: 'data-akn-attr-softtrans_from'
+            }, {
                 akn: LEOS_INDENT_ORIGIN_TYPE,
                 html: DATA_INDENT_ORIGIN_TYPE
             }, {
@@ -455,7 +501,7 @@ define(function aknNumberedParagraphPluginModule(require) {
         rootElementsForFrom: ['paragraph'],
         contentWrapperForFrom: 'subparagraph',
         rootElementsForTo: ['li']
-    })
+    });
     
     var transformationConfig = leosHierarchicalElementTransformer.getTransformationConfig();
     

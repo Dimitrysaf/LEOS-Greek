@@ -39,12 +39,12 @@ define(function leosArticleIndentListPluginModule(require) {
         isNotBookmark = CKEDITOR.dom.walker.bookmark( false, true ),
         TRISTATE_DISABLED = CKEDITOR.TRISTATE_DISABLED,
         TRISTATE_OFF = CKEDITOR.TRISTATE_OFF;
-
+    var LOCAL_MAX_LEVEL_LIST;
     var pluginDefinition = {
         requires: 'indent',
         init: function init(editor) {
             var globalHelpers = CKEDITOR.plugins.indent;
-
+            LOCAL_MAX_LEVEL_LIST =  leosPluginUtils.getMaxListLevel(editor);
             // Register commands.
             globalHelpers.registerCommands( editor, {
                 aknindentlist: new commandDefinition( editor, 'aknindentlist', true ),
@@ -110,9 +110,9 @@ define(function leosArticleIndentListPluginModule(require) {
                 this.jobs[this.isIndent ? 10 : 30] = {
                     refresh: this.isIndent ?
                         function(editor, path) {
-                            var list = this.getContext( path );
                             var range = getSelectedRange(editor);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
+                            var list = this.getContext( path );
                             var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
                             if (isListEnding) {
                                 return TRISTATE_OFF;
@@ -120,15 +120,20 @@ define(function leosArticleIndentListPluginModule(require) {
                                 return TRISTATE_OFF;
                             } else if (!list
                                 || firstItemInPath( this.context, path, list )
-                                || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), leosPluginUtils.MAX_LIST_LEVEL) ) {
+                                || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST) ) {
                                 return TRISTATE_DISABLED;
                             } else {
                                 return TRISTATE_OFF;
                             }
                         } : function(editor, path) {
+                            var range = getSelectedRange(editor);
+                            path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
+                            var isSubParagraph = leosPluginUtils.isSubparagraphInPath(path);
                             // custom code to disable the outdent toolbar button for first level list items.
-                            if (!list || isFirstLevelList(editor, list)) {
+                            if (isSubParagraph) {
+                                return TRISTATE_DISABLED;
+                            } else if (!list || isFirstLevelList(editor, list)) {
                                 return TRISTATE_DISABLED;
                             } else {
                                 return TRISTATE_OFF;
@@ -163,7 +168,8 @@ define(function leosArticleIndentListPluginModule(require) {
                 endContainer = endContainer.getParent();
 
             if (!startContainer || !endContainer
-                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer) && _isListDepthMoreThanThreshold(startContainer, endContainer, leosPluginUtils.MAX_LIST_LEVEL))){
+                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer)
+                    && _isListDepthMoreThanThreshold(startContainer, endContainer, LOCAL_MAX_LEVEL_LIST))){
                 return false;
             }
 
@@ -509,7 +515,10 @@ define(function leosArticleIndentListPluginModule(require) {
         if (!list)
             list = path.contains(query);
 
-        return list && firstListItemInPath && firstListItemInPath.equals(list.getFirst(listItem));
+        return (list && firstListItemInPath
+            && firstListItemInPath.getParent().equals(list)
+            && firstListItemInPath.equals(list.getFirst(listItem)))
+            || list.getFirst().equals(path.lastElement);
     }
 
     /**
@@ -544,6 +553,9 @@ define(function leosArticleIndentListPluginModule(require) {
             });
         } else {
             var liElement = getEnclosedLiElement(range.endContainer);
+            if (leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(liElement)) {
+                liElement = liElement.getParent().getParent();
+            }
             return liElement && !liElement.getAscendant('li')
         }
     };

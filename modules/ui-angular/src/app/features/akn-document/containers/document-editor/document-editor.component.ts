@@ -39,9 +39,11 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.route.params.subscribe((params) => {
       this.documentRef = params.id;
       this.documentType = this.route.snapshot.data['category'];
-      this.doc.setDocumentCategory(this.route.snapshot.data['category']);
-      this.doc.setDocumentId(params.id);
-      this.cdkEditor.setDocumentRef(params.id);
+      this.doc.setDocumentCategory(this.documentType);
+      this.doc.setDocumentId(this.documentRef);
+      this.doc.setDocumentCategory(this.documentType);
+      this.cdkEditor.setDocumentRef(this.documentRef);
+      this.cdkEditor.setDocumentType(this.documentType);
     });
 
     this.loadStyleSheet();

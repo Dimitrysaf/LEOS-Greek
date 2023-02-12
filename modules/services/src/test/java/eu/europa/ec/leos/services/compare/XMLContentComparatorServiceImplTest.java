@@ -14,46 +14,61 @@
 package eu.europa.ec.leos.services.compare;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.w3c.dom.Document;
 
+import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJaneDigitUser;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class XMLContentComparatorServiceImplTest extends LeosTest {
 
-    private final static String CLONED_FOLDER_CN = "/compare/cloned/";
+    private final static String CLONED_FOLDER = "/compare/cloned/";
 
     @Mock
     private MessageHelper messageHelper;
     @InjectMocks
     private TextComparator textComparator = new LeosTextComparatorImpl(messageHelper);
-    @InjectMocks
+    @Mock
     private SecurityContext securityContext;
+    @Mock
+    protected CloneContext cloneContext;
     @InjectMocks
     private XmlContentProcessor xmlContentProcessor = new XmlContentProcessorProposal();
 
     @InjectMocks
-    private ContentComparatorService contentComparatorService = new XMLContentComparatorServiceImplMandate(messageHelper,
-            textComparator, securityContext, xmlContentProcessor);
+    protected ContentComparatorService proposalCompareService = new XMLContentComparatorServiceImplProposal(messageHelper,
+            textComparator, cloneContext, securityContext, xmlContentProcessor);
 
+    @Before
+    public void onSetUp() throws Exception {
+        User user = getJaneDigitUser();
+        when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.getUserName()).thenReturn(user.getName());
+    }
     @Test
     public void test_delete_reference_of_internal_reference_in_clone() {
-        String oldContent = new String(TestUtils.getFileContent(CLONED_FOLDER_CN, "test_delete_reference_of_internal_reference_in_clone_proposal_old_content.xml"));
-        String newContent = new String(TestUtils.getFileContent(CLONED_FOLDER_CN, "test_delete_reference_of_internal_reference_in_clone_proposal_new_content.xml"));
-        String expectedResult = new String(TestUtils.getFileContent(CLONED_FOLDER_CN, "test_delete_reference_of_internal_reference_in_clone_proposal_expected.xml"));
+        String oldContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_delete_reference_of_internal_reference_in_clone_proposal_old_content.xml"));
+        String newContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_delete_reference_of_internal_reference_in_clone_proposal_new_content.xml"));
+        String expectedResult = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_delete_reference_of_internal_reference_in_clone_proposal_expected.xml"));
         Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
         String expectedStr = XercesUtils.nodeToString(documentExpected);
         String result = testCompareForCloned(oldContent, newContent);
@@ -63,12 +78,74 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
     }
 
     private String testCompareForCloned(String oldContent, String newContent) {
-        return contentComparatorService.compareContents(new ContentComparatorContext.Builder(oldContent, newContent)
+        return proposalCompareService.compareContents(new ContentComparatorContext.Builder(oldContent, newContent)
                 .withAttrName(ATTR_NAME)
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
                 .build());
+    }
+
+    private String testCompareDeletedElementsForCloned(String oldContent, String newContent) {
+        return proposalCompareService.compareDeletedElements(new ContentComparatorContext.Builder(oldContent, newContent)
+                .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
+                .build());
+    }
+
+    @Test
+    public void test_clone_compare_deleted_numbered_to_unnumbered_article() {
+        String oldContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_numbered_to_unnumbered_article_V0.xml"));
+        String newContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_numbered_to_unnumbered_article_V1.xml"));
+        String expectedResult = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_numbered_to_unnumbered_article_expected.xml"));
+        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8), false);
+
+        String expectedStr = XercesUtils.nodeToString(documentExpected);
+        String result = testCompareDeletedElementsForCloned(oldContent, newContent);
+        Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
+        result = XercesUtils.nodeToString(documentResult);
+        assertEquals(squeezeXml(expectedStr), squeezeXml(result));
+    }
+
+    @Test
+    public void test_cloneProposal_compare_content_numbered_to_unnumbered_article() {
+        String oldContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_numbered_to_unnumbered_article_multi_para_V0.xml"));
+        String newContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_numbered_to_unnumbered_article_multi_para_V1.xml"));
+        String expectedResult = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_numbered_to_unnumbered_article_multi_para_expected.xml"));
+        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8), false);
+
+        String expectedStr = XercesUtils.nodeToString(documentExpected);
+        String result = testCompareForCloned(oldContent, newContent);
+        Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
+        result = XercesUtils.nodeToString(documentResult);
+        assertEquals(squeezeXml(expectedStr), squeezeXml(result));
+    }
+
+    @Test
+    public void test_cloneProposal_delete_content_numbered_to_unnumbered_article() {
+        String oldContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_delete_content_numbered_to_unnumbered_article_V0.xml"));
+        String newContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_delete_content_numbered_to_unnumbered_article_V1.xml"));
+        String expectedResult = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_delete_content_numbered_to_unnumbered_article_expected.xml"));
+        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8), false);
+
+        String expectedStr = XercesUtils.nodeToString(documentExpected);
+        String result = testCompareDeletedElementsForCloned(oldContent, newContent);
+        Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
+        result = XercesUtils.nodeToString(documentResult);
+        assertEquals(squeezeXml(expectedStr), squeezeXml(result));
+    }
+
+    @Test
+    public void test_cloneProposal_delete_points_article() {
+        String oldContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_delete_points_article_V0.xml"));
+        String newContent = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_delete_points_article_V1.xml"));
+        String expectedResult = new String(TestUtils.getFileContent(CLONED_FOLDER, "test_cloneProposal_delete_points_article_expected.xml"));
+        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8), false);
+
+        String expectedStr = XercesUtils.nodeToString(documentExpected);
+        String result = testCompareDeletedElementsForCloned(oldContent, newContent);
+        Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
+        result = XercesUtils.nodeToString(documentResult);
+        assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
 
 }

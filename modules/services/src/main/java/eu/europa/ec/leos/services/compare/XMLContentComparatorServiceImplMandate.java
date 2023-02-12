@@ -458,33 +458,6 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
         addToResultNode(context, node);
     }
 
-    @Override
-    protected void appendMovedToOrDeletedElement(ContentComparatorContext context) {
-        Element softMovedToOrDeletedNewElement = context.getNewElement();
-        Node node = softMovedToOrDeletedNewElement.getNode();
-        String attrName = context.getAttrName();
-        String attrValue = getStartTagValueForRemovedElement(softMovedToOrDeletedNewElement, context);
-        if (attrName != null && attrValue != null) {
-            XercesUtils.addAttribute(node, attrName, attrValue);
-        }
-        getChangedElementContent(node, context.getNewElement(), context.getAttrName(), context.getRemovedValue());
-        addToResultNode(context, node);
-    }
-
-    private String getStartTagValueForRemovedElement(Element newElement, ContentComparatorContext context) {
-        String attrValue;
-        if (context.getThreeWayDiff()) {
-            if (context.getIntermediateContentElements() != null && newElement!= null && context.getIntermediateContentElements().get(newElement.getTagId()) == null) {
-                attrValue = context.getRemovedIntermediateValue();
-            } else {
-                attrValue = context.getRemovedOriginalValue();
-            }
-        } else {
-            attrValue = context.getRemovedValue();
-        }
-        return attrValue;
-    }
-
     private String getStartTagValueForRemovedElementFromAncestor(Element element, ContentComparatorContext context) {
         String attrValue;
         if (context.getThreeWayDiff()) {

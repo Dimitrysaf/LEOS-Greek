@@ -29,6 +29,7 @@ import org.w3c.dom.Node;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.w3c.dom.NodeList;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class LeosXercesUtils {
@@ -157,5 +158,29 @@ public class LeosXercesUtils {
         }
 
         return XercesUtils.nodeToByteArray(document);
+    }
+
+    public static String removeSoftDeletedNodes(String elementContent){
+        Document xercesDocument = XercesUtils.createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false);
+        List<Node> children = XercesUtils.getChildren(xercesDocument);
+        for (Node node : children){
+            removeDeletedNodes(node);
+        }
+       return  XercesUtils.nodeToStringSimple(xercesDocument);
+    }
+
+    private static void removeDeletedNodes(Node node) {
+        if(node == null){
+            return;
+        }
+        String nodeId = XercesUtils.getId(node);
+        if(nodeId != null && nodeId.startsWith("deleted_")){
+            XercesUtils.deleteElement(node);
+        }else if(node.hasChildNodes()){
+            List<Node> children = XercesUtils.getNodesAsList(node.getChildNodes());
+            for (Node child : children){
+                removeDeletedNodes(child);
+            }
+        }
     }
 }

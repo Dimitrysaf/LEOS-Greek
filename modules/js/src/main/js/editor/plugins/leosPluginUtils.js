@@ -16,6 +16,7 @@ define(function leosPluginUtilsModule(require) {
     "use strict";
 
     var CKEDITOR = require("promise!ckEditor");
+
     var TEXT = "text";
     var BOGUS = "br";
     var UNKNOWN = "unknown";
@@ -33,6 +34,7 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_LEVEL_ATTR = "data-indent-level";
     var AKN_ORDERED_ANNEX_LIST = "aknAnnexOrderedList";
     var AKN_ORDERED_LIST = "aknOrderedList";
+    var AKN_NUMBERED_PARAGRAPH = "aknNumberedParagraph";
     var INDENT_LEVEL_ATTR = "--indent-level"
     var INLINE_NUM_ATTR = "--inline-num"
     var ORDER_LIST_ELEMENT = "ol";
@@ -41,6 +43,8 @@ define(function leosPluginUtilsModule(require) {
     var MAX_LEVEL_DEPTH = 7;
     var MAX_LIST_LEVEL = 5;
     var MAX_LEVEL_LIST_DEPTH = 4;
+    var MAX_LIST_LEVEL_DEF = 4;
+    var MAX_LEVEL_LIST_DEPTH_DEF = 3;
     var MAINBODY = "mainbody";
     var INDENT = "indent";
     var POINT = "point";
@@ -81,8 +85,7 @@ define(function leosPluginUtilsModule(require) {
     var MOVETO = "move_to";
 
     var COUNCIL_INSTANCE = "COUNCIL";
-
-
+    const ART_DEF = "~_ART_DEF";
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -407,6 +410,14 @@ define(function leosPluginUtilsModule(require) {
         cursor.select();
     }
 
+    function _isSubparagraphInPath(path) {
+        if (!!path) {
+            var currentElement = path.lastElement;
+            return _isSubparagraph(currentElement);
+        }
+        return false;
+    }
+
     function _isListIntroAndFirstSubelement(element) {
         if (element.type == CKEDITOR.NODE_TEXT) {
             var tmpElement = element;
@@ -542,10 +553,15 @@ define(function leosPluginUtilsModule(require) {
                 point.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
                 if (!!point.is && point.is('li') && !point.getParent().is('ol')) {
                     point.renameNode('p');
-					point.removeAttribute('data-akn-name');
+					point.removeAttribute(DATA_AKN_NAME);
                 } else if (!!point.is && point.is('p') && point.getParent().is('ol')) {
                     point.renameNode('li');
                 }
+            }
+            // Case when point has been outdented to paragraph
+            if (_isPointOrIndent(point) && !point.getAscendant('li')) {
+                point.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
+                point.setAttribute(DATA_AKN_NAME, AKN_NUMBERED_PARAGRAPH);
             }
         }
     }
@@ -995,6 +1011,23 @@ define(function leosPluginUtilsModule(require) {
         return type;
     }
 
+    function _isDefinitionArticle(editor){
+        let editorData = $(editor.getData());
+        let rootElt = editorData.length && editorData.prop("tagName").toLowerCase() ===  ARTICLE ? editorData : $(editor.element.$).closest(ARTICLE);
+        if(rootElt.length){
+            return rootElt.attr("refersto") === ART_DEF;
+        }
+        return false;
+    }
+
+    function _getMaxListLevel(editor) {
+        return _isDefinitionArticle(editor) ? MAX_LIST_LEVEL_DEF : MAX_LIST_LEVEL;
+    }
+
+    function _getMaxListLevelDepth(editor) {
+        return _isDefinitionArticle(editor) ? MAX_LEVEL_LIST_DEPTH_DEF : MAX_LEVEL_LIST_DEPTH;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1008,6 +1041,7 @@ define(function leosPluginUtilsModule(require) {
 		isAnnexUnnumberedCNParagraph: _isAnnexUnnumberedCNParagraph,
 		isAnnexSubparagraphElement: _isAnnexSubparagraphElement,
         isSubparagraph: _isSubparagraph,
+        isSubparagraphInPath: _isSubparagraphInPath,
         isPointOrIndent: _isPointOrIndent,
         isListIntroAndFirstSubparaOfPointOrPara: _isListIntroAndFirstSubparaOfPointOrPara,
         isSubParaButNotListIntroOrFirstSubparaOfPointOrPara: _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara,
@@ -1049,9 +1083,14 @@ define(function leosPluginUtilsModule(require) {
         copyContentAndMpAttributeToElement: _copyContentAndMpAttributeToElement,
         hasPointAttribute: _hasPointAttribute,
         getArticleType: _getArticleType,
+        isDefinitionArticle: _isDefinitionArticle,
+        getMaxListLevel: _getMaxListLevel,
+        getMaxListLevelDepth: _getMaxListLevelDepth,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
+        MAX_LIST_LEVEL_DEF: MAX_LIST_LEVEL_DEF,
+        MAX_LEVEL_LIST_DEPTH_DEF: MAX_LEVEL_LIST_DEPTH_DEF,
         HTML_POINT: HTML_POINT,
         HTML_SUB_POINT: HTML_SUB_POINT,
         DATA_ORIGIN: DATA_ORIGIN,
