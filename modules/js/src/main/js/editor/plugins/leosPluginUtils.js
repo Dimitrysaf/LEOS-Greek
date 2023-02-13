@@ -85,7 +85,7 @@ define(function leosPluginUtilsModule(require) {
     var MOVETO = "move_to";
 
     var COUNCIL_INSTANCE = "COUNCIL";
-    const ART_DEF = "~_ART_DEF";
+    var ART_DEF = "~_ART_DEF";
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -1012,8 +1012,8 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isDefinitionArticle(editor){
-        let editorData = $(editor.getData());
-        let rootElt = editorData.length && editorData.prop("tagName").toLowerCase() ===  ARTICLE ? editorData : $(editor.element.$).closest(ARTICLE);
+        var editorData = $(editor.getData());
+        var rootElt = editorData.length && editorData.prop("tagName").toLowerCase() ===  ARTICLE ? editorData : $(editor.element.$).closest(ARTICLE);
         if(rootElt.length){
             return rootElt.attr("refersto") === ART_DEF;
         }
