@@ -20,14 +20,15 @@
                 <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true"
                            leos:softdate="2022-08-09T13:52:33.803+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_par3">
                     <num leos:origin="ec" xml:id="deleted_moved_art3_SC9AWu">3.</num>
-                    <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
-                                  leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_par3_sub">
-                        <content leos:origin="ec" xml:id="deleted_moved_art3_ce2U2a">
-                            <p leos:origin="ec" xml:id="deleted_moved_art3_uJJljZ">paragraph 3</p>
-                        </content>
-                    </subparagraph>
                     <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
                           leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_list">
+                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
+                                      leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" refersTo="~_INP"
+                                      xml:id="deleted_moved_par3_sub">
+                            <content leos:origin="ec" xml:id="deleted_moved_art3_ce2U2a">
+                                <p leos:origin="ec" xml:id="deleted_moved_art3_uJJljZ">paragraph 3</p>
+                            </content>
+                        </subparagraph>
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
                                leos:softdate="2022-08-09T13:52:33.805+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_par3_point_a">
                             <num leos:origin="ec" xml:id="deleted_moved_art3_TOdOwf">(a)</num>
@@ -46,12 +47,12 @@
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="par4">
                     <num leos:origin="ec" xml:id="art3_OnpQgl">4.</num>
-                    <subparagraph leos:origin="ec" xml:id="art3_k9jna3">
-                        <content leos:origin="ec" xml:id="art3_Tndj0O">
-                            <p leos:origin="ec" xml:id="art3_8q0PFw">paragraph 4</p>
-                        </content>
-                    </subparagraph>
                     <list leos:origin="ec" xml:id="art3_EmN1LF">
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art3_k9jna3">
+                            <content leos:origin="ec" xml:id="art3_Tndj0O">
+                                <p leos:origin="ec" xml:id="art3_8q0PFw">paragraph 4</p>
+                            </content>
+                        </subparagraph>
                         <point leos:origin="ec" xml:id="art3_hDNMaF">
                             <num leos:origin="ec" xml:id="art3_QdKWrS">(a)</num>
                             <content leos:origin="ec" xml:id="art3_MnAbnd">

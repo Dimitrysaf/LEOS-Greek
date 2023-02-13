@@ -78,6 +78,45 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     }
 
     @Test
+    public void test_remove_cn_indented_point() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_indented_cn_point_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_remove_cn_indented_point_with_several_lists() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point_and_several_lists.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_indented_cn_point_and_several_lists_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad2");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_remove_cn_added_point_with_several_lists() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point_and_several_lists.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_added_cn_point_and_several_lists_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
     public void test_insertAffectedAttributeIntoParentElements() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_insertAffectedAttributeIntoParentElements.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_insertAffectedAttributeIntoParentElements_expected.xml");
@@ -353,7 +392,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_first_point_of_ec_list.xml");
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_first_point_of_ec_list_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz");
+        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz", true);
         assertNull(result);
     }
 
@@ -362,7 +401,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_point_of_ec_list.xml");
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_point_of_ec_list_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz");
+        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz", true);
         assertNull(result);
     }
 

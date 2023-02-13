@@ -773,6 +773,16 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         Element splitElement;
         if (Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) || (PARAGRAPH.equals(tagName) && !content.contains("<" + SUBPARAGRAPH + ">"))) {
             splitElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Collections.emptyList(), false);
+            // Case when subparagraph is a list's wrapper
+            if (splitElement == null) {
+                Element parentElement = getParentElement(xmlContent, idAttributeValue);
+                Element listSibling = parentElement != null ? getSiblingElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
+                        Collections.emptyList(),
+                        false) : null;
+                splitElement = listSibling != null ? getChildElement(xmlContent, listSibling.getElementTagName(), listSibling.getElementId(),
+                        Arrays.asList(tagName),
+                        1) : null;
+            }
         } else if (LEVEL.equals(tagName)) {
             return null;
         } else if (CONTENT.equals(tagName)) {
@@ -780,7 +790,8 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         } else {
             splitElement = getChildElement(xmlContent, tagName, idAttributeValue, Arrays.asList(SUBPARAGRAPH, SUBPOINT), 2);
         }
-        if (splitElement.getElementTagName().equals(LIST)) {
+        // Case when subparagraph is outside of a list and sibling part of next sibling's list
+        if (splitElement != null && splitElement.getElementTagName().equals(LIST)) {
             splitElement = getChildElement(xmlContent, tagName, splitElement.getElementId(), Arrays.asList(tagName), 1);
         }
 
@@ -788,20 +799,31 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     @Override
-    public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
+    public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue, boolean checkParent) {
         Map<String, String> attributes = getElementAttributesByPath(content.getBytes(UTF_8), "/" + tagName, false);
         if (isSoftDeletedOrMovedTo(attributes) || !isPContent(content, tagName)) {
             return null;
         }
 
         Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+
+        // Case when element is intro
+        if ((mergeOnElement == null) && (isListIntro(xmlContent, idAttributeValue))) {
+            Element parentElement = getParentElement(xmlContent, idAttributeValue);
+            mergeOnElement = parentElement != null ? getSiblingElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
+                    Arrays.asList(tagName,
+                    parentElement.getElementTagName()), true) : null;
+            if (mergeOnElement != null && mergeOnElement.getElementTagName().equalsIgnoreCase(LIST)) {
+                mergeOnElement = getLastChildElement(xmlContent, mergeOnElement.getElementTagName(), mergeOnElement.getElementId(), Collections.emptyList());
+            }
+        }
         if ((mergeOnElement == null) || ((mergeOnElement != null) &&
                 (isSoftDeletedOrMovedTo(getElementAttributesByPath(mergeOnElement.getElementFragment().getBytes(UTF_8), "/" + mergeOnElement.getElementTagName(), false)) ||
                         !isPContent(mergeOnElement.getElementFragment(), mergeOnElement.getElementTagName())))) {
             return null;
         }
 
-        if (!isProposalElement(attributes)) {
+        if (!isProposalElement(attributes) && checkParent) {
             mergeOnElement = getMergedOnElement(mergeOnElement, xmlContent);
         }
 
@@ -810,7 +832,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     @Override
     public byte[] mergeElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
-        Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+        Element mergeOnElement = getMergeOnElement(xmlContent, content, tagName, idAttributeValue, false);
         String contentFragment = getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false);
         String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8), "/" + mergeOnElement.getElementTagName() + "/content/p", false);
         final String replace = mergeOnElement.getElementFragment().replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
