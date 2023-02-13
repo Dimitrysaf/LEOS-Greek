@@ -561,7 +561,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     private Node wrapWithSubparagraph(Node node, TableOfContentItemVO tocVo, User user) {
-        Node subparagraphNode = createElement(node.getOwnerDocument(), SUBPARAGRAPH, IdGenerator.generateId(LIST.substring(0, 3), 7), EMPTY_STRING);
+        Node subparagraphNode = createElement(node.getOwnerDocument(), SUBPARAGRAPH, IdGenerator.generateId(SUBPARAGRAPH.substring(0, 3), 7), EMPTY_STRING);
         updateSoftInfo(subparagraphNode, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo), null, getOriginOfDocument(subparagraphNode));
         XercesUtils.insertOrUpdateAttributeValue(subparagraphNode, LEOS_ORIGIN_ATTR, tocVo.getOriginAttr());
         List<Node> listNode = new ArrayList<>();
