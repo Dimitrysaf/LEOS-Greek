@@ -104,7 +104,6 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
 
         final Bill originalDocument = createBillForBytes(xmlStart);
         List<String> elementsIds = new ArrayList<>();
-        IntStream.range(1, 100).forEach(val -> elementsIds.add("art_" + val));  //total are 155, import only first 100
 
         // When
         long startTime = System.currentTimeMillis();
