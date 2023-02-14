@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
@@ -54,4 +55,37 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
         expected = squeezeXmlAndRemoveAllNS(expected);
         assertEquals(expected, result);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_addSubParagraphInPointAUsingTOC() throws IOException, ClassNotFoundException {
+
+        /*
+         * The file test_addSubParagraphInPointAUsingTOC.xml has an annex with this structure:
+         * - Level with text "Text of Level 1"
+         *    - Point (a) with text "Text of Point (a)"
+         *
+         * The test_addSubParagraphInPointAUsingTOC_TocObject.obj contains a java object that represents a toc in annex with
+         * the previous structure, and adding a Subparagraph:
+         * - Level with text "Text of Level 1"
+         *    - Point (a) with text "Text of Point (a)"
+         *       - Subparagraph with text "Text..." (simulating adding by TOC)
+         *
+         */
+
+        byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC.xml");
+        List<TableOfContentItemVO> tocList = (List<TableOfContentItemVO>) TestUtils.getDeserializeObject(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_TocObject.obj");
+
+        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser());
+        xmlResult = xercesXmlContentProcessor.doXMLPostProcessing(xmlResult);
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_expected.xml");
+
+        String result = new String(xmlResult);
+        String expected = new String(xmlExpected);
+        result = squeezeXmlAndRemoveAllNS(result);
+        expected = squeezeXmlAndRemoveAllNS(expected);
+        assertEquals(expected, result);
+
+    }
+
 }

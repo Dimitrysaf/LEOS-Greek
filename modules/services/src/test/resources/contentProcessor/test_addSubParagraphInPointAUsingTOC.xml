@@ -1,0 +1,83 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <doc name="ANNEX">
+        <meta>
+            <identification source="~_COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en" xml:id="_FRBRlanguage"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.0.0.0"/>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~_COM">
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="_CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="_EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="_COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="_PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/ANNEX" name="docType" showAs="Annex" xml:id="_ANNEX"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="_legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="_language"/>
+                <TLCReference href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" name="procedureReference" shortForm="YYYY/NNN/AAA" showAs="YYYY/NNNN (AAA)" xml:id="_procedure_YYYY_NNN"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" name="identifier" shortForm="AAA/YYYY/NNN" showAs="AAA(YYYY) NNN" xml:id="_azs3y"/>
+            </references>
+            <proprietary source="~_leos">
+                <leos:templateVersion>2.1.1</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SG-017</leos:template>
+                <leos:docTemplate>SG-017</leos:docTemplate>
+                <leos:docStage xml:id="_proprietary__docstage">Proposal for a</leos:docStage>
+                <leos:docType xml:id="_proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType>
+                <leos:docPurpose xml:id="_proprietary__docpurpose">on Test</leos:docPurpose>
+                <leos:ref>annex_cldvroe8g0006fc88t3to281q</leos:ref>
+                <leos:objectId/>
+                <leos:annexIndex xml:id="_proprietary__annexIndex">3</leos:annexIndex>
+                <leos:annexNumber xml:id="_proprietary__annexNumber">ANNEX III</leos:annexNumber>
+                <leos:annexTitle xml:id="_proprietary__annexTitle"/>
+                <leos:clonedRef xml:id="_proprietary__clonedRef"/>
+            </proprietary>
+        </meta>
+        <preface leos:origin="cn" xml:id="_preface">
+            <container name="headerOfAnnex" xml:id="_preface__container">
+                <block name="num" xml:id="_preface__container__block__num">ANNEX III</block>
+                <block name="heading" xml:id="_preface__container__block__heading"/>
+            </container>
+        </preface>
+        <mainBody leos:origin="cn" xml:id="_body">
+            <level leos:depth="1" leos:editable="true" leos:origin="cn" xml:id="_akn_level_LAjir8">
+                <num leos:origin="cn" xml:id="_akn_kEHMdY">1.</num>
+                <list leos:origin="cn" xml:id="_lis_NiLVdY">
+                    <subparagraph leos:editable="true" leos:origin="cn" refersTo="~_INP" xml:id="_akn_subparagraph_rQ2w6q">
+                        <content xml:id="_akn_ewdmkZ">
+                            <p xml:id="_akn_XYACJH">Text of Level 1</p>
+                        </content>
+                    </subparagraph>
+                    <point leos:origin="cn" xml:id="cldx7i18800016c8835i24ga2">
+                        <num leos:origin="cn" xml:id="_akn_kN4q2P">(a)</num>
+                        <content xml:id="_akn_4Av0Pm">
+                            <p xml:id="_akn_BE08Cl">Text of Point (a)</p>
+                        </content>
+                    </point>
+                </list>
+            </level>
+        </mainBody>
+    </doc>
+</akomaNtoso>

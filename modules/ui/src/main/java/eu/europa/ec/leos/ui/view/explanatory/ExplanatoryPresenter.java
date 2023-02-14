@@ -810,7 +810,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             // save document into repository
             explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, comment);
             if (explanatory != null) {
-                eventBus.post(new NotificationEvent(Type.INFO, "document." + tagName + ".deleted"));
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -840,7 +839,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
         if (explanatory != null) {
-            eventBus.post(new NotificationEvent(Type.INFO, "document." + tagName + ".inserted"));
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1155,7 +1153,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         explanatory = explanatoryService.saveTableOfContent(explanatory, event.getTableOfContentItemVOs(), explanatoryStructureType,
                 messageHelper.getMessage("operation.toc.updated"), user);
 
-        eventBus.post(new NotificationEvent(Type.INFO, "toc.edit.saved"));
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
