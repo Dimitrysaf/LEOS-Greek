@@ -62,6 +62,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
@@ -761,6 +762,20 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     }, 3, TimeUnit.SECONDS);
                     return true;
         		}
+                if(isDefinitionArticleBiggerDepth(item)){
+                    ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
+                            messageHelper.getMessage("toc.edit.window.article.change"),
+                            messageHelper.getMessage("toc.edit.window.article.3levels.deep"),
+                            messageHelper.getMessage("toc.edit.window.delete.confirmation.confirm"),
+                            null,
+                            null);
+                    confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
+                    confirmDialog.getContent().setHeightUndefined();
+                    confirmDialog.setHeightUndefined();
+                    confirmDialog.getCancelButton().setVisible(false);
+                    confirmDialog.show(getUI(), dialog -> {}, true);
+                    return true;
+                }
         	}
         }
 
@@ -807,6 +822,13 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 	private boolean invalidContent(TableOfContentItemVO item) {
 		return isCrossHeading(item.getTocItem()) && (StringUtils.isBlank(item.getContent()) || XmlHelper.containsXmlTags(item.getContent()));
 	}
+
+    private boolean isDefinitionArticleBiggerDepth(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(ARTICLE) // is article
+                && TocItemTypeName.DEFINITION.equals(item.getTocItemType()) // is definition article
+                && XercesUtils.getFirstDescendant(item.getNode(), Arrays.asList(INDENT)) != null; // has INDENT html tag
+    }
+
 
     /**
      * On read only mode, it is populating only tocItems.
