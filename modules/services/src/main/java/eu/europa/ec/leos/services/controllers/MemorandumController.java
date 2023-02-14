@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.api.MemorandumApiService;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> getMemorandum(@PathVariable("documentRef") String documentRef) {
         try {
-            byte[] memorandumDocument = this.memorandumApiService.getMemorandumDocument(documentRef);
+            DocumentViewResponse memorandumDocument = this.memorandumApiService.getMemorandumDocument(documentRef);
             return  ResponseEntity.ok().body(memorandumDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum document - " + e.getMessage());

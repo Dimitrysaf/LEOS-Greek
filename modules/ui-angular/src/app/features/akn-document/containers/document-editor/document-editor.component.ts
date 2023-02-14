@@ -2,7 +2,9 @@ import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { combineLatest, withLatestFrom } from 'rxjs';
 
+import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
@@ -48,9 +50,8 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     });
 
     this.loadStyleSheet();
-
-    this.doc.documentXML$.subscribe((xml) => {
-      this.loadDocument(xml);
+    this.doc.documentView$.pipe().subscribe((documentView) => {
+      this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
     });
   }
 
@@ -90,14 +91,14 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.router.navigate([`/collection/proposal`]);
   }
 
-  private loadDocument(xml: string) {
+  private loadDocument(editableXml: string, versionInfo: VersionInfoVO) {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'text/xml');
+    const xmlDoc = parser.parseFromString(editableXml, 'text/xml');
     this.setPageTitle(xmlDoc);
     this.setPageSubTitle({
-      version: '1.0.8',
-      updatedByFull: 'MICHOTTE Alexandra (DIGIT)',
-      updatedOn: 1664193765137,
+      version: versionInfo.documentVersion,
+      updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
+      updatedOn: versionInfo.lastModifiedBy,
     });
     this.xml = this.cleanupAndSerializeXML(xmlDoc);
   }
@@ -113,9 +114,6 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
-    if (this.documentType !== 'coverPage') {
-      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
-    }
     xmlDoc.querySelector('akomaNtoso').id = this.documentRef;
     return new XMLSerializer()
       .serializeToString(xmlDoc)

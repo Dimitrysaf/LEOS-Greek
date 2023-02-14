@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  distinctUntilChanged,
   map,
   Observable,
   of,
@@ -17,6 +18,8 @@ import {
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentService } from '@/shared/services/document.service';
+
+import { TocItem } from '../models/toc.model';
 
 // FIXME: mockdata
 // TODO This must be fetch from a backend Api. Keep in mind that aktTag must always be lowercase
@@ -815,9 +818,12 @@ export class CKEditorService implements OnDestroy {
         elementData.elementId,
         documentType,
         elementData.position,
-      ).subscribe((response) => {
-        this.documentService.setDocumentId(documentRef);
-      });
+      )
+        .pipe(distinctUntilChanged())
+        .subscribe((response) => {
+          this.documentService.setDocumentId(documentRef);
+          // this.documentService.getToc(documentRef);
+        });
     },
   };
 

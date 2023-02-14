@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.api.CoverPageApiService;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
@@ -24,11 +25,11 @@ public class CoverPageController {
     @Autowired
     CoverPageApiService coverPageApiService;
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.TEXT_XML_VALUE )
+    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
     public ResponseEntity<Object> getCoverPage(@PathVariable("documentRef") String documentRef) {
         try {
-            String coverPageDocument = this.coverPageApiService.getCoverPageDocument(documentRef);
+            DocumentViewResponse coverPageDocument = this.coverPageApiService.getCoverPageDocument(documentRef);
             return  ResponseEntity.ok().body(coverPageDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill document - " + e.getMessage());

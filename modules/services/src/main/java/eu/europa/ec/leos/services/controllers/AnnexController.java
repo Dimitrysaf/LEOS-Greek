@@ -8,6 +8,7 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.swing.text.Document;
 import java.util.List;
 
 @RestController
@@ -184,7 +186,7 @@ public class AnnexController {
     @ResponseBody
     public ResponseEntity<Object> getAnnex(@PathVariable("documentRef") String documentRef) {
         try {
-            byte[] annex = this.annexAPIService.getAnnex(documentRef);
+            DocumentViewResponse annex = this.annexAPIService.getAnnex(documentRef);
             return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());

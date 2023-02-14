@@ -1,14 +1,17 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -16,20 +19,29 @@ import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.request.Position;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +49,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_N
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service
 public class AnnexApiServiceImpl implements AnnexApiService {
@@ -60,6 +73,14 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     ContentComparatorService compareService;
     @Autowired
     CloneContext cloneContext;
+    @Autowired
+    ProposalService proposalService;
+    @Autowired
+    PackageService packageService;
+    @Autowired
+    UserHelperAPI userHelper;
+    private static final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+
 
     AnnexApiServiceImpl(Provider<StructureContext> structureContext) {
         this.structureContext = structureContext;
@@ -150,8 +171,20 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public byte[] getAnnex(String documentRef) {
-        return getContent(this.annexService.findAnnexByRef(documentRef));
+    public DocumentViewResponse getAnnex(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        Proposal proposal = getProposalFromPackage(annex);
+        String editableXml = getEditableXml(annex,proposal);
+        VersionInfoVO versionInfoVO = getVersionInfo(annex);
+        String baseRevisionId = annex.getBaseRevisionId();
+
+        if(!StringUtils.isEmpty(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+            String versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
+            String versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
+            versionInfoVO.setRevisedBaseVersion(versionLabel);
+            versionInfoVO.setBaseVersionTitle(versionComment);
+        }
+        return new DocumentViewResponse(proposal.getOriginRef(),editableXml,versionInfoVO);
     }
 
     @Override
@@ -236,4 +269,46 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
+
+    private String getEditableXml(Annex document, Proposal proposal) {
+        byte[] coverPageContent = new byte[0];
+        byte[] annexContent = document.getContent().get().getSource().getBytes();
+        boolean isCoverPageExists = documentContentService.isCoverPageExists(annexContent);
+        if(!isCoverPageExists) {
+            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+            coverPageContent = documentContentService.getCoverPageContent(xmlContent);
+        }
+        String editableXml = documentContentService.toEditableContent(document,
+                "", securityContext, coverPageContent);
+        return StringEscapeUtils.unescapeXml(editableXml);
+    }
+
+    private Proposal getProposalFromPackage(Annex annex) {
+        Proposal proposal = null;
+        if (annex != null) {
+            LeosPackage leosPackage = this.packageService.findPackageByDocumentId(annex.getId());
+            proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+        }
+        return proposal;
+    }
+
+    private VersionInfoVO getVersionInfo(Annex document) {
+        String userId = document.getLastModifiedBy();
+        User user = userHelper.getUser(userId);
+
+        String versionLabel = null;
+        String versionComment = null;
+        String baseRevisionId = document.getBaseRevisionId();
+        if(StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+            versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
+            versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
+        }
+        return new VersionInfoVO(
+                document.getVersionLabel(),
+                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
+                dateFormatter.format(document.getLastModificationInstant()),
+                document.getVersionType(), versionLabel, versionComment);
+    }
+
+
 }

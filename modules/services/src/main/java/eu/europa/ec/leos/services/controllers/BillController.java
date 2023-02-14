@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.api.BillApiService;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class BillController {
     @ResponseBody
     public ResponseEntity<Object> getBillDocument(@PathVariable("documentRef") String documentRef) {
         try {
-            byte[] billDocument = this.billApiService.getBillDocument(documentRef);
+            DocumentViewResponse billDocument = this.billApiService.getBillDocument(documentRef);
             return  ResponseEntity.ok().body(billDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill document - " + e.getMessage());

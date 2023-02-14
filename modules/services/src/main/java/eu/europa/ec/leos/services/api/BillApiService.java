@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 
@@ -7,8 +8,7 @@ import java.util.List;
 
 public interface BillApiService {
 
-    byte[] getBillDocument(String documentRef);
-
+    DocumentViewResponse getBillDocument(String documentRef);
     List<TableOfContentItemVO> getToc(String documentRef);
     List<TocItem> getTocItems(String documentRef);
 }

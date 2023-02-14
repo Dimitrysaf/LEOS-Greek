@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { consumeEvent } from '@eui/core';
 
 import { Version } from '@/features/akn-document/models/versions';
-import { DocumentService } from '@/features/akn-document/services/document.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-version-actions-dropdown',

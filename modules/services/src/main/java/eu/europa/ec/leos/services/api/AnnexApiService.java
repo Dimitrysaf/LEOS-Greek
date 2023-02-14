@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -23,7 +24,7 @@ public interface AnnexApiService {
     void saveDocumentVersion(String documentRef);
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
     List<TocItem> getTocItems(String documentRef);
-    byte[] getAnnex(String documentRef);
+    DocumentViewResponse getAnnex(String documentRef);
     List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords);
     String showVersion(String versionId);
