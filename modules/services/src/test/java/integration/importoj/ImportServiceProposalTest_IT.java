@@ -97,6 +97,30 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
     }
 
     @Test
+    public void test_removeINP() {
+        final byte[] xmlInput = TestUtils.getFileContent(PREFIX_FILE, "test_importElement_154Articles_with_NO_IND_or_WRP.xml");
+        final byte[] xmlStart = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_start_with_IND_and_WRP.xml");
+        final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_expected_without_IND_or_WRP.xml");
+
+        final Bill originalDocument = createBillForBytes(xmlStart);
+        List<String> elementsIds = new ArrayList<>();
+        IntStream.range(1, 100).forEach(val -> elementsIds.add("art_" + val));  //total are 155, import only first 100
+
+        // When
+        long startTime = System.currentTimeMillis();
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        long endTime = System.currentTimeMillis();
+
+        // Then
+        String result = new String(xmlResult);
+        String expected = new String(xmlExpected);
+        result = squeezeXmlAndRemoveAllNS(result);
+        expected = squeezeXmlAndRemoveAllNS(expected);
+        assertEquals(expected, result);
+        assertTrue(endTime - startTime < 25_000);  // check how you are converting Node to String. The time shouldn't go exponential.
+    }
+
+    @Test
     public void test_importElement_single_checkCorrectNamespaces() {
         final byte[] xmlInput = TestUtils.getFileContent(PREFIX_FILE, "test_importElement_154Articles.xml");
         final byte[] xmlStart = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_start.xml");

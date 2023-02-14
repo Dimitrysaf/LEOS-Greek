@@ -58,6 +58,7 @@ import java.util.stream.Stream;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class ExplanatoryProcessorImplTest extends LeosTest {
@@ -84,8 +85,8 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     @Mock
     private StructureContext structureContext;
 
-    @Mock
-    private XPathCatalog xPathCatalog;
+    @InjectMocks
+    private XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
     @Mock
     private DocumentContentService documentContentService;

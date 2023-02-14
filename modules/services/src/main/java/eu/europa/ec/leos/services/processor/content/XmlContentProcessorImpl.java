@@ -1043,34 +1043,40 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         NodeList metaReferencesNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferences(), true);
         Node metaReferences = metaReferencesNodeList.item(0);
 
-        NodeList subparagraphWithReferToINPAttributeNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathSubparagraphWithReferToINPAttribute(), true);
-        NodeList INPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForINP(), true);
-        if (subparagraphWithReferToINPAttributeNodeList.getLength() > 0) {
-            if (INPListNodes.getLength() == 0) {
-                Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_INP_ID, EMPTY_STRING);
-                XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/INP");
-                XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "introductory part");
-                metaReferences.appendChild(tclNode);
-            }
-        } else {
-            for (int i = 0; i < INPListNodes.getLength(); i++) {
-                metaReferences.removeChild(INPListNodes.item(i));
-            }
-        }
+        if (metaReferences != null) {
 
-        NodeList subparagraphWithReferToWRPAttributeNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathSubparagraphWithReferToWRPAttribute(), true);
-        NodeList WRPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForWRP(), true);
-        if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0 && WRPListNodes.getLength() == 0) {
-            if (WRPListNodes.getLength() == 0) {
-                Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_WRP_ID, EMPTY_STRING);
-                XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/WRP");
-                XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "closing part");
-                metaReferences.appendChild(tclNode);
+            NodeList subparagraphWithReferToINPAttributeNodeList = XercesUtils.getElementsByXPath(node,
+                    xPathCatalog.getXPathSubparagraphWithReferToINPAttribute(), true);
+            NodeList INPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForINP(), true);
+            if (subparagraphWithReferToINPAttributeNodeList.getLength() > 0) {
+                if (INPListNodes.getLength() == 0) {
+                    Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_INP_ID, EMPTY_STRING);
+                    XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/INP");
+                    XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "introductory part");
+                    metaReferences.appendChild(tclNode);
+                }
+            } else {
+                for (int i = 0; i < INPListNodes.getLength(); i++) {
+                    metaReferences.removeChild(INPListNodes.item(i));
+                }
             }
-        } else {
-            for (int i = 0; i < WRPListNodes.getLength(); i++) {
-                metaReferences.removeChild(WRPListNodes.item(i));
+
+            NodeList subparagraphWithReferToWRPAttributeNodeList = XercesUtils.getElementsByXPath(node,
+                    xPathCatalog.getXPathSubparagraphWithReferToWRPAttribute(), true);
+            NodeList WRPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForWRP(), true);
+            if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0 && WRPListNodes.getLength() == 0) {
+                if (WRPListNodes.getLength() == 0) {
+                    Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_WRP_ID, EMPTY_STRING);
+                    XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/WRP");
+                    XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "closing part");
+                    metaReferences.appendChild(tclNode);
+                }
+            } else {
+                for (int i = 0; i < WRPListNodes.getLength(); i++) {
+                    metaReferences.removeChild(WRPListNodes.item(i));
+                }
             }
+
         }
 
     }
