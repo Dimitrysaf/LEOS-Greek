@@ -341,10 +341,17 @@ public class XmlContentProcessorHelper {
 
     private static String extractContentForTocItemsExceptNumAndHeadingAndIntro(Node node, String elementName) {
         if (!ELEMENTS_TO_HIDE_CONTENT.contains(elementName)) {
-        	if(PARAGRAPH.equals(elementName)) {
+        	if(PARAGRAPH.equals(elementName) || LEVEL.equals(elementName)) {
         		Node current = XercesUtils.getFirstChild(node, SUBPARAGRAPH);
         		if(current != null) {
         			return current.getTextContent();
+        		}
+        		Node list = XercesUtils.getFirstChild(node, LIST);
+        		if(list != null) {
+        			current = XercesUtils.getFirstChild(list, SUBPARAGRAPH);
+            		if(current != null) {
+            			return current.getTextContent();
+            		}
         		}
         	}
             Node current = XercesUtils.getFirstChild(node, HEADING);
