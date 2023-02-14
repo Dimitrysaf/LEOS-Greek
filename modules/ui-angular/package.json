@@ -47,7 +47,7 @@
   "private": true,
   "dependencies": {
     "@eui/deps-base": "14.0.7",
-    "@ngx-env/core": "^15.0.1",
+    "@ngx-env/core": "15.0.1",
     "ng-for-track-by-property": "14.0.2",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3"
