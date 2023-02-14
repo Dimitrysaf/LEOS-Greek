@@ -170,9 +170,10 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isSubparagraph(element) {
-        return (!!element && element.type == CKEDITOR.NODE_ELEMENT
+        return (!!element && element.type === CKEDITOR.NODE_ELEMENT
             && !!element.getAttribute(DATA_AKN_ELEMENT)
-            && element.getAttribute(DATA_AKN_ELEMENT) == SUBPARAGRAPH);
+            && element.getAttribute(DATA_AKN_ELEMENT) === SUBPARAGRAPH
+            && !element.is("table"));
     }
 
     function _isPointOrIndent(element) {
