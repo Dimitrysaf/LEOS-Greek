@@ -83,7 +83,7 @@ public class XercesUtils {
             doc.getDocumentElement().normalize();
             return doc;
         } catch (Exception e) {
-            throw new IllegalStateException("cannot create createXercesDocument ", e);
+            throw new IllegalStateException("Wrong XML Structure!", e);
         }
     }
 
