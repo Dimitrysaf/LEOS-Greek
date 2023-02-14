@@ -232,7 +232,7 @@ public class XmlContentProcessorHelper {
             originNumAttr = getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
             numId = getAttributeValue(numNode, XMLID);
             numSoftActionAttribute = getAttributeForSoftAction(numNode, LEOS_SOFT_ACTION_ATTR);
-            number = extractNumber(numNode.getTextContent(), tocItem.isNumWithType());
+            number = extractNumber(numNode.getTextContent() != null ? numNode.getTextContent().trim() : null, tocItem.isNumWithType());
             if (indentOriginType != null && indentOriginNumValue == null
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPARAGRAPH)
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPOINT)
