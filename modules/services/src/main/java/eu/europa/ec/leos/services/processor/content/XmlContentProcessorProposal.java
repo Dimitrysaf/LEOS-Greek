@@ -170,7 +170,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             }
         }
         XmlContentProcessorHelper.updateSoftInfo(node, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), moveId,
-                tocVo.getTocItem().getAknTag().value(), tocVo, getOriginOfDocument(node));
+                tocVo, getOriginOfDocument(node));
     }
 
     private void updateDepthAttribute(TableOfContentItemVO tocVo, Node node) {
