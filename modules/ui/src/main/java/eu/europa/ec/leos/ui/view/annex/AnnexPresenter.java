@@ -995,7 +995,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
             // save document into repository
             annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
             if (annex != null) {
-                eventBus.post(new NotificationEvent(Type.INFO, "document.annex.block.deleted", tagName.equalsIgnoreCase(LEVEL) ? StringUtils.capitalize(POINT) : StringUtils.capitalize(tagName)));
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1019,7 +1018,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
         if (annex != null) {
-            eventBus.post(new NotificationEvent(Type.INFO, "document.annex.block.inserted",  tagName.equalsIgnoreCase(LEVEL) ? StringUtils.capitalize(POINT) : StringUtils.capitalize(tagName)));
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1491,7 +1489,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
         AnnexStructureType structureType = getStructureType();
         annex = annexService.saveTableOfContent(annex, event.getTableOfContentItemVOs(), structureType, messageHelper.getMessage("operation.toc.updated"), user);
 
-        eventBus.post(new NotificationEvent(Type.INFO, "toc.edit.saved"));
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));

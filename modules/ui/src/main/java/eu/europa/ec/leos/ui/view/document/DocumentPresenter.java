@@ -690,7 +690,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             final String updatedLabel = generateLabel(event.getElementId(), bill);
             final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
 
-            updateBillContent(bill, newXmlContent, comment, "document." + tagName + ".deleted");
+            updateBillContent(bill, newXmlContent, comment);
             updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
             LOG.info("Element '{}' in Bill {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), bill.getName(), bill.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception ex) {
@@ -720,7 +720,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, event.getElementId(), tagName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
-        updateBillContent(bill, newXmlContent, checkinCommentJson, "document." + tagName + ".inserted");
+        updateBillContent(bill, newXmlContent, checkinCommentJson);
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
         LOG.info("New Element of type '{}' inserted in Bill {} id {}, in {} milliseconds ({} sec)", tagName, bill.getName(), bill.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
@@ -812,7 +812,6 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
         Bill updatedBill = billService.saveTableOfContent(bill, event.getTableOfContentItemVOs(), checkinCommentJson, user);
 
-        eventBus.post(new NotificationEvent(Type.INFO, "toc.edit.saved"));
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
@@ -1046,6 +1045,15 @@ class DocumentPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LOG.error("Unable to perform the importElements operation", e);
             eventBus.post(new NotificationEvent(Type.INFO, "document.import.failed"));
+        }
+    }
+
+    private void updateBillContent(Bill bill, byte[] xmlContent, String operationMsg) {
+        bill = billService.updateBill(bill, xmlContent, operationMsg);
+        if (bill != null) {
+            eventBus.post(new RefreshDocumentEvent());
+            eventBus.post(new DocumentUpdatedEvent());
+            leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         }
     }
 
