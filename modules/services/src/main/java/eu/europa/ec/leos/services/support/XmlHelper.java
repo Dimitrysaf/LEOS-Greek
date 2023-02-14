@@ -110,6 +110,7 @@ public class XmlHelper {
     public static final String CONTENT = "content";
     public static final String CROSSHEADING = "crossHeading";
     public static final String BLOCK = "block";
+    public static final String TLC_CONCEPT = "TLCConcept";
     public static final String EXPL_COUNCIL = "EXPL_COUNCIL";
 
     public static final String ID = "id";
@@ -121,7 +122,9 @@ public class XmlHelper {
     public static final String STYLE = "style";
     public static final String WHITESPACE = " ";
     public static final String REFERS_TO_ATTR = "refersTo";
+    public static final String TLC_CONCEPT_INP_ID = "_INP";
     public static final String INTRODUCTORY_PART = "~_INP";
+    public static final String TLC_CONCEPT_WRP_ID = "_WRP";
     public static final String ENDING_PART = "~_WRP";
 
     public static final String LEOS_ORIGIN_ATTR = "leos:origin";

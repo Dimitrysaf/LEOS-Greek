@@ -72,6 +72,7 @@ import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHe
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftDeletedOrMovedTo;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.addSibling;
+import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
 import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
@@ -105,6 +106,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DIR_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_IN_TOC;
+import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
+import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT_INP_ID;
 import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
@@ -152,10 +155,13 @@ import static eu.europa.ec.leos.services.support.XmlHelper.STATUS_IGNORED_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.STATUS_IGNORED_ATTR_VALUE;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT;
+import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT_WRP_ID;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.WHITESPACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
 import static eu.europa.ec.leos.services.support.XmlHelper.determinePrefixForChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getEditableAttribute;
@@ -721,6 +727,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         injectTagIdsInNode(node, IdGenerator.DEFAULT_PREFIX);
         modifyAuthorialNoteMarkers(node, 1);
         updateReferences(node.getOwnerDocument());
+        updateMetaReferences(node);
     }
 
     @Override
@@ -761,6 +768,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         // Move subparagraphs as intro and conclusion
         moveSubparagraphsInList(document);
+        updateMetaReferences(document.getFirstChild());
         long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
         LOG.trace("Finished doXMLPostProcessing: Ids Injected at {}ms, authNote Renumbering at {}ms, mref udpated at {}ms, convert alineas to subparagraphs " +
@@ -1028,6 +1036,43 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
         }
         return updated;
+    }
+
+    private void updateMetaReferences(Node node) {
+
+        NodeList metaReferencesNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferences(), true);
+        Node metaReferences = metaReferencesNodeList.item(0);
+
+        NodeList subparagraphWithReferToINPAttributeNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathSubparagraphWithReferToINPAttribute(), true);
+        NodeList INPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForINP(), true);
+        if (subparagraphWithReferToINPAttributeNodeList.getLength() > 0) {
+            if (INPListNodes.getLength() == 0) {
+                Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_INP_ID, EMPTY_STRING);
+                XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/INP");
+                XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "introductory part");
+                metaReferences.appendChild(tclNode);
+            }
+        } else {
+            for (int i = 0; i < INPListNodes.getLength(); i++) {
+                metaReferences.removeChild(INPListNodes.item(i));
+            }
+        }
+
+        NodeList subparagraphWithReferToWRPAttributeNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathSubparagraphWithReferToWRPAttribute(), true);
+        NodeList WRPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForWRP(), true);
+        if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0 && WRPListNodes.getLength() == 0) {
+            if (WRPListNodes.getLength() == 0) {
+                Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_WRP_ID, EMPTY_STRING);
+                XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/WRP");
+                XercesUtils.insertOrUpdateAttributeValue(tclNode, XML_SHOW_AS, "closing part");
+                metaReferences.appendChild(tclNode);
+            }
+        } else {
+            for (int i = 0; i < WRPListNodes.getLength(); i++) {
+                metaReferences.removeChild(WRPListNodes.item(i));
+            }
+        }
+
     }
 
     private List<Ref> findReferences(Node node, String documentRefSource) {
