@@ -182,6 +182,8 @@ define(function leosCrossReferenceDialog(require) {
                 return editor.lang.leosCrossReference.bill;
             case "ANNEX":
                 return editor.lang.leosCrossReference.annex + " " + annexIndex;
+            case "STAT_FINANC_LEGIS":
+                return editor.lang.leosCrossReference.financialStatement;
             default:
                 return "";
         }
