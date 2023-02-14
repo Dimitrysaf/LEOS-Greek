@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Test;
@@ -27,9 +28,12 @@ import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.spy;
 
 public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends XmlContentProcessorTest {
 
+    @InjectMocks
+    private XPathCatalog xPathCatalog = spy(new XPathCatalog());
     @InjectMocks
     private TableOfContentProcessor tableOfContentProcessor = Mockito.spy(new TableOfContentProcessorImpl());
     @InjectMocks

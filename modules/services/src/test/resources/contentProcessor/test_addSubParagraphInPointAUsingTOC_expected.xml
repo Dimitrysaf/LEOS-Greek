@@ -38,6 +38,7 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="_language"/>
                 <TLCReference href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" name="procedureReference" shortForm="YYYY/NNN/AAA" showAs="YYYY/NNNN (AAA)" xml:id="_procedure_YYYY_NNN"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" name="identifier" shortForm="AAA/YYYY/NNN" showAs="AAA(YYYY) NNN" xml:id="_azs3y"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.1.1</leos:templateVersion>
