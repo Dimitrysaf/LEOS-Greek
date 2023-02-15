@@ -6,27 +6,26 @@
                 <heading leos:origin="ec" xml:id="_art_1__heading">Scope</heading>
                 <paragraph leos:affected="true" leos:origin="ec" xml:id="_art_1__para_1">
                     <num leos:origin="ec" xml:id="_art_1__para_1__num">1.</num>
-                    <subparagraph leos:origin="ec" xml:id="_art_1_0IxItO">
-                        <content leos:origin="ec" xml:id="_art_1__para_1__content">
-                            <p leos:origin="ec" xml:id="_art_1__para_1__content__p">Article 1</p>
-                        </content>
-                    </subparagraph>
                     <list leos:origin="ec" xml:id="_art_1_VqBxls">
-                        <point class="leos-double-compare-removed-intermediate" leos:deletable="false" leos:editable="false" leos:origin="ec"
-                               xml:id="_art_1_9Xrkmo">
-                            <num leos:origin="ec" xml:id="_art_1_YEYSDb">(a)</num>
-                            <content leos:origin="ec" xml:id="_art_1_6vBqoh">
-                                <p leos:origin="ec" xml:id="_art_1_jQm45I">Point a of Article 1</p>
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_0IxItO">
+                            <content leos:origin="ec" xml:id="_art_1__para_1__content">
+                                <p leos:origin="ec" xml:id="_art_1__para_1__content__p">Article 1</p>
+                            </content>
+                        </subparagraph>
+                        <point class="leos-double-compare-removed-intermediate" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2023-02-13T12:54:18.076+01:00" leos:softuser=" jane(DIGIT)" xml:id="deleted__art_1_9Xrkmo">
+                            <num class="leos-double-compare-removed-intermediate" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deleted__art_1_YEYSDb">(a)</num>
+                            <content class="leos-double-compare-removed-intermediate" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deleted__art_1_6vBqoh">
+                                <p class="leos-double-compare-removed-intermediate" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deleted__art_1_jQm45I">Point a of Article 1</p>
                             </content>
                         </point>
                         <point leos:affected="true" leos:origin="ec" xml:id="_art_1_d5lxNW">
                             <num leos:origin="ec" xml:id="_art_1_T1FuHf">(b)</num>
-                            <subparagraph leos:origin="ec" xml:id="_art_1_BmSjxA">
-                                <content leos:origin="ec" xml:id="_art_1_liLUFO">
-                                    <p leos:origin="ec" xml:id="_art_1_ckf6MW">Point b of Article 1</p>
-                                </content>
-                            </subparagraph>
                             <list leos:origin="ec" xml:id="_art_1_Avh2dF">
+                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_BmSjxA">
+                                    <content leos:origin="ec" xml:id="_art_1_liLUFO">
+                                        <p leos:origin="ec" xml:id="_art_1_ckf6MW">Point b of Article 1</p>
+                                    </content>
+                                </subparagraph>
                                 <point leos:origin="ec" xml:id="_art_1_DoFXZB">
                                     <num leos:origin="ec" xml:id="_art_1_QUO4dw">(i)</num>
                                     <content leos:origin="ec" xml:id="_art_1_tI9UK0">
