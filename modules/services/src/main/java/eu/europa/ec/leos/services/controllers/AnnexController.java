@@ -10,6 +10,7 @@ import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,13 +150,26 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef,
+    public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
                                               @RequestParam("tocMode")TocMode tocMode
     ) {
         try {
-            List<TableOfContentItemVO> tocItems = this.annexAPIService.getTocItems(documentRef,tocMode);
+            List<TableOfContentItemVO> toc = this.annexAPIService.getToc(documentRef,tocMode);
+            return  ResponseEntity.ok().body(toc);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while getting annex toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
+        try {
+            List<TocItem> tocItems = this.annexAPIService.getTocItems(documentRef);
             return  ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
@@ -163,6 +177,8 @@ public class AnnexController {
         }
 
     }
+
+
 
     @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody

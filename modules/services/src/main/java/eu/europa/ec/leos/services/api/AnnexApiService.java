@@ -8,6 +8,7 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
 
 import java.util.List;
 
@@ -20,7 +21,8 @@ public interface AnnexApiService {
     List<Annex> getRecentMinorVersions(String documentId, String  documentRef);
     List<VersionVO> getVersionsData(String documentId, String documentRef);
     void saveDocumentVersion(String documentRef);
-    List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode);
+    List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
+    List<TocItem> getTocItems(String documentRef);
     byte[] getAnnex(String documentRef);
     List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords);

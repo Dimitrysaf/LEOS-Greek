@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,18 +36,33 @@ public class BillController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef,
+    public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
                                               @RequestParam("tocMode") TocMode tocMode
     ) {
         try {
-            List<TableOfContentItemVO> tocItems = this.billApiService.getTocItems(documentRef);
+            List<TableOfContentItemVO> tocItems = this.billApiService.getToc(documentRef);
             return  ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while getting annex toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while getting bill toc - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while getting bill toc", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
+
+    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
+        try {
+            List<TocItem> tocItems = this.billApiService.getTocItems(documentRef);
+            return  ResponseEntity.ok().body(tocItems);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting bill toc items - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while getting bill toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+
 }
