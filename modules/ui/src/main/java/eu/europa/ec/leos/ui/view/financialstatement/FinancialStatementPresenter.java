@@ -618,7 +618,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
             FinancialStatement financialStatement = getDocument();
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
-            Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId);
+            Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
                 byte[] newXmlContent = xmlContentProcessor.mergeElement(xmlContent, elementContent, tagName, elementId);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,

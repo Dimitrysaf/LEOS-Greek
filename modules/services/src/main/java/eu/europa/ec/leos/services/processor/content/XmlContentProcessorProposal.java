@@ -40,6 +40,7 @@ import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -188,12 +189,23 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     @Override
-    public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
+    public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue, boolean checkParent) {
         if (!isPContent(content, tagName)) {
             return null;
         }
 
         Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+
+        // Case when element is intro
+        if ((mergeOnElement == null) && (isListIntro(xmlContent, idAttributeValue))) {
+            Element parentElement = getParentElement(xmlContent, idAttributeValue);
+            mergeOnElement = parentElement != null ? getSiblingElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
+                    Arrays.asList(tagName,
+                            parentElement.getElementTagName()), true) : null;
+            if (mergeOnElement != null && mergeOnElement.getElementTagName().equalsIgnoreCase(LIST)) {
+                mergeOnElement = getLastChildElement(xmlContent, mergeOnElement.getElementTagName(), mergeOnElement.getElementId(), Collections.emptyList());
+            }
+        }
         if ((mergeOnElement == null) || ((mergeOnElement != null) &&
                 (!isPContent(mergeOnElement.getElementFragment(), mergeOnElement.getElementTagName())))) {
             return null;
@@ -204,7 +216,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public byte[] mergeElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
-        Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+        Element mergeOnElement = getMergeOnElement(xmlContent, content, tagName, idAttributeValue, false);
         String contentFragment = getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false);
         String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8),
                 "/" + mergeOnElement.getElementTagName() + "/content/p", false);

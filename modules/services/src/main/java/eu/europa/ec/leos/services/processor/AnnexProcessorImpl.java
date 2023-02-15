@@ -302,7 +302,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(elementId, "ElementId is required.");
     
         final byte[] contentBytes = getContent(document);
-        return xmlContentProcessor.getMergeOnElement(contentBytes, elementContent, elementName, elementId);
+        return xmlContentProcessor.getMergeOnElement(contentBytes, elementContent, elementName, elementId, true);
     }
 
     @Override
