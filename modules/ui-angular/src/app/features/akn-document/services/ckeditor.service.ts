@@ -730,12 +730,13 @@ export class CKEditorService implements OnDestroy {
       elementId: string;
       elementType: string;
     }) => {
-      console.log(data);
       const documentRef = this.documentRefBS.value;
-      this.getAnnexElement(
+      const documentType = this.documentTypeBS.value;
+      this.getDocumentElement(
         documentRef,
         data.elementId,
         data.elementType.toLowerCase(),
+        documentType,
       ).subscribe((response) => {
         //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
         const {
@@ -770,12 +771,14 @@ export class CKEditorService implements OnDestroy {
       isSplit: boolean;
     }) => {
       const documentRef = this.documentRefBS.value;
-      this.saveAnnexElement(
+      const documentType = this.documentTypeBS.value;
+      this.saveDocumentElement(
         documentRef,
         elemData.elementId,
         elemData.elementType,
         elemData.elementFragment,
         elemData.isSplit,
+        documentType,
       ).subscribe((response) => {
         // this.documentService.setDocumentId(documentRef);
       });
@@ -791,11 +794,13 @@ export class CKEditorService implements OnDestroy {
       elementType: string;
     }) => {
       const documentRef = this.documentRefBS.value;
+      const documentType = this.documentTypeBS.value;
       console.log(elementData, documentRef);
-      this.deleteAnnexElement(
+      this.deleteDocumentElement(
         documentRef,
         elementData.elementType,
         elementData.elementId,
+        documentType,
       ).subscribe((response) => {
         this.documentService.setDocumentId(documentRef);
       });
@@ -970,16 +975,17 @@ export class CKEditorService implements OnDestroy {
       );
   }
 
-  saveAnnexElement(
+  saveDocumentElement(
     documentRef: string,
     elementId: string,
     elementType: string,
     elementFragment: string,
     isSplit: boolean,
+    documentType: string,
   ) {
     return this.http
       .put(
-        `api/secured/annex/${documentRef}/element/${elementType}/${elementId}/save-element`,
+        `api/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
         elementFragment,
         { responseType: 'text' },
       )
@@ -1008,10 +1014,15 @@ export class CKEditorService implements OnDestroy {
     this.annexRefBS.next(annexRef);
   }
 
-  getAnnexElement(documentRef: string, elementName: string, elementId: string) {
+  getDocumentElement(
+    documentRef: string,
+    elementName: string,
+    elementId: string,
+    documentType: string,
+  ) {
     return this.http
       .get(
-        `api/secured/annex/${documentRef}/element/${elementName}/${elementId}`,
+        `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
         { responseType: 'text' },
       )
       .pipe(
@@ -1021,13 +1032,14 @@ export class CKEditorService implements OnDestroy {
       );
   }
 
-  deleteAnnexElement(
+  deleteDocumentElement(
     documentRef: string,
     elementName: string,
     elementId: string,
+    documentType: string,
   ) {
     return this.http.delete(
-      `api/secured/annex/${documentRef}/element/${elementName}/${elementId}`,
+      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
       { responseType: 'arraybuffer' },
     );
   }
