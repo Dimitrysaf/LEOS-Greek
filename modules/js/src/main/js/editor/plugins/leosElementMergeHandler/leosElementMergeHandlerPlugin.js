@@ -44,7 +44,7 @@ define(function leosElementMergeHandlerPluginModule(require) {
             var mergeCommand = editor.addCommand(MERGE_CMD_NAME, {
                 exec: function(editor) {
                 	if (this.state != TRISTATE_DISABLED) {
-                        CKEDITOR.fire("editorInitOngoing");
+                        CKEDITOR.fire("editorInitEnds");
                 		editor.fire("merge", {
                 			data: editor.getData()
                 		});

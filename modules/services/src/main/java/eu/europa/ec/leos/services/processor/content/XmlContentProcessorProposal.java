@@ -49,6 +49,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_BE_NUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
@@ -218,8 +219,10 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     public byte[] mergeElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
         Element mergeOnElement = getMergeOnElement(xmlContent, content, tagName, idAttributeValue, false);
         String contentFragment = getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false);
+        String mergeOnElementFragment =  CONTENT.equalsIgnoreCase(mergeOnElement.getElementTagName())
+                ? "/content/p" : "/" + mergeOnElement.getElementTagName() + "/content/p";
         String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8),
-                "/" + mergeOnElement.getElementTagName() + "/content/p", false);
+                mergeOnElementFragment, false);
         final String replace = mergeOnElement.getElementFragment().replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
         byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
 
