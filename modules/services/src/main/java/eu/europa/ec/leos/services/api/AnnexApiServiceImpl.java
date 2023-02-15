@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,7 +136,14 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getTocItems(String documentRef, TocMode mode) {
+    public List<TocItem> getTocItems(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        return this.structureContext.get().getTocItems();
+    }
+
+    @Override
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.annexService.getTableOfContent(annex, mode);

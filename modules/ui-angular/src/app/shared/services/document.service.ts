@@ -16,7 +16,7 @@ import {
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 
-import { TableOfContentItemVO } from '../models/toc.model';
+import { TableOfContentItemVO, TocItem } from '../models/toc.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +33,8 @@ export class DocumentService implements OnDestroy {
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
-  tocItems$: Observable<TableOfContentItemVO[]>;
+  toc$: Observable<TableOfContentItemVO[]>;
+  tocItems$: Observable<any[]>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -228,15 +229,40 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'versionView', versionNumber); // FIXME
   }
 
-  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+  getToc(annexRef: string, tocMode = 'SIMPLIFIED') {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<TableOfContentItemVO[]>(
+      `api/secured/${category}/${annexRef}/getToc`,
+      {
+        params: { tocMode },
+      },
+    );
+  }
+
+  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+    let category = this.documentCategoryBS.value;
+    category = category === 'coverpage' ? 'coverPage' : category;
+    return this.http.get<TocItem[]>(
       `api/secured/${category}/${annexRef}/getTocItems`,
       {
         params: { tocMode },
       },
     );
+  }
+
+  validateNodeDrop(
+    documentRef: string,
+    documentType: string,
+    nodeDragged: TableOfContentItemVO,
+    nodeDroppedAt: TableOfContentItemVO,
+  ) {
+    return this.http.post(`api/secured/toc/${documentRef}/validate-node-drop`, {
+      nodeDragged: null,
+      nodeDroppedAt: null,
+      documentRef,
+      documentType,
+    });
   }
 
   setToc(toc: TableOfContentItemVO[]) {

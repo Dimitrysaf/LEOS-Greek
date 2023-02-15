@@ -11,6 +11,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,10 +44,17 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getTocItems(String documentRef) {
+    public List<TableOfContentItemVO> getToc(String documentRef) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         this.setStructureContext(proposal.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.proposalService.getCoverPageTableOfContent(proposal, TocMode.SIMPLIFIED);
+    }
+
+    @Override
+    public List<TocItem> getTocItems(String documentRef) {
+        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        this.setStructureContext(proposal.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        return this.structureContext.get().getTocItems();
     }
 
     private byte[] getContent(Proposal proposal) {

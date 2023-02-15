@@ -986,7 +986,7 @@ export class CKEditorService implements OnDestroy {
       .pipe(
         tap(() => {
           console.log('dep');
-          this.documentService.getTocItems(this.annexRefBS.value);
+          this.documentService.getToc(this.annexRefBS.value);
         }),
         tap(() => this.connector.closeElement()),
       );
