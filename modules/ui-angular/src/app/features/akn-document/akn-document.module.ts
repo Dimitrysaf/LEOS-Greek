@@ -13,17 +13,13 @@ import { AnnexDocumentComponent } from './components/annex-document/annex-docume
 import { DocumentSearchComponent } from './components/document-search/document-search.component';
 import { VersionActionsDropdownComponent } from './components/version-actions-dropdown/version-actions-dropdown.component';
 import { VersionsPaneGroupComponent } from './components/versions-pane-group/versions-pane-group.component';
-import { AknDocumentComponent } from './containers/akn-document/akn-document.component';
-import { AnnexEditorComponent } from './containers/annex-editor/annex-editor.component';
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
 
 @NgModule({
   declarations: [
-    AknDocumentComponent,
     AnnexActionsDropdownComponent,
     AnnexDocumentComponent,
-    AnnexEditorComponent,
     ActionsToolbarComponent,
     DocumentSearchComponent,
     VersionActionsDropdownComponent,

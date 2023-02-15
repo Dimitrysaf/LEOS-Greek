@@ -155,5 +155,11 @@
   "page.editor.toc.move-actions.move": "Move",
   "page.editor.toc.move-actions.place-before": "Place before",
   "page.editor.toc.move-actions.place-child": "Place as child",
-  "page.editor.toc.move-actions.place-after": "Place after"
+  "page.editor.toc.move-actions.place-after": "Place after",
+  "page.editor.toc.tree-node.more-options": "More options",
+  "page.editor.toc.selected-element.title": "Selected Element",
+  "page.editor.toc.selected-element.type": "Type",
+  "page.editor.toc.selected-element.number": "Number",
+  "page.editor.toc.selected-element.heading": "Heading",
+  "page.editor.toc.selected-element.delete": "Delete"
 }

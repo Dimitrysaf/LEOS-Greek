@@ -68,7 +68,10 @@ export class AknDocumentComponent implements OnInit, AfterViewInit {
       updatedOn: 1664193765137,
     });
     const elem = this.xmlView.nativeElement;
-    elem.innerHTML = this.cleanupAndSerializeXML(xmlDoc);
+
+    let cleanXml = this.cleanupAndSerializeXML(xmlDoc);
+    cleanXml = cleanXml.replaceAll('xml:id', 'id');
+    elem.innerHTML = cleanXml;
   }
 
   private loadStyleSheet() {

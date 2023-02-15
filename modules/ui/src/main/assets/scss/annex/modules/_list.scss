@@ -58,6 +58,14 @@ $LIST_SPACING: 40px;
     point > list > subparagraph:not(:first-child) {
         padding-left: $LIST_SPACING;
     }
+
+    level > list > .cke_editable > ol[data-akn-name=aknSubParagraphMandate] {
+        padding-left: 0px;  // override default list padding
+    }
+
+    level > .cke_editable > ol[data-akn-name=aknSubParagraphMandate] {
+        padding-left: 0px;  // override default list padding
+    }
 }
 
 //------------------------------- Editor Styles -----------------------------//
@@ -68,7 +76,6 @@ $LIST_SPACING: 40px;
 
     ol[data-akn-name=aknAnnexList],
     ol[data-akn-name=aknOrderedList],
-    ol[data-akn-name=aknSubParagraphMandate],
     ol[data-akn-name=aknSubParagraphMandate],
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknAnnexOrderedList],
@@ -105,9 +112,6 @@ $LIST_SPACING: 40px;
 
     ol[data-akn-name=aknAnnexList],
     ol[data-akn-name=aknOrderedList],
-    indent > ol[data-akn-name=aknSubParagraphMandate],
-    point > ol[data-akn-name=aknSubParagraphMandate],
-    paragraph > ol[data-akn-name=aknSubParagraphMandate],
     ol[data-akn-name=aknPointMandateOrderedList],
     ol[data-akn-name=aknAnnexOrderedList],
     ul[data-akn-name=UnNumberedBlockList],

@@ -23,6 +23,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_ACTIONS_PREFIXES;
 import static eu.europa.ec.leos.services.support.XmlHelper.STYLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
@@ -1087,5 +1088,39 @@ public class XercesUtils {
         String attributeValue;
         attributeValue = getAttributeValue(childNode, attrName);
         return (attributeValue != null && attributeValue.equalsIgnoreCase(attrValue));
+    }
+
+    public static boolean is(Node node, String tagName) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            return node.getNodeName().equalsIgnoreCase(tagName);
+        }
+        return false;
+    }
+
+    public static boolean is(Node node, List<String> tagNames) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            return tagNames.contains(node.getNodeName().toLowerCase());
+        }
+        return false;
+    }
+
+    public static boolean isFirstSubParagraph(Node node) {
+        if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
+            return false;
+        }
+        if (is(node, SUBPARAGRAPH)) {
+            Node prevSibling = XercesUtils.getPrevSibling(isListIntro(node) ? node.getParentNode(): node);
+            return prevSibling == null || !is(prevSibling, Arrays.asList(SUBPARAGRAPH, LIST));
+        }
+        return false;
+    }
+
+    public static boolean isListIntro(Node node) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            boolean isInsideAList = is(node.getParentNode(), LIST);
+            boolean isFirstElement = XercesUtils.getPrevSibling(node) == null;
+            return is(node, SUBPARAGRAPH) && isInsideAList && isFirstElement;
+        }
+        return false;
     }
 }

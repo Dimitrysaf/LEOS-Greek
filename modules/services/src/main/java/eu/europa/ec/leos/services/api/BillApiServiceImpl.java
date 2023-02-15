@@ -1,11 +1,13 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +33,17 @@ public class BillApiServiceImpl implements BillApiService{
     }
 
     @Override
-    public List<TableOfContentItemVO> getTocItems(String documentRef) {
+    public List<TableOfContentItemVO> getToc(String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.billService.getTableOfContent(bill, TocMode.SIMPLIFIED);
+    }
+
+    @Override
+    public List<TocItem> getTocItems(String documentRef) {
+        Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        return this.structureContext.get().getTocItems();
     }
 
 

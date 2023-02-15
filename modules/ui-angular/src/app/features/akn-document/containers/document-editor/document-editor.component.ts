@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DocumentService } from '@/shared/services/document.service';
@@ -31,6 +31,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     private domService: DomService,
     public doc: DocumentService,
     private route: ActivatedRoute,
+    private router: Router,
     private translate: TranslateService,
     private cdkEditor: CKEditorService,
   ) {}
@@ -81,6 +82,12 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   handleCancel() {
     //TODO : implement cancel
     this.isEditMode = false;
+  }
+
+  handleClose() {
+    this.doc.closeEditor();
+    //wait for the API where we get all the metadata for each document
+    this.router.navigate([`/collection/proposal`]);
   }
 
   private loadDocument(xml: string) {

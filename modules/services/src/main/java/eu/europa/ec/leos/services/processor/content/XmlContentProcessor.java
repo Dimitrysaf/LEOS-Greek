@@ -161,6 +161,14 @@ public interface XmlContentProcessor {
     byte[] setAttributeForAllChildren(byte[] xmlContent, String parentTag, List<String> elementTags, String attributeName, String value) throws Exception;
 
     /**
+     * checks if this element is intro of a list
+     *
+     * @param idAttributeValue
+     * @return is list intro ?
+     */
+    Boolean isListIntro(byte[] xmlContent, String idAttributeValue);
+
+    /**
      * get the parent element id given a child id attribute value
      *
      * @param xmlContent
@@ -194,6 +202,17 @@ public interface XmlContentProcessor {
     Element getChildElement(byte[] xmlContent, String tagName, String idAttributeValue, List<String> elementTags, int position);
 
     /**
+     * get the last child element given an element id attribute value, tag name, considering only tag elements provided
+     *
+     * @param xmlContent
+     * @param tagName
+     * @param idAttributeValue
+     * @param elementTags
+     * @return last child of element
+     */
+    Element getLastChildElement(byte[] xmlContent, String tagName, String idAttributeValue, List<String> elementTags);
+
+    /**
      * get element from the given document if a split operation is already performed over element passed as argument
      *
      * @param xmlContent
@@ -213,7 +232,7 @@ public interface XmlContentProcessor {
      * @param idAttributeValue
      * @return
      */
-    Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) throws Exception;
+    Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue, boolean checkParent) throws Exception;
 
     /**
      * get element from the given document if a merge operation is performed over element passed as argument

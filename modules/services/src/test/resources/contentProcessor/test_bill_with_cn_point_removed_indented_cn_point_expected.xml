@@ -1,0 +1,93 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <bill name="REG">
+        <body leos:origin="ec" xml:id="_body">
+            <article leos:affected="true" leos:autonumbering="true" leos:deletable="false" leos:editable="true" leos:origin="ec" xml:id="_art_1">
+                <num leos:editable="false" leos:origin="ec" xml:id="_art_1__num">Article 1</num>
+                <heading leos:origin="ec" xml:id="_art_1__heading">Scope</heading>
+                <paragraph leos:affected="true" leos:origin="ec" xml:id="_art_1__para_1">
+                    <num leos:origin="ec" xml:id="_art_1__para_1__num">1.</num>
+                    <list leos:origin="ec" xml:id="_art_1_geFV8v">
+                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_9QazpL">
+                            <content leos:origin="ec" xml:id="_art_1__para_1__content">
+                                <p leos:origin="ec" xml:id="_art_1__para_1__content__p">This a custom article.</p>
+                            </content>
+                        </subparagraph>
+                        <point leos:affected="true" leos:indent-origin-indent-level="1" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT"
+                               leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2023-02-10T16:32:51.000+01:00"
+                               leos:softuser="DOE Jane(DGT)" xml:id="transformed__art_1_SHnaUi">
+                            <num leos:origin="ec" xml:id="_art_1_AXTACj">(a)</num>
+                            <content leos:origin="ec" xml:id="_art_1_XN3rWq">
+                                <p leos:origin="ec" xml:id="_art_1_FPpGfE">First point</p>
+                            </content>
+                        </point>
+                        <point leos:origin="ec" xml:id="_art_1_iTVvtl">
+                            <num leos:origin="ec" xml:id="_art_1_dRmzE0">(b)</num>
+                            <list leos:origin="ec" xml:id="_art_1_kSgdA1">
+                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_H6p1HX">
+                                    <content leos:origin="ec" xml:id="_art_1_GS0DdI">
+                                        <p leos:origin="ec" xml:id="_art_1_eXY3hF">Second point</p>
+                                    </content>
+                                </subparagraph>
+                                <point leos:origin="ec" xml:id="_art_1_F93I9z">
+                                    <num leos:origin="ec" xml:id="_art_1_ZqC4os">(i)</num>
+                                    <subparagraph leos:origin="ec" xml:id="_art_1_Mh9DZe">
+                                        <content leos:origin="ec" xml:id="_art_1_w1YbyI">
+                                            <p leos:origin="ec" xml:id="_art_1_R8N7Td">Third point</p>
+                                        </content>
+                                    </subparagraph>
+                                    <list leos:origin="ec" xml:id="_art_1_jI1hMO">
+                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_sf68he">
+                                            <content leos:origin="ec" xml:id="_art_1_8FSQqS">
+                                                <p leos:origin="ec" xml:id="_art_1_EpY1x9">This a subparagraph</p>
+                                            </content>
+                                        </subparagraph>
+                                        <point leos:origin="ec" xml:id="_art_1_AW7mmk">
+                                            <num leos:origin="ec" xml:id="_art_1_jwMvmL">(1)</num>
+                                            <list leos:origin="ec" xml:id="_art_1_muTM7F">
+                                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_QrNUIS">
+                                                    <content leos:origin="ec" xml:id="_art_1_HETZsY">
+                                                        <p leos:origin="ec" xml:id="_art_1_f4OEmt">Fourth point</p>
+                                                    </content>
+                                                </subparagraph>
+                                                <indent leos:origin="ec" xml:id="_art_1_9s4ttT">
+                                                    <num leos:origin="ec" xml:id="_art_1_voHCfe">-</num>
+                                                    <content leos:origin="ec" xml:id="_art_1_rCBV4d">
+                                                        <p leos:origin="ec" xml:id="_art_1_k4tadc">Fifth point</p>
+                                                    </content>
+                                                </indent>
+                                                <indent leos:origin="ec" xml:id="_art_1_yaLnZJ">
+                                                    <num leos:origin="ec" xml:id="_art_1_s5BMgC">-</num>
+                                                    <content leos:origin="ec" xml:id="_art_1_nULcgG">
+                                                        <p leos:origin="ec" xml:id="_art_1_ZQobfc">Sixth point</p>
+                                                    </content>
+                                                </indent>
+                                            </list>
+                                        </point>
+                                        <point leos:origin="ec" xml:id="_art_1_eKKPn2">
+                                            <num leos:origin="ec" xml:id="_art_1_FSGx3w">(2)</num>
+                                            <content leos:origin="ec" xml:id="_art_1_9fpI8j">
+                                                <p leos:origin="ec" xml:id="_art_1_gOZi4q">Seventh point</p>
+                                            </content>
+                                        </point>
+                                    </list>
+                                </point>
+                                <point leos:origin="ec" xml:id="_art_1_HoMy6w">
+                                    <num leos:origin="ec" xml:id="_art_1_FMxDhW">(ii)</num>
+                                    <content leos:origin="ec" xml:id="_art_1_QFdcr3">
+                                        <p leos:origin="ec" xml:id="_art_1_EIYM9P">Eighth point</p>
+                                    </content>
+                                </point>
+                            </list>
+                        </point>
+                        <point leos:origin="ec" xml:id="_art_1_aIbX3e">
+                            <num leos:origin="ec" xml:id="_art_1_KYwp8p">(c)</num>
+                            <content leos:origin="ec" xml:id="_art_1_Sz0b9M">
+                                <p leos:origin="ec" xml:id="_art_1_rhD89v">Ninth point</p>
+                            </content>
+                        </point>
+                    </list>
+                </paragraph>
+            </article>
+        </body>
+    </bill>
+</akomaNtoso>
