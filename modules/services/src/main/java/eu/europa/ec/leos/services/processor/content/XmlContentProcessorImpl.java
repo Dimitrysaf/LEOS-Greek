@@ -40,7 +40,6 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -86,6 +85,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
 import static eu.europa.ec.leos.services.support.XercesUtils.importNodeInDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateStylingAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.is;
+import static eu.europa.ec.leos.services.support.XercesUtils.isFirstSubParagraph;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToStringSimple;
@@ -509,7 +510,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
-            return isListIntro(node);
+            return XercesUtils.isListIntro(node);
         }
         return false;
     }
@@ -817,13 +818,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 String subElementOrigin = getAttributeValue(subElement, LEOS_ORIGIN_ATTR);
                 if (j == 0 && elementOrigin.equals(EC) && (subElementOrigin == null)) {
                     createTransformationNode(node, subElement);
-                } else if (subElement.getNodeName().equalsIgnoreCase(LIST)) {
+                } else if (is(subElement, LIST)) {
                     List<Node> listSubElements = XercesUtils.getChildren(subElement, subElementTagName);
                     for (int k = 0; k < listSubElements.size(); k++) {
                         Node listSubElement = listSubElements.get(k);
                         String listSubElementOrigin = getAttributeValue(listSubElement, LEOS_ORIGIN_ATTR);
                         String listSubElementSoftAction = getAttributeValue(listSubElement, LEOS_SOFT_ACTION_ATTR);
-                        if (k==0 && j==0 && listSubElement.getNodeName().equalsIgnoreCase(SUBPARAGRAPH) && elementOrigin.equals(EC) && (listSubElementOrigin == null
+                        if (k==0 && j==0 && is(listSubElement, SUBPARAGRAPH) && elementOrigin.equals(EC) && (listSubElementOrigin == null
                                 || !listSubElementOrigin.equals(EC))
                                 && (listSubElementSoftAction == null
                                 || isSoftAdded(listSubElement))) {
@@ -859,10 +860,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             originAttr = parentOrigin;
         }
 
-        if (originAttr.equals(parentOrigin) && !node.getNodeName().equalsIgnoreCase(LIST)) {
+        if (originAttr.equals(parentOrigin) && !is(node, LIST)) {
             XercesUtils.addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
-            if (softAction == null && !CN.equals(originOfDocument) && !node.getNodeName().equalsIgnoreCase(MAIN_BODY)) {
+            if (softAction == null && !CN.equals(originOfDocument) && !is(node, MAIN_BODY)) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
                 XercesUtils.addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
                 XercesUtils.addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
@@ -912,10 +913,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             boolean moved = false;
             if (((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(nextSiblingList)) || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(nextSiblingList)))
                     && nextSiblingList != null
-                    && nextSiblingList.getNodeName().equalsIgnoreCase(LIST)) {
+                    && is(nextSiblingList, LIST)) {
                 Node firstChildList = XercesUtils.getFirstChild(nextSiblingList);
                 if ((firstChildList == null
-                        || !firstChildList.getNodeName().equalsIgnoreCase(SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && (compareSoftAction(subpara,
+                        || !is(firstChildList, SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && (compareSoftAction(subpara,
                         nextSiblingList) || isSoftAdded(nextSiblingList))) {
                     if (nextSiblingList.getFirstChild() != null) {
                         nextSiblingList.insertBefore(subpara, nextSiblingList.getFirstChild());
@@ -927,29 +928,29 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
             if (!moved) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
-                if (previousSiblingList != null && previousSiblingList.getNodeName().equalsIgnoreCase(LIST)
+                if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
                         || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(previousSiblingList)))) {
                     List<Node> children = XercesUtils.getChildren(previousSiblingList);
                     Node lastChildList = children.get(children.size()-1);
-                    if (lastChildList == null || !lastChildList.getNodeName().equalsIgnoreCase(SUBPARAGRAPH)  || isSoftDeletedOrMovedTo(lastChildList)) {
+                    if (lastChildList == null || !is(lastChildList, SUBPARAGRAPH)  || isSoftDeletedOrMovedTo(lastChildList)) {
                         previousSiblingList.appendChild(subpara);
                     }
                 }
             }
-            if (subpara.getParentNode().getNodeName().equalsIgnoreCase(LIST)) {
+            if (is(subpara.getParentNode(), LIST)) {
                 List<Node> children = XercesUtils.getChildren(subpara.getParentNode());
                 int index = children.indexOf(subpara);
                 if (index == 0) {
                     addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.INTRODUCTORY_PART);
                 } else if (index == children.size()-1) {
                     addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.ENDING_PART);
-                } else if (index == children.size()-2 && children.get(index+1).getNodeName().equals(SUBPARAGRAPH)) {
+                } else if (index == children.size()-2 && is(children.get(index+1), SUBPARAGRAPH)) {
                     addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.ENDING_PART);
                     Node nextSibling = children.get(index+1);
                     removeAttribute(nextSibling, XmlHelper.REFERS_TO_ATTR);
                     subpara.getParentNode().getParentNode().insertBefore(nextSibling, subpara.getParentNode().getNextSibling());
-                } else if (index == 1 && children.get(0).getNodeName().equals(SUBPARAGRAPH)) {
+                } else if (index == 1 && is(children.get(0), SUBPARAGRAPH)) {
                     addAttribute(subpara, XmlHelper.REFERS_TO_ATTR, XmlHelper.INTRODUCTORY_PART);
                     Node prevSibling = children.get(0);
                     removeAttribute(prevSibling, XmlHelper.REFERS_TO_ATTR);
@@ -1313,7 +1314,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private Node setAttributeForDefinitionArticle(Node node) {
-        if (node.getNodeName().equals(ARTICLE)) {
+        if (is(node, ARTICLE)) {
             // Will check here if it is a definitions' article.
             // The checking is done thanks to the points' numbering scheme of the article
             // That could be done just checking the heading, but I found it not accurate, because:
@@ -1442,7 +1443,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     } else {
                         Node parent = node.getParentNode();
                         while (parent != null) {
-                            if (ArrayUtils.contains(NUMBERED_AND_LEVEL_ITEMS, parent.getLocalName())) {
+                            if (is(parent, Arrays.asList(NUMBERED_AND_LEVEL_ITEMS))) {
                                 depth++;
                             }
                             parent = parent.getParentNode();
@@ -1673,14 +1674,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         boolean singleChild = siblings.size() <= 1;
         boolean firstChild = siblings.indexOf(node) == 0;
 
-        if ((Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) && firstChild && !parentNode.getNodeName().equalsIgnoreCase(LIST))
+        if ((Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) && firstChild && !is(parentNode, LIST))
                 || (Arrays.asList(POINT, INDENT, INDENT).contains(tagName) && singleChild)) {
             // Cases when the deleted element should be the wrapping element
             node = parentNode;
-        } else if (tagName.equals(SUBPARAGRAPH) && parentNode.getNodeName().equalsIgnoreCase(LIST) && firstChild) {
+        } else if (tagName.equals(SUBPARAGRAPH) && is(parentNode, LIST) && firstChild) {
             // Cases when the deleted element should be the wrapping element (subparagraph is intro of the first list)
             Node grandParentNode = parentNode.getParentNode();
-            if (grandParentNode != null && !grandParentNode.getNodeName().equalsIgnoreCase(LEVEL)) {
+            if (grandParentNode != null && !is(grandParentNode,LEVEL)) {
                 List<Node> parentNodeSiblings = XercesUtils.getChildren(grandParentNode, Arrays.asList(SUBPARAGRAPH, LIST));
                 if (parentNodeSiblings.indexOf(parentNode) == 0) {
                     node = grandParentNode;
@@ -1688,7 +1689,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
         }
 
-        Node list = node.getParentNode().getNodeName().equalsIgnoreCase(LIST) ? node.getParentNode() : null;
+        Node list = is(node.getParentNode(),LIST) ? node.getParentNode() : null;
         if (isSoftMovedFrom) {
             softDeleteOriginalNode(node);
             restoreTransformedNodeToContent(node);
@@ -1803,53 +1804,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return CN.equals(XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR));
     }
 
-    public boolean isFirstSubParagraph(Node node) {
-        if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
-            return false;
-        }
-        if (isListIntro(node)) {
-            Node prevSibling = XercesUtils.getPrevSibling(node.getParentNode());
-            return prevSibling == null || !Arrays.asList(SUBPARAGRAPH, LIST).contains(prevSibling.getNodeName().toLowerCase());
-        } else if (node.getNodeName().equalsIgnoreCase(SUBPARAGRAPH)){
-            Node prevSibling = XercesUtils.getPrevSibling(node.getParentNode());
-            return prevSibling == null || !Arrays.asList(SUBPARAGRAPH, LIST).contains(prevSibling.getNodeName().toLowerCase());
-        }
-        return false;
-    }
-
-    public boolean is(Node node, String tagName) {
-        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-            return node.getNodeName().equalsIgnoreCase(tagName);
-        }
-        return false;
-    }
-
-    public boolean isSubParagraphOutsideList(Node node) {
-        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-            boolean isInsideAList = node.getParentNode().getNodeName().equalsIgnoreCase(LIST);
-            return is(node, SUBPARAGRAPH) && !isInsideAList;
-        }
-        return false;
-    }
-
-    public boolean isListIntro(Node node) {
-        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-            boolean isInsideAList = node.getParentNode().getNodeName().equalsIgnoreCase(LIST);
-            boolean isFirstElement = XercesUtils.getPrevSibling(node) == null;
-            return is(node, SUBPARAGRAPH) && isInsideAList && isFirstElement;
-        }
-        return false;
-    }
-
-    public boolean isListWrapup(Node node) {
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-            boolean isInsideAList = node.getParentNode().getNodeName().equalsIgnoreCase(LIST);
-            boolean isLastElement = XercesUtils.getNextSibling(node) == null;
-            return is(node, SUBPARAGRAPH) && isInsideAList && isLastElement;
-        }
-        return false;
-    }
-
     /**
      * When deleting "sub2", check if previous node is EC transformed and in that case, restore to content.
      *
@@ -1928,7 +1882,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node nextSibling = XercesUtils.getNextSibling(node);
         boolean isFirstSubParagraph = isFirstSubParagraph(prevSibling);
         if (nextSibling == null) {
-            if (isListIntro(prevSibling)) {
+            if (XercesUtils.isListIntro(prevSibling)) {
                 node.getParentNode().getParentNode().insertBefore(prevSibling, node.getParentNode());
                 if (XercesUtils.getNextSibling(node.getParentNode()) != null) {
                     return;
@@ -2001,7 +1955,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
             String origin = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
-            if (CN.equals(origin) && Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(child.getNodeName())) { // The CN part of the split should be removed
+            if (CN.equals(origin) && is(child, Arrays.asList(SUBPARAGRAPH, SUBPOINT))) { // The CN part of the split should be
+                // removed
                 restoreTransformedNodeToContent(child);
                 XercesUtils.deleteElement(child);
             } else {
@@ -2015,7 +1970,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         cleanMoveFromAttributes(node);
         updateXMLIDAttributeFullStructureNode(node, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, false);
 
-        if(ELEMENTS_IN_TOC.contains(node.getNodeName())) {
+        if(is(node, ELEMENTS_IN_TOC)) {
             updateSoftAttributes(actionType, node, false);
         }
 
