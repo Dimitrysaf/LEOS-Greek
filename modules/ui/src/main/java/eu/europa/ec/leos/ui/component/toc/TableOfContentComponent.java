@@ -62,6 +62,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
@@ -808,6 +809,12 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 		return isCrossHeading(item.getTocItem()) && (StringUtils.isBlank(item.getContent()) || XmlHelper.containsXmlTags(item.getContent()));
 	}
 
+    private boolean isArticleBiggerThanDefinitionDepth(TableOfContentItemVO item) {
+        return getTagValueFromTocItemVo(item).equals(ARTICLE) // is article
+                && XercesUtils.getFirstDescendant(item.getNode(), Arrays.asList(INDENT)) != null; // has INDENT html tag
+    }
+
+
     /**
      * On read only mode, it is populating only tocItems.
      * TocRules and numConfigs are populating on runtime through handleEditTocRequest() when user decides to edit.
@@ -1551,10 +1558,27 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             listRadioButtonGroup.setItemCaptionGenerator(item -> messageHelper.getMessage("toc.edit.window.item." + item + ".article.type"));
 
             listRadioButtonGroup.addValueChangeListener(event -> {
+
+                TableOfContentItemVO item = binder.getBean();
+                if(TocItemTypeName.DEFINITION.value().equalsIgnoreCase(event.getValue()) && isArticleBiggerThanDefinitionDepth(item)){
+                    ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
+                            messageHelper.getMessage("toc.edit.window.article.change"),
+                            messageHelper.getMessage("toc.edit.window.article.3levels.deep"),
+                            messageHelper.getMessage("toc.edit.window.delete.confirmation.confirm"),
+                            null,
+                            null);
+                    confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
+                    confirmDialog.getContent().setHeightUndefined();
+                    confirmDialog.setHeightUndefined();
+                    confirmDialog.getCancelButton().setVisible(false);
+                    confirmDialog.show(getUI(), dialog -> {}, true);
+                    event.getSource().setValue(TocItemTypeName.REGULAR.name().toLowerCase());
+                    return;
+                }
+
                 if (event.isUserOriginated()) {
                     dataChanged = true;
 
-                    TableOfContentItemVO item = binder.getBean();
                     String oldValue = item.getHeading();
                     item.setTocItemType(TocItemTypeName.fromValue(event.getValue().toUpperCase()));
                     TocUpdate tocUpdate = new TocUpdate(item, ACTION_ON_ITEM.TYPE_UPDATE);
