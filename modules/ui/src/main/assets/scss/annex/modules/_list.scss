@@ -63,6 +63,9 @@ $LIST_SPACING: 40px;
         padding-left: 0px;  // override default list padding
     }
 
+    level > .cke_editable > ol[data-akn-name=aknSubParagraphMandate] {
+        padding-left: 0px;  // override default list padding
+    }
 }
 
 //------------------------------- Editor Styles -----------------------------//
