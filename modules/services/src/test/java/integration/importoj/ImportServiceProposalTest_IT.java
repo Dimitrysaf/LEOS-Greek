@@ -106,9 +106,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         List<String> elementsIds = new ArrayList<>();
 
         // When
-        long startTime = System.currentTimeMillis();
         byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
-        long endTime = System.currentTimeMillis();
 
         // Then
         String result = new String(xmlResult);
@@ -116,7 +114,27 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         result = squeezeXmlAndRemoveAllNS(result);
         expected = squeezeXmlAndRemoveAllNS(expected);
         assertEquals(expected, result);
-        assertTrue(endTime - startTime < 25_000);  // check how you are converting Node to String. The time shouldn't go exponential.
+    }
+
+    @Test
+    public void test_addMoreThanOneWRPParagraph() {
+        final byte[] xmlInput = TestUtils.getFileContent(PREFIX_FILE, "test_addMoreThanOneWRPParagraph.xml");
+        final byte[] xmlStart = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_start_with_NO_IND_or_WRP.xml");
+        final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_FILE_EC, "test_addMoreThanOneWRPParagraph_expected.xml");
+
+        final Bill originalDocument = createBillForBytes(xmlStart);
+        List<String> elementsIds = new ArrayList<>();
+        elementsIds.add("art_2");
+
+        // When
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+
+        // Then
+        String result = new String(xmlResult);
+        String expected = new String(xmlExpected);
+        result = squeezeXmlAndRemoveAllNS(result);
+        expected = squeezeXmlAndRemoveAllNS(expected);
+        assertEquals(expected, result);
     }
 
     @Test

@@ -1064,7 +1064,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             NodeList subparagraphWithReferToWRPAttributeNodeList = XercesUtils.getElementsByXPath(node,
                     xPathCatalog.getXPathSubparagraphWithReferToWRPAttribute(), true);
             NodeList WRPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForWRP(), true);
-            if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0 && WRPListNodes.getLength() == 0) {
+            if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0) {
                 if (WRPListNodes.getLength() == 0) {
                     Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_WRP_ID, EMPTY_STRING);
                     XercesUtils.insertOrUpdateAttributeValue(tclNode, HREF, "http://publications.europa.eu/resource/authority/subdivision/WRP");
