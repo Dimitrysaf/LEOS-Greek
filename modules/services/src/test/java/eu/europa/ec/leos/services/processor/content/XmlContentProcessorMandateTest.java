@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import io.atlassian.fugue.Pair;
@@ -34,8 +35,12 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.spy;
 
 public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
+
+    @InjectMocks
+    protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
     @InjectMocks
     private XmlContentProcessorImpl xercesXmlContentProcessor = new XmlContentProcessorMandate();

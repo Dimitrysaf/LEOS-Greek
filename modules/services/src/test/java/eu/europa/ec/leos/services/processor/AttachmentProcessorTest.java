@@ -25,6 +25,7 @@ import static org.mockito.Mockito.spy;
 
 public class AttachmentProcessorTest extends LeosTest {
 
+    @InjectMocks
     private XmlContentProcessor xmlContentProcessor = new XmlContentProcessorProposal();
     @InjectMocks
     private XPathCatalog xPathCatalog = spy(new XPathCatalog());

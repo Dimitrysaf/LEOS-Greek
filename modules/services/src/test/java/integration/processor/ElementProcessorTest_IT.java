@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
@@ -65,6 +66,7 @@ import java.util.stream.Stream;
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJaneDigitUser;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class ElementProcessorTest_IT extends LeosTest {
@@ -113,6 +115,8 @@ public class ElementProcessorTest_IT extends LeosTest {
     protected List<NumberingConfig> numberingConfigs;
     protected Map<TocItem, List<TocItem>> tocRules;
 
+    @InjectMocks
+    protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
     @InjectMocks
     protected XmlContentProcessor xmlContentProcessor = Mockito.spy(new XmlContentProcessorMandate());
     @InjectMocks

@@ -36,7 +36,6 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -67,10 +66,7 @@
                 </p>
             </longTitle>
             <container name="mainDocLanguage" xml:id="_coverpage__container_3">
-                <p xml:id="_coverpage__container_3__p">
-                    <inline name="language" refersTo="~FRBRlanguage" xml:id="_coverpage__container_3__p_inline">EN
-                    </inline>
-                </p>
+                <p xml:id="_coverpage__container_3__p"><inline name="language" refersTo="~FRBRlanguage" xml:id="_coverpage__container_3__p_inline">EN</inline></p>
             </container>
         </coverPage>
         <preface xml:id="preface">
@@ -149,116 +145,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" xml:id="art_2">
-                <num leos:editable="false" xml:id="art_2__num">Article 2</num>
-                <heading xml:id="art_2__heading">Entry into force</heading>
-                <paragraph xml:id="art_2__para_1">
-                    <content xml:id="art_2__para_1__content">
-                        <p xml:id="art_2__para_1__content__p">This Regulation shall enter into force on the [...] day
-                            following that of its publication in the <i xml:id="art_2__para_1__content__p__i">Official
-                                Journal of the European Union</i>.
-                        </p>
-                    </content>
-                </paragraph>
-            </article>
 
-            <article leos:deletable="true" leos:editable="true" xml:id="_imp_art_1_Cl46eZ">
-                <num xml:id="imp_art_23_P99mof_l82HBa">Article 3</num>
-                <heading xml:id="imp_art_23_P99mof_sxMEnk">heading article</heading>
-                <paragraph xml:id="imp_art_23_P99mof_aAN1ei">
-                    <num xml:id="imp_art_23_P99mof_J4LSx4">1.</num>
-                    <subparagraph xml:id="imp_art_23_P99mof_bMsjS9">
-                        <content xml:id="imp_art_23_P99mof_dP8nUz">
-                            <p xml:id="imp_art_23_P99mof_mAXTwB">Article 25, paragraph 1, first subparagraph</p>
-                        </content>
-                    </subparagraph>
-                </paragraph>
-                <paragraph xml:id="imp_art_23_P99mof_58pYPx">
-                    <num xml:id="imp_art_23_P99mof_h0d1hy">2.</num>
-                    <list xml:id="imp_art_23_P99mof_u93htc">
-                        <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_Qk0CtG">
-                            <content xml:id="imp_art_23_P99mof_prZB8Z">
-                                <p xml:id="imp_art_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
-                            </content>
-                        </subparagraph>
-                        <point xml:id="imp_art_23_P99mof_zfNq9s">
-                            <num xml:id="imp_art_23_P99mof_FC1tcm">(a)</num>
-                            <subparagraph xml:id="imp_art_23_P99mof_C0cyPH">
-                                <content xml:id="imp_art_23_P99mof_bwovMa">
-                                    <p xml:id="imp_art_23_P99mof_CCX9D5">Article 25, paragraph 2, Point (a), first
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                            <subparagraph xml:id="imp_art_23_P99mof_kUIIeV">
-                                <content xml:id="imp_art_23_P99mof_ThoMVz">
-                                    <p xml:id="imp_art_23_P99mof_0615td">Article 25, paragraph 2, Point (b), second
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                        </point>
-                        <point xml:id="imp_art_23_P99mof_fD6PFK">
-                            <num xml:id="imp_art_23_P99mof_g7iGYJ">(b)</num>
-                            <subparagraph xml:id="imp_art_23_P99mof_i4rCY2">
-                                <content xml:id="imp_art_23_P99mof_DJx4Q8">
-                                    <p xml:id="imp_art_23_P99mof_8fYIul">Article 25, paragraph 2, Point (b), first
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                            <list xml:id="imp_art_23_P99mof_SQ8BMd">
-                                <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_LYUT0e">
-                                    <content xml:id="imp_art_23_P99mof_znCsOX">
-                                        <p xml:id="imp_art_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second
-                                            alinea
-                                        </p>
-                                    </content>
-                                </subparagraph>
-                                <indent xml:id="imp_art_23_P99mof_ydKJie">
-                                    <num xml:id="imp_art_23_P99mof_hERt8s">(i)</num>
-                                    <content xml:id="imp_art_23_P99mof_QQsneg">
-                                        <p xml:id="imp_art_23_P99mof_Fkz4lv">Article 25, paragraph 2, Point (b), first
-                                            indent
-                                        </p>
-                                    </content>
-                                </indent>
-                                <indent xml:id="imp_art_23_P99mof_2zx3yF">
-                                    <num xml:id="imp_art_23_P99mof_HS4TKc">(ii)</num>
-                                    <content xml:id="imp_art_23_P99mof_cXJL5d">
-                                        <p xml:id="imp_art_23_P99mof_Qx99ji">Article 25, paragraph 2, Point (b), second
-                                            indent
-                                        </p>
-                                    </content>
-                                </indent>
-                            </list>
-                        </point>
-                        <point xml:id="imp_art_23_P99mof_lHSKlW">
-                            <num xml:id="imp_art_23_P99mof_pHLgiE">(c)</num>
-                            <subparagraph xml:id="imp_art_23_P99mof_aVESKN">
-                                <content xml:id="imp_art_23_P99mof_NdRXK8">
-                                    <p xml:id="imp_art_23_P99mof_NEWqze">Article 25, paragraph 2, Point (c), first
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                            <subparagraph xml:id="imp_art_23_P99mof_m5xD3y">
-                                <content xml:id="imp_art_23_P99mof_0u6LpQ">
-                                    <p xml:id="imp_art_23_P99mof_pPg6PJ">Article 25, paragraph 2, Point (c), second
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                        </point>
-                    </list>
-                </paragraph>
-                <paragraph xml:id="imp_art_23_P99mof_h8IbPR">
-                    <num xml:id="imp_art_23_P99mof_nCaALw">3.</num>
-                    <content xml:id="imp_art_23_P99mof_bsE5nj">
-                        <p xml:id="imp_art_23_P99mof_fq1R1F">Article 25, paragraph 3</p>
-                    </content>
-                </paragraph>
-            </article>
             <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
                 <content xml:id="clause_1__content">
                     <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly

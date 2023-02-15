@@ -28,15 +28,26 @@
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="_BEL_BRU"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
-                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"
+                             xml:id="_BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL"
+                                 showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP"
+                                 showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM"
+                                 showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"
+                         xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType"
+                              showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"
+                              xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
+                              showAs="en" xml:id="language"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP"
+                            showAs="introductory part" xml:id="_INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP"
+                            showAs="closing part" xml:id="_WRP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -54,7 +65,8 @@
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">
                 <p xml:id="coverpage__container_1__p">
-                    <img alt="European Commission" src="data:image/png;base64" title="European Commission" xml:id="coverpage__container_1__p__img"/>
+                    <img alt="European Commission" src="data:image/png;base64" title="European Commission"
+                         xml:id="coverpage__container_1__p__img"/>
                 </p>
             </container>
             <longTitle xml:id="coverpage__longtitle">
@@ -140,7 +152,7 @@
         </preamble>
         <body xml:id="body">
             <article leos:deletable="true" leos:editable="true" xml:id="art_1">
-                <num leos:editable="false" xml:id="art_1__num">Article 1</num>
+                <num xml:id="art_1__num">Article 1</num>
                 <heading xml:id="art_1__heading">Scope</heading>
                 <paragraph xml:id="art_1__para_1">
                     <num xml:id="art_1__para_1__num">1.</num>
@@ -155,122 +167,106 @@
                 <paragraph xml:id="art_2__para_1">
                     <content xml:id="art_2__para_1__content">
                         <p xml:id="art_2__para_1__content__p">This Regulation shall enter into force on the [...] day
-                            following that of its publication in the <i xml:id="art_2__para_1__content__p__i">Official
-                                Journal of the European Union</i>.
+                            following that of its publication in the
+                            <i xml:id="art_2__para_1__content__p__i">Official Journal of the European Union</i>
+                            .
                         </p>
                     </content>
                 </paragraph>
-            </article>
-
-            <article leos:deletable="true" leos:editable="true" xml:id="_imp_art_1_Cl46eZ">
-                <num xml:id="imp_art_23_P99mof_l82HBa">Article 3</num>
-                <heading xml:id="imp_art_23_P99mof_sxMEnk">heading article</heading>
-                <paragraph xml:id="imp_art_23_P99mof_aAN1ei">
-                    <num xml:id="imp_art_23_P99mof_J4LSx4">1.</num>
-                    <subparagraph xml:id="imp_art_23_P99mof_bMsjS9">
-                        <content xml:id="imp_art_23_P99mof_dP8nUz">
-                            <p xml:id="imp_art_23_P99mof_mAXTwB">Article 25, paragraph 1, first subparagraph</p>
-                        </content>
-                    </subparagraph>
-                </paragraph>
-                <paragraph xml:id="imp_art_23_P99mof_58pYPx">
-                    <num xml:id="imp_art_23_P99mof_h0d1hy">2.</num>
-                    <list xml:id="imp_art_23_P99mof_u93htc">
-                        <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_Qk0CtG">
-                            <content xml:id="imp_art_23_P99mof_prZB8Z">
-                                <p xml:id="imp_art_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
+                <paragraph xml:id="dummy6">
+                    <num xml:id="dummy1">1.</num>
+                    <list xml:id="dummy7">
+                        <subparagraph refersTo="~_INP" xml:id="dummy2">
+                            <content xml:id="dummy8">
+                                <p xml:id="dummy3">The Commission shall be empowered to adopt a delegated act in
+                                    accordance with
+                                    Article 149 to provide for a European code of conduct on partnership (the 'code
+                                    of conduct') in order to support and facilitate Member States in the
+                                    organisation of partnership in accordance with paragraphs 1 and 2 of this
+                                    Article. The code of conduct shall set out the framework within which the Member
+                                    States, in accordance with their institutional and legal framework as well as
+                                    their national and regional competences, shall pursue the implementation of
+                                    partnership. The code of conduct, while fully respecting the principles of
+                                    subsidiarity and proportionality, shall lay down the following elements:
+                                </p>
                             </content>
                         </subparagraph>
-                        <point xml:id="imp_art_23_P99mof_zfNq9s">
-                            <num xml:id="imp_art_23_P99mof_FC1tcm">(a)</num>
-                            <subparagraph xml:id="imp_art_23_P99mof_C0cyPH">
-                                <content xml:id="imp_art_23_P99mof_bwovMa">
-                                    <p xml:id="imp_art_23_P99mof_CCX9D5">Article 25, paragraph 2, Point (a), first
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                            <subparagraph xml:id="imp_art_23_P99mof_kUIIeV">
-                                <content xml:id="imp_art_23_P99mof_ThoMVz">
-                                    <p xml:id="imp_art_23_P99mof_0615td">Article 25, paragraph 2, Point (b), second
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
+                        <point xml:id="dummy9">
+                            <num xml:id="dummy4">(a)</num>
+                            <content xml:id="dummy10">
+                                <p xml:id="dummy5">the main principles concerning transparent procedures to be followed
+                                    for the
+                                    identification of the relevant partners including, where appropriate, their
+                                    umbrella organisations in order to facilitate Member States in designating
+                                    the most representative relevant partners, in accordance with their
+                                    institutional and legal framework;
+                                </p>
+                            </content>
                         </point>
-                        <point xml:id="imp_art_23_P99mof_fD6PFK">
-                            <num xml:id="imp_art_23_P99mof_g7iGYJ">(b)</num>
-                            <subparagraph xml:id="imp_art_23_P99mof_i4rCY2">
-                                <content xml:id="imp_art_23_P99mof_DJx4Q8">
-                                    <p xml:id="imp_art_23_P99mof_8fYIul">Article 25, paragraph 2, Point (b), first
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                            <list xml:id="imp_art_23_P99mof_SQ8BMd">
-                                <subparagraph refersTo="~_INP" xml:id="imp_art_23_P99mof_LYUT0e">
-                                    <content xml:id="imp_art_23_P99mof_znCsOX">
-                                        <p xml:id="imp_art_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second
-                                            alinea
-                                        </p>
-                                    </content>
-                                </subparagraph>
-                                <indent xml:id="imp_art_23_P99mof_ydKJie">
-                                    <num xml:id="imp_art_23_P99mof_hERt8s">(i)</num>
-                                    <content xml:id="imp_art_23_P99mof_QQsneg">
-                                        <p xml:id="imp_art_23_P99mof_Fkz4lv">Article 25, paragraph 2, Point (b), first
-                                            indent
-                                        </p>
-                                    </content>
-                                </indent>
-                                <indent xml:id="imp_art_23_P99mof_2zx3yF">
-                                    <num xml:id="imp_art_23_P99mof_HS4TKc">(ii)</num>
-                                    <content xml:id="imp_art_23_P99mof_cXJL5d">
-                                        <p xml:id="imp_art_23_P99mof_Qx99ji">Article 25, paragraph 2, Point (b), second
-                                            indent
-                                        </p>
-                                    </content>
-                                </indent>
-                            </list>
-                        </point>
-                        <point xml:id="imp_art_23_P99mof_lHSKlW">
-                            <num xml:id="imp_art_23_P99mof_pHLgiE">(c)</num>
-                            <subparagraph xml:id="imp_art_23_P99mof_aVESKN">
-                                <content xml:id="imp_art_23_P99mof_NdRXK8">
-                                    <p xml:id="imp_art_23_P99mof_NEWqze">Article 25, paragraph 2, Point (c), first
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                            <subparagraph xml:id="imp_art_23_P99mof_m5xD3y">
-                                <content xml:id="imp_art_23_P99mof_0u6LpQ">
-                                    <p xml:id="imp_art_23_P99mof_pPg6PJ">Article 25, paragraph 2, Point (c), second
-                                        alinea
-                                    </p>
-                                </content>
-                            </subparagraph>
-                        </point>
+                        <subparagraph refersTo="~_WRP" xml:id="dummy11">
+                            <content xml:id="dummy12">
+                                <p xml:id="dummy13">The provisions of the code of conduct shall not in any way contradict the
+                                    relevant provisions of this Regulation or the Fund-specific rules.
+                                </p>
+                            </content>
+                        </subparagraph>
                     </list>
+
                 </paragraph>
-                <paragraph xml:id="imp_art_23_P99mof_h8IbPR">
-                    <num xml:id="imp_art_23_P99mof_nCaALw">3.</num>
-                    <content xml:id="imp_art_23_P99mof_bsE5nj">
-                        <p xml:id="imp_art_23_P99mof_fq1R1F">Article 25, paragraph 3</p>
-                    </content>
+                <paragraph xml:id="dummy14">
+                    <num xml:id="dummy15">2.</num>
+                    <list xml:id="dummy16">
+                        <subparagraph refersTo="~_INP" xml:id="dummy17">
+                            <content xml:id="dummy18">
+                                <p xml:id="dummy19">The Commission shall be empowered to adopt a delegated act in
+                                    accordance with
+                                    Article 149 to provide for a European code of conduct on partnership (the 'code
+                                    of conduct') in order to support and facilitate Member States in the
+                                    organisation of partnership in accordance with paragraphs 1 and 2 of this
+                                    Article. The code of conduct shall set out the framework within which the Member
+                                    States, in accordance with their institutional and legal framework as well as
+                                    their national and regional competences, shall pursue the implementation of
+                                    partnership. The code of conduct, while fully respecting the principles of
+                                    subsidiarity and proportionality, shall lay down the following elements:
+                                </p>
+                            </content>
+                        </subparagraph>
+                        <point xml:id="dummy20">
+                            <num xml:id="dummy21">(a)</num>
+                            <content xml:id="dummy22">
+                                <p xml:id="dummy23">the main principles concerning transparent procedures to be followed
+                                    for the
+                                    identification of the relevant partners including, where appropriate, their
+                                    umbrella organisations in order to facilitate Member States in designating
+                                    the most representative relevant partners, in accordance with their
+                                    institutional and legal framework;
+                                </p>
+                            </content>
+                        </point>
+                        <subparagraph refersTo="~_WRP" xml:id="dummy24">
+                            <content xml:id="dummy25">
+                                <p xml:id="dummy26">The provisions of the code of conduct shall not in any way contradict the
+                                    relevant provisions of this Regulation or the Fund-specific rules.
+                                </p>
+                            </content>
+                        </subparagraph>
+                    </list>
+
                 </paragraph>
             </article>
-            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1"
+                    leos:selectedoption="1" xml:id="clause_1">
                 <content xml:id="clause_1__content">
                     <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly
                         applicable in all Member States.
                     </p>
                 </content>
             </clause>
-
         </body>
         <conclusions xml:id="conclusions">
-            <p xml:id="conclusions__p_1">Done at <location refersTo="~_BEL_BRU" xml:id="conclusions__p__location_1">
-                Brussels</location>,
+            <p xml:id="conclusions__p_1">Done at
+                <location refersTo="~_BEL_BRU" xml:id="conclusions__p__location_1">Brussels</location>
+                ,
             </p>
             <block name="signatory" xml:id="conclusions__block_1">
                 <signature xml:id="conclusions__block_1__signature_1">
