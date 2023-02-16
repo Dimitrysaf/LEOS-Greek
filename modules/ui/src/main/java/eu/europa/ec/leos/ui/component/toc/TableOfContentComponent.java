@@ -103,6 +103,7 @@ import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.teemusa.gridextensions.client.tableselection.TableSelectionState.TableSelectionMode;
 import org.vaadin.teemusa.gridextensions.tableselection.TableSelectionModel;
+import org.w3c.dom.Node;
 
 import javax.inject.Provider;
 import java.time.Instant;
@@ -152,6 +153,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     public static final DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final float TOC_MIN_WIDTH = 190F;
     private static final int MAX_CHECKIN_COMMENTS = 15;
+    private static final int MAX_DEPTH = 3;
 
     enum POINT_NUMBERING_TYPE {
         BULLET("bullet", NumberingType.BULLET_NUM),
@@ -810,8 +812,12 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 	}
 
     private boolean isArticleBiggerThanDefinitionDepth(TableOfContentItemVO item) {
+        Node indentNode = XercesUtils.getFirstDescendant(item.getNode(), Arrays.asList(INDENT));
+        int depth = indentNode != null ? XercesUtils.getPointDepth(indentNode) : 0;
+
         return getTagValueFromTocItemVo(item).equals(ARTICLE) // is article
-                && XercesUtils.getFirstDescendant(item.getNode(), Arrays.asList(INDENT)) != null; // has INDENT html tag
+                && TocItemTypeName.REGULAR.equals(item.getTocItemType())
+                &&  depth > MAX_DEPTH ; // has INDENT html tag
     }
 
 
@@ -1564,7 +1570,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                     ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
                             messageHelper.getMessage("toc.edit.window.article.change"),
                             messageHelper.getMessage("toc.edit.window.article.3levels.deep"),
-                            messageHelper.getMessage("toc.edit.window.delete.confirmation.confirm"),
+                            messageHelper.getMessage("toc.edit.window.article.close"),
                             null,
                             null);
                     confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
