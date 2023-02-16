@@ -559,7 +559,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 eventBus.post(new RefreshElementEvent(elementId, elementTagName, newElementContent));
 
                 eventBus.post(new DocumentUpdatedEvent());
-                eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "operation.financial.statement.block.updated"));
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
             LOG.info("Element '{}' in FinancialStatement {} id {}, saved in {} milliseconds ({} sec)", elementId, financialStatement.getName(),
