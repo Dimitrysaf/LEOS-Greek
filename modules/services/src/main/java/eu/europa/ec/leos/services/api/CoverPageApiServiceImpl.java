@@ -2,23 +2,28 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +32,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
-
-@Service
+@Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {
 
     @Autowired
     ProposalService proposalService;
-
+    @Autowired
+    DocumentViewService documentViewService;
     @Autowired
     DocumentContentService documentContentService;
     @Autowired
@@ -51,7 +55,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public DocumentViewResponse getCoverPageDocument(String documentRef) {
+    public DocumentViewResponse getDocument(String documentRef) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         VersionInfoVO versionInfoVO = getVersionInfo(proposal);
         String editableXml = getEditableXml(proposal);
@@ -59,10 +63,45 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> getToc(String documentRef) {
+    public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
-        this.setStructureContext(proposal.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(proposal.getMetadata().getOrError(() -> "Cover Page metadata is required!").getDocTemplate());
         return this.proposalService.getCoverPageTableOfContent(proposal, TocMode.SIMPLIFIED);
+    }
+
+    @Override
+    public String getElement(String documentRef, String elementName, String elementId) {
+        return null;
+    }
+
+    @Override
+    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
+        return null;
+    }
+
+    @Override
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
+        return null;
+    }
+
+    @Override
+    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public List<XmlDocument> getRecentMinorVersions(String documentId, String documentRef) {
+        return null;
+    }
+
+    @Override
+    public List<VersionVO> getVersionsData(String documentId, String documentRef) {
+        return null;
     }
 
     @Override
@@ -70,6 +109,36 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
         this.setStructureContext(proposal.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.structureContext.get().getTocItems();
+    }
+
+    @Override
+    public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
+        return null;
+    }
+
+    @Override
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) {
+        return null;
+    }
+
+    @Override
+    public DocumentViewResponse showVersion(String versionId) {
+        return null;
+    }
+
+    @Override
+    public String compare(String newVersionId, String oldVersionId) {
+        return null;
+    }
+
+    @Override
+    public DocumentViewResponse restoreToVersion(String documentRef, String versionId) {
+        return null;
+    }
+
+    @Override
+    public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
+        return null;
     }
 
     private byte[] getContent(Proposal proposal) {

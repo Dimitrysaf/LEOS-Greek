@@ -1,5 +1,9 @@
 package eu.europa.ec.leos.services.dto.response;
 
+import eu.europa.ec.leos.model.action.VersionVO;
+
+import java.util.List;
+
 public class DocumentViewResponse {
 
     String proposalRef;

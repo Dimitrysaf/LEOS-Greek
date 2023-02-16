@@ -1,14 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 
-import java.util.List;
+public interface BillApiService extends BaseDocumentService<Bill> {
 
-public interface BillApiService {
-
-    DocumentViewResponse getBillDocument(String documentRef);
-    List<TableOfContentItemVO> getToc(String documentRef);
-    List<TocItem> getTocItems(String documentRef);
 }

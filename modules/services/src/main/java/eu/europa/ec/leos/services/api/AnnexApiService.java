@@ -1,34 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.domain.vo.SearchMatchVO;
-import eu.europa.ec.leos.model.action.VersionVO;
-import eu.europa.ec.leos.services.dto.request.Position;
-import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.response.EditElementResponse;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
 
-import java.util.List;
+public interface AnnexApiService extends BaseDocumentService<Annex> {
 
-public interface AnnexApiService {
-    String getAnnexElement(String documentRef, String elementName, String elementId);
-    byte[] deleteAnnexBlock(String documentRef, String elementName, String elementId) throws Exception;
-    byte[] saveAnnexElement(String documentRef, String elementId, String elementName, String elementFragment);
-    byte[] insertAnnexElement(String documentRef, String elementName, String elementId, Position position);
-    byte[] mergeElement(String documentRef, String elementContent , String  elementTag , String elementId) throws  Exception;
-    List<Annex> getRecentMinorVersions(String documentId, String  documentRef);
-    List<VersionVO> getVersionsData(String documentId, String documentRef);
-    void saveDocumentVersion(String documentRef);
-    List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
-    List<TocItem> getTocItems(String documentRef);
-    DocumentViewResponse getAnnex(String documentRef);
-    List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType);
-    List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords);
-    String showVersion(String versionId);
-    String compare(String newVersionId, String oldVersionId);
-    byte[] restoreToVersion(String documentRef, String versionId);
-    EditElementResponse editElement(String documentRef, String elementId, String  elementTagName);
 }

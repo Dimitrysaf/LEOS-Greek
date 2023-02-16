@@ -1,7 +1,6 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.api.CoverPageApiService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -29,7 +28,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> getCoverPage(@PathVariable("documentRef") String documentRef) {
         try {
-            DocumentViewResponse coverPageDocument = this.coverPageApiService.getCoverPageDocument(documentRef);
+            DocumentViewResponse coverPageDocument = this.coverPageApiService.getDocument(documentRef);
             return  ResponseEntity.ok().body(coverPageDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill document - " + e.getMessage());
@@ -44,7 +43,7 @@ public class CoverPageController {
                                               @RequestParam("tocMode") TocMode tocMode
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef);
+            List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef,tocMode);
             return  ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());

@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.text.Document;
 import java.util.List;
 
 @RestController
@@ -47,7 +46,7 @@ public class AnnexController {
                                                    @PathVariable("elementId") String elementId,
                                                    @RequestBody String elementContent) {
         try {
-            byte[] annexXml = this.annexAPIService.saveAnnexElement(documentRef,elementId,elementName,elementContent);
+            DocumentViewResponse annexXml = this.annexAPIService.saveElement(documentRef,elementId,elementName,elementContent);
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());
@@ -56,13 +55,13 @@ public class AnnexController {
 
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_XML_VALUE )
+    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
     public ResponseEntity<Object> deleteAnnexElement(@PathVariable("documentRef") String documentRef,
                                                      @PathVariable("elementName") String elementName,
                                                      @PathVariable("elementId") String elementId) {
         try {
-            byte[] annexXml = this.annexAPIService.deleteAnnexBlock(documentRef,elementName,elementId);
+            DocumentViewResponse annexXml = this.annexAPIService.deleteBlock(documentRef,elementName,elementId);
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
@@ -73,14 +72,14 @@ public class AnnexController {
     }
 
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_XML_VALUE )
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
     public ResponseEntity<Object> insertAnnexElement(@PathVariable("documentRef") String documentRef,
                                                      @PathVariable("elementName") String elementName,
                                                      @PathVariable("elementId") String elementId,
                                                      @RequestBody InsertElementRequest request) {
         try {
-            byte[] annexXml = this.annexAPIService.insertAnnexElement(documentRef,elementName,elementId,request.getPosition());
+            DocumentViewResponse annexXml = this.annexAPIService.insertElement(documentRef,elementName,elementId,request.getPosition());
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
@@ -89,17 +88,17 @@ public class AnnexController {
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_XML_VALUE )
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
     public ResponseEntity<Object> mergeAnnexElement(@PathVariable("documentRef") String documentRef,
                                                     @PathVariable("elementName") String elementTag,
                                                     @PathVariable("elementId") String elementId,
                                                     @RequestBody String  elementContent) {
         try {
-            byte[] annexXml = this.annexAPIService.mergeElement(documentRef,elementContent,elementTag,elementId);
+            DocumentViewResponse annexXml = this.annexAPIService.mergeElement(documentRef,elementContent,elementTag,elementId);
             return  ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting trying to merge on annex - " + e.getMessage());
+            LOG.error("Error occurred while getting trying to merge on bill - " + e.getMessage());
             return  new ResponseEntity<>("Unexpected error occurred while merging elements ",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -128,7 +127,7 @@ public class AnnexController {
                                                             @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            List<VersionVO> versions = this.annexAPIService.saveAnnexDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            List<VersionVO> versions = this.annexAPIService.saveDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return  ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
@@ -186,7 +185,7 @@ public class AnnexController {
     @ResponseBody
     public ResponseEntity<Object> getAnnex(@PathVariable("documentRef") String documentRef) {
         try {
-            DocumentViewResponse annex = this.annexAPIService.getAnnex(documentRef);
+            DocumentViewResponse annex = this.annexAPIService.getDocument(documentRef);
             return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());
@@ -215,7 +214,7 @@ public class AnnexController {
     @ResponseBody
     public ResponseEntity<Object> showAnnexVersion(@PathVariable("versionId") String versionId) {
         try {
-            String  contentHtml = this.annexAPIService.showVersion(versionId);
+            DocumentViewResponse contentHtml = this.annexAPIService.showVersion(versionId);
             return  ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex version {} , error {}: - ",versionId,e.getMessage());
@@ -243,7 +242,7 @@ public class AnnexController {
     public ResponseEntity<Object> restoreAnnexVersion(@PathVariable("documentRef") String documentRef,
                                                       @PathVariable("targetVersion") String targetVersion) {
         try {
-            byte[]  annex = this.annexAPIService.restoreToVersion(documentRef, targetVersion);
+            DocumentViewResponse annex = this.annexAPIService.restoreToVersion(documentRef, targetVersion);
             return  ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());

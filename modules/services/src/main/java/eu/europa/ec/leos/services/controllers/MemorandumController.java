@@ -28,7 +28,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> getMemorandum(@PathVariable("documentRef") String documentRef) {
         try {
-            DocumentViewResponse memorandumDocument = this.memorandumApiService.getMemorandumDocument(documentRef);
+            DocumentViewResponse memorandumDocument = this.memorandumApiService.getDocument(documentRef);
             return  ResponseEntity.ok().body(memorandumDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum document - " + e.getMessage());
@@ -43,7 +43,7 @@ public class MemorandumController {
                                               @RequestParam("tocMode") TocMode tocMode
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef);
+            List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef,tocMode);
             return  ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());

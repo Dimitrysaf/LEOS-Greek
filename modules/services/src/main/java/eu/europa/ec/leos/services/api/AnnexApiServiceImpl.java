@@ -1,25 +1,21 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
-import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
-import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -27,21 +23,15 @@ import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
-import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.toc.StructureContext;
-import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,9 +39,8 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_N
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
-@Service
+@Service("annex")
 public class AnnexApiServiceImpl implements AnnexApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
     private Provider<StructureContext> structureContext;
@@ -72,14 +61,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Autowired
     ContentComparatorService compareService;
     @Autowired
-    CloneContext cloneContext;
-    @Autowired
-    ProposalService proposalService;
-    @Autowired
-    PackageService packageService;
-    @Autowired
-    UserHelperAPI userHelper;
-    private static final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    DocumentViewService<Annex> documentViewService;
 
 
     AnnexApiServiceImpl(Provider<StructureContext> structureContext) {
@@ -87,47 +69,47 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public String getAnnexElement(String documentRef, String elementName, String elementId) {
+    public String getElement(String documentRef, String elementName, String elementId) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         String element = this.elementProcessor.getElement(annex, elementName, elementId);
         return element;
     }
 
     @Override
-    public byte[] deleteAnnexBlock(String documentRef, String elementName, String elementId) throws Exception {
+    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex, elementId, elementName);
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return getContent(annex);
+        return documentViewService.getDocumentView(annex);
 
     }
 
     @Override
-    public byte[] saveAnnexElement(String documentRef, String elementId, String elementName, String elementContent) {
+    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
 
         //TODO add splitted content functionality since
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
-        return getContent(annex);
+        return documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public byte[] insertAnnexElement(String documentRef, String elementName, String elementId, Position position) {
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = this.annexProcessor.insertAnnexBlock(annex, elementId, elementName, position.equals(Position.BEFORE));
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
 
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return getContent(annex);
+        return documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public byte[] mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
+    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         Element mergeOnElement = annexProcessor.getMergeOnElement(annex, elementContent, elementTag, elementId);
@@ -137,7 +119,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Annex {} id {})", elementId, mergeOnElement.getElementId(), annex.getName(), annex.getId());
         }
-        return updatedXmlContent;
+        return documentViewService.getDocumentView(annex);
     }
 
     @Override
@@ -149,11 +131,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public List<VersionVO> getVersionsData(String documentId, String documentRef) {
         return this.annexService.getAllVersions(documentId, documentRef);
-    }
-
-    @Override
-    public void saveDocumentVersion(String documentRef) {
-
     }
 
     @Override
@@ -171,24 +148,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse getAnnex(String documentRef) {
+    public DocumentViewResponse getDocument(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        Proposal proposal = getProposalFromPackage(annex);
-        String editableXml = getEditableXml(annex,proposal);
-        VersionInfoVO versionInfoVO = getVersionInfo(annex);
-        String baseRevisionId = annex.getBaseRevisionId();
-
-        if(!StringUtils.isEmpty(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
-            String versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
-            String versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
-            versionInfoVO.setRevisedBaseVersion(versionLabel);
-            versionInfoVO.setBaseVersionTitle(versionComment);
-        }
-        return new DocumentViewResponse(proposal.getOriginRef(),editableXml,versionInfoVO);
+        return this.documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType) {
+    public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Annex newVersion = this.annexService.createVersion(annex.getId(), versionType, checkInComment);
         return this.annexService.getAllVersions(annex.getId(), documentRef);
@@ -207,12 +173,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public String showVersion(String versionId) {
+    public DocumentViewResponse showVersion(String versionId) {
         Annex annex = this.annexService.findAnnexVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(annex,
                 "",
                 securityContext.getPermissions(annex));
-        return versionContent;
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(annex);
+        return new DocumentViewResponse(null,versionContent,versionInfoVO);
     }
 
     @Override
@@ -223,12 +190,12 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public byte[] restoreToVersion(String documentRef, String versionId) {
+    public DocumentViewResponse restoreToVersion(String documentRef, String versionId) {
         Annex version = annexService.findAnnexVersion(versionId);
         Annex annex = annexService.findAnnexByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
         Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
-        return getContent(updatedAnnex);
+        return this.documentViewService.getDocumentView(updatedAnnex);
     }
 
     @Override
@@ -269,46 +236,5 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
-
-    private String getEditableXml(Annex document, Proposal proposal) {
-        byte[] coverPageContent = new byte[0];
-        byte[] annexContent = document.getContent().get().getSource().getBytes();
-        boolean isCoverPageExists = documentContentService.isCoverPageExists(annexContent);
-        if(!isCoverPageExists) {
-            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-            coverPageContent = documentContentService.getCoverPageContent(xmlContent);
-        }
-        String editableXml = documentContentService.toEditableContent(document,
-                "", securityContext, coverPageContent);
-        return StringEscapeUtils.unescapeXml(editableXml);
-    }
-
-    private Proposal getProposalFromPackage(Annex annex) {
-        Proposal proposal = null;
-        if (annex != null) {
-            LeosPackage leosPackage = this.packageService.findPackageByDocumentId(annex.getId());
-            proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
-        }
-        return proposal;
-    }
-
-    private VersionInfoVO getVersionInfo(Annex document) {
-        String userId = document.getLastModifiedBy();
-        User user = userHelper.getUser(userId);
-
-        String versionLabel = null;
-        String versionComment = null;
-        String baseRevisionId = document.getBaseRevisionId();
-        if(StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
-            versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
-            versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
-        }
-        return new VersionInfoVO(
-                document.getVersionLabel(),
-                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
-                dateFormatter.format(document.getLastModificationInstant()),
-                document.getVersionType(), versionLabel, versionComment);
-    }
-
 
 }
