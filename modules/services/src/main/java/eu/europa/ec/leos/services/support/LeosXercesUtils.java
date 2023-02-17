@@ -118,7 +118,8 @@ public class LeosXercesUtils {
         Element portraitDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
 
         NodeList bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(MAIN_BODY));
-        if (bodyNodes.getLength() == 0) {
+        boolean hasLandscapeNode = XercesUtils.hasNodeContainingAttributeValue(bodyNodes, CLASS_ATTR, ORIENTATION_LANDSCAPE);
+        if (bodyNodes.getLength() == 0 || !hasLandscapeNode) {
             return XercesUtils.nodeToByteArray(document);
         }
         Node mainBody = bodyNodes.item(0);
@@ -154,6 +155,8 @@ public class LeosXercesUtils {
                     }
                     prevElement = ORIENTATION_PORTRAIT;
                 }
+            } else if (prevElement != null) {
+                mainBody.appendChild(node);
             }
         }
 
