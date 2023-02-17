@@ -43,6 +43,7 @@ define(function leosIndentMandatePluginModule(require) {
     let modeRealTimeIndent = true;
 
     let indentationStatus = {
+        indentAllowed: true,
         original: {
             num: undefined,
             level: -1,
@@ -125,6 +126,9 @@ define(function leosIndentMandatePluginModule(require) {
                     refresh: this.isIndent ?
                         function(editor, path) {
                             _initIndentStatus(editor);
+                            if (!indentationStatus.indentAllowed) {
+                                return TRISTATE_DISABLED;
+                            }
                             if (this.getContext(path) == null) {
                                 return;
                             }
@@ -137,6 +141,9 @@ define(function leosIndentMandatePluginModule(require) {
                             }
                         } : function(editor, path) {
                             _initIndentStatus(editor);
+                            if (!indentationStatus.indentAllowed) {
+                                return TRISTATE_DISABLED;
+                            }
                             if (this.getContext(path) == null) {
                                 return;
                             }
@@ -254,6 +261,14 @@ define(function leosIndentMandatePluginModule(require) {
             let source = $(editor.element.$);
             if (leosPluginUtils.isSubpoint(editor) && leosPluginUtils.isFirstChild(editor)) {
                 source = $(editor.element.$).parents(NUMBERED_ITEM).first();
+            }
+            // means that this element is not included in paragraph, point or indent, indentation should be disabled
+            if (!source || source.length == 0
+                || ($(editor.element.$).parents(NUMBERED_ITEM).length == 0 && leosPluginUtils.isFirstSubParagraph(editor))) {
+                indentationStatus.indentAllowed = false;
+                return;
+            } else {
+                indentationStatus.indentAllowed = true;
             }
             indentationStatus.original.realPosition = source.index();
             indentationStatus.original.parent = source.parent().attr('id');

@@ -638,6 +638,11 @@ define(function leosPluginUtilsModule(require) {
             || ($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() == LIST && $(editor.element.$).parent().prevAll(ITEMS_SELECTOR).length == 0));
     }
 
+    function _isFirstSubParagraph(editor) {
+        return _isSubpoint(editor) && (($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() != LIST)
+            || ($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() == LIST && $(editor.element.$).parent().prevAll(ITEMS_SELECTOR).length == 0));
+    }
+
     function _getCurrentNumValue(editor) {
         var rootElt = $(editor.element.$);
         var pointInHtml = (_isSubpoint(editor) && _isFirstChild(editor)) ? rootElt.parents(NUMBERED_ITEM).first() : rootElt.find(HTML_POINT).first();
@@ -1087,6 +1092,7 @@ define(function leosPluginUtilsModule(require) {
         isDefinitionArticle: _isDefinitionArticle,
         getMaxListLevel: _getMaxListLevel,
         getMaxListLevelDepth: _getMaxListLevelDepth,
+        isFirstSubParagraph: _isFirstSubParagraph,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
