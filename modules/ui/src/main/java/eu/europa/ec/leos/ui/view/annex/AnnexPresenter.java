@@ -576,6 +576,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             if (InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
                 exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
                 exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, currentDocument));
+                exportOptions.setWithCoverPage(true);
             } else {
                 boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isRevisionAnnex(currentDocument);
                 if (!isLiveDiffing) {
@@ -583,10 +584,10 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 }
                 exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
                 exportOptions.setExportVersions(new ExportVersions<>(original, currentDocument));
+                exportOptions.setWithCoverPage(false);
             }
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
-            exportOptions.setWithCoverPage(false);
             LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
             BillContext context = billContextProvider.get();
             context.usePackage(leosPackage);
