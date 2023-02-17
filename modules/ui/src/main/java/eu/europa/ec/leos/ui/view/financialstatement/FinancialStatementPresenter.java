@@ -559,7 +559,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 eventBus.post(new RefreshElementEvent(elementId, elementTagName, newElementContent));
 
                 eventBus.post(new DocumentUpdatedEvent());
-                eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "operation.financial.statement.block.updated"));
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
             LOG.info("Element '{}' in FinancialStatement {} id {}, saved in {} milliseconds ({} sec)", elementId, financialStatement.getName(),
@@ -652,8 +651,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                 VersionType.MINOR, messageHelper.getMessage("operation.financial.block.inserted"));
         if (financialStatement != null) {
-            eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.financial.block.inserted",
-                    StringUtils.capitalize(tagName)));
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -677,8 +674,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                     VersionType.MINOR, messageHelper.getMessage("operation.financial.block.deleted"));
             if (financialStatement != null) {
-                eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.financial.block.deleted",
-                        StringUtils.capitalize(tagName)));
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
