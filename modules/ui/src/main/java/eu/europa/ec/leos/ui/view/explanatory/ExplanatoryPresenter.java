@@ -141,6 +141,7 @@ import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -244,6 +245,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private final SearchService searchService;
     private final ExportPackageService exportPackageService;
     private final NotificationService notificationService;
+    private final ConfigurationHelper cfgHelper;
     private DownloadExportRequest downloadExportRequest;
 
     private String strDocumentVersionSeriesId;
@@ -261,18 +263,18 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     @Autowired
     ExplanatoryPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
-            ExplanatoryScreen explanatoryScreen,
-            ExplanatoryService explanatoryService, PackageService packageService, ExportService exportService,
-            Provider<BillContext> billContextProvider, Provider<ExplanatoryContext> explanatoryContextProvider, ElementProcessor<Explanatory> elementProcessor,
-            ExplanatoryProcessor explanatoryProcessor, DocumentContentService documentContentService, UrlBuilder urlBuilder,
-            ComparisonDelegate<Explanatory> comparisonDelegate, UserHelper userHelper,
-            MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider,
-            CoEditionHelper coEditionHelper, EventBus leosApplicationEventBus, UuidHelper uuidHelper,
-            Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
-            UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
-            ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
-            NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate,
-            TemplateConfigurationService templateConfigurationService) {
+                         ExplanatoryScreen explanatoryScreen,
+                         ExplanatoryService explanatoryService, PackageService packageService, ExportService exportService,
+                         Provider<BillContext> billContextProvider, Provider<ExplanatoryContext> explanatoryContextProvider, ElementProcessor<Explanatory> elementProcessor,
+                         ExplanatoryProcessor explanatoryProcessor, DocumentContentService documentContentService, UrlBuilder urlBuilder,
+                         ComparisonDelegate<Explanatory> comparisonDelegate, UserHelper userHelper,
+                         MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider,
+                         CoEditionHelper coEditionHelper, EventBus leosApplicationEventBus, UuidHelper uuidHelper,
+                         Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
+                         UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
+                         ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
+                         NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate,
+                         TemplateConfigurationService templateConfigurationService) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         LOG.trace("Initializing explanatory presenter...");
         this.explanatoryScreen = explanatoryScreen;
@@ -300,6 +302,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         this.commonDelegate = commonDelegate;
         this.openElementEditors = new ArrayList<>();
         this.templateConfigurationService = templateConfigurationService;
+        this.cfgHelper = cfgHelper;
     }
 
     @Override
@@ -1090,10 +1093,36 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
+
         final Explanatory version = explanatoryService.findExplanatoryVersion(event.getVersionId());
         final byte[] resultXmlContent = getContent(version);
-        explanatoryService.updateExplanatory(getDocument(), resultXmlContent, VersionType.MINOR,
-                messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent,
+                            version.getVersionLabel()), null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    private void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        explanatoryService.updateExplanatory(getDocument(), xmlContent, VersionType.MINOR,
+                messageHelper.getMessage("operation.restore.version", versionLabel));
 
         List<Explanatory> documentVersions = explanatoryService.findVersions(documentId);
         explanatoryScreen.updateTimeLineWindow(documentVersions);
