@@ -1,3 +1,17 @@
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
@@ -11,12 +25,14 @@ import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.response.EditElementResponse;
@@ -38,7 +54,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
-@Service
+@Service("annex")
 public class AnnexApiServiceImpl implements AnnexApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
     private Provider<StructureContext> structureContext;
@@ -59,54 +75,55 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Autowired
     ContentComparatorService compareService;
     @Autowired
-    CloneContext cloneContext;
+    DocumentViewService<Annex> documentViewService;
+
 
     AnnexApiServiceImpl(Provider<StructureContext> structureContext) {
         this.structureContext = structureContext;
     }
 
     @Override
-    public String getAnnexElement(String documentRef, String elementName, String elementId) {
+    public String getElement(String documentRef, String elementName, String elementId) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         String element = this.elementProcessor.getElement(annex, elementName, elementId);
         return element;
     }
 
     @Override
-    public byte[] deleteAnnexBlock(String documentRef, String elementName, String elementId) throws Exception {
+    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex, elementId, elementName);
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return getContent(annex);
+        return documentViewService.getDocumentView(annex);
 
     }
 
     @Override
-    public byte[] saveAnnexElement(String documentRef, String elementId, String elementName, String elementContent) {
+    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
 
         //TODO add splitted content functionality since
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
-        return getContent(annex);
+        return documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public byte[] insertAnnexElement(String documentRef, String elementName, String elementId, Position position) {
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = this.annexProcessor.insertAnnexBlock(annex, elementId, elementName, position.equals(Position.BEFORE));
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
 
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return getContent(annex);
+        return documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public byte[] mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
+    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         Element mergeOnElement = annexProcessor.getMergeOnElement(annex, elementContent, elementTag, elementId);
@@ -116,23 +133,20 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Annex {} id {})", elementId, mergeOnElement.getElementId(), annex.getName(), annex.getId());
         }
-        return updatedXmlContent;
+        return documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public List<Annex> getRecentMinorVersions(String documentId, String documentRef) {
-        Integer recentCount = this.annexService.findRecentMinorVersionsCount(documentId, documentRef);
-        return this.annexService.findRecentMinorVersions(documentId, documentRef, 0, recentCount);
+    public List<Annex> getRecentMinorVersions(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
+        return this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
     }
 
     @Override
-    public List<VersionVO> getVersionsData(String documentId, String documentRef) {
-        return this.annexService.getAllVersions(documentId, documentRef);
-    }
-
-    @Override
-    public void saveDocumentVersion(String documentRef) {
-
+    public List<VersionVO> getVersionsData(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        return this.annexService.getAllVersions(annex.getId(), documentRef);
     }
 
     @Override
@@ -150,12 +164,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public byte[] getAnnex(String documentRef) {
-        return getContent(this.annexService.findAnnexByRef(documentRef));
+    public DocumentViewResponse getDocument(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        return this.documentViewService.getDocumentView(annex);
     }
 
     @Override
-    public List<VersionVO> saveAnnexDocument(String documentRef, String checkInComment, VersionType versionType) {
+    public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Annex newVersion = this.annexService.createVersion(annex.getId(), versionType, checkInComment);
         return this.annexService.getAllVersions(annex.getId(), documentRef);
@@ -174,12 +189,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public String showVersion(String versionId) {
+    public DocumentViewResponse showVersion(String versionId) {
         Annex annex = this.annexService.findAnnexVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(annex,
                 "",
                 securityContext.getPermissions(annex));
-        return versionContent;
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(annex);
+        return new DocumentViewResponse(null,versionContent,versionInfoVO);
     }
 
     @Override
@@ -190,12 +206,12 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public byte[] restoreToVersion(String documentRef, String versionId) {
+    public DocumentViewResponse restoreToVersion(String documentRef, String versionId) {
         Annex version = annexService.findAnnexVersion(versionId);
         Annex annex = annexService.findAnnexByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
         Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
-        return getContent(updatedAnnex);
+        return this.documentViewService.getDocumentView(updatedAnnex);
     }
 
     @Override
@@ -236,4 +252,5 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
+
 }

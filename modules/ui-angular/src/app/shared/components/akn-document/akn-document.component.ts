@@ -55,7 +55,7 @@ export class AknDocumentComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.documentService
       .getDocumentByRef(this.docId, this.docCategory)
-      .subscribe((xml) => this.loadDocument(xml));
+      .subscribe((xml) => this.loadDocument(xml.editableXml));
   }
 
   private loadDocument(xml: string) {

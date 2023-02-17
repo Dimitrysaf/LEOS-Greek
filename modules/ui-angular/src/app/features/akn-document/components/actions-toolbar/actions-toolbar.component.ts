@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { mergeMap, Observable } from 'rxjs';
 
-import { DocumentService } from '@/features/akn-document/services/document.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-actions-toolbar',

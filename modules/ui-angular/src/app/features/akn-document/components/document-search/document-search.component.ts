@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Subject, take, takeUntil } from 'rxjs';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
-import { DocumentService } from '@/features/akn-document/services/document.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-document-search',

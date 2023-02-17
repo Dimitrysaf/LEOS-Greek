@@ -12,14 +12,9 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-package eu.europa.ec.leos.services.api;
+package eu.europa.ec.leos.services.delegates;
 
-import eu.europa.ec.leos.services.dto.request.NodeDropValidationRequest;
-import eu.europa.ec.leos.services.dto.response.NodeValidationResponse;
-import eu.europa.ec.leos.vo.toc.TocItem;
-
-import java.util.List;
-
-public interface TableOfContentService {
-     NodeValidationResponse nodeValidationDrop(NodeDropValidationRequest request);
+public enum ComparisonDisplayMode {
+    SINGLE_COLUMN_MODE,
+    TWO_COLUMN_MODE
 }
