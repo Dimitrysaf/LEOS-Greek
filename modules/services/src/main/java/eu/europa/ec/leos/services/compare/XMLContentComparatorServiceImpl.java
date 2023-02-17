@@ -132,12 +132,17 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
     protected void appendMovedToOrDeletedElement(ContentComparatorContext context) {
         Element softMovedToOrDeletedNewElement = context.getNewElement();
         Node node = softMovedToOrDeletedNewElement.getNode();
+        if(context.getOldContentElements().containsKey(softMovedToOrDeletedNewElement.getTagId().replace(
+                SOFT_DELETE_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
+            Element originalOldElement = context.getOldContentElements().get(softMovedToOrDeletedNewElement.getTagId().replace(
+                    SOFT_DELETE_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
+            node.setTextContent(originalOldElement.getTagContent());
+        }
         String attrName = context.getAttrName();
         String attrValue = getStartTagValueForRemovedElement(softMovedToOrDeletedNewElement, context);
         if (attrName != null && attrValue != null) {
             XercesUtils.addAttribute(node, attrName, attrValue);
         }
-        getChangedElementContent(node, context.getNewElement(), context.getAttrName(), context.getRemovedValue());
         addToResultNode(context, node);
     }
 
