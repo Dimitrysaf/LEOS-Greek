@@ -268,7 +268,7 @@ export class DocumentService implements OnDestroy {
   getDocumentVersionsData(documentType: string, documentRef: string) {
     //FIXME modify this when backend api for version-data is modified not to contain documentId param.
     return this.http.get<Version[]>(
-      `api/secured/${documentType}/${documentRef}/${documentRef}/version-data/`,
+      `api/secured/${documentType}/${documentRef}/version-data`,
     );
   }
 

@@ -2,7 +2,7 @@ import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, withLatestFrom } from 'rxjs';
+import { combineLatest, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { DocumentService } from '@/shared/services/document.service';
@@ -28,6 +28,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
 
   isEditMode = false;
   private unloadStyleSheet?: () => void;
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     private domService: DomService,
@@ -39,7 +40,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.documentRef = params.id;
       this.documentType = this.route.snapshot.data['category'];
       this.doc.setDocumentCategory(this.documentType);
@@ -50,12 +51,16 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     });
 
     this.loadStyleSheet();
-    this.doc.documentView$.pipe().subscribe((documentView) => {
-      this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
-    });
+    this.doc.documentView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
+      });
   }
 
   ngOnDestroy() {
+    this.destroy$.next(null);
+    this.destroy$.complete();
     this.unloadStyleSheet?.();
   }
 
@@ -124,6 +129,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     updatedOn = formatDate(1664193765137, 'dd/mm/yyyy HH:MM', 'en-US');
     this.translate
       .get('page.editor.subtitle', { version, updatedByFull, updatedOn })
+      .pipe(takeUntil(this.destroy$))
       .subscribe((subTitle: string) => {
         this.pageSubTitle = subTitle;
       });

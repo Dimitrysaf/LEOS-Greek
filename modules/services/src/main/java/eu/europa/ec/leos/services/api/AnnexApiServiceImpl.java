@@ -137,14 +137,16 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<Annex> getRecentMinorVersions(String documentId, String documentRef) {
-        Integer recentCount = this.annexService.findRecentMinorVersionsCount(documentId, documentRef);
-        return this.annexService.findRecentMinorVersions(documentId, documentRef, 0, recentCount);
+    public List<Annex> getRecentMinorVersions(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
+        return this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
     }
 
     @Override
-    public List<VersionVO> getVersionsData(String documentId, String documentRef) {
-        return this.annexService.getAllVersions(documentId, documentRef);
+    public List<VersionVO> getVersionsData(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        return this.annexService.getAllVersions(annex.getId(), documentRef);
     }
 
     @Override

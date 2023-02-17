@@ -120,13 +120,11 @@ public class BillController {
 
 
 
-    @GetMapping(value = "/{documentId}/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentId") String documentId,
-                                                   @PathVariable("documentRef") String documentRef
-    ) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
-            List<Bill> bills = this.billApiService.getRecentMinorVersions(documentId,documentRef);
+            List<Bill> bills = this.billApiService.getRecentMinorVersions(documentRef);
             return  ResponseEntity.ok().body(bills);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
@@ -150,13 +148,11 @@ public class BillController {
 
     }
 
-    @GetMapping(value = "/{documentId}/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getVersionData(@PathVariable("documentId") String documentId,
-                                                 @PathVariable("documentRef") String documentRef
-    ) {
+    public ResponseEntity<Object> getVersionData(@PathVariable("documentRef") String documentRef) {
         try {
-            List<VersionVO> versions = this.billApiService.getVersionsData(documentId,documentRef);
+            List<VersionVO> versions = this.billApiService.getVersionsData(documentRef);
             return  ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill versioning data - " + e.getMessage());

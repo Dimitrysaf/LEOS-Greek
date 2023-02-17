@@ -120,13 +120,11 @@ public class AnnexController {
 
 
 
-    @GetMapping(value = "/{documentId}/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentId") String documentId,
-                                                   @PathVariable("documentRef") String documentRef
-    ) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
-            List<Annex> annexes = this.annexAPIService.getRecentMinorVersions(documentId,documentRef);
+            List<Annex> annexes = this.annexAPIService.getRecentMinorVersions(documentRef);
             return  ResponseEntity.ok().body(annexes);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
@@ -150,13 +148,11 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentId}/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
-    public ResponseEntity<Object> getVersionData(@PathVariable("documentId") String documentId,
-                                                 @PathVariable("documentRef") String documentRef
-    ) {
+    public ResponseEntity<Object> getVersionData(@PathVariable("documentRef") String documentRef) {
         try {
-            List<VersionVO> versions = this.annexAPIService.getVersionsData(documentId,documentRef);
+            List<VersionVO> versions = this.annexAPIService.getVersionsData(documentRef);
             return  ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());

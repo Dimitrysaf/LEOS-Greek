@@ -10,6 +10,7 @@ public class DocumentViewResponse {
     String editableXml;
     VersionInfoVO versionInfoVO;
 
+
     public DocumentViewResponse(String proposalRef, String editableXml, VersionInfoVO versionInfoVO) {
         this.proposalRef = proposalRef;
         this.editableXml = editableXml;

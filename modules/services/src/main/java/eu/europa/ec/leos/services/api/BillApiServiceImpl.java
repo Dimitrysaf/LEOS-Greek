@@ -277,14 +277,16 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<Bill> getRecentMinorVersions(String documentId, String documentRef) {
-        Integer recentCount = this.billService.findRecentMinorVersionsCount(documentId, documentRef);
-        return this.billService.findRecentMinorVersions(documentId, documentRef, 0, recentCount);
+    public List<Bill> getRecentMinorVersions(String documentRef) {
+        Bill bill = this.billService.findBillByRef(documentRef);
+        Integer recentCount = this.billService.findRecentMinorVersionsCount(bill.getId(), documentRef);
+        return this.billService.findRecentMinorVersions(bill.getId(), documentRef, 0, recentCount);
     }
 
     @Override
-    public List<VersionVO> getVersionsData(String documentId, String documentRef) {
-        return this.billService.getAllVersions(documentId,documentRef);
+    public List<VersionVO> getVersionsData(String documentRef) {
+        Bill bill = this.billService.findBillByRef(documentRef);
+        return this.billService.getAllVersions(bill.getId(),documentRef);
     }
 
     @Override

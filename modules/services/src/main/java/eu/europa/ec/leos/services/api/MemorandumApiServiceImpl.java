@@ -93,12 +93,12 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<Memorandum> getRecentMinorVersions(String documentId, String documentRef) {
+    public List<Memorandum> getRecentMinorVersions(String documentRef) {
         return null;
     }
 
     @Override
-    public List<VersionVO> getVersionsData(String documentId, String documentRef) {
+    public List<VersionVO> getVersionsData(String documentRef) {
         return null;
     }
 
