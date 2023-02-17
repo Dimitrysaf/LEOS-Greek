@@ -626,14 +626,15 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 if (financialStatement != null) {
                     elementToEditAfterClose = mergeOnElement;
                     eventBus.post(new CloseElementEvent());
+                    eventBus.post(new RefreshDocumentEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+                    LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
+                            financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
                 }
             } else {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
             }
-            LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
-                    financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error in mergeElement", e);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "unknown.error.message"));

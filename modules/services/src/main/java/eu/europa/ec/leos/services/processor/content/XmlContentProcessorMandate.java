@@ -871,7 +871,9 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     public byte[] mergeElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
         Element mergeOnElement = getMergeOnElement(xmlContent, content, tagName, idAttributeValue, false);
         String contentFragment = getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false);
-        String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8), "/" + mergeOnElement.getElementTagName() + "/content/p", false);
+        String mergeOnElementFragment =  CONTENT.equalsIgnoreCase(mergeOnElement.getElementTagName())
+                ? "/content/p" : "/" + mergeOnElement.getElementTagName() + "/content/p";
+        String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8), mergeOnElementFragment, false);
         final String replace = mergeOnElement.getElementFragment().replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
         byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
 
