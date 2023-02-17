@@ -221,7 +221,7 @@ public class TreeHelper {
     }
 
     private static String findNum(Node node) {
-        String numNode = XercesUtils.getNodeNum(node);
+        String numNode = XercesUtils.getNodeNumExcludingContentRemoved(node);
         return numNode != null ? parseNum(numNode) : null;
     }
 
