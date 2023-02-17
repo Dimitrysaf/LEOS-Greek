@@ -1084,6 +1084,18 @@ public class XercesUtils {
         return null;
     }
 
+    public static boolean hasNodeContainingAttributeValue(NodeList bodyNodes, String attrName, String attrValue) {
+        for (int i=0; i<bodyNodes.getLength(); i++) {
+            List<Node> children = XercesUtils.getChildren(bodyNodes.item(i));
+            for (Node childNode : children) {
+                if (hasAttributeValue(attrName, attrValue, childNode)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean hasAttributeValue(String attrName, String attrValue, Node childNode) {
         String attributeValue;
         attributeValue = getAttributeValue(childNode, attrName);
