@@ -93,6 +93,7 @@ import eu.europa.ec.leos.web.event.component.ResetRevisionComponentEvent;
 import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.ShowCleanVersionRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
@@ -1053,9 +1054,36 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
         String versionId = event.getVersionId();
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
+
         FinancialStatement version = financialStatementService.findFinancialStatementVersion(versionId);
         byte[] resultXmlContent = getContent(version);
-        financialStatementService.updateFinancialStatement(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()),
+                            null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    private void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        financialStatementService.updateFinancialStatement(getDocument(), xmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version",
+                versionLabel));
 
         List documentVersions = financialStatementService.findVersions(documentId);
         financialStatementScreen.updateTimeLineWindow(documentVersions);

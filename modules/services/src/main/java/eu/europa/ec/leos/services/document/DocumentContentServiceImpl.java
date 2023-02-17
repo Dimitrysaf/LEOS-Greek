@@ -320,9 +320,28 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
 
     @Override
+    public byte[] akn4euVersionDocumentConversion(byte[] xmlContent) {
+        xmlContent = setAkn4euVersion(xmlContent, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS);
+        xmlContent = xmlContentProcessor.convertAlineasInDocumentContent(xmlContent);
+        return xmlContent;
+    }
+
+    @Override
     public boolean isDeprecatedDocument(XmlDocument xmlDocument) {
         // Should be temporary as for performance reason, getting content for each document while opening proposal screen is not good
         byte[] xmlContent = getDocumentContent(xmlDocument);
+        Document document = createXercesDocument(xmlContent);
+        if (!xmlContentProcessor.containsAlineas(document)) {
+            String akn4euVersion = getAkn4euVersion(xmlContent);
+            VersionComparator comparator = new VersionComparator();
+            return comparator.compare(akn4euVersion, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS) >= 0;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isDeprecatedDocument(byte[] xmlContent) {
         Document document = createXercesDocument(xmlContent);
         if (!xmlContentProcessor.containsAlineas(document)) {
             String akn4euVersion = getAkn4euVersion(xmlContent);

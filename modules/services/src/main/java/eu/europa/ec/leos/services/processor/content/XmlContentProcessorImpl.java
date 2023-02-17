@@ -891,6 +891,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         // Move subparagraphs as intros
         moveSubparagraphsInList(document);
+        updateMetaReferences(document.getFirstChild());
         long moveSubparagraphsInListTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
 

@@ -124,6 +124,7 @@ import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.EditElementRequestEvent;
@@ -150,6 +151,7 @@ import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
+import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
@@ -167,7 +169,6 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -210,6 +211,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     private final InstanceTypeResolver instanceTypeResolver;
     private final AttachmentProcessor attachmentProcessor;
     private final AnnotateService annotateService;
+    private final ConfigurationHelper cfgHelper;
 
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -244,13 +246,14 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                         ProposalService proposalService,
                         SearchService searchService, CommonDelegate<Memorandum> commonDelegate,
                         AnnotateService annotateService,
-                        CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver, AttachmentProcessor attachmentProcessor, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor) {
+                        CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver, AttachmentProcessor attachmentProcessor, ConfigurationHelper cfgHelper, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
+        LOG.trace("Initializing memorandum presenter...");
         this.instanceTypeResolver = instanceTypeResolver;
         this.attachmentProcessor = attachmentProcessor;
+        this.cfgHelper = cfgHelper;
         this.mergeContributionHelper = mergeContributionHelper;
         this.xmlContentProcessor = xmlContentProcessor;
-        LOG.trace("Initializing memorandum presenter...");
         this.contributionService = contributionService;
         this.memorandumScreen = memorandumScreen;
         this.memorandumService = memorandumService;
@@ -813,10 +816,37 @@ class MemorandumPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
+
         String versionId = event.getVersionId();
         Memorandum version = memorandumService.findMemorandumVersion(versionId);
         byte[] resultXmlContent = getContent(version);
-        memorandumService.updateMemorandum(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()),
+                            null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        memorandumService.updateMemorandum(getDocument(), xmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version",
+                versionLabel));
 
         List documentVersions = memorandumService.findVersions(documentId);
         memorandumScreen.updateTimeLineWindow(documentVersions);
@@ -824,7 +854,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         eventBus.post(new DocumentUpdatedEvent()); //Document might be updated.
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
     }
-    
+
     @Subscribe
     void cleanComparedContent(CleanComparedContentEvent event) {
         memorandumScreen.cleanComparedContent();

@@ -164,6 +164,7 @@ import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -1428,9 +1429,35 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
+
         final Annex version = annexService.findAnnexVersion(event.getVersionId());
         final byte[] resultXmlContent = getContent(version);
-        annexService.updateAnnex(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()), null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        annexService.updateAnnex(getDocument(), xmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version",
+                versionLabel));
 
         List<Annex> documentVersions = annexService.findVersions(documentId);
         annexScreen.updateTimeLineWindow(documentVersions);
