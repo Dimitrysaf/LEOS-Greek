@@ -221,6 +221,9 @@ public class XmlHelper {
     public static final String PROP_ACT = "PROP_ACT";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
     public static final String STAT_FINANC_LEGIS = "STAT_FINANC_LEGIS";
+    
+    public static final String CONTENT_REMOVED_CLASS = "leos-content-removed";
+    public static final String CONTENT_NEW_CLASS = "leos-content-new";
 
     public static String extractContentFromTocItem(TableOfContentItemVO tocItem) {
         if (tocItem.getContent() == null) {

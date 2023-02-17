@@ -8,6 +8,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_NEW_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.ID;
@@ -604,7 +606,7 @@ public class XercesUtils {
     public static boolean containsAttributeWithValue(Node node, String attrName, String attrVal) {
         if (node != null) {
             String attrValue = getAttributeValue(node, attrName);
-            if (!StringUtils.isEmpty(attrValue) && attrValue.equals(attrVal)) {
+            if (!StringUtils.isEmpty(attrValue) && attrValue.contains(attrVal)) {
                 return true;
             }
         }
@@ -918,6 +920,33 @@ public class XercesUtils {
         return nodeNum;
     }
 
+    public static String getNodeNumExcludingContentRemoved(Node node) {
+        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+        if (numNode != null) {
+        	NodeList children = numNode.getChildNodes();
+        	StringBuilder content = new StringBuilder();
+        	for (int i = 0; i < children.getLength(); i++) {
+        		if(content.length() > 0) {
+        			content.append(" ");
+        		}
+                Node child = children.item(i);
+                String childContent = null;
+                if(containsAttributeWithValue(child, CLASS_ATTR, CONTENT_REMOVED_CLASS)) {
+                	if(!hasChildContainsAttributeValue(numNode, CLASS_ATTR, CONTENT_NEW_CLASS)) {
+                		childContent = child.getTextContent();
+                	}
+                } else {
+                	childContent = child.getTextContent();
+                }
+            	if(StringUtils.isNotBlank(childContent)) {
+            		content.append(childContent);
+            	}
+            }
+        	return content.length() > 0 ? content.toString() : null;
+        }
+        return null;
+    }
+    
     private static String getSoftActionPrefix(String id) {
         if (id != null) {
             return SOFT_ACTIONS_PREFIXES.stream()
@@ -1082,6 +1111,16 @@ public class XercesUtils {
             }
         }
         return null;
+    }
+    
+    private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
+    	NodeList children = node.getChildNodes();
+    	for (int i = 0; i < children.getLength(); i++) {
+        	if(containsAttributeWithValue(children.item(i), attrName, attrValue)) {
+        		return true;
+        	}
+        }
+    	return false;
     }
 
     private static boolean hasAttributeValue(String attrName, String attrValue, Node childNode) {
