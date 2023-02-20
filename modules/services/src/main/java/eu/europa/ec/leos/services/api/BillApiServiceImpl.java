@@ -48,7 +48,6 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
-import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
@@ -152,11 +151,10 @@ public class BillApiServiceImpl implements BillApiService {
 
     @Override
     public String compare(String newVersionId, String oldVersionId) {
-        final Bill oldVersion = billService.findBillVersion(oldVersionId);
-        final Bill newVersion = billService.findBillVersion(newVersionId);
-//        final ComparisonDisplayMode displayMode = event.getDisplayMode();
-        HashMap<ComparisonDisplayMode, Object> result = comparisonDelegate.versionCompare(oldVersion, newVersion, ComparisonDisplayMode.SINGLE_COLUMN_MODE);
-        return "";
+        Bill oldVersion = billService.findBillVersion(oldVersionId);
+        Bill newVersion = billService.findBillVersion(newVersionId);
+        String comparedContent = comparisonDelegate.getMarkedContent(oldVersion,newVersion);
+        return comparedContent;
     }
 
     @Override
@@ -336,10 +334,5 @@ public class BillApiServiceImpl implements BillApiService {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
 
-    private String getProposalRef(String documentId){
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
-        Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
-        return proposal.getMetadata().getOrNull().getRef();
-    }
 
 }
