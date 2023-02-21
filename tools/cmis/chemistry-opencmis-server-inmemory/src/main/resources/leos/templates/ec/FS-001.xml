@@ -1,4 +1,5 @@
-<!--legislative_financial_statement--><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<!--legislative_financial_statement-->
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="STAT_FINANC_LEGIS">
         <meta>
             <identification source="~_PUBL">
@@ -63,11 +64,9 @@
                 <heading xml:id="_body__level_11__heading">
                     <b xml:id="_body__level_11__heading__b">Title of the proposal/initiative</b>
                 </heading>
-                <subparagraph leos:editable="true" xml:id="_body__level_11__subparagraph">
-                    <content xml:id="_body__level_11__subparagraph__content">
-                        <p xml:id="_body__level_11__subparagraph__content__p">[...]</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="true" xml:id="_body__level_11__subparagraph__content">
+                    <p xml:id="_body__level_11__subparagraph__content__p">[...]</p>
+                </content>
             </level>
             <level xml:id="_body__level_12">
                 <num xml:id="_body__level_12__num">
@@ -76,11 +75,9 @@
                 <heading xml:id="_body__level_12__heading">
                     <b xml:id="_body__level_12__heading__b">Policy area(s) concerned</b>
                 </heading>
-                <subparagraph leos:editable="true" xml:id="_body__level_12__subparagraph">
-                    <content xml:id="_body__level_12__subparagraph__content">
-                        <p xml:id="_body__level_12__subparagraph__content__p">[...]</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="true" xml:id="_body__level_12__subparagraph__content">
+                    <p xml:id="_body__level_12__subparagraph__content__p">[...]</p>
+                </content>
             </level>
             <level xml:id="_body__level_13">
                 <num xml:id="_body__level_13__num">
@@ -238,11 +235,9 @@
                 <heading xml:id="_body__level_151__heading">
                     <i xml:id="_body__level_151__heading__i">Requirement(s) to be met in the short or long term including a detailed timeline for roll-out of the implementation of the initiative</i>
                 </heading>
-                <subparagraph leos:editable="true" xml:id="_body__level_151__subparagraph">
-                    <content xml:id="_body__level_151__subparagraph__content">
-                        <p xml:id="_body__level_151__subparagraph__content__p">[...]</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="true" xml:id="_body__level_151__subparagraph__content">
+                    <p xml:id="_body__level_151__subparagraph__content__p">[...]</p>
+                </content>
             </level>
             <level xml:id="_body__level_152">
                 <num xml:id="_body__level_152__num">
@@ -269,11 +264,9 @@
                 <heading xml:id="_body__level_153__heading">
                     <i xml:id="_body__level_153__heading__i">Lessons learned from similar experiences in the past</i>
                 </heading>
-                <subparagraph leos:editable="true" xml:id="_body__level_153__subparagraph">
-                    <content xml:id="_body__level_153__subparagraph__content">
-                        <p xml:id="_body__level_153__subparagraph__content__p">[...]</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="true" xml:id="_body__level_153__subparagraph__content">
+                    <p xml:id="_body__level_153__subparagraph__content__p">[...]</p>
+                </content>
             </level>
             <level xml:id="_body__level_154">
                 <num xml:id="_body__level_154__num">
@@ -282,11 +275,9 @@
                 <heading xml:id="_body__level_154__heading">
                     <i xml:id="_body__level_154__heading__i">Compatibility with the Multiannual Financial Framework and possible synergies with other appropriate instruments</i>
                 </heading>
-                <subparagraph leos:editable="true" xml:id="_body__level_154__subparagraph">
-                    <content xml:id="_body__level_154__subparagraph__content">
-                        <p xml:id="_body__level_154__subparagraph__content__p">[...]</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="true" xml:id="_body__level_154__subparagraph__content">
+                    <p xml:id="_body__level_154__subparagraph__content__p">[...]</p>
+                </content>
             </level>
             <level xml:id="_body__level_155">
                 <num xml:id="_body__level_155__num">
@@ -295,11 +286,9 @@
                 <heading xml:id="_body__level_155__heading">
                     <i xml:id="_body__level_155__heading__i">Assessment of the different available financing options, including scope for redeployment</i>
                 </heading>
-                <subparagraph leos:editable="true" xml:id="_body__level_155__subparagraph">
-                    <content xml:id="_body__level_155__subparagraph__content">
-                        <p xml:id="_body__level_155__subparagraph__content__p">[...]</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="true" xml:id="_body__level_155__subparagraph__content">
+                    <p xml:id="_body__level_155__subparagraph__content__p">[...]</p>
+                </content>
             </level>
             <level xml:id="_body__level_16">
                 <num xml:id="_body__level_16__num">
