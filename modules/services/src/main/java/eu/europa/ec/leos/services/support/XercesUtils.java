@@ -606,7 +606,7 @@ public class XercesUtils {
     public static boolean containsAttributeWithValue(Node node, String attrName, String attrVal) {
         if (node != null) {
             String attrValue = getAttributeValue(node, attrName);
-            if (!StringUtils.isEmpty(attrValue) && attrValue.contains(attrVal)) {
+            if (!StringUtils.isEmpty(attrValue) && attrValue.equals(attrVal)) {
                 return true;
             }
         }
@@ -931,7 +931,7 @@ public class XercesUtils {
         		}
                 Node child = children.item(i);
                 String childContent = null;
-                if(containsAttributeWithValue(child, CLASS_ATTR, CONTENT_REMOVED_CLASS)) {
+                if(hasAttributeWithValue(child, CLASS_ATTR, CONTENT_REMOVED_CLASS)) {
                 	if(!hasChildContainsAttributeValue(numNode, CLASS_ATTR, CONTENT_NEW_CLASS)) {
                 		childContent = child.getTextContent();
                 	}
@@ -1112,11 +1112,21 @@ public class XercesUtils {
         }
         return null;
     }
+
+    public static boolean hasAttributeWithValue(Node node, String attrName, String attrVal) {
+        if (node != null) {
+            String attrValue = getAttributeValue(node, attrName);
+            if (!StringUtils.isEmpty(attrValue) && attrValue.contains(attrVal)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
     	NodeList children = node.getChildNodes();
     	for (int i = 0; i < children.getLength(); i++) {
-        	if(containsAttributeWithValue(children.item(i), attrName, attrValue)) {
+        	if(hasAttributeWithValue(children.item(i), attrName, attrValue)) {
         		return true;
         	}
         }
