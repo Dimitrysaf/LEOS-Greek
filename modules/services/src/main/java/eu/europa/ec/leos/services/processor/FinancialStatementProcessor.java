@@ -24,4 +24,6 @@ public interface FinancialStatementProcessor {
     byte[] insertNewElement(FinancialStatement document, String elementId, String tagName, boolean before);
 
     byte[] deleteElement(FinancialStatement document, String elementId, String tagName) throws Exception;
+
+    byte[] mergeElement(FinancialStatement financialStatement, String elementContent, String tagName, String elementId);
 }

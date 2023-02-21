@@ -30,6 +30,8 @@ import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,8 +213,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 (!isPContent(mergeOnElement.getElementFragment(), mergeOnElement.getElementTagName())))) {
             return null;
         }
-
-        return getMergedOnElement(mergeOnElement, xmlContent);
+        return getMergedOnElement(mergeOnElement, xmlContent) ;
     }
 
     @Override
@@ -223,13 +224,18 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 ? "/content/p" : "/" + mergeOnElement.getElementTagName() + "/content/p";
         String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8),
                 mergeOnElementFragment, false);
-        final String replace = mergeOnElement.getElementFragment().replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
+        String fragment = mergeOnElement.getElementFragment();
+        if(!fragment.contains(contentFragmentMergeOn)){
+            fragment =  Jsoup.parse(fragment, EMPTY_STRING, Parser.xmlParser()).toString();
+        }
+        final String replace = fragment.replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
+
         byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
 
         updatedXmlContent = replaceElementById(updatedXmlContent, content, idAttributeValue);
         updatedXmlContent = deleteElementById(updatedXmlContent, idAttributeValue);
         Element parentElement = getParentElement(updatedXmlContent, mergeOnElement.getElementId());
-        if (Arrays.asList(LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) &&
+        if (parentElement != null && Arrays.asList(LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) &&
                 getChildElement(updatedXmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
                         Arrays.asList(SUBPARAGRAPH, SUBPOINT, LIST), 2) == null) {
             final String xPath = "/" + parentElement.getElementTagName() + "/" + mergeOnElement.getElementTagName();

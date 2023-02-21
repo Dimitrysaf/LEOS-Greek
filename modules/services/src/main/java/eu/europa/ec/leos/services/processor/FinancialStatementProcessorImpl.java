@@ -127,4 +127,19 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         final Content content = financialStatement.getContent().getOrError(() -> "Financial statement content is required!");
         return content.getSource().getBytes();
     }
+
+    @Override
+    public byte[] mergeElement(FinancialStatement document, String elementContent, String elementName, String elementId) {
+        Validate.notNull(document, "Document is required.");
+        Validate.notNull(elementContent, "ElementContent is required.");
+        Validate.notNull(elementName, "ElementName is required.");
+        Validate.notNull(elementId, "ElementId is required.");
+
+        final byte[] contentBytes = getContent(document);
+        byte[] updatedContent = xmlContentProcessor.mergeElement(contentBytes, elementContent, elementName, elementId);
+        if (updatedContent != null) {
+            updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        }
+        return updatedContent;
+    }
 }

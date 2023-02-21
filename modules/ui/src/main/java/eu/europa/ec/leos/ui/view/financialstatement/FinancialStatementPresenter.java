@@ -473,12 +473,24 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     @Subscribe
     void checkElementCoEdition(CheckElementCoEditionEvent event) {
         try {
-            FinancialStatement financialStatement = getDocument();
-            final byte[] contentBytes = getContent(financialStatement);
-            Element tocElement = xmlContentProcessor.getTocElement(contentBytes, event.getElementId(),
-                    getListOfTableOfContent(financialStatement, TocMode.SIMPLIFIED), Arrays.asList(SUBPARAGRAPH));
-            financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
-                    tocElement.getElementId(), tocElement.getElementTagName(), event.getAction(), event.getActionEvent());
+            if (event.getAction().equals(CheckElementCoEditionEvent.Action.MERGE)) {
+                FinancialStatement financialStatement = getDocument();
+                final byte[] contentBytes = getContent(financialStatement);
+                Element mergeOnElement = xmlContentProcessor.getMergeOnElement(contentBytes, event.getElementContent(), event.getElementTagName(), event.getElementId(), true);
+                if (mergeOnElement != null) {
+                    financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
+                            mergeOnElement.getElementId(), mergeOnElement.getElementTagName(), event.getAction(), event.getActionEvent());
+                } else {
+                    financialStatementScreen.showAlertDialog("operation.element.not.performed");
+                }
+            } else {
+                FinancialStatement financialStatement = getDocument();
+                final byte[] contentBytes = getContent(financialStatement);
+                Element tocElement = xmlContentProcessor.getTocElement(contentBytes, event.getElementId(),
+                        getListOfTableOfContent(financialStatement, TocMode.SIMPLIFIED), Arrays.asList(SUBPARAGRAPH));
+                financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
+                        tocElement.getElementId(), tocElement.getElementTagName(), event.getAction(), event.getActionEvent());
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error in checkElementCoEdition", e);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "unknown.error.message"));
@@ -620,13 +632,12 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
             Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
-                byte[] newXmlContent = xmlContentProcessor.mergeElement(xmlContent, elementContent, tagName, elementId);
+                byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
                 if (financialStatement != null) {
-                    elementToEditAfterClose = mergeOnElement;
+                    elementToEditAfterClose = null;
                     eventBus.post(new CloseElementEvent());
-                    eventBus.post(new RefreshDocumentEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
                     LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
