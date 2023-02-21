@@ -116,7 +116,9 @@ define(function leosArticleIndentListPluginModule(require) {
                             var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
                             if (isListEnding) {
                                 return TRISTATE_OFF;
-                            } else if (leosPluginUtils.isSubparagraph(path.lastElement)) {
+                            } else if (leosPluginUtils.isSubparagraph(path.lastElement)
+                                         && !_isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)
+                                    ) {
                                 return TRISTATE_OFF;
                             } else if (!list
                                 || firstItemInPath( this.context, path, list )
@@ -168,7 +170,7 @@ define(function leosArticleIndentListPluginModule(require) {
                 endContainer = endContainer.getParent();
 
             if (!startContainer || !endContainer
-                || (that.isIndent && !leosPluginUtils.isSubparagraph(startContainer)
+                || (that.isIndent
                     && _isListDepthMoreThanThreshold(startContainer, endContainer, LOCAL_MAX_LEVEL_LIST))){
                 return false;
             }
