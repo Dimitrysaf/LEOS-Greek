@@ -30,6 +30,7 @@ define(function aknSubParagraphProfileModule(require) {
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
+    plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
     plugins.push(require("plugins/aknSubParagraphMandate/aknSubParagraphMandatePlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
@@ -99,7 +100,7 @@ define(function aknSubParagraphProfileModule(require) {
         toolbar : [
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
-            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
             { name: 'ref', items: [ 'authorialNoteWidget', 'LeosCrossReference' ] },
             { name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
@@ -110,7 +111,7 @@ define(function aknSubParagraphProfileModule(require) {
         //show toolbar on startup
         startupFocus: 'end',
         // comma-separated list of toolbar button names that must not be rendered
-        removeButtons: "Underline,Strike,Anchor,TextColor,PasteFromWord,PasteText",
+        removeButtons: "Strike,Anchor,TextColor,PasteFromWord,PasteText",
         // semicolon-separated list of dialog elements that must not be rendered
         // element is a string concatenation of dialog name + colon + tab name
         removeDialogTabs: "",
