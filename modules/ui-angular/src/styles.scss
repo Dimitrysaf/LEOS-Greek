@@ -72,6 +72,7 @@ eui-icon-svg > svg > use {
   left: 0;
   min-width: 100%;
   position: fixed;
+  z-index: 1050;
 }
 
 .eui-footer.leos-footer-content {
