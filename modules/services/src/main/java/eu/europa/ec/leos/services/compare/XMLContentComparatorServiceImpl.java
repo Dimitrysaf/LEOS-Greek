@@ -129,15 +129,26 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
         context.getResultNode().appendChild(node);
     }
 
-    protected void appendMovedToOrDeletedElement(ContentComparatorContext context) {
-        Element softMovedToOrDeletedNewElement = context.getNewElement();
-        Node node = softMovedToOrDeletedNewElement.getNode();
-        if(context.getOldContentElements().containsKey(softMovedToOrDeletedNewElement.getTagId().replace(
+    protected void appendDeletedNumberElement(ContentComparatorContext context) {
+        Element softDeletedNewElement = context.getNewElement();
+        Node node = softDeletedNewElement.getNode();
+        if(context.getOldContentElements().containsKey(softDeletedNewElement.getTagId().replace(
                 SOFT_DELETE_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
-            Element originalOldElement = context.getOldContentElements().get(softMovedToOrDeletedNewElement.getTagId().replace(
+            Element originalOldElement = context.getOldContentElements().get(softDeletedNewElement.getTagId().replace(
                     SOFT_DELETE_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
             node.setTextContent(originalOldElement.getTagContent());
         }
+        String attrName = context.getAttrName();
+        String attrValue = getStartTagValueForRemovedElement(softDeletedNewElement, context);
+        if (attrName != null && attrValue != null) {
+            XercesUtils.addAttribute(node, attrName, attrValue);
+        }
+        addToResultNode(context, node);
+    }
+
+    protected void appendMovedToOrDeletedElement(ContentComparatorContext context) {
+        Element softMovedToOrDeletedNewElement = context.getNewElement();
+        Node node = softMovedToOrDeletedNewElement.getNode();
         String attrName = context.getAttrName();
         String attrValue = getStartTagValueForRemovedElement(softMovedToOrDeletedNewElement, context);
         if (attrName != null && attrValue != null) {
@@ -184,14 +195,16 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
 
             // at each step, check for a particular structural change in this order
             if (shouldIgnoreElement(context.getNewElement())) {
-                // Case when removed element has been indented, his position in the hierarchy has changed:
-                // that's the best way to display removed element at his original position
-                if (isTransformedNumElement(context.getNewElement(), context.getNewContentRoot()) || (isElementIndented(context.getNewElement())
+                // Case when removed element has been indented, it's position in the hierarchy has changed:
+                // that's the best way to display removed element at it's original position
+                if (isElementIndented(context.getNewElement())
                         && (isSoftAction(context.getNewElement().getNode(), SoftActionType.MOVE_TO)
                         || isSoftAction(context.getNewElement().getNode(), SoftActionType.DELETE)
-                        || isSoftAction(context.getNewElement().getNode(), SoftActionType.DELETE_TRANSFORM)))
+                        || isSoftAction(context.getNewElement().getNode(), SoftActionType.DELETE_TRANSFORM))
                         && (!shouldIgnoreElement(context.getOldElement()))) {
                     appendMovedToOrDeletedElement(context);
+                } else if(isTransformedNumElement(context.getNewElement(), context.getNewContentRoot())) {
+                    appendDeletedNumberElement(context);
                 }
                 newContentChildIndex++;
                 if (context.getThreeWayDiff() && shouldIgnoreElement(context.getIntermediateElement())) {
