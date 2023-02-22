@@ -156,12 +156,9 @@ module. The jar will be created in the `target` directory.
 
 Customize the build with these maven properties:
 - `skipTests` - skip unit tests and linting (default: `false`)
-- `instance` - specify the LEOS instance to build for (default: `os`)
-  - available in the code as `appConfig.global.leos.instance` and
-    `process.env.NG_APP_LEOS_INSTANCE`
-- `env` - specify the LEOS environment to build for (default: `local`)
-  - available in the code as `appConfig.global.leos.env` and
-    `process.env.NG_APP_LEOS_ENV`
+- `instance` - specify the LEOS instance to build for (default: `os`). Available in the code as:
+  - `*.{js,ts}`: `process.env.NG_APP_LEOS_INSTANCE`
+  - `index.html`: `%NG_APP_LEOS_INSTANCE%`
 
 _See [ngx-env](https://github.com/chihab/ngx-env) for more details about `NG_APP_` environment usage._
 
