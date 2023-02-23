@@ -119,6 +119,9 @@
                             <environmentVariables>
                                 <_CSDR_ARGS>${_CSDR.skipTest},${_CSDR.skipLint}</_CSDR_ARGS>
                                 <NG_APP_LEOS_INSTANCE>${leos.build.instance}</NG_APP_LEOS_INSTANCE>
+                                <NG_APP_LEOS_SOURCE_REVISION>${leos.source.revision}</NG_APP_LEOS_SOURCE_REVISION>
+                                <NG_APP_LEOS_VERSION>${leos.build.version}</NG_APP_LEOS_VERSION>
+                                <NG_APP_LEOS_VERSION_BUILD_DATE>${leos.build.date}</NG_APP_LEOS_VERSION_BUILD_DATE>
                             </environmentVariables>
                             <arguments>${yarn.build.command}</arguments>
                         </configuration>
