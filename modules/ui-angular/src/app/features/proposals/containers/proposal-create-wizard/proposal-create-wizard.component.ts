@@ -76,10 +76,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       }),
       packageTitleCheck: new FormControl({ value: false, disabled: true }),
       packageTitle: new FormControl({ value: '', disabled: true }),
-      eeaRelevance: new FormControl(
-        { value: false, disabled: true },
-        { validators: Validators.required },
-      ),
+      eeaRelevance: new FormControl(false, { validators: Validators.required }),
       eeaRelevanceText: new FormControl({ value: '', disabled: true }),
     });
   }
