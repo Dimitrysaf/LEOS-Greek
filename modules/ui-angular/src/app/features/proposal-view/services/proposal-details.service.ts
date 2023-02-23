@@ -123,7 +123,7 @@ export class ProposalDetailsService {
         error: (res) => {
           this.loadingService.setLoading(false);
           this.uxAppService.growl({
-            severity: 'anger',
+            severity: 'danger',
             summary: 'Annex deletion failed',
             detail: res,
             life: 3000,

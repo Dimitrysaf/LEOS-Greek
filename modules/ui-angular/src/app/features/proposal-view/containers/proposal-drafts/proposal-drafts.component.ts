@@ -10,7 +10,6 @@ import {
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Document, DocumentType } from '@leos/shared';
-import { takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 

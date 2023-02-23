@@ -644,17 +644,23 @@ public class ApiServiceImpl implements ApiService {
     @Override
     public void deleteAnnex(String proposalRef, String annexRef) {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
-        DocumentVO annex = createAnnexVO(annexService.findAnnexByRef(annexRef));
+        Annex annex = this.annexService.findAnnexByRef(annexRef);
+        DocumentVO annexVO = createAnnexVO(annexService.findAnnexByRef(annexRef));
         
         if (proposal != null) {
             String proposalId = proposal.getId();
             LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
             BillContextService billContext = billContextProvider.get();
             billContext.useAnnexwithRef(annexRef);
+            billContext.useAnnex(annex.getId());
             billContext.usePackage(leosPackage);
             billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
             billContext.useActionMessage(ContextActionService.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
-            archiveService.archiveDocument(annex, Annex.class, leosPackage.getPath());
+            try {
+                archiveService.archiveDocument(annexVO, Annex.class, leosPackage.getPath());
+            } catch (Exception e) {
+                LOG.error("Error while using archive service {}",e.getMessage());
+            }
             billContext.executeRemoveBillAnnex();
         }
     }
