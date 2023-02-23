@@ -17,6 +17,8 @@ public interface TokenService {
     String getAnnotateToken(String userLogin, String url);
 
     String getAccessToken(String user);
+
+    String getNgAccessToken(String user);
     
     AuthClient validateClientByJwtToken(String token);
     
