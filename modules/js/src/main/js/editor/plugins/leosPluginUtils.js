@@ -58,6 +58,7 @@ define(function leosPluginUtilsModule(require) {
     var CROSSHEADING = "crossHeading";
     var EC = "ec";
     var CN = "cn";
+    var REFERS_TO = "refersto";
 
     var NUMBERED_ITEM = "point, indent, paragraph";
     var UNUMBERED_ITEM = "alinea, subparagraph";
@@ -643,6 +644,10 @@ define(function leosPluginUtilsModule(require) {
             || ($(editor.element.$).prevAll(ITEMS_SELECTOR).length == 0 && $(editor.element.$).parent().prop("tagName").toLowerCase() == LIST && $(editor.element.$).parent().prevAll(ITEMS_SELECTOR).length == 0));
     }
 
+    function _isDefinitionArticleElement(element) {
+        return element.getAscendant(ARTICLE) && element.getAscendant(ARTICLE).attributes[REFERS_TO] && element.getAscendant(ARTICLE).attributes[REFERS_TO] === ART_DEF;
+    }
+
     function _getCurrentNumValue(editor) {
         var rootElt = $(editor.element.$);
         var pointInHtml = (_isSubpoint(editor) && _isFirstChild(editor)) ? rootElt.parents(NUMBERED_ITEM).first() : rootElt.find(HTML_POINT).first();
@@ -1093,6 +1098,7 @@ define(function leosPluginUtilsModule(require) {
         getMaxListLevel: _getMaxListLevel,
         getMaxListLevelDepth: _getMaxListLevelDepth,
         isFirstSubParagraph: _isFirstSubParagraph,
+        isDefinitionArticleElement: _isDefinitionArticleElement,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
