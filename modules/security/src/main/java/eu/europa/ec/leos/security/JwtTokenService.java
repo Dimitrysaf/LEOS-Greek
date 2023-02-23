@@ -42,7 +42,7 @@ class JwtTokenService implements TokenService {
     @Value("${annotate.jwt.issuer.client.secret}")
     private String annotateSecret;
 
-    @Value("${leos.ng.jwt.issuer.client.id}")
+    @Value("${leos.api.jwt.auth.client.ngLeos.id}")
     private String ngClientId;
     @Value("${leos.api.jwt.auth.client.ngLeos.secret}")
     private String ngClientSecret;
