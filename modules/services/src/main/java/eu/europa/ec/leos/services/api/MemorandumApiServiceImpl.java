@@ -115,6 +115,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+        return null;
+    }
+
+    @Override
     public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) {
         return null;
     }

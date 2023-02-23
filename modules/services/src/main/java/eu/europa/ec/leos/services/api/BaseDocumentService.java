@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
@@ -39,6 +40,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
     List<TocItem> getTocItems(String documentRef);
     DocumentViewResponse getDocument(String documentRef);
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
+    List<TableOfContentItemVO> saveToC(String documentRef,List<TableOfContentItemVO> toc);
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception;
     DocumentViewResponse showVersion(String versionId);
     String compare(String newVersionId, String oldVersionId);

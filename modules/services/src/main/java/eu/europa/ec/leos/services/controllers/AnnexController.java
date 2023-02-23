@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -142,8 +143,23 @@ public class AnnexController {
             List<VersionVO> versions = this.annexAPIService.saveDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return  ResponseEntity.ok().body(versions);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while saving annex version - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while saving annex version ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<Object> saveAnnexVersion(@PathVariable("documentRef") String documentRef,
+                                                   @RequestBody SaveTocRequestEvent saveTocRequestEvent
+    ) {
+        try {
+            List<TableOfContentItemVO> toc = this.annexAPIService.saveToC(documentRef,saveTocRequestEvent.getTableOfContentItemVOs());
+            return  ResponseEntity.ok().body(toc);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting saving toc - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while saving toc ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
