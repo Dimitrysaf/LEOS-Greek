@@ -137,6 +137,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL_NUM_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST_CLOSE;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.MARKER_ATTRIBUTE;
 import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM_FILE_PREFIX;
@@ -145,6 +146,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.MREF;
 import static eu.europa.ec.leos.services.support.XmlHelper.NON_BREAKING_SPACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARA_END;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARA_OPEN_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARA_START;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROP_ACT;
@@ -154,7 +158,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLD
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.STATUS_IGNORED_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.STATUS_IGNORED_ATTR_VALUE;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARA_END;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARA_REGEX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT;
 import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT_WRP_ID;
@@ -413,12 +419,50 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId) {
         Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
-        if (node != null) {
-            node = XercesUtils.replaceElement(node, newContent);
-            xmlContent = nodeToByteArray(node);
+        Node elementNode = XercesUtils.getElementById(document, elementId);
+
+        if (elementNode != null) {
+            Node documentNode = XercesUtils.replaceElement(elementNode, newContent);
+            xmlContent = nodeToByteArray(documentNode);
             //TODO refactor doXMLPostProcessing to work with Node in input too. To increase performance
             xmlContent = doXMLPostProcessing(xmlContent);
+            xmlContent = processUnnumberedParagraph(xmlContent, newContent, elementId);
+        }
+        return xmlContent;
+    }
+
+    private byte[] processUnnumberedParagraph(byte[] xmlContent, String newContent, String elementId) {
+        if (newContent.startsWith(PARA_OPEN_TAG) && newContent.contains(LIST_CLOSE)) {
+            Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8));
+            if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
+                    && XercesUtils.getFirstChild(XercesUtils.getFirstChild(newNode), NUM) == null) {
+
+                Document updatedDocument = createXercesDocument(xmlContent);
+                Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
+                String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
+                NodeList nodeList = updatedNode.getChildNodes();
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.item(i)));
+                    if (nodeList.item(i).getNodeName().equals(LIST)) {
+                        if (i == 0) {
+                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
+                        } else {
+                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, PARA_START + childNodeContent + PARA_END);
+                        }
+                    } else if (nodeList.item(i).getNodeName().equals(SUBPARAGRAPH)) {
+                        if (i == 0) {
+                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replaceFirst(SUBPARA_REGEX, "").replace(SUBPARA_END, PARA_END));
+                        } else {
+                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replace("<" + SUBPARAGRAPH, "<" + PARAGRAPH).replace(SUBPARA_END, PARA_END));
+                        }
+                    }
+                    updatedNodeContent = updatedNodeContent.replace(PARA_END + PARA_END, PARA_END);
+                }
+                Document newDocument = createXercesDocument(xmlContent);
+                Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
+                Node updatedDocumentNode = XercesUtils.replaceElement(newElementNode, updatedNodeContent);
+                xmlContent = nodeToByteArray(updatedDocumentNode);
+            }
         }
         return xmlContent;
     }
