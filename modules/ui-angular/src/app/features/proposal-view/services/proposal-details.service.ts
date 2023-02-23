@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { UxAppShellService } from '@eui/core';
 import {
   Collaborator,
   CollaboratorRequest,
@@ -48,6 +49,7 @@ export class ProposalDetailsService {
     private http: HttpClient,
     private router: Router,
     private loadingService: LoadingService,
+    private uxAppService: UxAppShellService,
   ) {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
 
@@ -116,8 +118,19 @@ export class ProposalDetailsService {
         `api/secured/proposals/${this.proposalRef}/deleteAnnex/${annexRef}`,
         {},
       )
-      .subscribe((val) => {
-        this.setProposalRef(this.proposalRef);
+      .subscribe({
+        next: (res) => this.setProposalRef(this.proposalRef),
+        error: (res) => {
+          this.loadingService.setLoading(false);
+          this.uxAppService.growl({
+            severity: 'anger',
+            summary: 'Annex deletion failed',
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
       });
   }
 
