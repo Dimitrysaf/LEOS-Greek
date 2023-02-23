@@ -66,3 +66,17 @@ eui-icon-svg > svg > use {
 .Vaadin-Icons {
   font-family: Vaadin-Icons;
 }
+
+.eui-app-footer.leos-footer {
+  bottom: 0;
+  left: 0;
+  min-width: 100%;
+  position: fixed;
+  z-index: 1050;
+}
+
+.eui-footer.leos-footer-content {
+  font-size: 0.8rem;
+  justify-content: center;
+  padding: 0.3rem;
+}

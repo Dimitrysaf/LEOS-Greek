@@ -76,7 +76,7 @@
         <leos.build.date>${git.build.time}</leos.build.date>
         <leos.build.timestamp>${buildnumber.timestamp}</leos.build.timestamp>
         <leos.source.status>${git.commit.id.describe-short}</leos.source.status>
-        <leos.source.revision>LEOS</leos.source.revision>
+        <leos.source.revision>LEOS Open Source</leos.source.revision>
         <leos.source.committedRevision>${git.commit.id}</leos.source.committedRevision>
         <leos.source.committedDate>${git.commit.time}</leos.source.committedDate>
         <!-- Plugins -->
@@ -1134,6 +1134,7 @@
             </activation>
             <properties>
                 <leos.build.instance>ec</leos.build.instance>
+                <leos.source.revision>EdiT Drafting</leos.source.revision>
                 <leos.web.context.path>leos-pilot</leos.web.context.path>
             </properties>
         </profile>
@@ -1148,6 +1149,7 @@
             </activation>
             <properties>
                 <leos.build.instance>cn</leos.build.instance>
+                <leos.source.revision>EdiT Revision</leos.source.revision>
                 <leos.web.context.path>leos-pilot-cn</leos.web.context.path>
             </properties>
         </profile>
