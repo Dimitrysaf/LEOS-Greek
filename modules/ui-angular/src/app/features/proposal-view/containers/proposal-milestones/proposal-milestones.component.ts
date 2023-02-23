@@ -75,7 +75,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   deleteMilestone(id: string) {
-    console.log(`Delete milestone ${id}`);
+    console.log(`Delete milestone  ${id}`);
     this.proposalMilestonesService.deleteMilestone(id);
   }
 
@@ -87,15 +87,26 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   onClickOutside(): void {
     console.log('clickOutside from output');
     this.milestonesDialog.closeDialog();
+    this.resetInitials();
+  }
+
+  resetInitials(): void {
+    this.form.patchValue({
+      milestonesType: 'For Interservice Consultation',
+      milestonesTitle: 'For Interservice Consultation',
+    });
+    this.form.clearValidators();
   }
 
   onClose(): void {
     console.log('close from output');
     this.milestonesDialog.closeDialog();
+    this.resetInitials();
   }
 
   onAccept(): void {
     this.milestonesDialog.closeDialog();
+    this.resetInitials();
     this.proposalDetailsService.createMilestone(
       this.proposalDetailsService.proposalRef,
       this.form.get('milestonesTitle').value,
@@ -105,10 +116,15 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   onDismiss(): void {
     console.log('dismiss from output');
     this.milestonesDialog.closeDialog();
+    this.resetInitials();
   }
 
   handleMilestoneView(): void {
     this.viewMilestone.openDialog();
+  }
+
+  isFormInValid() {
+    return this.form.invalid;
   }
 
   private buildForm() {
@@ -134,7 +150,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         } else {
           milestonesTitle.setValue('');
           milestonesTitle.enable();
-          milestonesTitle.setValidators(Validators.required);
+          milestonesTitle.setValidators([Validators.required]);
         }
         milestonesTitle.updateValueAndValidity();
       });

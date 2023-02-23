@@ -17,6 +17,7 @@
   #milestonesDialog
   [title]="'Add Milestones'"
   (clickOutside)="onClickOutside()"
+  (close)="onClickOutside()"
 >
   <form [formGroup]="form" class="eui-u-ml-4xl">
     <div
@@ -86,7 +87,13 @@
             | translate
         }}
       </button>
-      <button type="button" euiButton euiPrimary (click)="onAccept()">
+      <button
+        type="button"
+        euiButton
+        euiPrimary
+        (click)="onAccept()"
+        [disabled]="isFormInValid()"
+      >
         {{
           'page.collection.milestones.table.add-milestone-dialog.create'
             | translate
