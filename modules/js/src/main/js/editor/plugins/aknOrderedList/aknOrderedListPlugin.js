@@ -333,11 +333,13 @@ define(function aknOrderedListPluginModule(require) {
     }
 
     function elementTagIndexProvider(element) {
-        if (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.INDENT) {
+        if ( !!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.INDENT) {
             return 1;
         } else if ((element.name.toLowerCase() == leosPluginUtils.SUBPARAGRAPH.toLowerCase()) || (!!element.attributes[leosPluginUtils.DATA_AKN_ELEMENT]
             && element.attributes[leosPluginUtils.DATA_AKN_ELEMENT] == leosPluginUtils.SUBPARAGRAPH)) {
             return 2;
+        } else if(leosPluginUtils.isDefinitionArticleElement(element)) {
+            return 0;
         } else {
             return leosPluginUtils.calculateListLevel(element) >= LOCAL_MAX_LEVEL_LIST ? 1 : 0;
         }
