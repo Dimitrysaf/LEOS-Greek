@@ -147,5 +147,4 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
         result = XercesUtils.nodeToString(documentResult);
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
-
 }

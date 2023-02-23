@@ -41,6 +41,11 @@ class JwtTokenService implements TokenService {
     private String annotateClientId;
     @Value("${annotate.jwt.issuer.client.secret}")
     private String annotateSecret;
+
+    @Value("${leos.api.jwt.auth.client.ngLeos.id}")
+    private String ngClientId;
+    @Value("${leos.api.jwt.auth.client.ngLeos.secret}")
+    private String ngClientSecret;
     private static final int ANNOT_TOKEN_EXPIRE_IN_MIN = 9;
     
     @Value("${leos.api.jwt.auth.access.token.id}")
@@ -108,7 +113,14 @@ class JwtTokenService implements TokenService {
         return generateToken(leosApiId, null, null, now, now, accessTokenExpirationInMin,
                 leosApiSecret, user);
     }
-    
+
+    @Override
+    public String getNgAccessToken(String user) {
+        final Date now = Calendar.getInstance().getTime();
+        return generateToken(ngClientId, null, null, now, now, accessTokenExpirationInMin,
+                ngClientSecret, user);
+    }
+
     private String generateToken(String clientId, String subject, String audience, Date issuedAt, Date notBefore,
                                  int expireInMin, String secret, String user) {
         String token = null;

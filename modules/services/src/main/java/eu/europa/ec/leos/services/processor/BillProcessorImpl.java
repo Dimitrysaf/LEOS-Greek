@@ -338,7 +338,7 @@ public class BillProcessorImpl implements BillProcessor {
         Validate.notNull(elementId, "ElementId is required.");
     
         final byte[] contentBytes = getContent(document);
-        return xmlContentProcessor.getMergeOnElement(contentBytes, elementContent, elementName, elementId);
+        return xmlContentProcessor.getMergeOnElement(contentBytes, elementContent, elementName, elementId, true);
     }
 
     @Override

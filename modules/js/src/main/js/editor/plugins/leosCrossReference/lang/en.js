@@ -10,5 +10,6 @@ CKEDITOR.plugins.setLang( 'leosCrossReference', 'en', {
    memorandum: 'Explanatory Memorandum',
    bill: 'Legal Act',
    annex: 'Annex',
+   financialStatement: 'Financial Statement',
    levelDescription: 'Point'
 });

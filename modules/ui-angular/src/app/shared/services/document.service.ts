@@ -5,18 +5,23 @@ import {
   combineLatestWith,
   distinctUntilChanged,
   filter,
+  map,
   mergeMap,
   Observable,
   skip,
   Subject,
+  switchMap,
   take,
   takeUntil,
+  withLatestFrom,
 } from 'rxjs';
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 
-import { TableOfContentItemVO } from '../models/toc.model';
+import { DocumentViewResponse } from '../models/document-view-response.model';
+import { TableOfContentItemVO, TocItem } from '../models/toc.model';
+import { VersionInfoVO } from '../models/version-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -26,14 +31,15 @@ export class DocumentService implements OnDestroy {
   annotationsEnabled$: Observable<boolean>;
   compareModeEnabled$: Observable<boolean>;
   documentId$: Observable<string | null>;
-  documentXML$: Observable<string | null>;
+  documentView$: Observable<DocumentViewResponse | null>;
   guidelinesEnabled$: Observable<boolean>;
   highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
-  tocItems$: Observable<TableOfContentItemVO[]>;
+  toc$: Observable<TableOfContentItemVO[]>;
+  tocItems$: Observable<any[]>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -56,12 +62,10 @@ export class DocumentService implements OnDestroy {
     this.documentId$ = this.documentIdBS.asObservable();
     this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
-    this.documentXML$ = this.documentId$.pipe(
+    this.documentView$ = this.documentId$.pipe(
       // FIXME: use proper API
       combineLatestWith(this.documentCategory$),
-      mergeMap(([ref, category]) =>
-        ref ? this.getDocumentByRef(ref, category) : null,
-      ),
+      switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
     );
 
     this.annotationsEnabled$ = this.annotationsEnabledBS.asObservable();
@@ -112,15 +116,10 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'downloadWithAnnotation'); // FIXME
   }
 
-  /** @deprecated TODO: replace uses and delete */
-  getXmlDocument() {
-    return this.documentXML$;
-  }
-
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http
-      .get(`api/secured/${category}/${ref}`, { responseType: 'text' })
+      .get<DocumentViewResponse>(`api/secured/${category}/${ref}`)
       .pipe(take(1));
   }
 
@@ -133,12 +132,10 @@ export class DocumentService implements OnDestroy {
   }
 
   saveVersion(requestBody: any) {
-    console.warn('stub:', 'saveVersion'); // FIXME
-    return this.documentId$.pipe(
-      combineLatestWith(this.documentCategory$),
-      mergeMap(([ref, category]) =>
-        this.saveDocumentVersionWithData(category, ref, requestBody),
-      ),
+    return this.saveDocumentVersionWithData(
+      this.documentCategoryBS.value,
+      this.documentIdBS.value,
+      requestBody,
     );
   }
 
@@ -228,15 +225,40 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'versionView', versionNumber); // FIXME
   }
 
-  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+  getToc(annexRef: string, tocMode = 'SIMPLIFIED') {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<TableOfContentItemVO[]>(
+      `api/secured/${category}/${annexRef}/getToc`,
+      {
+        params: { tocMode },
+      },
+    );
+  }
+
+  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+    let category = this.documentCategoryBS.value;
+    category = category === 'coverpage' ? 'coverPage' : category;
+    return this.http.get<TocItem[]>(
       `api/secured/${category}/${annexRef}/getTocItems`,
       {
         params: { tocMode },
       },
     );
+  }
+
+  validateNodeDrop(
+    documentRef: string,
+    documentType: string,
+    nodeDragged: TableOfContentItemVO,
+    nodeDroppedAt: TableOfContentItemVO,
+  ) {
+    return this.http.post(`api/secured/toc/${documentRef}/validate-node-drop`, {
+      nodeDragged: null,
+      nodeDroppedAt: null,
+      documentRef,
+      documentType,
+    });
   }
 
   setToc(toc: TableOfContentItemVO[]) {
@@ -246,7 +268,7 @@ export class DocumentService implements OnDestroy {
   getDocumentVersionsData(documentType: string, documentRef: string) {
     //FIXME modify this when backend api for version-data is modified not to contain documentId param.
     return this.http.get<Version[]>(
-      `api/secured/${documentType}/${documentRef}/${documentRef}/version-data/`,
+      `api/secured/${documentType}/${documentRef}/version-data`,
     );
   }
 

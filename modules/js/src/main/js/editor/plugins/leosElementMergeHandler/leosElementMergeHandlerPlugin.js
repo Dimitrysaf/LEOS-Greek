@@ -18,6 +18,7 @@ define(function leosElementMergeHandlerPluginModule(require) {
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var $ = require("jquery");
 
     var pluginName = "leosElementMergeHandler";
@@ -43,7 +44,7 @@ define(function leosElementMergeHandlerPluginModule(require) {
             var mergeCommand = editor.addCommand(MERGE_CMD_NAME, {
                 exec: function(editor) {
                 	if (this.state != TRISTATE_DISABLED) {
-                        CKEDITOR.fire("editorInitOngoing");
+                        CKEDITOR.fire("editorInitEnds");
                 		editor.fire("merge", {
                 			data: editor.getData()
                 		});
@@ -71,7 +72,17 @@ define(function leosElementMergeHandlerPluginModule(require) {
     			|| _isSoftDeletedOrMovedTo($editedElement.find('ol > li'), 'data-akn-attr-softaction')))) {
     		return false;
     	}
-    	var $mergeOnElement = editor.LEOS != null ? $editedElement.prevAll(editor.LEOS.elementType + ', list').first() : $();
+        var $mergeOnElement;
+        if (_isListIntro($editedElement, editor)) {
+            $mergeOnElement = $editedElement.parent().prevAll(editor.LEOS.elementType + ', ' + leosPluginUtils.LIST).first();
+        } else {
+            $mergeOnElement = editor.LEOS != null ? $editedElement.prevAll(editor.LEOS.elementType + ', ' + leosPluginUtils.LIST).first() : $();
+        }
+        // Check if previous is a list, then take last element of list
+        if ($mergeOnElement.length>0 && !!$mergeOnElement.prop('tagName')
+            && $mergeOnElement.prop('tagName').toLowerCase() == leosPluginUtils.LIST) {
+            $mergeOnElement = editor.LEOS != null ? $mergeOnElement.children(editor.LEOS.elementType + ':last') : $();
+        }
     	if (!($mergeOnElement.length) || ($mergeOnElement.length && (!($mergeOnElement.children('content').length)
     			|| $mergeOnElement.children('content:has(>table)').length
     			|| _isSoftDeletedOrMovedTo($mergeOnElement, 'leos:softaction')))) {
@@ -80,6 +91,16 @@ define(function leosElementMergeHandlerPluginModule(require) {
         return true;
     }
 
+    function _isListIntro($element, editor) {
+        if (!!$element && $element.length) {
+            var isList = $element.parent().length > 0 && !!($element.parent().prop('tagName')) &&
+                $element.parent().prop('tagName').toLowerCase() == leosPluginUtils.LIST;
+            var isSubParagraph = !!(editor.LEOS)
+                && editor.LEOS.elementType == leosPluginUtils.SUBPARAGRAPH;
+            return (isList && isSubParagraph);
+        }
+        return false;
+    }
     function _isSoftDeletedOrMovedTo($element, attributeName) {
     	return SOFT_ACTIONS_LIST.includes($element.attr(attributeName));
     }

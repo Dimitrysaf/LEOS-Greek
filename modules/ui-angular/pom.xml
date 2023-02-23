@@ -119,7 +119,6 @@
                             <environmentVariables>
                                 <_CSDR_ARGS>${_CSDR.skipTest},${_CSDR.skipLint}</_CSDR_ARGS>
                                 <NG_APP_LEOS_INSTANCE>${leos.build.instance}</NG_APP_LEOS_INSTANCE>
-                                <NG_APP_LEOS_ENV>${leos.build.env}</NG_APP_LEOS_ENV>
                             </environmentVariables>
                             <arguments>${yarn.build.command}</arguments>
                         </configuration>
@@ -174,29 +173,6 @@
             </activation>
             <properties>
                 <_CSDR.skipTest>skipTest:true</_CSDR.skipTest>
-            </properties>
-        </profile>
-        <!-- SET build env -->
-        <profile>
-            <id>env-default</id>
-            <activation>
-                <property>
-                    <name>!env</name>
-                </property>
-            </activation>
-            <properties>
-                <leos.build.env>local</leos.build.env>
-            </properties>
-        </profile>
-        <profile>
-            <id>env</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                </property>
-            </activation>
-            <properties>
-                <leos.build.env>${env}</leos.build.env>
             </properties>
         </profile>
         <!-- SET build instance -->

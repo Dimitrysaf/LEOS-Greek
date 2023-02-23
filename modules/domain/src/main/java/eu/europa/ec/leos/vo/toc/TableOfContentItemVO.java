@@ -84,6 +84,10 @@ public class TableOfContentItemVO implements Serializable {
     private String style;
     private Boolean isAutoNumOverwritten = false;
 
+    public TableOfContentItemVO() {
+        super();
+    }
+
     public TableOfContentItemVO(TocItem tocItem, String id, String originAttr, String number, String originNumAttr, String heading,
                                 Node node, String content) {
         this.tocItem = tocItem;

@@ -1,8 +1,10 @@
 import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { combineLatest, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
+import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
@@ -26,17 +28,19 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
 
   isEditMode = false;
   private unloadStyleSheet?: () => void;
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     private domService: DomService,
     public doc: DocumentService,
     private route: ActivatedRoute,
+    private router: Router,
     private translate: TranslateService,
     private cdkEditor: CKEditorService,
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.documentRef = params.id;
       this.documentType = this.route.snapshot.data['category'];
       this.doc.setDocumentCategory(this.documentType);
@@ -47,13 +51,16 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     });
 
     this.loadStyleSheet();
-
-    this.doc.documentXML$.subscribe((xml) => {
-      this.loadDocument(xml);
-    });
+    this.doc.documentView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
+      });
   }
 
   ngOnDestroy() {
+    this.destroy$.next(null);
+    this.destroy$.complete();
     this.unloadStyleSheet?.();
   }
 
@@ -83,14 +90,20 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.isEditMode = false;
   }
 
-  private loadDocument(xml: string) {
+  handleClose() {
+    this.doc.closeEditor();
+    //wait for the API where we get all the metadata for each document
+    this.router.navigate([`/collection/proposal`]);
+  }
+
+  private loadDocument(editableXml: string, versionInfo: VersionInfoVO) {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'text/xml');
+    const xmlDoc = parser.parseFromString(editableXml, 'text/xml');
     this.setPageTitle(xmlDoc);
     this.setPageSubTitle({
-      version: '1.0.8',
-      updatedByFull: 'MICHOTTE Alexandra (DIGIT)',
-      updatedOn: 1664193765137,
+      version: versionInfo.documentVersion,
+      updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
+      updatedOn: versionInfo.lastModifiedBy,
     });
     this.xml = this.cleanupAndSerializeXML(xmlDoc);
   }
@@ -106,9 +119,6 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
-    if (this.documentType !== 'coverPage') {
-      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
-    }
     xmlDoc.querySelector('akomaNtoso').id = this.documentRef;
     return new XMLSerializer()
       .serializeToString(xmlDoc)
@@ -119,6 +129,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     updatedOn = formatDate(1664193765137, 'dd/mm/yyyy HH:MM', 'en-US');
     this.translate
       .get('page.editor.subtitle', { version, updatedByFull, updatedOn })
+      .pipe(takeUntil(this.destroy$))
       .subscribe((subTitle: string) => {
         this.pageSubTitle = subTitle;
       });

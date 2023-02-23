@@ -8,6 +8,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_NEW_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.ID;
@@ -23,6 +25,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_ACTIONS_PREFIXES;
 import static eu.europa.ec.leos.services.support.XmlHelper.STYLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
@@ -83,7 +86,7 @@ public class XercesUtils {
             doc.getDocumentElement().normalize();
             return doc;
         } catch (Exception e) {
-            throw new IllegalStateException("cannot create createXercesDocument ", e);
+            throw new IllegalStateException("Wrong XML Structure!", e);
         }
     }
 
@@ -917,6 +920,33 @@ public class XercesUtils {
         return nodeNum;
     }
 
+    public static String getNodeNumExcludingContentRemoved(Node node) {
+        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+        if (numNode != null) {
+        	NodeList children = numNode.getChildNodes();
+        	StringBuilder content = new StringBuilder();
+        	for (int i = 0; i < children.getLength(); i++) {
+        		if(content.length() > 0) {
+        			content.append(" ");
+        		}
+                Node child = children.item(i);
+                String childContent = null;
+                if(hasAttributeWithValue(child, CLASS_ATTR, CONTENT_REMOVED_CLASS)) {
+                	if(!hasChildContainsAttributeValue(numNode, CLASS_ATTR, CONTENT_NEW_CLASS)) {
+                		childContent = child.getTextContent();
+                	}
+                } else {
+                	childContent = child.getTextContent();
+                }
+            	if(StringUtils.isNotBlank(childContent)) {
+            		content.append(childContent);
+            	}
+            }
+        	return content.length() > 0 ? content.toString() : null;
+        }
+        return null;
+    }
+    
     private static String getSoftActionPrefix(String id) {
         if (id != null) {
             return SOFT_ACTIONS_PREFIXES.stream()
@@ -1083,9 +1113,75 @@ public class XercesUtils {
         return null;
     }
 
+    public static boolean hasAttributeWithValue(Node node, String attrName, String attrVal) {
+        if (node != null) {
+            String attrValue = getAttributeValue(node, attrName);
+            if (!StringUtils.isEmpty(attrValue) && attrValue.contains(attrVal)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
+    	NodeList children = node.getChildNodes();
+    	for (int i = 0; i < children.getLength(); i++) {
+        	if(hasAttributeWithValue(children.item(i), attrName, attrValue)) {
+        		return true;
+        	}
+        }
+    	return false;
+    }
+
+    public static boolean hasNodeContainingAttributeValue(NodeList bodyNodes, String attrName, String attrValue) {
+        for (int i=0; i<bodyNodes.getLength(); i++) {
+            List<Node> children = XercesUtils.getChildren(bodyNodes.item(i));
+            for (Node childNode : children) {
+                if (hasAttributeValue(attrName, attrValue, childNode)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean hasAttributeValue(String attrName, String attrValue, Node childNode) {
         String attributeValue;
         attributeValue = getAttributeValue(childNode, attrName);
         return (attributeValue != null && attributeValue.equalsIgnoreCase(attrValue));
+    }
+
+    public static boolean is(Node node, String tagName) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            return node.getNodeName().equalsIgnoreCase(tagName);
+        }
+        return false;
+    }
+
+    public static boolean is(Node node, List<String> tagNames) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            return tagNames.contains(node.getNodeName().toLowerCase());
+        }
+        return false;
+    }
+
+    public static boolean isFirstSubParagraph(Node node) {
+        if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
+            return false;
+        }
+        if (is(node, SUBPARAGRAPH)) {
+            Node prevSibling = XercesUtils.getPrevSibling(isListIntro(node) ? node.getParentNode(): node);
+            return prevSibling == null || !is(prevSibling, Arrays.asList(SUBPARAGRAPH, LIST));
+        }
+        return false;
+    }
+
+    public static boolean isListIntro(Node node) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            boolean isInsideAList = is(node.getParentNode(), LIST);
+            boolean isFirstElement = XercesUtils.getPrevSibling(node) == null;
+            return is(node, SUBPARAGRAPH) && isInsideAList && isFirstElement;
+        }
+        return false;
     }
 }

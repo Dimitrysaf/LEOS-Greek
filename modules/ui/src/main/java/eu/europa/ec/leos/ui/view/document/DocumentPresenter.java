@@ -159,6 +159,7 @@ import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -194,6 +195,7 @@ import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
+import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.log.LogUtil;
 import eu.europa.ec.leos.web.support.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
@@ -216,7 +218,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -277,6 +278,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private final MergeContributionHelper mergeContributionHelper;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     protected final AttachmentProcessor attachmentProcessor;
+    private final ConfigurationHelper cfgHelper;
 
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -309,11 +311,12 @@ class DocumentPresenter extends AbstractLeosPresenter {
                       ProposalService proposalService, ContributionService contributionService, SearchService searchService, ExportPackageService exportPackageService,
                       NotificationService notificationService, CloneContext cloneContext, InstanceTypeResolver instanceTypeResolver, XmlContentProcessor xmlContentProcessor,
                       NumberService numberService, MergeContributionHelper mergeContributionHelper, AttachmentProcessor attachmentProcessor,
-                      AnnotateService annotateService) {
+                      ConfigurationHelper cfgHelper, AnnotateService annotateService) {
 
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.contributionService = contributionService;
         this.attachmentProcessor = attachmentProcessor;
+        this.cfgHelper = cfgHelper;
         LOG.trace("Initializing document presenter...");
         this.documentScreen = documentScreen;
         this.billService = billService;
@@ -690,7 +693,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             final String updatedLabel = generateLabel(event.getElementId(), bill);
             final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
 
-            updateBillContent(bill, newXmlContent, comment, "document." + tagName + ".deleted");
+            updateBillContent(bill, newXmlContent, comment);
             updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
             LOG.info("Element '{}' in Bill {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), bill.getName(), bill.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception ex) {
@@ -720,7 +723,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, event.getElementId(), tagName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
-        updateBillContent(bill, newXmlContent, checkinCommentJson, "document." + tagName + ".inserted");
+        updateBillContent(bill, newXmlContent, checkinCommentJson);
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
         LOG.info("New Element of type '{}' inserted in Bill {} id {}, in {} milliseconds ({} sec)", tagName, bill.getName(), bill.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
@@ -812,7 +815,6 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
         Bill updatedBill = billService.saveTableOfContent(bill, event.getTableOfContentItemVOs(), checkinCommentJson, user);
 
-        eventBus.post(new NotificationEvent(Type.INFO, "toc.edit.saved"));
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
@@ -1046,6 +1048,15 @@ class DocumentPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LOG.error("Unable to perform the importElements operation", e);
             eventBus.post(new NotificationEvent(Type.INFO, "document.import.failed"));
+        }
+    }
+
+    private void updateBillContent(Bill bill, byte[] xmlContent, String operationMsg) {
+        bill = billService.updateBill(bill, xmlContent, operationMsg);
+        if (bill != null) {
+            eventBus.post(new RefreshDocumentEvent());
+            eventBus.post(new DocumentUpdatedEvent());
+            leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         }
     }
 
@@ -1726,10 +1737,36 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
         String versionId = event.getVersionId();
         Bill version = billService.findBillVersion(versionId);
         byte[] resultXmlContent = getContent(version);
-        billService.updateBill(getDocument(), resultXmlContent, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()), null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    private void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        billService.updateBill(getDocument(), xmlContent, messageHelper.getMessage("operation.restore.version"
+                , versionLabel));
 
         List<Bill> documentVersions = billService.findVersions(documentId);
         documentScreen.updateTimeLineWindow(documentVersions);

@@ -31,7 +31,6 @@ import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -233,7 +232,7 @@ public class XmlContentProcessorHelper {
             originNumAttr = getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
             numId = getAttributeValue(numNode, XMLID);
             numSoftActionAttribute = getAttributeForSoftAction(numNode, LEOS_SOFT_ACTION_ATTR);
-            number = extractNumber(numNode.getTextContent(), tocItem.isNumWithType());
+            number = extractNumber(numNode.getTextContent() != null ? numNode.getTextContent().trim() : null, tocItem.isNumWithType());
             if (indentOriginType != null && indentOriginNumValue == null
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPARAGRAPH)
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPOINT)
@@ -342,10 +341,17 @@ public class XmlContentProcessorHelper {
 
     private static String extractContentForTocItemsExceptNumAndHeadingAndIntro(Node node, String elementName) {
         if (!ELEMENTS_TO_HIDE_CONTENT.contains(elementName)) {
-        	if(PARAGRAPH.equals(elementName)) {
+        	if(PARAGRAPH.equals(elementName) || LEVEL.equals(elementName)) {
         		Node current = XercesUtils.getFirstChild(node, SUBPARAGRAPH);
         		if(current != null) {
         			return current.getTextContent();
+        		}
+        		Node list = XercesUtils.getFirstChild(node, LIST);
+        		if(list != null) {
+        			current = XercesUtils.getFirstChild(list, SUBPARAGRAPH);
+            		if(current != null) {
+            			return current.getTextContent();
+            		}
         		}
         	}
             Node current = XercesUtils.getFirstChild(node, HEADING);
@@ -472,7 +478,7 @@ public class XmlContentProcessorHelper {
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
             headingNode = extractOrBuildHeaderElement(node, EMPTY_STRING);
             XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
-            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null, null);
+            updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
         }
         return headingNode;
     }
@@ -550,7 +556,7 @@ public class XmlContentProcessorHelper {
     }
 
     public static void updateSoftInfo(Node node, SoftActionType action, Boolean isSoftActionRoot, User user, String originAttrValue,
-                                      String moveId, String tagName, TableOfContentItemVO tocVo, String originOfDocument) {
+                                      String moveId, TableOfContentItemVO tocVo, String originOfDocument) {
         if (originAttrValue == null) {
             return;
         }

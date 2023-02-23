@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import io.atlassian.fugue.Pair;
@@ -34,8 +35,12 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.spy;
 
 public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
+
+    @InjectMocks
+    protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
     @InjectMocks
     private XmlContentProcessorImpl xercesXmlContentProcessor = new XmlContentProcessorMandate();
@@ -68,6 +73,45 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_remove_cn_point() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_cn_point_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_remove_cn_indented_point() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_indented_cn_point_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_remove_cn_indented_point_with_several_lists() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point_and_several_lists.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_indented_cn_point_and_several_lists_expected.xml");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad2");
+
+        Document doc = XercesUtils.createXercesDocument(returnedElement);
+        xercesXmlContentProcessor.doXMLPostProcessing(doc);
+        String result = XercesUtils.nodeToString(doc);
+
+        assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
+    }
+
+    @Test
+    public void test_remove_cn_added_point_with_several_lists() {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point_and_several_lists.xml");
+        byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_added_cn_point_and_several_lists_expected.xml");
         byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
@@ -353,7 +397,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_first_point_of_ec_list.xml");
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_first_point_of_ec_list_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz");
+        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz", true);
         assertNull(result);
     }
 
@@ -362,7 +406,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_point_of_ec_list.xml");
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_point_of_ec_list_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz");
+        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz", true);
         assertNull(result);
     }
 

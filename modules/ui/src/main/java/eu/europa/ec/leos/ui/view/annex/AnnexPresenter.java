@@ -164,6 +164,7 @@ import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
@@ -576,6 +577,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             if (InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
                 exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
                 exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, currentDocument));
+                exportOptions.setWithCoverPage(true);
             } else {
                 boolean isLiveDiffing = currentDocument.isLiveDiffingRequired() || !documentContentService.isRevisionAnnex(currentDocument);
                 if (!isLiveDiffing) {
@@ -583,10 +585,10 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 }
                 exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
                 exportOptions.setExportVersions(new ExportVersions<>(original, currentDocument));
+                exportOptions.setWithCoverPage(false);
             }
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
-            exportOptions.setWithCoverPage(false);
             LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
             BillContext context = billContextProvider.get();
             context.usePackage(leosPackage);
@@ -995,7 +997,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
             // save document into repository
             annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
             if (annex != null) {
-                eventBus.post(new NotificationEvent(Type.INFO, "document.annex.block.deleted", tagName.equalsIgnoreCase(LEVEL) ? StringUtils.capitalize(POINT) : StringUtils.capitalize(tagName)));
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1019,7 +1020,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
         if (annex != null) {
-            eventBus.post(new NotificationEvent(Type.INFO, "document.annex.block.inserted",  tagName.equalsIgnoreCase(LEVEL) ? StringUtils.capitalize(POINT) : StringUtils.capitalize(tagName)));
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1429,9 +1429,35 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
+
         final Annex version = annexService.findAnnexVersion(event.getVersionId());
         final byte[] resultXmlContent = getContent(version);
-        annexService.updateAnnex(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()), null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        annexService.updateAnnex(getDocument(), xmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version",
+                versionLabel));
 
         List<Annex> documentVersions = annexService.findVersions(documentId);
         annexScreen.updateTimeLineWindow(documentVersions);
@@ -1491,7 +1517,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
         AnnexStructureType structureType = getStructureType();
         annex = annexService.saveTableOfContent(annex, event.getTableOfContentItemVOs(), structureType, messageHelper.getMessage("operation.toc.updated"), user);
 
-        eventBus.post(new NotificationEvent(Type.INFO, "toc.edit.saved"));
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));

@@ -438,7 +438,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
         if (!isValid) {
             ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionProposal(documents), null),
-                    this.eventBus, this.messageHelper);
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("documents.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
         }
         annexVOList.sort(Comparator.comparingInt(DocumentVO::getDocNumber));
         DocumentVO legalText = proposalVO.getChildDocument(LeosCategory.BILL);

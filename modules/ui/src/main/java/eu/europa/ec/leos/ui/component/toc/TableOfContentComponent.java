@@ -62,6 +62,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
@@ -102,6 +103,7 @@ import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.teemusa.gridextensions.client.tableselection.TableSelectionState.TableSelectionMode;
 import org.vaadin.teemusa.gridextensions.tableselection.TableSelectionModel;
+import org.w3c.dom.Node;
 
 import javax.inject.Provider;
 import java.time.Instant;
@@ -151,6 +153,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     public static final DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final float TOC_MIN_WIDTH = 190F;
     private static final int MAX_CHECKIN_COMMENTS = 15;
+    private static final int MAX_DEPTH = 3;
 
     enum POINT_NUMBERING_TYPE {
         BULLET("bullet", NumberingType.BULLET_NUM),
@@ -807,6 +810,16 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 	private boolean invalidContent(TableOfContentItemVO item) {
 		return isCrossHeading(item.getTocItem()) && (StringUtils.isBlank(item.getContent()) || XmlHelper.containsXmlTags(item.getContent()));
 	}
+
+    private boolean isArticleBiggerThanDefinitionDepth(TableOfContentItemVO item) {
+        Node indentNode = XercesUtils.getFirstDescendant(item.getNode(), Arrays.asList(INDENT));
+        int depth = indentNode != null ? XercesUtils.getPointDepth(indentNode) : 0;
+
+        return getTagValueFromTocItemVo(item).equals(ARTICLE) // is article
+                && TocItemTypeName.REGULAR.equals(item.getTocItemType())
+                &&  depth > MAX_DEPTH ; // has INDENT html tag
+    }
+
 
     /**
      * On read only mode, it is populating only tocItems.
@@ -1551,10 +1564,27 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             listRadioButtonGroup.setItemCaptionGenerator(item -> messageHelper.getMessage("toc.edit.window.item." + item + ".article.type"));
 
             listRadioButtonGroup.addValueChangeListener(event -> {
+
+                TableOfContentItemVO item = binder.getBean();
+                if(TocItemTypeName.DEFINITION.value().equalsIgnoreCase(event.getValue()) && isArticleBiggerThanDefinitionDepth(item)){
+                    ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
+                            messageHelper.getMessage("toc.edit.window.article.change"),
+                            messageHelper.getMessage("toc.edit.window.article.3levels.deep"),
+                            messageHelper.getMessage("toc.edit.window.article.close"),
+                            null,
+                            null);
+                    confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
+                    confirmDialog.getContent().setHeightUndefined();
+                    confirmDialog.setHeightUndefined();
+                    confirmDialog.getCancelButton().setVisible(false);
+                    confirmDialog.show(getUI(), dialog -> {}, true);
+                    event.getSource().setValue(TocItemTypeName.REGULAR.name().toLowerCase());
+                    return;
+                }
+
                 if (event.isUserOriginated()) {
                     dataChanged = true;
 
-                    TableOfContentItemVO item = binder.getBean();
                     String oldValue = item.getHeading();
                     item.setTocItemType(TocItemTypeName.fromValue(event.getValue().toUpperCase()));
                     TocUpdate tocUpdate = new TocUpdate(item, ACTION_ON_ITEM.TYPE_UPDATE);

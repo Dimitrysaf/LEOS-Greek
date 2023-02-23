@@ -110,6 +110,7 @@ public class XmlHelper {
     public static final String CONTENT = "content";
     public static final String CROSSHEADING = "crossHeading";
     public static final String BLOCK = "block";
+    public static final String TLC_CONCEPT = "TLCConcept";
     public static final String EXPL_COUNCIL = "EXPL_COUNCIL";
 
     public static final String ID = "id";
@@ -121,7 +122,9 @@ public class XmlHelper {
     public static final String STYLE = "style";
     public static final String WHITESPACE = " ";
     public static final String REFERS_TO_ATTR = "refersTo";
+    public static final String TLC_CONCEPT_INP_ID = "_INP";
     public static final String INTRODUCTORY_PART = "~_INP";
+    public static final String TLC_CONCEPT_WRP_ID = "_WRP";
     public static final String ENDING_PART = "~_WRP";
 
     public static final String LEOS_ORIGIN_ATTR = "leos:origin";
@@ -218,6 +221,15 @@ public class XmlHelper {
     public static final String PROP_ACT = "PROP_ACT";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
     public static final String STAT_FINANC_LEGIS = "STAT_FINANC_LEGIS";
+
+    public static final String CONTENT_REMOVED_CLASS = "leos-content-removed";
+    public static final String CONTENT_NEW_CLASS = "leos-content-new";
+    public static final String LIST_CLOSE = "</list>";
+    public static final String PARA_START = "<paragraph>";
+    public static final String PARA_END = "</paragraph>";
+    public static final String PARA_OPEN_TAG = "<paragraph";
+    public static final String SUBPARA_END = "</subparagraph>";
+    public static final String SUBPARA_REGEX = "<subparagraph[^>]*(?:>)";
 
     public static String extractContentFromTocItem(TableOfContentItemVO tocItem) {
         if (tocItem.getContent() == null) {

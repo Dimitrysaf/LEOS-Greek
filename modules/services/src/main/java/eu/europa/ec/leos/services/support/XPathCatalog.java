@@ -147,6 +147,26 @@ public class XPathCatalog {
         return "//akn:meta/akn:identification/akn:FRBRManifestation/akn:preservation/@xmlns:akn4eu";
     }
 
+    public String getXPathSubparagraphWithReferToINPAttribute() {
+        return "/akn:akomaNtoso//akn:subparagraph[@refersTo=\"~_INP\"]";
+    }
+
+    public String getXPathSubparagraphWithReferToWRPAttribute() {
+        return "/akn:akomaNtoso//akn:subparagraph[@refersTo=\"~_WRP\"]";
+    }
+
+    public String getXPathMetaReferences() {
+        return "/akn:akomaNtoso//akn:meta/akn:references";
+    }
+
+    public String getXPathMetaReferenceForINP() {
+        return "/akn:akomaNtoso//akn:meta/akn:references/akn:TLCConcept[@xml:id=\"_INP\"]";
+    }
+
+    public String getXPathMetaReferenceForWRP() {
+        return "/akn:akomaNtoso//akn:meta/akn:references/akn:TLCConcept[@xml:id=\"_WRP\"]";
+    }
+
     public static String removeNamespaceFromXml(String xml) {
         return xml.replaceAll(NAMESPACE_AKN_NAME + ":", "");
     }

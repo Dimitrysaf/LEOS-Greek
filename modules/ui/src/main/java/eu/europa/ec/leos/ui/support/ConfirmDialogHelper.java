@@ -27,10 +27,11 @@ public class ConfirmDialogHelper {
         );
     }
 
-    public static void showConvertEditorDialog( final UI ui, final ShowConfirmDialogEvent event, final EventBus eventBus, final MessageHelper messageHelper) {
-        LeosConfirmDialog dialog = new LeosConfirmDialog(messageHelper.getMessage("document.akn4eu.version.convert.title"),
-                messageHelper.getMessage("document.akn4eu.version.convert.message"),
-                messageHelper.getMessage("document.akn4eu.version.convert.confirm"), null, null, false);
+    public static void showConvertEditorDialog( final UI ui, final ShowConfirmDialogEvent event, final EventBus eventBus, final String title,
+                                                final String message, final String confirm) {
+        LeosConfirmDialog dialog = new LeosConfirmDialog(title ,
+                message,
+                confirm, null, null, false);
         dialog.show(ui, new ConfirmDialog.Listener() {
             private static final long serialVersionUID = -2086246080635984781L;
 

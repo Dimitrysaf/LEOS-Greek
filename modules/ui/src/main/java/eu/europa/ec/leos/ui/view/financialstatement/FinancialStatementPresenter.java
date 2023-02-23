@@ -93,6 +93,7 @@ import eu.europa.ec.leos.web.event.component.ResetRevisionComponentEvent;
 import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.ShowCleanVersionRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
@@ -472,12 +473,24 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     @Subscribe
     void checkElementCoEdition(CheckElementCoEditionEvent event) {
         try {
-            FinancialStatement financialStatement = getDocument();
-            final byte[] contentBytes = getContent(financialStatement);
-            Element tocElement = xmlContentProcessor.getTocElement(contentBytes, event.getElementId(),
-                    getListOfTableOfContent(financialStatement, TocMode.SIMPLIFIED), Arrays.asList(SUBPARAGRAPH));
-            financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
-                    tocElement.getElementId(), tocElement.getElementTagName(), event.getAction(), event.getActionEvent());
+            if (event.getAction().equals(CheckElementCoEditionEvent.Action.MERGE)) {
+                FinancialStatement financialStatement = getDocument();
+                final byte[] contentBytes = getContent(financialStatement);
+                Element mergeOnElement = xmlContentProcessor.getMergeOnElement(contentBytes, event.getElementContent(), event.getElementTagName(), event.getElementId(), true);
+                if (mergeOnElement != null) {
+                    financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
+                            mergeOnElement.getElementId(), mergeOnElement.getElementTagName(), event.getAction(), event.getActionEvent());
+                } else {
+                    financialStatementScreen.showAlertDialog("operation.element.not.performed");
+                }
+            } else {
+                FinancialStatement financialStatement = getDocument();
+                final byte[] contentBytes = getContent(financialStatement);
+                Element tocElement = xmlContentProcessor.getTocElement(contentBytes, event.getElementId(),
+                        getListOfTableOfContent(financialStatement, TocMode.SIMPLIFIED), Arrays.asList(SUBPARAGRAPH));
+                financialStatementScreen.checkElementCoEdition(coEditionHelper.getCurrentEditInfo(strDocumentVersionSeriesId), user,
+                        tocElement.getElementId(), tocElement.getElementTagName(), event.getAction(), event.getActionEvent());
+            }
         } catch (Exception e) {
             LOG.error("Unexpected error in checkElementCoEdition", e);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "unknown.error.message"));
@@ -559,7 +572,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 eventBus.post(new RefreshElementEvent(elementId, elementTagName, newElementContent));
 
                 eventBus.post(new DocumentUpdatedEvent());
-                eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "operation.financial.statement.block.updated"));
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
             LOG.info("Element '{}' in FinancialStatement {} id {}, saved in {} milliseconds ({} sec)", elementId, financialStatement.getName(),
@@ -618,22 +630,22 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
             FinancialStatement financialStatement = getDocument();
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
-            Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId);
+            Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
-                byte[] newXmlContent = xmlContentProcessor.mergeElement(xmlContent, elementContent, tagName, elementId);
+                byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
                 if (financialStatement != null) {
-                    elementToEditAfterClose = mergeOnElement;
+                    elementToEditAfterClose = null;
                     eventBus.post(new CloseElementEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
+                    LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
+                            financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
                 }
             } else {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
             }
-            LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
-                    financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error in mergeElement", e);
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "unknown.error.message"));
@@ -651,8 +663,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                 VersionType.MINOR, messageHelper.getMessage("operation.financial.block.inserted"));
         if (financialStatement != null) {
-            eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.financial.block.inserted",
-                    StringUtils.capitalize(tagName)));
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -676,8 +686,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                     VersionType.MINOR, messageHelper.getMessage("operation.financial.block.deleted"));
             if (financialStatement != null) {
-                eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.financial.block.deleted",
-                        StringUtils.capitalize(tagName)));
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
@@ -1057,9 +1065,36 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     @Subscribe
     void versionRestore(RestoreVersionRequestEvent event) {
         String versionId = event.getVersionId();
+        Boolean akn4euConversionDocumentsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.akn4eu.conversion.documents.enable"));
+
         FinancialStatement version = financialStatementService.findFinancialStatementVersion(versionId);
         byte[] resultXmlContent = getContent(version);
-        financialStatementService.updateFinancialStatement(getDocument(), resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+
+        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+            ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()),
+                            null),
+                    this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.message"),
+                    messageHelper.getMessage("document.akn4eu.version.convert.confirm"));
+        } else {
+            doRestoreVersion(resultXmlContent, version.getVersionLabel());
+        }
+    }
+
+    @Subscribe
+    void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
+        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
+                "document.akn4eu.version.converted.message",
+                NotificationEvent.Type.TRAY);
+        eventBus.post(notificationEvent);
+        doRestoreVersion(xmlContent, event.getVersionLabel() + " - " + messageHelper.getMessage("operation.akn4eu.version.conversion"));
+    }
+
+    private void doRestoreVersion(byte[] xmlContent, String versionLabel) {
+        financialStatementService.updateFinancialStatement(getDocument(), xmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version",
+                versionLabel));
 
         List documentVersions = financialStatementService.findVersions(documentId);
         financialStatementScreen.updateTimeLineWindow(documentVersions);

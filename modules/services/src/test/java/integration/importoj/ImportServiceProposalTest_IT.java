@@ -97,6 +97,47 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
     }
 
     @Test
+    public void test_removeINP() {
+        final byte[] xmlInput = TestUtils.getFileContent(PREFIX_FILE, "test_importElement_154Articles_with_NO_IND_or_WRP.xml");
+        final byte[] xmlStart = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_start_with_IND_and_WRP.xml");
+        final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_expected_without_IND_or_WRP.xml");
+
+        final Bill originalDocument = createBillForBytes(xmlStart);
+        List<String> elementsIds = new ArrayList<>();
+
+        // When
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+
+        // Then
+        String result = new String(xmlResult);
+        String expected = new String(xmlExpected);
+        result = squeezeXmlAndRemoveAllNS(result);
+        expected = squeezeXmlAndRemoveAllNS(expected);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void test_addMoreThanOneWRPParagraph() {
+        final byte[] xmlInput = TestUtils.getFileContent(PREFIX_FILE, "test_addMoreThanOneWRPParagraph.xml");
+        final byte[] xmlStart = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_start_with_NO_IND_or_WRP.xml");
+        final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_FILE_EC, "test_addMoreThanOneWRPParagraph_expected.xml");
+
+        final Bill originalDocument = createBillForBytes(xmlStart);
+        List<String> elementsIds = new ArrayList<>();
+        elementsIds.add("art_2");
+
+        // When
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+
+        // Then
+        String result = new String(xmlResult);
+        String expected = new String(xmlExpected);
+        result = squeezeXmlAndRemoveAllNS(result);
+        expected = squeezeXmlAndRemoveAllNS(expected);
+        assertEquals(expected, result);
+    }
+
+    @Test
     public void test_importElement_single_checkCorrectNamespaces() {
         final byte[] xmlInput = TestUtils.getFileContent(PREFIX_FILE, "test_importElement_154Articles.xml");
         final byte[] xmlStart = TestUtils.getFileContent(PREFIX_FILE_EC, "test_importElement_start.xml");

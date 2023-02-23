@@ -19,6 +19,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import integration.saveToc.SaveTocTest_IT;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -29,8 +30,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.mockito.Mockito.spy;
+
 public abstract class SaveTocProposalTest_IT extends SaveTocTest_IT {
 
+    @InjectMocks
+    protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
     @InjectMocks
     protected XmlContentProcessor xmlContentProcessor = Mockito.spy(new XmlContentProcessorProposal());
     @InjectMocks

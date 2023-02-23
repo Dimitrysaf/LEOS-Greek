@@ -30,6 +30,8 @@ import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,7 @@ import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +51,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_BE_NUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
@@ -170,7 +174,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             }
         }
         XmlContentProcessorHelper.updateSoftInfo(node, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), moveId,
-                tocVo.getTocItem().getAknTag().value(), tocVo, getOriginOfDocument(node));
+                tocVo, getOriginOfDocument(node));
     }
 
     private void updateDepthAttribute(TableOfContentItemVO tocVo, Node node) {
@@ -188,33 +192,50 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     @Override
-    public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
+    public Element getMergeOnElement(byte[] xmlContent, String content, String tagName, String idAttributeValue, boolean checkParent) {
         if (!isPContent(content, tagName)) {
             return null;
         }
 
         Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+
+        // Case when element is intro
+        if ((mergeOnElement == null) && (isListIntro(xmlContent, idAttributeValue))) {
+            Element parentElement = getParentElement(xmlContent, idAttributeValue);
+            mergeOnElement = parentElement != null ? getSiblingElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
+                    Arrays.asList(tagName,
+                            parentElement.getElementTagName()), true) : null;
+            if (mergeOnElement != null && mergeOnElement.getElementTagName().equalsIgnoreCase(LIST)) {
+                mergeOnElement = getLastChildElement(xmlContent, mergeOnElement.getElementTagName(), mergeOnElement.getElementId(), Collections.emptyList());
+            }
+        }
         if ((mergeOnElement == null) || ((mergeOnElement != null) &&
                 (!isPContent(mergeOnElement.getElementFragment(), mergeOnElement.getElementTagName())))) {
             return null;
         }
-
-        return getMergedOnElement(mergeOnElement, xmlContent);
+        return getMergedOnElement(mergeOnElement, xmlContent) ;
     }
 
     @Override
     public byte[] mergeElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
-        Element mergeOnElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Arrays.asList(tagName, LIST), true);
+        Element mergeOnElement = getMergeOnElement(xmlContent, content, tagName, idAttributeValue, false);
         String contentFragment = getElementContentFragmentByPath(content.getBytes(UTF_8), "/" + tagName + "/content/p", false);
+        String mergeOnElementFragment =  CONTENT.equalsIgnoreCase(mergeOnElement.getElementTagName())
+                ? "/content/p" : "/" + mergeOnElement.getElementTagName() + "/content/p";
         String contentFragmentMergeOn = getElementContentFragmentByPath(mergeOnElement.getElementFragment().getBytes(UTF_8),
-                "/" + mergeOnElement.getElementTagName() + "/content/p", false);
-        final String replace = mergeOnElement.getElementFragment().replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
+                mergeOnElementFragment, false);
+        String fragment = mergeOnElement.getElementFragment();
+        if(!fragment.contains(contentFragmentMergeOn)){
+            fragment =  Jsoup.parse(fragment, EMPTY_STRING, Parser.xmlParser()).toString();
+        }
+        final String replace = fragment.replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
+
         byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
 
         updatedXmlContent = replaceElementById(updatedXmlContent, content, idAttributeValue);
         updatedXmlContent = deleteElementById(updatedXmlContent, idAttributeValue);
         Element parentElement = getParentElement(updatedXmlContent, mergeOnElement.getElementId());
-        if (Arrays.asList(LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) &&
+        if (parentElement != null && Arrays.asList(LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) &&
                 getChildElement(updatedXmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
                         Arrays.asList(SUBPARAGRAPH, SUBPOINT, LIST), 2) == null) {
             final String xPath = "/" + parentElement.getElementTagName() + "/" + mergeOnElement.getElementTagName();

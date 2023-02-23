@@ -58,6 +58,10 @@
                 & > :nth-child(1) {
                 }
             }
+
+			            table * > td {
+                				text-align: left;
+			            } 
         }
     }
     

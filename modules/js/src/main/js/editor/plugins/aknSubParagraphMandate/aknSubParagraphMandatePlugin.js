@@ -47,6 +47,7 @@ define(function aknSubParagraphMandatePluginModule(require) {
                 action : _onCtrlUKey
             });
             editor.on("toDataFormat", _transformSubParagraph, null, null, 15);
+            editor.on("toHtml", _removeContentEditableAttribute, null, null, 15);
             editor.on('selectionChange', function(event) {
                 var tableCommand = event.editor.getCommand('table');
                 if (tableCommand) {
@@ -73,6 +74,10 @@ define(function aknSubParagraphMandatePluginModule(require) {
             event.data.dataValue = (event.data.dataValue + '?').replace("<subparagraph>", "").
             replace("</subparagraph>?", "");
         }
+    }
+
+    function _removeContentEditableAttribute(event) {
+        event.data.dataValue = event.data.dataValue.replace("contenteditable=\"true\"", "");
     }
 
     function _isElementInsideUnNumberedPar(editor) {
