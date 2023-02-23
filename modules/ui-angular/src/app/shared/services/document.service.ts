@@ -247,6 +247,19 @@ export class DocumentService implements OnDestroy {
     );
   }
 
+  saveToc(documentRef: string, toc: TableOfContentItemVO[]) {
+    let category = this.documentCategoryBS.value;
+    category = category === 'coverpage' ? 'coverPage' : category;
+    return this.http
+      .post<TableOfContentItemVO[]>(`api/secured/${category}/${documentRef}`, {
+        tableOfContentItemVOs: toc,
+      })
+      .subscribe({
+        next: (res) => null,
+        error: (res) => console.log(res),
+      });
+  }
+
   validateNodeDrop(
     documentRef: string,
     documentType: string,

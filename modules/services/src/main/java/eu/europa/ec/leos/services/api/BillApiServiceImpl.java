@@ -26,6 +26,7 @@ import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
@@ -45,6 +46,7 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
+import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringUtils;
@@ -84,6 +86,8 @@ public class BillApiServiceImpl implements BillApiService {
     @Autowired
     UserHelperAPI userHelper;
     @Autowired
+    UserService userService;
+    @Autowired
     ElementProcessor<Bill> elementProcessor;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
@@ -108,6 +112,14 @@ public class BillApiServiceImpl implements BillApiService {
         Bill annex = this.billService.findBillByRef(documentRef);
         Bill newVersion = this.billService.createVersion(annex.getId(), versionType, checkInComment);
         return this.billService.getAllVersions(annex.getId(), documentRef);
+    }
+
+    @Override
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+        Bill bill = this.billService.findBillByRef(documentRef);
+        User user =securityContext.getUser();
+        Bill updatedBill = this.billService.saveTableOfContent(bill,toc,messageHelper.getMessage("operation.toc.updated"),user);
+        return billService.getTableOfContent(updatedBill,TocMode.SIMPLIFIED);
     }
 
     @Override
@@ -187,7 +199,6 @@ public class BillApiServiceImpl implements BillApiService {
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
-
         bill = billService.updateBill(bill, newXmlContent, comment);
 
         //leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));

@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -147,6 +148,22 @@ public class BillController {
         }
 
     }
+
+    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<Object> saveToc(@PathVariable("documentRef") String documentRef,
+                                                  @RequestBody SaveTocRequestEvent saveTocRequestEvent
+    ) {
+        try {
+            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef,saveTocRequestEvent.getTableOfContentItemVOs());
+            return  ResponseEntity.ok().body(toc);
+        } catch (Exception e) {
+            LOG.error("Error occurred while saving toc - " + e.getMessage());
+            return  new ResponseEntity<>("Unexpected error occurred while saving toc recent", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody

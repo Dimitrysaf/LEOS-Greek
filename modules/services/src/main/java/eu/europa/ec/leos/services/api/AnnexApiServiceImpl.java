@@ -48,7 +48,9 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
@@ -177,6 +179,15 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        AnnexStructureType structureType = getStructureType();
+        Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
+        return this.annexService.getTableOfContent(updatedAnnex,TocMode.SIMPLIFIED);
+    }
+
+    @Override
     public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         List<SearchMatchVO> matches = Collections.emptyList();
@@ -235,6 +246,14 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         return content.getSource().getBytes();
     }
+
+    private AnnexStructureType getStructureType() {
+        List<TocItem> tocItems = structureContext.get().getTocItems().stream().
+                filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(AnnexStructureType.LEVEL.getType()) ||
+                        tocItem.getAknTag().value().equalsIgnoreCase(ARTICLE.getType()))).collect(Collectors.toList());
+        return AnnexStructureType.valueOf(tocItems.get(0).getAknTag().value().toUpperCase());
+    }
+
 
     private String compareTwoVersion(Annex oldVersion, Annex newVersion) {
         final String firstItemHtml = documentContentService.getDocumentAsHtml(oldVersion, "", securityContext.getPermissions(oldVersion),
