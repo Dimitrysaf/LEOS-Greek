@@ -25,7 +25,9 @@
     <ng-template euiTemplate="header">
       <tr>
         <th>{{ 'page.collection.collaborators.table.td-name' | translate }}</th>
-        <th>{{ 'page.collection.collaborators.table.td-unit' | translate }}</th>
+        <th>
+          {{ 'page.collection.collaborators.table.td-entity' | translate }}
+        </th>
         <th>{{ 'page.collection.collaborators.table.td-role' | translate }}</th>
         <th>
           {{ 'page.collection.collaborators.table.td-actions' | translate }}
@@ -34,7 +36,7 @@
     </ng-template>
     <ng-template let-row euiTemplate="body">
       <tr>
-        <td>{{ row.login }}</td>
+        <td>{{ row.fullName }}</td>
         <td>{{ row.entity.organizationName }}</td>
         <td>
           <ng-container
@@ -59,7 +61,11 @@
             </select>
           </ng-container>
           <ng-template #tdRole>
-            <span>{{ row.role }}</span>
+            <span>{{
+              'page.collection.collaborators.role.' +
+                (row.role === 'OWNER' ? 'author' : row.role.toLowerCase())
+                | translate
+            }}</span>
           </ng-template>
         </td>
         <td>
