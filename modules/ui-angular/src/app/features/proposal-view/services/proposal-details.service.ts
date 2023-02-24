@@ -9,6 +9,7 @@ import {
   Document,
   User,
 } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   filter,
@@ -50,6 +51,7 @@ export class ProposalDetailsService {
     private router: Router,
     private loadingService: LoadingService,
     private uxAppService: UxAppShellService,
+    private translateService: TranslateService,
   ) {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
 
@@ -124,7 +126,9 @@ export class ProposalDetailsService {
           this.loadingService.setLoading(false);
           this.uxAppService.growl({
             severity: 'danger',
-            summary: 'Annex deletion failed',
+            summary: this.translateService.instant(
+              'page.collection.drafts.annex.deletion.error',
+            ),
             detail: res,
             life: 3000,
             isGrowlSticky: false,
