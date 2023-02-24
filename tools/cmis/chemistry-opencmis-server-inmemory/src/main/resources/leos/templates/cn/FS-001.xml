@@ -1327,6 +1327,10 @@
                         <p xml:id="_body__level_321__subparagraph_5_5__content__p">
                             <br xml:id="_body__level_321__subparagraph_5_5__content__p__br"/>
                         </p>
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="true" xml:id="_body__level_321__subparagraph_5_6">
+                    <content xml:id="_body__level_31__subparagraph_5_6__content">
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;margin-left:0%;" xml:id="_body__level_321__subparagraph_5_5__content__table_2">
                             <tr style="height: 13.85pt;" xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_1">
@@ -1457,9 +1461,9 @@
                                 <td rowspan="2" style="width: 198.0pt; border: solid windowtext 1.0pt; border-top: none; background: #F1F1F1; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1">
                                     <p style="text-align: center;" xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p">
                                         <b xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p__b_1">TOTAL appropriations</b>
-                                        <br xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p__br"/>
+                                        <br xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p__br1"/>
                                         <b xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p__b_2">under HEADING &lt;….&gt;</b>
-                                        <br xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p__br"/>
+                                        <br xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_1__p__br2"/>
                                         of the multiannual financial framework
                                     </p>
                                 </td>
@@ -1752,15 +1756,23 @@
                         <!-- end of rotated table-->
                     </content>
                 </subparagraph>
+                <!-- Guidance ?-->
                 <subparagraph leos:editable="true" xml:id="_body__level_321__subparagraph_9_9">
                     <content xml:id="_body__level_321__subparagraph_9_9__content">
-                        <!-- Guidance ?-->
                         <p xml:id="_body__level_321__subparagraph_9_9__content__p_1">This section should be filled in using the 'budget data of an administrative nature' to be firstly introduced in the
                             <a href="https://myintracomm.ec.europa.eu/corp/budget/financial-rules/legal-framework/internal-rules/Documents/2022-5-legislative-financial-statement-annex-en.docx" xml:id="_body__level_321__subparagraph_9_9__content__p_1__a">Annex to the Legislative Financial Statement</a>
                             (Annex 5 to the Commission decision on the internal rules for the implementation of the Commission section of the general budget of the European Union), which is uploaded to DECIDE for interservice consultation purposes.
                         </p>
+                    </content>
+                </subparagraph>
+                <subparagraph xml:id="_body__level_321__subparagraph_9_9a">
+                    <content xml:id="_body__level_321__subparagraph_9_9__content_a">
                         <p style="text-align: right;padding-right: 12%;" xml:id="_body__level_321__subparagraph_9_9__content__p_2">EUR million (to three decimal places)</p>
-                        <!-- / Guidance -->
+                    </content>
+                </subparagraph>
+                <!-- / Guidance -->
+                <subparagraph leos:editable="true" xml:id="_body__level_321__subparagraph_9_9b">
+                    <content xml:id="_body__level_321__subparagraph_9_9__content_b">
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;margin-left:0%;" xml:id="_body__level_321__subparagraph_9_9__content__table">
                             <tr xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1">
