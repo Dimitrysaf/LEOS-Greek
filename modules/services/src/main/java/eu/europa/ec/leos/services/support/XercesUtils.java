@@ -1184,4 +1184,13 @@ public class XercesUtils {
         }
         return false;
     }
+
+    public static boolean isListWrapper(Node node) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            boolean isInsideAList = is(node.getParentNode(), LIST);
+            boolean isLastElement = XercesUtils.getNextSibling(node) == null;
+            return is(node, SUBPARAGRAPH) && isInsideAList && isLastElement;
+        }
+        return false;
+    }
 }

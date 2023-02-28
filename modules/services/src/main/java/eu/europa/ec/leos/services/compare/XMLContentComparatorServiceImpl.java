@@ -36,10 +36,15 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.buildElement;
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.getListWrapper;
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.is;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isElementContentEqual;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isElementTransformedFrom;
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.isListIntro;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isListIntroAndFirstSubpoint;
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.isListWrapper;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftAction;
+import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftDeletedOrSoftMovedTo;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.withPlaceholderPrefix;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.containsNotDeletedElementsInOtherContext;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.elementImpactedByIndentation;
@@ -372,9 +377,13 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         oldContentChildIndex++;
                         newContentChildIndex++;
                     } else if (oldContentChildIndex == newContentChildIndex) {
-                        if (getIntroFromFirstList(context.getNewElement()) != null && context.getOldElement().getTagName().equals(XmlHelper.CONTENT)) {
+                        if (getIntroFromFirstList(context.getNewElement()) != null
+                                && context.getOldElement().getTagName().equals(XmlHelper.CONTENT)) {
                             appendRemovedElementContentIfRequired(context);
                             appendAddedElementContentIfRequired(context);
+                        } else if (isListWrapperSoftDeletedInPreviousList(context.getNewElement())) {
+                            appendRemovedListWrapperOfPreviousList(context);
+                            appendAddedElementContent(context);
                         } else {
                             appendAddedElementContentIfRequired(context);
                             appendRemovedElementContentIfRequired(context);
@@ -1054,7 +1063,8 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                         addToResultNode(context, newNode);
                     } else if (oldContentChildIndex == newContentChildIndex &&
                             !isElementIndentedInOtherContext(context.getNewContentElements(), context.getOldElement())
-                            && !isElementTransformedFrom(context.getNewContentRoot().getNode(), LEOS_SOFT_TRANS_FROM, context.getOldElement().getTagId())) {
+                            && !isElementTransformedFrom(context.getNewContentRoot().getNode(), LEOS_SOFT_TRANS_FROM, context.getOldElement().getTagId())
+                            && !context.getNewContentElements().containsKey(context.getOldElement().getTagId())) {
                         addReadOnlyAttributes(oldNode);
                         insertSoftDeleteAttributes(oldNode);
                         addToResultNode(context, oldNode);
@@ -1291,7 +1301,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             isFirstElement = (index == 0) || (index == 1 && element.getParent().getParent().getChildren().get(0).getTagName().equals(NUM));
             return (isFirstElement
                     && !element.getParent().getParent().equals(XmlHelper.LEVEL)
-                    && ComparisonHelper.isListIntro(element));
+                    && isListIntro(element));
         }
         return false;
     }
@@ -1345,5 +1355,59 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
             }
         }
         return false;
+    }
+
+    protected Element getPreviousListFromSubParagraph(Element element) {
+        if (is(element, SUBPARAGRAPH) && element.getParent() != null) {
+            int index = element.getParent().getChildren().indexOf(element);
+            Element previousSibling = null;
+            if (isListIntro(element) && element.getParent().getParent() != null) {
+                index = element.getParent().getParent().getChildren().indexOf(element.getParent());
+                previousSibling = index > 0
+                        ? element.getParent().getParent().getChildren().get(index - 1) : null;
+            } else if (index > 0) {
+                previousSibling = index > 0
+                        ? element.getParent().getChildren().get(index - 1) : null;
+            }
+            return previousSibling;
+        } else if (is(element, LIST)) {
+            int index = element.getParent().getChildren().indexOf(element);
+            return index > 0
+                    ? element.getParent().getChildren().get(index - 1) : null;
+        }
+        return null;
+    }
+
+    protected boolean isListWrapperSoftDeletedInPreviousList(Element element) {
+       Element previousSibling = getPreviousListFromSubParagraph(element);
+       Element listWrapper = getListWrapper(previousSibling);
+       return (isSoftDeletedOrSoftMovedTo(listWrapper));
+    }
+
+    protected void appendRemovedListWrapperOfPreviousList(ContentComparatorContext context) {
+        Element element = context.getNewElement();
+        Element previousSibling = getPreviousListFromSubParagraph(element);
+        Element listWrapper = getListWrapper(previousSibling);
+        if (isSoftDeletedOrSoftMovedTo(listWrapper)) {
+            String attrName = context.getAttrName();
+            String attrValue = getStartTagValueForRemovedElement(listWrapper, context);
+            if (attrName != null && attrValue != null) {
+                XercesUtils.addAttribute(listWrapper.getNode(), attrName, attrValue);
+            }
+            addToResultNode(context, listWrapper.getNode());
+        }
+    }
+
+    protected void appendSoftDeletedListWrapperOfPreviousList(ContentComparatorContext context, Element element) {
+        Element previousSibling = getPreviousListFromSubParagraph(element);
+        Element listWrapper = getListWrapper(previousSibling);
+        if (isSoftDeletedOrSoftMovedTo(listWrapper)) {
+            String attrName = context.getAttrName();
+            String attrValue = getStartTagValueForRemovedElement(listWrapper, context);
+            if (attrName != null && attrValue != null) {
+                XercesUtils.addAttribute(listWrapper.getNode(), attrName, attrValue);
+            }
+            addToResultNode(context, listWrapper.getNode());
+        }
     }
 }

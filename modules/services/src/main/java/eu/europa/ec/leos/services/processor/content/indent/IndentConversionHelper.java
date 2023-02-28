@@ -795,7 +795,11 @@ public class IndentConversionHelper {
             return true;
         } else if (tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
             TableOfContentItemVO parent = item.getParentItem();
-            if (!getTagValueFromTocItemVo(parent).equalsIgnoreCase(POINT)) {
+            if (!getTagValueFromTocItemVo(parent).equalsIgnoreCase(LIST)
+                    && !getTagValueFromTocItemVo(parent).equalsIgnoreCase(POINT)) {
+                return true;
+            } else if (getTagValueFromTocItemVo(parent).equalsIgnoreCase(LIST)
+                    && !getTagValueFromTocItemVo(parent.getParentItem()).equalsIgnoreCase(POINT)) {
                 return true;
             }
         }
