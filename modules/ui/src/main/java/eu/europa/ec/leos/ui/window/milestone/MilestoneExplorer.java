@@ -438,6 +438,11 @@ public class MilestoneExplorer extends AbstractWindow {
                 throw new RuntimeException("Unexpected error occurred while reading doc file", e);
             }
         }
+        addFinancialStatementTabs();
+        addAnnexTabs(annexesComparaison);
+    }
+
+    private void addAnnexTabs(HashMap<String, Boolean> annexesComparaison) {
         for (Integer annexNumber : annexIndexesMap.keySet()) {
             String annexDocument = annexIndexesMap.get(annexNumber);
             String version = docVersionMap.get(annexDocument);
@@ -453,7 +458,7 @@ public class MilestoneExplorer extends AbstractWindow {
             }
         }
         if(annexDeletedMap.size() > 0) {
-            for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
+            for (Entry<String, Object> entry : annexDeletedMap.entrySet()) {
                 String xmlContent = getFileContent(entry);
                 String[] annexVersionAndNumber = getAnnexVersionAndNumber(xmlContent);
                 HorizontalSplitPanel tocSplitter = new HorizontalSplitPanel();
@@ -466,7 +471,10 @@ public class MilestoneExplorer extends AbstractWindow {
                 }
             }
         }
-        for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
+    }
+
+    private void addFinancialStatementTabs() {
+        for (Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
             String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
@@ -498,7 +506,6 @@ public class MilestoneExplorer extends AbstractWindow {
                 throw new RuntimeException("Unexpected error occurred while reading doc file", e);
             }
         }
-
     }
 
     private String getFileContent(Entry<String, Object> entry) {
