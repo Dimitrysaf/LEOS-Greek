@@ -29,6 +29,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   isEditMode = false;
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
+  private proposalRef: string;
 
   constructor(
     private domService: DomService,
@@ -55,6 +56,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
         this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
+        this.proposalRef = documentView.proposalRef;
       });
   }
 
@@ -93,7 +95,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   handleClose() {
     this.doc.closeEditor();
     //wait for the API where we get all the metadata for each document
-    this.router.navigate([`/collection/proposal`]);
+    this.router.navigate([`/collection/${this.proposalRef}`]);
   }
 
   private loadDocument(editableXml: string, versionInfo: VersionInfoVO) {

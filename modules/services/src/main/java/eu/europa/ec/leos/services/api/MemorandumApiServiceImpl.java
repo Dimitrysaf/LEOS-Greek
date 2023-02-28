@@ -15,21 +15,26 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.MemorandumService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import org.bouncycastle.util.Pack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +52,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     DocumentContentService documentContentService;
     @Autowired
     DocumentViewService<Memorandum> documentViewService;
+    @Autowired
+    PackageService packageService;
+    @Autowired
+    ProposalService proposalService;
 
     private Provider<StructureContext> structureContext;
 
@@ -152,6 +161,12 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
+    }
+
+    private String getProposalRef(String documentId){
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+        return proposal.getMetadata().getOrNull().getRef();
     }
 
 }
