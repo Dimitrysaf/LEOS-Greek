@@ -118,10 +118,11 @@
     </div>
     <div class="col-md-8">
       <input
-        id="eeaRelevanceText"
         euiInputText
-        formControlName="eeaRelevance"
-        placeholder="(Text with EEA relevance)"
+        [disabled]="true"
+        [placeholder]="
+          'page.workspace.create-form.eea-relevance.placeholder' | translate
+        "
       />
     </div>
   </div>

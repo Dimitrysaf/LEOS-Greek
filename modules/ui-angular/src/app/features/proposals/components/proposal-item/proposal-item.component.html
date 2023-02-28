@@ -20,16 +20,15 @@
       class="eui-u-flex-column col-2 eui-u-flex-align-items-start"
     >
       <div
-        class="eui-u-font-m eui-u-font-bold eui-u-color-grey-75 eui-u-mb-2xs"
+        class="eui-u-font-m eui-u-font-bold eui-u-color-grey-75 eui-u-mb-2xs h-25"
       >
         <!-- TODO : // This shouldn'y be hardcoded -->
-        ISC/2022/0330
       </div>
-      <div class="eui-u-font-m eui-u-font-bold eui-u-color-grey-100">
+      <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
         {{ 'page.workspace.proposal-item.contribution-status' | translate }}
       </div>
       <eui-chip
-        euiSizeS
+        euiSize2XL
         euiOutline
         [euiSuccess]="status === 'ready'"
         [euiSecondary]="status === 'pending'"
