@@ -182,6 +182,9 @@ define(function elementEditorModule(require) {
 
             // register EmptyTrimSelector
             UTILS.registerEmptyTrimSelector(params.tocItemsList);
+            $("button.ui-datepicker-trigger").attr("disabled", true);
+            $("inline[name='checked']").off();
+            $("inline[name='unchecked']").off();
         } else {
             throw new Error("Unable to initialize the element editor!");
         }
