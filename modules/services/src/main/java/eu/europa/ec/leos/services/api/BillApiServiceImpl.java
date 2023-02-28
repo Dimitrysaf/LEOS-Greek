@@ -15,8 +15,10 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -33,6 +35,7 @@ import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.delegates.ComparisonDisplayMode;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
@@ -43,6 +46,8 @@ import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
@@ -91,6 +96,10 @@ public class BillApiServiceImpl implements BillApiService {
     ElementProcessor<Bill> elementProcessor;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
+    @Autowired
+    PackageService packageService;
+    @Autowired
+    ProposalService proposalService;
     private static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
     private static final Logger LOG = LoggerFactory.getLogger(BillApiService.class);
 
@@ -316,6 +325,12 @@ public class BillApiServiceImpl implements BillApiService {
 
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
+    }
+
+    private String getProposalRef(String documentId){
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+        return proposal.getMetadata().getOrNull().getRef();
     }
 
 }

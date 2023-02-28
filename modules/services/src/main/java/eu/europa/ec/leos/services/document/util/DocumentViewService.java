@@ -55,7 +55,7 @@ public class DocumentViewService<T extends XmlDocument> {
         Proposal proposal = getProposalFromPackage(document);
         String editableXml = getEditableXml(document,proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
-        return new DocumentViewResponse(proposal.getOriginRef(),editableXml,versionInfoVO);
+        return new DocumentViewResponse(getProposalRef(document.getId()),editableXml,versionInfoVO);
     }
     public VersionInfoVO getVersionInfo(T document) {
         String userId = document.getLastModifiedBy();
@@ -111,5 +111,11 @@ public class DocumentViewService<T extends XmlDocument> {
             proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
         }
         return proposal;
+    }
+
+    private String getProposalRef(String documentId){
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+        return proposal.getMetadata().getOrNull().getRef();
     }
 }
