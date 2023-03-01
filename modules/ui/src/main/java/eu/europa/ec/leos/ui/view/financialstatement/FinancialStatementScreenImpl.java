@@ -187,8 +187,8 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
     private SearchDelegate searchDelegate;
 
-    private static final String CHECKED = "\u2611";
-    private static final String UNCHECKED = "\u2610";
+    private static final String CHECKED = "&#x2611;";
+    private static final String UNCHECKED = "&#x2610;";
     private static final String NAME_ATTR = "name";
     private static final String NAME_ATTR_CHECKED = "checked";
     private static final String NAME_ATTR_UNCHECKED = "unchecked";

@@ -65,6 +65,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
@@ -544,7 +545,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
         try {
             FinancialStatement financialStatement = getDocument();
-            byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId);
+            byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId, true);
+            updatedXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, updatedXmlContent);
             updatedXmlContent = xmlContentProcessor.doXMLPostProcessing(updatedXmlContent);
             if (updatedXmlContent == null) {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
@@ -566,6 +568,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                         eventBus.post(new CloseElementEvent());
                     }
                 }
+                updatedXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, updatedXmlContent);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.financial.statement.block.updated"));
                 String newElementContent = elementProcessor.getElement(financialStatement, elementTagName, elementId);
@@ -630,9 +633,11 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
             FinancialStatement financialStatement = getDocument();
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
+            xmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, xmlContent);
             Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
                 byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
+                newXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, newXmlContent);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
                 if (financialStatement != null) {
