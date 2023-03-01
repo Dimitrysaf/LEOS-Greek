@@ -84,7 +84,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((toc) => {
         // this.saveExpanded();
-        this.setTree(toc);
+        this.setTree(toc ?? []);
       });
   }
 
