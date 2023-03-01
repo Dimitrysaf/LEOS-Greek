@@ -862,6 +862,10 @@ export class CKEditorService implements OnDestroy {
   }
 
   init() {
+    this.leosLegacyService.require$.pipe(take(1)).subscribe((require) => {
+      require(['js/leosModulesBootstrap']);
+    });
+
     const actionManagerExtension$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>

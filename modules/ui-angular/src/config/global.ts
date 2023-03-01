@@ -7,7 +7,7 @@ export const GLOBAL: GlobalConfig = {
       languages: ['en', 'fr'],
     },
     i18nLoader: {
-      i18nFolders: ['i18n-eui', 'i18n', 'i18n-ecl'],
+      i18nFolders: ['i18n-eui', 'i18n'],
     },
   },
   user: {

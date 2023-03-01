@@ -11,7 +11,7 @@ export class LeosLegacyService {
   require$: Observable<Require>;
 
   /* require('js/xyz') -> `${basrUrl}/js/xys` */
-  private baseUrl = 'leos-js';
+  private baseUrl = new URL('leos-js', document.baseURI).href;
   private requireSubj = new BehaviorSubject<Require>(null);
 
   constructor(private dom: DomService) {
@@ -50,7 +50,8 @@ export class LeosLegacyService {
       // set additional configuration to be passed to specified modules
       config: {
         'js/leosModulesBootstrap': {
-          logLevel: 'debug',
+          logLevel:
+            process.env.NG_APP_ENV === 'production' ? undefined : 'debug',
         },
       },
     };

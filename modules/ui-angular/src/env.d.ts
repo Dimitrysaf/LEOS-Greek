@@ -1,5 +1,7 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
+    /* = NODE_ENV */
+    NG_APP_ENV: string;
     NG_APP_LEOS_INSTANCE: string;
     NG_APP_LEOS_SOURCE_REVISION: string;
     NG_APP_LEOS_VERSION: string;
