@@ -34,7 +34,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
     DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception;
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
     DocumentViewResponse mergeElement(String documentRef, String elementContent , String  elementTag , String elementId) throws  Exception;
-    List<T> getRecentMinorVersions(String  documentRef);
+    List<VersionVO> getRecentMinorVersions(String  documentRef);
     List<VersionVO> getVersionsData(String documentRef);
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
     List<TocItem> getTocItems(String documentRef);

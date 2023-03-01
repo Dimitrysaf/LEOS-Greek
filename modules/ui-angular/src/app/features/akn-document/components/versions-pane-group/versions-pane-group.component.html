@@ -1,15 +1,23 @@
 <eui-card euiNoShadow>
   <eui-card-header>
-    <eui-card-header-title>{{ title }}</eui-card-header-title>
+    <eui-card-header-title *ngIf="!isRecent">{{ title }}</eui-card-header-title>
 
-    <eui-card-header-subtitle *ngIf="description">
+    <eui-card-header-subtitle *ngIf="description && !isRecent">
       {{ description }}
     </eui-card-header-subtitle>
-    <eui-card-header-subtitle>
+    <eui-card-header-subtitle *ngIf="!isRecent">
       {{ subtitle }}
     </eui-card-header-subtitle>
 
-    <eui-card-header-right-content *ngIf="!isRecents">
+    <eui-card-header-left-content *ngIf="isRecent">
+      <eui-chip euiRounded euiChip euiAccent>
+        <span
+          euiLabel
+          translate="page.editor.versions.group-tag.recent-changes"
+        ></span
+      ></eui-chip>
+    </eui-card-header-left-content>
+    <eui-card-header-right-content *ngIf="!isRecent">
       <eui-chip euiRounded euiPrimary *ngIf="isMilestone">
         <span
           euiLabel
@@ -28,10 +36,31 @@
       ></app-version-actions-dropdown>
     </eui-card-header-right-content>
   </eui-card-header>
-
   <eui-card-content
+    *ngIf="isRecent && recentChanges?.length && showModifications"
+  >
+    <div class="subversions" *ngIf="recentChanges.length > 0">
+      <ng-container
+        *ngFor="let version of recentChanges; trackByProperty: 'versionNumber'"
+      >
+        <div class="version">{{ version.cmisVersionNumber }}</div>
+        <div>{{ version.checkinCommentVO.title }}</div>
+        <div>
+          <app-version-actions-dropdown
+            [version]="version"
+          ></app-version-actions-dropdown>
+        </div>
+      </ng-container>
+    </div>
+  </eui-card-content>
+  <eui-card-content *ngIf="isRecent && recentChanges?.length === 0">
+    <span euiLabel>{{
+      'page.editor.versions.group-recents-subtitle-empty' | translate
+    }}</span>
+  </eui-card-content>
+  <eui-card-content
+    *ngIf="!isRecent && group?.subVersions.length && showModifications"
     class="eui-u-pb-none"
-    *ngIf="group.subVersions.length && showModifications"
   >
     <div class="subversions">
       <ng-container
@@ -40,7 +69,7 @@
           trackByProperty: 'versionNumber'
         "
       >
-        <div class="version">{{ version.versionNumber }}</div>
+        <div class="version">{{ version.cmisVersionNumber }}</div>
         <div>{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
@@ -51,7 +80,9 @@
     </div>
   </eui-card-content>
 
-  <eui-card-content *ngIf="group.subVersions.length">
+  <eui-card-content
+    *ngIf="group?.subVersions.length > 0 || recentChanges?.length > 0"
+  >
     <button
       class="eui-u-pv-none eui-u-pl-none eui-u-pr-xs"
       euiButton

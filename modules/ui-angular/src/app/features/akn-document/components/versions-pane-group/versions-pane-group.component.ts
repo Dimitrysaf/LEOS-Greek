@@ -12,10 +12,11 @@ import { Version } from '@/features/akn-document/models/versions';
 })
 export class VersionsPaneGroupComponent implements OnInit {
   @Input() group: Version;
+  @Input() recentChanges: Version[];
+  @Input() isRecent: boolean;
 
   isMilestone: boolean;
   isCreation: boolean;
-  isRecents: boolean;
   title: string;
   subtitle: string;
   description: string;
@@ -24,18 +25,20 @@ export class VersionsPaneGroupComponent implements OnInit {
   constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
-    const { versionType, cmisVersionNumber, checkinCommentVO } = this.group;
-    this.isMilestone = versionType === 'MAJOR';
-    this.isCreation =
-      versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
-    this.isRecents = !cmisVersionNumber;
-    this.description = checkinCommentVO.description;
+    if (this.group) {
+      const { versionType, cmisVersionNumber, checkinCommentVO } = this.group;
+      this.isMilestone = versionType === 'MAJOR';
+      this.isCreation =
+        versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
+      this.description = checkinCommentVO.description;
+    }
+
     this.setTitle();
     this.setSubtitle();
   }
 
   private setTitle() {
-    if (this.isRecents) {
+    if (this.isRecent) {
       this.translate
         .get('page.editor.versions.group-recents-title')
         .subscribe((title: string) => {
@@ -54,7 +57,7 @@ export class VersionsPaneGroupComponent implements OnInit {
   }
 
   private setSubtitle() {
-    const subtitle$ = this.isRecents
+    const subtitle$ = this.isRecent
       ? this.getRecentsSubtitle()
       : this.getGroupSubtitle();
     subtitle$.subscribe((subtitle: string) => {
@@ -82,7 +85,7 @@ export class VersionsPaneGroupComponent implements OnInit {
   }
 
   private getRecentsSubtitle() {
-    if (this.group.subVersions.length) {
+    if (this.group?.subVersions.length) {
       const [dateString, timeSting] = this.group.subVersions[0].updatedDate
         .toString()
         .split(' ');

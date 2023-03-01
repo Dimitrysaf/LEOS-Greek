@@ -1,5 +1,11 @@
 <div class="eui-u-flex eui-u-flex-column app-u-gap-m">
   <app-versions-pane-group
+    [isRecent]="true"
+    class="eui-u-display-block eui-u-width-100"
+    [recentChanges]="(doc.recentChanges$ | async) ?? []"
+  ></app-versions-pane-group>
+  <app-versions-pane-group
+    [isRecent]="false"
     class="eui-u-display-block eui-u-width-100"
     *ngFor="
       let group of doc.versions$ | async;

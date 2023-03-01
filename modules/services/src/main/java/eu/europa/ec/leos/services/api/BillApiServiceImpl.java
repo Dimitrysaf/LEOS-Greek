@@ -48,6 +48,7 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
@@ -104,8 +105,8 @@ public class BillApiServiceImpl implements BillApiService {
     private static final Logger LOG = LoggerFactory.getLogger(BillApiService.class);
 
 
-
     private Provider<StructureContext> structureContext;
+
     BillApiServiceImpl(Provider<StructureContext> structureContext) {
         this.structureContext = structureContext;
     }
@@ -120,15 +121,15 @@ public class BillApiServiceImpl implements BillApiService {
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Bill annex = this.billService.findBillByRef(documentRef);
         Bill newVersion = this.billService.createVersion(annex.getId(), versionType, checkInComment);
-        return this.billService.getAllVersions(annex.getId(), documentRef);
+        return this.getVersionsData(documentRef);
     }
 
     @Override
     public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        User user =securityContext.getUser();
-        Bill updatedBill = this.billService.saveTableOfContent(bill,toc,messageHelper.getMessage("operation.toc.updated"),user);
-        return billService.getTableOfContent(updatedBill,TocMode.SIMPLIFIED);
+        User user = securityContext.getUser();
+        Bill updatedBill = this.billService.saveTableOfContent(bill, toc, messageHelper.getMessage("operation.toc.updated"), user);
+        return billService.getTableOfContent(updatedBill, TocMode.SIMPLIFIED);
     }
 
     @Override
@@ -136,7 +137,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         List<SearchMatchVO> matches = Collections.emptyList();
         matches = searchService.searchText(getContent(bill), searchText, matchCase, completeWords);
-        return  matches;
+        return matches;
     }
 
     @Override
@@ -146,7 +147,7 @@ public class BillApiServiceImpl implements BillApiService {
                 "",
                 securityContext.getPermissions(bill));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(bill);
-        return new DocumentViewResponse(null,versionContent,versionInfoVO);
+        return new DocumentViewResponse(null, versionContent, versionInfoVO);
     }
 
     @Override
@@ -163,16 +164,17 @@ public class BillApiServiceImpl implements BillApiService {
         Bill targetVersion = billService.findBillVersion(versionId);
         Bill sourceVersion = billService.findBillByRef(documentRef);
         byte[] resultXmlContent = getContent(targetVersion);
-        Bill updatedBill = billService.updateBill(sourceVersion,resultXmlContent,messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
+        Bill updatedBill = billService.updateBill(sourceVersion, resultXmlContent, messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
         return this.documentViewService.getDocumentView(updatedBill);
     }
 
     @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         String jsonAlternatives = "";
         try {
-            String element = this.elementProcessor.getElement(bill,elementTagName,elementId);
+            String element = this.elementProcessor.getElement(bill, elementTagName, elementId);
             String alternateAttrVal = elementProcessor.getElementAttributeValueByNameAndId(bill, LEOS_ALTERNATIVE_ATTR, elementTagName, elementId);
             if (alternateAttrVal != null && alternateAttrVal.equalsIgnoreCase("true")) {
                 jsonAlternatives = templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "alternatives");
@@ -180,7 +182,7 @@ public class BillApiServiceImpl implements BillApiService {
 
 
             return new EditElementResponse(
-                    elementId,elementTagName,element,jsonAlternatives);
+                    elementId, elementTagName, element, jsonAlternatives);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);
@@ -197,13 +199,14 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public String getElement(String documentRef, String elementName, String elementId) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        String element = this.elementProcessor.getElement(bill,elementName,elementId);
+        String element = this.elementProcessor.getElement(bill, elementName, elementId);
         return element;
     }
 
     @Override
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         final byte[] newXmlContent = billProcessor.deleteElement(bill, elementId, elementName, null);
 
         final String updatedLabel = generateLabel(elementId, bill);
@@ -224,6 +227,7 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
@@ -279,17 +283,16 @@ public class BillApiServiceImpl implements BillApiService {
     public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required").getDocTemplate());
-        Element mergeOnElement = billProcessor.getMergeOnElement(bill,elementContent,elementTag,elementId);
+        Element mergeOnElement = billProcessor.getMergeOnElement(bill, elementContent, elementTag, elementId);
         byte[] updatedXmlContent = null;
-        if(mergeOnElement != null) {
-            updatedXmlContent = billProcessor.mergeElement(bill,elementContent,elementTag,elementId);
-            bill = billService.updateBill(bill,updatedXmlContent,messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
+        if (mergeOnElement != null) {
+            updatedXmlContent = billProcessor.mergeElement(bill, elementContent, elementTag, elementId);
+            bill = billService.updateBill(bill, updatedXmlContent, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Bill {} id {})", elementId, mergeOnElement.getElementId(), bill.getName(), bill.getId());
-            if(bill != null) {
+            if (bill != null) {
                 return this.documentViewService.getDocumentView(bill);
             }
-        }
-        else {
+        } else {
             LOG.info("Element '{}' merged into '{}' in Bill {} id {})", elementId, mergeOnElement.getElementId(), bill.getName(), bill.getId());
             throw new Exception();
         }
@@ -297,16 +300,22 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<Bill> getRecentMinorVersions(String documentRef) {
+    public List<VersionVO> getRecentMinorVersions(String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
         Integer recentCount = this.billService.findRecentMinorVersionsCount(bill.getId(), documentRef);
-        return this.billService.findRecentMinorVersions(bill.getId(), documentRef, 0, recentCount);
+        List<Bill> bills = this.billService.findRecentMinorVersions(bill.getId(), documentRef, 0, recentCount);
+        return VersionsUtil.buildVersionVO(bills, messageHelper);
     }
 
     @Override
     public List<VersionVO> getVersionsData(String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        return this.billService.getAllVersions(bill.getId(),documentRef);
+        List<VersionVO> versions = this.billService.getAllVersions(bill.getId(), documentRef);
+        for (VersionVO versionVO : versions) {
+            Integer count = this.billService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
+            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.billService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
+        }
+        return versions;
     }
 
     @Override

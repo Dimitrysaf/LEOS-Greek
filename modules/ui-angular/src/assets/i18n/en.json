@@ -144,6 +144,7 @@
   "page.editor.versions.compare-button.tooltip-disable": "End version comparison",
   "page.editor.versions.group-tag.milestone": "Milestone",
   "page.editor.versions.group-tag.creation": "Creation",
+  "page.editor.versions.group-tag.recent-changes": "Recent changes",
   "page.editor.versions.group-title": "Version {{ version }} - {{ title }}",
   "page.editor.versions.group-recents-title": "Recent changes",
   "page.editor.versions.group-recents-subtitle": "Last change on {{ date }}",

@@ -40,6 +40,7 @@ export class DocumentService implements OnDestroy {
   versionSearchOpen$: Observable<boolean>;
   toc$: Observable<TableOfContentItemVO[]>;
   tocItems$: Observable<any[]>;
+  recentChanges$: Observable<any[]>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -80,6 +81,13 @@ export class DocumentService implements OnDestroy {
       combineLatestWith(this.documentCategory$),
       mergeMap(([ref, category]) =>
         this.getDocumentVersionsData(category, ref),
+      ),
+    );
+
+    this.recentChanges$ = this.documentId$.pipe(
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([ref, category]) =>
+        this.getDocumentRecentChangesData(category, ref),
       ),
     );
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
@@ -282,6 +290,13 @@ export class DocumentService implements OnDestroy {
     //FIXME modify this when backend api for version-data is modified not to contain documentId param.
     return this.http.get<Version[]>(
       `api/secured/${documentType}/${documentRef}/version-data`,
+    );
+  }
+
+  getDocumentRecentChangesData(documentType: string, documentRef: string) {
+    console.log('in');
+    return this.http.get<any[]>(
+      `api/secured/${documentType}/${documentRef}/recent-changes`,
     );
   }
 
