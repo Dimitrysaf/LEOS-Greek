@@ -125,8 +125,8 @@ public class AnnexController {
     @ResponseBody
     public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
-            List<Annex> annexes = this.annexAPIService.getRecentMinorVersions(documentRef);
-            return  ResponseEntity.ok().body(annexes);
+            List<VersionVO> recentMinorVersions = this.annexAPIService.getRecentMinorVersions(documentRef);
+            return  ResponseEntity.ok().body(recentMinorVersions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
             return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);

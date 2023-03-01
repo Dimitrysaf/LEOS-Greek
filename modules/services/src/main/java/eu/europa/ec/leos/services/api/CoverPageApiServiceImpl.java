@@ -109,7 +109,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<XmlDocument> getRecentMinorVersions(String documentRef) {
+    public List<VersionVO> getRecentMinorVersions(String documentRef) {
         return null;
     }
 

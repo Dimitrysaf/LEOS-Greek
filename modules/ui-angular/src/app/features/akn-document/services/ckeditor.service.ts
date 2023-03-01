@@ -17,6 +17,7 @@ import {
 } from 'rxjs';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocItem } from '../models/toc.model';
@@ -830,6 +831,21 @@ export class CKEditorService implements OnDestroy {
           // this.documentService.getToc(documentRef);
         });
     },
+    mergeElement: (elementData: {
+      elementId: string;
+      elementType: string;
+      elementContent: string;
+    }) => {
+      const documentRef = this.documentRefBS.value;
+      const documentType = this.documentTypeBS.value;
+      this.mergeDocumentElement(
+        documentRef,
+        documentType,
+        elementData.elementId,
+        elementData.elementType,
+        elementData.elementContent,
+      );
+    },
   };
 
   private destroy$ = new Subject<void>();
@@ -1061,6 +1077,19 @@ export class CKEditorService implements OnDestroy {
       `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-element`,
       { position: position.toUpperCase() },
       { responseType: 'arraybuffer' },
+    );
+  }
+
+  mergeDocumentElement(
+    documentRef: string,
+    documentType: string,
+    elementId: string,
+    elementName: string,
+    elementContent: string,
+  ) {
+    this.documentService.documentView$ = this.http.put<DocumentViewResponse>(
+      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/merge-element`,
+      { elementContent },
     );
   }
 }

@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -146,16 +147,24 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<Annex> getRecentMinorVersions(String documentRef) {
+    public List<VersionVO> getRecentMinorVersions(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
-        return this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
+        List<Annex> annexes = this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
+        List<VersionVO> recentChanges = VersionsUtil.buildVersionVO(annexes, messageHelper);
+        return recentChanges;
+
     }
 
     @Override
     public List<VersionVO> getVersionsData(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        return this.annexService.getAllVersions(annex.getId(), documentRef);
+        List<VersionVO> versions = this.annexService.getAllVersions(annex.getId(),documentRef);
+        for(VersionVO versionVO : versions) {
+            Integer count = this.annexService.findAllMinorsCountForIntermediate(documentRef,versionVO.getCmisVersionNumber());
+            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.annexService.findAllMinorsForIntermediate(documentRef,versionVO.getCmisVersionNumber(),0,count), messageHelper));
+        }
+        return versions;
     }
 
     @Override
@@ -182,7 +191,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Annex newVersion = this.annexService.createVersion(annex.getId(), versionType, checkInComment);
-        return this.annexService.getAllVersions(annex.getId(), documentRef);
+        return this.getVersionsData(documentRef);
     }
 
     @Override

@@ -125,8 +125,8 @@ public class BillController {
     @ResponseBody
     public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
-            List<Bill> bills = this.billApiService.getRecentMinorVersions(documentRef);
-            return  ResponseEntity.ok().body(bills);
+            List<VersionVO> recentMinorVersions = this.billApiService.getRecentMinorVersions(documentRef);
+            return  ResponseEntity.ok().body(recentMinorVersions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
             return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
