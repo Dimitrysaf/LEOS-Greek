@@ -1,8 +1,22 @@
-.toc-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 75vh;
+:host ::ng-deep {
+  .toc-container {
+    display: flex;
+    flex-direction: column;
+    font-size: 10px !important;
+    justify-content: space-between;
+    max-height: 75vh;
+  }
+}
+
+.tree-container {
+  max-height: 50vh;
+  overflow: scroll;
+}
+
+.selected-node {
+  background-color: #7bd2f6 !important;
+  border-radius: 2rem;
+  max-width: fit-content;
 }
 
 .edit-element-container {
@@ -16,18 +30,6 @@
 
 .label-extended {
   text-align: center;
-}
-
-.tree-drag-content {
-  gap: 1.25rem;
-  position: absolute;
-  right: 0%;
-  top: 10%;
-
-  li {
-    font-size: 14px;
-    padding: 1rem;
-  }
 }
 
 mat-tree {
@@ -74,51 +76,50 @@ li ul {
   padding-left: 60px;
 }
 
+.mat-nested-tree-node {
+  padding: 0.2rem;
+}
+
 .mat-nested-tree-node:last-child ul {
   margin-left: -41px;
 }
 
-.drop-inside {
-  border: 1px solid #00f;
+.drop-as_children {
+  border: 1px solid var(--eui-base-color-primary-120);
   border-radius: 2rem;
-  // max-width: fit-content;
+  max-width: fit-content;
 }
 
 .drop-before {
   border-radius: 2rem;
-  border-top: 1px solid #00f;
-  // max-width: fit-content;
+  border-top: 1px solid var(--eui-base-color-primary);
+  max-width: fit-content;
 }
 
 .drop-after {
-  border-bottom: 1px solid #00f;
+  border-bottom: 1px solid var(--eui-base-color-primary);
   border-radius: 2rem;
-  // max-width: fit-content;
+  max-width: fit-content;
 }
 
-.drop-inside-invalid {
-  border: 1px solid red;
+.drop-as_children-invalid {
+  position: relative;
+  border: 1px solid var(--eui-base-color-danger);
   border-radius: 2rem;
-  // max-width: fit-content;
+  max-width: fit-content;
   transition: all 1s;
 }
 
 .drop-after-invalid {
-  border-bottom: 1px solid red;
+  border-bottom: 1px solid var(--eui-base-color-danger);
   border-radius: 2rem;
-  // max-width: fit-content;
+  max-width: fit-content;
   transition: all 1s;
 }
 
 .drop-before-invalid {
   border-radius: 2rem;
-  border-top: 1px solid red;
-  // max-width: fit-content;
-  transition: all 1s;
-}
-
-.selected-node {
-  background-color: #7bd2f6 !important;
-  border-radius: 2rem;
+  border-top: 1px solid var(--eui-base-color-danger);
   max-width: fit-content;
+  transition: all 1s;
 }

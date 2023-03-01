@@ -38,6 +38,7 @@ export class TableOfContentItemVO {
   style: string;
   isAutoNumOverwritten = false;
   moved: boolean;
+  isAffected: boolean;
 }
 
 export class TocItem {
