@@ -1,12 +1,18 @@
 import { formatDate } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { uniqueId } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
+import { truncate } from 'lodash';
 import { combineLatest, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
+import { DocumentTocComponent } from '@/shared/components/document-toc/document-toc.component';
+import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
+import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
 
@@ -21,42 +27,59 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   pageTitle: string;
   pageSubTitle: string;
   xml: string;
+  isCollapseToc = false;
 
   isTOCColumnCollapsed = true;
   isAnnotationsColumnCollapsed = true;
   isVersionsColumnCollapsed = true;
 
+  tocItems: Array<TocItem> = [];
+  dragItems: Array<Partial<TableOfContentItemVO>> = [];
+
   isEditMode = false;
+  @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
+  @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
+
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private proposalRef: string;
 
   constructor(
     private domService: DomService,
-    public doc: DocumentService,
+    public documentService: DocumentService,
     private route: ActivatedRoute,
     private router: Router,
     private translate: TranslateService,
     private cdkEditor: CKEditorService,
+    private tranlsateService: TranslateService,
   ) {}
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.documentRef = params.id;
       this.documentType = this.route.snapshot.data['category'];
-      this.doc.setDocumentCategory(this.documentType);
-      this.doc.setDocumentId(this.documentRef);
-      this.doc.setDocumentCategory(this.documentType);
+      this.documentService.setDocumentCategory(this.documentType);
+      this.documentService.setDocumentId(this.documentRef);
+      this.documentService.setDocumentCategory(this.documentType);
       this.cdkEditor.setDocumentRef(this.documentRef);
       this.cdkEditor.setDocumentType(this.documentType);
     });
 
     this.loadStyleSheet();
-    this.doc.documentView$
+
+    this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
         this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
         this.proposalRef = documentView.proposalRef;
+      });
+
+    this.documentService
+      .getTocItems(this.documentRef)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((tocItems) => {
+        this.tocItems = tocItems;
+        this.dragItems = this.buildTocItemToTOC(tocItems);
       });
   }
 
@@ -64,6 +87,22 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
+  }
+
+  disableUndoButton() {
+    return this.documentTocComponent.treeHistory.length === 0;
+  }
+  disableSaveButton() {
+    return !this.documentTocComponent.isToCDraft;
+  }
+
+  hanldeListItemDragged(event, isAdd) {
+    this.documentTocComponent.dragMoved(event, isAdd);
+  }
+  onRebuildTocItems(event: boolean) {
+    if (event && this.tocItems) {
+      this.dragItems = this.buildTocItemToTOC(this.tocItems);
+    }
   }
 
   onToggleTOCColumnCollapsed() {
@@ -82,20 +121,113 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.isEditMode = true;
   }
   handleUndo() {
-    //TODO : implement undo
+    const oldToc = this.documentTocComponent.treeHistory.pop();
+    if (oldToc.length > 0) {
+      this.documentService.setToc(oldToc);
+    }
   }
   handleSave() {
     //TODO : implememt save
   }
   handleCancel() {
     //TODO : implement cancel
-    this.isEditMode = false;
+
+    if (this.documentTocComponent.isToCDraft) {
+      //TODO: handle confirm you want to discard changes
+      this.unSavedDialog.openDialog();
+      //reset toc state
+      this.documentTocComponent.isToCDraft = false;
+    } else this.isEditMode = false;
   }
 
   handleClose() {
-    this.doc.closeEditor();
+    this.documentService.closeEditor();
     //wait for the API where we get all the metadata for each document
     this.router.navigate([`/collection/${this.proposalRef}`]);
+  }
+
+  getTocItemDisplayTitle(item: TocItem) {
+    if (item.numberingType === 'BULLET_NUM') {
+      return this.tranlsateService.instant('toc.item.typel.bullet');
+    } else {
+      return this.tranlsateService.instant(
+        'toc.item.type.' + item.aknTag.toLowerCase(),
+      );
+    }
+  }
+
+  getTranlsations(msg: string) {
+    return this.tranlsateService.instant(msg);
+  }
+
+  hanldeUnSaveDialogClose(save: boolean) {
+    if (save) {
+      this.handleSave();
+      this.unSavedDialog.closeDialog();
+    } else {
+      this.unSavedDialog.closeDialog();
+      if (this.documentTocComponent.treeHistory.length > 0) {
+        this.documentService.setToc(this.documentTocComponent.treeHistory[0]);
+      }
+      this.documentTocComponent.treeHistory = [];
+    }
+    this.isEditMode = false;
+  }
+
+  expandAll() {
+    this.isCollapseToc = !this.isCollapseToc;
+    if (this.isCollapseToc) {
+      this.documentTocComponent.colllapseAll();
+      return;
+    }
+    this.documentTocComponent.expandAll();
+  }
+  getTooltipForToggleTree() {
+    if (this.isCollapseToc) {
+      return this.translate.instant(
+        'page.editor.toc.toc-column.actions.expandAll',
+      );
+    }
+    return this.translate.instant(
+      'page.editor.toc.toc-column.actions.expandAll',
+    );
+  }
+
+  private buildTocItemToTOC(
+    tocItems: TocItem[],
+  ): Array<Partial<TableOfContentItemVO>> {
+    const dragItems: Array<Partial<TableOfContentItemVO>> = [];
+    for (const item of tocItems) {
+      if (!item.root && item.draggable) {
+        let number = null;
+        let heading = null;
+        let content = null;
+        if (item.itemNumber === 'MANDATORY' || item.itemNumber === 'OPTIONAL') {
+          number = this.tranlsateService.instant('toc.item.type.number');
+        }
+        if (item.itemHeading === 'MANDATORY') {
+          heading = this.tranlsateService.instant(
+            'toc.item.type.' + item.aknTag.toLowerCase() + '.heading',
+          );
+        }
+        if (item.contentDisplayed) {
+          content =
+            item.aknTag.toLocaleLowerCase() === 'recital' ||
+            item.aknTag.toLocaleLowerCase() === 'citation'
+              ? capitalizeFirstLetter(item.aknTag) + '...'
+              : 'Text...';
+        }
+        dragItems.push({
+          tocItem: item,
+          heading,
+          number,
+          content,
+          childItems: [],
+          id: uniqueId(),
+        });
+      }
+    }
+    return dragItems;
   }
 
   private loadDocument(editableXml: string, versionInfo: VersionInfoVO) {

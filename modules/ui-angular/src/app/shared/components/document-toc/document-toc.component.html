@@ -1,28 +1,5 @@
 <div class="toc-container h-100">
-  <div class="tree-container">
-    <div class="tree-drag-content" *ngIf="false">
-      <ul
-        euiList
-        class="tree-drag-content"
-        #elementList="cdkDropList"
-        cdkDropList
-        [cdkDropListData]="tocItems"
-        cdkDropListConnectedTo="tree"
-        [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="false"
-      >
-        <li
-          euiListItem
-          class=""
-          cdkDrag
-          [cdkDragData]="item"
-          (cdkDragMoved)="dragMoved($event, true)"
-          *ngFor="let item of getTocItemsToDrag()"
-        >
-          <span *ngIf="item.draggable">{{ item.aknTag }}</span>
-        </li>
-      </ul>
-    </div>
+  <div class="tree-container" cdkScrollable>
     <mat-tree
       id="tree"
       cdkDropList
@@ -31,27 +8,24 @@
       [treeControl]="treeControl"
       (cdkDropListDropped)="onDrop($event)"
       [cdkDropListSortingDisabled]="true"
-      class="eui-primary"
     >
       <mat-nested-tree-node
+        cdkScrollable
         [hidden]="!node.tocItem.display"
         (cdkDragMoved)="dragMoved($event)"
         [attr.data-id]="node.id"
         *matTreeNodeDef="let node"
         cdkDrag
         cdkDropList
+        matTreeNodePadding
+        (cdkDragStarted)="onDragStart($event)"
         [cdkDragData]="node"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
         [cdkDropListDisabled]="false"
       >
         <li class="node-li">
-          <div
-            class="mat-tree-node"
-            (click)="hanldeNodeClick(node)"
-            euiLabel
-            euiPrimary
-          >
+          <div class="mat-tree-node" (click)="hanldeNodeClick(node)">
             <span class="label">{{ getLabel(node) }}</span>
             <eui-dropdown *ngIf="isEditMode()">
               <button
@@ -115,10 +89,12 @@
         </li>
       </mat-nested-tree-node>
       <mat-nested-tree-node
+        cdkScrollable
         [hidden]="!node.tocItem.display"
         *matTreeNodeDef="let node; when: hasChildren"
         cdkDrag
         cdkDropList
+        matTreeNodePadding
         [attr.data-id]="node.id"
         [cdkDragData]="node"
         (cdkDragMoved)="dragMoved($event)"
@@ -126,7 +102,7 @@
         [cdkDropListSortingDisabled]="true"
         [cdkDropListDisabled]="false"
       >
-        <li class="example-tree-container">
+        <li class="">
           <div class="mat-tree-node mr-2" (click)="hanldeNodeClick(node)">
             <eui-icon
               euiSizeM
@@ -141,13 +117,9 @@
               iconClass="eui-icon eui-icon-angle-down"
               (click)="saveExpanded(node)"
             ></eui-icon>
-            <span
-              class="label-extended"
-              euiLabel
-              euiPrimary
-              (click)="hanldeNodeClick(node)"
-              >{{ getLabel(node) }}</span
-            >
+            <span class="label-extended" (click)="hanldeNodeClick(node)">{{
+              getLabel(node)
+            }}</span>
             <eui-dropdown *ngIf="isEditMode()">
               <button
                 euiButton
@@ -207,7 +179,7 @@
               </eui-dropdown-content>
             </eui-dropdown>
           </div>
-          <ul class="example-tree-nested-node">
+          <ul class="">
             <div *ngIf="treeControl.isExpanded(node)">
               <ng-container matTreeNodeOutlet></ng-container>
             </div>
@@ -217,23 +189,34 @@
     </mat-tree>
   </div>
   <div class="d-flex flex-column" *ngIf="isEditMode() && isNodeSelected()">
-    <h3>{{ 'page.editor.selected-element.title' | translate }}</h3>
+    <h3>{{ 'page.editor.toc.selected-element.title' | translate }}</h3>
     <div class="d-flex flex-column">
       <div class="d-flex flex-row">
         <div class="m-2">
           <label euiLabel class="font-weight-bold" for="">{{
-            'page.editor.toc.selected-element.heading' | translate
+            'page.editor.toc.selected-element.type' | translate
           }}</label
           ><input euiInputText disabled type="text" [(ngModel)]="type" />
         </div>
-        <div class="m-2">
+        <div
+          class="m-2"
+          [hidden]="!isItemNumberVisible(this.selectedNodeToMove.tocItem)"
+        >
           <label class="font-weight-bold" euiLabel for="">{{
             'page.editor.toc.selected-element.number' | translate
           }}</label
-          ><input euiInputText type="text" disabled [(ngModel)]="number" />
+          ><input
+            euiInputText
+            type="text"
+            [disabled]="!isItemNumberEditable(this.selectedNodeToMove.tocItem)"
+            [(ngModel)]="number"
+          />
         </div>
       </div>
-      <div class="">
+      <div
+        class=""
+        [hidden]="!isItemHeadingVisible(this.selectedNodeToMove.tocItem)"
+      >
         <label euiLabel class="font-weight-bold" for="">{{
           'page.editor.toc.selected-element.heading' | translate
         }}</label>
@@ -241,11 +224,42 @@
           euiInputText
           type="text"
           [(ngModel)]="heading"
+          [disabled]="!isItemHeadingEditable(this.selectedNodeToMove.tocItem)"
           (ngModelChange)="handleHeadingChange($event)"
         />
       </div>
+      <div
+        class="d-flex flex-row mt-4"
+        *ngIf="isArticle(selectedNodeToMove.tocItem)"
+      >
+        <h5 class="mr-2">Type</h5>
+        <div class="d-flex flex-row align-items-center">
+          <label>Regular</label>
+          <input
+            euiInputRadio
+            value="regular"
+            [(ngModel)]="tocType"
+            (ngModelChange)="handleTypeChange($event)"
+          />
+        </div>
+        <div class="d-flex flex-row align-items-center">
+          <label>Definition</label>
+          <input
+            euiInputRadio
+            value="definition"
+            [(ngModel)]="tocType"
+            (ngModelChange)="handleTypeChange($event)"
+          />
+        </div>
+      </div>
       <div class="mt-2 align-self-end">
-        <button euiButton class="w-25" euiDanger (click)="hanldeTocRemove()">
+        <button
+          euiButton
+          class="w-25"
+          euiDanger
+          (click)="hanldeTocRemove()"
+          [disabled]="!selectedNodeToMove.tocItem.deletable"
+        >
           {{ 'page.editor.toc.selected-element.delete' | translate }}
         </button>
       </div>

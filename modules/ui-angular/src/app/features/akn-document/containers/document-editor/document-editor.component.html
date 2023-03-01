@@ -36,63 +36,78 @@
         (collapsed)="onToggleTOCColumnCollapsed()"
         class="scrollable-page-column"
       >
-        <eui-page-column-header-right-content>
+        <eui-page-column-header-body>
+          <span
+            *ngIf="!isEditMode"
+            [euiTooltip]="getTooltipForToggleTree()"
+            class="eui-icon eui-icon-sitemap"
+            (click)="expandAll()"
+          ></span>
           <button
             euiButton
             euiBasicButton
             euiSizeS
-            euiPrimary
             class="eui-u-mr-s"
             (click)="handleEdit()"
             *ngIf="!isEditMode"
           >
-            Edit
+            {{ 'page.editor.toc.toc-column.actions.title' | translate }}
+            <span class="eui-icon eui-icon-edit"></span>
           </button>
           <div
             class="d-flex flex-row justify-content-around align-items-center mt-10"
-            style="width: 230px"
             *ngIf="isEditMode"
           >
+            <span
+              [euiTooltip]="getTooltipForToggleTree()"
+              class="eui-icon eui-icon-sitemap"
+              (click)="expandAll()"
+            ></span>
             <button
               euiButton
               euiBasicButton
-              euiPrimary
-              class="eui-u-mr-s"
+              class="eui-u-ml-s"
+              [disabled]="disableUndoButton()"
               (click)="handleUndo()"
             >
-              Undo
+              {{ 'page.editor.toc.toc-column.actions.undo' | translate }}
+              <span class="eui-icon eui-icon-undo"></span>
             </button>
             <button
               euiButton
               euiBasicButton
-              euiPrimary
               class="eui-u-mr-s"
+              [disabled]="disableSaveButton()"
               (click)="handleSave()"
             >
-              Save
+              {{ 'page.editor.toc.toc-column.actions.save' | translate }}
             </button>
             <button
               euiButton
               euiBasicButton
-              euiPrimary
               class="eui-u-mr-s"
               (click)="handleCancel()"
             >
-              Cancel
+              {{ 'page.editor.toc.toc-column.actions.cancel' | translate }}
+              <span class="eui-icon eui-icon-times"></span>
             </button>
           </div>
-        </eui-page-column-header-right-content>
+        </eui-page-column-header-body>
         <eui-page-column-body>
           <app-document-toc
+            [tocItems]="tocItems"
             [isEdit]="isEditMode"
             [documentType]="documentType"
             [documentRef]="documentRef"
+            (reBuildTocItems)="onRebuildTocItems($event)"
           ></app-document-toc>
         </eui-page-column-body>
       </eui-page-column>
 
       <eui-page-column interactiveScrollbars>
-        <eui-page-column-header-body *ngIf="doc.searchPaneOpen$ | async">
+        <eui-page-column-header-body
+          *ngIf="documentService.searchPaneOpen$ | async"
+        >
           <eui-card class="eui-u-font-size-m eui-u-mb-l" euiNoShadow>
             <eui-card-content class="eui-u-overflow-auto">
               <app-document-search></app-document-search>
@@ -103,13 +118,70 @@
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center"
         >
+          <div class="tree-drag-content" *ngIf="isEditMode && tocItems.length">
+            <h3 class="">{{ 'page.editor.drag-items.title' | translate }}</h3>
+            <ul
+              euiList
+              class=""
+              #elementList="cdkDropList"
+              cdkDropList
+              [cdkDropListData]="dragItems"
+              cdkDropListConnectedTo="tree"
+              [cdkDropListSortingDisabled]="true"
+              [cdkDropListDisabled]="false"
+            >
+              <li
+                euiListItem
+                euiPrimary
+                class=""
+                cdkDrag
+                [cdkDragData]="item"
+                (cdkDragMoved)="hanldeListItemDragged($event, true)"
+                *ngFor="let item of dragItems"
+              >
+                <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                <div *cdkDragPlaceholder></div>
+              </li>
+            </ul>
+          </div>
           <app-annex-document
             id="docContainer"
             [xml]="xml"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
-
+      <eui-dialog
+        #unSavedDialog
+        [title]="
+          getTranlsations('page.editor.toc.unsaved-changes-dialog.title')
+        "
+        [isHandleCloseOnAccept]="true"
+        [isHandleCloseOnDismiss]="true"
+      >
+        <p euiSizeXL>
+          {{ 'page.editor.toc.unsaved-changes-dialog.body' | translate }}
+        </p>
+        <eui-dialog-footer>
+          <div class="d-flex flex-row justify-content-end" style="gap: 0.5rem">
+            <button
+              euiButton
+              class="mr-2"
+              euiSecondary
+              (click)="hanldeUnSaveDialogClose(false)"
+            >
+              {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
+            </button>
+            <button
+              euiButton
+              class=""
+              euiPrimary
+              (click)="hanldeUnSaveDialogClose(true)"
+            >
+              {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
+            </button>
+          </div>
+        </eui-dialog-footer>
+      </eui-dialog>
       <eui-page-column
         class="eui-page-column--right-column"
         [label]="'page.editor.annotations-column.label' | translate"
@@ -146,18 +218,18 @@
               euiOutline
               euiSizeS
               [title]="
-                ((doc.compareModeEnabled$ | async)
+                ((documentService.compareModeEnabled$ | async)
                   ? 'page.editor.versions.compare-button.tooltip-disable'
                   : 'page.editor.versions.compare-button.tooltip-enable'
                 ) | translate
               "
               [attr.aria-label]="
-                ((doc.compareModeEnabled$ | async)
+                ((documentService.compareModeEnabled$ | async)
                   ? 'page.editor.versions.compare-button.tooltip-disable'
                   : 'page.editor.versions.compare-button.tooltip-enable'
                 ) | translate
               "
-              (click)="doc.toggleCompareMode()"
+              (click)="documentService.toggleCompareMode()"
             >
               <eui-icon-svg icon="documents"></eui-icon-svg>
             </button>
@@ -169,18 +241,18 @@
               euiOutline
               euiSizeS
               [title]="
-                ((doc.versionSearchOpen$ | async)
+                ((documentService.versionSearchOpen$ | async)
                   ? 'page.editor.versions.search-button.tooltip-disable'
                   : 'page.editor.versions.search-button.tooltip-enable'
                 ) | translate
               "
               [attr.aria-label]="
-                ((doc.versionSearchOpen$ | async)
+                ((documentService.versionSearchOpen$ | async)
                   ? 'page.editor.versions.search-button.tooltip-disable'
                   : 'page.editor.versions.search-button.tooltip-enable'
                 ) | translate
               "
-              (click)="doc.toggleVersionsSearchPane()"
+              (click)="documentService.toggleVersionsSearchPane()"
             >
               <eui-icon-svg icon="search"></eui-icon-svg>
             </button>
@@ -188,9 +260,9 @@
 
           <div
             class="eui-u-display-block eui-u-pt-m_"
-            *ngIf="doc.versionSearchOpen$ | async"
+            *ngIf="documentService.versionSearchOpen$ | async"
           >
-            [search-controls]
+            <!-- TODO : add search controls [search-controls] -->
           </div>
         </eui-page-column-header-body>
         <eui-page-column-body>

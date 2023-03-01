@@ -269,16 +269,18 @@ export class DocumentService implements OnDestroy {
   }
 
   validateNodeDrop(
-    documentRef: string,
+    nodeDragged: TableOfContentItemVO[],
+    targetNode: TableOfContentItemVO,
+    position: string,
     documentType: string,
-    nodeDragged: TableOfContentItemVO,
-    nodeDroppedAt: TableOfContentItemVO,
+    documentRef: string,
   ) {
     return this.http.post(`api/secured/toc/${documentRef}/validate-node-drop`, {
-      nodeDragged: null,
-      nodeDroppedAt: null,
+      nodeDragged,
+      targetNode,
+      position: position.toUpperCase(),
       documentRef,
-      documentType,
+      documentType: documentType.toUpperCase(),
     });
   }
 

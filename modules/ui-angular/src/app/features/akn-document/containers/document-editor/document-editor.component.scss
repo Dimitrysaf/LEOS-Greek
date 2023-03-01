@@ -19,3 +19,30 @@
     justify-content: center;
   }
 }
+
+.tree-drag-content {
+  background-color: var(--eui-app-body-bg-color);
+  border-radius: 1rem;
+  gap: 1.25rem;
+  left: 0%;
+  margin-left: 1rem;
+  padding: 1rem;
+  position: absolute;
+  top: 1.2%;
+  z-index: 9999;
+
+  h3 {
+    padding: 0.2rem;
+  }
+
+  li,
+  .toc-item {
+    border: solid var(--eui-base-color-primary);
+    border-radius: 1rem;
+    border-width: 2px;
+    font-size: 14px;
+    margin: 0.5rem;
+    padding: 0.6rem;
+    text-align: center;
+  }
+}
