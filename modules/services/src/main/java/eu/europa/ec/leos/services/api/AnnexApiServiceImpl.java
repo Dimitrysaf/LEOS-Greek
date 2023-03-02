@@ -15,10 +15,8 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -27,8 +25,8 @@ import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
+import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -56,9 +54,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
 @Service("annex")
@@ -87,6 +82,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     PackageService packageService;
     @Autowired
     ProposalService proposalService;
+    @Autowired
+    ComparisonDelegateAPI<Annex> comparisonDelegate;
 
     AnnexApiServiceImpl(Provider<StructureContext> structureContext) {
         this.structureContext = structureContext;
@@ -159,10 +156,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public List<VersionVO> getVersionsData(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        List<VersionVO> versions = this.annexService.getAllVersions(annex.getId(),documentRef);
-        for(VersionVO versionVO : versions) {
-            Integer count = this.annexService.findAllMinorsCountForIntermediate(documentRef,versionVO.getCmisVersionNumber());
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.annexService.findAllMinorsForIntermediate(documentRef,versionVO.getCmisVersionNumber(),0,count), messageHelper));
+        List<VersionVO> versions = this.annexService.getAllVersions(annex.getId(), documentRef);
+        for (VersionVO versionVO : versions) {
+            int count = this.annexService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
+            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.annexService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
         }
         return versions;
     }
@@ -200,7 +197,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         AnnexStructureType structureType = getStructureType();
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
-        return this.annexService.getTableOfContent(updatedAnnex,TocMode.SIMPLIFIED);
+        return this.annexService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
     }
 
     @Override
@@ -222,14 +219,15 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 "",
                 securityContext.getPermissions(annex));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(annex);
-        return new DocumentViewResponse(null,versionContent,versionInfoVO);
+        return new DocumentViewResponse(null, versionContent, versionInfoVO);
     }
 
     @Override
     public String compare(String newVersionId, String oldVersionId) {
         Annex oldVersion = annexService.findAnnexVersion(oldVersionId);
         Annex newVersion = annexService.findAnnexVersion(newVersionId);
-        return this.compareTwoVersion(oldVersion, newVersion);
+        String comparedContent = comparisonDelegate.getMarkedContent(oldVersion, newVersion);
+        return comparedContent;
     }
 
     @Override
@@ -268,20 +266,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(AnnexStructureType.LEVEL.getType()) ||
                         tocItem.getAknTag().value().equalsIgnoreCase(ARTICLE.getType()))).collect(Collectors.toList());
         return AnnexStructureType.valueOf(tocItems.get(0).getAknTag().value().toUpperCase());
-    }
-
-
-    private String compareTwoVersion(Annex oldVersion, Annex newVersion) {
-        final String firstItemHtml = documentContentService.getDocumentAsHtml(oldVersion, "", securityContext.getPermissions(oldVersion),
-                false);
-        final String secondItemHtml = documentContentService.getDocumentAsHtml(newVersion, "", securityContext.getPermissions(newVersion),
-                false);
-        return compareService.compareContents(new ContentComparatorContext.Builder(firstItemHtml, secondItemHtml)
-                .withAttrName(ATTR_NAME)
-                .withRemovedValue(CONTENT_REMOVED_CLASS)
-                .withAddedValue(CONTENT_ADDED_CLASS)
-                .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
-                .build());
     }
 
     private void setStructureContext(String docTemplate) {

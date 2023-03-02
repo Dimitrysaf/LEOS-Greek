@@ -103,10 +103,10 @@ li ul {
 }
 
 .drop-as_children-invalid {
-  position: relative;
   border: 1px solid var(--eui-base-color-danger);
   border-radius: 2rem;
   max-width: fit-content;
+  position: relative;
   transition: all 1s;
 }
 

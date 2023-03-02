@@ -992,7 +992,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     }
 
     private void updateMemorandumContent( Memorandum memorandum, byte[] xmlContent, String operationMsg, String notificationMsg) {
-        memorandum = memorandumService.updateMemorandum(memorandum, xmlContent, operationMsg);
+            memorandum = memorandumService.updateMemorandum(memorandum, xmlContent, operationMsg);
         if (memorandum != null) {
             eventBus.post(new NotificationEvent(Type.INFO, notificationMsg));
             eventBus.post(new RefreshDocumentEvent());
