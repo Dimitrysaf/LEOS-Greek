@@ -48,6 +48,7 @@ import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.*;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
+import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -59,9 +60,12 @@ import eu.europa.ec.leos.services.store.ArchiveService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
+import eu.europa.ec.leos.vo.toc.AlternateConfig;
+import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
@@ -80,6 +84,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.locks.StampedLock;
@@ -112,7 +117,6 @@ public class ApiServiceImpl implements ApiService {
     private PostProcessingDocumentService postProcessingDocumentService;
     private ValidationService validationService;
 
-
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
                           WorkspaceService workspaceService,
@@ -135,7 +139,7 @@ public class ApiServiceImpl implements ApiService {
                           MilestoneService milestoneService,
                           ProposalConverterService proposalConverterService,
                           PostProcessingDocumentService postProcessingDocumentService,
-                          ValidationService validationService) {
+                          ValidationService validationService, Properties applicationProperties) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -718,5 +722,4 @@ public class ApiServiceImpl implements ApiService {
         }
         return null;
     }
-
 }

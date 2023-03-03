@@ -28,11 +28,13 @@ import eu.europa.ec.leos.security.AuthClient;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.api.ApiService;
+import eu.europa.ec.leos.services.api.ConfigService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -92,6 +94,8 @@ public class LeosApiController {
     private final Properties applicationProperties;
     private final ExportPackageService exportPackageService;
     private final ApiService apiService;
+
+    private final ConfigService configService;
     private final SecurityContext securityContext;
 
     private final int SINGLE_COLUMN_MODE = 1;
@@ -105,7 +109,8 @@ public class LeosApiController {
                              TransformationService transformationService, ContentComparatorService comparatorService,
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
-                             ExportPackageService exportPackageService, ApiService apiService, SecurityContext securityContext) {
+                             ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
+            ConfigService configService1, SecurityContext securityContext) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -117,6 +122,7 @@ public class LeosApiController {
         this.applicationProperties = applicationProperties;
         this.exportPackageService = exportPackageService;
         this.apiService = apiService;
+        this.configService = configService;
         this.securityContext = securityContext;
     }
 
@@ -518,4 +524,15 @@ public class LeosApiController {
         return null;
     }
 
+    @RequestMapping(value = "/secured/config", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getConfig() {
+        try {
+            AppConfigResponse appConfigResponse = configService.getApplicationConfig();
+            return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting application configuration - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
