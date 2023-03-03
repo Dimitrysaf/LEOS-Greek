@@ -46,182 +46,181 @@ public class MemorandumController {
     @Autowired
     MemorandumApiService memorandumApiService;
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getMemorandum(@PathVariable("documentRef") String documentRef) {
         try {
             DocumentViewResponse memorandumDocument = this.memorandumApiService.getDocument(documentRef);
-            return  ResponseEntity.ok().body(memorandumDocument);
+            return ResponseEntity.ok().body(memorandumDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum document - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while getting Memorandum document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting Memorandum document", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                              @RequestParam("tocMode") TocMode tocMode
+                                         @RequestParam("tocMode") TocMode tocMode
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef,tocMode);
-            return  ResponseEntity.ok().body(toc);
+            List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef, tocMode);
+            return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting Memorandum toc items - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while getting Memorandum toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting Memorandum toc items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
         try {
             List<TocItem> tocItems = this.memorandumApiService.getTocItems(documentRef);
-            return  ResponseEntity.ok().body(tocItems);
+            return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum toc items - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error memorandum while getting memorandum toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error memorandum while getting memorandum toc items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_XML_VALUE )
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveMemorandumElement(@PathVariable("documentRef") String documentRef,
-                                                       @PathVariable("elementName") String elementName,
-                                                       @PathVariable("elementId") String elementId,
-                                                       @RequestBody String elementContent) {
+                                                        @PathVariable("elementName") String elementName,
+                                                        @PathVariable("elementId") String elementId,
+                                                        @RequestBody String elementContent) {
         try {
-            DocumentViewResponse memorandumXml = this.memorandumApiService.saveElement(documentRef,elementId,elementName,elementContent);
-            return  ResponseEntity.ok().body(memorandumXml);
+            DocumentViewResponse memorandumXml = this.memorandumApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(memorandumXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum element - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occured while getting memorandum element",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE )
+    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> deleteMemorandumElement(@PathVariable("documentRef") String documentRef,
-                                                         @PathVariable("elementName") String elementName,
-                                                         @PathVariable("elementId") String elementId) {
+                                                          @PathVariable("elementName") String elementName,
+                                                          @PathVariable("elementId") String elementId) {
         try {
-            DocumentViewResponse memorandumXml = this.memorandumApiService.deleteBlock(documentRef,elementName,elementId);
-            return  ResponseEntity.ok().body(memorandumXml);
+            DocumentViewResponse memorandumXml = this.memorandumApiService.deleteBlock(documentRef, elementName, elementId);
+            return ResponseEntity.ok().body(memorandumXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpcted error occured while getting memorandum element",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
     }
 
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> insertMemorandumElement(@PathVariable("documentRef") String documentRef,
-                                                         @PathVariable("elementName") String elementName,
-                                                         @PathVariable("elementId") String elementId,
-                                                         @RequestBody InsertElementRequest request) {
+                                                          @PathVariable("elementName") String elementName,
+                                                          @PathVariable("elementId") String elementId,
+                                                          @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse memorandumXml = this.memorandumApiService.insertElement(documentRef,elementName,elementId,request.getPosition());
-            return  ResponseEntity.ok().body(memorandumXml);
+            DocumentViewResponse memorandumXml = this.memorandumApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            return ResponseEntity.ok().body(memorandumXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpcted error occured while getting memorandum element",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> mergeMemorandumElement(@PathVariable("documentRef") String documentRef,
-                                                        @PathVariable("elementName") String elementTag,
-                                                        @PathVariable("elementId") String elementId,
-                                                        @RequestBody String  elementContent) {
+                                                         @PathVariable("elementName") String elementTag,
+                                                         @PathVariable("elementId") String elementId,
+                                                         @RequestBody String elementContent) {
         try {
-            DocumentViewResponse memorandumXml = this.memorandumApiService.mergeElement(documentRef,elementContent,elementTag,elementId);
-            return  ResponseEntity.ok().body(memorandumXml);
+            DocumentViewResponse memorandumXml = this.memorandumApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            return ResponseEntity.ok().body(memorandumXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on memorandum - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while merging elements ",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while merging elements ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
 
-
-    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
-            List<Memorandum> memorandumes = this.memorandumApiService.getRecentMinorVersions(documentRef);
-            return  ResponseEntity.ok().body(memorandumes);
+            List<VersionVO> memorandumes = this.memorandumApiService.getRecentMinorVersions(documentRef);
+            return ResponseEntity.ok().body(memorandumes);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveMemorandumVersion(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SaveIntermediateVersionRequest saveEvent
+                                                        @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            List<VersionVO> versions = this.memorandumApiService.saveDocument(documentRef,saveEvent.getCheckinComment(), saveEvent.getVersionType());
-            return  ResponseEntity.ok().body(versions);
+            List<VersionVO> versions = this.memorandumApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while saving memorandum version - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while saving memorandum version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving memorandum version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveMemorandumVersion(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SaveTocRequestEvent saveTocRequestEvent
+                                                        @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef,saveTocRequestEvent.getTableOfContentItemVOs());
-            return  ResponseEntity.ok().body(toc);
+            List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
+            return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while saving toc ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving toc ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getVersionData(@PathVariable("documentRef") String documentRef) {
         try {
             List<VersionVO> versions = this.memorandumApiService.getVersionsData(documentRef);
-            return  ResponseEntity.ok().body(versions);
+            return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum versioning data - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
                                                    @RequestParam String searchText,
                                                    @RequestParam boolean matchCase,
                                                    @RequestParam boolean completeWords) {
         try {
-            List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef,searchText,matchCase,completeWords);
-            return  ResponseEntity.ok().body(memorandum);
+            List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
+            return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum search results - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error occurred while fetching search results for memorandum ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while fetching search results for memorandum ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -231,10 +230,10 @@ public class MemorandumController {
     public ResponseEntity<Object> showMemorandumVersion(@PathVariable("versionId") String versionId) {
         try {
             DocumentViewResponse contentHtml = this.memorandumApiService.showVersion(versionId);
-            return  ResponseEntity.ok().body(contentHtml);
+            return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting memorandum version {} , error {}: - ",versionId,e.getMessage());
-            return  new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while getting memorandum version {} , error {}: - ", versionId, e.getMessage());
+            return new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -242,13 +241,13 @@ public class MemorandumController {
     @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> compareMemorandumVersions(@PathVariable("newVersionId") String newVersionId,
-                                                           @PathVariable("oldVersionId") String oldVersionId) {
+                                                            @PathVariable("oldVersionId") String oldVersionId) {
         try {
-            String  contentHtml = this.memorandumApiService.compare(newVersionId, oldVersionId);
-            return  ResponseEntity.ok().body(contentHtml);
+            String contentHtml = this.memorandumApiService.compare(newVersionId, oldVersionId);
+            return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
-            LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId , newVersionId);
-            return  new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId, newVersionId);
+            return new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -256,13 +255,13 @@ public class MemorandumController {
     @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> restoreMemorandumVersion(@PathVariable("documentRef") String documentRef,
-                                                          @PathVariable("targetVersion") String targetVersion) {
+                                                           @PathVariable("targetVersion") String targetVersion) {
         try {
             DocumentViewResponse memorandum = this.memorandumApiService.restoreToVersion(documentRef, targetVersion);
-            return  ResponseEntity.ok().body(memorandum);
+            return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -270,14 +269,14 @@ public class MemorandumController {
     @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getMemorandumElement(@PathVariable("documentRef") String documentRef,
-                                                      @PathVariable("elementId") String elementId,
-                                                      @PathVariable("elementTagName") String elementTagName) {
+                                                       @PathVariable("elementId") String elementId,
+                                                       @PathVariable("elementTagName") String elementTagName) {
         try {
-            EditElementResponse response = this.memorandumApiService.editElement(documentRef,elementId,elementTagName);
+            EditElementResponse response = this.memorandumApiService.editElement(documentRef, elementId, elementTagName);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting memorandum element - " + e.getMessage());
-            return  new ResponseEntity<>("Unexpected error while getting memorandum element ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while getting memorandum element ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
