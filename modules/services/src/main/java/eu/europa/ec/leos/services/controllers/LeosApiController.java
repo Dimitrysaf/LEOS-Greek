@@ -62,6 +62,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -135,23 +136,37 @@ public class LeosApiController {
         final String grantType = request.getHeader(GRANT_TYPE);
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
-            AuthClient authClient = tokenService.validateClientByJwtToken(token);
-            if (authClient.isVerified()) {
-                LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
-                String user = tokenService.extractUserFromToken(token);
-                JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt",
-                        System.currentTimeMillis() + 3600000, null, null);
-                LOG.debug("Created accessToken for the Client '{}", authClient.getName());
-                return new ResponseEntity<>(jsonToken, HttpStatus.OK);
-            } else {
-                LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
-                return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
-            }
+            return validateAndGenerateAccessToken(token);
         } else {
-            LOG.warn("Authorization failed! Wrong Headers: '{}' is missing or contains a wrong value", GRANT_TYPE);
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("Authorization")) {
+                        return validateAndGenerateAccessToken(cookie.getValue());
+                    } else {
+                        LOG.warn("Authorization failed! Wrong Headers: No authorization cookie found");
+                    }
+                }
+            } else {
+                LOG.warn("Authorization failed! Wrong Headers: '{}' is missing or contains no cookie is found", GRANT_TYPE);
+            }
         }
-
         return new ResponseEntity<>("Wrong Headers!", HttpStatus.FORBIDDEN);
+    }
+
+    private ResponseEntity<Object> validateAndGenerateAccessToken(String token) {
+        AuthClient authClient = tokenService.validateClientByJwtToken(token);
+        if (authClient.isVerified()) {
+            LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
+            String user = tokenService.extractUserFromToken(token);
+            JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt",
+                    System.currentTimeMillis() + 3600000, null, null);
+            LOG.debug("Created accessToken for the Client '{}", authClient.getName());
+            return new ResponseEntity<>(jsonToken, HttpStatus.OK);
+        } else {
+            LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
+            return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
+        }
     }
 
     @RequestMapping(value = "/secured/compare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
