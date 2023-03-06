@@ -99,6 +99,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             var parent = selectedElement.getParent();
             var isLevelElement = leosPluginUtils.isAnnexList(parent);
             var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
+            var isFirstLevelListSubparagraph = leosPluginUtils.isFirstLevelListSubparagraph(selectedElement);
             var point = isParentSubPoint ? parent.getParent() : parent;
             var isSelectedElementInsidePoint = (leosPluginUtils.getElementName(point) === leosPluginUtils.HTML_POINT) && _getAscendantPoint(point);
             var isSelectedElementSubPoint = isSelectedElementInsidePoint && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
@@ -113,6 +114,25 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 if (isOnlyChild) {
                     parent.appendBogus();
                 }
+            } else if (isFirstLevelListSubparagraph) {
+                event.cancelIdentityHandler = 'cancel';
+                var parentElementChildList = parent.getChildren().$;
+                if (selectedElement.$ === parentElementChildList[1]) {
+                    let doc = selectedElement.getDocument();
+                    let newElement = doc.createElement('p');
+                    newElement.setHtml(parent.getChildren().$[0].getInnerHTML().replaceAll('<br>',''));
+                    newElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+                    $(newElement.$).insertBefore($(parent.$));
+                    parent.getChildren().$[0].remove()
+                } else if (selectedElement.$ === parentElementChildList[parentElementChildList.length -1]) {
+                    selectedElement.renameNode('p')
+                    selectedElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+                    selectedElement.removeAttribute(leosPluginUtils.REFERS_TO);
+                    selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
+                    selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                    $(selectedElement.$).insertAfter($(parent.$));
+                }
+                leosPluginUtils.setFocus(selectedElement, event.editor);
             }
         }
     }
