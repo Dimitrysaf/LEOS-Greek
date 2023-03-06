@@ -237,7 +237,7 @@ public class BillController {
 
     }
 
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> showBillVersion(@PathVariable("versionId") String versionId) {
         try {

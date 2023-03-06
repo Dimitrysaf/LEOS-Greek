@@ -231,6 +231,12 @@ export class DocumentService implements OnDestroy {
 
   versionView(versionNumber: string) {
     console.warn('stub:', 'versionView', versionNumber); // FIXME
+    this.getDocumentVersion(
+      this.documentCategoryBS.value,
+      versionNumber,
+    ).subscribe((result) => {
+      console.log(result);
+    });
   }
 
   getToc(annexRef: string, tocMode = 'SIMPLIFIED') {
@@ -289,7 +295,6 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentVersionsData(documentType: string, documentRef: string) {
-    //FIXME modify this when backend api for version-data is modified not to contain documentId param.
     return this.http.get<Version[]>(
       `api/secured/${documentType}/${documentRef}/version-data`,
     );
@@ -312,6 +317,12 @@ export class DocumentService implements OnDestroy {
       {
         ...data,
       },
+    );
+  }
+
+  getDocumentVersion(documentType: string, versionId: string) {
+    return this.http.get<DocumentViewResponse>(
+      `api/secured/${documentType}/${versionId}/show-version`,
     );
   }
 
