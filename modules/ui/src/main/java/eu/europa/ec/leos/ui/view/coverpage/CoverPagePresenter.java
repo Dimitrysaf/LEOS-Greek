@@ -655,7 +655,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     @Subscribe
     void mergeSuggestion(MergeSuggestionRequest event) {
         Proposal document = getDocument();
-        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset());
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset(), false);
         if (resultXmlContent == null) {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
             return;

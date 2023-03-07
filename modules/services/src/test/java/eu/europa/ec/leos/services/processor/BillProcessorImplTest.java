@@ -165,8 +165,8 @@ public class BillProcessorImplTest extends LeosTest {
         final String articleTag = ARTICLE;
         final String articleId = "486";
 
-        when(elementProcessor.deleteElement(argThat(is(originalDocument)), argThat(is(articleId)),
-                argThat(is(articleTag)))).thenReturn(updatedByteContent);
+        when(elementProcessor.deleteElement(originalDocument, articleId,
+                articleTag, false)).thenReturn(updatedByteContent);
         when(xmlContentProcessor.insertAffectedAttributeIntoParentElements(argThat(is(updatedByteContent)), argThat(is(articleId)))).thenReturn(updatedByteContent);
         when(numberService.renumberArticles(argThat(is(updatedByteContent)))).thenReturn(renumberdContent);
         when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);

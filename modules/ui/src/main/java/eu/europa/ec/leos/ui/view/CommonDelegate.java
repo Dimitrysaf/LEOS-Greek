@@ -60,7 +60,8 @@ public class CommonDelegate<T extends XmlDocument> {
     /*FIXME : this is unfinished refactoring idea to move common code from presenters.
     * It can not be applied to all presenters as updateFn has different interface for annexService and documentService*/
     public void mergeSuggestion(T document, MergeSuggestionRequest event, ElementProcessor<T> elementProcessor, TriFunction<T, byte[], String, T> updateDocumentFn) {
-        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset());
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(),
+                event.getStartOffset(), event.getEndOffset(), false);
         if (resultXmlContent == null) {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
             return;
