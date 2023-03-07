@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
+import { coerceStringArray } from '@angular/cdk/coercion';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import {
@@ -672,6 +673,9 @@ const params = {
     '{"id":"_body_level_1","levelNum":"1.","levelDepth":1,"origin":null,"children":[{"id":"_body_level_1_1","levelNum":"1.1.","levelDepth":2,"origin":null,"children":[]}]}',
   isClonedProposal: false,
 };
+type ResizeListener<T extends Element = Element> = (event: {
+  element: T;
+}) => void;
 
 @Injectable({
   providedIn: 'root',
@@ -681,6 +685,8 @@ export class CKEditorService implements OnDestroy {
   private documentRefBS = new BehaviorSubject<string>(null);
   private xmlBS = new BehaviorSubject<string>('');
   private documentTypeBS = new BehaviorSubject<string>(null);
+  private resizeObserver?: ResizeObserver;
+  resizeListeners = new Map<Element, Set<ResizeListener>>();
   elementEditor$: Observable<any>;
   xml$ = this.xmlBS.asObservable();
   documentRef$ = this.documentRefBS.asObservable();
@@ -692,7 +698,7 @@ export class CKEditorService implements OnDestroy {
     getElement: (...args) => document.getElementById('docContainer'),
     getState: () => ({
       instanceType: 'OS',
-      isImplicitSaveEnabled: false,
+      isImplicitSaveEnabled: true,
       isSpellCheckerEnabled: false,
       spellCheckerServiceUrl:
         'https://webgate.acceptance.ec.testa.eu/qas/spellcheck',
@@ -741,32 +747,34 @@ export class CKEditorService implements OnDestroy {
         data.elementId,
         data.elementType.toLowerCase(),
         documentType,
-      ).subscribe((response) => {
-        //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
-        const {
-          elementId,
-          elementType,
-          elementFragment,
-          docType,
-          instanceType,
-          alternatives,
-          levelItemVo,
-          isClonedProposal,
-        } = params;
+      )
+        .pipe(distinctUntilChanged())
+        .subscribe((response) => {
+          //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
+          const {
+            elementId,
+            elementType,
+            elementFragment,
+            docType,
+            instanceType,
+            alternatives,
+            levelItemVo,
+            isClonedProposal,
+          } = params;
 
-        const res = JSON.parse(response);
+          const res = JSON.parse(response);
 
-        this.connector.editElement(
-          res.elementId,
-          res.elementTagName,
-          res.element,
-          docType,
-          instanceType,
-          alternatives,
-          JSON.stringify(res.levelItem),
-          isClonedProposal,
-        );
-      });
+          this.connector.editElement(
+            res.elementId,
+            res.elementTagName,
+            res.element,
+            docType,
+            instanceType,
+            alternatives,
+            JSON.stringify(res.levelItem),
+            isClonedProposal,
+          );
+        });
     },
     saveElement: (elemData: {
       elementId: string;
@@ -784,10 +792,33 @@ export class CKEditorService implements OnDestroy {
         elemData.isSplit,
         documentType,
       ).subscribe((response) => {
-        // this.documentService.setDocumentId(documentRef);
+        this.documentService.setDocumentId(documentRef);
       });
     },
     closeElement: () => {},
+
+    addResizeListener: <T extends Element>(
+      element: T,
+      callbackFunction: ResizeListener<T>,
+    ) => {
+      if (!this.resizeListeners.has(element)) {
+        this.resizeListeners.set(element, new Set());
+        this.getResizeObserver().observe(element);
+      }
+      this.resizeListeners.get(element).add(callbackFunction);
+    },
+    removeResizeListener: <T extends Element>(
+      element: T,
+      callbackFunction: ResizeListener<T>,
+    ) => {
+      if (this.resizeListeners.has(element)) {
+        this.resizeListeners.get(element).delete(callbackFunction);
+        if (this.resizeListeners.get(element).size === 0) {
+          this.resizeListeners.delete(element);
+          this.resizeObserver?.unobserve(element);
+        }
+      }
+    },
     releaseElement: () => {
       const documentRef = this.documentRefBS.value;
       this.documentService.setDocumentId(documentRef);
@@ -799,7 +830,6 @@ export class CKEditorService implements OnDestroy {
     }) => {
       const documentRef = this.documentRefBS.value;
       const documentType = this.documentTypeBS.value;
-      console.log(elementData, documentRef);
       this.deleteDocumentElement(
         documentRef,
         elementData.elementType,
@@ -815,7 +845,6 @@ export class CKEditorService implements OnDestroy {
       elementType: string;
       position: string;
     }) => {
-      console.log(elementData);
       const documentRef = this.documentRefBS.value;
       const documentType = this.documentTypeBS.value;
       this.insertDocumentElement(
@@ -828,7 +857,6 @@ export class CKEditorService implements OnDestroy {
         .pipe(distinctUntilChanged())
         .subscribe((response) => {
           this.documentService.setDocumentId(documentRef);
-          // this.documentService.getToc(documentRef);
         });
     },
     mergeElement: (elementData: {
@@ -955,6 +983,19 @@ export class CKEditorService implements OnDestroy {
       ),
     );
 
+    const inlineLeosEditor$ = this.leosLegacyService.require$.pipe(
+      switchMap(
+        (require) =>
+          new Observable((subscriber) => {
+            require([
+              'js/editor/plugins/leosInlineEditor/leosInlineEditorPlugin',
+            ], (inlineLeosEditor) => {
+              subscriber.next(inlineLeosEditor);
+            });
+          }),
+      ),
+    );
+
     this.elementEditor$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -996,7 +1037,6 @@ export class CKEditorService implements OnDestroy {
           actionHandler.setup(this.connector);
           toolbarPositionAdapter.setup(this.connector);
           elementEditor.setup(this.connector);
-          console.log('Connector => ', this.connector);
         },
       );
   }
@@ -1013,11 +1053,10 @@ export class CKEditorService implements OnDestroy {
       .put(
         `api/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
         elementFragment,
-        { responseType: 'text' },
+        { responseType: 'text', headers: { contentType: 'text' } },
       )
       .pipe(
         tap(() => {
-          console.log('dep');
           this.documentService.getToc(this.annexRefBS.value);
         }),
         tap(() => this.connector.closeElement()),
@@ -1046,16 +1085,10 @@ export class CKEditorService implements OnDestroy {
     elementId: string,
     documentType: string,
   ) {
-    return this.http
-      .get(
-        `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
-        { responseType: 'text' },
-      )
-      .pipe(
-        tap(() => {
-          console.log('getAnnexElement run');
-        }),
-      );
+    return this.http.get(
+      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+      { responseType: 'text' },
+    );
   }
 
   deleteDocumentElement(
@@ -1095,5 +1128,16 @@ export class CKEditorService implements OnDestroy {
       `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/merge-element`,
       { elementContent },
     );
+  }
+  private getResizeObserver() {
+    if (!this.resizeObserver) {
+      const fireResizeListeners = (el: Element) =>
+        this.resizeListeners.get(el)?.forEach((cb) => cb({ element: el }));
+      const callback: ResizeObserverCallback = (entries) => {
+        entries.map((e) => e.target).forEach(fireResizeListeners);
+      };
+      this.resizeObserver = new ResizeObserver(callback);
+    }
+    return this.resizeObserver;
   }
 }
