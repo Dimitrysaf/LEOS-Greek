@@ -29,6 +29,7 @@ import java.util.Map;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasChildTextNode;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 public class ComparisonHelper {
 
@@ -80,25 +81,11 @@ public class ComparisonHelper {
         return isElementContentEqual;
     }
 
-    public static boolean isListIntro(Element element) {
-        return (element != null
-                && element.getTagName().equals(XmlHelper.SUBPARAGRAPH)
-                && element.getParent().getTagName().equals(LIST)
-                && element.getParent().getChildren().indexOf(element) == 0);
-    }
-
-    public static boolean isListEnding(Element element) {
-        return (element != null
-                && element.getTagName().equals(XmlHelper.SUBPARAGRAPH)
-                && element.getParent().getTagName().equals(LIST)
-                && element.getParent().getChildren().indexOf(element) == element.getParent().getChildren().size()-1);
-    }
-
     public static boolean isListIntroAndFirstSubpoint(Element element) {
         if (isListIntro(element)) {
             int indexOfList = element.getParent().getParent().getChildren().indexOf(element.getParent());
             Element firstChild = element.getParent().getParent().getChildren().get(0);
-            return (indexOfList == 0 || (indexOfList == 1 && firstChild.getTagName().equals(XmlHelper.NUM)));
+            return (indexOfList == 0 || (indexOfList == 1 && is(firstChild, XmlHelper.NUM)));
         }
         return false;
     }
@@ -115,5 +102,48 @@ public class ComparisonHelper {
     public static boolean isElementTransformedFrom(Node node, String attrName, String attrValue) {
         Node foundNode = XercesUtils.getNodeContainingAttributeValue(node, attrName, attrValue);
         return foundNode != null;
+    }
+
+    public static boolean is(Element element, String tagName) {
+        return element != null && element.getTagName().equalsIgnoreCase(tagName);
+    }
+
+    public static boolean isListIntro(Element element) {
+        return (element != null
+                && is(element,SUBPARAGRAPH)
+                && element.getParent().getTagName().equals(LIST)
+                && element.getParent().getChildren().indexOf(element) == 0);
+    }
+
+    public static boolean isListWrapper(Element element) {
+        if (element != null) {
+            if (is(element, SUBPARAGRAPH) && is(element.getParent(), LIST)) {
+                return (element.getParent().getChildren().indexOf(element) == element.getParent().getChildren().size()-1);
+            }
+        }
+        return false;
+    }
+
+    public static Element getListWrapper(Element element) {
+        if (is(element, LIST)) {
+            List<Element> children = element.getChildren();
+            return children.size()>0 && is(children.get(children.size()-1), SUBPARAGRAPH) ? children.get(children.size()-1) : null;
+        }
+        return null;
+    }
+
+    public static Element getListIntro(Element element) {
+        if (is(element, LIST)) {
+            List<Element> children = element.getChildren();
+            return children.size()>0 && is(children.get(0), SUBPARAGRAPH) ? children.get(0) : null;
+        }
+        return null;
+    }
+
+    public static boolean isSoftDeletedOrSoftMovedTo(Element element) {
+        return element != null && element.getNode() != null
+                && (isSoftAction(element.getNode(), SoftActionType.DELETE)
+                || isSoftAction(element.getNode(), SoftActionType.MOVE_TO)
+                || isSoftAction(element.getNode(), SoftActionType.DELETE_TRANSFORM));
     }
 }

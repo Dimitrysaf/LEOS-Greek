@@ -812,15 +812,15 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         Element splitElement;
         if (Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) || (PARAGRAPH.equals(tagName) && !content.contains("<" + SUBPARAGRAPH + ">"))) {
             splitElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Collections.emptyList(), false);
+
             // Case when subparagraph is a list's wrapper
             if (splitElement == null) {
-                Element parentElement = getParentElement(xmlContent, idAttributeValue);
-                Element listSibling = parentElement != null ? getSiblingElement(xmlContent, parentElement.getElementTagName(), parentElement.getElementId(),
-                        Collections.emptyList(),
-                        false) : null;
-                splitElement = listSibling != null ? getChildElement(xmlContent, listSibling.getElementTagName(), listSibling.getElementId(),
-                        Arrays.asList(tagName),
-                        1) : null;
+                Element parentSibling = getSiblingOfParentElement(xmlContent, tagName, idAttributeValue);
+                // If it is a wrapper, get next sibling of the parent, if the parent's next sibling is a list, get its first child
+                splitElement = parentSibling != null ? parentSibling.getElementTagName().equalsIgnoreCase(LIST) ?
+                        getChildElement(xmlContent,
+                        parentSibling.getElementTagName(), parentSibling.getElementId(), Arrays.asList(tagName), 1)
+                        : parentSibling : null;
             }
         } else if (LEVEL.equals(tagName)) {
             return null;
