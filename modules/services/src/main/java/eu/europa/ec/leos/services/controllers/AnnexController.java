@@ -54,7 +54,7 @@ public class AnnexController {
     @Autowired
     private AnnexApiService annexAPIService;
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_XML_VALUE )
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE )
     @ResponseBody
     public ResponseEntity<Object> saveAnnexElement(@PathVariable("documentRef") String documentRef,
                                                    @PathVariable("elementName") String elementName,
