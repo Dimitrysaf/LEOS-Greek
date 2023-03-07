@@ -53,7 +53,7 @@
                 <num xml:id="_body__level_1__num">
                     <b xml:id="_body__level_1__num__b">1.</b>
                 </num>
-                <heading xml:id="_body__level_1__heading">
+                <heading leos:editable="false" xml:id="_body__level_1__heading">
                     <b xml:id="_body__level_1__heading__b">FRAMEWORK OF THE PROPOSAL/INITIATIVE</b>
                 </heading>
             </level>
@@ -61,7 +61,7 @@
                 <num xml:id="_body__level_11__num">
                     <b xml:id="_body__level_11__num__b">1.1.</b>
                 </num>
-                <heading xml:id="_body__level_11__heading">
+                <heading leos:editable="false" xml:id="_body__level_11__heading">
                     <b xml:id="_body__level_11__heading__b">Title of the proposal/initiative</b>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_11__subparagraph__content">
@@ -72,7 +72,7 @@
                 <num xml:id="_body__level_12__num">
                     <b xml:id="_body__level_12__num__b">1.2.</b>
                 </num>
-                <heading xml:id="_body__level_12__heading">
+                <heading leos:editable="false" xml:id="_body__level_12__heading">
                     <b xml:id="_body__level_12__heading__b">Policy area(s) concerned</b>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_12__subparagraph__content">
@@ -83,14 +83,14 @@
                 <num xml:id="_body__level_13__num">
                     <b xml:id="_body__level_13__num__b">1.3.</b>
                 </num>
-                <heading xml:id="_body__level_13__heading">
+                <heading leos:editable="false" xml:id="_body__level_13__heading">
                     <b xml:id="_body__level_13__heading__b">The proposal/initiative relates to</b>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_13__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_13__list">
                     <indent xml:id="_body__level_13__list__indent_1">
                         <num xml:id="_body__level_13__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_13__list__indent_1__num__inline">
-                                <b xml:id="_body__level_13__list__indent_1__num__inline__b">☐</b>
+                                <b xml:id="_body__level_13__list__indent_1__num__inline__b">&#x2610;</b>
                             </inline>
                         </num>
                         <content xml:id="_body__level_13__list__indent_1__content">
@@ -102,7 +102,7 @@
                     <indent xml:id="_body__level_13__list__indent_2_2">
                         <num xml:id="_body__level_13__list__indent_2_2__num">
                             <inline name="unchecked" xml:id="_body__level_13__list__indent_2_2__num__inline">
-                                <b xml:id="_body__level_13__list__indent_2_2__num__inline__b">☐</b>
+                                <b xml:id="_body__level_13__list__indent_2_2__num__inline__b">&#x2610;</b>
                             </inline>
                         </num>
                         <content xml:id="_body__level_13__list__indent_2_2__content">
@@ -118,7 +118,7 @@
                     <indent xml:id="_body__level_13__list__indent_3_3">
                         <num xml:id="_body__level_13__list__indent_3_3__num">
                             <inline name="unchecked" xml:id="_body__level_13__list__indent_3_3__num__inline">
-                                <b xml:id="_body__level_13__list__indent_3_3__num__inline__b">☐</b>
+                                <b xml:id="_body__level_13__list__indent_3_3__num__inline__b">&#x2610;</b>
                             </inline>
                         </num>
                         <content xml:id="_body__level_13__list__indent_3_3__content">
@@ -130,7 +130,7 @@
                     <indent xml:id="_body__level_13__list__indent_4">
                         <num xml:id="_body__level_13__list__indent_4__num">
                             <inline name="unchecked" xml:id="_body__level_13__list__indent_4__num__inline">
-                                <b xml:id="_body__level_13__list__indent_4__num__inline__b">☐</b>
+                                <b xml:id="_body__level_13__list__indent_4__num__inline__b">&#x2610;</b>
                             </inline>
                         </num>
                         <content xml:id="_body__level_13__list__indent_4__content">
@@ -145,7 +145,7 @@
                 <num xml:id="_body__level_14__num">
                     <b xml:id="_body__level_14__num__b">1.4.</b>
                 </num>
-                <heading xml:id="_body__level_14__heading">
+                <heading leos:editable="false" xml:id="_body__level_14__heading">
                     <b xml:id="_body__level_14__heading__b">Objective(s)</b>
                 </heading>
             </level>
@@ -153,7 +153,7 @@
                 <num xml:id="_body__level_141__num">
                     <i xml:id="_body__level_141__num__i">1.4.1.</i>
                 </num>
-                <heading xml:id="_body__level_141__heading">
+                <heading leos:editable="false" xml:id="_body__level_141__heading">
                     <i xml:id="_body__level_141__heading__i">General objective(s)</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_141__content">
@@ -164,7 +164,7 @@
                 <num xml:id="_body__level_142__num">
                     <i xml:id="_body__level_142__num__i">1.4.2.</i>
                 </num>
-                <heading xml:id="_body__level_142__heading">
+                <heading leos:editable="false" xml:id="_body__level_142__heading">
                     <i xml:id="_body__level_142__heading__i">Specific objective(s)</i>
                 </heading>
                 <subparagraph leos:editable="true" xml:id="_body__level_142__subparagraph_3">
@@ -184,10 +184,10 @@
                 <num xml:id="_body__level_143__num">
                     <i xml:id="_body__level_143__num__i">1.4.3.</i>
                 </num>
-                <heading xml:id="_body__level_143__heading">
+                <heading leos:editable="false" xml:id="_body__level_143__heading">
                     <i xml:id="_body__level_143__heading__i">Expected result(s) and impact</i>
                 </heading>
-                <subparagraph xml:id="_body__level_143__subparagraph_3">
+                <subparagraph leos:editable="false" xml:id="_body__level_143__subparagraph_3">
                     <content xml:id="_body__level_143__subparagraph_3__content">
                         <p xml:id="_body__level_143__subparagraph_3__content__p">
                             <i xml:id="_body__level_143__subparagraph_3__content__p__i">Specify the effects which the proposal/initiative should have on the beneficiaries/groups targeted.</i>
@@ -204,10 +204,10 @@
                 <num xml:id="_body__level_144__num">
                     <i xml:id="_body__level_144__num__i">1.4.4.</i>
                 </num>
-                <heading xml:id="_body__level_144__heading">
+                <heading leos:editable="false" xml:id="_body__level_144__heading">
                     <i xml:id="_body__level_144__heading__i">Indicators of performance</i>
                 </heading>
-                <subparagraph xml:id="_body__level_144__subparagraph_3">
+                <subparagraph leos:editable="false" xml:id="_body__level_144__subparagraph_3">
                     <content xml:id="_body__level_144__subparagraph_3__content">
                         <p xml:id="_body__level_144__subparagraph_3__content__p">
                             <i xml:id="_body__level_144__subparagraph_3__content__p__i">Specify the indicators for monitoring progress and achievements.</i>
@@ -224,7 +224,7 @@
                 <num xml:id="_body__level_15__num">
                     <b xml:id="_body__level_15__num__b">1.5.</b>
                 </num>
-                <heading xml:id="_body__level_15__heading">
+                <heading leos:editable="false" xml:id="_body__level_15__heading">
                     <b xml:id="_body__level_15__heading__b">Grounds for the proposal/initiative</b>
                 </heading>
             </level>
@@ -232,7 +232,7 @@
                 <num xml:id="_body__level_151__num">
                     <i xml:id="_body__level_151__num__i">1.5.1.</i>
                 </num>
-                <heading xml:id="_body__level_151__heading">
+                <heading leos:editable="false" xml:id="_body__level_151__heading">
                     <i xml:id="_body__level_151__heading__i">Requirement(s) to be met in the short or long term including a detailed timeline for roll-out of the implementation of the initiative</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_151__subparagraph__content">
@@ -243,7 +243,7 @@
                 <num xml:id="_body__level_152__num">
                     <i xml:id="_body__level_152__num__i">1.5.2.</i>
                 </num>
-                <heading xml:id="_body__level_152__heading">
+                <heading leos:editable="false" xml:id="_body__level_152__heading">
                     <i xml:id="_body__level_152__heading__i">Added value of Union involvement (it may result from different factors, e.g. coordination gains, legal certainty, greater effectiveness or complementarities). For the purposes of this point 'added value of Union involvement' is the value resulting from Union intervention which is additional to the value that would have been otherwise created by Member States alone.</i>
                 </heading>
                 <subparagraph leos:editable="true" xml:id="_body__level_152__subparagraph_3">
@@ -261,7 +261,7 @@
                 <num xml:id="_body__level_153__num">
                     <i xml:id="_body__level_153__num__i">1.5.3.</i>
                 </num>
-                <heading xml:id="_body__level_153__heading">
+                <heading leos:editable="false" xml:id="_body__level_153__heading">
                     <i xml:id="_body__level_153__heading__i">Lessons learned from similar experiences in the past</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_153__subparagraph__content">
@@ -272,7 +272,7 @@
                 <num xml:id="_body__level_154__num">
                     <i xml:id="_body__level_154__num__i">1.5.4.</i>
                 </num>
-                <heading xml:id="_body__level_154__heading">
+                <heading leos:editable="false" xml:id="_body__level_154__heading">
                     <i xml:id="_body__level_154__heading__i">Compatibility with the Multiannual Financial Framework and possible synergies with other appropriate instruments</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_154__subparagraph__content">
@@ -283,7 +283,7 @@
                 <num xml:id="_body__level_155__num">
                     <i xml:id="_body__level_155__num__i">1.5.5.</i>
                 </num>
-                <heading xml:id="_body__level_155__heading">
+                <heading leos:editable="false" xml:id="_body__level_155__heading">
                     <i xml:id="_body__level_155__heading__i">Assessment of the different available financing options, including scope for redeployment</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_155__subparagraph__content">
@@ -294,15 +294,15 @@
                 <num xml:id="_body__level_16__num">
                     <b xml:id="_body__level_16__num__b">1.6.</b>
                 </num>
-                <heading xml:id="_body__level_16__heading">
+                <heading leos:editable="false" xml:id="_body__level_16__heading">
                     <b xml:id="_body__level_16__heading__b">Duration and financial impact of the proposal/initiative</b>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_16__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_16__list">
                     <indent xml:id="_body__level_16__list__indent_1">
                         <num xml:id="_body__level_16__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_16__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_16__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_16__list__indent_1__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_16__list__indent_1__subparagraph">
                             <content xml:id="_body__level_16__list__indent_1__subparagraph__content">
                                 <p xml:id="_body__level_16__list__indent_1__subparagraph__content__p">
                                     <b xml:id="_body__level_16__list__indent_1__subparagraph__content__p__b">limited duration</b>
@@ -312,7 +312,7 @@
                         <list class="~CHECK" xml:id="_body__level_16__list__indent_1__list">
                             <indent xml:id="_body__level_16__list__indent_1__list__indent_1">
                                 <num xml:id="_body__level_16__list__indent_1__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_1__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_1__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_1__list__indent_1__content">
                                     <p xml:id="_body__level_16__list__indent_1__list__indent_1__content__p">in effect from
@@ -324,7 +324,7 @@
                             </indent>
                             <indent xml:id="_body__level_16__list__indent_1__list__indent_2">
                                 <num xml:id="_body__level_16__list__indent_1__list__indent_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_2__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_2__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_1__list__indent_2__content">
                                     <p xml:id="_body__level_16__list__indent_1__list__indent_2__content__p">Financial impact from
@@ -343,19 +343,19 @@
                     </indent>
                     <indent xml:id="_body__level_16__list__indent_2">
                         <num xml:id="_body__level_16__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_16__list__indent_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_16__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_16__list__indent_2__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_16__list__indent_2__subparagraph">
                             <content xml:id="_body__level_16__list__indent_2__subparagraph__content">
                                 <p xml:id="_body__level_16__list__indent_2__subparagraph__content__p">
                                     <b xml:id="_body__level_16__list__indent_2__subparagraph__content__p__b">unlimited duration</b>
                                 </p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_16__list__indent_2__list">
+                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_16__list__indent_2__list">
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_1">
                                 <num xml:id="_body__level_16__list__indent_2__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_2__list__indent_1__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_2__list__indent_1__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_1__content">
                                     <p xml:id="_body__level_16__list__indent_2__list__indent_1__content__p">Implementation with a start-up period from
@@ -368,7 +368,7 @@
                             </indent>
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_2">
                                 <num xml:id="_body__level_16__list__indent_2__list__indent_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_2__list__indent_2__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_2__list__indent_2__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_2__content">
                                     <p xml:id="_body__level_16__list__indent_2__list__indent_2__content__p">followed by full-scale operation.</p>
@@ -380,7 +380,7 @@
             </level>
             <level xml:id="_body__level_17">
                 <num xml:id="_body__level_17__num">1.7.</num>
-                <heading xml:id="_body__level_17__heading">
+                <heading leos:editable="false" xml:id="_body__level_17__heading">
                     <b xml:id="_body__level_17__heading__b">Method(s) of budget implementation planned</b>
                     <authorialNote marker="4" placement="bottom" xml:id="_body__level_17__heading__authorialnote">
                         <p xml:id="_body__level_17__heading__authorialnote__p">Details of budget implementation methods and references to the Financial Regulation may be found on the BUDGpedia site:
@@ -389,12 +389,12 @@
                         </p>
                     </authorialNote>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_17__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list">
                     <indent xml:id="_body__level_17__list__indent_1">
                         <num xml:id="_body__level_17__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_17__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_17__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_17__list__indent_1__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_17__list__indent_1__subparagraph">
                             <content xml:id="_body__level_17__list__indent_1__subparagraph__content">
                                 <p xml:id="_body__level_17__list__indent_1__subparagraph__content__p">
                                     <b xml:id="_body__level_17__list__indent_1__subparagraph__content__p__b">Direct management</b>
@@ -402,10 +402,10 @@
                                 </p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_17__list__indent_1__list">
+                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list__indent_1__list">
                             <indent xml:id="_body__level_17__list__indent_1__list__indent_1">
                                 <num xml:id="_body__level_17__list__indent_1__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_1__list__indent_1__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_1__list__indent_1__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_1__list__indent_1__content">
                                     <p xml:id="_body__level_17__list__indent_1__list__indent_1__content__p">by its departments, including by its staff in the Union delegations;</p>
@@ -413,7 +413,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_1__list__indent_2">
                                 <num xml:id="_body__level_17__list__indent_1__list__indent_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_1__list__indent_2__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_1__list__indent_2__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_1__list__indent_2__content">
                                     <p xml:id="_body__level_17__list__indent_1__list__indent_2__content__p">by the executive agencies</p>
@@ -423,7 +423,7 @@
                     </indent>
                     <indent xml:id="_body__level_17__list__indent_2_2">
                         <num xml:id="_body__level_17__list__indent_2_2__num">
-                            <inline name="unchecked" xml:id="_body__level_17__list__indent_2_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_17__list__indent_2_2__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_17__list__indent_2_2__content">
                             <p xml:id="_body__level_17__list__indent_2_2__content__p">
@@ -434,9 +434,9 @@
                     </indent>
                     <indent xml:id="_body__level_17__list__indent_3">
                         <num xml:id="_body__level_17__list__indent_3__num">
-                            <inline name="unchecked" xml:id="_body__level_17__list__indent_3__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_17__list__indent_3__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_17__list__indent_3__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_17__list__indent_3__subparagraph">
                             <content xml:id="_body__level_17__list__indent_3__subparagraph__content">
                                 <p xml:id="_body__level_17__list__indent_3__subparagraph__content__p">
                                     <b xml:id="_body__level_17__list__indent_3__subparagraph__content__p__b">Indirect management</b>
@@ -444,10 +444,10 @@
                                 </p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_17__list__indent_3__list">
+                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list__indent_3__list">
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_1">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_1__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_1__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_1__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_1__content__p">third countries or the bodies they have designated;</p>
@@ -455,7 +455,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_2_2">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_2_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_2_2__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_2_2__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_2_2__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_2_2__content__p">international organisations and their agencies (to be specified);</p>
@@ -463,7 +463,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_3_3">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_3_3__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_3_3__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_3_3__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_3_3__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_3_3__content__p">the EIB and the European Investment Fund;</p>
@@ -471,7 +471,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_4_4">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_4_4__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_4_4__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_4_4__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_4_4__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_4_4__content__p">bodies referred to in Articles 70 and 71 of the Financial Regulation</p>
@@ -479,7 +479,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_5_5">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_5_5__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_5_5__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_5_5__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_5_5__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_5_5__content__p">public law bodies;</p>
@@ -487,7 +487,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_6_6">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_6_6__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_6_6__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_6_6__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_6_6__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_6_6__content__p">bodies governed by private law with a public service mission to the extent that they provide adequate financial guarantees;</p>
@@ -495,7 +495,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_7_7">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_7_7__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_7_7__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_7_7__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_7_7__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_7_7__content__p">bodies governed by the private law of a Member State that are entrusted with the implementation of a public-private partnership and that provide adequate financial guarantees;</p>
@@ -503,7 +503,7 @@
                             </indent>
                             <indent xml:id="_body__level_17__list__indent_3__list__indent_8">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_8__num">
-                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_8__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_8__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_8__content">
                                     <p xml:id="_body__level_17__list__indent_3__list__indent_8__content__p">bodies or persons entrusted with the implementation of specific actions in the CFSP pursuant to Title V of the TEU, and identified in the relevant basic act.</p>
@@ -512,7 +512,7 @@
                         </list>
                     </indent>
                 </list>
-                <subparagraph xml:id="_body__level_17__subparagraph_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_17__subparagraph_4">
                     <content xml:id="_body__level_17__subparagraph_4__content">
                         <p xml:id="_17__p">Comments</p>
                     </content>
@@ -527,7 +527,7 @@
                 <num xml:id="_body__level_2__num">
                     <b xml:id="_body__level_2__num__b">2.</b>
                 </num>
-                <heading xml:id="_body__level_2__heading">
+                <heading leos:editable="false" xml:id="_body__level_2__heading">
                     <b xml:id="_body__level_2__heading__b">MANAGEMENT MEASURES</b>
                 </heading>
             </level>
@@ -535,10 +535,10 @@
                 <num xml:id="_body__level_21__num">
                     <b xml:id="_body__level_21__num__b">2.1.</b>
                 </num>
-                <heading xml:id="_body__level_21__heading">
+                <heading leos:editable="false" xml:id="_body__level_21__heading">
                     <b xml:id="_body__level_21__heading__b">Monitoring and report rules</b>
                 </heading>
-                <subparagraph xml:id="_body__level_21__subparagraph_3">
+                <subparagraph leos:editable="false" xml:id="_body__level_21__subparagraph_3">
                     <content xml:id="_body__level_21__subparagraph_3__content">
                         <p xml:id="_body__level_21__subparagraph_3__content__p">
                             <i xml:id="_body__level_21__subparagraph_3__content__p__i">Specify frequency and conditions.</i>
@@ -555,7 +555,7 @@
                 <num xml:id="_body__level_22__num">
                     <b xml:id="_body__level_22__num__b">2.2.</b>
                 </num>
-                <heading xml:id="_body__level_22__heading">
+                <heading leos:editable="false" xml:id="_body__level_22__heading">
                     <b xml:id="_body__level_22__heading__b">Management and control system(s)</b>
                 </heading>
             </level>
@@ -563,7 +563,7 @@
                 <num xml:id="_body__level_221__num">
                     <i xml:id="_body__level_221__num__i">2.2.1.</i>
                 </num>
-                <heading xml:id="_body__level_221__heading">
+                <heading leos:editable="false" xml:id="_body__level_221__heading">
                     <i xml:id="_body__level_221__heading__i">Justification of the management mode(s), the funding implementation mechanism(s), the payment modalities and the control strategy proposed</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_221__content">
@@ -574,7 +574,7 @@
                 <num xml:id="_body__level_222__num">
                     <i xml:id="_body__level_222__num__i">2.2.2.</i>
                 </num>
-                <heading xml:id="_body__level_222__heading">
+                <heading leos:editable="false" xml:id="_body__level_222__heading">
                     <i xml:id="_body__level_222__heading__i">Information concerning the risks identified and the internal control system(s) set up to mitigate them</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_222__content">
@@ -585,7 +585,7 @@
                 <num xml:id="_body__level_223__num">
                     <i xml:id="_body__level_223__num__i">2.2.3.</i>
                 </num>
-                <heading xml:id="_body__level_223__heading">
+                <heading leos:editable="false" xml:id="_body__level_223__heading">
                     <i xml:id="_body__level_223__heading__i">Estimation and justification of the cost-effectiveness of the controls (ratio of "control costs ÷ value of the related funds managed"), and assessment of the expected levels of risk of error (at payment &amp; at closure)</i>
                 </heading>
                 <content leos:editable="true" xml:id="_body__level_223__content">
@@ -596,10 +596,10 @@
                 <num xml:id="_body__level_23__num">
                     <b xml:id="_body__level_23__num__b">2.3.</b>
                 </num>
-                <heading xml:id="_body__level_23__heading">
+                <heading leos:editable="false" xml:id="_body__level_23__heading">
                     <b xml:id="_body__level_23__heading__b">Measures to prevent fraud and irregularities</b>
                 </heading>
-                <subparagraph xml:id="_body__level_23__subparagraph_3">
+                <subparagraph leos:editable="false" xml:id="_body__level_23__subparagraph_3">
                     <content xml:id="_body__level_23__subparagraph_3__content">
                         <p xml:id="_body__level_23__subparagraph_3__content__p">
                             <i xml:id="_body__level_23__subparagraph_3__content__p__i">Specify existing or envisaged prevention and protection measures, e.g. from the Anti-Fraud Strategy.</i>
@@ -616,7 +616,7 @@
                 <num xml:id="_body__level_3__num">
                     <b xml:id="_body__level_3__num__b">3.</b>
                 </num>
-                <heading xml:id="_body__level_3__heading">
+                <heading leos:editable="false" xml:id="_body__level_3__heading">
                     <b xml:id="_body__level_3__heading__b">ESTIMATED FINANCIAL IMPACT OF THE PROPOSAL/INITIATIVE</b>
                 </heading>
             </level>
@@ -624,15 +624,15 @@
                 <num xml:id="_body__level_31__num">
                     <b xml:id="_body__level_31__num__b">3.1.</b>
                 </num>
-                <heading xml:id="_body__level_31__heading">
+                <heading leos:editable="false" xml:id="_body__level_31__heading">
                     <b xml:id="_body__level_31__heading__b">Heading(s) of the multiannual financial framework and expenditure budget line(s) affected</b>
                 </heading>
-                <subparagraph xml:id="_body__level_31__subparagraph_3">
+                <subparagraph leos:editable="false" xml:id="_body__level_31__subparagraph_3">
                     <content xml:id="_body__level_31__subparagraph_3__content">
                         <p xml:id="_body__level_31__subparagraph_3__content__p">Existing budget lines</p>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_31__subparagraph_4_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_31__subparagraph_4_4">
                     <content xml:id="_body__level_31__subparagraph_4_4__content">
                         <p xml:id="_body__level_31__subparagraph_4_4__content__p">
                             <i xml:id="_body__level_31__subparagraph_4_4__content__p__i">
@@ -724,12 +724,12 @@
                         <!-- end of rotated table (landscape) -->
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_31__subparagraph_6_6">
+                <subparagraph leos:editable="false" xml:id="_body__level_31__subparagraph_6_6">
                     <content xml:id="_body__level_31__subparagraph_6_6__content">
                         <p xml:id="_body__level_31__subparagraph_6_6__content__p">New budget lines requested</p>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_31__subparagraph_7_7">
+                <subparagraph leos:editable="false" xml:id="_body__level_31__subparagraph_7_7">
                     <content xml:id="_body__level_31__subparagraph_7_7__content">
                         <p xml:id="_body__level_31__subparagraph_7_7__content__p">
                             <i xml:id="_body__level_31__subparagraph_7_7__content__p__i">
@@ -814,7 +814,7 @@
                 <num xml:id="_body__level_32__num">
                     <b xml:id="_body__level_32__num__b">3.2.</b>
                 </num>
-                <heading xml:id="_body__level_32__heading">
+                <heading leos:editable="false" xml:id="_body__level_32__heading">
                     <b xml:id="_body__level_32__heading__b">Estimated financial impact of the proposal on appropriations</b>
                 </heading>
             </level>
@@ -822,13 +822,13 @@
                 <num xml:id="_body__level_321__num">
                     <i xml:id="_body__level_321__num__i">3.2.1.</i>
                 </num>
-                <heading xml:id="_body__level_321__heading">
+                <heading leos:editable="false" xml:id="_body__level_321__heading">
                     <i xml:id="_body__level_321__heading__i">Summary of estimated impact on operational appropriations</i>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_321__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_321__list">
                     <indent xml:id="_body__level_321__list__indent_1">
                         <num xml:id="_body__level_321__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_321__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_321__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_321__list__indent_1__content">
                             <p xml:id="_body__level_321__list__indent_1__content__p">The proposal/initiative does not require the use of operational appropriations</p>
@@ -836,7 +836,7 @@
                     </indent>
                     <indent xml:id="_body__level_321__list__indent_2">
                         <num xml:id="_body__level_321__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_321__list__indent_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_321__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_321__list__indent_2__content">
                             <p xml:id="_body__level_321__list__indent_2__content__p">The proposal/initiative requires the use of operational appropriations, as explained below:</p>
@@ -1542,7 +1542,7 @@
                         <!-- end of rotated table (landscape) -->
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_321__subparagraph_6_6">
+                <subparagraph leos:editable="false" xml:id="_body__level_321__subparagraph_6_6">
                     <content xml:id="_body__level_321__subparagraph_6_6__content">
                         <p xml:id="_body__level_321__subparagraph_6_6__content__p">
                             <b xml:id="_body__level_321__subparagraph_6_6__content__p__b">
@@ -1765,7 +1765,7 @@
                         </p>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_321__subparagraph_9_9a">
+                <subparagraph leos:editable="false" xml:id="_body__level_321__subparagraph_9_9a">
                     <content xml:id="_body__level_321__subparagraph_9_9__content_a">
                         <p style="text-align: right;padding-right: 12%;" xml:id="_body__level_321__subparagraph_9_9__content__p_2">EUR million (to three decimal places)</p>
                     </content>
@@ -2064,7 +2064,7 @@
                 <num xml:id="_body__level_322__num">
                     <i xml:id="_body__level_322__num__i">3.2.2.</i>
                 </num>
-                <heading xml:id="_body__level_322__heading">
+                <heading leos:editable="false" xml:id="_body__level_322__heading">
                     <i xml:id="_body__level_322__heading__i">Estimated impact on administrative appropriations</i>
                 </heading>
                 <subparagraph style="text-align: right;padding-right:4%;" xml:id="_body__level_322__subparagraph_3">
@@ -2617,13 +2617,13 @@
                 <num xml:id="_body__level_323__num">
                     <i xml:id="_body__level_323__num__i">3.2.3.</i>
                 </num>
-                <heading xml:id="_body__level_323__heading">
+                <heading leos:editable="false" xml:id="_body__level_323__heading">
                     <i xml:id="_body__level_323__heading__i">Summary of estimated impact on administrative appropriations</i>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_323__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_323__list">
                     <indent xml:id="_body__level_323__list__indent_1">
                         <num xml:id="_body__level_323__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_323__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_323__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_323__list__indent_1__content">
                             <p xml:id="_body__level_323__list__indent_1__content__p">The proposal/initiative does not require the use of appropriations of an administrative nature</p>
@@ -2631,7 +2631,7 @@
                     </indent>
                     <indent xml:id="_body__level_323__list__indent_2">
                         <num xml:id="_body__level_323__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_323__list__indent_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_323__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_323__list__indent_2__content">
                             <p xml:id="_body__level_323__list__indent_2__content__p">The proposal/initiative requires the use of appropriations of an administrative nature, as explained below:</p>
@@ -2936,6 +2936,10 @@
                                 </td>
                             </tr>
                         </table>
+                    </content>
+                </subparagraph>
+                <subparagraph xml:id="_body__level_323__subparagraph_6">
+                    <content xml:id="_body__level_323__subparagraph_6__content">
                         <p xml:id="_body__level_323__subparagraph_5__content__p">The appropriations required for human resources and other expenditure of an administrative nature will be met by appropriations from the DG that are already assigned to management of the action and/or have been redeployed within the DG, together if necessary with any additional allocation which may be granted to the managing DG under the annual allocation procedure and in the light of budgetary constraints.</p>
                     </content>
                 </subparagraph>
@@ -2944,13 +2948,13 @@
                 <num xml:id="_body__level_3231__num">
                     <i xml:id="_body__level_3231__num__i">3.2.3.1</i>
                 </num>
-                <heading xml:id="_body__level_3231__heading">
+                <heading leos:editable="false" xml:id="_body__level_3231__heading">
                     <i xml:id="_body__level_3231__heading__i">Estimated requirements of human resources</i>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_3231__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_3231__list">
                     <indent xml:id="_body__level_3231__list__indent_1">
                         <num xml:id="_body__level_3231__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_3231__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_3231__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_3231__list__indent_1__content">
                             <p xml:id="_body__level_3231__list__indent_1__content__p">The proposal/initiative does not require the use of human resources.</p>
@@ -2958,14 +2962,14 @@
                     </indent>
                     <indent xml:id="_body__level_3231__list__indent_2">
                         <num xml:id="_body__level_3231__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_3231__list__indent_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_3231__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_3231__list__indent_2__content">
                             <p xml:id="_body__level_3231__list__indent_2__content__p">The proposal/initiative requires the use of human resources, as explained below:</p>
                         </content>
                     </indent>
                 </list>
-                <subparagraph xml:id="_body__level_3231__subparagraph_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_4">
                     <content xml:id="_body__level_3231__subparagraph_4__content">
                         <p xml:id="_body__level_3231__subparagraph_4__content__p">Estimates to be expressed in full time equivalent units</p>
                     </content>
@@ -3368,13 +3372,13 @@
                         </table>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_3231__subparagraph_6_6">
+                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_6_6">
                     <content xml:id="_body__level_3231__subparagraph_6_6__content">
                         <p xml:id="_body__level_3231__subparagraph_6_6__content__p_1">XX is the policy area or budget title concerned.</p>
                         <p xml:id="_body__level_3231__subparagraph_6_6__content__p_2">The human resources required will be met by staff from the DG who are already assigned to management of the action and/or have been redeployed within the DG, together if necessary with any additional allocation which may be granted to the managing DG under the annual allocation procedure and in the light of budgetary constraints.</p>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_3231__subparagraph_7_7">
+                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_7_7">
                     <content xml:id="_body__level_3231__subparagraph_7_7__content">
                         <p xml:id="_body__level_3231__subparagraph_7_7__content__p">Description of tasks to be carried out:</p>
                     </content>
@@ -3406,20 +3410,20 @@
                 <num xml:id="_body__level_324__num">
                     <i xml:id="_body__level_324__num__i">3.2.4.</i>
                 </num>
-                <heading xml:id="_body__level_324__heading">
+                <heading leos:editable="false" xml:id="_body__level_324__heading">
                     <i xml:id="_body__level_324__heading__i">Compatibility with the current multiannual financial framework</i>
                 </heading>
-                <subparagraph xml:id="_body__level_324__subparagraph">
+                <subparagraph leos:editable="false" xml:id="_body__level_324__subparagraph">
                     <content xml:id="_body__level_324__subparagraph__content">
                         <p xml:id="_body__level_324__subparagraph__content__p">The proposal/initiative :</p>
                     </content>
                 </subparagraph>
-                <list class="~CHECK" xml:id="_body__level_324__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_324__list">
                     <indent xml:id="_body__level_324__list__indent_1">
                         <num xml:id="_body__level_324__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_324__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_324__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_324__list__indent_1__subparagraph_2">
+                        <subparagraph leos:editable="false" xml:id="_body__level_324__list__indent_1__subparagraph_2">
                             <content xml:id="_body__level_324__list__indent_1__subparagraph_2__content">
                                 <p xml:id="_body__level_324__list__indent_1__subparagraph_2__content__p">can be fully financed through redeployment within the relevant heading of the Multiannual Financial Framework (MFF).</p>
                             </content>
@@ -3432,9 +3436,9 @@
                     </indent>
                     <indent xml:id="_body__level_324__list__indent_2_2">
                         <num xml:id="_body__level_324__list__indent_2_2__num">
-                            <inline name="unchecked" xml:id="_body__level_324__list__indent_2_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_324__list__indent_2_2__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_324__list__indent_2_2__subparagraph_2">
+                        <subparagraph leos:editable="false" xml:id="_body__level_324__list__indent_2_2__subparagraph_2">
                             <content xml:id="_body__level_324__list__indent_2_2__subparagraph_2__content">
                                 <p xml:id="_body__level_324__list__indent_2_2__subparagraph_2__content__p">requires use of the unallocated margin under the relevant heading of the MFF and/or use of the special instruments as defined in the MFF Regulation.</p>
                             </content>
@@ -3447,9 +3451,9 @@
                     </indent>
                     <indent xml:id="_body__level_324__list__indent_3">
                         <num xml:id="_body__level_324__list__indent_3__num">
-                            <inline name="unchecked" xml:id="_body__level_324__list__indent_3__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_324__list__indent_3__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_324__list__indent_3__subparagraph_2">
+                        <subparagraph leos:editable="false" xml:id="_body__level_324__list__indent_3__subparagraph_2">
                             <content xml:id="_body__level_324__list__indent_3__subparagraph_2__content">
                                 <p xml:id="_body__level_324__list__indent_3__subparagraph_2__content__p">requires a revision of the MFF.</p>
                             </content>
@@ -3466,15 +3470,15 @@
                 <num xml:id="_body__level_325__num">
                     <i xml:id="_body__level_325__num__i">3.2.5.</i>
                 </num>
-                <heading xml:id="_body__level_325__heading">
+                <heading leos:editable="false" xml:id="_body__level_325__heading">
                     <i xml:id="_body__level_325__heading__i">Third-party contributions</i>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_325__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_325__list">
                     <indent xml:id="_body__level_325__list__indent_1">
                         <num xml:id="_body__level_325__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_325__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_325__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_325__list__indent_1__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_325__list__indent_1__subparagraph">
                             <content xml:id="_body__level_325__list__indent_1__subparagraph__content">
                                 <p xml:id="_body__level_325__list__indent_1__subparagraph__content__p">does not provide for co-financing by third parties</p>
                             </content>
@@ -3482,16 +3486,16 @@
                     </indent>
                     <indent xml:id="_body__level_325__list__indent_2">
                         <num xml:id="_body__level_325__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_325__list__indent_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_325__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_325__list__indent_2__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_325__list__indent_2__subparagraph">
                             <content xml:id="_body__level_325__list__indent_2__subparagraph__content">
                                 <p xml:id="_body__level_325__list__indent_2__subparagraph__content__p">provides for the co-financing by third parties estimated below:</p>
                             </content>
                         </subparagraph>
                     </indent>
                 </list>
-                <subparagraph xml:id="_body__level_325__subparagraph_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_325__subparagraph_4">
                     <content xml:id="_body__level_325__subparagraph_4__content">
                         <p xml:id="_body__level_325__subparagraph_4__content__p">Appropriations in EUR million (to three decimal places)</p>
                     </content>
@@ -3594,13 +3598,13 @@
                 <num xml:id="_body__level_33__num">
                     <b xml:id="_body__level_33__num__b">3.3.</b>
                 </num>
-                <heading xml:id="_body__level_33__heading">
+                <heading leos:editable="false" xml:id="_body__level_33__heading">
                     <b xml:id="_body__level_33__heading__b">Estimated impact on revenue</b>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_33__list">
+                <list leos:editable="false" class="~CHECK" xml:id="_body__level_33__list">
                     <indent xml:id="_body__level_33__list__indent_1">
                         <num xml:id="_body__level_33__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_33__list__indent_1__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_33__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_33__list__indent_1__content">
                             <p xml:id="_body__level_33__list__indent_1__content__p">The proposal/initiative has no financial impact on revenue.</p>
@@ -3608,17 +3612,17 @@
                     </indent>
                     <indent xml:id="_body__level_33__list__indent_2">
                         <num xml:id="_body__level_33__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_33__list__indent_2__num__inline">☐</inline>
+                            <inline name="unchecked" xml:id="_body__level_33__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
-                        <subparagraph xml:id="_body__level_33__list__indent_2__subparagraph">
+                        <subparagraph leos:editable="false" xml:id="_body__level_33__list__indent_2__subparagraph">
                             <content xml:id="_body__level_33__list__indent_2__subparagraph__content">
                                 <p xml:id="_body__level_33__list__indent_2__subparagraph__content__p">The proposal/initiative has the following financial impact:</p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_33__list__indent_2__list">
+                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_33__list__indent_2__list">
                             <indent xml:id="_body__level_33__list__indent_2__list__indent_1">
                                 <num xml:id="_body__level_33__list__indent_2__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_1__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_1__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_33__list__indent_2__list__indent_1__content">
                                     <p xml:id="_body__level_33__list__indent_2__list__indent_1__content__p">on own resources</p>
@@ -3626,7 +3630,7 @@
                             </indent>
                             <indent xml:id="_body__level_33__list__indent_2__list__indent_2_2">
                                 <num xml:id="_body__level_33__list__indent_2__list__indent_2_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_2_2__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_2_2__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_33__list__indent_2__list__indent_2_2__content">
                                     <p xml:id="_body__level_33__list__indent_2__list__indent_2_2__content__p">on other revenue</p>
@@ -3634,7 +3638,7 @@
                             </indent>
                             <indent xml:id="_body__level_33__list__indent_2__list__indent_3">
                                 <num xml:id="_body__level_33__list__indent_2__list__indent_3__num">
-                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__num__inline">☐</inline>
+                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_33__list__indent_2__list__indent_3__content">
                                     <p xml:id="_body__level_33__list__indent_2__list__indent_3__content__p">please indicate, if the revenue is assigned to expenditure lines</p>
@@ -3643,7 +3647,7 @@
                         </list>
                     </indent>
                 </list>
-                <subparagraph xml:id="_body__level_33__subparagraph_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_33__subparagraph_4">
                     <content xml:id="_body__level_33__subparagraph_4__content">
                         <p xml:id="_body__level_33__subparagraph_4__content__p">EUR million (to three decimal places)</p>
                     </content>
@@ -3727,7 +3731,7 @@
                         </table>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_33__subparagraph_6_6">
+                <subparagraph leos:editable="false" xml:id="_body__level_33__subparagraph_6_6">
                     <content xml:id="_body__level_33__subparagraph_6_6__content">
                         <p xml:id="_body__level_33__subparagraph_6_6__content__p">For assigned revenue, specify the budget expenditure line(s) affected.</p>
                     </content>
@@ -3737,7 +3741,7 @@
                         <p xml:id="_body__level_33__subparagraph_7_7__content__p">[...]</p>
                     </content>
                 </subparagraph>
-                <subparagraph xml:id="_body__level_33__subparagraph_8_8">
+                <subparagraph leos:editable="false" xml:id="_body__level_33__subparagraph_8_8">
                     <content xml:id="_body__level_33__subparagraph_8_8__content">
                         <p xml:id="_body__level_33__subparagraph_8_8__content__p">Other remarks (e.g. method/formula used for calculating the impact on revenue or any other information).</p>
                     </content>

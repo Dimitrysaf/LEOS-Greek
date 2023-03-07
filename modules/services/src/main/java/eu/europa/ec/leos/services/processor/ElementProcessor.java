@@ -77,7 +77,7 @@ public interface ElementProcessor<T extends XmlDocument> {
      * @return The updated document or throws a LeosDocumentNotLockedByCurrentUserException if the given user doesn't have a lock on the document
      */
     @PreAuthorize("hasPermission(#document, 'CAN_UPDATE')")
-    byte[] updateElement(T document, String elementContent, String elementName, String elementId);
+    byte[] updateElement(T document, String elementContent, String elementName, String elementId, boolean manageEntities);
 
     /**
      * Deletes an element with the given id and saves the document.
@@ -86,7 +86,7 @@ public interface ElementProcessor<T extends XmlDocument> {
      * @return The updated document or throws a LeosDocumentNotLockedByCurrentUserException if the given user doesn't have a lock on the document
      */
     @PreAuthorize("hasPermission(#document, 'CAN_UPDATE')")
-    byte[] deleteElement(T document, String elementId, String elementType) throws Exception;
+    byte[] deleteElement(T document, String elementId, String elementType, boolean manageEntities) throws Exception;
 
     /**
      * Retrieves elements containing soft action
@@ -105,7 +105,7 @@ public interface ElementProcessor<T extends XmlDocument> {
      * @return: On success returns updated content. On failure throws exception.
      */
     @PreAuthorize("hasPermission(#document, 'CAN_MERGE_SUGGESTION')")
-    byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset);
+    byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset, boolean manageEntities);
     
     String getElementAttributeValueByNameAndId(T document, String attributeName, String tagName, String idAttributeValue);
 

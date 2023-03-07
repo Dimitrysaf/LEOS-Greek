@@ -218,22 +218,22 @@ public class BillProcessorImpl implements BillProcessor {
         switch (tagName) {
             case CLAUSE:
             case CITATION:
-                updatedContent = elementProcessor.deleteElement(document, elementId, tagName);
+                updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
                 break;
             case RECITAL:
-                updatedContent = elementProcessor.deleteElement(document, elementId, tagName);
+                updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
                 updatedContent = numberService.renumberRecitals(updatedContent);
                 break;
             case ARTICLE:
             case PARAGRAPH:
-                updatedContent = elementProcessor.deleteElement(document, elementId, tagName);
+                updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case SUBPARAGRAPH:
             case POINT:
             case SUBPOINT:
             case INDENT:
-                updatedContent = elementProcessor.deleteElement(document, elementId, tagName);
+                updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             default:
@@ -291,7 +291,7 @@ public class BillProcessorImpl implements BillProcessor {
                 updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
             }
         } else {
-            updatedContent = elementProcessor.updateElement(document, elementContent, elementName, elementId);
+            updatedContent = elementProcessor.updateElement(document, elementContent, elementName, elementId, false);
         }
         return updatedContent;
     }

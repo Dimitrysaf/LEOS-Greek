@@ -20,6 +20,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -63,29 +64,32 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
         Validate.notNull(elementFragment, "Element Fragment is required.");
-        byte[] updatedContent = elementProcessor.updateElement(document, elementFragment, elementName, elementId);
+        byte[] updatedContent = elementProcessor.updateElement(document, elementFragment, elementName, elementId, true);
 
-        return updateFinancialStatementContent(elementId, elementName, updatedContent);
+        return updateFinancialStatementContent(updatedContent);
     }
 
     @Override
     public byte[] insertNewElement(FinancialStatement financialStatement, String elementId, String tagName, boolean before) {
         String template;byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
+        byte[] content;
         switch (tagName) {
             case SUBPARAGRAPH:
+                content = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
-                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(financialStatement), template,
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(content, template,
                         tagName, elementId, before);
                 break;
             case CONTENT:
-                Element contentElement = xmlContentProcessor.getElementById(getContent(financialStatement), elementId);
+                content = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
+                Element contentElement = xmlContentProcessor.getElementById(content, elementId);
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
                 String updatedElementContent = convertToSubparagraph(contentElement, template);
                 try {
-                    updatedContent = xmlContentProcessor.replaceElementById(getContent(financialStatement), updatedElementContent,
+                    updatedContent = xmlContentProcessor.replaceElementById(content, updatedElementContent,
                             elementId);
                 } catch (Exception e) {
                     throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
@@ -94,7 +98,8 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
             default:
                 throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
         }
-        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        return XercesUtils.restoreEntities(XercesUtils.replacements, updatedContent);
     }
 
     @Override
@@ -102,18 +107,21 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(financialStatement, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
         Validate.notNull(tagName, "Tag name is required.");
-        byte[] updatedContent;
+        byte[] updatedContent = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
         if(tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
             //TODO: Check for last element deletion
-            updatedContent = elementProcessor.deleteElement(financialStatement, elementId, tagName);
+            updatedContent = xmlContentProcessor.removeElementById(updatedContent, elementId);
         } else {
             throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
         }
-        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
+        return XercesUtils.restoreEntities(XercesUtils.replacements, updatedContent);
     }
 
-    private byte[] updateFinancialStatementContent(String elementId, String tagName, byte[] xmlContent) {
-        return xmlContentProcessor.doXMLPostProcessing(xmlContent);
+    private byte[] updateFinancialStatementContent(byte[] xmlContent) {
+        xmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, xmlContent);
+        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        return XercesUtils.restoreEntities(XercesUtils.replacements, xmlContent);
     }
 
     private String convertToSubparagraph(Element contentElement, String template) {
@@ -135,11 +143,12 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(elementName, "ElementName is required.");
         Validate.notNull(elementId, "ElementId is required.");
 
-        final byte[] contentBytes = getContent(document);
+        byte[] contentBytes = getContent(document);
+        contentBytes = XercesUtils.replaceEntities(XercesUtils.replacements, contentBytes);
         byte[] updatedContent = xmlContentProcessor.mergeElement(contentBytes, elementContent, elementName, elementId);
         if (updatedContent != null) {
             updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         }
-        return updatedContent;
+        return XercesUtils.restoreEntities(XercesUtils.replacements, updatedContent);
     }
 }

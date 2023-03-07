@@ -121,7 +121,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementName, elementId, elementFragment);
+        byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementName, elementId, elementFragment, false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
         return this.documentViewService.getDocumentView(memorandum);
     }

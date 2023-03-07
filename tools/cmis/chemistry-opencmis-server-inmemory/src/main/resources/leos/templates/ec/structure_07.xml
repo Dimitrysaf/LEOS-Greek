@@ -87,7 +87,7 @@
             <profiles>
                 <profile>
                     <elementSelector>level:not(:has(subparagraph)):not(:has(point)) content[leos\:editable='true']</elementSelector>
-                    <profileName>inlineAknLevelContentMandate</profileName>
+                    <profileName>inlineAknLevelContentFS</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
