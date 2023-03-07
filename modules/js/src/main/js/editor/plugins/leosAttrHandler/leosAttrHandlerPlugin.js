@@ -32,7 +32,7 @@ define(function leosAttrHandlerPluginModule(require) {
             });
             
             editor.on('afterCommandExec', function(e) {
-                if (e.data.name === 'enter') {
+                if (e.data.name === 'enter' && !!e.cancelIdentityHandler) {
                     var element = e.editor.getSelection().getStartElement();
                     if (element) {
                         var newSelectedElementDetails = identityHandler.getElementDetails(element);

@@ -436,32 +436,33 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8));
             if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
                     && XercesUtils.getFirstChild(XercesUtils.getFirstChild(newNode), NUM) == null) {
-
                 Document updatedDocument = createXercesDocument(xmlContent);
                 Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
-                String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
-                NodeList nodeList = updatedNode.getChildNodes();
-                for (int i = 0; i < nodeList.getLength(); i++) {
-                    String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.item(i)));
-                    if (nodeList.item(i).getNodeName().equals(LIST)) {
-                        if (i == 0) {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
-                        } else {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, PARA_START + childNodeContent + PARA_END);
+                if(updatedNode != null) {
+                    String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
+                    NodeList nodeList = updatedNode.getChildNodes();
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.item(i)));
+                        if (nodeList.item(i).getNodeName().equals(LIST)) {
+                            if (i == 0) {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
+                            } else {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, PARA_START + childNodeContent + PARA_END);
+                            }
+                        } else if (nodeList.item(i).getNodeName().equals(SUBPARAGRAPH)) {
+                            if (i == 0) {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replaceFirst(SUBPARA_REGEX, "").replace(SUBPARA_END, PARA_END));
+                            } else {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replace("<" + SUBPARAGRAPH, "<" + PARAGRAPH).replace(SUBPARA_END, PARA_END));
+                            }
                         }
-                    } else if (nodeList.item(i).getNodeName().equals(SUBPARAGRAPH)) {
-                        if (i == 0) {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replaceFirst(SUBPARA_REGEX, "").replace(SUBPARA_END, PARA_END));
-                        } else {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replace("<" + SUBPARAGRAPH, "<" + PARAGRAPH).replace(SUBPARA_END, PARA_END));
-                        }
+                        updatedNodeContent = updatedNodeContent.replace(PARA_END + PARA_END, PARA_END);
                     }
-                    updatedNodeContent = updatedNodeContent.replace(PARA_END + PARA_END, PARA_END);
+                    Document newDocument = createXercesDocument(xmlContent);
+                    Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
+                    Node updatedDocumentNode = XercesUtils.replaceElement(newElementNode, updatedNodeContent);
+                    xmlContent = nodeToByteArray(updatedDocumentNode);
                 }
-                Document newDocument = createXercesDocument(xmlContent);
-                Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
-                Node updatedDocumentNode = XercesUtils.replaceElement(newElementNode, updatedNodeContent);
-                xmlContent = nodeToByteArray(updatedDocumentNode);
             }
         }
         return xmlContent;

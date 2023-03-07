@@ -459,6 +459,13 @@ define(function leosPluginUtilsModule(require) {
         return element;
     }
 
+    function _isFirstLevelListSubparagraph(element) {
+        var elementType = element && element.getAttribute(DATA_AKN_ELEMENT);
+        var parentElement = element.getAscendant('ol').getParent();
+        var parentElementType = parentElement && parentElement.getAttribute(DATA_AKN_ELEMENT);
+        return elementType === SUBPARAGRAPH && parentElementType === PARAGRAPH;
+    }
+
     function _manageSubparagraphs(range) {
         range.startContainer = _manageListIntro(range.startContainer);
         range.endContainer = _manageListIntro(range.endContainer);
@@ -552,7 +559,12 @@ define(function leosPluginUtilsModule(require) {
                 && !!point.getParent().getAttribute(DATA_AKN_ELEMENT)
                 && (point.getParent().getAttribute(DATA_AKN_ELEMENT) == LEVEL || point.getParent().getAttribute(DATA_AKN_ELEMENT) == PARAGRAPH)
                 && _isPointOrIndent(point)) {
+                var parentElement = point.getParent().getAttribute(DATA_AKN_ELEMENT);
+                if (parentElement === LEVEL) {
                 point.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+                } else if (parentElement === PARAGRAPH) {
+                    point.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
+                }
                 if (!!point.is && point.is('li') && !point.getParent().is('ol')) {
                     point.renameNode('p');
 					point.removeAttribute(DATA_AKN_NAME);
@@ -1089,6 +1101,7 @@ define(function leosPluginUtilsModule(require) {
         manageSiblingLists: _manageSiblingLists,
         manageSubparagraphs: _manageSubparagraphs,
         manageListIntro: _manageListIntro,
+        isFirstLevelListSubparagraph: _isFirstLevelListSubparagraph,
         manageCrossheadings: _manageCrossheadings,
         keepCursorPosition: _keepCursorPosition,
         copyContentAndMpAttributeToElement: _copyContentAndMpAttributeToElement,
@@ -1132,6 +1145,8 @@ define(function leosPluginUtilsModule(require) {
         LEOS_SOFTACTION: LEOS_SOFTACTION,
         DEL: DEL,
         MOVETO: MOVETO,
+        REFERS_TO: REFERS_TO,
+        DATA_AKN_CONTENT_ID: DATA_AKN_CONTENT_ID,
         CROSSHEADING_LIST_ATTR: CROSSHEADING_LIST_ATTR,
         DATA_INDENT_LEVEL_ATTR: DATA_INDENT_LEVEL_ATTR,
         INDENT_LEVEL_ATTR: INDENT_LEVEL_ATTR,
