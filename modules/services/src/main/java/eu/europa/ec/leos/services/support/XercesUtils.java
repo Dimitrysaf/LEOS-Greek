@@ -34,6 +34,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.findString;
 import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
+import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -201,6 +202,23 @@ public class XercesUtils {
             }
         }
         return sb.toString();
+    }
+    
+    public static byte[] sanitize(byte[] content) {
+    	Document doc = createXercesDocument(content);
+    	sanitize(doc.getDocumentElement());
+    	return nodeToByteArray(doc);
+    }
+    
+    public static void sanitize(Node node) {
+    	if (node.getNodeType() == Node.TEXT_NODE) {
+    		node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
+    	} else if (node.getNodeType() == Node.ELEMENT_NODE) {
+    		NodeList nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+            	sanitize(nodeList.item(i));
+            }
+    	}
     }
 
     private static String buildNodeAsString(Node node, StringBuffer sb) {

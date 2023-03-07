@@ -543,6 +543,10 @@ public class XmlHelper {
         str = str == null ? "" : str;
         return Jsoup.parse(str, EMPTY_STRING, Parser.xmlParser()).toString();
     }
+    
+    public static String replaceNonBreakingSpace(String str) {
+    	return str == null ? str : str.replaceAll("&nbsp;", " ").replaceAll("\u00a0", " ");
+    }
 
     /**
      * Escape the string from only characters interfering with Xerces parsing: "<", ">" and "&". The rest of special characters

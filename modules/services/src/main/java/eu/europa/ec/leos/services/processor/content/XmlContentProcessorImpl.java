@@ -171,7 +171,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
 import static eu.europa.ec.leos.services.support.XmlHelper.determinePrefixForChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
-import static eu.europa.ec.leos.services.support.XmlHelper.getEditableAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSubstringAvoidingTags;
 import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
@@ -1323,19 +1322,25 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Validate.isTrue(node != null, "Node can not be null");
         Validate.isTrue(node.getParentNode() != null, "Parent Node can not be null");
         EditableAttributeValue editableAttrVal = getEditableAttributeForNode(node);
-        node = node.getParentNode();
-        while (EditableAttributeValue.UNDEFINED.equals(editableAttrVal) && node != null) {
-            editableAttrVal = getEditableAttributeForNode(node);
+        while (EditableAttributeValue.UNDEFINED.equals(editableAttrVal) && node.getParentNode() != null) {
+            editableAttrVal = getEditableAttributeForNode(node.getParentNode());
             node = node.getParentNode();
         }
-        return Boolean.parseBoolean(editableAttrVal.name());
+        return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? true : Boolean.parseBoolean(editableAttrVal.name());
     }
 
     private static EditableAttributeValue getEditableAttributeForNode(Node node) {
         Map<String, String> attrs = XercesUtils.getAttributes(node);
         String tagName = node.getNodeName();
         String attrVal = attrs.get(LEOS_EDITABLE_ATTR);
-        return getEditableAttribute(tagName, attrVal);
+        
+        if (attrVal != null) {
+        	return attrVal.equalsIgnoreCase("false") ? EditableAttributeValue.FALSE : EditableAttributeValue.TRUE;
+        } else if (isExcludedNode(tagName)) {
+            return EditableAttributeValue.FALSE;
+        }
+        
+        return EditableAttributeValue.UNDEFINED;
     }
 
     @Override
