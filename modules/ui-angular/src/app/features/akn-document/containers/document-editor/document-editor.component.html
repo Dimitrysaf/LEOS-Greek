@@ -150,6 +150,26 @@
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
+      <eui-page-column interactiveScrollbars *ngIf="isVersionForViewOpen">
+        <eui-page-column-header-left-content class="font-inherit-header">{{
+          versionForViewHeaderTitle
+        }}</eui-page-column-header-left-content>
+        <eui-page-column-header-right-content>
+          <eui-icon
+            euiSizeS
+            iconClass="eui-icon-close-m"
+            (click)="closeVersionView()"
+          ></eui-icon>
+        </eui-page-column-header-right-content>
+        <eui-page-column-body
+          class="eui-u-flex eui-u-flex-column align-items-center"
+        >
+          <app-annex-document
+            id="versionContainer"
+            [xml]="versionForView"
+          ></app-annex-document>
+        </eui-page-column-body>
+      </eui-page-column>
       <eui-dialog
         #unSavedDialog
         [title]="

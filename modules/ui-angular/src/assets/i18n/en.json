@@ -228,5 +228,6 @@
   "toc.item.template.default.content.text": "Text...",
   "toc.item.template.citation.content.text": "Citation...",
   "toc.item.template.recital.content.text": "Recital...",
-  "toc.item.template.crossheading.content.text": "Crossheading..."
+  "toc.item.template.crossheading.content.text": "Crossheading...",
+  "version.view.header": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}"
 }

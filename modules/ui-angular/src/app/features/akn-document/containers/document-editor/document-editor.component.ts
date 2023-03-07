@@ -28,7 +28,10 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   pageSubTitle: string;
   xml: string;
   isCollapseToc = false;
+  versionForView: string;
+  versionForViewHeaderTitle: string;
 
+  isVersionForViewOpen = false;
   isTOCColumnCollapsed = true;
   isAnnotationsColumnCollapsed = true;
   isVersionsColumnCollapsed = true;
@@ -80,6 +83,18 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       .subscribe((tocItems) => {
         this.tocItems = tocItems;
         this.dragItems = this.buildTocItemToTOC(tocItems);
+      });
+
+    this.documentService.versionView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((versionView) => {
+        if (versionView !== null) this.versionForView = versionView.editableXml;
+        this.setVersionForViewHeader({
+          version: versionView.versionInfoVO.documentVersion,
+          updatedByFull: `${versionView.versionInfoVO.lastModifiedBy} (${versionView.versionInfoVO.entity})`,
+          updatedOn: versionView.versionInfoVO.lastModificationInstant,
+        });
+        this.isVersionForViewOpen = true;
       });
   }
 
@@ -193,6 +208,10 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     );
   }
 
+  closeVersionView() {
+    this.isVersionForViewOpen = false;
+  }
+
   private buildTocItemToTOC(
     tocItems: TocItem[],
   ): Array<Partial<TableOfContentItemVO>> {
@@ -279,5 +298,14 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     ]
       .filter(Boolean)
       .join(' ');
+  }
+
+  private setVersionForViewHeader({ version, updatedByFull, updatedOn }) {
+    this.translate
+      .get('version.view.header', { version, updatedByFull, updatedOn })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((header: string) => {
+        this.versionForViewHeaderTitle = header;
+      });
   }
 }

@@ -13,6 +13,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  tap,
   withLatestFrom,
 } from 'rxjs';
 
@@ -32,6 +33,7 @@ export class DocumentService implements OnDestroy {
   compareModeEnabled$: Observable<boolean>;
   documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
+  versionView$: Observable<DocumentViewResponse | null>;
   guidelinesEnabled$: Observable<boolean>;
   highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
@@ -41,6 +43,7 @@ export class DocumentService implements OnDestroy {
   toc$: Observable<TableOfContentItemVO[]>;
   tocItems$: Observable<any[]>;
   recentChanges$: Observable<any[]>;
+  versionId$: Observable<string | null>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -56,6 +59,7 @@ export class DocumentService implements OnDestroy {
     matchCase: false,
   });
   private versionSearchOpenBS = new BehaviorSubject(false);
+  private versionIdBS = new BehaviorSubject<string | null>(null);
 
   private destroy$ = new Subject<void>();
 
@@ -74,6 +78,7 @@ export class DocumentService implements OnDestroy {
     this.guidelinesEnabled$ = this.guidelinesEnabledBS.asObservable();
     this.highlightsEnabled$ = this.highlightsEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
+    this.versionId$ = this.versionIdBS.asObservable();
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
@@ -101,6 +106,15 @@ export class DocumentService implements OnDestroy {
     this.searchParams$
       .pipe(takeUntil(this.destroy$), skip(1))
       .subscribe((params) => this.doSearch(params));
+
+    this.versionView$ = this.versionId$.pipe(
+      takeUntil(this.destroy$),
+      skip(1),
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([versionId, category]) =>
+        this.getDocumentVersion(category, versionId),
+      ),
+    );
   }
 
   ngOnDestroy() {
@@ -230,13 +244,7 @@ export class DocumentService implements OnDestroy {
   }
 
   versionView(versionNumber: string) {
-    console.warn('stub:', 'versionView', versionNumber); // FIXME
-    this.getDocumentVersion(
-      this.documentCategoryBS.value,
-      versionNumber,
-    ).subscribe((result) => {
-      console.log(result);
-    });
+    this.versionIdBS.next(versionNumber);
   }
 
   getToc(annexRef: string, tocMode = 'SIMPLIFIED') {
@@ -301,7 +309,6 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentRecentChangesData(documentType: string, documentRef: string) {
-    console.log('in');
     return this.http.get<any[]>(
       `api/secured/${documentType}/${documentRef}/recent-changes`,
     );
