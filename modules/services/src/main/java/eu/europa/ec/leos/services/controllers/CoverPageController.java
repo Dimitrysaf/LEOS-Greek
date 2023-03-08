@@ -14,8 +14,6 @@
 
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -87,15 +85,15 @@ public class CoverPageController {
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_XML_VALUE)
+    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveCoverPageElement(@PathVariable("documentRef") String documentRef,
                                                        @PathVariable("elementName") String elementName,
                                                        @PathVariable("elementId") String elementId,
                                                        @RequestBody String elementContent) {
         try {
-            DocumentViewResponse coverPageXml = this.coverPageApiService.saveElement(documentRef, elementId, elementName, elementContent);
-            return ResponseEntity.ok().body(coverPageXml);
+            DocumentViewResponse coverPage = this.coverPageApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(coverPage);
         } catch (Exception e) {
             LOG.error("Error occurred while getting coverPage element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting coverPage element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -109,8 +107,8 @@ public class CoverPageController {
                                                          @PathVariable("elementName") String elementName,
                                                          @PathVariable("elementId") String elementId) {
         try {
-            DocumentViewResponse coverPageXml = this.coverPageApiService.deleteBlock(documentRef, elementName, elementId);
-            return ResponseEntity.ok().body(coverPageXml);
+            DocumentViewResponse coverPage = this.coverPageApiService.deleteBlock(documentRef, elementName, elementId);
+            return ResponseEntity.ok().body(coverPage);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpcted error occured while getting coverPage element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -127,8 +125,8 @@ public class CoverPageController {
                                                          @PathVariable("elementId") String elementId,
                                                          @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse coverPageXml = this.coverPageApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
-            return ResponseEntity.ok().body(coverPageXml);
+            DocumentViewResponse coverPage = this.coverPageApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            return ResponseEntity.ok().body(coverPage);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpcted error occured while getting coverPage element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -143,8 +141,8 @@ public class CoverPageController {
                                                         @PathVariable("elementId") String elementId,
                                                         @RequestBody String elementContent) {
         try {
-            DocumentViewResponse coverPageXml = this.coverPageApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
-            return ResponseEntity.ok().body(coverPageXml);
+            DocumentViewResponse coverPage = this.coverPageApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            return ResponseEntity.ok().body(coverPage);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on coverpage - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while merging elements ", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -225,7 +223,7 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> showCoverPageVersion(@PathVariable("versionId") String versionId) {
         try {
@@ -252,7 +250,7 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> restoreCoverPageVersion(@PathVariable("documentRef") String documentRef,
                                                           @PathVariable("targetVersion") String targetVersion) {
@@ -277,6 +275,32 @@ public class CoverPageController {
         } catch (Exception e) {
             LOG.error("Error occurred  while getting coverPage element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error while getting coverPage element ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/download-version", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
+                                                         @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
+        try {
+            byte[] response = this.coverPageApiService.downloadVersion(documentRef, isWithAnnotation);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while getting downloading version - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while getting downloading version", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
+                                                     @RequestParam("versionId") String versionId) {
+        try {
+            byte[] response = this.coverPageApiService.downloadXmlVersionFiles(documentRef, versionId);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -14,21 +14,24 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
-import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -36,31 +39,40 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportOptions;
+import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
-import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.MethodNotSupportedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.io.ByteArrayInputStream;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {
+    private static final Logger LOG = LoggerFactory.getLogger(CoverPageApiServiceImpl.class);
 
     @Autowired
     ProposalService proposalService;
@@ -81,14 +93,22 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Autowired
     ElementProcessor elementProcessor;
     @Autowired
+    PackageService packageService;
+    @Autowired
     XmlContentProcessor xmlContentProcessor;
-    private static final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    @Autowired
+    ExportService exportService;
+    private Provider<CloneContext> cloneContext;
+    private Provider<BillContextService> context;
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
 
     private Provider<StructureContext> structureContext;
 
-    CoverPageApiServiceImpl(Provider<StructureContext> structureContext) {
+    CoverPageApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
         this.structureContext = structureContext;
+        this.cloneContext = cloneContext;
+        this.context = context;
     }
 
     @Override
@@ -96,7 +116,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         VersionInfoVO versionInfoVO = getVersionInfo(proposal);
         String editableXml = getEditableXml(proposal);
-        return new DocumentViewResponse(proposal.getOriginRef(),editableXml,versionInfoVO);
+        return new DocumentViewResponse(proposal.getOriginRef(), editableXml, versionInfoVO);
     }
 
     @Override
@@ -114,7 +134,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId)  {
+    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) {
         throw new UnsupportedOperationException("Delete isn't supported for cover page");
     }
 
@@ -128,7 +148,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         // Check if new doc purpose is not empty
         if (docPurpose != null && docPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
 
-            byte[] newXmlContent = !docPurposeElements.isEmpty() ?  xmlContentProcessor.replaceElementById(proposalContent, elementFragment,
+            byte[] newXmlContent = !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent, elementFragment,
                     docPurposeElements.get(0).getElementId()) : null;
 
             if (newXmlContent == null) {
@@ -161,10 +181,10 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public List<VersionVO> getVersionsData(String documentRef) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        List<VersionVO> versions = this.proposalService.getAllVersions(proposal.getId(),documentRef);
-        for(VersionVO versionVO : versions) {
-            Integer count = this.proposalService.findAllMinorsCountForIntermediate(documentRef,versionVO.getCmisVersionNumber());
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.proposalService.findAllMinorsForIntermediate(documentRef,versionVO.getCmisVersionNumber(),0,count), messageHelper));
+        List<VersionVO> versions = this.proposalService.getAllVersions(proposal.getId(), documentRef);
+        for (VersionVO versionVO : versions) {
+            Integer count = this.proposalService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
+            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.proposalService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
         }
         return versions;
     }
@@ -187,7 +207,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception  {
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception {
         Proposal coverpage = this.proposalService.getProposalByRef(documentRef);
         List<SearchMatchVO> matches = Collections.emptyList();
         matches = searchService.searchText(getContent(coverpage), searchText, matchCase, completeWords);
@@ -199,7 +219,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         final Proposal version = proposalService.findProposalVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(version, "", securityContext.getPermissions(version), true);
         final VersionInfoVO versionInfo = this.documentViewService.getVersionInfo(version);
-        return new DocumentViewResponse(null,versionContent,versionInfo);
+        return new DocumentViewResponse(null, versionContent, versionInfo);
     }
 
     @Override
@@ -225,10 +245,63 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         String element = this.elementProcessor.getElement(proposal, elementTagName, elementId);
         String jsonAlternatives = "";
         return new EditElementResponse(
-                elementId,elementTagName,element,jsonAlternatives);
+                elementId, elementTagName, element, jsonAlternatives);
+    }
+
+    @Override
+    public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
+        if (isWithAnnotations) {
+            //get filters
+            return new byte[0];
+        }
+        return this.doDownloadVersion(documentRef, false, null);
+
+    }
+
+    @Override
+    public byte[] downloadXmlVersionFiles(String documentRef, String versionId) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final Proposal chosenDocument = proposalService.findProposalVersion(versionId);
+        final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
+        LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return chosenDocument.getContent().get().getSource().getBytes();
+    }
+
+    private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            final Proposal currentDocument = this.proposalService.getProposalByRef(documentRef);
+
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
+            context.get().usePackage(leosPackage);
+            Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
+            populateCloneProposalMetadata(proposal);
+
+            ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Proposal.class, false);
+
+            exportOptions.setExportVersions(new ExportVersions(isClonedProposal() ?
+                    proposalService.findFirstVersion(currentDocument.getMetadata().get().getRef()) : null, currentDocument));
+            exportOptions.setWithFilteredAnnotations(isWithFilteredAnnotations);
+            exportOptions.setFilteredAnnotations(annotations);
+
+            String proposalId = proposal.getId();
+            if (proposalId != null) {
+                try {
+                    this.createDocumentPackageForExport(exportOptions);
+                } catch (Exception e) {
+                    LOG.error("Unexpected error occurred while using ExportService", e);
+                }
+            }
+            LOG.info("The actual version of Coverpage {} downloaded in {} milliseconds ({} sec)", currentDocument.getName(),
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+        }
+        return null;
     }
 
     private byte[] getContent(Proposal proposal) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         final Content content = proposal.getContent().getOrError(() -> "Annex content is required!");
         return content.getSource().getBytes();
     }
@@ -238,7 +311,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
 
-    private DocumentVO getCoverPageVO(DocumentVO proposalVO,String  proposalRef) {
+    private DocumentVO getCoverPageVO(DocumentVO proposalVO, String proposalRef) {
         DocumentVO coverPageVO = new DocumentVO(proposalVO.getId(),
                 proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
                 LeosCategory.COVERPAGE,
@@ -254,7 +327,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         byte[] coverPageContent = new byte[0];
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         boolean isCoverPageExists = documentContentService.isCoverPageExists(proposalContent);
-        if(isCoverPageExists) {
+        if (isCoverPageExists) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
             coverPageContent = documentContentService.getCoverPageContent(xmlContent);
         }
@@ -262,14 +335,43 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         editableXml = XmlHelper.removeSelfClosingElements(editableXml);
         return StringEscapeUtils.unescapeXml(editableXml);
     }
-    private VersionInfoVO getVersionInfo(XmlDocument document){
+
+    private VersionInfoVO getVersionInfo(XmlDocument document) {
         String userId = document.getLastModifiedBy();
         User user = userHelper.getUser(userId);
 
         return new VersionInfoVO(
                 document.getVersionLabel(),
-                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName(): "",
+                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
                 dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType());
+    }
+
+    private void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final String proposalId = this.getContextProposalId();
+
+        if (proposalId != null) {
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
+            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+            LOG.info("Exported to LegisWrite and downloaded file {}, in {} milliseconds ({} sec)", jobFileName,
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        }
+    }
+
+    private String getContextProposalId() {
+        return context.get().getProposalId();
+    }
+
+    private boolean isClonedProposal() {
+        return cloneContext != null && cloneContext.get().isClonedProposal();
+    }
+
+    private void populateCloneProposalMetadata(Proposal proposal) {
+        if (proposal != null && proposal.isClonedProposal()) {
+            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+            cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        }
     }
 }

@@ -49,21 +49,22 @@ public class DocumentViewService<T extends XmlDocument> {
     ProposalService proposalService;
     @Autowired
     UserHelperAPI userHelper;
-    private static final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public DocumentViewResponse getDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
-        String editableXml = getEditableXml(document,proposal);
+        String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
-        return new DocumentViewResponse(getProposalRef(document.getId()),editableXml,versionInfoVO);
+        return new DocumentViewResponse(getProposalRef(document.getId()), editableXml, versionInfoVO);
     }
+
     public VersionInfoVO getVersionInfo(T document) {
         String userId = document.getLastModifiedBy();
         User user = userHelper.getUser(userId);
 
         String versionLabel = null;
         String versionComment = null;
-        if(document instanceof  Annex) {
+        if (document instanceof Annex) {
             String baseRevisionId = ((Annex) document).getBaseRevisionId();
             if (StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
                 versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
@@ -76,14 +77,15 @@ public class DocumentViewService<T extends XmlDocument> {
                 dateFormatter.format(document.getLastModificationInstant()),
                 document.getVersionType(), versionLabel, versionComment);
     }
+
     private String getEditableXml(T document, Proposal proposal) {
         securityContext.getPermissions(proposal);
         byte[] coverPageContent = new byte[0];
         //handle cover page type
-        if(document instanceof Proposal) {
-           byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
-           boolean isCoverPageExists = documentContentService.isCoverPageExists(proposalContent);
-            if(isCoverPageExists) {
+        if (document instanceof Proposal) {
+            byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+            boolean isCoverPageExists = documentContentService.isCoverPageExists(proposalContent);
+            if (isCoverPageExists) {
                 byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
                 coverPageContent = documentContentService.getCoverPageContent(xmlContent);
             }
@@ -94,7 +96,7 @@ public class DocumentViewService<T extends XmlDocument> {
         //handle other types
         byte[] documentContent = document.getContent().get().getSource().getBytes();
         boolean isCoverPageExists = documentContentService.isCoverPageExists(documentContent);
-        if(!isCoverPageExists) {
+        if (!isCoverPageExists) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
             coverPageContent = documentContentService.getCoverPageContent(xmlContent);
         }
@@ -104,7 +106,7 @@ public class DocumentViewService<T extends XmlDocument> {
     }
 
 
-    private Proposal getProposalFromPackage(T document) {
+    public Proposal getProposalFromPackage(T document) {
         Proposal proposal = null;
         if (document != null) {
             LeosPackage leosPackage = this.packageService.findPackageByDocumentId(document.getId());
@@ -113,7 +115,7 @@ public class DocumentViewService<T extends XmlDocument> {
         return proposal;
     }
 
-    private String getProposalRef(String documentId){
+    private String getProposalRef(String documentId) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal.getMetadata().getOrNull().getRef();
