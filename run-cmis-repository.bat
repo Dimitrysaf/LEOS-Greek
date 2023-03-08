@@ -1,5 +1,5 @@
 @REM
-@REM Copyright 2021 European Commission
+@REM Copyright 2017 European Commission
 @REM
 @REM Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
 @REM You may not use this work except in compliance with the Licence.
@@ -13,17 +13,13 @@
 @REM
 
 @echo off
-TITLE Repository Tool
-echo "---------------------Repository-----------------------------------------------"
+TITLE Repository
+echo "---------------------REPOSITORY-----------------------------------------------"
 
-cd ./tools/repository
+cd ./tools/cmis/chemistry-opencmis-server-inmemory
 
-echo "---------------------Repository COMPILING...----------------------------------"
-call mvn clean install
-echo "---------------------Repository COMPILED.-------------------------------------"
+echo "---------------------REPOSITORY STARTING...-----------------------------------"
+call mvn clean
+call mvn jetty:run-war
 
-cd ./web
-
-echo "---------------------Repository STARTING...-----------------------------------"
-call mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
-echo "---------------------Repository STOPPED....-----------------------------------"
+echo "---------------------REPOSITORY STOPPED....-----------------------------------"
