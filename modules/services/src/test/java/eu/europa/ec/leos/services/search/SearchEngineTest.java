@@ -224,24 +224,17 @@ public class SearchEngineTest extends LeosTest {
         assertThat(matchedElements.size(), is(2));
         assertThat(matchedElements, hasItem(new ElementMatchVO("em_coverpage__longTitle__docTitle__p__docType", 8, 18)));
         assertThat(matchedElements, hasItem(new ElementMatchVO("em_coverpage__longTitle__docTitle__p__docPurpose", 0, 2)));
-        assertThat(matchedElements.get(0).isEditable(), is(false));
-        assertThat(matchedElements.get(1).isEditable(), is(false));
+        assertThat(matchedElements.get(0).isEditable(), is(true));
+        assertThat(matchedElements.get(1).isEditable(), is(true));
 
         byte[] resultDoc = se.replace(docContent, results, "regulation on", "bazzinga", true);
         se = SearchEngineImpl.forContent(resultDoc);
 
         results = se.searchText("regulation on", false, false);
-        assertThat(results.size(), is(1));
-
-        matchedElements = results.get(0).getMatchedElements();
-        assertThat(matchedElements.size(), is(2));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("em_coverpage__longTitle__docTitle__p__docType", 8, 18)));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("em_coverpage__longTitle__docTitle__p__docPurpose", 0, 2)));
-        assertThat(matchedElements.get(0).isEditable(), is(false));
-        assertThat(matchedElements.get(1).isEditable(), is(false));
+        assertThat(results.size(), is(0));
 
         results = se.searchText("bazzinga", false, false);
-        assertThat(results.size(), is(0));
+        assertThat(results.size(), is(1));
     }
 
     @Test
@@ -260,14 +253,10 @@ public class SearchEngineTest extends LeosTest {
         se = SearchEngineImpl.forContent(resultDoc);
 
         results = se.searchText("Regulation", true, false);
-        assertThat(results.size(), is(1));
-
-        matchedElements = results.get(0).getMatchedElements();
-        assertThat(matchedElements.size(), is(1));
-        assertThat(matchedElements.get(0).isEditable(), is(false));
+        assertThat(results.size(), is(0));
 
         results = se.searchText("Directive", true, false);
-        assertThat(results.size(), is(1));
+        assertThat(results.size(), is(2));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(resultDoc, UTF_8)), squeezeXmlAndRemoveAllNS(new String(expectedDocContent, UTF_8)));
     }
 
