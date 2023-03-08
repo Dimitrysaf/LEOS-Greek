@@ -16,12 +16,10 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -45,16 +43,11 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
-import eu.europa.ec.leos.services.export.ExportDW;
-import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.export.ExportVersions;
-import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
-import eu.europa.ec.leos.services.resolvers.InstanceTypeResolverAPI;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -112,8 +105,6 @@ public class BillApiServiceImpl implements BillApiService {
     PackageService packageService;
     @Autowired
     ProposalService proposalService;
-    @Autowired
-    InstanceTypeResolverAPI instanceTypeResolver;
     @Autowired
     ExportService exportService;
     private Provider<CloneContext> cloneContext;
@@ -210,11 +201,7 @@ public class BillApiServiceImpl implements BillApiService {
 
     @Override
     public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
-        if (isWithAnnotations) {
-            //get filters
-            return new byte[0];
-        }
-        return this.doDownloadVersion(documentRef, false, null);
+        return null;
     }
 
     @Override
@@ -374,49 +361,6 @@ public class BillApiServiceImpl implements BillApiService {
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
-
-    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
-        try {
-            final Bill currentDocument = this.billService.findBillByRef(documentRef);
-
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
-            contex.get().usePackage(leosPackage);
-            Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
-            populateCloneProposalMetadata(proposal);
-
-            ExportOptions exportOptions;
-            XmlDocument original = documentContentService.getOriginalBill(currentDocument);
-            if (InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
-                exportOptions = new ExportLW(ExportOptions.Output.PDF, Bill.class, false);
-                exportOptions.setExportVersions(new ExportVersions(isClonedProposal() ? original : null, currentDocument));
-            } else {
-                exportOptions = new ExportDW(ExportOptions.Output.WORD, Bill.class, false);
-                exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
-            }
-            exportOptions.setWithFilteredAnnotations(isWithAnnotations);
-            exportOptions.setFilteredAnnotations(annotations);
-            exportOptions.setWithCoverPage(false);
-
-            String proposalId = proposal.getId();
-            if (proposalId != null) {
-                final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
-                if (isClonedProposal() || InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
-                    try {
-                        this.createDocumentPackageForExport(exportOptions);
-                    } catch (Exception e) {
-                        LOG.error("Unexpected error occurred while using ExportService", e);
-                    }
-                } else {
-                    return exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
-                }
-            }
-            LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName());
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while using ExportService", e);
-        }
-        return null;
-    }
-
 
     protected void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
         final String proposalId = this.getContextProposalId();

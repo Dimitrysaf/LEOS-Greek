@@ -49,7 +49,6 @@ import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
-import eu.europa.ec.leos.services.resolvers.InstanceTypeResolverAPI;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -99,8 +98,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     ProposalService proposalService;
     @Autowired
     ComparisonDelegateAPI<Annex> comparisonDelegate;
-    @Autowired
-    InstanceTypeResolverAPI instanceTypeResolver;
     @Autowired
     ExportService exportService;
     private Provider<CloneContext> cloneContext;
@@ -282,11 +279,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     @Override
     public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
-        if (isWithAnnotations) {
-            //get filters
-            return new byte[0];
-        }
-        return this.doDownloadVersion(documentRef, false, null);
+        return null;
     }
 
     @Override
@@ -296,52 +289,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
         LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return chosenDocument.getContent().get().getSource().getBytes();
-    }
-
-    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
-        try {
-            Annex annex = this.annexService.findAnnexByRef(documentRef);
-
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
-            contex.get().usePackage(leosPackage);
-            Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
-            populateCloneProposalMetadata(proposal);
-
-            XmlDocument original = documentContentService.getOriginalAnnex(annex);
-            ExportOptions exportOptions;
-            if (InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
-                exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
-                exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, annex));
-                exportOptions.setWithCoverPage(true);
-            } else {
-                boolean isLiveDiffing = annex.isLiveDiffingRequired() || !documentContentService.isRevisionAnnex(annex);
-                if (!isLiveDiffing) {
-                    original = annex; // For NO Diffing
-                }
-                exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
-                exportOptions.setExportVersions(new ExportVersions<>(original, annex));
-                exportOptions.setWithCoverPage(false);
-            }
-            exportOptions.setWithFilteredAnnotations(isWithAnnotations);
-            exportOptions.setFilteredAnnotations(annotations);
-            String proposalId = proposal.getId();
-
-            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
-            if (isClonedProposal() || InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
-                try {
-                    this.createDocumentPackageForExport(exportOptions);
-                } catch (Exception e) {
-                    LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
-                }
-            } else {
-                return exportService.createDocuWritePackage(jobFileName, proposalId, exportOptions);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while using ExportService", e);
-            throw new Exception("Unexpected error occured while using Export service", e);
-        }
-        return null;
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {
