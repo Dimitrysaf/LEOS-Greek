@@ -76,6 +76,7 @@ public class CollectionContextService {
     private final Provider<MemorandumContextService> memorandumContextProvider;
     private final Provider<BillContextService> billContextProvider;
     private final Provider<ExplanatoryContextService> explanatoryContextProvider;
+    private final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private SecurityContext securityContext;
     private final Map<LeosCategory, XmlDocument> categoryTemplateMap;
     private final Map<ContextActionService, String> actionMsgMap;
@@ -92,7 +93,6 @@ public class CollectionContextService {
     private boolean cloneProposal = false;
     private String connectedEntity;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
-    private Provider<FinancialStatementContextService> financialStatementContextProvider;
     private String explanatoryId;
     protected LeosPackage leosPackage = null;
 
@@ -426,7 +426,7 @@ public class CollectionContextService {
     public void executeCreateMilestone() {
         LOG.info("Creating major versions for all documents of [proposal={}", proposal.getId());
 
-        // 1. Proposal
+        //Proposal
         List<String> milestoneComments = proposal.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (proposal.getVersionType().equals(VersionType.MAJOR)) {
@@ -440,19 +440,26 @@ public class CollectionContextService {
         // Update the last structure
         final LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
 
-        // 2. Memorandum
+        //Memorandum
         final MemorandumContextService memorandumContext = memorandumContextProvider.get();
         memorandumContext.usePackage(leosPackage);
         memorandumContext.useVersionComment(versionComment);
         memorandumContext.useMilestoneComment(milestoneComment);
         memorandumContext.executeCreateMilestone();
 
-        // 2. Bill + Annexes
+        //Bill + Annexes
         final BillContextService billContext = billContextProvider.get();
         billContext.usePackage(leosPackage);
         billContext.useVersionComment(versionComment);
         billContext.useMilestoneComment(milestoneComment);
         billContext.executeCreateMilestone();
+
+        //FS
+        final FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
+        financialStatementContext.usePackage(leosPackage);
+        financialStatementContext.useVersionComment(versionComment);
+        financialStatementContext.useMilestoneComment(milestoneComment);
+        financialStatementContext.executeCreateMilestone();
     }
 
     public void executeCreateExplanatory() {
