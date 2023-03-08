@@ -939,6 +939,62 @@ define(function leosPluginUtilsModule(require) {
         });
     }
 
+    function _popNotInlineSubElement(notInlineSubElements) {
+        notInlineSubElements.reverse();
+        for (let i = 0; i < notInlineSubElements.length; i++){
+            let subElem = notInlineSubElements[i];
+            var parent = subElem.getParent();
+            if (parent) {
+                var newParentElement = new CKEDITOR.dom.element(HTML_POINT);
+                newParentElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+                newParentElement.setAttribute(DATA_AKN_NAME, AKN_NUMBERED_PARAGRAPH);
+                newParentElement.append(subElem);
+                newParentElement.insertAfter(parent);
+            }
+        }
+    }
+/**
+     * Add "child" element into "notInlineElements" if the <li> node contains not inline elements and
+     * a subparagraph.
+     * Example: Add <p> to "notInlineElements" if the structure is as below:
+     * <li>
+     *     "some text"
+     *     <table> </table>
+     *     <p> </p>
+     * </li>
+     *
+     * @param node, parent <li>
+     * @param notInlineElements, elements which will be converted later into <li>
+     * @param isNotInlinePushed, elements already processed
+     */
+     function _pushNotInlineElements(node, notInlineElements, isNotInlinePushed){
+        var hasElementsLI = !!node && _getElementName(node) === HTML_POINT
+             && node.childNodes.length > 1 &&  !!node.getAttribute(DATA_AKN_ELEMENT)
+                         && node.getAttribute(DATA_AKN_ELEMENT) === SUBPARAGRAPH;
+        if(!hasElementsLI){
+            return;
+        }
+        let isAtLeastOneMatch = false;
+        for (let i = 0; i < node.childNodes.length; i++){
+            let child = node.childNodes[i];
+            if(!INLINE_FROM_MATCH.test(_getElementName(child))){
+               isAtLeastOneMatch = true;
+               break;
+            }
+        }
+        if(isAtLeastOneMatch){
+            // keep the first element of the <li>
+            for (let j = 1; j < node.childNodes.length; j++){
+               let child = node.childNodes[j];
+               if(isNotInlinePushed[child] !== 1){
+                   isNotInlinePushed[child] = 1;
+                   let elem = new CKEDITOR.dom.element(child);
+                   notInlineElements.push(elem);
+               }
+           }
+        }
+     }
+
     function _copyContentAndMpAttributeToElement(from, to) {
         if (!!from.getAttribute(DATA_AKN_WRAPPED_CONTENT_ID)) {
             to.setAttribute(DATA_AKN_WRAPPED_CONTENT_ID, from.getAttribute(DATA_AKN_WRAPPED_CONTENT_ID));
@@ -1092,6 +1148,8 @@ define(function leosPluginUtilsModule(require) {
         resetIndentAttributes: _resetIndentAttributes,
         doIndent: _doIndent,
         popSingleSubElement : _popSingleSubElement,
+        popNotInlineSubElement: _popNotInlineSubElement,
+        pushNotInlineElements: _pushNotInlineElements,
         handleIndentAttributes : _handleIndentAttributes,
         moveChildren: _moveChildren,
         moveElementChildren: _moveElementChildren,
@@ -1151,6 +1209,7 @@ define(function leosPluginUtilsModule(require) {
         DATA_INDENT_LEVEL_ATTR: DATA_INDENT_LEVEL_ATTR,
         INDENT_LEVEL_ATTR: INDENT_LEVEL_ATTR,
         AKN_ORDERED_ANNEX_LIST: AKN_ORDERED_ANNEX_LIST,
-        COUNCIL_INSTANCE: COUNCIL_INSTANCE
+        COUNCIL_INSTANCE: COUNCIL_INSTANCE,
+        INLINE_FROM_MATCH: INLINE_FROM_MATCH
     };
 });
