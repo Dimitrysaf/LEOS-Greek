@@ -70,7 +70,6 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
-@Service("annex")
 public class AnnexApiServiceImpl implements AnnexApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
     private Provider<StructureContext> structureContext;
