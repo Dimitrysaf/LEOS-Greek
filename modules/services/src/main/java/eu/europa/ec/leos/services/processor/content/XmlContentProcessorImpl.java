@@ -93,94 +93,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToStringSimple;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.AUTHORIAL_NOTE;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.CN;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.COUNCIL_EXPLANATORY;
-import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.DEC_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.DIR_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
-import static eu.europa.ec.leos.services.support.XmlHelper.EC;
-import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_IN_TOC;
-import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
-import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT_INP_ID;
-import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
-import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT_LEVEL_PROPERTY;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM_PROPERTY;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_CROSS_HEADING_BLOCK_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_LEVEL_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_TYPE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INITIAL_NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_REF;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_REF_BROKEN_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVED_LABEL_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL_NUM_SEPARATOR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST_CLOSE;
-import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.MARKER_ATTRIBUTE;
-import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.META;
-import static eu.europa.ec.leos.services.support.XmlHelper.MREF;
-import static eu.europa.ec.leos.services.support.XmlHelper.NON_BREAKING_SPACE;
-import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARA_END;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARA_OPEN_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARA_START;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
-import static eu.europa.ec.leos.services.support.XmlHelper.PROP_ACT;
-import static eu.europa.ec.leos.services.support.XmlHelper.REF;
-import static eu.europa.ec.leos.services.support.XmlHelper.REG_FILE_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX;
-import static eu.europa.ec.leos.services.support.XmlHelper.STATUS_IGNORED_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.STATUS_IGNORED_ATTR_VALUE;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARA_END;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARA_REGEX;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT;
-import static eu.europa.ec.leos.services.support.XmlHelper.TLC_CONCEPT_WRP_ID;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XmlHelper.WHITESPACE;
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
-import static eu.europa.ec.leos.services.support.XmlHelper.determinePrefixForChildren;
-import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
-import static eu.europa.ec.leos.services.support.XmlHelper.getEditableAttribute;
-import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
-import static eu.europa.ec.leos.services.support.XmlHelper.getSubstringAvoidingTags;
-import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.normalizeNewText;
-import static eu.europa.ec.leos.services.support.XmlHelper.removeAllNameSpaces;
-import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
-import static eu.europa.ec.leos.services.support.XmlHelper.skipNodeAndChildren;
-import static eu.europa.ec.leos.services.support.XmlHelper.skipNodeOnly;
-import static eu.europa.ec.leos.services.support.XmlHelper.wrapXPathWithQuotes;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
@@ -436,32 +349,33 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8));
             if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
                     && XercesUtils.getFirstChild(XercesUtils.getFirstChild(newNode), NUM) == null) {
-
                 Document updatedDocument = createXercesDocument(xmlContent);
                 Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
-                String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
-                NodeList nodeList = updatedNode.getChildNodes();
-                for (int i = 0; i < nodeList.getLength(); i++) {
-                    String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.item(i)));
-                    if (nodeList.item(i).getNodeName().equals(LIST)) {
-                        if (i == 0) {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
-                        } else {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, PARA_START + childNodeContent + PARA_END);
+                if(updatedNode != null) {
+                    String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
+                    NodeList nodeList = updatedNode.getChildNodes();
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.item(i)));
+                        if (nodeList.item(i).getNodeName().equals(LIST)) {
+                            if (i == 0) {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
+                            } else {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, PARA_START + childNodeContent + PARA_END);
+                            }
+                        } else if (nodeList.item(i).getNodeName().equals(SUBPARAGRAPH)) {
+                            if (i == 0) {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replaceFirst(SUBPARA_REGEX, "").replace(SUBPARA_END, PARA_END));
+                            } else {
+                                updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replace("<" + SUBPARAGRAPH, "<" + PARAGRAPH).replace(SUBPARA_END, PARA_END));
+                            }
                         }
-                    } else if (nodeList.item(i).getNodeName().equals(SUBPARAGRAPH)) {
-                        if (i == 0) {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replaceFirst(SUBPARA_REGEX, "").replace(SUBPARA_END, PARA_END));
-                        } else {
-                            updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replace("<" + SUBPARAGRAPH, "<" + PARAGRAPH).replace(SUBPARA_END, PARA_END));
-                        }
+                        updatedNodeContent = updatedNodeContent.replace(PARA_END + PARA_END, PARA_END);
                     }
-                    updatedNodeContent = updatedNodeContent.replace(PARA_END + PARA_END, PARA_END);
+                    Document newDocument = createXercesDocument(xmlContent);
+                    Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
+                    Node updatedDocumentNode = XercesUtils.replaceElement(newElementNode, updatedNodeContent);
+                    xmlContent = nodeToByteArray(updatedDocumentNode);
                 }
-                Document newDocument = createXercesDocument(xmlContent);
-                Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
-                Node updatedDocumentNode = XercesUtils.replaceElement(newElementNode, updatedNodeContent);
-                xmlContent = nodeToByteArray(updatedDocumentNode);
             }
         }
         return xmlContent;
@@ -473,6 +387,26 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
             Node newNode = XercesUtils.createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
+            if (XercesUtils.isListIntro(node) && before) {
+                XercesUtils.addSibling(newNode, node.getParentNode(), before);
+            } else if (XercesUtils.isListIntro(node) && !before) {
+                node.getParentNode().getParentNode().insertBefore(node, node.getParentNode());
+                XercesUtils.removeAttribute(node, REFERS_TO_ATTR);
+                node.getParentNode().insertBefore(newNode, node.getParentNode().getFirstChild());
+                XercesUtils.addAttribute(newNode, REFERS_TO_ATTR, INTRODUCTORY_PART);
+            } else if (XercesUtils.isListWrapper(node) && !before) {
+                XercesUtils.addSibling(newNode, node.getParentNode(), before);
+            } else if (XercesUtils.isListWrapper(node) && before) {
+                Node nextSiblingOfParent = XercesUtils.getNextSibling(node.getParentNode());
+                if (nextSiblingOfParent == null) {
+                    node.getParentNode().getParentNode().appendChild(node);
+                } else {
+                    node.getParentNode().getParentNode().insertBefore(node, nextSiblingOfParent);
+                }
+                XercesUtils.removeAttribute(node, REFERS_TO_ATTR);
+                node.getParentNode().appendChild(newNode);
+                XercesUtils.addAttribute(newNode, REFERS_TO_ATTR, ENDING_PART);
+            }
             XercesUtils.addSibling(newNode, node, before);
         }
         return nodeToByteArray(document);
@@ -868,7 +802,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             for (int j = 0; j < subElements.size(); j++) {
                 Node subElement = subElements.get(j);
                 String subElementOrigin = getAttributeValue(subElement, LEOS_ORIGIN_ATTR);
-                if (j == 0 && elementOrigin.equals(EC) && (subElementOrigin == null)) {
+                if (j == 0 && !is(subElement, LIST) && elementOrigin.equals(EC) && (subElementOrigin == null)) {
                     createTransformationNode(node, subElement);
                 } else if (is(subElement, LIST)) {
                     List<Node> listSubElements = XercesUtils.getChildren(subElement, subElementTagName);
@@ -968,14 +902,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     && nextSiblingList != null
                     && is(nextSiblingList, LIST)) {
                 Node firstChildList = XercesUtils.getFirstChild(nextSiblingList);
-                if ((firstChildList == null
-                        || !is(firstChildList, SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && (compareSoftAction(subpara,
+                if (firstChildList != null
+                        && (!is(firstChildList, SUBPARAGRAPH) || isSoftDeletedOrMovedTo(firstChildList)) && (compareSoftAction(subpara,
                         nextSiblingList) || isSoftAdded(nextSiblingList))) {
-                    if (nextSiblingList.getFirstChild() != null) {
-                        nextSiblingList.insertBefore(subpara, nextSiblingList.getFirstChild());
-                    } else {
-                        nextSiblingList.appendChild(subpara);
-                    }
+                    nextSiblingList.insertBefore(subpara, nextSiblingList.getFirstChild());
                     moved = true;
                 }
             }
@@ -985,8 +915,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
                         || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(previousSiblingList)))) {
                     List<Node> children = XercesUtils.getChildren(previousSiblingList);
-                    Node lastChildList = children.get(children.size()-1);
-                    if (lastChildList == null || !is(lastChildList, SUBPARAGRAPH)  || isSoftDeletedOrMovedTo(lastChildList)) {
+                    Node lastChildList = children.size() > 0 ? children.get(children.size()-1) : null;
+                    if (lastChildList != null && !is(lastChildList, SUBPARAGRAPH)) {
                         previousSiblingList.appendChild(subpara);
                     }
                 }
@@ -1323,19 +1253,25 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Validate.isTrue(node != null, "Node can not be null");
         Validate.isTrue(node.getParentNode() != null, "Parent Node can not be null");
         EditableAttributeValue editableAttrVal = getEditableAttributeForNode(node);
-        node = node.getParentNode();
-        while (EditableAttributeValue.UNDEFINED.equals(editableAttrVal) && node != null) {
-            editableAttrVal = getEditableAttributeForNode(node);
+        while (EditableAttributeValue.UNDEFINED.equals(editableAttrVal) && node.getParentNode() != null) {
+            editableAttrVal = getEditableAttributeForNode(node.getParentNode());
             node = node.getParentNode();
         }
-        return Boolean.parseBoolean(editableAttrVal.name());
+        return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? true : Boolean.parseBoolean(editableAttrVal.name());
     }
 
     private static EditableAttributeValue getEditableAttributeForNode(Node node) {
         Map<String, String> attrs = XercesUtils.getAttributes(node);
         String tagName = node.getNodeName();
         String attrVal = attrs.get(LEOS_EDITABLE_ATTR);
-        return getEditableAttribute(tagName, attrVal);
+        
+        if (attrVal != null) {
+        	return attrVal.equalsIgnoreCase("false") ? EditableAttributeValue.FALSE : EditableAttributeValue.TRUE;
+        } else if (isExcludedNode(tagName)) {
+            return EditableAttributeValue.FALSE;
+        }
+        
+        return EditableAttributeValue.UNDEFINED;
     }
 
     @Override

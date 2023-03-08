@@ -106,7 +106,7 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
 
-        byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName);
+        byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName, false);
         return updateExplanatoryContent(elementId, tagName, xmlContent);
     }
 
@@ -147,7 +147,7 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, tagName, elementId, elementFragment, toc);
         } else {
-            updatedContent = elementProcessor.updateElement(document, elementFragment, tagName, elementId);
+            updatedContent = elementProcessor.updateElement(document, elementFragment, tagName, elementId, false);
         }
         return updateExplanatoryContent(elementId, tagName, updatedContent);
     }

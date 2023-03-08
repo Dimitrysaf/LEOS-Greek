@@ -69,6 +69,8 @@ import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
 import eu.europa.ec.leos.ui.event.search.SearchTextResponseEvent;
+import eu.europa.ec.leos.ui.event.security.SecurityTokenRequest;
+import eu.europa.ec.leos.ui.event.security.SecurityTokenResponse;
 import eu.europa.ec.leos.ui.event.toc.DisableEditTocEvent;
 import eu.europa.ec.leos.ui.event.toc.ExpandTocSliderPanel;
 import eu.europa.ec.leos.ui.event.toc.InlineTocCloseRequestEvent;
@@ -76,7 +78,6 @@ import eu.europa.ec.leos.ui.extension.ActionManagerExtension;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
 import eu.europa.ec.leos.ui.extension.CheckBoxesExtension;
-import eu.europa.ec.leos.ui.extension.DatePickerExtension;
 import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
 import eu.europa.ec.leos.ui.extension.MathJaxExtension;
 import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
@@ -187,8 +188,8 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
     private SearchDelegate searchDelegate;
 
-    private static final String CHECKED = "\u2611";
-    private static final String UNCHECKED = "\u2610";
+    private static final String CHECKED = "&#x2611;";
+    private static final String UNCHECKED = "&#x2610;";
     private static final String NAME_ATTR = "name";
     private static final String NAME_ATTR_CHECKED = "checked";
     private static final String NAME_ATTR_UNCHECKED = "unchecked";
@@ -393,6 +394,11 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         annotateExtension = new AnnotateExtension<>(financialStatementContent, eventBus, cfgHelper, null, AnnotateExtension.OperationMode.NORMAL,
                 ConfigurationHelper.isAnnotateAuthorityEquals(cfgHelper, "LEOS"), true, proposalRef,
                 connectedEntity);
+    }
+
+    @Subscribe
+    public void fetchToken(SecurityTokenRequest event) {
+        eventBus.post(new SecurityTokenResponse(securityContext.getAnnotateToken(event.getUrl())));
     }
 
     @Override

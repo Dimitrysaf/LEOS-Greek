@@ -596,7 +596,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
 
         try {
             Memorandum memorandum = getDocument();
-            byte[] newXmlContent = elementProcessor.updateElement(memorandum, event.getElementContent(), elementTagName, elementId);
+            byte[] newXmlContent = elementProcessor.updateElement(memorandum, event.getElementContent(), elementTagName, elementId, false);
             if (newXmlContent == null) {
                 memorandumScreen.showAlertDialog("operation.element.not.performed");
                 return;
@@ -637,7 +637,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     @Subscribe
     void mergeSuggestion(MergeSuggestionRequest event) {
         Memorandum document = getDocument();
-        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset());
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset(), false);
         if (resultXmlContent == null) {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
             return;

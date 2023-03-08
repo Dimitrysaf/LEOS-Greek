@@ -142,7 +142,9 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     }
   }
   handleSave() {
-    //TODO : implememt save
+    const toc = this.tocStructure;
+    this.prepareTocForSave(toc);
+    this.documentService.saveToc(this.documentRef, toc);
   }
   handleCancel() {
     //TODO : implement cancel
@@ -200,7 +202,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   getTooltipForToggleTree() {
     if (this.isCollapseToc) {
       return this.translate.instant(
-        'page.editor.toc.toc-column.actions.expandAll',
+        'page.editor.toc.toc-column.actions.collapseAll',
       );
     }
     return this.translate.instant(
@@ -210,6 +212,22 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
 
   closeVersionView() {
     this.isVersionForViewOpen = false;
+  }
+
+  private get tocStructure() {
+    return this.documentTocComponent.treeControl.dataNodes;
+  }
+
+  private prepareTocForSave(node: TableOfContentItemVO[]) {
+    for (const n of node) {
+      n['childItemsView'] = [];
+      if (n.parentItem) {
+        n.parentItem = null;
+      }
+      if (n.childItems && n.childItems.length > 0) {
+        this.prepareTocForSave(n.childItems);
+      }
+    }
   }
 
   private buildTocItemToTOC(

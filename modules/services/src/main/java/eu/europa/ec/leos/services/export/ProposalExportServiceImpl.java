@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -64,10 +63,10 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     protected CloneContext cloneContext;
 
     @Autowired
-    ProposalExportServiceImpl(LegService legService, PackageService packageService, Optional<ToolBoxService> toolBoxServiceO, 
-            SecurityContext securityContext, ExportHelper exportHelper, BillService billService, 
-            AnnexService annexService, TransformationService transformationService, NotificationService notificationService,
-            AKN4EUService akn4euService, CloneContext cloneContext) {
+    ProposalExportServiceImpl(LegService legService, PackageService packageService, Optional<ToolBoxService> toolBoxServiceO,
+                              SecurityContext securityContext, ExportHelper exportHelper, BillService billService,
+                              AnnexService annexService, TransformationService transformationService, NotificationService notificationService,
+                              AKN4EUService akn4euService, CloneContext cloneContext) {
         super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService);
         toolBoxServiceO.ifPresent(service -> this.toolBoxService = service);
         this.notificationService = notificationService;
@@ -79,7 +78,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
      * Asks to Toolbox the generation of PDF/LegisWrite for the given proposalId and return the jobId.
      * The result will be sent to the email of the logged user.
      *
-     * @param proposalId Proposal for which we need to generate the PDF/LegisWrite
+     * @param proposalId    Proposal for which we need to generate the PDF/LegisWrite
      * @param exportOptions
      * @return jobId assigned from Toolbox for this generation.
      */
@@ -94,15 +93,12 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             Map<String, File> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
             jobId = toolBoxService.createJobWithEmail(proposalId, packages, destinationEmail);
-        } catch (WebServiceException wse) {
-            LOG.error("Webservice error occurred in method exportToToolboxCoDe(): {}", wse.getMessage());
-            throw wse;
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportToToolboxCoDe(): {}", ex.getMessage());
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
-                if(!legisWritePackage.delete()){
+                if (!legisWritePackage.delete()) {
                     LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
                 }
             }
@@ -115,8 +111,8 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
      * The method first send the request to Toolbox then, with the jobId assigned, keep pulling the reply until
      * it get the answer or until the maximum numbers of tries exceed.
      *
-     * @param legFile Leg file for which we need to generate the PDF/LegisWrite.
-     *                It contains a full structure of a proposal (main.xml, bill, annexes, media, renditions, etc).
+     * @param legFile       Leg file for which we need to generate the PDF/LegisWrite.
+     *                      It contains a full structure of a proposal (main.xml, bill, annexes, media, renditions, etc).
      * @param exportOptions
      * @return New zip/leg file returned from Toolbox containing the generated PDF/LegisWrite files
      */
@@ -135,15 +131,12 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
                     legFile.getName(), legisWritePackage.getName());
 
             return checkForReply(jobId, exportOptions.getExportOutput(), legFile.getName());
-        } catch (WebServiceException wse) {
-            LOG.error("Webservice error occurred in method exportToToolboxCoDe(): {}", wse.getMessage());
-            throw wse;
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportToToolboxCoDe(): {}", ex.getMessage());
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
-                if(!legisWritePackage.delete()){
+                if (!legisWritePackage.delete()) {
                     LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
                 }
             }
@@ -174,20 +167,17 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             packages.put(exportOptionsWord.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
 
             jobId = toolBoxService.createJobWithCallback(proposalId, packages);
-        } catch (WebServiceException wse) {
-            LOG.error("Webservice error occurred in method exportLegPackage(): {}", wse.getMessage());
-            throw wse;
         } catch (Exception ex) {
             LOG.error("Unexpected error occurred in method exportLegPackage(): {}", ex.getMessage());
             throw ex;
         } finally {
             if (legisWritePackage != null && legisWritePackage.exists()) {
-                if(!legisWritePackage.delete()){
+                if (!legisWritePackage.delete()) {
                     LOG.info(FILE_NOT_DELETED, legisWritePackage.toPath());
                 }
             }
             if (pdfPackage != null && pdfPackage.exists()) {
-                if(!pdfPackage.delete()){
+                if (!pdfPackage.delete()) {
                     LOG.info(FILE_NOT_DELETED, pdfPackage.toPath());
                 }
             }
@@ -206,12 +196,12 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
                 Pair<byte[], byte[]> zipFiles = toolBoxService.getZipFilesFromLegDocumentJobResult(jobId);
                 LOG.debug("Rendition response from Toolbox in {} sec. Nr. tries made {} with a frequency of {} seconds", stopwatch.elapsed(TimeUnit.SECONDS),
                         count, jobResultPullingThresholdInSeconds);
-                
-                switch (exportOutput){
+
+                switch (exportOutput) {
                     case PDF:
                         byte[] outputPdf = zipFiles.left();
-                        if(outputPdf != null && outputPdf.length > 0) {
-                           notificationService.sendNotification(new PDFGenerationNotification(pdfGenerationFunctionalMailBox, "PDF generations", outputPdf, fileName));
+                        if (outputPdf != null && outputPdf.length > 0) {
+                            notificationService.sendNotification(new PDFGenerationNotification(pdfGenerationFunctionalMailBox, "PDF generations", outputPdf, fileName));
                         }
                         return outputPdf;
                     case WORD:
@@ -239,7 +229,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             return createZipFile(legPackage, jobFileName, exportOptions);
         } finally {
             if (legFile != null && legFile.exists()) {
-                if(!legFile.delete()){
+                if (!legFile.delete()) {
                     LOG.info(FILE_NOT_DELETED, legFile.toPath());
                 }
 
@@ -261,17 +251,17 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
                 legPackage = legService.createLegPackage(proposalId, exportOptions);
             }
             akn4euService.convert(legPackage.getFile(), user, exportHelper.createJsonOutputDescriptorFile(exportOptions));
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOG.error("An exception occurred while using the Legiswrite service: ", e);
             throw e;
         } finally {
-            if(legPackage != null && legPackage.getFile() != null && legPackage.getFile().exists()) {
-                if(!legPackage.getFile().delete()){
+            if (legPackage != null && legPackage.getFile() != null && legPackage.getFile().exists()) {
+                if (!legPackage.getFile().delete()) {
                     LOG.info(FILE_NOT_DELETED, legPackage.getFile().toPath());
                 }
             }
             LOG.debug("createLegisWritePackage() end....");
         }
     }
-    
+
 }

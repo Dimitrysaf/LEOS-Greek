@@ -59,6 +59,7 @@ public class SearchEngineImpl implements SearchEngine {
         List<Element> elements = new ArrayList<>();
 
         Node root = XercesUtils.getFirstElementByName(document, AKOMANTOSO);
+        XercesUtils.sanitize(root);
         visitNode(root, elements);
 
         createSearchableString(elements);
@@ -238,9 +239,13 @@ public class SearchEngineImpl implements SearchEngine {
     @Override
     public byte[] replace(byte[] docContent, List<SearchMatchVO> searchMatchVOs, String searchText, String replaceText, boolean removeEmptyTags) {
         Document document = createXercesDocument(docContent);
+        XercesUtils.sanitize(XercesUtils.getFirstElementByName(document, AKOMANTOSO));
         int replacedContentDiffLength = replaceText.length() - searchText.length();
         for (int i = 0; i < searchMatchVOs.size(); i++) {
             SearchMatchVO smVO = searchMatchVOs.get(i);
+            if (!smVO.isReplaceable()) {
+            	continue;
+            }
             replace(document, smVO, replaceText, true);
             // update positions of elements that have replaced texts
             List<String> elementIdsReplaced = smVO.getMatchedElements().stream().map(ElementMatchVO::getElementId).collect(Collectors.toList());
@@ -272,7 +277,6 @@ public class SearchEngineImpl implements SearchEngine {
      *
      */
     private void replace(Document document, SearchMatchVO smVO, String replaceText, boolean removeEmptyTags) {
-        if (smVO.isReplaceable()) {
             if (StringUtils.isEmpty(replaceText)) {
                 replaceText = "";
             }
@@ -325,7 +329,6 @@ public class SearchEngineImpl implements SearchEngine {
 
             removeEmptyElementsAndParents(document, emptyElementSet);
         }
-    }
 
     private List<Integer> getChildElementsContentLength(Document document, String elementId) {
         List<Integer> childNodesContentLength = new ArrayList<>();

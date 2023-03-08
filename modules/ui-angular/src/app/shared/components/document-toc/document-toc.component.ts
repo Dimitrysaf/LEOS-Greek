@@ -95,7 +95,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.documentService.setDocumentCategory(this.documentType.toLowerCase());
-
+    this.documentService.toc$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((toc) => {
+        this.setTree(toc);
+      });
     if (this.documentRef) {
       this.documentService
         .getToc(this.documentRef)
@@ -196,7 +200,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.type = this.getDisplayableTocItem(node.tocItem);
     this.number = node.number;
     this.tocType = node.tocItemType.toLocaleLowerCase();
-    this.selectedNodeToMove = node;
   }
 
   onDragStart(event: CdkDragStart) {
@@ -469,7 +472,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (dropped) {
       this.dragAction = null;
     }
-    this.selectedNodeToMove = null;
     this.document
       .querySelectorAll('.drop-before')
       .forEach((element) => element.classList.remove('drop-before'));

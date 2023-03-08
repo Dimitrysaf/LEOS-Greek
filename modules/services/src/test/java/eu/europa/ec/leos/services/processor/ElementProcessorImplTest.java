@@ -157,7 +157,7 @@ public class ElementProcessorImplTest extends LeosTest {
         when(xmlContentProcessor.replaceElementById(originalByteContent, newArticleText, articleId)).thenReturn(updatedByteContent);
         when(xmlContentProcessor.removeEmptyHeading(newArticleText)).thenReturn(newArticleText);
 
-        final byte[] result = elementServiceImpl.updateElement(originalDocument, newArticleText, articleTag, articleId);
+        final byte[] result = elementServiceImpl.updateElement(originalDocument, newArticleText, articleTag, articleId, false);
 
         assertThat(result, is(updatedByteContent));
     }
@@ -186,7 +186,7 @@ public class ElementProcessorImplTest extends LeosTest {
 
         when(xmlContentProcessor.replaceElementById(originalByteContent, null, articleId)).thenReturn(updatedByteContent);
 
-        final byte[] result = elementServiceImpl.updateElement(originalDocument, null, articleTag, articleId);
+        final byte[] result = elementServiceImpl.updateElement(originalDocument, null, articleTag, articleId, false);
 
         assertThat(result, is(updatedByteContent));
     }
@@ -248,7 +248,7 @@ public class ElementProcessorImplTest extends LeosTest {
         when(xmlContentProcessor.replaceElementById(originalByteContent, updtedCitations, tagId)).thenReturn(updatedByteContent);
 
         // DO THE ACTUAL CALL
-        final byte[] result = elementServiceImpl.updateElement(originalDocument, updtedCitations, tagName, tagId);
+        final byte[] result = elementServiceImpl.updateElement(originalDocument, updtedCitations, tagName, tagId, false);
 
         assertThat(result, is(updatedByteContent));
         verify(xmlContentProcessor).replaceElementById(originalByteContent, updtedCitations, tagId);
@@ -312,7 +312,7 @@ public class ElementProcessorImplTest extends LeosTest {
         when(xmlContentProcessor.replaceElementById(originalByteContent, updtedRecitals, tagId)).thenReturn(updatedByteContent);
 
         // DO THE ACTUAL CALL
-        byte[] result = elementServiceImpl.updateElement(originalDocument, updtedRecitals, tagName, tagId);
+        byte[] result = elementServiceImpl.updateElement(originalDocument, updtedRecitals, tagName, tagId, false);
 
         assertThat(result, is(updatedByteContent));
         verify(xmlContentProcessor).replaceElementById(originalByteContent, updtedRecitals, tagId);
@@ -346,7 +346,7 @@ public class ElementProcessorImplTest extends LeosTest {
                 .thenReturn(updatedByteContent);
 
         // DO THE ACTUAL CALL
-        final byte[] result = elementServiceImpl.deleteElement(originalDocument, elementId, elementId);
+        final byte[] result = elementServiceImpl.deleteElement(originalDocument, elementId, elementId, false);
 
         assertThat(result, is(updatedByteContent));
     }

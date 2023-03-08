@@ -55,7 +55,7 @@ $LIST_SPACING: 40px;
         }
     }
 
-    point > list > subparagraph:not(:first-child) {
+    point > list > subparagraph:not(:first-child):not(:last-of-type) {
         padding-left: $LIST_SPACING;
     }
 

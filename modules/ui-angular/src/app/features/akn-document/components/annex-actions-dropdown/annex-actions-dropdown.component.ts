@@ -52,7 +52,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   onSaveVersion() {
     const requestBody = this.populateDataForVersionSave();
     this.doc.saveVersion(requestBody).subscribe((response) => {
-      this.doc.versions$ = of(response);
+      this.doc.setDocumentId(this.doc.documentRef);
       this.closeVersionModal();
     });
   }

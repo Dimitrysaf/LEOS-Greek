@@ -34,15 +34,20 @@ import static eu.europa.ec.leos.services.support.XmlHelper.findString;
 import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
+import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -75,6 +80,104 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 public class XercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
+
+    public static final Map<String, String> replacements = Stream.of(new String[][] {
+            { "#x2610", "#x2610" },
+            { "#x2611", "#x2611" },
+    }).collect(Collectors.collectingAndThen(
+            Collectors.toMap(data -> data[0], data -> data[1]),
+            Collections::<String, String> unmodifiableMap));
+
+    /**
+     * This function takes the Map containing the entities to be replaced
+     * and uses those values to replace any entities in the XML string
+     * with their unique random integer replacements. The end results is an XML
+     * string that contains no entities, but contains identifiable strings that
+     * can be used to replace those entities at a later point.
+     *
+     * @param replacements
+     *            The Map containing the entities to be replaced
+     * @param xml
+     *            The XML string to modify
+     * @return The modified XML
+     */
+    public static String replaceEntities(final Map<String, String> replacements, final String xml)
+    {
+        String retValue = xml;
+        for (final String entity : replacements.keySet()) {
+            retValue = retValue.replaceAll("\\&" + entity + ";", replacements.get(entity));
+        }
+        return retValue;
+    }
+
+    /**
+     * This function takes the Map containing the entities to be replaced
+     * and uses those values to replace any entities in the XML byte array
+     * with their unique random integer replacements. The end results is an XML
+     * array that contains no entities, but contains identifiable strings that
+     * can be used to replace those entities at a later point.
+     *
+     * @param replacements
+     *            The Map containing the entities to be replaced
+     * @param xml
+     *            The XML byte array to modify
+     * @return The modified XML
+     */
+    public static byte[] replaceEntities(final Map<String, String> replacements, final byte[] xml)
+    {
+        return replaceEntities(replacements, new String(xml, UTF_8)).getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * This function takes a string, along with the Map containing the
+     * entities to be replaced, and restores all the entities.
+     *
+     * @param replacements
+     *            The Map containing the entities to be replaced
+     * @param xml
+     *            The xml string to modify
+     * @return The modified XML
+     */
+    public static String restoreEntities(final Map<String, String> replacements, final String xml)
+    {
+        String retValue = xml;
+        for (final Map.Entry<String, String> entityReplacement : replacements.entrySet())
+        {
+            final String entityName = entityReplacement.getKey();
+            final String entityPlaceholder = entityReplacement.getValue();
+            final int entityPlaceholderLength = entityPlaceholder.length();
+
+            /* The text in this node, with the substitutions */
+            final StringBuilder originalText = new StringBuilder(retValue);
+
+            int index = originalText.indexOf(entityPlaceholder);
+
+            while (index>=0) {
+                originalText.insert(index, "\u0026");
+                originalText.insert(index + entityPlaceholderLength + 1, ";");
+                originalText.replace(index + 1, index + entityPlaceholderLength + 1, entityName);
+                index = originalText.indexOf(entityPlaceholder, index + entityPlaceholderLength + 1);
+            }
+
+            retValue = originalText.toString();
+        }
+        return retValue;
+    }
+
+    /**
+     * This function takes a byte array, along with the Map containing the
+     * entities to be replaced, and restores all the entities.
+     *
+     * @param replacements
+     *            The Map containing the entities to be replaced
+     * @param xml
+     *            The xml byte array to modify
+     * @return The modified XML
+     */
+    public static byte[] restoreEntities(final Map<String, String> replacements, final byte[] xml)
+    {
+        return restoreEntities(replacements, new String(xml, UTF_8)).getBytes(StandardCharsets.UTF_8);
+    }
 
     public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
@@ -201,6 +304,23 @@ public class XercesUtils {
             }
         }
         return sb.toString();
+    }
+    
+    public static byte[] sanitize(byte[] content) {
+    	Document doc = createXercesDocument(content);
+    	sanitize(doc.getDocumentElement());
+    	return nodeToByteArray(doc);
+    }
+    
+    public static void sanitize(Node node) {
+    	if (node.getNodeType() == Node.TEXT_NODE) {
+    		node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
+    	} else if (node.getNodeType() == Node.ELEMENT_NODE) {
+    		NodeList nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+            	sanitize(nodeList.item(i));
+            }
+    	}
     }
 
     private static String buildNodeAsString(Node node, StringBuffer sb) {
@@ -1181,6 +1301,15 @@ public class XercesUtils {
             boolean isInsideAList = is(node.getParentNode(), LIST);
             boolean isFirstElement = XercesUtils.getPrevSibling(node) == null;
             return is(node, SUBPARAGRAPH) && isInsideAList && isFirstElement;
+        }
+        return false;
+    }
+
+    public static boolean isListWrapper(Node node) {
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+            boolean isInsideAList = is(node.getParentNode(), LIST);
+            boolean isLastElement = XercesUtils.getNextSibling(node) == null;
+            return is(node, SUBPARAGRAPH) && isInsideAList && isLastElement;
         }
         return false;
     }

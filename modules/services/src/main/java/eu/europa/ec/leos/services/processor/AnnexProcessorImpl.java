@@ -78,7 +78,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
         
-        byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName);
+        byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName, false);
         return updateAnnexContent(elementId, tagName, xmlContent);
     }
     
@@ -230,7 +230,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, tagName, elementId, elementFragment, toc);
         } else {
-            updatedContent = elementProcessor.updateElement(annex, elementFragment, tagName, elementId);
+            updatedContent = elementProcessor.updateElement(annex, elementFragment, tagName, elementId, false);
         }
         return updateAnnexContent(elementId, tagName, updatedContent);
     }

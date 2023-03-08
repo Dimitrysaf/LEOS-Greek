@@ -41,7 +41,9 @@ import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.Annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
 import eu.europa.ec.leos.services.document.ContributionService;
@@ -65,6 +67,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
@@ -76,6 +79,8 @@ import eu.europa.ec.leos.ui.event.DownloadXmlVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
 import eu.europa.ec.leos.ui.event.revision.OpenRevisionDocumentEvent;
+import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataRequest;
+import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataResponse;
 import eu.europa.ec.leos.ui.event.search.ReplaceAllMatchRequestEvent;
 import eu.europa.ec.leos.ui.event.search.ReplaceAllMatchResponseEvent;
 import eu.europa.ec.leos.ui.event.search.SearchTextRequestEvent;
@@ -84,6 +89,8 @@ import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;
 import eu.europa.ec.leos.ui.event.toc.InlineTocEditRequestEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
+import eu.europa.ec.leos.ui.model.AnnotateMetadata;
+import eu.europa.ec.leos.ui.view.CommonDelegate;
 import eu.europa.ec.leos.web.event.component.CompareRequestEvent;
 import eu.europa.ec.leos.web.event.component.CleanComparedContentEvent;
 import eu.europa.ec.leos.web.event.component.RestoreVersionRequestEvent;
@@ -94,7 +101,10 @@ import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
+import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
+import eu.europa.ec.leos.web.event.view.document.MergeSuggestionRequest;
+import eu.europa.ec.leos.web.event.view.document.MergeSuggestionsRequest;
 import eu.europa.ec.leos.web.event.view.document.ShowCleanVersionRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
 import eu.europa.ec.leos.web.event.view.document.ShowIntermediateVersionWindowEvent;
@@ -207,6 +217,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private final CloneContext cloneContext;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     protected final AttachmentProcessor attachmentProcessor;
+    private final AnnotateService annotateService;
+    private final CommonDelegate<FinancialStatement> commonDelegate;
 
     private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private String documentRef;
@@ -234,7 +246,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                                           LegService legService, ProposalService proposalService, SearchService searchService,
                                           ExportPackageService exportPackageService, NotificationService notificationService,
                                           CloneContext cloneContext, AttachmentProcessor attachmentProcessor,
-                                          TemplateConfigurationService templateConfigurationService) {
+                                          AnnotateService annotateService, CommonDelegate<FinancialStatement> commonDelegate, TemplateConfigurationService templateConfigurationService) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.financialStatementScreen = financialStatementScreen;
         this.financialStatementProcessor = financialStatementProcessor;
@@ -263,6 +275,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         this.notificationService = notificationService;
         this.cloneContext = cloneContext;
         this.attachmentProcessor = attachmentProcessor;
+        this.annotateService = annotateService;
+        this.commonDelegate = commonDelegate;
         this.openElementEditors = new ArrayList<>();
         this.templateConfigurationService = templateConfigurationService;
     }
@@ -286,7 +300,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         populateViewData(financialStatement, event.getTocMode());
     }
 
-    private boolean isFinancialStatementUnsaved(){
+    private boolean isFinancialStatementUnsaved() {
         return getFinancialStatementFromSession() != null;
     }
 
@@ -544,7 +558,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
         try {
             FinancialStatement financialStatement = getDocument();
-            byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId);
+            byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId, true);
+            updatedXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, updatedXmlContent);
             updatedXmlContent = xmlContentProcessor.doXMLPostProcessing(updatedXmlContent);
             if (updatedXmlContent == null) {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
@@ -566,6 +581,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                         eventBus.post(new CloseElementEvent());
                     }
                 }
+                updatedXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, updatedXmlContent);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.financial.statement.block.updated"));
                 String newElementContent = elementProcessor.getElement(financialStatement, elementTagName, elementId);
@@ -630,9 +646,11 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
             FinancialStatement financialStatement = getDocument();
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
+            xmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, xmlContent);
             Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
                 byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
+                newXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, newXmlContent);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
                 if (financialStatement != null) {
@@ -671,6 +689,36 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         LOG.info("New Element of type '{}' inserted in Financial statement {} id {}, in {} milliseconds ({} sec)", tagName,
                 financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS),
                 stopwatch.elapsed(TimeUnit.SECONDS));
+    }
+
+    @Subscribe
+    public void getUserPermissions(FetchUserPermissionsRequest event) {
+        FinancialStatement financialStatement = getDocument();
+        List<LeosPermission> userPermissions = securityContext.getPermissions(financialStatement);
+        financialStatementScreen.sendUserPermissions(userPermissions);
+        annotateService.sendUserPermissions(userPermissions);
+    }
+
+    @Subscribe
+    void mergeSuggestion(MergeSuggestionRequest event) {
+        FinancialStatement financialStatement = getDocument();
+        commonDelegate.mergeSuggestion(financialStatement, event, elementProcessor, financialStatementService::updateFinancialStatement);
+    }
+
+    @Subscribe
+    void mergeBulkSuggestions(MergeSuggestionsRequest event) {
+        FinancialStatement financialStatement = getDocument();
+        commonDelegate.mergeSuggestions(financialStatement, event, elementProcessor, financialStatementService::updateFinancialStatement);
+    }
+
+    @Subscribe
+    public void fetchMetadata(DocumentMetadataRequest event) {
+        AnnotateMetadata metadata = new AnnotateMetadata();
+        FinancialStatement financialStatement = getDocument();
+        metadata.setVersion(financialStatement.getVersionLabel());
+        metadata.setId(financialStatement.getId());
+        metadata.setTitle(financialStatement.getTitle());
+        eventBus.post(new DocumentMetadataResponse(metadata));
     }
 
     @Subscribe

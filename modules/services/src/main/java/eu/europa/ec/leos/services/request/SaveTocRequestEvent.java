@@ -23,11 +23,7 @@ import java.util.Set;
 
 public class SaveTocRequestEvent {
     private List<TableOfContentItemVO> tableOfContentItemVOs;
-
-    public SaveTocRequestEvent(List<TableOfContentItemVO> tocVOs) {
-        this.tableOfContentItemVOs = tocVOs;
-    }
-
+    
     public List<TableOfContentItemVO> getTableOfContentItemVOs() {
         return tableOfContentItemVOs;
     }

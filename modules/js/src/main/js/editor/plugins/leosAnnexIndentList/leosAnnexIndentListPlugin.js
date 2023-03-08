@@ -1366,7 +1366,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         if (!list)
             list = path.contains(query);
 
-		if(list && list.is && list.is('ol') && firstListItemInPath && firstListItemInPath.is && firstListItemInPath.is('p')) {
+		if(list && list.is && list.is('ol') && firstListItemInPath && firstListItemInPath.is && firstListItemInPath.is('p')){
 			list = list.getFirst(listItem);
 		}
 

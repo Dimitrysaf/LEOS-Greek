@@ -115,14 +115,22 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
     }
 
     @Override
-    public byte[] updateElement(T document, String elementContent, String elementName, String elementId) {
+    public byte[] updateElement(T document, String elementContent, String elementName, String elementId, boolean manageEntities) {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
 
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        elementContent = removeEmptyHeading(document.getContent().get().getSource().getBytes(), elementContent, elementName, elementId, tocItems);
+        byte[] byteXmlContent = getContent(document);
+        if (manageEntities) {
+            elementContent = XercesUtils.replaceEntities(XercesUtils.replacements, elementContent);
+            byteXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, byteXmlContent);
+        }
+        elementContent = removeEmptyHeading(byteXmlContent, elementContent, elementName, elementId, tocItems);
         // merge the updated content with the actual document and return updated document
         byte[] contentBytes = getContent(document);
+        if (manageEntities) {
+            contentBytes = XercesUtils.replaceEntities(XercesUtils.replacements, contentBytes);
+        }
         if (isClonedProposal()) {
             Pair<byte[], String> result = xmlContentProcessor.updateSoftMovedElement(contentBytes, elementContent);
             if(result.left() != null && result.left().length > 0) {
@@ -132,6 +140,9 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
                 elementContent = result.right();
             }
             byte[] originalContentBytes = documentContentService.getOriginalContentToCompare(document);
+            if (manageEntities) {
+                originalContentBytes = XercesUtils.replaceEntities(XercesUtils.replacements, originalContentBytes);
+            }
             Document doc = createXercesDocument(originalContentBytes);
             Node node = XercesUtils.getElementById(doc, elementId);
             String originalContent = nodeToString(node);
@@ -141,16 +152,27 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
                         .build());
             }
         }
-        return xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId);
+        contentBytes = xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId);
+        if (manageEntities) {
+            contentBytes = XercesUtils.restoreEntities(XercesUtils.replacements, contentBytes);
+        }
+        return contentBytes;
     }
 
     @Override
-    public byte[] deleteElement(T document, String elementId, String elementType) {
+    public byte[] deleteElement(T document, String elementId, String elementType, boolean manageEntities) {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
     
-        final byte[] contentBytes = getContent(document);
-        return xmlContentProcessor.removeElementById(contentBytes, elementId);
+        byte[] byteXmlContent = getContent(document);
+        if (manageEntities) {
+            byteXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, byteXmlContent);
+        }
+        byteXmlContent = xmlContentProcessor.removeElementById(byteXmlContent, elementId);
+        if (manageEntities) {
+            byteXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, byteXmlContent);
+        }
+        return byteXmlContent;
     }
 
     @Override
@@ -160,14 +182,23 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
     }
 
     @Override
-    public byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset) {
+    public byte[] replaceTextInElement(T document, String origText, String newText, String elementId, int startOffset, int endOffset, boolean manageEntities) {
         Validate.notNull(document, "Document is required.");
         Validate.notEmpty(origText, "Orginal Text is required");
         Validate.notNull(elementId, "Element Id is required");
         Validate.notNull(newText, "New Text is required");
         
-        final byte[] byteXmlContent = getContent(document);
-        return xmlContentProcessor.replaceTextInElement(byteXmlContent, origText, newText, elementId, startOffset, endOffset);
+        byte[] byteXmlContent = getContent(document);
+        if (manageEntities) {
+            origText = XercesUtils.replaceEntities(XercesUtils.replacements, origText);
+            newText = XercesUtils.replaceEntities(XercesUtils.replacements, newText);
+            byteXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, byteXmlContent);
+        }
+        byteXmlContent = xmlContentProcessor.replaceTextInElement(byteXmlContent, origText, newText, elementId, startOffset, endOffset);
+        if (manageEntities) {
+            byteXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, byteXmlContent);
+        }
+        return byteXmlContent;
     }
 
     @Override

@@ -60,14 +60,19 @@ define(function checkBoxesExtensionModule(require) {
         log.debug("checkBoxes extension state changed...");
     }
 
+    function encodeToUTF8(string) {
+        return string.replace(/[\u00A0-\u9999\&]/gim, function(i) {  return '&#x' + i.charCodeAt(0).toString(16) + ';';});
+    }
+
     function _toggleCheckBox(connector, event) {
         event.stopImmediatePropagation();
-        (this.text().includes(UNCHECKED)) ? this.html(this.html().replace(UNCHECKED, CHECKED)) : this.html(this.html().replace(CHECKED, UNCHECKED));
+        const text = encodeToUTF8(this.text());
+        (text.includes(UNCHECKED)) ? this.html(this.html().replace(this.text(), CHECKED)) : this.html(this.html().replace(this.text(), UNCHECKED));
         (this.attr(NAME_ATTR) == NAME_ATTR_UNCHECKED) ? this.attr(NAME_ATTR, NAME_ATTR_CHECKED) : this.attr(NAME_ATTR, NAME_ATTR_UNCHECKED);
         let data = {
             elementId: this.attr("id"),
             elementType: this.prop("tagName").toLowerCase(),
-            elementFragment: this.prop('outerHTML').replaceAll(" id=", " xml:id="),
+            elementFragment: encodeToUTF8(this.prop('outerHTML').replaceAll(" id=", " xml:id=")),
         };
         connector.saveElement(data);
     }

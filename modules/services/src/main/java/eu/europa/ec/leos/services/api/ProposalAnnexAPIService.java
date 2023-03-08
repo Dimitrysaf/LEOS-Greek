@@ -1,0 +1,83 @@
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+package eu.europa.ec.leos.services.api;
+
+
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.instance.Instance;
+import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
+import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportOptions;
+import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.toc.StructureContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Provider;
+
+@Service("proposalAnnex")
+@Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
+public class ProposalAnnexAPIService extends AnnexApiServiceImpl {
+    private static final Logger LOG = LoggerFactory.getLogger(ProposalAnnexAPIService.class);
+
+    ProposalAnnexAPIService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
+        super(structureContext, cloneContext, context);
+    }
+
+    @Override
+    public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
+        if (isWithAnnotations) {
+            //get filters
+            return new byte[0];
+        }
+        return this.doDownloadVersion(documentRef, false, null);
+    }
+
+    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
+        try {
+            Annex annex = this.annexService.findAnnexByRef(documentRef);
+
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+            contex.get().usePackage(leosPackage);
+            Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+            populateCloneProposalMetadata(proposal);
+
+            XmlDocument original = documentContentService.getOriginalAnnex(annex);
+            ExportOptions exportOptions;
+            exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
+            exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, annex));
+            exportOptions.setWithCoverPage(true);
+            exportOptions.setWithFilteredAnnotations(isWithAnnotations);
+            exportOptions.setFilteredAnnotations(annotations);
+
+            try {
+                this.createDocumentPackageForExport(exportOptions);
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+            throw new Exception("Unexpected error occured while using Export service", e);
+        }
+        return null;
+    }
+
+}

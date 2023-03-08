@@ -295,7 +295,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private boolean milestoneExplorerOpened = false;
     private InstanceTypeResolver instanceTypeResolver;
 
-    private static final DateTimeFormatter dateFormatter =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     private MergeContributionHelper mergeContributionHelper;
     private NumberService numberService;
     private XmlContentProcessor xmlContentProcessor;
@@ -303,6 +303,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private final List<String> openElementEditors;
 
     private final TemplateConfigurationService templateConfigurationService;
+
     @Autowired
     AnnexPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                    AnnexScreen annexScreen,
@@ -396,7 +397,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             proposalRef = proposal.getMetadata().get().getRef();
             connectedEntity = userHelper.getCollaboratorConnectedEntityByLoggedUser(proposal.getCollaborators());
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-            if(proposal != null && proposal.isClonedProposal()) {
+            if (proposal != null && proposal.isClonedProposal()) {
                 populateCloneProposalMetadataVO(xmlContent);
             }
         }
@@ -445,7 +446,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     private void populateViewData(Annex annex, TocMode mode) {
         Validate.notNull(annex, "Annex document should not be null");
-        try{
+        try {
             Option<AnnexMetadata> annexMetadata = annex.getMetadata();
             if (annexMetadata.isDefined()) {
                 annexScreen.setTitle(annexMetadata.get().getTitle(), annexMetadata.get().getNumber());
@@ -459,11 +460,10 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexScreen.setPermissions(annexVO, isClonedProposal(), isAnnexFromCouncil);
             annexScreen.setLiveDiffingRequired(annex.isLiveDiffingRequired());
             annexScreen.initAnnotations(annexVO, proposalRef, connectedEntity);
-            if(isClonedProposal()) {
+            if (isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error("Error while processing document", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
@@ -497,6 +497,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final List<VersionVO> allVersions = getVersionVOS();
         annexScreen.refreshVersions(allVersions, comparisonMode);
     }
+
     @Subscribe
     public void getUserGuidance(FetchUserGuidanceRequest event) {
         Annex annex = annexService.findAnnex(documentId, true);
@@ -634,7 +635,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         String language = original.getMetadata().get().getLanguage();
 
-        if(intermediate != null){
+        if (intermediate != null) {
             comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
             leosComparedContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
             docuWriteComparedContent = legService.doubleCompareXmlContents(original, intermediate, current, false);
@@ -663,7 +664,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void exportToDocuWrite(DocuWriteExportRequestEvent event){
+    void exportToDocuWrite(DocuWriteExportRequestEvent event) {
         try {
             this.createDocuWritePackageForExport(event.getExportOptions());
         } catch (Exception e) {
@@ -713,7 +714,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private void createDocuWritePackageForExport(ExportOptions exportOptions) throws Exception {
         final String proposalId = this.getContextProposalId();
         exportOptions.setDocuwrite(true);
-        if (proposalId != null){
+        if (proposalId != null) {
             final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
             final byte[] exportedBytes = exportService.createDocuWritePackage(jobFileName, proposalId, exportOptions);
             this.setAnnexScreenDownloadStreamResourceForExport(jobFileName, exportedBytes);
@@ -723,18 +724,18 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     private void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
         final String proposalId = this.getContextProposalId();
-        if (proposalId != null){
+        if (proposalId != null) {
             final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
             exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, user);
         }
     }
 
-    private void setAnnexScreenDownloadStreamResourceForExport(String jobFileName, byte[] exportedBytes){
+    private void setAnnexScreenDownloadStreamResourceForExport(String jobFileName, byte[] exportedBytes) {
         DownloadStreamResource downloadStreamResource = new DownloadStreamResource(jobFileName, new ByteArrayInputStream(exportedBytes));
         annexScreen.setDownloadStreamResourceForExport(downloadStreamResource);
     }
 
-    private String getContextProposalId(){
+    private String getContextProposalId() {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         BillContext context = billContextProvider.get();
         context.usePackage(leosPackage);
@@ -765,7 +766,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
                 ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false, true);
                 exportOptions.setExportVersions(new ExportVersions<Annex>(null, getDocument()));
-                byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName,"zip"), proposalId, exportOptions);
+                byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
                 DownloadStreamResource downloadStreamResource = new DownloadStreamResource(jobFileName, new ByteArrayInputStream(exportedBytes));
                 annexScreen.setDownloadStreamResourceForMenu(downloadStreamResource);
             } catch (Exception e) {
@@ -877,7 +878,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String baseRevisionId = document.getBaseRevisionId();
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
 
-        if(!StringUtils.isEmpty(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+        if (!StringUtils.isEmpty(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
             String versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
             String versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
             versionInfoVO.setRevisedBaseVersion(versionLabel);
@@ -887,7 +888,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         byte[] coverPageContent = new byte[0];
         byte[] annexContent = document.getContent().get().getSource().getBytes();
         boolean isCoverPageExists = documentContentService.isCoverPageExists(annexContent);
-        if(annexScreen.isCoverPageVisible() && !isCoverPageExists) {
+        if (annexScreen.isCoverPageVisible() && !isCoverPageExists) {
             Proposal proposal = getProposalFromPackage();
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
             coverPageContent = documentContentService.getCoverPageContent(xmlContent);
@@ -908,7 +909,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         LOG.trace("Handling close document request...");
 
         //if unsaved changes remain in the session, first ask for confirmation
-        if(this.isAnnexUnsaved() || this.isHasOpenElementEditors()){
+        if (this.isAnnexUnsaved() || this.isHasOpenElementEditors()) {
             eventBus.post(new ShowConfirmDialogEvent(new CloseDocumentConfirmationEvent(), null));
             return;
         }
@@ -919,14 +920,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
     void handleNavigationRequest(DocumentNavigationRequest event) {
         LOG.trace("Handling document navigation request...");
         if (event.getNavigationEvent() != null) event.getNavigationEvent().setForwardToDocument(false);
-        if(isAnnexUnsaved() || this.isHasOpenElementEditors()) {
+        if (isAnnexUnsaved() || this.isHasOpenElementEditors()) {
             eventBus.post(new ShowConfirmDialogEvent(event.getNavigationEvent(), null));
             return;
         }
         eventBus.post(event.getNavigationEvent());
     }
 
-    private boolean isAnnexUnsaved(){
+    private boolean isAnnexUnsaved() {
         return getAnnexFromSession() != null;
     }
 
@@ -987,7 +988,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void deleteElement(DeleteElementRequestEvent event){
+    void deleteElement(DeleteElementRequestEvent event) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Annex annex = getDocument();
@@ -1004,15 +1005,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 LOG.info("Element '{}' in Annex {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
 
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             LOG.error("Exception while deleting element operation for ", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
     }
 
     @Subscribe
-    void insertElement(InsertElementRequestEvent event){
+    void insertElement(InsertElementRequestEvent event) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String tagName = event.getElementTagName();
         Annex annex = getDocument();
@@ -1024,7 +1024,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
-            LOG.info("New Element of type '{}' inserted in Annex {} id {}, in {} milliseconds ({} sec)", tagName,  annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("New Element of type '{}' inserted in Annex {} id {}, in {} milliseconds ({} sec)", tagName, annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
 
         }
     }
@@ -1047,7 +1047,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                     eventBus.post(new CloseElementEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-                    LOG.info("Element '{}' merged into '{}' in Annex {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), annex.getName(),annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+                    LOG.info("Element '{}' merged into '{}' in Annex {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(), annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
                 }
             } else {
                 annexScreen.showAlertDialog("operation.element.not.performed");
@@ -1090,26 +1090,26 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         //load content from session if exists
         Annex annexFromSession = getAnnexFromSession();
-        if(annexFromSession != null) {
+        if (annexFromSession != null) {
             annexScreen.setContent(getEditableXml(annexFromSession));
             annexScreen.setLiveDiffingRequired(annexFromSession.isLiveDiffingRequired());
-        }else{
+        } else {
             eventBus.post(new RefreshDocumentEvent());
         }
         LOG.debug("User edit information removed");
     }
 
     @Subscribe
-    void editElement(EditElementRequestEvent event){
+    void editElement(EditElementRequestEvent event) {
         String elementId = event.getElementId();
         String elementTagName = event.getElementTagName();
         elementToEditAfterClose = null;
-        LOG.trace("Handling edit element request... for {},id={}",elementTagName , elementId );
+        LOG.trace("Handling edit element request... for {},id={}", elementTagName, elementId);
         try {
             //show confirm dialog if there is any unsaved replaced text
             //it can be detected from the session attribute
-            if(isAnnexUnsaved()){
-                eventBus.post(new ShowConfirmDialogEvent(event, new CancelElementEditorEvent(event.getElementId(),event.getElementTagName())));
+            if (isAnnexUnsaved()) {
+                eventBus.post(new ShowConfirmDialogEvent(event, new CancelElementEditorEvent(event.getElementId(), event.getElementTagName())));
                 return;
             }
 
@@ -1123,21 +1123,20 @@ class AnnexPresenter extends AbstractLeosPresenter {
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
             annexScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
             openElementEditors.add(elementId);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
         }
     }
 
     @Subscribe
-    void saveElement(SaveElementRequestEvent event){
+    void saveElement(SaveElementRequestEvent event) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String elementId = event.getElementId();
         String elementTagName = event.getElementTagName();
         String elementContent = event.getElementContent();
         elementToEditAfterClose = null;
-        LOG.trace("Handling save element request... for {},id={}",elementTagName , elementId );
+        LOG.trace("Handling save element request... for {},id={}", elementTagName, elementId);
 
         try {
             Annex annex = getDocument();
@@ -1153,7 +1152,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                     splittedContent = annexProcessor.getSplittedElement(updatedXmlContent, event.getElementContent(), elementTagName, elementId);
                     if (splittedContent != null) {
                         elementToEditAfterClose = splittedContent.right();
-                        if(splittedContent.left() != null){
+                        if (splittedContent.left() != null) {
                             updatedXmlContent = splittedContent.left();
                         }
                         eventBus.post(new CloseElementEvent());
@@ -1194,7 +1193,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void closeAnnexBlock(CloseElementEditorEvent event){
+    void closeAnnexBlock(CloseElementEditorEvent event) {
         String elementId = event.getElementId();
         coEditionHelper.removeUserEditInfo(id, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
         openElementEditors.remove(elementId);
@@ -1250,7 +1249,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         cloneContext.setContribution(Boolean.TRUE);
         annexScreen.refreshVersions(getVersionVOS(), false);
         Annex annex = getDocument();
-        List<TocItem>  tocItemList = getTocITems(annex);
+        List<TocItem> tocItemList = getTocITems(annex);
 
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
         annexScreen.showRevisionWithSidebar(revisionContent, contributionVO, tocItemList, temporaryAnnotationsId);
@@ -1276,7 +1275,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
         properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), contributionStatus);
         Annex updatedAnnex = annexService.updateAnnex(revision.getId(), properties, false);
-        if(updatedAnnex != null) {
+        if (updatedAnnex != null) {
             annexScreen.disableMergePane();
             event.getSelectedItem().setVisible(false);
         } else {
@@ -1311,7 +1310,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void acceptSelectedContributions(ApplyContributionsRequestEvent event) throws IOException {
-        if(event.getMergeActionVOS() == null || event.getMergeActionVOS().isEmpty()) {
+        if (event.getMergeActionVOS() == null || event.getMergeActionVOS().isEmpty()) {
             // Nothing to be done
             eventBus.post(new NotificationEvent(Type.INFO,
                     "contribution.no.contribution.available.notification.message"));
@@ -1337,7 +1336,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         }
         xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
         updateAnnexContent(annex, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"), mergeActionKey);
-        if(event.isAllContributions()) {
+        if (event.isAllContributions()) {
             markRevisionAsProcessed(event.getMergeActionVOS().get(0).getContributionVO().getDocumentId(), "contribution.accept.all.notification.message");
         } else {
             eventBus.post(new RefreshContributionEvent());
@@ -1350,11 +1349,11 @@ class AnnexPresenter extends AbstractLeosPresenter {
         Map<String, String> attachmentsClonedContent = attachmentProcessor.getAttachmentsHrefFromBill(xmlClonedContent);
         List<InternalRefMap> map = new ArrayList<>();
         String ref = annex.getName().replace(".xml", "");
-        String clonedRef  = event.getMergeActionVOS().get(0).getContributionVO().getDocumentName().replace(".xml", "");
+        String clonedRef = event.getMergeActionVOS().get(0).getContributionVO().getDocumentName().replace(".xml", "");
         map.add(new InternalRefMap("BILL", ref, clonedRef));
         Map<String, String> attachments = attachmentProcessor.getAttachmentsHrefFromBill(xmlContent);
         attachments.forEach((docType, href) -> {
-            if(docType.equals("ANNEX")) {
+            if (docType.equals("ANNEX")) {
                 docType = docType + " I";
             }
             String cloned = attachmentsClonedContent.get(docType);
@@ -1539,7 +1538,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    public void fetchSearchMetadata(SearchMetadataRequest event){
+    public void fetchSearchMetadata(SearchMetadataRequest event) {
         if (!milestoneExplorerOpened) {
             List<AnnotateMetadata> metadataList = new ArrayList<>();
             if (instanceTypeResolver.getInstanceType().equals(InstanceType.COMMISSION.toString()) || instanceTypeResolver.getInstanceType().equals(InstanceType.COUNCIL.toString())) {
@@ -1554,7 +1553,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    public void fetchMetadata(DocumentMetadataRequest event){
+    public void fetchMetadata(DocumentMetadataRequest event) {
         AnnotateMetadata metadata = new AnnotateMetadata();
         Annex annex = getDocument();
         metadata.setVersion(annex.getVersionLabel());
@@ -1566,7 +1565,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     @Subscribe
     void mergeSuggestion(MergeSuggestionRequest event) {
         Annex document = getDocument();
-        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset());
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, event.getOrigText(), event.getNewText(), event.getElementId(), event.getStartOffset(), event.getEndOffset(), false);
         if (resultXmlContent == null) {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
             return;
@@ -1577,8 +1576,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.success"), MergeSuggestionResponse.Result.SUCCESS));
-        }
-        else {
+        } else {
             eventBus.post(new MergeSuggestionResponse(messageHelper.getMessage("document.merge.suggestion.failed"), MergeSuggestionResponse.Result.ERROR));
         }
     }
@@ -1596,7 +1594,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String versionLabel = null;
         String versionComment = null;
         String baseRevisionId = document.getBaseRevisionId();
-        if(StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+        if (StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
             versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
             versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
         }
@@ -1621,7 +1619,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexVO.setTitle(metadata.getTitle());
             annexVO.getMetadata().setInternalRef(metadata.getRef());
         }
-        if(!annex.getCollaborators().isEmpty()) {
+        if (!annex.getCollaborators().isEmpty()) {
             annexVO.addCollaborators(annex.getCollaborators());
         }
         return annexVO;
@@ -1638,7 +1636,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void onInfoUpdate(UpdateUserInfoEvent updateUserInfoEvent) {
-        if(isCurrentInfoId(updateUserInfoEvent.getActionInfo().getInfo().getDocumentId())) {
+        if (isCurrentInfoId(updateUserInfoEvent.getActionInfo().getInfo().getDocumentId())) {
             if (!id.equals(updateUserInfoEvent.getActionInfo().getInfo().getPresenterId())) {
                 eventBus.post(new NotificationEvent(leosUI, "coedition.caption", "coedition.operation." + updateUserInfoEvent.getActionInfo().getOperation().getValue(),
                         NotificationEvent.Type.TRAY, updateUserInfoEvent.getActionInfo().getInfo().getUserName()));
@@ -1726,7 +1724,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         structureContextProvider.get().useDocumentTemplate(template);
         annexContext.useTemplate(template);
         annexContext.useAnnexId(documentId);
-        annexContext.useActionMessage(ContextAction.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch."+ elementType +".structure"));
+        annexContext.useActionMessage(ContextAction.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + elementType + ".structure"));
         annexContext.executeUpdateAnnexStructure();
         refreshView(elementType);
     }
@@ -1754,7 +1752,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void saveAndCloseAfterReplace(SaveAndCloseAfterReplaceEvent event){
+    void saveAndCloseAfterReplace(SaveAndCloseAfterReplaceEvent event) {
         // save document into repository
         Annex annex = getDocument();
 
@@ -1827,7 +1825,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void saveAfterReplace(SaveAfterReplaceEvent event){
+    void saveAfterReplace(SaveAfterReplaceEvent event) {
         // save document into repository
         Annex annex = getDocument();
 
@@ -1836,7 +1834,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         annex = annexService.updateAnnex(annex, annexFromSession.getContent().get().getSource().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         if (annex != null) {
-            httpSession.setAttribute("annex#"+getDocumentRef(), annex);
+            httpSession.setAttribute("annex#" + getDocumentRef(), annex);
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             eventBus.post(new NotificationEvent(Type.INFO, "document.replace.success"));
@@ -1871,7 +1869,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     void closeSearchBar(SearchBarClosedEvent event) {
         //Cleanup the session etc
         annexScreen.closeSearchBar();
-        httpSession.removeAttribute("annex#"+getDocumentRef());
+        httpSession.removeAttribute("annex#" + getDocumentRef());
         eventBus.post(new RefreshDocumentEvent());
     }
 
@@ -1922,7 +1920,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private Annex updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
-        Annex updatedExplanatory =  annexService.updateAnnex(documentId, properties, true);
+        Annex updatedExplanatory = annexService.updateAnnex(documentId, properties, true);
         return updatedExplanatory;
     }
 

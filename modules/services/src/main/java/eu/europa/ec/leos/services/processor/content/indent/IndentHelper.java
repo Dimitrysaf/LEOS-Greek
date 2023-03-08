@@ -476,7 +476,7 @@ public class IndentHelper {
                             || (isEndOfList(indentedItem) && indentedItem.getParentItem().getParentItem().equals(targetItem))) {
                         // Is there a list before ?
                         TableOfContentItemVO siblingBefore = originalPosition > 0 ? targetItem.getChildItemsView().get(originalPosition - 1) : null;
-                        if (siblingBefore != null && TableOfContentProcessor.getTagValueFromTocItemVo(siblingBefore).equals(XmlHelper.LIST)) {
+                        if (siblingBefore != null && isListAndGoodCandidate(siblingBefore, false)) {
                             // Ok found candidate, that's the list before
                             // For indent always at the end of the list
 
@@ -484,7 +484,7 @@ public class IndentHelper {
                             int position = siblingBefore.getChildItemsView().size();
                             if ((originalPosition + 1) < targetItem.getChildItemsView().size()) {
                                 TableOfContentItemVO siblingAfter = targetItem.getChildItemsView().get(originalPosition + 1);
-                                if (TableOfContentProcessor.getTagValueFromTocItemVo(siblingAfter).equals(XmlHelper.LIST)) {
+                                if (isListAndGoodCandidate(siblingAfter, true)) {
                                     indentApplyRules.mergeTwoLists(siblingBefore, siblingAfter);
                                 }
                             }
@@ -493,7 +493,7 @@ public class IndentHelper {
                             // Is there a list after ?
                             if ((originalPosition + 1) < targetItem.getChildItemsView().size()) {
                                 TableOfContentItemVO siblingAfter = targetItem.getChildItemsView().get(originalPosition + 1);
-                                if (TableOfContentProcessor.getTagValueFromTocItemVo(siblingAfter).equals(XmlHelper.LIST)) {
+                                if (isListAndGoodCandidate(siblingAfter, true)) {
                                     // Ok found candidate, that's the list after
                                     // This time should be first element of the list
                                     if (indentApplyRules.nextListCanBeMerged(siblingAfter)) {
@@ -595,6 +595,20 @@ public class IndentHelper {
         }
     }
 
+    private boolean isListAndGoodCandidate(TableOfContentItemVO list, boolean after) {
+        if (getTagValueFromTocItemVo(list).equals(LIST)) {
+            if (after && list.getChildItemsView().size() > 0) {
+                TableOfContentItemVO firstListChild = list.getChildItemsView().get(0);
+                return !getTagValueFromTocItemVo(firstListChild).equalsIgnoreCase(SUBPARAGRAPH);
+            } else if (!after && list.getChildItemsView().size() > 0) {
+                TableOfContentItemVO lastListChild = list.getChildItemsView().get(list.getChildItemsView().size() - 1);
+                return !getTagValueFromTocItemVo(lastListChild).equalsIgnoreCase(SUBPARAGRAPH);
+            }
+            return true;
+        }
+        return false;
+    }
+
     private int getOutdentTargetPosition(TableOfContentItemVO targetItem, TableOfContentItemVO indentedItem) {
         TableOfContentItemVO parent = indentedItem;
         while (parent.getParentItem() != null && !(parent.getParentItem().equals(targetItem))) {
@@ -617,12 +631,16 @@ public class IndentHelper {
 
     private List<TableOfContentItemVO> getDirectNextSiblings(TableOfContentItemVO item) {
         List<TableOfContentItemVO> nextSiblings = new ArrayList<TableOfContentItemVO>();
-        if (indentConversionHelper.isUnumberedInAlist(item)) {
+        if (indentConversionHelper.isUnumberedInAlist(item) && !isEndOfList(item)) {
             int position = item.getParentItem().getParentItem().getChildItemsView().indexOf(item.getParentItem());
             for (int i = position; i < item.getParentItem().getParentItem().getChildItemsView().size(); i++) {
                 nextSiblings.add(item.getParentItem().getParentItem().getChildItemsView().get(i));
             }
-
+        } else if (indentConversionHelper.isUnumberedInAlist(item) && isEndOfList(item)) {
+            int position = item.getParentItem().getParentItem().getChildItemsView().indexOf(item.getParentItem());
+            for (int i = position + 1; i < item.getParentItem().getParentItem().getChildItemsView().size(); i++) {
+                nextSiblings.add(item.getParentItem().getParentItem().getChildItemsView().get(i));
+            }
         } else {
             int position = item.getParentItem().getChildItemsView().indexOf(item);
             for (int i = position + 1; i < item.getParentItem().getChildItemsView().size(); i++) {
