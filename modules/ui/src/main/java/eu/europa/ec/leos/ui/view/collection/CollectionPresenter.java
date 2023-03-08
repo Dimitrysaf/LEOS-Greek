@@ -1020,6 +1020,31 @@ class CollectionPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
+    void createFinancialStatement(CreateFinancialStatementRequest event) {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+            Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
+            ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is required!");
+            CollectionContextService context = proposalContextProvider.get();
+            String template = "FS-001";
+            context.useTemplate(template);
+            context.usePurpose(metadata.getPurpose());
+            context.useProposalId(proposalId);
+            String actionMessage;
+            actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
+            context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
+            context.executeCreateFinancialStatement();
+            eventBus.post(new DocumentUpdatedEvent());
+            populateData();
+            LOG.info(actionMessage + ", in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while creating the financial statment", e);
+            eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.block.financial.statement.add.error", e.getMessage()));
+        }
+    }
+
+    @Subscribe
     void createSupportDocument(CreateSupportDocumentRequest event) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -1034,9 +1059,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             String actionMessage;
             switch (template) {
                 default :
-                    actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
-                    context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
-                    context.executeCreateFinancialStatement();
+                    actionMessage = "document creation message";
             }
             eventBus.post(new DocumentUpdatedEvent());
             populateData();

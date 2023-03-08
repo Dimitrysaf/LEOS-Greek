@@ -61,10 +61,12 @@ import eu.europa.ec.leos.ui.component.listener.CtrlHomeListener;
 import eu.europa.ec.leos.ui.component.milestones.MilestonesComponent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
 import eu.europa.ec.leos.ui.event.view.collection.CreateAnnexRequest;
+import eu.europa.ec.leos.ui.event.view.collection.CreateFinancialStatementRequest;
 import eu.europa.ec.leos.ui.event.view.collection.DeleteAnnexEvent;
 import eu.europa.ec.leos.ui.event.view.collection.DeleteCollectionRequest;
 import eu.europa.ec.leos.ui.event.view.collection.DeleteExplanatoryEvent;
 import eu.europa.ec.leos.ui.event.view.collection.DeleteFinancialStatementEvent;
+import eu.europa.ec.leos.ui.event.view.collection.DeleteFinancialStatementRequest;
 import eu.europa.ec.leos.ui.event.view.collection.SearchUserResponse;
 import eu.europa.ec.leos.ui.model.ExportPackageVO;
 import eu.europa.ec.leos.ui.model.MilestonesVO;
@@ -184,6 +186,13 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     protected Label legalTextLanguage;
     protected Label legalTextLastUpdated;
 
+    //Financial Statement
+    protected VerticalLayout financialStatementBlock;
+    protected Button createFinancialStatementButton = new Button(); // initialized to avoid unmapped field exception from design
+    protected Button deleteFinancialStatementButton = new Button();
+    protected HeadingComponent financialStatementBlockHeading;
+
+
     // Annexes
     protected Button createAnnexButton = new Button(); // initialized to avoid unmapped field exception from design
     protected HeadingComponent annexesBlockHeading;
@@ -301,7 +310,8 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         annexesBlockHeading.addRightButton(addCreateAnnexButton());
         annexesBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.annexes"));
 
-        supportDocumentsBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.supporting.documents"));
+        financialStatementBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.financial.statement"));
+        financialStatementBlockHeading.addRightButton(addCreatFinancialStatementButton());
 
         collaboratorsBlockHeading.addRightButton(addCollaboratorButton());
         collaboratorsBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.collaborator"));
@@ -313,9 +323,34 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         initDownloader();
         revision.setVisible(false);
         originRef.setVisible(false);
-        if(Boolean.valueOf(cfgHelper.getProperty("leos.supporting.documents.enable"))){
+        if(Boolean.valueOf(cfgHelper.getProperty("leos.supporting.documents.enable"))) {
+            supportDocumentsBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.supporting.documents"));
             supportDocumentsBlockHeading.addRightButton(addCreatSupportingDocumentButton());
         }
+    }
+
+    private Button addCreatFinancialStatementButton() {
+        createFinancialStatementButton.setIcon(VaadinIcons.PLUS_CIRCLE);
+        createFinancialStatementButton.setDescription(messageHelper.getMessage("collection.description.button.create.financial.statement"));
+        createFinancialStatementButton.addStyleName("create-finstmnt-button");
+        createFinancialStatementButton.setDisableOnClick(true);
+        createFinancialStatementButton.addClickListener(clickEvent -> eventBus.post(new CreateFinancialStatementRequest()));
+        createFinancialStatementButton.setVisible(true);
+        return createFinancialStatementButton;
+    }
+
+    private Button createDeleteDocumentButton() {
+        deleteFinancialStatementButton.setIcon(VaadinIcons.MINUS_CIRCLE);
+        deleteFinancialStatementButton.setDescription(messageHelper.getMessage("collection.description.button.delete.financial.statement"));
+        deleteFinancialStatementButton.addStyleName("delete-button");
+        deleteFinancialStatementButton.addClickListener(listener -> deleteFinancialStatmentRequest());
+        deleteFinancialStatementButton.setVisible(true);
+        return deleteFinancialStatementButton;
+    }
+
+    private void deleteFinancialStatmentRequest() {
+        FinancialStatementBlockComponent financialStatementBlockComponent = webApplicationContext.getBean(FinancialStatementBlockComponent.class);
+        eventBus.post(new DeleteFinancialStatementRequest((DocumentVO) financialStatementBlockComponent.getData()));
     }
 
     private Button addCreatSupportingDocumentButton() {
@@ -387,6 +422,20 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     }
 
     private void populateFinancialStatementData(DocumentVO financialStatment) {
+        if (financialStatment == null) {
+            createFinancialStatementButton.setVisible(true);
+            createFinancialStatementButton.setEnabled(true);
+            deleteFinancialStatementButton.setVisible(false);
+            financialStatementBlock.removeAllComponents();
+        } else {
+            financialStatementBlockHeading.addRightButton(createDeleteDocumentButton());
+            financialStatementBlock.setData(financialStatment);
+            createFinancialStatementButton.setVisible(false);
+            addFinancialDocument(financialStatment);
+        }
+    }
+
+    private void populateSupportingDocumentData(DocumentVO financialStatment) {
         if (financialStatment == null) {
             supportDocumentsLayout.setVisible(false);
         } else {
@@ -684,7 +733,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
 
     private void addFinancialDocument(DocumentVO document) {
         FinancialStatementBlockComponent financialStatementBlockComponent = webApplicationContext.getBean(FinancialStatementBlockComponent.class);
-        supportDocumentsLayout.addComponent(financialStatementBlockComponent);
+        financialStatementBlock.addComponent(financialStatementBlockComponent);
         financialStatementBlockComponent.populateData(document);
     }
 

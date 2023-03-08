@@ -93,7 +93,12 @@
                     <v-label _id="legalTextLastUpdated" style-name="last-updated" size-auto plain-text :top :right :expand=".4">Updated: Updated by Updated on</v-label>
                 </v-horizontal-layout>
 
-                <v-vertical-layout style-name="sub-block annexes-block" spacing="false" margin="false">
+                <v-vertical-layout style-name="ui-block financialstatement-block" spacing="false" margin="false">
+                    <leos-heading-component width-full _id="financialStatementBlockHeading"></leos-heading-component>
+                    <v-vertical-layout _id="financialStatementBlock" size-full spacing="false" margin="false"></v-vertical-layout>
+                </v-vertical-layout>
+
+                <v-vertical-layout style-name="ui-block annexes-block" spacing="false" margin="false">
                     <leos-heading-component width-full _id="annexesBlockHeading"></leos-heading-component>
                     <v-vertical-layout _id="annexesLayout" size-full spacing="false" margin="false"></v-vertical-layout>
                 </v-vertical-layout>
