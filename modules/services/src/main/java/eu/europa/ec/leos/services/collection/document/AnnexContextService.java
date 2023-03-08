@@ -226,6 +226,7 @@ public class AnnexContextService {
         AnnexMetadata annexMetadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
                 .build();
         annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
     }

@@ -355,6 +355,7 @@ public class BillContextService {
         BillMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
                 .build();
         billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
@@ -364,6 +365,7 @@ public class BillContextService {
             annexContext.usePurpose(purpose);
             annexContext.useAnnexId(annex.getId());
             annexContext.useActionMessageMap(actionMsgMap);
+            annexContext.useEeaRelevance(eeaRelevance);
             annexContext.executeUpdateAnnexMetadata();
         });
     }
