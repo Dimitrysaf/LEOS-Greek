@@ -30,21 +30,41 @@ import java.util.List;
 
 public interface BaseDocumentService<T extends XmlDocument> {
     String getElement(String documentRef, String elementName, String elementId);
+
     DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception;
+
     DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception;
+
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
-    DocumentViewResponse mergeElement(String documentRef, String elementContent , String  elementTag , String elementId) throws  Exception;
-    List<VersionVO> getRecentMinorVersions(String  documentRef);
+
+    DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception;
+
+    List<VersionVO> getRecentMinorVersions(String documentRef);
+
     List<VersionVO> getVersionsData(String documentRef);
+
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
+
     List<TocItem> getTocItems(String documentRef);
+
     DocumentViewResponse getDocument(String documentRef);
+
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
-    List<TableOfContentItemVO> saveToC(String documentRef,List<TableOfContentItemVO> toc) throws MethodNotSupportedException;
+
+    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException;
+
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception;
+
     DocumentViewResponse showVersion(String versionId);
+
     String compare(String newVersionId, String oldVersionId);
+
     DocumentViewResponse restoreToVersion(String documentRef, String versionId);
-    EditElementResponse editElement(String documentRef, String elementId, String  elementTagName);
+
+    EditElementResponse editElement(String documentRef, String elementId, String elementTagName);
+
+    byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception;
+
+    byte[] downloadXmlVersionFiles(String documentRef, String versionId);
 
 }

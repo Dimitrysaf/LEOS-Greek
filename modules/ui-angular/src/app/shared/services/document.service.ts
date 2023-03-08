@@ -64,7 +64,6 @@ export class DocumentService implements OnDestroy {
     this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
     this.documentView$ = this.documentId$.pipe(
-      // FIXME: use proper API
       combineLatestWith(this.documentCategory$),
       switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
     );
@@ -90,6 +89,7 @@ export class DocumentService implements OnDestroy {
         this.getDocumentRecentChangesData(category, ref),
       ),
     );
+    this.toc$ = this.documentId$.pipe(switchMap((ref) => this.getToc(ref)));
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
     this.searchPaneOpen$
@@ -259,9 +259,12 @@ export class DocumentService implements OnDestroy {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http
-      .post<TableOfContentItemVO[]>(`api/secured/${category}/${documentRef}`, {
-        tableOfContentItemVOs: toc,
-      })
+      .post<TableOfContentItemVO[]>(
+        `api/secured/${category}/${documentRef}/save-toc`,
+        {
+          tableOfContentItemVOs: toc,
+        },
+      )
       .subscribe({
         next: (res) => null,
         error: (res) => console.log(res),
@@ -286,6 +289,10 @@ export class DocumentService implements OnDestroy {
 
   setToc(toc: TableOfContentItemVO[]) {
     this.tocItemBS.next(toc);
+  }
+
+  get documentRef() {
+    return this.documentIdBS.value;
   }
 
   getDocumentVersionsData(documentType: string, documentRef: string) {

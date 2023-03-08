@@ -857,6 +857,8 @@ export class CKEditorService implements OnDestroy {
         .pipe(distinctUntilChanged())
         .subscribe((response) => {
           this.documentService.setDocumentId(documentRef);
+          this.documentService.getToc(documentRef);
+          // this.documentService.getToc(documentRef);
         });
     },
     mergeElement: (elementData: {

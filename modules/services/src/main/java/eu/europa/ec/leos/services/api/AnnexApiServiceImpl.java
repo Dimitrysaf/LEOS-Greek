@@ -14,10 +14,16 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -25,6 +31,8 @@ import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.AnnexService;
@@ -34,8 +42,14 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.export.ExportDW;
+import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportOptions;
+import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.resolvers.InstanceTypeResolverAPI;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -51,6 +65,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
@@ -84,9 +99,18 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     ProposalService proposalService;
     @Autowired
     ComparisonDelegateAPI<Annex> comparisonDelegate;
+    @Autowired
+    InstanceTypeResolverAPI instanceTypeResolver;
+    @Autowired
+    ExportService exportService;
+    private Provider<CloneContext> cloneContext;
+    protected Provider<BillContextService> contex;
 
-    AnnexApiServiceImpl(Provider<StructureContext> structureContext) {
+
+    AnnexApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
         this.structureContext = structureContext;
+        this.cloneContext = cloneContext;
+        this.contex = context;
     }
 
     @Override
@@ -256,6 +280,78 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         }
     }
 
+    @Override
+    public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
+        if (isWithAnnotations) {
+            //get filters
+            return new byte[0];
+        }
+        return this.doDownloadVersion(documentRef, false, null);
+    }
+
+    @Override
+    public byte[] downloadXmlVersionFiles(String documentRef, String versionId) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final Annex chosenDocument = annexService.findAnnexVersion(versionId);
+        final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
+        LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return chosenDocument.getContent().get().getSource().getBytes();
+    }
+
+    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
+        try {
+            Annex annex = this.annexService.findAnnexByRef(documentRef);
+
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+            contex.get().usePackage(leosPackage);
+            Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+            populateCloneProposalMetadata(proposal);
+
+            XmlDocument original = documentContentService.getOriginalAnnex(annex);
+            ExportOptions exportOptions;
+            if (InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
+                exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
+                exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, annex));
+                exportOptions.setWithCoverPage(true);
+            } else {
+                boolean isLiveDiffing = annex.isLiveDiffingRequired() || !documentContentService.isRevisionAnnex(annex);
+                if (!isLiveDiffing) {
+                    original = annex; // For NO Diffing
+                }
+                exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false);
+                exportOptions.setExportVersions(new ExportVersions<>(original, annex));
+                exportOptions.setWithCoverPage(false);
+            }
+            exportOptions.setWithFilteredAnnotations(isWithAnnotations);
+            exportOptions.setFilteredAnnotations(annotations);
+            String proposalId = proposal.getId();
+
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+            if (isClonedProposal() || InstanceType.COMMISSION.toString().equals(instanceTypeResolver.getInstanceType())) {
+                try {
+                    this.createDocumentPackageForExport(exportOptions);
+                } catch (Exception e) {
+                    LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
+                }
+            } else {
+                return exportService.createDocuWritePackage(jobFileName, proposalId, exportOptions);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+            throw new Exception("Unexpected error occured while using Export service", e);
+        }
+        return null;
+    }
+
+    protected void populateCloneProposalMetadata(Proposal proposal) {
+        if (proposal != null && proposal.isClonedProposal()) {
+            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+            cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        }
+    }
+
     private byte[] getContent(Annex annex) {
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         return content.getSource().getBytes();
@@ -270,6 +366,22 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
+    }
+
+    protected void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
+        final String proposalId = this.getContextProposalId();
+        if (proposalId != null) {
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
+            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+        }
+    }
+
+    private String getContextProposalId() {
+        return contex.get().getProposalId();
+    }
+
+    protected boolean isClonedProposal() {
+        return cloneContext != null && cloneContext.get().isClonedProposal();
     }
 
 }

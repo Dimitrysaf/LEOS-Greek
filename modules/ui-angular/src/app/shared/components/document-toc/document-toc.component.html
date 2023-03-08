@@ -8,6 +8,7 @@
       [treeControl]="treeControl"
       (cdkDropListDropped)="onDrop($event)"
       [cdkDropListSortingDisabled]="true"
+      [cdkDropListDisabled]="!isEditMode()"
     >
       <mat-nested-tree-node
         cdkScrollable
@@ -22,7 +23,7 @@
         [cdkDragData]="node"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="false"
+        [cdkDropListDisabled]="!isEditMode()"
       >
         <li class="node-li">
           <div class="mat-tree-node" (click)="hanldeNodeClick(node)">
@@ -100,7 +101,7 @@
         (cdkDragMoved)="dragMoved($event)"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="false"
+        [cdkDropListDisabled]="!isEditMode()"
       >
         <li class="">
           <div class="mat-tree-node mr-2" (click)="hanldeNodeClick(node)">
