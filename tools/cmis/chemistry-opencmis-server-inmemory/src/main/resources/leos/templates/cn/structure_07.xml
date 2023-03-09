@@ -63,7 +63,13 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>LEVEL_NUM</numberingType>
-            <editable>false</editable>
+            <profiles>
+                <profile>
+                    <elementSelector>level[leos\:editable='true']</elementSelector>
+                    <profileName>inlineAknLevelFinancialStatement</profileName>
+                </profile>
+            </profiles>
+            <editable>true</editable>
             <maxDepth>7</maxDepth>
         </tocItem>
 
@@ -84,7 +90,7 @@
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
-            <editable>true</editable>
+            <editable>false</editable>
         </tocItem>
 
         <tocItem>
@@ -103,6 +109,12 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
+            <profiles>
+                <profile>
+                    <elementSelector>level:has(table) subparagraph[leos\:editable='true']</elementSelector>
+                    <profileName>inlineAknSubParagraph</profileName>
+                </profile>
+            </profiles>
             <editable>true</editable>
         </tocItem>
 
@@ -194,8 +206,7 @@
             <suffix></suffix>
             <sequence>1</sequence>
             <description>1, 2, etc</description>
-            <regex>#|^(?!([a-z]))((^([1-9][0-9]*)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([a-z])*)
-            </regex>
+            <regex>#|^(?!([a-z]))((^([1-9][0-9]*)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([a-z])*)</regex>
             <msgValidationError>subdivision.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -348,6 +359,16 @@
             <tocItem>level</tocItem>
             <list>
                 <tocItem>level</tocItem>
+                <tocItem>subparagraph</tocItem>
+                <tocItem>list</tocItem>
+                <tocItem>point</tocItem>
+                <tocItem>indent</tocItem>
+            </list>
+        </entry>
+        <entry>
+            <tocItem>subparagraph</tocItem>
+            <list>
+                <tocItem>subparagraph</tocItem>
             </list>
         </entry>
     </tocRules>

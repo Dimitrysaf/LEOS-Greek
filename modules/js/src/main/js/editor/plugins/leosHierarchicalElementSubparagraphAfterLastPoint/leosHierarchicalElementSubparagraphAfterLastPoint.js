@@ -39,6 +39,8 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
     
     var CMD_NAME = "leosHierarchicalElementSubparagraphAfterLastPoint";
 
+    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
         init : function init(editor) {
@@ -68,16 +70,21 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
     };
 
     var _handleJQueryEvent = function _handleJQueryEvent(event) {
+        console.log("_handleJQueryEvent for " + event.name);
         var evtDataArray = event.data;
         var editor = evtDataArray[0];
         var cmd = evtDataArray[1];
         _setCurrentShiftCtrlEnterStatus(editor, cmd);
+        event.editor = editor;
+        leosCommandStateHandler.changeCommandState(event, CMD_NAME, null, true);
     }
 
     var _handleCKEvent = function _handleCKEvent(event) {
+        console.log("_handleCKEvent for " + event.name);
         var editor = event.editor;
         var cmd = event.listenerData;
         _setCurrentShiftCtrlEnterStatus(editor, cmd);
+        leosCommandStateHandler.changeCommandState(event, CMD_NAME, null, true);
     }
 
     var _setCurrentShiftCtrlEnterStatus = function _setCurrentShiftCtrlEnterStatus(editor, cmd) {

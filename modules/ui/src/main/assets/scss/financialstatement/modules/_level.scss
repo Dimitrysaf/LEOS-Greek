@@ -15,7 +15,7 @@
 
 $NUM_SPACING: 25px;
 $OUTLINE_BLUE: #47a4f5;
-$LEVEL_SPACING: 22px;
+$LEVEL_SPACING: 25px;
 
 //------------------------------- XML Styles --------------------------------//
 %xmlLevel {
@@ -62,7 +62,8 @@ $LEVEL_SPACING: 22px;
       }
     }
 
-    & > list > point {
+    & > list > point,
+    & > list > indent {
       padding-left: 0px; // first level list must be aligned to the heading
     }
 
@@ -84,7 +85,15 @@ $LEVEL_SPACING: 22px;
     }
   }
 
+  level[leos\:depth="1"] num:not(indent num):not(point num),
+  level[leos\:depth="2"] num:not(indent num):not(point num) {
+    font-weight: bold;
+  }
 
+  level[leos\:depth="3"] num:not(indent num):not(point num),
+  level[leos\:depth="4"] num:not(indent num):not(point num) {
+    font-style: italic;
+  }
 
   level[leos\:origin='ec'] {
     // second depth point (i).

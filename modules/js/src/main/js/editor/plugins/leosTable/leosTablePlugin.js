@@ -171,6 +171,9 @@ define(function leosTablePluginModule(require) {
                 akn : 'summary',
                 html : 'summary'
             }, {
+                akn : "leos:editable",
+                html : "contenteditable",
+            }, {
                 html : 'data-akn-name=leosTable'
             }],
             sub : {
@@ -182,6 +185,9 @@ define(function leosTablePluginModule(require) {
                 },{
                     akn : "leos:origin",
                     html : "data-origin"
+                }, {
+                    akn : "leos:editable",
+                    html : "contenteditable",
                 }],
                 sub: {
                     akn : {
@@ -207,6 +213,9 @@ define(function leosTablePluginModule(require) {
                     },{
                         akn : "leos:origin",
                         html : "data-origin"
+                    }, {
+                        akn : "leos:editable",
+                        html : "contenteditable",
                     }]
                 }
             }
