@@ -23,6 +23,9 @@ export class ProposalMilestoneViewComponent implements OnInit {
       this.proposalRef = params['proposalId'];
     });
     for (const doc of this.proposal.childDocuments) {
+      // if (doc.category === 'COUNCIL_EXPLANATORY') {
+      //   return;
+      // }
       if (doc.category === 'BILL') {
         for (const anenx of doc.childDocuments) {
           this.annexDocs.push(anenx);
@@ -39,6 +42,12 @@ export class ProposalMilestoneViewComponent implements OnInit {
 
   openDialog() {
     this.milestoneView.openDialog();
+  }
+
+  getDocumentsForMilestoneView() {
+    return this.documents.filter(
+      (d) => !['COUNCIL_EXPLANATORY', 'COVERPAGE'].includes(d.category),
+    );
   }
 
   getDocTitle(doc: Document) {
