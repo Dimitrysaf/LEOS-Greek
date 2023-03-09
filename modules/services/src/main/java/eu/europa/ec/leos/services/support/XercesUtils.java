@@ -153,9 +153,11 @@ public class XercesUtils {
             int index = originalText.indexOf(entityPlaceholder);
 
             while (index>=0) {
-                originalText.insert(index, "\u0026");
-                originalText.insert(index + entityPlaceholderLength + 1, ";");
-                originalText.replace(index + 1, index + entityPlaceholderLength + 1, entityName);
+                if (originalText.charAt(index-1) != '\u0026') { // Is already restored?
+                    originalText.insert(index, "\u0026");
+                    originalText.insert(index + entityPlaceholderLength + 1, ";");
+                    originalText.replace(index + 1, index + entityPlaceholderLength + 1, entityName);
+                }
                 index = originalText.indexOf(entityPlaceholder, index + entityPlaceholderLength + 1);
             }
 
