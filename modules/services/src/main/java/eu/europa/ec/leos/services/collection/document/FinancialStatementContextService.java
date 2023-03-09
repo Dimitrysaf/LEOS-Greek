@@ -41,7 +41,6 @@ public class FinancialStatementContextService {
     private String title = "";
     private String type = null;
     private String template = null;
-    private String FinancialStatementId = null;
     private List<Collaborator> collaborators = null;
 
     private DocumentVO FinancialStatementDocument;
@@ -110,12 +109,6 @@ public class FinancialStatementContextService {
         Validate.notNull(financialStatement, "FinancialStatement document is required!");
         LOG.trace("Using FinancialStatement document'... [FinancialStatementId={}]", financialStatement.getId());
         this.financialStatement = financialStatement;
-    }
-
-    public void useFinancialStatementId(String FinancialStatementId) {
-        Validate.notNull(FinancialStatementId, "FinancialStatement 'FinancialStatementId' is required!");
-        LOG.trace("Using FinancialStatementId'... [FinancialStatementId={}]", FinancialStatementId);
-        this.FinancialStatementId = FinancialStatementId;
     }
 
     public void useDocument(DocumentVO document) {
@@ -212,7 +205,7 @@ public class FinancialStatementContextService {
 
     public void executeUpdateFinancialStatementStructure() {
         byte[] xmlContent = getContent(financialStatement); //Use the content from template
-        financialStatement = financialStatementService.findFinancialStatement(FinancialStatementId); //Get the existing FinancialStatement document
+        financialStatement = financialStatementService.findFinancialStatement(financialStatementId); //Get the existing FinancialStatement document
 
         Option<FinancialStatementMetadata> metadataOption = financialStatement.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
@@ -235,15 +228,18 @@ public class FinancialStatementContextService {
     }
 
     public void executeCreateMilestone() {
-        financialStatement = financialStatementService.findFinancialStatement(FinancialStatementId);
-        List<String> milestoneComments = financialStatement.getMilestoneComments();
-        milestoneComments.add(milestoneComment);
-        if (financialStatement.getVersionType().equals(VersionType.MAJOR)) {
-            financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement.getId(), milestoneComments);
-            LOG.info("Major version {} already present. Updated only milestoneComment for [FinancialStatement={}]", financialStatement.getVersionLabel(), financialStatement.getId());
-        } else {
-            financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement, milestoneComments, VersionType.MAJOR, versionComment);
-            LOG.info("Created major version {} for [FinancialStatement={}]", financialStatement.getVersionLabel(), financialStatement.getId());
+        List<FinancialStatement> fsList = financialStatementService.findFinancialStatementByPackagePath(leosPackage.getPath());
+        if (fsList != null && !fsList.isEmpty()) {
+            financialStatement = fsList.get(0);
+            List<String> milestoneComments = financialStatement.getMilestoneComments();
+            milestoneComments.add(milestoneComment);
+            if (financialStatement.getVersionType().equals(VersionType.MAJOR)) {
+                financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement.getId(), milestoneComments);
+                LOG.info("Major version {} already present. Updated only milestoneComment for [FinancialStatement={}]", financialStatement.getVersionLabel(), financialStatement.getId());
+            } else {
+                financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement, milestoneComments, VersionType.MAJOR, versionComment);
+                LOG.info("Created major version {} for [FinancialStatement={}]", financialStatement.getVersionLabel(), financialStatement.getId());
+            }
         }
     }
 
