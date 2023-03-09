@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
@@ -122,6 +122,7 @@ export class DocumentService implements OnDestroy {
     );
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
+      skip(1),
       tap((x) => {
         console.log(x);
       }),
@@ -366,11 +367,13 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentVersionsComparison(versionArray: any, documentType: string) {
-    console.log('getDocumentVersionsComparison:', versionArray);
-    if (versionArray.newVersion !== null) {
+    if (versionArray && versionArray.newVersion !== null) {
       return this.http.get<string>(
         `api/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
+        { responseType: 'text' as 'json' },
       );
+    } else {
+      return of('');
     }
   }
 

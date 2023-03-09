@@ -52,10 +52,19 @@ export class VersionsPaneGroupComponent implements OnInit {
           oldVersion: idParts[1],
           newVersion: null,
         });
-      } else if (currentIdsArray.oldVersion !== null) {
+      } else if (currentIdsArray && currentIdsArray.oldVersion !== null) {
+        const oldV =
+          currentIdsArray.oldVersion < idParts[1]
+            ? currentIdsArray.oldVersion
+            : idParts[1];
+        const newV =
+          currentIdsArray.oldVersion < idParts[1]
+            ? idParts[1]
+            : currentIdsArray.oldVersion;
+
         this.docService.setVersionIdsForCompare({
-          oldVersion: currentIdsArray.oldVersion,
-          newVersion: idParts[1],
+          oldVersion: oldV,
+          newVersion: newV,
         });
       }
     }

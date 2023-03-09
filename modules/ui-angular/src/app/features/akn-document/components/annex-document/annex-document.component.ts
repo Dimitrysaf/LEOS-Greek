@@ -45,7 +45,8 @@ export class AnnexDocumentComponent
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('xml' in changes) {
+    console.log(changes);
+    if ('xml' in changes && changes.xml.currentValue !== undefined) {
       const rootEl = this.rootElementRef.nativeElement;
       this.xml = changes.xml.currentValue.replaceAll('xml:id', 'id');
       rootEl.innerHTML = this.xml;

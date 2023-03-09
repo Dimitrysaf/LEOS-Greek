@@ -68,6 +68,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       this.documentService.setDocumentCategory(this.documentType);
       this.cdkEditor.setDocumentRef(this.documentRef);
       this.cdkEditor.setDocumentType(this.documentType);
+      this.setVersionComparisonViewHeader(null, null);
     });
 
     this.loadStyleSheet();
@@ -106,13 +107,15 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
           this.versionsComparisonForView = versionCompareView;
         }
       });
+
     this.documentService.versionCompareIds$
       .pipe(takeUntil(this.destroy$))
       .subscribe((idArray) => {
-        if (idArray.length === 2) {
-          this.setVersionComparisonViewHeader(idArray[0], idArray[1]);
-        } else {
-          this.setVersionComparisonViewHeader(null, null);
+        if (idArray && idArray.newVersion !== null) {
+          this.setVersionComparisonViewHeader(
+            idArray.oldVersion,
+            idArray.newVersion,
+          );
         }
       });
   }
@@ -350,6 +353,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private setVersionComparisonViewHeader(oldVersion, newVersion) {
+    console.log('setVersionComparisonViewHeader', oldVersion, newVersion);
     this.translate
       .get(
         oldVersion && newVersion
@@ -359,7 +363,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe((header: string) => {
-        this.versionForViewHeaderTitle = header;
+        this.versionsComparisonForViewHeaderTitle = header;
       });
   }
 }
