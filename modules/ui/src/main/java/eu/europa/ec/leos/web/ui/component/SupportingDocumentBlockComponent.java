@@ -52,17 +52,18 @@ import java.util.List;
 
 @SpringComponent
 @ViewScope
-@DesignRoot("FinancialStatementBlockDesign.html")
-public class FinancialStatementBlockComponent extends VerticalLayout {
+@DesignRoot("SupportingDocumentsBlockDesign.html")
+public class SupportingDocumentBlockComponent extends VerticalLayout {
     private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final int TITLE_MAX_LEGTH  = 2000;
 
+    protected HeadingComponent heading;
     protected Label titleCaption;
     protected EditBoxComponent title;
     protected Label docUserCoEdition;
     protected Button openButton;
-    protected Label financialStatementLanguage;
-    protected Label financialStatementLastUpdated;
+    protected Label supportDocLanguage;
+    protected Label supportDocLastUpdated;
 
     private MessageHelper messageHelper;
     private EventBus eventBus;
@@ -79,8 +80,11 @@ public class FinancialStatementBlockComponent extends VerticalLayout {
     @Value("${leos.coedition.sip.domain}")
     private String coEditionSipDomain;
 
+    @Value("${leos.supporting.documents.enable:false}")
+    private boolean supportingDocEnabled;
+
     @Autowired
-    public FinancialStatementBlockComponent(LanguageHelper languageHelper, MessageHelper messageHelper, EventBus eventBus, UserHelper userHelper,
+    public SupportingDocumentBlockComponent(LanguageHelper languageHelper, MessageHelper messageHelper, EventBus eventBus, UserHelper userHelper,
                                             SecurityContext securityContext) {
         this.messageHelper = messageHelper;
         this.eventBus = eventBus;
@@ -92,22 +96,36 @@ public class FinancialStatementBlockComponent extends VerticalLayout {
 
     @PostConstruct
     private void init() {
-        addStyleName("financialstatement-block");
+        addStyleName("supportingdocument-block");
 
         documentVOBinder = new Binder<>();
-        documentVOBinder.forField(new ReadOnlyHasValue<>(financialStatementLanguage::setValue))
+        documentVOBinder.forField(new ReadOnlyHasValue<>(supportDocLanguage::setValue))
                 .withConverter(langConverter)
                 .bind(DocumentVO::getLanguage, DocumentVO::setLanguage);
         documentVOBinder.forField(title).bind(DocumentVO::getTitle, DocumentVO::setTitle);
+        titleCaption.setCaption(messageHelper.getMessage("collection.block.caption.financial.statement.title"));
+        openButton.setCaption(messageHelper.getMessage("leos.button.open"));// using same caption as of card
+        supportDocLanguage.setCaption(messageHelper.getMessage("collection.caption.language"));
+        heading.setCaption(messageHelper.getMessage("collection.block.caption.financial.statement"));
+
+        if(supportingDocEnabled) {
+            heading.addRightButton(createDeleteDocumentButton());
+        }
         openButton.addClickListener(event -> openDocument());
         title.addValueChangeListener(event -> saveData());
     }
 
+    private Button createDeleteDocumentButton() {
+        Button button = new Button();
+        button.setIcon(VaadinIcons.MINUS_CIRCLE);
+        button.setDescription(messageHelper.getMessage("collection.description.button.delete.financial.statement"));
+        button.addStyleName("delete-button");
+        return button;
+    }
+
     public void populateData(DocumentVO documentVO) {
-        titleCaption.setCaption(messageHelper.getMessage("collection.block.caption.financial.statement.title"));
-        openButton.setCaption(messageHelper.getMessage("leos.button.open"));// using same caption as of card
-        financialStatementLanguage.setCaption(messageHelper.getMessage("collection.caption.language"));
         enableSave = false; // To avoid triggering save on load of data
+        resetBasedOnPermissions(documentVO);
         this.setData(documentVO);
         documentVOBinder.setBean(documentVO);
         setLastUpdated(documentVO.getUpdatedBy(), documentVO.getUpdatedOn());
@@ -115,6 +133,13 @@ public class FinancialStatementBlockComponent extends VerticalLayout {
         title.setTitleMaxSize(TITLE_MAX_LEGTH);
     }
 
+    private void resetBasedOnPermissions(DocumentVO documentVO) {
+        boolean enableUpdate = securityContext.hasPermission(documentVO, LeosPermission.CAN_UPDATE);
+        if(heading.getRightButton() != null) {
+            heading.getRightButton().setVisible(enableUpdate);
+        }
+        title.setEnabled(enableUpdate);
+    }
 
     private void openDocument() {
         eventBus.post(new OpenFinancialStatementEvent((DocumentVO) this.getData()));
@@ -130,7 +155,7 @@ public class FinancialStatementBlockComponent extends VerticalLayout {
     }
 
     public void setLastUpdated(String lastUpdatedBy, Date lastUpdatedOn) {
-        financialStatementLastUpdated.setValue(messageHelper.getMessage("collection.caption.document.lastupdated", dataFormat.format(lastUpdatedOn.toInstant()),
+        supportDocLastUpdated.setValue(messageHelper.getMessage("collection.caption.document.lastupdated", dataFormat.format(lastUpdatedOn.toInstant()),
                 userHelper.convertToPresentation(lastUpdatedBy)));
     }
 

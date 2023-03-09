@@ -188,7 +188,22 @@ $HEADING_BLUE: #2a78e4;
             }
         }
 
+        .financialstatement-block {
+            .create-finstmnt-button {
+                color: green;
+            }
+            .create-finstmnt-button.v-disabled {
+                color: $DARK_GREY;
+            }
+            .financialstatement-block {
+                .title {
+                    padding-left: 51px; //number to align it with language
+                }
+            }
+        }
+
         .supportingdocuments-block {
+            display: none;
             .create-supportdoc-button {
                 color: green;
             }
