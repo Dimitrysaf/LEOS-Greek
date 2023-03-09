@@ -55,6 +55,8 @@ public class ConfigServiceImpl implements ConfigService {
         String supportDocumentCatalogKey = applicationProperties.getProperty("leos.supporting.documents.catalog.key");
         boolean supportDocumentEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.supporting.documents.enable"));
         String[] permissions = authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        String headerTitle = applicationProperties.getProperty("leos.ui.header.title");
+        String headerPath = applicationProperties.getProperty("leos.ui.header.path.leos");
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -68,6 +70,8 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setSupportDocumentEnabled(supportDocumentEnabled);
         appConfigResponse.setPermissions(permissions);
         appConfigResponse.setUser(securityContext.getUser());
+        appConfigResponse.setHeaderTitle(headerTitle);
+        appConfigResponse.setHeaderPath(headerPath);
 
         return appConfigResponse;
     }

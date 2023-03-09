@@ -29,6 +29,8 @@ public class AppConfigResponse {
     private boolean supportDocumentEnabled;
     private String[] permissions;
     private User user;
+    private String headerTitle;
+    private String headerPath;
 
     public AppConfigResponse() {
     }
@@ -129,5 +131,21 @@ public class AppConfigResponse {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getHeaderTitle() {
+        return headerTitle;
+    }
+
+    public void setHeaderTitle(String headerTitle) {
+        this.headerTitle = headerTitle;
+    }
+
+    public String getHeaderPath() {
+        return headerPath;
+    }
+
+    public void setHeaderPath(String headerPath) {
+        this.headerPath = headerPath;
     }
 }
