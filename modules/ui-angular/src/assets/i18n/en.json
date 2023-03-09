@@ -229,5 +229,7 @@
   "toc.item.template.citation.content.text": "Citation...",
   "toc.item.template.recital.content.text": "Recital...",
   "toc.item.template.crossheading.content.text": "Crossheading...",
-  "version.view.header": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}"
+  "version.view.header": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}",
+  "version.compare.header.default": "Select 2 versions to compare",
+  "version.compare.header": "Comparing {{ oldVersion }} and {{ newVersion }}"
 }

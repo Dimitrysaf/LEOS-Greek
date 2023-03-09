@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { Version } from '@/features/akn-document/models/versions';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-versions-pane-group',
@@ -22,7 +23,10 @@ export class VersionsPaneGroupComponent implements OnInit {
   description: string;
   showModifications = false;
 
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    public docService: DocumentService,
+  ) {}
 
   ngOnInit(): void {
     if (this.group) {
@@ -35,6 +39,26 @@ export class VersionsPaneGroupComponent implements OnInit {
 
     this.setTitle();
     this.setSubtitle();
+  }
+
+  onSelectVersion(event) {
+    if (event.target.checked) {
+      const idParts = event.target.id.split('-');
+      console.log('on Select Version:', idParts);
+      const currentIdsArray = this.docService.getVersionsIdsArray();
+      console.log('on Select Version:', currentIdsArray);
+      if (!currentIdsArray || currentIdsArray.newVersion !== null) {
+        this.docService.setVersionIdsForCompare({
+          oldVersion: idParts[1],
+          newVersion: null,
+        });
+      } else if (currentIdsArray.oldVersion !== null) {
+        this.docService.setVersionIdsForCompare({
+          oldVersion: currentIdsArray.oldVersion,
+          newVersion: idParts[1],
+        });
+      }
+    }
   }
 
   private setTitle() {

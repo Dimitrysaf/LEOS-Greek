@@ -8,6 +8,7 @@ import {
   map,
   mergeMap,
   Observable,
+  of,
   skip,
   Subject,
   switchMap,
@@ -34,6 +35,7 @@ export class DocumentService implements OnDestroy {
   documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
   versionView$: Observable<DocumentViewResponse | null>;
+  versionCompareView$: Observable<string | null>;
   guidelinesEnabled$: Observable<boolean>;
   highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
@@ -44,6 +46,7 @@ export class DocumentService implements OnDestroy {
   tocItems$: Observable<any[]>;
   recentChanges$: Observable<any[]>;
   versionId$: Observable<string | null>;
+  versionCompareIds$: Observable<any | null>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -60,6 +63,7 @@ export class DocumentService implements OnDestroy {
   });
   private versionSearchOpenBS = new BehaviorSubject(false);
   private versionIdBS = new BehaviorSubject<string | null>(null);
+  private versionCompareIdsBS = new BehaviorSubject<any | null>(null);
 
   private destroy$ = new Subject<void>();
 
@@ -78,6 +82,7 @@ export class DocumentService implements OnDestroy {
     this.highlightsEnabled$ = this.highlightsEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
     this.versionId$ = this.versionIdBS.asObservable();
+    this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
@@ -113,6 +118,17 @@ export class DocumentService implements OnDestroy {
       combineLatestWith(this.documentCategory$),
       mergeMap(([versionId, category]) =>
         this.getDocumentVersion(category, versionId),
+      ),
+    );
+
+    this.versionCompareView$ = this.versionCompareIds$.pipe(
+      tap((x) => {
+        console.log(x);
+      }),
+      takeUntil(this.destroy$),
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([versionCompareIds, category]) =>
+        this.getDocumentVersionsComparison(versionCompareIds, category),
       ),
     );
   }
@@ -208,6 +224,15 @@ export class DocumentService implements OnDestroy {
     });
   }
 
+  setVersionIdsForCompare(versionIdsToCompare: any) {
+    console.log('setVersionIdsForCompare:', versionIdsToCompare);
+    this.versionCompareIdsBS.next(versionIdsToCompare);
+  }
+
+  getVersionsIdsArray() {
+    return this.versionCompareIdsBS.value;
+  }
+
   toggleAnnotations(enabled?: boolean) {
     this.toggleSubject(this.annotationsEnabledBS, enabled);
   }
@@ -215,7 +240,7 @@ export class DocumentService implements OnDestroy {
   toggleCompareMode(enabled?: boolean) {
     this.toggleSubject(this.compareModeEnabledBS, enabled);
     this.compareModeEnabledBS.pipe(take(1)).subscribe((e) => {
-      console.warn('stub:', 'toggleCompareMode', e); // FIXME
+      if (!e) this.setVersionIdsForCompare([]);
     });
   }
 
@@ -338,6 +363,15 @@ export class DocumentService implements OnDestroy {
     return this.http.get<DocumentViewResponse>(
       `api/secured/${documentType}/${versionId}/show-version`,
     );
+  }
+
+  getDocumentVersionsComparison(versionArray: any, documentType: string) {
+    console.log('getDocumentVersionsComparison:', versionArray);
+    if (versionArray.newVersion !== null) {
+      return this.http.get<string>(
+        `api/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
+      );
+    }
   }
 
   private doSearch(params: DocumentSearchParams) {

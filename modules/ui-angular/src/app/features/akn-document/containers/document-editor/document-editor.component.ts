@@ -30,6 +30,8 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   isCollapseToc = false;
   versionForView: string;
   versionForViewHeaderTitle: string;
+  versionsComparisonForView: string;
+  versionsComparisonForViewHeaderTitle: string;
 
   isVersionForViewOpen = false;
   isTOCColumnCollapsed = true;
@@ -95,6 +97,23 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
           updatedOn: versionView.versionInfoVO.lastModificationInstant,
         });
         this.isVersionForViewOpen = true;
+      });
+
+    this.documentService.versionCompareView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((versionCompareView) => {
+        if (versionCompareView !== null) {
+          this.versionsComparisonForView = versionCompareView;
+        }
+      });
+    this.documentService.versionCompareIds$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((idArray) => {
+        if (idArray.length === 2) {
+          this.setVersionComparisonViewHeader(idArray[0], idArray[1]);
+        } else {
+          this.setVersionComparisonViewHeader(null, null);
+        }
       });
   }
 
@@ -214,6 +233,9 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.isVersionForViewOpen = false;
   }
 
+  closeVersionComparisonView() {
+    this.documentService.toggleCompareMode(false);
+  }
   private get tocStructure() {
     return this.documentTocComponent.treeControl.dataNodes;
   }
@@ -321,6 +343,20 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   private setVersionForViewHeader({ version, updatedByFull, updatedOn }) {
     this.translate
       .get('version.view.header', { version, updatedByFull, updatedOn })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((header: string) => {
+        this.versionForViewHeaderTitle = header;
+      });
+  }
+
+  private setVersionComparisonViewHeader(oldVersion, newVersion) {
+    this.translate
+      .get(
+        oldVersion && newVersion
+          ? 'version.compare.header'
+          : 'version.compare.header.default',
+        { oldVersion, newVersion },
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe((header: string) => {
         this.versionForViewHeaderTitle = header;

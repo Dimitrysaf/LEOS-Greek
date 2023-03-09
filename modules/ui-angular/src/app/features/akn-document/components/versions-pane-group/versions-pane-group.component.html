@@ -1,6 +1,8 @@
 <eui-card euiNoShadow>
   <eui-card-header>
-    <eui-card-header-title *ngIf="!isRecent">{{ title }}</eui-card-header-title>
+    <eui-card-header-title *ngIf="!isRecent">
+      {{ title }}
+    </eui-card-header-title>
 
     <eui-card-header-subtitle *ngIf="description && !isRecent">
       {{ description }}
@@ -8,7 +10,7 @@
     <eui-card-header-subtitle *ngIf="!isRecent">
       {{ subtitle }}
     </eui-card-header-subtitle>
-
+    <eui-card-header-subtitle *ngIf="!isRecent"> </eui-card-header-subtitle>
     <eui-card-header-left-content *ngIf="isRecent">
       <eui-chip euiRounded euiChip euiAccent>
         <span
@@ -17,23 +19,43 @@
         ></span
       ></eui-chip>
     </eui-card-header-left-content>
-    <eui-card-header-right-content *ngIf="!isRecent">
-      <eui-chip euiRounded euiPrimary *ngIf="isMilestone">
+
+    <eui-card-header-right-content>
+      <eui-chip euiRounded euiPrimary *ngIf="!isRecent && isMilestone">
         <span
           euiLabel
           translate="page.editor.versions.group-tag.milestone"
         ></span>
       </eui-chip>
-      <eui-chip euiRounded euiSuccess *ngIf="isCreation">
+      <eui-chip
+        euiRounded
+        euiSuccess
+        *ngIf="
+          !isRecent &&
+          isCreation &&
+          (docService.compareModeEnabled$ | async) === false
+        "
+      >
         <span
           euiLabel
           translate="page.editor.versions.group-tag.creation"
         ></span>
       </eui-chip>
-
       <app-version-actions-dropdown
+        *ngIf="(docService.compareModeEnabled$ | async) === false"
         [version]="group"
       ></app-version-actions-dropdown>
+      <input
+        id="select-{{ group.documentId }}"
+        euiInputCheckBox
+        (change)="onSelectVersion($event)"
+        *ngIf="
+          ((docService.compareModeEnabled$ | async) && !isRecent) ||
+          ((docService.compareModeEnabled$ | async) &&
+            isRecent &&
+            recentChanges?.length !== 0)
+        "
+      />
     </eui-card-header-right-content>
   </eui-card-header>
   <eui-card-content
@@ -43,7 +65,9 @@
       <ng-container
         *ngFor="let version of recentChanges; trackByProperty: 'versionNumber'"
       >
-        <div class="version">{{ version.cmisVersionNumber }}</div>
+        <div class="version">
+          {{ version.cmisVersionNumber }}
+        </div>
         <div>{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
@@ -69,7 +93,9 @@
           trackByProperty: 'versionNumber'
         "
       >
-        <div class="version">{{ version.cmisVersionNumber }}</div>
+        <div class="version">
+          {{ version.cmisVersionNumber }}
+        </div>
         <div>{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
