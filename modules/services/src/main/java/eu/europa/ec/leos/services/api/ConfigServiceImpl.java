@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
@@ -31,13 +32,16 @@ public class ConfigServiceImpl implements ConfigService {
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final Provider<StructureContext> structureContextProvider;
 
+    private final MessageHelper messageHelper;
+
     @Autowired
     public ConfigServiceImpl(Properties applicationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
-            Provider<StructureContext> structureContextProvider) {
+            Provider<StructureContext> structureContextProvider, MessageHelper messageHelper) {
         this.applicationProperties = applicationProperties;
         this.securityContext = securityContext;
         this.authorityMapHelper = authorityMapHelper;
         this.structureContextProvider = structureContextProvider;
+        this.messageHelper = messageHelper;
     }
 
     @Override
@@ -55,8 +59,7 @@ public class ConfigServiceImpl implements ConfigService {
         String supportDocumentCatalogKey = applicationProperties.getProperty("leos.supporting.documents.catalog.key");
         boolean supportDocumentEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.supporting.documents.enable"));
         String[] permissions = authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
-        String headerTitle = applicationProperties.getProperty("leos.ui.header.title");
-        String headerPath = applicationProperties.getProperty("leos.ui.header.path.leos");
+        String headerTitle = messageHelper.getMessage("leos.ui.header.title");
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -71,7 +74,6 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setPermissions(permissions);
         appConfigResponse.setUser(securityContext.getUser());
         appConfigResponse.setHeaderTitle(headerTitle);
-        appConfigResponse.setHeaderPath(headerPath);
 
         return appConfigResponse;
     }
