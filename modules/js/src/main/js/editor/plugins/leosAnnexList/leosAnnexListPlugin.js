@@ -1147,14 +1147,11 @@ define(function leosAnnexListPluginModule(require) {
 
                     }
 
-                    var startContainerParents = cursor.startContainer.getParents();
-                    var endContainerParents = cursor.endContainer.getParents();
                     leosPluginUtils.manageEmptyLists(editor);
                     leosPluginUtils.managePoints(editor);
                     leosPluginUtils.manageEmptySubparagraphs(editor);
                     leosPluginUtils.manageCrossheadings(editor);
                     leosPluginUtils.manageSiblingLists(editor);
-                    leosPluginUtils.keepCursorPosition(startContainerParents, endContainerParents, editor, cursor);
                     // The backspace/del could potentially put cursor at a bad position,
                     // being it handled or not, check immediately the selection to have it fixed.
                     setTimeout( function() {
