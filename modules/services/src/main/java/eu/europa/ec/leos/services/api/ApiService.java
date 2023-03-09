@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
+import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 
 import java.io.File;
@@ -56,6 +57,10 @@ public interface ApiService {
 
     void createExplanatoryDocument(String proposalRef, String template);
 
+    void deleteExplanatoryDocument(String proposalRef, String template);
+
+    List<ExportPackageVO> getExportDocuments(String proposalRef);
+
     String exportProposal(String proposalRef, String outputType) throws Exception;
 
     Optional<DocumentVO> getProposalDetails(String proposalRef);
@@ -66,9 +71,9 @@ public interface ApiService {
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 
-    void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection,Integer timesToMove);
+    void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove);
 
-    void updateAnnexTitle(String proposalRef,String annexId, String annexTitle);
+    void updateAnnexTitle(String proposalRef, String annexId, String annexTitle);
 
     LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception;
 }
