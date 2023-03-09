@@ -395,12 +395,14 @@ public class CollectionContextService {
         memorandumContext.usePackage(leosPackage);
         memorandumContext.usePurpose(purpose);
         memorandumContext.useActionMessageMap(actionMsgMap);
+        memorandumContext.useEeaRelevance(eeaRelevance);
         memorandumContext.executeUpdateMemorandum();
 
         BillContextService billContext = billContextProvider.get();
         billContext.usePackage(leosPackage);
         billContext.usePurpose(purpose);
         billContext.useActionMessageMap(actionMsgMap);
+        billContext.useEeaRelevance(eeaRelevance);
         billContext.executeUpdateBill();
 
         return proposal;
