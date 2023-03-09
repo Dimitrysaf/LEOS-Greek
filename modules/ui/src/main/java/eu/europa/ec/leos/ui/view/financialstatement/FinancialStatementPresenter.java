@@ -650,7 +650,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
                 byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
-                newXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, newXmlContent);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
                 if (financialStatement != null) {
