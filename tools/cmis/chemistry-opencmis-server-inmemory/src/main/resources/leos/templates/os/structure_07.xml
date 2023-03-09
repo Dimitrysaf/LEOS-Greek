@@ -63,7 +63,13 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>LEVEL_NUM</numberingType>
-            <editable>false</editable>
+            <profiles>
+                <profile>
+                    <elementSelector>level[leos\:editable='true']</elementSelector>
+                    <profileName>inlineAknLevelFinancialStatement</profileName>
+                </profile>
+            </profiles>
+            <editable>true</editable>
             <maxDepth>7</maxDepth>
         </tocItem>
 
@@ -84,13 +90,7 @@
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>NONE</numberingType>
-            <profiles>
-                <profile>
-                    <elementSelector>level:not(:has(subparagraph)):not(:has(point)) content[leos\:editable='true']</elementSelector>
-                    <profileName>inlineAknLevelContentFS</profileName>
-                </profile>
-            </profiles>
-            <editable>true</editable>
+            <editable>false</editable>
         </tocItem>
 
         <tocItem>
@@ -111,7 +111,7 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>level subparagraph[leos\:editable='true']</elementSelector>
+                    <elementSelector>level:has(table) subparagraph[leos\:editable='true']</elementSelector>
                     <profileName>inlineAknSubParagraph</profileName>
                 </profile>
             </profiles>

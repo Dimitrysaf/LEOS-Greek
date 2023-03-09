@@ -478,6 +478,7 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithCrossHeadingInlineForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/inline"].join("")));
             var rootElementsWithTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/text"].join("")));
             var rootElementsWithNumAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/num\/text"].join("")));
+            var rootElementsWithInlineNumAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/num\/inline\/text"].join("")));
             var rootElementsWithCrossHeadingInlineAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/inline\/text"].join("")));
             var rootElementsWithContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content"].join("")));
             var rootElementsWithContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content\/mp"].join("")));
@@ -686,9 +687,11 @@ define(function hierarchicalElementTransformer(require) {
                                     toChildTextValue: element.value
 
                                 });
-                            } else if (rootElementsWithNumAndTextForFromRegExp.test(path)
+                            } else if ((rootElementsWithNumAndTextForFromRegExp.test(path)
+                                    && element.value !== " ")
                                 || (rootElementsWithCrossHeadingInlineAndTextForFromRegExp.test(path)
-                                    && !!element.parent.attributes["name"] && element.parent.attributes["name"].toLowerCase() == INLINE_NUM.toLowerCase())) {
+                                    && !!element.parent.attributes["name"] && element.parent.attributes["name"].toLowerCase() == INLINE_NUM.toLowerCase())
+                                || rootElementsWithInlineNumAndTextForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsPathForTo,
                                     toAttribute: DATA_AKN_NUM

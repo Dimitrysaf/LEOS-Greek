@@ -75,11 +75,14 @@ define(function leosAnnexIndentListPluginModule(require) {
         TRISTATE_DISABLED = CKEDITOR.TRISTATE_DISABLED,
         TRISTATE_OFF = CKEDITOR.TRISTATE_OFF;
 
+    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+
     var pluginDefinition = {
         requires: 'indent',
         init: function init(editor) {
             var globalHelpers = CKEDITOR.plugins.indent;
             editor.on("receiveLevelItemVo", _getLevelItemVo);
+            editor.on('selectionChange', _onSelectionChange, null, null, 11);
 
             resetIndentStatus();
 
@@ -184,21 +187,21 @@ define(function leosAnnexIndentListPluginModule(require) {
                                         return TRISTATE_DISABLED;
                                     }
                                 } else if (_shouldUseCouncilIndentation(list, editor) && PARAGRAPH === type) {
-									if(_isParagraphInsideAnnexList(range) || _isSubparagraphInsideAnnexParagraph(range)) {
-										if(isFirstItemInLevel(path, list)) {
-											return TRISTATE_DISABLED;
-										} else {
-											return TRISTATE_OFF;
-										}
-									} else {
-	                                    _initIndentStatus(editor);
-	                                    var ol = $(this.getContext(path).$);
-	                                    if (!_shouldIndent(ol)) {
-	                                        return TRISTATE_DISABLED;
-	                                    } else {
-	                                        return TRISTATE_OFF;
-	                                    }
-									}
+                                    if(_isParagraphInsideAnnexList(range) || _isSubparagraphInsideAnnexParagraph(range)) {
+                                        if(isFirstItemInLevel(path, list)) {
+                                            return TRISTATE_DISABLED;
+                                        } else {
+                                            return TRISTATE_OFF;
+                                        }
+                                    } else {
+                                        _initIndentStatus(editor);
+                                        var ol = $(this.getContext(path).$);
+                                        if (!_shouldIndent(ol)) {
+                                            return TRISTATE_DISABLED;
+                                        } else {
+                                            return TRISTATE_OFF;
+                                        }
+                                    }
                                 } else if (isListEnding) {
                                     return TRISTATE_OFF;
                                 } else if (_isIndentableInNumberEditor(range)) {
@@ -420,8 +423,8 @@ define(function leosAnnexIndentListPluginModule(require) {
 
     function _checkLevelListDepthMoreThanThreshold(list, range) {
         var isDepthMoreThanThreshold = list && list.getName() === 'ol' && leosPluginUtils.isAnnexList(list)
-                        && !_isLevelListDepthMoreThanThreshold(getEnclosedLevelElement(range.startContainer),
-                        getEnclosedLevelElement(range.endContainer), LOCAL_MAX_LEVEL_LIST_DEPTH);
+            && !_isLevelListDepthMoreThanThreshold(getEnclosedLevelElement(range.startContainer),
+                getEnclosedLevelElement(range.endContainer), LOCAL_MAX_LEVEL_LIST_DEPTH);
         return isDepthMoreThanThreshold;
     }
 
@@ -707,7 +710,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
             var indentOffset = that.isIndent ? 1 : -1,
 
-            startItem = itemsToMove[0], lastItem = itemsToMove[itemsToMove.length - 1], listArray;
+                startItem = itemsToMove[0], lastItem = itemsToMove[itemsToMove.length - 1], listArray;
 
             // Convert the list DOM tree into a one dimensional array.
             // Is this is a subparagraph, no need to go to the list of points' logic, just set it as a point
@@ -737,7 +740,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                 // Make sure the newly created sublist get a brand-new element of the same type. (http://dev.ckeditor.com/ticket/5372)
                 if (indentOffset > 0) {
 
-                  //LEOS: 4062 On indent the first level list just update the num and depth attribute
+                    //LEOS: 4062 On indent the first level list just update the num and depth attribute
                     //values without changing the structure
                     var firstLevelList = isFirstLevelList(editor, listNode);
                     if(firstLevelList && isFirstItemInLevel(editor.elementPath(), listNode)) {
@@ -830,7 +833,7 @@ define(function leosAnnexIndentListPluginModule(require) {
             if (pendingLis && pendingLis.length) {
                 for (i = 0; i < pendingLis.length; i++) {
                     var li = pendingLis[i], followingList = li;
-					var parentAknElement = li.getParent().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
+                    var parentAknElement = li.getParent().getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
                     if (!parentAknElement || (parentAknElement !== leosPluginUtils.LEVEL && parentAknElement !== PARAGRAPH)) {
                         // Nest preceding <ul>/<ol> inside current <li> if any.
                         while ((followingList = followingList.getNext()) && followingList.is && followingList.getName() in context) {
@@ -987,7 +990,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                 }
                 return true;
             } else if (leosPluginUtils.PARAGRAPH === type && _shouldUseCouncilIndentation(list, editor)) {
-				if ((_isParagraphInsideAnnexList(range) || _isSubparagraphInsideAnnexParagraph(range)) && !leosPluginUtils.isListIntro(range.startContainer)) {
+                if ((_isParagraphInsideAnnexList(range) || _isSubparagraphInsideAnnexParagraph(range)) && !leosPluginUtils.isListIntro(range.startContainer)) {
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     range.startContainer.renameNode('li');
                     // Check if point has an ol as parent, if not add it
@@ -997,11 +1000,11 @@ define(function leosAnnexIndentListPluginModule(require) {
                         range.startContainer.getParent().$.insertBefore(newOl.$, range.startContainer.$);
                         newOl.append(range.startContainer);
                     }
-					leosPluginUtils.manageSiblingLists(editor);
+                    leosPluginUtils.manageSiblingLists(editor);
                     result = true;
                 } else {
-                	return indentParagraph();
-				}
+                    return indentParagraph();
+                }
             } else if (nearestListBlock) {
                 if (_isParagraphInsideAnnexList(range) || leosPluginUtils.isSubparagraph(range.startContainer) && !leosPluginUtils.isListIntro(range.startContainer)) {
                     range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
@@ -1046,27 +1049,27 @@ define(function leosAnnexIndentListPluginModule(require) {
             indentationStatus.current.numbered = true;
         }
     }
-    
+
     function _isParagraphInsideAnnexList(range) {
         var element = range.startContainer.getAscendant('p', true);
         if (element && PARAGRAPH === element.getAttribute(DATA_AKN_NAME_ELEMENT)) {
-			var parentElement = element.getAscendant('ol');
-			if (leosPluginUtils.isAnnexList(parentElement)
+            var parentElement = element.getAscendant('ol');
+            if (leosPluginUtils.isAnnexList(parentElement)
                 && PARAGRAPH === parentElement.getAttribute(DATA_AKN_NAME_ELEMENT)) {
                 return true;
-			}
+            }
         }
         return false;
     }
-    
+
     function _isSubparagraphInsideAnnexParagraph(range) {
         var element = range.startContainer.getAscendant('p', true);
         if (element && SUBPARAGRAPH === element.getAttribute(DATA_AKN_NAME_ELEMENT)) {
-			var parentElement = element.getAscendant('ol');
-			if (leosPluginUtils.isAnnexList(parentElement)
+            var parentElement = element.getAscendant('ol');
+            if (leosPluginUtils.isAnnexList(parentElement)
                 && PARAGRAPH === parentElement.getAttribute(DATA_AKN_NAME_ELEMENT)) {
                 return true;
-			}
+            }
         }
         return false;
     }
@@ -1103,7 +1106,7 @@ define(function leosAnnexIndentListPluginModule(require) {
         return listDepth === 1 && leosPluginUtils.isAnnexList(olElement)
             && ('paragraph' === olElement.getAttribute(DATA_AKN_NAME_ELEMENT));
     }
-    
+
     function _isHeadingSelected(range) {
         var startContainer = range.startContainer;
         var endContainer = range.endContainer;
@@ -1111,8 +1114,8 @@ define(function leosAnnexIndentListPluginModule(require) {
         var endAtHeading = range.endContainer.getAscendant('h2', true);
 
         if (leosPluginUtils.isSelectionInFirstLevelList(startContainer) || leosPluginUtils.isSelectionInFirstLevelList(endContainer)) {
-           return (startContainer && endContainer && _isCrossListSelectionIncludesFirstLevelList(startContainer, endContainer))
-                   || startAtHeading || endAtHeading;
+            return (startContainer && endContainer && _isCrossListSelectionIncludesFirstLevelList(startContainer, endContainer))
+                || startAtHeading || endAtHeading;
         }
         return false;
     }
@@ -1139,9 +1142,9 @@ define(function leosAnnexIndentListPluginModule(require) {
         var crossheadingAttr = element.getAttribute(leosPluginUtils.CROSSHEADING_LIST_ATTR);
         var dataAknElementAttr = element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
 
-        if (!!element && isLi 
-			&& (dataAknElementAttr == null || (dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase() && dataAknElementAttr.toLowerCase() != leosPluginUtils.PARAGRAPH.toLowerCase())) 
-			&& (crossheadingAttr == null || crossheadingAttr != leosPluginUtils.LIST)) {
+        if (!!element && isLi
+            && (dataAknElementAttr == null || (dataAknElementAttr.toLowerCase() != leosPluginUtils.SUBPARAGRAPH.toLowerCase() && dataAknElementAttr.toLowerCase() != leosPluginUtils.PARAGRAPH.toLowerCase()))
+            && (crossheadingAttr == null || crossheadingAttr != leosPluginUtils.LIST)) {
             return true;
         } else {
             return false;
@@ -1191,8 +1194,8 @@ define(function leosAnnexIndentListPluginModule(require) {
     function _isOnlyLevelElementSelected(startSelection, endSelection) {
         return ((startSelection && (startSelection.type === CKEDITOR.NODE_ELEMENT || startSelection.type === CKEDITOR.NODE_TEXT) && startSelection.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT,true) &&
                 leosPluginUtils.isAnnexList(startSelection.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT,true))) &&
-                (endSelection && (endSelection.type === CKEDITOR.NODE_ELEMENT || endSelection.type === CKEDITOR.NODE_TEXT) && endSelection.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT,true) &&
-                        leosPluginUtils.isAnnexList(endSelection.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT,true))));
+            (endSelection && (endSelection.type === CKEDITOR.NODE_ELEMENT || endSelection.type === CKEDITOR.NODE_TEXT) && endSelection.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT,true) &&
+                leosPluginUtils.isAnnexList(endSelection.getAscendant(leosPluginUtils.ORDER_LIST_ELEMENT,true))));
     }
 
     function _isLevelDepthMoreThanThreshold(levelItemVo, depth){
@@ -1366,9 +1369,9 @@ define(function leosAnnexIndentListPluginModule(require) {
         if (!list)
             list = path.contains(query);
 
-		if(list && list.is && list.is('ol') && firstListItemInPath && firstListItemInPath.is && firstListItemInPath.is('p')){
-			list = list.getFirst(listItem);
-		}
+        if(list && list.is && list.is('ol') && firstListItemInPath && firstListItemInPath.is && firstListItemInPath.is('p')) {
+            list = list.getFirst(listItem);
+        }
 
         return list && firstListItemInPath && firstListItemInPath.getParent().equals(list) && firstListItemInPath.equals(list.getFirst(listItem));
     }
@@ -1495,6 +1498,11 @@ define(function leosAnnexIndentListPluginModule(require) {
             return !!paragraph;
         }
         return false;
+    }
+
+    function _onSelectionChange(event) {
+        leosCommandStateHandler.changeCommandState(event, "indent", null, true);
+        leosCommandStateHandler.changeCommandState(event, "outdent", null, true);
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

@@ -37,6 +37,9 @@ define(function aknHtmlBoldPluginModule(require) {
         }, {
             akn : "leos:origin",
             html : "data-origin"
+        }, {
+            akn : "leos:editable",
+            html : "contenteditable"
         }],
         sub: {
             akn: "text",
