@@ -6,6 +6,7 @@ declare namespace NodeJS {
     NG_APP_LEOS_SOURCE_REVISION: string;
     NG_APP_LEOS_VERSION: string;
     NG_APP_LEOS_VERSION_BUILD_DATE: string;
+    NG_APP_REFRESH_TOKEN: string;
   }
 }
 

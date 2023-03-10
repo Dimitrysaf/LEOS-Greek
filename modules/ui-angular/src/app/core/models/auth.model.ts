@@ -8,6 +8,5 @@ export type AccessTokenResponse = {
 
 export type TokenData = {
   accessToken?: string;
-  refreshToken?: string;
   expiresIn: number; // date in ms
 };

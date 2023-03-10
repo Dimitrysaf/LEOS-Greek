@@ -9,7 +9,9 @@ import {
   UserService,
 } from '@eui/core';
 import { Observable, of, zip } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
+
+import { User } from './shared';
 
 @Injectable({
   providedIn: 'root',
@@ -46,27 +48,15 @@ export class AppStarterService {
   /**
    * Fetches user details
    */
-  private fetchUserDetails(): Observable<UserDetails> {
-    // const url = this.config.modules.your_custom_module.your_custom_endpoint
-    const moduleCoreApi = this.config.modules.core;
-    const url = `${moduleCoreApi.base}${moduleCoreApi.userDetails}`;
-    const user = { userId: 'anonymous' };
-
-    if (!url) {
-      return of(user);
-    }
-    // return this.http.get<UserDetails>(url);
-    return of({
-      firstName: 'John',
-      lastName: 'Doe',
-      fullName: 'John Doe',
-      role: ['USER', 'SUPPORT'],
-      organisationRef: {
-        id: '123456',
-        abbreviation: 'DIGIT.B.3',
-      },
-      userId: 'doejohn',
-      email: 'John.DOE@ec.europa.eu',
-    });
+  private fetchUserDetails(): Observable<any> {
+    return this.http.get<User>('api/secured/users/current').pipe(
+      map((user) => ({
+        ...user,
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        fullName: user.name,
+      })),
+    );
   }
 }
