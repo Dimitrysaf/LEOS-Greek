@@ -1501,8 +1501,8 @@ define(function leosAnnexIndentListPluginModule(require) {
     }
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, "indent", null, true);
-        leosCommandStateHandler.changeCommandState(event, "outdent", null, true);
+        leosCommandStateHandler.changeCommandState(event, "indent");
+        leosCommandStateHandler.changeCommandState(event, "outdent");
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
