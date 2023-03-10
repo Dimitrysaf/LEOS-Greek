@@ -323,6 +323,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         initDownloader();
         revision.setVisible(false);
         originRef.setVisible(false);
+        financialStatementBlockHeading.setVisible(Boolean.valueOf(cfgHelper.getProperty("leos.financial.statement.enable")));
         if(Boolean.valueOf(cfgHelper.getProperty("leos.supporting.documents.enable"))) {
             supportDocumentsBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.supporting.documents"));
             supportDocumentsBlockHeading.addRightButton(addCreatSupportingDocumentButton());
