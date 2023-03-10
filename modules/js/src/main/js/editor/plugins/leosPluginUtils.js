@@ -941,8 +941,8 @@ define(function leosPluginUtilsModule(require) {
 
     function _popNotInlineSubElement(notInlineSubElements) {
         notInlineSubElements.reverse();
-        for (let i = 0; i < notInlineSubElements.length; i++){
-            let subElem = notInlineSubElements[i];
+        for (var i = 0; i < notInlineSubElements.length; i++){
+            var subElem = notInlineSubElements[i];
             var parent = subElem.getParent();
             if (parent) {
                 var newParentElement = new CKEDITOR.dom.element(HTML_POINT);
@@ -974,9 +974,9 @@ define(function leosPluginUtilsModule(require) {
         if(!hasElementsLI){
             return;
         }
-        let isAtLeastOneMatch = false;
-        for (let i = 0; i < node.childNodes.length; i++){
-            let child = node.childNodes[i];
+        var isAtLeastOneMatch = false;
+        for (var i = 0; i < node.childNodes.length; i++){
+            var child = node.childNodes[i];
             if(!INLINE_FROM_MATCH.test(_getElementName(child))){
                isAtLeastOneMatch = true;
                break;
@@ -984,11 +984,11 @@ define(function leosPluginUtilsModule(require) {
         }
         if(isAtLeastOneMatch){
             // keep the first element of the <li>
-            for (let j = 1; j < node.childNodes.length; j++){
-               let child = node.childNodes[j];
+            for (var j = 1; j < node.childNodes.length; j++){
+               var child = node.childNodes[j];
                if(isNotInlinePushed[child] !== 1){
                    isNotInlinePushed[child] = 1;
-                   let elem = new CKEDITOR.dom.element(child);
+                   var elem = new CKEDITOR.dom.element(child);
                    notInlineElements.push(elem);
                }
            }
