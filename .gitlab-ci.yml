@@ -16,4 +16,4 @@ test-job1:
     - echo "This job tests something"
 
 include:
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
