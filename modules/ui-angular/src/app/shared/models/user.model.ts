@@ -2,15 +2,17 @@
 import { ApplicationRole } from '@/shared';
 
 export interface User {
-  id: string;
-  login?: string;
-  name?: string;
-  entities?: UserEntity[];
-  email?: string;
-  roles?: ApplicationRole[];
-  connectedEntity?: UserEntity;
+  login: string;
+  firstName: string;
+  lastName: string;
+  entities: UserEntity[];
+  email: string;
+  roles: string[];
+  id: number;
+  name: string;
+  connectedEntity: UserEntity;
+  defaultEntity: UserEntity;
 }
-
 export interface UserEntity {
   id: string;
   name: string;

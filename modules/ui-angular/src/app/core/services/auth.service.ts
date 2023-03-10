@@ -33,13 +33,7 @@ export class AuthService implements OnDestroy {
   private storage = new LocalStorageService();
 
   constructor(private handler: HttpBackend) {
-    // FIXME: this should happen during login process
-    this.storeTokenData({
-      refreshToken:
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2NTQwMzQ2NiwiaXNzIjoibmdMZW9zQ2xpZW50SWQiLCJleHAiOjE2OTY5Mzk0NjYsImlhdCI6MTY2NTQwMzQ2NiwidXNlciI6ImphbmUifQ.ew5d0wGqGt0WuzPp1vdoy8XoVQr6w6b-wV9-51-7N1Y',
-      expiresIn: 0,
-    });
-    this.http = new HttpClient(handler);
+    this.http = new HttpClient(this.handler);
     this.initAccessToken();
     this.accessToken$ = this.accessTokenBS.pipe(
       filter(Boolean),
@@ -76,25 +70,29 @@ export class AuthService implements OnDestroy {
   }
 
   private renewIfNecessary() {
-    const { refreshToken, expiresIn } = this.loadTokenData();
-    if (this.tokenRenewedRecently(expiresIn)) {
-      return;
+    const { expiresIn } = this.loadTokenData();
+    if (!this.tokenRenewedRecently(expiresIn)) {
+      this.renewAccessToken();
     }
-    this.renewAccessToken(refreshToken);
   }
 
-  private renewAccessToken(refreshToken: string) {
+  private renewAccessToken() {
     this.http
-      .get<AccessTokenResponse>('api/token', {
-        headers: {
-          'grant-type': 'jwt-bearer',
-          assertion: refreshToken,
-        },
-      })
+      .get<AccessTokenResponse>(
+        'api/token',
+        process.env.NG_APP_REFRESH_TOKEN
+          ? {
+              headers: {
+                'grant-type': 'jwt-bearer',
+                assertion: process.env.NG_APP_REFRESH_TOKEN,
+              },
+            }
+          : undefined,
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ accessToken, expiresIn }) => {
-          this.storeTokenData({ refreshToken, accessToken, expiresIn });
+          this.storeTokenData({ accessToken, expiresIn });
           this.setAccessToken(accessToken, expiresIn);
         },
         error: (requestError: HttpErrorResponse) => {
