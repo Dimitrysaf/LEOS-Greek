@@ -61,30 +61,28 @@ import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
 
-@Component
-@Scope("prototype")
-public class CollectionContextService {
+public abstract class CollectionContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextService.class);
 
-    private final MessageHelper messageHelper;
+    protected final MessageHelper messageHelper;
     private final ExplanatoryService explanatoryService;
     private final TemplateService templateService;
-    private final PackageService packageService;
-    private final ProposalService proposalService;
+    protected final PackageService packageService;
+    protected final ProposalService proposalService;
     private final CollectionUrlBuilder urlBuilder;
-    private final Provider<MemorandumContextService> memorandumContextProvider;
-    private final Provider<BillContextService> billContextProvider;
-    private final Provider<ExplanatoryContextService> explanatoryContextProvider;
+    protected final Provider<MemorandumContextService> memorandumContextProvider;
+    protected final Provider<BillContextService> billContextProvider;
+    protected final Provider<ExplanatoryContextService> explanatoryContextProvider;
     private final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private SecurityContext securityContext;
-    private final Map<LeosCategory, XmlDocument> categoryTemplateMap;
-    private final Map<ContextActionService, String> actionMsgMap;
-    private Proposal proposal = null;
-    private String purpose;
+    protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
+    protected final Map<ContextActionService, String> actionMsgMap;
+    protected Proposal proposal = null;
+    protected String purpose;
     private String versionComment;
     private String milestoneComment;
-    private boolean eeaRelevance;
+    protected boolean eeaRelevance;
     private DocumentVO propDocument;
     private String propChildDocument;
     private String proposalComment;
@@ -180,7 +178,7 @@ public class CollectionContextService {
         propChildDocument = documentId;
     }
 
-    public void useActionComment(String comment){
+    public void useActionComment(String comment) {
         Validate.notNull(comment, "Proposal comment is required!");
         proposalComment = comment;
     }
@@ -189,12 +187,12 @@ public class CollectionContextService {
         Validate.notNull(idsAndUrlsHolder, "idsAndUrlsHolder is required!");
         this.idsAndUrlsHolder = idsAndUrlsHolder;
     }
-    
+
     public void useIscRef(String iscRef) {
         Validate.notNull(iscRef, "ISC reference is required!");
         this.iscRef = iscRef;
     }
-    
+
     public void useCloneProposal(boolean cloneProposal) {
         this.cloneProposal = cloneProposal;
     }
@@ -220,8 +218,8 @@ public class CollectionContextService {
         LOG.trace("Using Proposal explanatory id [explId={}]", explanatoryId);
         this.explanatoryId = explanatoryId;
     }
-    
-    public Proposal executeImportProposal()  {
+
+    public Proposal executeImportProposal() {
 
         LOG.trace("Executing 'Import Proposal' use case...");
         MetadataVO propMeta = propDocument.getMetadata();
@@ -244,7 +242,7 @@ public class CollectionContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
-        if(cloneProposal) {
+        if (cloneProposal) {
             setConnectedEntity();
             proposal = proposalService.createClonedProposalFromContent(leosPackage.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
         } else {
@@ -271,7 +269,7 @@ public class CollectionContextService {
                 String memorandumRef = memorandum.getMetadata().get().getRef();
                 idsAndUrlsHolder.setMemorandumId(memorandumRef);
                 idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(memorandumRef));
-                if(cloneProposal) {
+                if (cloneProposal) {
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(memorandumRef, docChild.getRef());
                 }
             } else if (docChild.getCategory() == BILL) {
@@ -290,7 +288,7 @@ public class CollectionContextService {
                 String billRef = bill.getMetadata().get().getRef();
                 idsAndUrlsHolder.setBillId(billRef);
                 idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
-                if(cloneProposal) {
+                if (cloneProposal) {
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(billRef, docChild.getRef());
                 }
             } else if (docChild.getCategory() == STAT_FINANC_LEGIS) {
@@ -410,7 +408,7 @@ public class CollectionContextService {
 
     public void executeDeleteProposal() {
         LOG.trace("Executing 'Delete Proposal' use case...");
-        if(proposal != null && proposal.getId() != null) {
+        if (proposal != null && proposal.getId() != null) {
             LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
             packageService.deletePackage(leosPackage);
         }
@@ -494,7 +492,7 @@ public class CollectionContextService {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T cast(Object obj) {
+    protected static <T> T cast(Object obj) {
         return (T) obj;
     }
 }

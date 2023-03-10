@@ -36,7 +36,6 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
-import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -51,7 +50,6 @@ import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.*;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
-import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -65,12 +63,9 @@ import eu.europa.ec.leos.services.store.ArchiveService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
@@ -171,6 +166,7 @@ public class ApiServiceImpl implements ApiService {
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.validationService = validationService;
+        this.explanatoryService = explanatoryService;
     }
 
     @Override
@@ -297,6 +293,25 @@ public class ApiServiceImpl implements ApiService {
             LOG.error("Unexpected error occurred while creating the explanatory", e);
             throw e;
         }
+    }
+
+    @Override
+    public void createDraftProposal(String templateId, String docPurpose, boolean eeaRelevance) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        LOG.debug("Handling create document request event... [category={}]", LeosCategory.PROPOSAL.toString());
+        String[] templates = (templateId != null) ? templateId.split(";") : new String[0];
+        BillContextService billContext = billContextProvider.get();
+
+        CollectionContextService context = collectionContextProvider.get();
+        for (String name : templates) {
+            context.useTemplate(name);
+        }
+        context.usePurpose(docPurpose);
+        context.useEeaRelevance(eeaRelevance);
+        context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+        context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+        LOG.info("New document of type {} created in {} milliseconds ({} sec)", LeosCategory.PROPOSAL.toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        context.executeCreateProposal();
     }
 
     @Override

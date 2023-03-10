@@ -14,10 +14,12 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.CreateDraftProposalRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.ExportPdfRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
@@ -98,6 +100,19 @@ public class ProposalApiController {
     public ResponseEntity<Object> createExplanatory(@RequestBody ExplanatoryRequest request) {
         try {
             apiService.createExplanatoryDocument(request.getProposalRef(), request.getTemplate());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while creating the explanatory", e);
+            return new ResponseEntity<>("Error occurred while creating the explanatory document: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/createDraftProposal", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> createDraftProposal(@RequestBody CreateDraftProposalRequest request) {
+        try {
+            apiService.createDraftProposal(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while creating the explanatory", e);

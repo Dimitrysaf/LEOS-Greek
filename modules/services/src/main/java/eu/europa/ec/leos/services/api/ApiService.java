@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
@@ -23,7 +24,6 @@ import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
-import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
@@ -56,6 +56,8 @@ public interface ApiService {
     List<UserJSON> searchUser(String searchKey);
 
     void createExplanatoryDocument(String proposalRef, String template);
+
+    void createDraftProposal(String templateId, String docPurpose, boolean eeaRelevance);
 
     void deleteExplanatoryDocument(String proposalRef, String template);
 
