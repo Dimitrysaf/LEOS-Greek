@@ -90,6 +90,7 @@ define(function aknOrderedListPluginModule(require) {
             var isOnlyChild = !selectedElement.hasNext() && !selectedElement.hasPrevious();
             var hasTextNext = leosPluginUtils.hasTextOrBogusAsNextSibling(selectedElement);
             var parent = selectedElement.getParent();
+            var isSubPoint = leosPluginUtils.isSubparagraph(selectedElement);
             var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
             var point = isParentSubPoint ? parent.getParent() : parent;
             var isSelectedElementInsidePoint = (leosPluginUtils.getElementName(point) === leosPluginUtils.HTML_POINT) && _getAscendantPoint(point);
@@ -97,7 +98,8 @@ define(function aknOrderedListPluginModule(require) {
 
             if(isSelectedElementSubPoint && isSelectedElementEmpty && (hasTextNext || isParentSubPoint)){
                 var listParent = point.getParent();
-                var listParentHasIntro = listParent.getPrevious(); //if not, it means that enter was pressed in the last sub-point before the list
+                var listParentHasIntro = (isParentSubPoint && isSubPoint) || listParent.getPrevious(); //if not, it means that enter was pressed in the last
+                // sub-point before the list
                 selectedElement.insertBefore(listParentHasIntro ? parent : listParent);
                 leosPluginUtils.setFocus(selectedElement, event.editor);
                 if(isOnlyChild){

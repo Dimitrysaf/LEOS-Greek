@@ -98,6 +98,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             var hasTextNext = leosPluginUtils.hasTextOrBogusAsNextSibling(selectedElement);
             var parent = selectedElement.getParent();
             var isLevelElement = leosPluginUtils.isAnnexList(parent);
+            var isSubPoint = leosPluginUtils.isSubparagraph(selectedElement);
             var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
             var isFirstLevelListSubparagraph = leosPluginUtils.isFirstLevelListSubparagraph(selectedElement);
             var point = isParentSubPoint ? parent.getParent() : parent;
@@ -108,7 +109,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 selectedElement.remove();
             } else if (isSelectedElementSubPoint && isSelectedElementEmpty && (hasTextNext || isParentSubPoint)) {
                 var listParent = point.getParent();
-                var listParentHasIntro = listParent.getPrevious(); //if not, it means that enter was pressed in the last sub-point before the list
+                var listParentHasIntro = (isParentSubPoint && isSubPoint) || listParent.getPrevious(); //if not, it means that enter was pressed in the last
                 selectedElement.insertBefore(listParentHasIntro ? parent : listParent);
                 leosPluginUtils.setFocus(selectedElement, event.editor);
                 if (isOnlyChild) {
