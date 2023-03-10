@@ -346,7 +346,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private byte[] processUnnumberedParagraph(byte[] xmlContent, String newContent, String elementId) {
         if (newContent.startsWith(PARA_OPEN_TAG) && newContent.contains(LIST_CLOSE)) {
-            Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8));
+            Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
             if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
                     && XercesUtils.getFirstChild(XercesUtils.getFirstChild(newNode), NUM) == null) {
                 Document updatedDocument = createXercesDocument(xmlContent);

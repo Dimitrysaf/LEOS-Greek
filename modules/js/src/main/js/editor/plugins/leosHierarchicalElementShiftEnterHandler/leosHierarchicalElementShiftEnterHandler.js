@@ -333,9 +333,12 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     
     function _isSubparMandateElementInsideUnNumberedPar(element) {
         var currentElement = element.getAscendant('ol');
-        if (_isSubparMandateElement(currentElement)) {
+        if (_isSubparMandateElement(currentElement)) { // When you able to edit subparagraph
             do {
                 var elementName = currentElement.getName && currentElement.getName();
+                if (elementName === 'point') {
+                    break;
+                }
                 if (elementName === 'paragraph') {
                     var firstChildElementName = currentElement.getFirst().getName && currentElement.getFirst().getName();
                     if (firstChildElementName !== 'num' && firstChildElementName !== 'div') {
@@ -344,6 +347,14 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                     break;
                 }
             } while (currentElement = currentElement.getParent());
+        } else if (leosPluginUtils.isSubparagraph(element)) { // When you able to edit entire paragraphs (Annex)
+            // We need to enable it for articles (Legal text)
+            if (leosPluginUtils.isListEnding(element) || leosPluginUtils.isListIntro(element)) {
+                currentElement = currentElement.getAscendant('ol');
+            }
+            if (leosPluginUtils.isAnnexList(currentElement)) { // For annexes, all paragraphs are unumbered
+                return true;
+            }
         }
         return false;
     }
