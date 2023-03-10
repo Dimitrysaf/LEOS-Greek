@@ -11,6 +11,8 @@ import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Document, DocumentType } from '@leos/shared';
 
+import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
+
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({
@@ -21,13 +23,16 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 export class ProposalDraftsComponent implements OnInit, OnChanges {
   @Input() proposal: Document;
   coverpage: Document | null = null;
+  explanatories: Document[] | null = null;
   memorandum: Document | null = null;
   document: Document | null = null;
   annexes: Document[] = [];
-  proposalId: string;
+  proposalRef: string;
 
   @ViewChild('editTitle') dialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
+  @ViewChild('createDraftDialog')
+  createDraftDialog: ProposalCreateDraftComponent;
 
   title: string;
   activeAnnexId: string;
@@ -44,10 +49,10 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     // FIXME: Validate document selection method
-    this.populateView();
     this.route.params.pipe().subscribe((params) => {
-      this.proposalId = params['proposalId'];
+      this.proposalRef = params['proposalId'];
     });
+    this.populateView();
   }
 
   handleAnnexAdd() {
@@ -79,6 +84,10 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
     this.dialog.closeDialog();
   }
 
+  handleCreateDraft() {
+    this.createDraftDialog.openCreateWizard();
+  }
+
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.annexes, event.previousIndex, event.currentIndex);
     const annexRef = this.annexes[event.currentIndex].id;
@@ -98,12 +107,23 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
     );
   }
 
+  handleExplanatoryDelete(expl: Document) {
+    this.proposalDetailsService
+      .deleteExplanatory(this.proposalRef, expl.metadata.internalRef)
+      .subscribe((res) => {
+        this.explanatories = this.explanatories.filter((d) => d.id !== expl.id);
+      });
+  }
+
   private populateView() {
     const getChildDocument = (type: DocumentType) =>
       this.proposal.childDocuments.find((d) => d.category === type) ?? null;
     this.coverpage = getChildDocument('COVERPAGE');
     this.memorandum = getChildDocument('MEMORANDUM');
     this.document = getChildDocument('BILL');
+    this.explanatories = this.proposal.childDocuments.filter(
+      (d) => d.category === 'COUNCIL_EXPLANATORY',
+    );
     this.annexes = this.document.childDocuments.filter(
       (d) => d.category === 'ANNEX',
     );

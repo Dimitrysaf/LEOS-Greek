@@ -35,6 +35,14 @@
           ></app-proposal-milestones>
         </eui-tab-content>
       </eui-tab>
+      <eui-tab *appShowOnInstance="['CN']">
+        <eui-tab-label>
+          {{ 'page.collection.tabs.e-consilium' | translate }}
+        </eui-tab-label>
+        <eui-tab-content>
+          <app-proposal-exports [proposal]="proposal"></app-proposal-exports>
+        </eui-tab-content>
+      </eui-tab>
       <eui-tab>
         <eui-tab-label>{{
           'page.collection.tabs.collaborators' | translate

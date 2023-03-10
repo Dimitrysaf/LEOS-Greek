@@ -1,0 +1,29 @@
+<table
+  class="eui-u-mt-m"
+  euiTable
+  euiTableResponsive
+  [rows]="exportDocuments ?? []"
+>
+  <ng-template euiTemplate="header">
+    <tr>
+      <th>
+        {{ 'page.collection.drafts.exports.table.title' | translate }}
+      </th>
+      <th>
+        {{ 'page.collection.drafts.exports.table.date' | translate }}
+      </th>
+      <th>
+        {{ 'page.collection.drafts.exports.table.status' | translate }}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template let-row euiTemplate="body">
+    <tr>
+      <td>
+        <span euiLabel>{{ row.comments }}</span>
+      </td>
+      <td>{{ row.date }}</td>
+      <td>{{ row.status }}</td>
+    </tr>
+  </ng-template>
+</table>

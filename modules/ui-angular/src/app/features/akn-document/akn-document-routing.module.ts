@@ -24,6 +24,11 @@ const routes: Routes = [
     component: DocumentEditorComponent,
     data: { category: 'coverPage' },
   },
+  {
+    path: 'explanatory/:id',
+    component: DocumentEditorComponent,
+    data: { category: 'explanatory' },
+  },
 ];
 
 @NgModule({
