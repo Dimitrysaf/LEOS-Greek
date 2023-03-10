@@ -166,6 +166,9 @@ define(function aknLevelPluginModule(require) {
             }, {
                 akn : "leos:softdate",
                 html : "data-akn-attr-softdate"
+            }, {
+                akn : "leos:deletable",
+                html : "leos:deletable"
             }]
         },
         rootElementsForFrom: ["level"],
