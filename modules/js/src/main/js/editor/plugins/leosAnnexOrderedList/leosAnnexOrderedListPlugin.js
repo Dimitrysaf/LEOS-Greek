@@ -116,7 +116,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
                     parent.appendBogus();
                 }
             } else if (isFirstLevelListSubparagraph) {
-                event.cancelIdentityHandler = 'cancel';
+                event.data.cancelIdentityHandler = 'cancel';
                 var parentElementChildList = parent.getChildren().$;
                 if (selectedElement.$ === parentElementChildList[1]) {
                     let doc = selectedElement.getDocument();
