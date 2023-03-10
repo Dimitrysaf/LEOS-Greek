@@ -15,7 +15,7 @@ export class DocumentSearchComponent implements OnDestroy {
 
   form = new FormGroup({
     searchText: new FormControl(''),
-    wholeWords: new FormControl(false),
+    completeWords: new FormControl(false),
     matchCase: new FormControl(false),
     replaceText: new FormControl(''),
   });
@@ -47,11 +47,11 @@ export class DocumentSearchComponent implements OnDestroy {
   }
 
   private getFormValues(): DocumentSearchParams {
-    const { searchText, matchCase, wholeWords } = this.form.getRawValue();
+    const { searchText, matchCase, completeWords } = this.form.getRawValue();
     return {
       searchText: searchText ?? '',
       matchCase,
-      wholeWords,
+      completeWords,
     };
   }
 }

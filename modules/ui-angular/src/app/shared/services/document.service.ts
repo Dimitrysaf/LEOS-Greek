@@ -220,13 +220,13 @@ export class DocumentService implements OnDestroy {
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
+    console.log('setSearchParams:', values);
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.searchParamsBS.next({ ...oldVal, ...values });
     });
   }
 
   setVersionIdsForCompare(versionIdsToCompare: any) {
-    console.log('setVersionIdsForCompare:', versionIdsToCompare);
     this.versionCompareIdsBS.next(versionIdsToCompare);
   }
 
@@ -377,8 +377,17 @@ export class DocumentService implements OnDestroy {
     }
   }
 
-  private doSearch(params: DocumentSearchParams) {
-    console.warn('stub:', 'doSearch', params); // FIXME
+  private doSearch(parameters: DocumentSearchParams) {
+    console.log('dosearch:', parameters);
+    const documentType = this.documentCategoryBS.value;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .get(`api/secured/${documentType}/${documentRef}/search-text`, {
+        params: parameters,
+      })
+      .subscribe((x) => {
+        console.log('dosearch_result:', x);
+      });
   }
 
   private toggleSubject(subj: Subject<boolean>, value?: boolean) {
