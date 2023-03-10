@@ -138,6 +138,7 @@ define(function aknOrderedListPluginModule(require) {
     function _processMutations(mutationsList) {
        var mutations = _getMutations(mutationsList);
        leosPluginUtils.popSingleSubElement(mutations.singleSubPoints);
+       leosPluginUtils.popNotInlineSubElement(mutations.notInlineElements);
     }
 
     /**
@@ -153,11 +154,14 @@ define(function aknOrderedListPluginModule(require) {
         var isListPushed = {};      // already processed OLs
         var singleSubPoints = [];   // single SubPoints
         var isSubPointPushed = {};  // already processed SubPoints
+        var notInlineElements = [];
+        var isNotInlinePushed = {};
         for(var i = 0; i < mutationsList.length; i++){
-            _pushMutations(mutationsList[i].target, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed);
+            _pushMutations(mutationsList[i].target, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed);
         }
         return {listsWithoutIntro: listsWithoutIntro,
-                singleSubPoints: singleSubPoints};
+                singleSubPoints: singleSubPoints,
+                notInlineElements: notInlineElements};
     }
     
     /**
@@ -169,7 +173,7 @@ define(function aknOrderedListPluginModule(require) {
      * @param singleSubPoints, single SubPoints which will be converted later into Points
      * @param isSubPointPushed, SubPoints already processed
      */
-    function _pushMutations(node, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed){
+    function _pushMutations(node, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed){
         for (var i = 0; i < node.childNodes.length; i++){
             var child = node.childNodes[i];
             if(child.childNodes.length > 0){
@@ -177,8 +181,10 @@ define(function aknOrderedListPluginModule(require) {
             }
             _pushListsWithoutIntro(child, listsWithoutIntro, isListPushed);
             _pushSingleSubPoints(node, child, singleSubPoints, isSubPointPushed);
+            leosPluginUtils.pushNotInlineElements(child, notInlineElements, isNotInlinePushed);
         }
         _pushListsWithoutIntro(node, listsWithoutIntro, isListPushed);
+        leosPluginUtils.pushNotInlineElements(node, notInlineElements, isNotInlinePushed);
     }
     
     /**
@@ -204,7 +210,7 @@ define(function aknOrderedListPluginModule(require) {
             listsWithoutIntro.push(child);
         }
     }
-    
+
     /**
      * Add "child" element into "singleSubPoints" if is the only element inside a <li> node.
      * Example: Add <p> to "singleSubPoints" if the structure is as below:
