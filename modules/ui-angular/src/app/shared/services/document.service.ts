@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { result } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatestWith,
@@ -266,6 +267,16 @@ export class DocumentService implements OnDestroy {
   }
 
   versionRevert(versionNumber: string) {
+    const documentCategory = this.documentCategoryBS.value;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .get(
+        `api/secured/${documentCategory}/${documentRef}/restore/${versionNumber}`,
+      )
+      .subscribe((r) => {
+        this.setDocumentId(documentRef);
+      });
+
     console.warn('stub:', 'versionRevert', versionNumber); // FIXME
   }
 
