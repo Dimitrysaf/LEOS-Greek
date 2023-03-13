@@ -21,13 +21,12 @@
   <ng-template let-row euiTemplate="body">
     <tr>
       <td class="d-flex flex-column">
-        <span euiLabel>
-          <input
-            euiInputText
-            type="text"
-            [value]="row.comments[0]"
-            (change)="handleTitleChange($event, row)"
-        /></span>
+        <input
+          euiInputText
+          type="text"
+          [value]="row.comments[0]"
+          (change)="handleTitleChange($event, row)"
+        />
         <span euiSublabel class="mt-2 ml-2" euiLabel>{{
           row.comments[1]
         }}</span>

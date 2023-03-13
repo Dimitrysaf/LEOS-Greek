@@ -7,6 +7,7 @@ import { Document } from '@/shared';
 import { ExportPackageVO } from '../../models/export-package.model';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
+const DEBOUNCE_TIME = 300;
 @Component({
   selector: 'app-proposal-exports',
   templateUrl: './proposal-exports.component.html',
@@ -31,7 +32,7 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
     data.comments[0] = (event.target as HTMLInputElement).value;
     this.proposalDetailsService
       .updateExportDocument(proposalRef, data.id, data.comments)
-      .pipe(debounceTime(500), takeUntil(this.destroy$))
+      .pipe(debounceTime(DEBOUNCE_TIME), takeUntil(this.destroy$))
       .subscribe((res) => {
         this.exportDocuments = res;
       });
