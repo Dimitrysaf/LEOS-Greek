@@ -19,6 +19,7 @@ import {
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 
+import { apiBaseUrl } from '../../../config';
 import { DocumentViewResponse } from '../models/document-view-response.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
 import { VersionInfoVO } from '../models/version-info.model';
@@ -127,7 +128,7 @@ export class DocumentService implements OnDestroy {
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http
-      .get<DocumentViewResponse>(`api/secured/${category}/${ref}`)
+      .get<DocumentViewResponse>(`${apiBaseUrl}/secured/${category}/${ref}`)
       .pipe(take(1));
   }
 
@@ -237,7 +238,7 @@ export class DocumentService implements OnDestroy {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<TableOfContentItemVO[]>(
-      `api/secured/${category}/${annexRef}/getToc`,
+      `${apiBaseUrl}/secured/${category}/${annexRef}/getToc`,
       {
         params: { tocMode },
       },
@@ -248,7 +249,7 @@ export class DocumentService implements OnDestroy {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<TocItem[]>(
-      `api/secured/${category}/${annexRef}/getTocItems`,
+      `${apiBaseUrl}/secured/${category}/${annexRef}/getTocItems`,
       {
         params: { tocMode },
       },
@@ -260,7 +261,7 @@ export class DocumentService implements OnDestroy {
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http
       .post<TableOfContentItemVO[]>(
-        `api/secured/${category}/${documentRef}/save-toc`,
+        `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
         {
           tableOfContentItemVOs: toc,
         },
@@ -278,13 +279,16 @@ export class DocumentService implements OnDestroy {
     documentType: string,
     documentRef: string,
   ) {
-    return this.http.post(`api/secured/toc/${documentRef}/validate-node-drop`, {
-      nodeDragged,
-      targetNode,
-      position: position.toUpperCase(),
-      documentRef,
-      documentType: documentType.toUpperCase(),
-    });
+    return this.http.post(
+      `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
+      {
+        nodeDragged,
+        targetNode,
+        position: position.toUpperCase(),
+        documentRef,
+        documentType: documentType.toUpperCase(),
+      },
+    );
   }
 
   setToc(toc: TableOfContentItemVO[]) {
@@ -297,13 +301,13 @@ export class DocumentService implements OnDestroy {
 
   getDocumentVersionsData(documentType: string, documentRef: string) {
     return this.http.get<Version[]>(
-      `api/secured/${documentType}/${documentRef}/version-data`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
     );
   }
 
   getDocumentRecentChangesData(documentType: string, documentRef: string) {
     return this.http.get<any[]>(
-      `api/secured/${documentType}/${documentRef}/recent-changes`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/recent-changes`,
     );
   }
 
@@ -313,7 +317,7 @@ export class DocumentService implements OnDestroy {
     data: any,
   ) {
     return this.http.post<Version[]>(
-      `api/secured/${documentType}/${documentRef}/save-version`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/save-version`,
       {
         ...data,
       },
@@ -333,7 +337,9 @@ export class DocumentService implements OnDestroy {
 
   private getDocument(documentRef: string, category: string) {
     return this.http
-      .get(`api/secured/${category}/${documentRef}`, { responseType: 'text' })
+      .get(`${apiBaseUrl}/secured/${category}/${documentRef}`, {
+        responseType: 'text',
+      })
       .pipe(take(1));
   }
 

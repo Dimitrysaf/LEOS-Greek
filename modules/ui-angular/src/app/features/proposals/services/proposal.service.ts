@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { GLOBAL_CONFIG_TOKEN, GlobalConfig, I18nService } from '@eui/core';
 import { Document } from '@leos/shared';
 import {
   BehaviorSubject,
@@ -13,10 +14,10 @@ import {
   tap,
 } from 'rxjs';
 import { finalize, switchMap } from 'rxjs/operators';
+import { apiBaseUrl } from 'src/config';
 
 import { LoadingService } from '@/shared/services/loading.service';
 
-import { appConfig } from '../../../../config';
 import {
   CreateProposalBody,
   CreateProposalResponse,
@@ -41,8 +42,6 @@ const initialFilters: ProposalFilter = {
   templates: [],
   roles: [],
 };
-const defaultLanguage =
-  appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
 
 @Injectable({
   providedIn: 'root',
@@ -109,10 +108,12 @@ export class ProposalService {
   proposals$: Observable<Document[]>;
   totalResults$: Observable<number>;
   templateCatalog$ = this.http
-    .get<GetTemplatesResponse>(`api/secured/getTemplates`)
+    .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
     .pipe(shareReplay(1));
 
-  private userLang = 'EN'; // FIXME: Get from UserService
+  private defaultLanguage =
+    this.globalConfig.i18n.i18nService.defaultLanguage.toUpperCase();
+  private userLang: string;
   private filtersBS = new BehaviorSubject<ProposalFilter>(initialFilters);
   private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
   private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
@@ -123,7 +124,12 @@ export class ProposalService {
   constructor(
     private http: HttpClient,
     private loadingService: LoadingService,
+    @Inject(GLOBAL_CONFIG_TOKEN) protected globalConfig: GlobalConfig,
+    private i18nService: I18nService,
   ) {
+    i18nService.getState().subscribe((state) => {
+      this.userLang = state.activeLang.toUpperCase();
+    });
     this.filters$ = this.filtersBS.pipe(
       distinctUntilChanged(ProposalService.eqFilters),
     );
@@ -155,7 +161,7 @@ export class ProposalService {
       tap(() => this.loadingService.setLoading(true)),
       switchMap((params) =>
         this.http.post<ListProposalsWithFilterResponse>(
-          `api/secured/filterProposals`,
+          `${apiBaseUrl}/secured/filterProposals`,
           params,
         ),
       ),
@@ -190,14 +196,17 @@ export class ProposalService {
   getTranslation(dict: Record<string, string>, langCode = this.userLang) {
     const firstAvailableLang = Object.keys(dict)[0];
     return (
-      dict[langCode] ?? dict[defaultLanguage] ?? dict[firstAvailableLang] ?? ''
+      dict[langCode] ??
+      dict[this.defaultLanguage] ??
+      dict[firstAvailableLang] ??
+      ''
     );
   }
 
   createProposal(data: CreateProposalBody) {
     this.loadingService.setLoading(true);
     return this.http
-      .post<CreateProposalResponse>(`api/secured/createPackage`, data)
+      .post<CreateProposalResponse>(`${apiBaseUrl}/secured/createPackage`, data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
@@ -205,10 +214,14 @@ export class ProposalService {
     const formData: FormData = new FormData();
     formData.append('legFile', data);
     return this.http
-      .post<UploadProposalResposne>(`api/secured/proposal/upload`, formData, {
-        reportProgress: true,
-        observe: 'events',
-      })
+      .post<UploadProposalResposne>(
+        `${apiBaseUrl}/secured/proposal/upload`,
+        formData,
+        {
+          reportProgress: true,
+          observe: 'events',
+        },
+      )
       .pipe(
         tap(() => this.loadingService.setLoading(true)),
         finalize(() => this.loadingService.setLoading(false)),
@@ -219,7 +232,7 @@ export class ProposalService {
     const formData: FormData = new FormData();
     formData.append('legFile', data);
     return this.http.post<LegFileValidationResponse>(
-      `api/secured/proposal/validateLegFile`,
+      `${apiBaseUrl}/secured/proposal/validateLegFile`,
       formData,
       {
         reportProgress: true,

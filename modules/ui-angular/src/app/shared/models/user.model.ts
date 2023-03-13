@@ -1,4 +1,3 @@
-//to get the default entity --> connectedEntity
 import { ApplicationRole } from '@/shared';
 
 export interface User {
@@ -7,12 +6,14 @@ export interface User {
   lastName: string;
   entities: UserEntity[];
   email: string;
-  roles: string[];
+  roles: ApplicationRole[];
   id: number;
   name: string;
-  connectedEntity: UserEntity;
-  defaultEntity: UserEntity;
+  connectedEntity: UserEntity | null;
+  defaultEntity: UserEntity | null;
+  lang: string;
 }
+
 export interface UserEntity {
   id: string;
   name: string;

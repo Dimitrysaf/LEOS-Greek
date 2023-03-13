@@ -11,6 +11,7 @@ import {
   tap,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { apiBaseUrl } from 'src/config';
 
 import { Milestone } from '../models/milestone.model';
 import { ProposalDetailsService } from './proposal-details.service';
@@ -22,12 +23,14 @@ export class ProposalMilestonesService {
   constructor(private http: HttpClient) {}
 
   getProposalMilestones(documentRef: string) {
-    return this.http.get(`api/secured/proposal/${documentRef}/milestones`).pipe(
-      map((res: any) => {
-        console.log('Milestones response => ', res);
-        return res.milestones;
-      }),
-    );
+    return this.http
+      .get(`${apiBaseUrl}/secured/proposal/${documentRef}/milestones`)
+      .pipe(
+        map((res: any) => {
+          console.log('Milestones response => ', res);
+          return res.milestones;
+        }),
+      );
   }
 
   addMilestone(proposalId: string, newMilestone: Milestone) {

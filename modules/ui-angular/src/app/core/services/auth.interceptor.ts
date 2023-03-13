@@ -19,13 +19,9 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
-    return this.requiresToken(req)
+    return this.authService.requiresToken(req.url)
       ? this.handleWithToken(req, next)
       : next.handle(req);
-  }
-
-  private requiresToken(req: HttpRequest<any>) {
-    return req.url.startsWith('api/secured/'); // FIXME: use api base from config
   }
 
   private handleWithToken(req: HttpRequest<any>, next: HttpHandler) {

@@ -1,8 +1,15 @@
 <eui-app [userInfos]="userInfos?.fullName" isSidebarOpen="true">
   <eui-app-toolbar>
     <eui-toolbar>
-      <eui-toolbar-logo></eui-toolbar-logo>
-      <eui-toolbar-app [appName]="appTitle"></eui-toolbar-app>
+      <eui-toolbar-items style="margin-left: 0">
+        <eui-toolbar-logo *ngIf="!headerLogoUrl"></eui-toolbar-logo>
+        <img
+          class="eui-toolbar-logo eui-toolbar-logo--custom"
+          [src]="headerLogoUrl"
+          *ngIf="headerLogoUrl"
+        />
+        <div class="eui-toolbar-app" [innerHTML]="headerTitleHtml"></div>
+      </eui-toolbar-items>
       <eui-toolbar-items euiPositionRight>
         <eui-toolbar-item-user-profile>
           <eui-user-profile-menu>

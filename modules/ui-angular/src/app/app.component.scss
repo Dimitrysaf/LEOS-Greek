@@ -1,0 +1,11 @@
+:host ::ng-deep .eui-toolbar-app > .emphasis {
+  color: #13d831;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.eui-toolbar-logo.eui-toolbar-logo--custom {
+  background-image: none;
+  outline: none;
+  width: auto;
+}

@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { truncate } from 'lodash';
 import { combineLatest, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentTocComponent } from '@/shared/components/document-toc/document-toc.component';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
@@ -52,6 +53,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     private translate: TranslateService,
     private cdkEditor: CKEditorService,
     private tranlsateService: TranslateService,
+    private config: AppConfigService,
   ) {}
 
   ngOnInit(): void {
@@ -261,13 +263,15 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private loadStyleSheet() {
-    // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
     const category =
       this.documentType === 'coverPage' ? 'coverpage' : this.documentType;
-    const leosBuildTimestamp = 1667202194805; // FIXME: get this from server at runtime
-    const legacyAssetsPrefix = 'legacy/assets'; // FIXME: import stylesheets to ngui?
-    const cssUrl = `${legacyAssetsPrefix}/css/${category}.css?cacheToken_${leosBuildTimestamp}`;
-    this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
+
+    this.config.config.subscribe((config) => {
+      // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
+      // FIXME: import stylesheets to ngui?
+      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css?cacheToken_${config.leosBuildTimestamp}`;
+      this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
+    });
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {

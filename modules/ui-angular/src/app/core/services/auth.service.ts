@@ -12,6 +12,7 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
+import { apiBaseUrl } from 'src/config';
 
 import { AccessTokenResponse, TokenData } from '../models';
 import { LocalStorageService } from './local-storage.service';
@@ -47,6 +48,10 @@ export class AuthService implements OnDestroy {
     this.destroy$.complete();
   }
 
+  requiresToken(url: string) {
+    return url.startsWith(`${apiBaseUrl}/secured/`);
+  }
+
   private initAccessToken() {
     const { accessToken, expiresIn } = this.loadTokenData();
     if (this.tokenRenewedRecently(expiresIn)) {
@@ -79,7 +84,7 @@ export class AuthService implements OnDestroy {
   private renewAccessToken() {
     this.http
       .get<AccessTokenResponse>(
-        'api/token',
+        `${apiBaseUrl}/token`,
         process.env.NG_APP_REFRESH_TOKEN
           ? {
               headers: {

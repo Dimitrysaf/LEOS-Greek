@@ -1,31 +1,46 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { map, shareReplay } from 'rxjs';
+import { apiBaseUrl } from 'src/config';
 
-import { RoleEntry } from '@/shared';
+import { LeosAppConfig, LeosConfig } from '@/shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppConfigService {
-  config = of({
-    title:
-      process.env.NG_APP_LEOS_INSTANCE === 'ec'
-        ? 'EdiT Drafting'
-        : process.env.NG_APP_LEOS_INSTANCE === 'cn'
-        ? 'EdiT Revision'
-        : 'LEOS',
-    roles: [],
-  } as LeosAppConfig);
-  // TODO: Use proper API when implemented
-  // config = this.http
-  //   .get<LeosAppConfig>('api/secured/getConfig')
-  //   .pipe(shareReplay(1));
+  config = this.http
+    .get<LeosConfig>(`${apiBaseUrl}/secured/config`)
+    .pipe(map(createLeosAppConfig))
+    .pipe(shareReplay(1));
 
   constructor(private http: HttpClient) {}
 }
 
-export type LeosAppConfig = {
-  title: string;
-  roles: RoleEntry[];
+const createLeosAppConfig = (config: LeosConfig): LeosAppConfig => ({
+  ...processConfig(config),
+  leosBuildDate: process.env.NG_APP_LEOS_VERSION_BUILD_DATE,
+  leosBuildTimestamp: process.env.NG_APP_LEOS_BUILD_TIMESTAMP,
+  leosBuildVersion: process.env.NG_APP_LEOS_VERSION,
+  leosSourceRevision: process.env.NG_APP_LEOS_SOURCE_REVISION,
+});
+
+/** FIXME: Process config server response, injecting missing props. */
+const processConfig = (config: LeosConfig) => {
+  const newConfig = { ...config };
+  const logError = (key: string, expected: string, value: string) =>
+    console.error(
+      `Expected ${key} to be ${expected}, but it has the value of "${value}".` +
+        ' Remove code in AppConfigService.processConfig.',
+    );
+  if (config.user.lang === undefined) {
+    newConfig.user = {
+      ...config.user,
+      lang: null,
+    };
+  } else {
+    logError('config.user.lang', 'undefined', JSON.stringify(config.user.lang)); // FIXME
+  }
+
+  return newConfig;
 };

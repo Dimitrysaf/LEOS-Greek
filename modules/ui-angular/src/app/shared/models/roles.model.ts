@@ -24,11 +24,3 @@ export type Permission =
   | 'CAN_SEE_ALL_DOCUMENTS'
   | 'CAN_WORK_WITH_EXPORT_PACKAGE'
   | 'CAN_CLOSE_PROPOSAL';
-
-export type RoleEntry = {
-  role: Role;
-  permissions: Permission[];
-  applicationRole: boolean;
-  collaborator: boolean;
-  defaultDocCreationRole: boolean;
-};

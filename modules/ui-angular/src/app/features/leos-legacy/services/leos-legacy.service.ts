@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, take } from 'rxjs';
+import { BehaviorSubject, filter, lastValueFrom, Observable, take } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { DomService } from '@/shared/services/dom.service';
 
@@ -10,18 +11,16 @@ import { DomService } from '@/shared/services/dom.service';
 export class LeosLegacyService {
   require$: Observable<Require>;
 
-  /* require('js/xyz') -> `${basrUrl}/js/xys` */
-  private baseUrl = new URL('leos-js', document.baseURI).href;
   private requireSubj = new BehaviorSubject<Require>(null);
 
-  constructor(private dom: DomService) {
+  constructor(private dom: DomService, private config: AppConfigService) {
     this.require$ = this.requireSubj.pipe(filter(Boolean), take(1));
     void this.init();
   }
 
   private async init() {
     if (!this.isInitialized()) {
-      this.setupRequireJsConfig();
+      await this.setupRequireJsConfig();
       await this.loadRequireJsScript();
       await this.loadLeosModulesBootstrap();
     }
@@ -33,7 +32,9 @@ export class LeosLegacyService {
   }
 
   /** @see `modules/js/src/main/js/leosBootstrap.js` */
-  private setupRequireJsConfig() {
+  private async setupRequireJsConfig() {
+    const baseUrl = await this.getBaseUrl();
+
     // ensure LEOS global namespace to export application functions and data
     window.LEOS = window.LEOS || ({} as unknown as typeof window.LEOS);
 
@@ -42,7 +43,7 @@ export class LeosLegacyService {
       // standard MIME type for JavaScript
       scriptType: 'application/javascript',
       // base URL to use for all modules/resources lookup
-      baseUrl: this.baseUrl,
+      baseUrl,
       // loading modules/resources timeout in seconds (0 = no timeout)
       waitSeconds: 60,
       // enforce define to improve catching load failures in IE
@@ -67,11 +68,19 @@ export class LeosLegacyService {
     window.require = window.LEOS.config;
   }
 
+  private async getBaseUrl() {
+    /* require('js/xyz') -> `${basrUrl}/js/xys` */
+    const { mappingUrl } = await lastValueFrom(this.config.config);
+    return mappingUrl;
+  }
+
   private async loadRequireJsScript() {
-    await this.dom.loadScript(`${this.baseUrl}/lib/requirejs_2.3.3/require.js`);
+    const baseUrl = await this.getBaseUrl();
+    await this.dom.loadScript(`${baseUrl}/lib/requirejs_2.3.3/require.js`);
   }
 
   private async loadLeosModulesBootstrap() {
-    await this.dom.loadScript(`${this.baseUrl}/js/leosModulesBootstrap.js`);
+    const baseUrl = await this.getBaseUrl();
+    await this.dom.loadScript(`${baseUrl}/js/leosModulesBootstrap.js`);
   }
 }

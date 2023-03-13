@@ -16,6 +16,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { apiBaseUrl } from 'src/config';
 
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
@@ -1053,7 +1054,7 @@ export class CKEditorService implements OnDestroy {
   ) {
     return this.http
       .put(
-        `api/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
         elementFragment,
         { responseType: 'text', headers: { contentType: 'text' } },
       )
@@ -1088,7 +1089,7 @@ export class CKEditorService implements OnDestroy {
     documentType: string,
   ) {
     return this.http.get(
-      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
       { responseType: 'text' },
     );
   }
@@ -1100,7 +1101,7 @@ export class CKEditorService implements OnDestroy {
     documentType: string,
   ) {
     return this.http.delete(
-      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
       { responseType: 'arraybuffer' },
     );
   }
@@ -1113,7 +1114,7 @@ export class CKEditorService implements OnDestroy {
     position: string,
   ) {
     return this.http.put(
-      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-element`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-element`,
       { position: position.toUpperCase() },
       { responseType: 'arraybuffer' },
     );
@@ -1127,7 +1128,7 @@ export class CKEditorService implements OnDestroy {
     elementContent: string,
   ) {
     this.documentService.documentView$ = this.http.put<DocumentViewResponse>(
-      `api/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/merge-element`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/merge-element`,
       { elementContent },
     );
   }

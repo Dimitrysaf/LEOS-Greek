@@ -10,7 +10,6 @@ const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/legacy', express.static(path.join(__dirname, 'legacy')));
 
 require('./app/routes')(app, db);
 
