@@ -9,6 +9,7 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, take, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
@@ -43,6 +44,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     private proposalMilestonesService: ProposalMilestonesService,
     private proposalDetailsService: ProposalDetailsService,
     private fb: FormBuilder,
+    public tranlsateSerice: TranslateService,
   ) {}
 
   ngOnInit(): void {

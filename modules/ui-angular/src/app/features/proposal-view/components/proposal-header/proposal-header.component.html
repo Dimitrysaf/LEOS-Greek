@@ -3,16 +3,18 @@
     {{ nonEditablePartOfTitle }} {{ editableTitle }}
   </h1>
 
-  <button
-    euiButton
-    euiSizeS
-    euiOutline
-    euiPrimary
-    class="eui-u-ml-s"
-    (click)="handleEdit()"
-  >
-    {{ 'page.collection.proposal-header.edit' | translate }}
-  </button>
+  <ng-container *appUserHasPermission="['CAN_UPDATE']">
+    <button
+      euiButton
+      euiSizeS
+      euiOutline
+      euiPrimary
+      class="eui-u-ml-s"
+      (click)="handleEdit()"
+    >
+      {{ 'page.collection.proposal-header.edit' | translate }}
+    </button>
+  </ng-container>
 
   <eui-dialog #editTitle title="Edit title">
     <div euiInputGroup class="flex-row">

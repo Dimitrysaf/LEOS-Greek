@@ -15,15 +15,60 @@
       <th>
         {{ 'page.collection.drafts.exports.table.status' | translate }}
       </th>
+      <th></th>
     </tr>
   </ng-template>
   <ng-template let-row euiTemplate="body">
     <tr>
-      <td>
-        <span euiLabel>{{ row.comments }}</span>
+      <td class="d-flex flex-column">
+        <span euiLabel>
+          <input
+            euiInputText
+            type="text"
+            [value]="row.comments[0]"
+            (change)="handleTitleChange($event, row)"
+        /></span>
+        <span euiSublabel class="mt-2 ml-2" euiLabel>{{
+          row.comments[1]
+        }}</span>
+        <span euiSublabel class="mt-2 ml-4" euiLabel>{{
+          row.comments[2]
+        }}</span>
       </td>
-      <td>{{ row.date }}</td>
+      <td>{{ row.date | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
       <td>{{ row.status }}</td>
+      <td>
+        <eui-dropdown>
+          <button
+            euiButton
+            euiRounded
+            euiIconButton
+            euiBasicButton
+            euiSecondary
+            euiTooltip="Menu"
+            [attr.aria-label]="'Menu'"
+          >
+            <span euiIcon iconClass="eui-icon eui-icon-ecl-hamburger"></span>
+          </button>
+          <eui-dropdown-content>
+            <div euiList>
+              <button euiListItem (click)="handleNotifyExport(row.id)">
+                {{
+                  'page.collection.exports.table.actions.re-export' | translate
+                }}
+              </button>
+              <button euiListItem (click)="handlePreviewExport(row.id)">
+                {{
+                  'page.collection.exports.table.actions.preview' | translate
+                }}
+              </button>
+              <button euiListItem (click)="handleDeleteExport(row.id)">
+                {{ 'page.collection.exports.table.actions.delete' | translate }}
+              </button>
+            </div>
+          </eui-dropdown-content>
+        </eui-dropdown>
+      </td>
     </tr>
   </ng-template>
 </table>

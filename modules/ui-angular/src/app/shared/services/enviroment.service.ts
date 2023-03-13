@@ -15,10 +15,10 @@ export class EnvironmentService {
   }
 
   public getInstanceName(): ENV_TYPE {
-    return this.instanceName as ENV_TYPE;
+    return this.instanceName.toLowerCase() as ENV_TYPE;
   }
 
   public isCouncil(): boolean {
-    return this.instanceName === 'CN';
+    return this.instanceName === 'cn';
   }
 }

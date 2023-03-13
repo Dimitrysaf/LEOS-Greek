@@ -14,6 +14,7 @@ import { ProposalCreateDraftComponent } from './components/proposal-create-draft
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
+import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
 
 @NgModule({
   imports: [
@@ -31,6 +32,8 @@ import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
     DocumentAnnotationsComponent,
     ProposalCreateDraftComponent,
     ShowOnInstanceDirective,
+    UserHasPermissionDirective,
+
     ProposalCreateDraftComponent,
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
@@ -47,6 +50,7 @@ import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
     AknDocumentComponent,
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,
+    UserHasPermissionDirective,
     ProposalCreateDraftComponent,
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,

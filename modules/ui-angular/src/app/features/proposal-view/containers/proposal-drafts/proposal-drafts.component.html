@@ -181,23 +181,27 @@
             {{ 'page.collection.drafts.annex.no-annex' | translate }}
           </div>
         </div>
-        <button
-          class="eui-u-ml-l"
-          euiButton
-          euiPrimary
-          (click)="handleAnnexAdd()"
-        >
-          Add
-        </button>
-        <button
-          class="eui-u-ml-l"
-          euiButton
-          euiPrimary
-          euiOutline
-          (click)="handleAnnexReorder()"
-        >
-          Reorder
-        </button>
+        <ng-container *appUserHasPermission="['CAN_UPDATE']">
+          <button
+            class="eui-u-ml-l"
+            euiButton
+            euiPrimary
+            (click)="handleAnnexAdd()"
+          >
+            Add
+          </button>
+        </ng-container>
+        <ng-container *appUserHasPermission="['CAN_UPDATE']">
+          <button
+            class="eui-u-ml-l"
+            euiButton
+            euiPrimary
+            euiOutline
+            (click)="handleAnnexReorder()"
+          >
+            Reorder
+          </button>
+        </ng-container>
       </div>
 
       <table
@@ -224,16 +228,18 @@
                 (click)="$event.preventDefault()"
                 ><strong>{{ row.title }}</strong></a
               >
-              <button
-                *ngIf="!row.title"
-                euiButton
-                euiBasicButton
-                euiPrimary
-                class="eui-u-mr-s"
-                (click)="handleAnnexEditTitle(row)"
-              >
-                Edit title
-              </button>
+              <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                <button
+                  *ngIf="!row.title"
+                  euiButton
+                  euiBasicButton
+                  euiPrimary
+                  class="eui-u-mr-s"
+                  (click)="handleAnnexEditTitle(row)"
+                >
+                  Edit title
+                </button>
+              </ng-container>
             </td>
             <td>{{ row.updatedBy }}</td>
             <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
@@ -256,12 +262,16 @@
                   </button>
                   <eui-dropdown-content>
                     <ul euiList>
-                      <li euiListItem (click)="handleAnnexEditTitle(row)">
-                        <button euiListItem>Edit title</button>
-                      </li>
-                      <li euiListItem (click)="handleAnnexDelete(row)">
-                        <button euiListItem>Delete</button>
-                      </li>
+                      <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                        <li euiListItem (click)="handleAnnexEditTitle(row)">
+                          <button euiListItem>Edit title</button>
+                        </li>
+                      </ng-container>
+                      <ng-container *appUserHasPermission="['CAN_DELETE']">
+                        <li euiListItem (click)="handleAnnexDelete(row)">
+                          <button euiListItem>Delete</button>
+                        </li>
+                      </ng-container>
                     </ul>
                   </eui-dropdown-content>
                 </eui-dropdown>

@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { debounce, debounceTime, Subject, take, takeUntil } from 'rxjs';
 
 import { ProposalService } from '@/features/proposals/services/proposal.service';
 import { Document } from '@/shared';
@@ -25,9 +25,59 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  handleTitleChange(event: Event, data: ExportPackageVO) {
+    console.log(event);
+    const proposalRef = this.proposalDetailsService.proposalRef;
+    data.comments[0] = (event.target as HTMLInputElement).value;
+    this.proposalDetailsService
+      .updateExportDocument(proposalRef, data.id, data.comments)
+      .pipe(debounceTime(500), takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.exportDocuments = res;
+      });
+  }
+
   ngOnInit(): void {
     this.proposalDetailsService.exportedDocuments$
       .pipe(takeUntil(this.destroy$))
       .subscribe((exports) => (this.exportDocuments = exports));
+  }
+
+  handleDeleteExport(id: string) {
+    const ref = this.proposalDetailsService.proposalRef;
+    this.proposalDetailsService
+      .deleteExportDocument(ref, id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.exportDocuments = res;
+      });
+  }
+
+  handleNotifyExport(id: string) {
+    const ref = this.proposalDetailsService.proposalRef;
+    this.proposalDetailsService
+      .notifyExport(ref, id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        console.log(res);
+      });
+  }
+
+  handlePreviewExport(id: string) {
+    const ref = this.proposalDetailsService.proposalRef;
+    this.proposalDetailsService
+      .deleteExportDocument(ref, id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.downloadFile(res);
+      });
+  }
+
+  private downloadFile(data: any) {
+    const blob = new Blob([data], {
+      type: 'application/docx',
+    });
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);
   }
 }

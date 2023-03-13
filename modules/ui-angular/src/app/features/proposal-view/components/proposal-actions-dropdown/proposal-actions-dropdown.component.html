@@ -6,11 +6,13 @@
     </button>
     <eui-dropdown-content>
       <ul euiList>
-        <li euiListItem (click)="handleDownload()">
-          <button euiListItem>
-            {{ 'page.collection.actions-dropdown.donwload' | translate }}
-          </button>
-        </li>
+        <ng-container *appUserHasPermission="['CAN_DOWNLOAD_PROPOSAL']">
+          <li euiListItem (click)="handleDownload()">
+            <button euiListItem>
+              {{ 'page.collection.actions-dropdown.donwload' | translate }}
+            </button>
+          </li>
+        </ng-container>
         <li
           euiListItem
           (click)="handleExport()"
@@ -25,11 +27,13 @@
             'page.collection.actions-dropdown.share' | translate
           }}</a>
         </li>
-        <li euiListItem (click)="handleDelete()">
-          <button euiListItem euiDanger>
-            {{ 'page.collection.actions-dropdown.delete' | translate }}
-          </button>
-        </li>
+        <ng-container *appUserHasPermission="['CAN_DELETE']">
+          <li euiListItem (click)="handleDelete()">
+            <button euiListItem euiDanger>
+              {{ 'page.collection.actions-dropdown.delete' | translate }}
+            </button>
+          </li>
+        </ng-container>
       </ul>
     </eui-dropdown-content>
   </eui-dropdown>

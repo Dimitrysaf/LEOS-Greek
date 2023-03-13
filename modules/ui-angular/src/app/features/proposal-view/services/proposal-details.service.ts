@@ -286,9 +286,38 @@ export class ProposalDetailsService {
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
-  private getAllExportDocuments(proposalRef: string) {
+  deleteExportDocument(proposalRef: string, exportId: string) {
+    return this.http.delete<ExportPackageVO[]>(
+      `api/secured/proposal/${proposalRef}/deleteExport/${exportId}`,
+    );
+  }
+
+  previewExport(proposalRef: string, exportId: string) {
+    return this.http.get(
+      `api/secured/proposal/${proposalRef}/previewExport/${exportId}`,
+    );
+  }
+
+  notifyExport(proposalRef: string, exportId: string) {
+    return this.http.get(
+      `api/secured/proposal/${proposalRef}/notiftExport/${exportId}`,
+    );
+  }
+
+  getAllExportDocuments(proposalRef: string) {
     return this.http.get<ExportPackageVO[]>(
       `api/secured/proposal/${proposalRef}/getExports`,
+    );
+  }
+
+  updateExportDocument(
+    proposalRef: string,
+    exportId: string,
+    comments: string[],
+  ) {
+    return this.http.put<ExportPackageVO[]>(
+      `api/secured/proposal/${proposalRef}/updateExport/${exportId}`,
+      comments,
     );
   }
 
