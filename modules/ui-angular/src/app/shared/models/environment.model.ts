@@ -1,1 +1,1 @@
-export type ENV_TYPE = 'OS' | 'EC' | 'CN';
+export type ENV_TYPE = 'os' | 'ec' | 'cn';

@@ -4,7 +4,7 @@ import {
   EuiPaginationEvent,
   EuiPaginatorComponent,
 } from '@eui/components/eui-paginator';
-import { ProcedureType } from '@leos/shared';
+import { InstanceType, ProcedureType } from '@leos/shared';
 import { combineLatest, distinctUntilChanged, map, take, tap } from 'rxjs';
 
 import {

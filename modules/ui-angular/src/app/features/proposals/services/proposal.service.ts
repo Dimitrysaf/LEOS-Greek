@@ -153,9 +153,6 @@ export class ProposalService {
         limit,
         filters: ProposalService.extractParamFilters(filters),
       })),
-      distinctUntilChanged(
-        (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
-      ),
       finalize(() => this.loadingService.setLoading(false)),
     );
 
