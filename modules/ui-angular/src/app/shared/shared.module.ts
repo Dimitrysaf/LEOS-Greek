@@ -29,7 +29,11 @@ import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
     DocumentTocComponent,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
+    ProposalCreateDraftComponent,
     ShowOnInstanceDirective,
+    ProposalCreateDraftComponent,
+    ProposalCreateFormComponent,
+    ProposalCreateTemplateSelectorComponent,
   ],
   exports: [
     UxAllModule,

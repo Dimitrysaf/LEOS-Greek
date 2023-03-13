@@ -3,8 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import {
-  ProposalCreateFormComponent,
-  ProposalCreateTemplateSelectorComponent,
   ProposalItemComponent,
   ProposalsFiltersComponent,
   ProposalsListComponent,
@@ -23,8 +21,6 @@ import { ProposalsRoutingModule } from './proposals-routing.module';
     ProposalsListComponent,
     ProposalItemComponent,
     ProposalCreateWizardComponent,
-    ProposalCreateFormComponent,
-    ProposalCreateTemplateSelectorComponent,
     ProposalUploadWizardComponent,
   ],
   imports: [SharedModule, ReactiveFormsModule, ProposalsRoutingModule],

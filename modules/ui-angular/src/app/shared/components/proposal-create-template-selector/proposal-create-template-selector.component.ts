@@ -13,8 +13,8 @@ import { UxTreeComponent } from '@eui/components/legacy/ux-tree';
 import { Subject, takeUntil } from 'rxjs';
 import { appConfig } from 'src/config';
 
-import { CatalogItem } from '../../models';
-import { ProposalService } from '../../services/proposal.service';
+import { CatalogItem } from '@/features/proposals/models';
+import { ProposalService } from '@/features/proposals/services/proposal.service';
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();

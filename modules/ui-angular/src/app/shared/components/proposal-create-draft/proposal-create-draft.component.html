@@ -1,81 +1,60 @@
 <button
   euiButton
-  [euiPrimary]="enviromentService.isCouncil()"
-  [euiSecondary]="!enviromentService.isCouncil()"
-  (click)="openUploadWizard()"
+  euiPrimary
+  (click)="openCreateWizard()"
+  *ngIf="showCreateButton"
 >
-  {{
-    (enviromentService.isCouncil()
-      ? 'page.workspace.upload-cn.button.text'
-      : 'page.workspace.upload.button.text'
-    ) | translate
-  }}
+  {{ 'page.workspace.create-draft' | translate }}
 </button>
 
 <eui-dialog
-  #uploadWizard
-  [title]="
-    this.tranlsateService.instant(
-      enviromentService.isCouncil()
-        ? 'page.workspace.upload-cn.title'
-        : 'page.workspace.upload.title'
-    )
-  "
+  #createWizardDialog
+  [title]="'page.workspace.create-title' | translate"
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
   (close)="onClose()"
 >
   <ux-wizard-steps
+    *ngIf="!fromProposal"
     (selectStep)="onSelectStepRemoteNav($event)"
     [activeStepIndex]="currentStepIndex"
     [isNavigationAllowed]="isNavigationAllowed"
   >
     <ux-wizard-step
-      label="Upload a legislative document"
-      [isCompleted]="step1Complete"
+      label="Template selection"
+      [isCompleted]="!!selectedTemplate"
     >
       <uxWizardStepContent>
-        <form [formGroup]="uploadForm" enctype="multipart/form-data">
-          <eui-file-upload
-            hasDragArea
-            [isMultiple]="false"
-            formControlName="legFile"
-            [progress]="progress"
-            (drop)="onDrop()"
-          ></eui-file-upload>
-        </form>
-        <eui-card *ngIf="errorsVO">
-          <eui-card-header
-            ><eui-card-header-title>
-              <span
-                >Filename: {{ fileName }} not valid</span
-              ></eui-card-header-title
-            ></eui-card-header
-          >
-          <eui-card-content>
-            <div class="" *ngFor="let error of errorsVO">
-              <span class=""
-                >{{ error.objects[0] }} - {{ error.objects[1] }}</span
-              >
-            </div>
-          </eui-card-content>
-        </eui-card>
+        <app-proposal-create-template-selector
+          #templateSelector
+          (selectTemplate)="handleSelectTemplate($event)"
+          (selectLanguage)="handleSelectLanguage($event)"
+        ></app-proposal-create-template-selector>
       </uxWizardStepContent>
     </ux-wizard-step>
-    <ux-wizard-step label="Document metadata" [isCompleted]="uploadForm.valid">
-      <uxWizardStepContent
-        ><app-proposal-create-form
-          [createForm]="uploadForm"
-        ></app-proposal-create-form
-      ></uxWizardStepContent>
+    <ux-wizard-step label="Document metadata" [isCompleted]="createForm.valid">
+      <uxWizardStepContent>
+        <app-proposal-create-form
+          [createForm]="createForm"
+        ></app-proposal-create-form>
+      </uxWizardStepContent>
     </ux-wizard-step>
   </ux-wizard-steps>
+  <ng-container *ngIf="fromProposal">
+    <app-proposal-create-template-selector
+      #templateSelector
+      (selectTemplate)="handleSelectTemplate($event)"
+      (selectLanguage)="handleSelectLanguage($event)"
+    ></app-proposal-create-template-selector>
+  </ng-container>
+
   <eui-dialog-footer>
     <div class="dialog-footer-content">
       <button euiButton (click)="closeDialog()">
         {{ 'page.workspace.create-form.cancel' | translate }}
       </button>
       <button
+        *ngIf="!fromProposal"
         euiButton
         type="button"
         [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
@@ -87,6 +66,7 @@
         </span>
       </button>
       <button
+        *ngIf="!fromProposal"
         euiButton
         type="button"
         [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"

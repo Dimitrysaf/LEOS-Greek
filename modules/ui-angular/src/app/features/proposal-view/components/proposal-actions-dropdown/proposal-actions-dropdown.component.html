@@ -11,7 +11,11 @@
             {{ 'page.collection.actions-dropdown.donwload' | translate }}
           </button>
         </li>
-        <li euiListItem (click)="handleExport()">
+        <li
+          euiListItem
+          (click)="handleExport()"
+          *appShowOnInstance="['EC', 'OS']"
+        >
           <button euiListItem>
             {{ 'page.collection.actions-dropdown.export' | translate }}
           </button>

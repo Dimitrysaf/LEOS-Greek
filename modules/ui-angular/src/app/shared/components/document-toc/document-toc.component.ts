@@ -95,11 +95,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.documentService.setDocumentCategory(this.documentType.toLowerCase());
-    this.documentService.toc$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((toc) => {
-        this.setTree(toc);
-      });
+    // this.documentService.toc$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((toc) => {
+    //     this.setTree(toc);
+    //   });
     if (this.documentRef) {
       this.documentService
         .getToc(this.documentRef)

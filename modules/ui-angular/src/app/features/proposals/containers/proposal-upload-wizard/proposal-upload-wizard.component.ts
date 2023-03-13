@@ -8,15 +8,14 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { EuiFileUploadUtilsService } from '@eui/components/eui-file-upload';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
-import { Subject, tap } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 import { CatalogItem, CreateProposalBody } from '../../models';
-import {
-  ErrorVO,
-  UploadProposalResposne,
-} from '../../models/upload-response.model';
+import { ErrorVO } from '../../models/upload-response.model';
 import { ProposalService } from '../../services/proposal.service';
 
 @Component({
@@ -45,6 +44,8 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
+    public tranlsateService: TranslateService,
+    public enviromentService: EnvironmentService,
   ) {}
 
   ngOnDestroy(): void {

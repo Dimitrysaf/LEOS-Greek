@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   filter,
+  finalize,
   forkJoin,
   map,
   Observable,
@@ -21,8 +22,13 @@ import {
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
+import {
+  CreateDraftBody,
+  CreateDraftResponse,
+} from '@/features/proposals/models';
 import { LoadingService } from '@/shared/services/loading.service';
 
+import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
 
 @Injectable({ providedIn: 'root' })
@@ -31,6 +37,7 @@ export class ProposalDetailsService {
   proposalDetails$: Observable<Document>;
   userInputFieldChange$: Observable<string>;
   addCollaborator$: Observable<Collaborator>;
+  exportedDocuments$: Observable<ExportPackageVO[]>;
   error$: Observable<string>;
 
   private errorBS = new BehaviorSubject<string>('');
@@ -64,6 +71,10 @@ export class ProposalDetailsService {
 
     this.userAutocompleteData$ = this.userAutocompleteDataResponse$.pipe(
       map((users: any) => users),
+    );
+
+    this.exportedDocuments$ = this.proposalRefBS.pipe(
+      switchMap((ref) => this.getAllExportDocuments(ref)),
     );
   }
 
@@ -260,6 +271,25 @@ export class ProposalDetailsService {
         milestoneComment,
       )
       .subscribe((val) => this.getProposalMilestones(documentRef));
+  }
+
+  deleteExplanatory(proposalRef: string, explanatoryRef: string) {
+    return this.http.delete<any>(
+      `api/secured/proposal/${proposalRef}/deleteExplanatory/${explanatoryRef}`,
+    );
+  }
+
+  createExplanatory(data: CreateDraftBody) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .post<CreateDraftResponse>(`api/secured/proposal/createExplanatory`, data)
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
+  }
+
+  private getAllExportDocuments(proposalRef: string) {
+    return this.http.get<ExportPackageVO[]>(
+      `api/secured/proposal/${proposalRef}/getExports`,
+    );
   }
 
   private getProposalDetails(proposalRef: string): Observable<Document> {

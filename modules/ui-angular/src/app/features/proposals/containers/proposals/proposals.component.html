@@ -14,7 +14,13 @@
       >
         <div class="d-flex flex-row justify-content-between" style="gap: 1rem">
           <app-proposal-upload-wizard></app-proposal-upload-wizard>
-          <app-proposal-create-wizard></app-proposal-create-wizard>
+          <app-proposal-create-wizard
+            *appShowOnInstance="['EC', 'OS']"
+          ></app-proposal-create-wizard>
+          <app-proposal-create-draft
+            [fromProposal]="false"
+            *appShowOnInstance="['CN']"
+          ></app-proposal-create-draft>
         </div>
       </div>
       <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
