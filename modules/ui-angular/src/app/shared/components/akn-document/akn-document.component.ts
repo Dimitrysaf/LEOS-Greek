@@ -10,7 +10,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
-import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
@@ -43,7 +43,7 @@ export class AknDocumentComponent implements OnInit, AfterViewInit {
     public doc: DocumentService,
     private route: ActivatedRoute,
     private translate: TranslateService,
-    private cdkEditor: CKEditorService,
+    private config: AppConfigService,
   ) {
     console.log(this.xml);
   }
@@ -75,17 +75,14 @@ export class AknDocumentComponent implements OnInit, AfterViewInit {
   }
 
   private loadStyleSheet() {
-    // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
-    const leosBuildTimestamp = 1667202194805; // FIXME: get this from server at runtime
-    const legacyAssetsPrefix = 'legacy/assets'; // FIXME: import stylesheets to ngui?
-    const cssUrl = `${legacyAssetsPrefix}/css/${this.docCategory.toLowerCase()}.css?cacheToken_${leosBuildTimestamp}`;
-    const coverPageCSS = `assets/scss/_coverPage.scss?cacheToken_${leosBuildTimestamp}`;
-    const coverPageVIEWCSS = `assets/scss/_coverpageView.scss?cacheToken_${leosBuildTimestamp}`;
-    this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
-    if (this.docCategory === 'coverpage') {
-      this.unloadStyleSheet = this.domService.setDynamicStyle(coverPageCSS);
-      this.unloadStyleSheet = this.domService.setDynamicStyle(coverPageVIEWCSS);
-    }
+    const category = this.docCategory.toLowerCase();
+
+    this.config.config.subscribe((config) => {
+      // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
+      // FIXME: import stylesheets to ngui?
+      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css?cacheToken_${config.leosBuildTimestamp}`;
+      this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
+    });
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {

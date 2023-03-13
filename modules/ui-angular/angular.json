@@ -116,7 +116,7 @@
               ]
             },
             "development": {
-              "baseHref": "/leos/ui2/",
+              "baseHref": "/leos-pilot/ui-a/",
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,

@@ -122,6 +122,7 @@
                                 <NG_APP_LEOS_SOURCE_REVISION>${leos.source.revision}</NG_APP_LEOS_SOURCE_REVISION>
                                 <NG_APP_LEOS_VERSION>${leos.build.version}</NG_APP_LEOS_VERSION>
                                 <NG_APP_LEOS_VERSION_BUILD_DATE>${leos.build.date}</NG_APP_LEOS_VERSION_BUILD_DATE>
+                                <NG_APP_LEOS_BUILD_TIMESTAMP>${leos.build.timestamp}</NG_APP_LEOS_BUILD_TIMESTAMP>
                             </environmentVariables>
                             <arguments>${yarn.build.command}</arguments>
                         </configuration>

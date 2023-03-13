@@ -19,6 +19,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
+import { apiBaseUrl } from 'src/config';
 
 import { LoadingService } from '@/shared/services/loading.service';
 
@@ -92,7 +93,10 @@ export class ProposalDetailsService {
   createAnnex() {
     this.loadingService.setLoading(true);
     this.http
-      .post<any>(`api/secured/proposals/${this.proposalRef}/createAnnex`, {})
+      .post<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/createAnnex`,
+        {},
+      )
       .subscribe((val) => {
         this.setProposalRef(this.proposalRef);
         this.loadingService.setLoading(false);
@@ -103,7 +107,7 @@ export class ProposalDetailsService {
     this.loadingService.setLoading(true);
     this.http
       .put<any>(
-        `api/secured/proposals/${this.proposalRef}/update-annex-title/${annexId}`,
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/update-annex-title/${annexId}`,
         {},
         { params: { title: annexTitle } },
       )
@@ -117,7 +121,7 @@ export class ProposalDetailsService {
     this.loadingService.setLoading(true);
     this.http
       .delete<any>(
-        `api/secured/proposals/${this.proposalRef}/deleteAnnex/${annexRef}`,
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/deleteAnnex/${annexRef}`,
         {},
       )
       .subscribe({
@@ -146,7 +150,7 @@ export class ProposalDetailsService {
     this.loadingService.setLoading(true);
     this.http
       .post<any>(
-        `api/secured/updateAnnexOrder/${this.proposalRef}/annex/${annexRef}?moveDirection=${moveDirection}&timesToMove=${timesToMove}`,
+        `${apiBaseUrl}/secured/updateAnnexOrder/${this.proposalRef}/annex/${annexRef}?moveDirection=${moveDirection}&timesToMove=${timesToMove}`,
         {},
       )
       .subscribe(() => {
@@ -157,7 +161,7 @@ export class ProposalDetailsService {
 
   updateProposalMetadata(docPurpose: string, eeaRelevance: boolean) {
     this.http
-      .put<any>(`api/secured/proposal/${this.proposalRef}`, {
+      .put<any>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`, {
         docPurpose,
         eeaRelevance,
         title: '',
@@ -169,7 +173,7 @@ export class ProposalDetailsService {
 
   donwloadProposal() {
     this.http
-      .get(`api/secured/proposals/${this.proposalRef}/download`, {
+      .get(`${apiBaseUrl}/secured/proposals/${this.proposalRef}/download`, {
         responseType: 'blob',
       })
       .pipe(
@@ -190,7 +194,7 @@ export class ProposalDetailsService {
   exportProposal(outputType: string) {
     this.http
       .get<any>(
-        `api/secured/proposal/${this.proposalRef}/export?exportOutput=${outputType}`,
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/export?exportOutput=${outputType}`,
       )
       .subscribe({
         next: (res) =>
@@ -206,7 +210,7 @@ export class ProposalDetailsService {
   deleteProposal() {
     this.loadingService.setLoading(true);
     this.http
-      .delete<string>(`api/secured/proposal/${this.proposalRef}`)
+      .delete<string>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`)
       .subscribe(() => {
         this.loadingService.setLoading(false);
         this.router.navigate(['/workspace']);
@@ -239,7 +243,9 @@ export class ProposalDetailsService {
   getProposalMilestones(documentRef: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .get<Milestone[]>(`api/secured/proposals/${documentRef}/milestones`)
+      .get<Milestone[]>(
+        `${apiBaseUrl}/secured/proposals/${documentRef}/milestones`,
+      )
       .subscribe((miles) => {
         this.milestonesBS.next(miles);
         this.loadingService.setLoading(false);
@@ -249,19 +255,26 @@ export class ProposalDetailsService {
   createMilestone(documentRef: string, milestoneComment: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .post(`api/secured/proposals/${documentRef}/milestones`, milestoneComment)
+      .post(
+        `${apiBaseUrl}/secured/proposals/${documentRef}/milestones`,
+        milestoneComment,
+      )
       .subscribe((val) => this.getProposalMilestones(documentRef));
   }
 
   private getProposalDetails(proposalRef: string): Observable<Document> {
     this.loadingService.setLoading(true);
-    return this.http.get<Document>(`api/secured/proposals/${proposalRef}`);
+    return this.http.get<Document>(
+      `${apiBaseUrl}/secured/proposals/${proposalRef}`,
+    );
   }
 
   private getAllCollaborators(prposalRef: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .get<Collaborator[]>(`api/secured/proposal/${[prposalRef]}/collaborators`)
+      .get<Collaborator[]>(
+        `${apiBaseUrl}/secured/proposal/${[prposalRef]}/collaborators`,
+      )
       .subscribe((col) => {
         this.loadingService.setLoading(false);
         this.collaboratorsBS.next(col);
@@ -273,9 +286,12 @@ export class ProposalDetailsService {
     collaboratorsBulkReq: CollaboratorsBulkRequest,
   ) {
     return this.http
-      .post<any>(`api/secured/proposal/${proposalId}/bulkCollaborators`, {
-        collaborators: collaboratorsBulkReq.collaborators,
-      })
+      .post<any>(
+        `${apiBaseUrl}/secured/proposal/${proposalId}/bulkCollaborators`,
+        {
+          collaborators: collaboratorsBulkReq.collaborators,
+        },
+      )
       .subscribe(() => this.getAllCollaborators(this.proposalRef));
   }
 
@@ -284,7 +300,7 @@ export class ProposalDetailsService {
     collaborator: CollaboratorRequest,
   ) {
     return this.http
-      .post<any>(`api/secured/proposal/${proposalId}/collaborators`, {
+      .post<any>(`${apiBaseUrl}/secured/proposal/${proposalId}/collaborators`, {
         userId: collaborator.userId,
         roleName: collaborator.roleName,
         connectedDG: collaborator.connectedDG,
@@ -298,7 +314,7 @@ export class ProposalDetailsService {
     collaborator: CollaboratorRequest,
   ): Observable<Collaborator[]> {
     return this.http.delete<any>(
-      `api/secured/proposal/${this.proposalRef}/collaborators`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/collaborators`,
       {
         body: {
           userId: collaborator.userId,
@@ -310,7 +326,7 @@ export class ProposalDetailsService {
   }
 
   private searchUsers(name: string): Observable<User[]> {
-    return this.http.get<User[]>(`api/secured/proposal/searchUser`, {
+    return this.http.get<User[]>(`${apiBaseUrl}/secured/proposal/searchUser`, {
       params: { searchKey: name },
     });
   }

@@ -8,9 +8,14 @@ import { AppConfigService } from '@/core/services/app-config.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  appTitle = '';
+  headerTitleHtml = '';
+  headerLogoUrl =
+    process.env.NG_APP_LEOS_INSTANCE === 'cn'
+      ? 'assets/images/logo-cn-w.svg'
+      : '';
   userInfos: UserState;
   // Observe state changes
   userState: Observable<UserState>;
@@ -27,7 +32,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.config.config.subscribe((config) => (this.appTitle = config.title));
+    this.config.config.subscribe(
+      (config) => (this.headerTitleHtml = config.headerTitle),
+    );
   }
 
   ngOnDestroy() {

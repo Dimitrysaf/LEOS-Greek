@@ -4,6 +4,8 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 
 import { TableOfContentItemVO } from '@/features/akn-document/models/toc.model';
 
+import { apiBaseUrl } from '../../../config';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,7 +20,7 @@ export class TocService {
   getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
     this.http
       .get<TableOfContentItemVO[]>(
-        `api/secured/annex/${annexRef}/getTocItems`,
+        `${apiBaseUrl}/secured/annex/${annexRef}/getTocItems`,
         {
           params: { tocMode },
         },
