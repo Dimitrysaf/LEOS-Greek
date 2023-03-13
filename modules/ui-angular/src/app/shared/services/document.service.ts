@@ -1,5 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { result } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -48,6 +49,8 @@ export class DocumentService implements OnDestroy {
   recentChanges$: Observable<any[]>;
   versionId$: Observable<string | null>;
   versionCompareIds$: Observable<any | null>;
+  searchResultIndexArray: string[];
+  focusedSearchResult: string;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -68,7 +71,10 @@ export class DocumentService implements OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    @Inject(DOCUMENT) private document: Document,
+  ) {
     this.documentId$ = this.documentIdBS.asObservable();
     this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
@@ -110,7 +116,7 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe(() => this.setSearchParams({ searchText: '' }));
     this.searchParams$
-      .pipe(takeUntil(this.destroy$), skip(1))
+      .pipe(takeUntil(this.destroy$), skip(2))
       .subscribe((params) => this.doSearch(params));
 
     this.versionView$ = this.versionId$.pipe(
@@ -180,11 +186,26 @@ export class DocumentService implements OnDestroy {
   }
 
   searchNext() {
-    console.warn('stub:', 'searchNext'); // FIXME
+    const currentIndex = this.searchResultIndexArray.indexOf(
+      this.focusedSearchResult,
+    );
+    if (
+      currentIndex >= 0 &&
+      currentIndex < this.searchResultIndexArray.length - 1
+    ) {
+      this.scrollToElement(this.searchResultIndexArray[currentIndex + 1]);
+    } else if (currentIndex === this.searchResultIndexArray.length - 1) {
+      this.scrollToElement(this.searchResultIndexArray[0]);
+    }
   }
 
   searchPrevious() {
-    console.warn('stub:', 'searchPrevious'); // FIXME
+    const currentIndex = this.searchResultIndexArray.indexOf(
+      this.focusedSearchResult,
+    );
+    if (currentIndex !== 0) {
+      this.scrollToElement(this.searchResultIndexArray[currentIndex - 1]);
+    }
   }
 
   searchReplace(text: string) {
@@ -396,8 +417,9 @@ export class DocumentService implements OnDestroy {
       .get(`api/secured/${documentType}/${documentRef}/search-text`, {
         params: parameters,
       })
-      .subscribe((x) => {
-        console.log('dosearch_result:', x);
+      .subscribe((results: any[]) => {
+        this.highlightSearchResults(results);
+        this.scrollToElement(this.searchResultIndexArray[0]);
       });
   }
 
@@ -420,5 +442,69 @@ export class DocumentService implements OnDestroy {
       aKeys.length === Object.keys(b).length &&
       aKeys.every((k) => a[k] === b[k])
     );
+  }
+
+  private highlightSearchResults(resultArray: any[]) {
+    this.removeHighlights();
+    let multipleInstances = false;
+    for (const [index, res] of resultArray.entries()) {
+      if (multipleInstances) {
+        multipleInstances = false;
+        continue;
+      }
+      const element = document.getElementById(
+        `${res.matchedElements[0].elementId}`,
+      );
+      if (element) {
+        const elementText = element.childNodes[0];
+        if (elementText) {
+          const range = document.createRange();
+          range.setStart(elementText, res.matchedElements[0].matchStartIndex);
+          range.setEnd(elementText, res.matchedElements[0].matchEndIndex);
+
+          if (
+            resultArray[index + 1] &&
+            resultArray[index + 1].matchedElements[0].elementId ===
+              res.matchedElements[0].elementId
+          ) {
+            const nextOccurrence = resultArray[index + 1];
+            const range2 = document.createRange();
+            range2.setStart(elementText, nextOccurrence.matchStartIndex);
+            range2.setEnd(elementText, nextOccurrence.matchEndIndex);
+            const wrapper2 = document.createElement('span');
+            const wrapperId2 = 'result-' + (index + 1);
+            wrapper2.id = wrapperId2;
+            this.searchResultIndexArray.push(wrapper2.id);
+            wrapper2.classList.add('search-result');
+            range2.surroundContents(wrapper2);
+            multipleInstances = true;
+          }
+          const wrapper = document.createElement('span');
+          const wrapperId = 'result-' + index;
+          wrapper.id = wrapperId;
+          this.searchResultIndexArray.push(wrapper.id);
+          wrapper.classList.add('search-result');
+          range.surroundContents(wrapper);
+        }
+      }
+    }
+  }
+
+  private removeHighlights() {
+    this.searchResultIndexArray = [];
+    this.focusedSearchResult = '';
+    this.document.querySelectorAll('.search-result').forEach((el) => {
+      const p = el.parentNode;
+      el.replaceWith(...el.childNodes);
+      p.normalize();
+    });
+  }
+
+  private scrollToElement(id: string) {
+    this.focusedSearchResult = id;
+    const targetElement = document.getElementById(id);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 }

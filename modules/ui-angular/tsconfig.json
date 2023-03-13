@@ -5,7 +5,7 @@
     "outDir": "./dist/out-tsc",
     "module": "ESNext",
     "target": "ES2016",
-    "lib": ["es2020", "dom", "ES2021.String"],
+    "lib": ["es2020", "dom", "ES2021.String", "dom.iterable"],
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

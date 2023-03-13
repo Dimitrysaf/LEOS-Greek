@@ -950,28 +950,6 @@ export class CKEditorService implements OnDestroy {
       ),
     );
 
-    const searchBarExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/searchBarExtension'], (searchBar) => {
-              subscriber.next(searchBar);
-            });
-          }),
-      ),
-    );
-
-    const searchTargetExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/searchTargetExtension'], (searchTarget) => {
-              subscriber.next(searchTarget);
-            });
-          }),
-      ),
-    );
-
     const leosConfig$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -1039,8 +1017,6 @@ export class CKEditorService implements OnDestroy {
       changeDetailsExtension$,
       actionHandler$,
       toolbarPositionAdapter$,
-      searchBarExtension$,
-      searchTargetExtension$,
       this.elementEditor$,
     ])
       .pipe(takeUntil(this.destroy$))
@@ -1053,8 +1029,6 @@ export class CKEditorService implements OnDestroy {
           changeDetails,
           actionHandler,
           toolbarPositionAdapter,
-          searchBarExtension,
-          searchTargetExtension,
           elementEditor,
         ]: any[]) => {
           actionManager.init(this.connector);
@@ -1064,8 +1038,6 @@ export class CKEditorService implements OnDestroy {
           changeDetails.init(this.connector);
           actionHandler.setup(this.connector);
           toolbarPositionAdapter.setup(this.connector);
-          searchBarExtension.init(this.connector);
-          searchTargetExtension.init(this.connector);
           elementEditor.setup(this.connector);
         },
       );
