@@ -61,7 +61,15 @@ public interface ApiService {
 
     void deleteExplanatoryDocument(String proposalRef, String template);
 
+    List<ExportPackageVO> updateExportDocument(String proposalRef, String id, List<String> comments);
+
+    List<ExportPackageVO> deleteExportDocument(String proposalRef, String id);
+
+    void notifyExportPackage(String proposalRef, String exportId);
+
     List<ExportPackageVO> getExportDocuments(String proposalRef);
+
+    byte[] downloadExportPackage(String proposalRef, String exportId) throws Exception;
 
     String exportProposal(String proposalRef, String outputType) throws Exception;
 

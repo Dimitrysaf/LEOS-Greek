@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
@@ -36,6 +37,8 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.event.ExportPackageDeletedEvent;
+import eu.europa.ec.leos.model.event.ExportPackageUpdatedEvent;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -58,8 +61,10 @@ import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
+import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.ArchiveService;
+import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
@@ -75,6 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -119,6 +125,8 @@ public class ApiServiceImpl implements ApiService {
     private ValidationService validationService;
     private UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private ExplanatoryService explanatoryService;
+    private ExportPackageService exportPackageService;
+    private NotificationService notificationService;
 
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
@@ -143,7 +151,8 @@ public class ApiServiceImpl implements ApiService {
                           ProposalConverterService proposalConverterService,
                           PostProcessingDocumentService postProcessingDocumentService,
                           ValidationService validationService, Properties applicationProperties,
-                          UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService) {
+                          UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService,
+                          ExportPackageService exportPackageService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -167,6 +176,7 @@ public class ApiServiceImpl implements ApiService {
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.validationService = validationService;
         this.explanatoryService = explanatoryService;
+        this.exportPackageService = exportPackageService;
     }
 
     @Override
@@ -331,6 +341,55 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
+    public List<ExportPackageVO> updateExportDocument(String proposalRef, String id, List<String> comments) {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            ExportDocument exportDocument = this.exportPackageService.updateExportDocument(id, comments);
+            LOG.info("Export Package {} for proposal {} comments updated in {} milliseconds ({} sec)", id, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating comments for Export Package", e);
+        }
+        return this.getExportDocuments(proposalRef);
+
+    }
+
+    @Override
+    public List<ExportPackageVO> deleteExportDocument(String proposalRef, String id) {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            exportPackageService.deleteExportDocument(id);
+            LOG.info("Export Package {} for proposal {} deleted in {} milliseconds ({} sec)", id, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while deleting Export Package", e);
+        }
+        return this.getExportDocuments(proposalRef);
+    }
+
+    @Override
+    public void notifyExportPackage(String proposalRef, String exportId) {
+        ExportDocument exportDocument = null;
+        LeosExportStatus processedStatus = LeosExportStatus.PROCESSED_ERROR;
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            byte[] updatedContent = exportService.updateExportPackageWithComments(exportId);
+            exportDocument = exportPackageService.updateExportDocument(exportId, updatedContent);
+            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            notificationService.sendNotification(proposalRef, exportDocument.getId());
+            processedStatus = LeosExportStatus.PROCESSED_OK;
+            LOG.info("Export Package {} for proposal {} notified in {} milliseconds ({} sec)", exportDocument.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while notifiying Export Package", e);
+        } finally {
+            if (exportDocument != null) {
+                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+                if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
+                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                }
+            }
+        }
+    }
+
+    @Override
     public List<ExportPackageVO> getExportDocuments(String proposalRef) {
         Proposal proposal = this.proposalService.getProposalByRef(proposalRef);
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
@@ -338,6 +397,24 @@ public class ApiServiceImpl implements ApiService {
         List<ExportPackageVO> exportDocumentsVO = new ArrayList<>();
         exportDocuments.forEach(exportDocument -> exportDocumentsVO.add(getExportPackageVO(exportDocument)));
         return exportDocumentsVO;
+    }
+
+    @Override
+    public byte[] downloadExportPackage(String proposalRef, String exportId) throws Exception {
+        byte[] result = null;
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            final Map<String, byte[]> exportPackageContent = exportService.getExportPackageContent(exportId, ".docx");
+            Optional<Map.Entry<String, byte[]>> first = exportPackageContent.entrySet().stream().findFirst();
+            if (first.isPresent()) {
+                result = first.get().getValue();
+                LOG.info("Export Package {} for proposal {} downloaded in {} milliseconds ({} sec)", exportId, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            }
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while downloading Export Package", e);
+        }
+        return result;
+
     }
 
     @Override

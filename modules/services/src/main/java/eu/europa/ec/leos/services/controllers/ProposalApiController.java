@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -133,6 +134,59 @@ public class ProposalApiController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/{proposalRef}/updateExport/{exportId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateExport(@PathVariable String proposalRef, @PathVariable String exportId, @RequestBody List<String> comments) {
+        try {
+            List<ExportPackageVO> exports = apiService.updateExportDocument(proposalRef, exportId, comments);
+            return new ResponseEntity<>(exports, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/deleteExport/{exportId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> deleteExport(@PathVariable String proposalRef, @PathVariable String exportId) {
+        try {
+            List<ExportPackageVO> exports = apiService.deleteExportDocument(proposalRef, exportId);
+            return new ResponseEntity<>(exports, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/notifyExport/{exportId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> notifyExport(@PathVariable String proposalRef, @PathVariable String exportId) {
+        try {
+            apiService.notifyExportPackage(proposalRef, exportId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/previewExport/{exportId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> previewExport(@PathVariable String proposalRef, @PathVariable String exportId) {
+        try {
+            byte[] result = apiService.downloadExportPackage(proposalRef, exportId);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @RequestMapping(value = "/{proposalRef}/deleteExplanatory/{explanatoryRef}", method = RequestMethod.DELETE)
     @ResponseBody
