@@ -16,7 +16,6 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
@@ -57,7 +56,7 @@ public interface ApiService {
 
     void createExplanatoryDocument(String proposalRef, String template);
 
-    void createDraftProposal(String templateId, String docPurpose, boolean eeaRelevance);
+    void createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance);
 
     void deleteExplanatoryDocument(String proposalRef, String template);
 

@@ -213,7 +213,7 @@ export class ProposalService {
   createProposalDraft(data: CreateDrafProposaltBody) {
     this.loadingService.setLoading(true);
     return this.http
-      .post<Document>('api/secured/proposal/createDraftProposal', data)
+      .post<Document>('api/secured/proposal/createExplanatoryDocument', data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 

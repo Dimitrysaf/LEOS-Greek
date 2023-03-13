@@ -14,14 +14,12 @@
 
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CreateDraftProposalRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
-import eu.europa.ec.leos.services.dto.request.ExportPdfRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
@@ -31,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,11 +106,11 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/createDraftProposal", method = RequestMethod.POST)
+    @RequestMapping(value = "/createExplanatoryDocument", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createDraftProposal(@RequestBody CreateDraftProposalRequest request) {
+    public ResponseEntity<Object> createExplanatoryDocument(@RequestBody CreateDraftProposalRequest request) {
         try {
-            apiService.createDraftProposal(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
+            apiService.createExplanatoryDocument(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while creating the explanatory", e);

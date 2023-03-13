@@ -306,11 +306,10 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public void createDraftProposal(String templateId, String docPurpose, boolean eeaRelevance) {
+    public void createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        LOG.debug("Handling create document request event... [category={}]", LeosCategory.PROPOSAL.toString());
+        LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY.toString());
         String[] templates = (templateId != null) ? templateId.split(";") : new String[0];
-        BillContextService billContext = billContextProvider.get();
 
         CollectionContextService context = collectionContextProvider.get();
         for (String name : templates) {
@@ -413,6 +412,7 @@ public class ApiServiceImpl implements ApiService {
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading Export Package", e);
         }
+        if (result == null) throw new Exception("Error when download export document with id");
         return result;
 
     }
