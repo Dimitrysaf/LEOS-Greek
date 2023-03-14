@@ -41,8 +41,30 @@ export class TableOfContentItemVO {
   isAffected: boolean;
 }
 
+export type TagName =
+  | 'RECITAL'
+  | 'RECITALS'
+  | 'SECTION'
+  | 'CITATION'
+  | 'CITATIONS'
+  | 'PREFACE'
+  | 'PREAMBLE'
+  | 'BODY'
+  | 'MAIN_BODY'
+  | 'CONCLUSIONS'
+  | 'CHAPTER'
+  | 'ARTICLE'
+  | 'TITLE'
+  | 'PART'
+  | 'DIVISION'
+  | 'PARAGRAPH'
+  | 'SUBPARAGRAPH'
+  | 'POINT'
+  | 'POINTS'
+  | 'LEVEL';
+
 export class TocItem {
-  aknTag: string;
+  aknTag: TagName;
   root: boolean;
   higherElement: boolean;
   draggable: boolean;

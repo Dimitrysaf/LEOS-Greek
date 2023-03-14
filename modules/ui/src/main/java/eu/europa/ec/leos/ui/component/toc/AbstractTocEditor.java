@@ -25,6 +25,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.OptionsType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,7 +37,6 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_FROM;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
-import static eu.europa.ec.leos.model.action.SoftActionType.SPLITTED;
 import static eu.europa.ec.leos.model.action.SoftActionType.UNDELETE;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getTocItemChildPosition;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;

@@ -25,8 +25,8 @@ import { Version } from '@/features/akn-document/models/versions';
 
 import { apiBaseUrl } from '../../../config';
 import { DocumentViewResponse } from '../models/document-view-response.model';
+import { NodeValidationResponse } from '../models/drop-response.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
-import { VersionInfoVO } from '../models/version-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -331,31 +331,34 @@ export class DocumentService implements OnDestroy {
   saveToc(documentRef: string, toc: TableOfContentItemVO[]) {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
-    return this.http
-      .post<TableOfContentItemVO[]>(
-        `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
-        {
-          tableOfContentItemVOs: toc,
-        },
-      )
-      .subscribe({
-        next: (res) => null,
-        error: (res) => console.log(res),
-      });
+    return this.http.post<TableOfContentItemVO[]>(
+      `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
+      {
+        tableOfContentItemVOs: toc,
+      },
+    );
   }
 
   validateNodeDrop(
-    nodeDragged: TableOfContentItemVO[],
-    targetNode: TableOfContentItemVO,
+    draggedNodeId: string[],
+    draggedNodeTagName: string,
+    targetNodeId: string,
+    targetNodeTagName: string,
+    parentNodeId: string,
+    parentNodeTagName: string,
     position: string,
     documentType: string,
     documentRef: string,
   ) {
-    return this.http.post(
+    return this.http.post<NodeValidationResponse>(
       `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
       {
-        nodeDragged,
-        targetNode,
+        draggedNodeId,
+        draggedNodeTagName,
+        targetNodeId,
+        targetNodeTagName,
+        parentNodeId,
+        parentNodeTagName,
         position: position.toUpperCase(),
         documentRef,
         documentType: documentType.toUpperCase(),

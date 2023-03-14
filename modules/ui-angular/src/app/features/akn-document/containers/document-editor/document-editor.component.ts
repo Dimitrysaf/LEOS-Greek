@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { uniqueId } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
-import { truncate } from 'lodash';
-import { combineLatest, Subject, takeUntil, withLatestFrom } from 'rxjs';
+import { cloneDeep } from 'lodash';
+import { Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentTocComponent } from '@/shared/components/document-toc/document-toc.component';
@@ -166,9 +166,17 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     }
   }
   handleSave() {
-    const toc = this.tocStructure;
+    const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
-    this.documentService.saveToc(this.documentRef, toc);
+    this.documentService
+      .saveToc(this.documentRef, toc)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {},
+      });
   }
   handleCancel() {
     //TODO : implement cancel
@@ -212,6 +220,8 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       }
       this.documentTocComponent.treeHistory = [];
     }
+    this.documentTocComponent.messageFromValidation = null;
+    this.documentTocComponent.isDropValid = null;
     this.isEditMode = false;
   }
 

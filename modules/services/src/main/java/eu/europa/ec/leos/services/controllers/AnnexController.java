@@ -60,8 +60,8 @@ public class AnnexController {
                                                    @PathVariable("elementId") String elementId,
                                                    @RequestBody String elementContent) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.saveElement(documentRef,elementId,elementName,elementContent);
-            return  ResponseEntity.ok().body(annexXml);
+            DocumentViewResponse annexXml = this.annexAPIService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,8 +75,8 @@ public class AnnexController {
                                                      @PathVariable("elementName") String elementName,
                                                      @PathVariable("elementId") String elementId) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.deleteBlock(documentRef,elementName,elementId);
-            return  ResponseEntity.ok().body(annexXml);
+            DocumentViewResponse annexXml = this.annexAPIService.deleteBlock(documentRef, elementName, elementId);
+            return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpcted error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -93,8 +93,8 @@ public class AnnexController {
                                                      @PathVariable("elementId") String elementId,
                                                      @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.insertElement(documentRef,elementName,elementId,request.getPosition());
-            return  ResponseEntity.ok().body(annexXml);
+            DocumentViewResponse annexXml = this.annexAPIService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpcted error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -109,8 +109,8 @@ public class AnnexController {
                                                     @PathVariable("elementId") String elementId,
                                                     @RequestBody String elementContent) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.mergeElement(documentRef,elementContent,elementTag,elementId);
-            return  ResponseEntity.ok().body(annexXml);
+            DocumentViewResponse annexXml = this.annexAPIService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on bill - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while merging elements ", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -149,8 +149,8 @@ public class AnnexController {
 
     @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> saveAnnexVersion(@PathVariable("documentRef") String documentRef,
-                                                   @RequestBody SaveTocRequestEvent saveTocRequestEvent
+    public ResponseEntity<Object> saveToc(@PathVariable("documentRef") String documentRef,
+                                          @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
             List<TableOfContentItemVO> toc = this.annexAPIService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());

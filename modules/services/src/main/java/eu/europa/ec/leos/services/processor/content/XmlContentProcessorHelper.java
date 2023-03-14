@@ -197,6 +197,9 @@ public class XmlContentProcessorHelper {
     }
 
     public static TableOfContentItemVO buildTableOfContentsItemVO(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node) {
+        if (node == null) {
+            return null;
+        }
         String tagName = node.getNodeName();
         TocItem tocItem = StructureConfigUtils.getTocItemByName(tocItems, tagName);
 

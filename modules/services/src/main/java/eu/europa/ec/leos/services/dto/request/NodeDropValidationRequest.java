@@ -1,46 +1,68 @@
 package eu.europa.ec.leos.services.dto.request;
 
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.vo.toc.TocItemPosition;
 
-public class NodeDropValidationRequest {
-    private TableOfContentItemVO nodeDragged;
-    private TableOfContentItemVO nodeDroppedAt;
-    private String documentType;
+import java.io.Serializable;
+import java.util.List;
+
+public class NodeDropValidationRequest implements Serializable {
+    private List<String> draggedNodeId;
+    private String draggedNodeTagName;
+    private String targetNodeId;
+    private String targetNodeTagName;
+    private String parentNodeId;
+    private String parentNodeTagName;
+    private TocItemPosition position;
+    private LeosCategory documentType;
     private String documentRef;
 
-    public NodeDropValidationRequest() {
-        super();
-    }
-    public NodeDropValidationRequest(TableOfContentItemVO nodeDragged, TableOfContentItemVO nodeDroppedAt, String documentType, String documentRef) {
-        super();
-        this.nodeDragged = nodeDragged;
-        this.nodeDroppedAt = nodeDroppedAt;
-        this.documentType = documentType;
-        this.documentRef = documentRef;
+    public List<String> getDraggedNodeId() {
+        return draggedNodeId;
     }
 
-    public TableOfContentItemVO getNodeDragged() {
-        return nodeDragged;
+    public String getDraggedNodeTagName() {
+        return draggedNodeTagName;
     }
 
-    public void setNodeDragged(TableOfContentItemVO nodeDragged) {
-        this.nodeDragged = nodeDragged;
+    public void setDraggedNodeTagName(String draggedNodeTagName) {
+        this.draggedNodeTagName = draggedNodeTagName;
     }
 
-    public TableOfContentItemVO getNodeDroppedAt() {
-        return nodeDroppedAt;
+    public String getTargetNodeId() {
+        return targetNodeId;
     }
 
-    public void setNodeDroppedAt(TableOfContentItemVO nodeDroppedAt) {
-        this.nodeDroppedAt = nodeDroppedAt;
+    public String getTargetNodeTagName() {
+        return targetNodeTagName;
     }
 
-    public String getDocumentType() {
+    public void setTargetNodeTagName(String targetNodeTagName) {
+        this.targetNodeTagName = targetNodeTagName;
+    }
+
+    public String getParentNodeId() {
+        return parentNodeId;
+    }
+
+    public void setParentNodeId(String parentNodeId) {
+        this.parentNodeId = parentNodeId;
+    }
+
+    public String getParentNodeTagName() {
+        return parentNodeTagName;
+    }
+
+    public void setParentNodeTagName(String parentNodeTagName) {
+        this.parentNodeTagName = parentNodeTagName;
+    }
+
+    public TocItemPosition getPosition() {
+        return position;
+    }
+
+    public LeosCategory getDocumentType() {
         return documentType;
-    }
-
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
     }
 
     public String getDocumentRef() {
@@ -51,5 +73,20 @@ public class NodeDropValidationRequest {
         this.documentRef = documentRef;
     }
 
+    public void setDraggedNodeId(List<String> draggedNodeId) {
+        this.draggedNodeId = draggedNodeId;
+    }
+
+    public void setTargetNodeId(String targetNodeId) {
+        this.targetNodeId = targetNodeId;
+    }
+
+    public void setPosition(TocItemPosition position) {
+        this.position = position;
+    }
+
+    public void setDocumentType(LeosCategory documentType) {
+        this.documentType = documentType;
+    }
 
 }
