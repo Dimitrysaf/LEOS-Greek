@@ -29,7 +29,12 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   pageSubTitle: string;
   xml: string;
   isCollapseToc = false;
+  versionForView: string;
+  versionForViewHeaderTitle: string;
+  versionsComparisonForView: string;
+  versionsComparisonForViewHeaderTitle: string;
 
+  isVersionForViewOpen = false;
   isTOCColumnCollapsed = true;
   isAnnotationsColumnCollapsed = true;
   isVersionsColumnCollapsed = true;
@@ -65,6 +70,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       this.documentService.setDocumentCategory(this.documentType);
       this.cdkEditor.setDocumentRef(this.documentRef);
       this.cdkEditor.setDocumentType(this.documentType);
+      this.setVersionComparisonViewHeader(null, null);
     });
 
     this.loadStyleSheet();
@@ -82,6 +88,37 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       .subscribe((tocItems) => {
         this.tocItems = tocItems;
         this.dragItems = this.buildTocItemToTOC(tocItems);
+      });
+
+    this.documentService.versionView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((versionView) => {
+        if (versionView !== null) this.versionForView = versionView.editableXml;
+        this.setVersionForViewHeader({
+          version: versionView.versionInfoVO.documentVersion,
+          updatedByFull: `${versionView.versionInfoVO.lastModifiedBy} (${versionView.versionInfoVO.entity})`,
+          updatedOn: versionView.versionInfoVO.lastModificationInstant,
+        });
+        this.isVersionForViewOpen = true;
+      });
+
+    this.documentService.versionCompareView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((versionCompareView) => {
+        if (versionCompareView !== null) {
+          this.versionsComparisonForView = versionCompareView;
+        }
+      });
+
+    this.documentService.versionCompareIds$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((idArray) => {
+        if (idArray && idArray.newVersion !== null) {
+          this.setVersionComparisonViewHeader(
+            idArray.oldVersion,
+            idArray.newVersion,
+          );
+        }
       });
   }
 
@@ -197,6 +234,13 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     );
   }
 
+  closeVersionView() {
+    this.isVersionForViewOpen = false;
+  }
+
+  closeVersionComparisonView() {
+    this.documentService.toggleCompareMode(false);
+  }
   private get tocStructure() {
     return this.documentTocComponent.treeControl.dataNodes;
   }
@@ -301,5 +345,29 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     ]
       .filter(Boolean)
       .join(' ');
+  }
+
+  private setVersionForViewHeader({ version, updatedByFull, updatedOn }) {
+    this.translate
+      .get('version.view.header', { version, updatedByFull, updatedOn })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((header: string) => {
+        this.versionForViewHeaderTitle = header;
+      });
+  }
+
+  private setVersionComparisonViewHeader(oldVersion, newVersion) {
+    console.log('setVersionComparisonViewHeader', oldVersion, newVersion);
+    this.translate
+      .get(
+        oldVersion && newVersion
+          ? 'version.compare.header'
+          : 'version.compare.header.default',
+        { oldVersion, newVersion },
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((header: string) => {
+        this.versionsComparisonForViewHeaderTitle = header;
+      });
   }
 }

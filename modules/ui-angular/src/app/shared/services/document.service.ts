@@ -1,5 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { result } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatestWith,
@@ -8,11 +10,13 @@ import {
   map,
   mergeMap,
   Observable,
+  of,
   skip,
   Subject,
   switchMap,
   take,
   takeUntil,
+  tap,
   withLatestFrom,
 } from 'rxjs';
 
@@ -33,6 +37,8 @@ export class DocumentService implements OnDestroy {
   compareModeEnabled$: Observable<boolean>;
   documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
+  versionView$: Observable<DocumentViewResponse | null>;
+  versionCompareView$: Observable<string | null>;
   guidelinesEnabled$: Observable<boolean>;
   highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
@@ -42,6 +48,10 @@ export class DocumentService implements OnDestroy {
   toc$: Observable<TableOfContentItemVO[]>;
   tocItems$: Observable<any[]>;
   recentChanges$: Observable<any[]>;
+  versionId$: Observable<string | null>;
+  versionCompareIds$: Observable<any | null>;
+  searchResultIndexArray: string[];
+  focusedSearchResult: string;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -57,10 +67,15 @@ export class DocumentService implements OnDestroy {
     matchCase: false,
   });
   private versionSearchOpenBS = new BehaviorSubject(false);
+  private versionIdBS = new BehaviorSubject<string | null>(null);
+  private versionCompareIdsBS = new BehaviorSubject<any | null>(null);
 
   private destroy$ = new Subject<void>();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    @Inject(DOCUMENT) private document: Document,
+  ) {
     this.documentId$ = this.documentIdBS.asObservable();
     this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
@@ -74,6 +89,8 @@ export class DocumentService implements OnDestroy {
     this.guidelinesEnabled$ = this.guidelinesEnabledBS.asObservable();
     this.highlightsEnabled$ = this.highlightsEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
+    this.versionId$ = this.versionIdBS.asObservable();
+    this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
@@ -100,8 +117,29 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe(() => this.setSearchParams({ searchText: '' }));
     this.searchParams$
-      .pipe(takeUntil(this.destroy$), skip(1))
+      .pipe(takeUntil(this.destroy$), skip(2))
       .subscribe((params) => this.doSearch(params));
+
+    this.versionView$ = this.versionId$.pipe(
+      takeUntil(this.destroy$),
+      skip(1),
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([versionId, category]) =>
+        this.getDocumentVersion(category, versionId),
+      ),
+    );
+
+    this.versionCompareView$ = this.versionCompareIds$.pipe(
+      skip(1),
+      tap((x) => {
+        console.log(x);
+      }),
+      takeUntil(this.destroy$),
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([versionCompareIds, category]) =>
+        this.getDocumentVersionsComparison(versionCompareIds, category),
+      ),
+    );
   }
 
   ngOnDestroy() {
@@ -149,11 +187,26 @@ export class DocumentService implements OnDestroy {
   }
 
   searchNext() {
-    console.warn('stub:', 'searchNext'); // FIXME
+    const currentIndex = this.searchResultIndexArray.indexOf(
+      this.focusedSearchResult,
+    );
+    if (
+      currentIndex >= 0 &&
+      currentIndex < this.searchResultIndexArray.length - 1
+    ) {
+      this.scrollToElement(this.searchResultIndexArray[currentIndex + 1]);
+    } else if (currentIndex === this.searchResultIndexArray.length - 1) {
+      this.scrollToElement(this.searchResultIndexArray[0]);
+    }
   }
 
   searchPrevious() {
-    console.warn('stub:', 'searchPrevious'); // FIXME
+    const currentIndex = this.searchResultIndexArray.indexOf(
+      this.focusedSearchResult,
+    );
+    if (currentIndex !== 0) {
+      this.scrollToElement(this.searchResultIndexArray[currentIndex - 1]);
+    }
   }
 
   searchReplace(text: string) {
@@ -190,9 +243,18 @@ export class DocumentService implements OnDestroy {
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
+    console.log('setSearchParams:', values);
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.searchParamsBS.next({ ...oldVal, ...values });
     });
+  }
+
+  setVersionIdsForCompare(versionIdsToCompare: any) {
+    this.versionCompareIdsBS.next(versionIdsToCompare);
+  }
+
+  getVersionsIdsArray() {
+    return this.versionCompareIdsBS.value;
   }
 
   toggleAnnotations(enabled?: boolean) {
@@ -202,7 +264,7 @@ export class DocumentService implements OnDestroy {
   toggleCompareMode(enabled?: boolean) {
     this.toggleSubject(this.compareModeEnabledBS, enabled);
     this.compareModeEnabledBS.pipe(take(1)).subscribe((e) => {
-      console.warn('stub:', 'toggleCompareMode', e); // FIXME
+      if (!e) this.setVersionIdsForCompare([]);
     });
   }
 
@@ -227,11 +289,21 @@ export class DocumentService implements OnDestroy {
   }
 
   versionRevert(versionNumber: string) {
+    const documentCategory = this.documentCategoryBS.value;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .get(
+        `api/secured/${documentCategory}/${documentRef}/restore/${versionNumber}`,
+      )
+      .subscribe((r) => {
+        this.setDocumentId(documentRef);
+      });
+
     console.warn('stub:', 'versionRevert', versionNumber); // FIXME
   }
 
   versionView(versionNumber: string) {
-    console.warn('stub:', 'versionView', versionNumber); // FIXME
+    this.versionIdBS.next(versionNumber);
   }
 
   getToc(annexRef: string, tocMode = 'SIMPLIFIED') {
@@ -324,8 +396,35 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  private doSearch(params: DocumentSearchParams) {
-    console.warn('stub:', 'doSearch', params); // FIXME
+  getDocumentVersion(documentType: string, versionId: string) {
+    return this.http.get<DocumentViewResponse>(
+      `api/secured/${documentType}/${versionId}/show-version`,
+    );
+  }
+
+  getDocumentVersionsComparison(versionArray: any, documentType: string) {
+    if (versionArray && versionArray.newVersion !== null) {
+      return this.http.get<string>(
+        `api/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
+        { responseType: 'text' as 'json' },
+      );
+    } else {
+      return of('');
+    }
+  }
+
+  private doSearch(parameters: DocumentSearchParams) {
+    console.log('dosearch:', parameters);
+    const documentType = this.documentCategoryBS.value;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .get(`api/secured/${documentType}/${documentRef}/search-text`, {
+        params: parameters,
+      })
+      .subscribe((results: any[]) => {
+        this.highlightSearchResults(results);
+        this.scrollToElement(this.searchResultIndexArray[0]);
+      });
   }
 
   private toggleSubject(subj: Subject<boolean>, value?: boolean) {
@@ -349,5 +448,69 @@ export class DocumentService implements OnDestroy {
       aKeys.length === Object.keys(b).length &&
       aKeys.every((k) => a[k] === b[k])
     );
+  }
+
+  private highlightSearchResults(resultArray: any[]) {
+    this.removeHighlights();
+    let multipleInstances = false;
+    for (const [index, res] of resultArray.entries()) {
+      if (multipleInstances) {
+        multipleInstances = false;
+        continue;
+      }
+      const element = document.getElementById(
+        `${res.matchedElements[0].elementId}`,
+      );
+      if (element) {
+        const elementText = element.childNodes[0];
+        if (elementText) {
+          const range = document.createRange();
+          range.setStart(elementText, res.matchedElements[0].matchStartIndex);
+          range.setEnd(elementText, res.matchedElements[0].matchEndIndex);
+
+          if (
+            resultArray[index + 1] &&
+            resultArray[index + 1].matchedElements[0].elementId ===
+              res.matchedElements[0].elementId
+          ) {
+            const nextOccurrence = resultArray[index + 1];
+            const range2 = document.createRange();
+            range2.setStart(elementText, nextOccurrence.matchStartIndex);
+            range2.setEnd(elementText, nextOccurrence.matchEndIndex);
+            const wrapper2 = document.createElement('span');
+            const wrapperId2 = 'result-' + (index + 1);
+            wrapper2.id = wrapperId2;
+            this.searchResultIndexArray.push(wrapper2.id);
+            wrapper2.classList.add('search-result');
+            range2.surroundContents(wrapper2);
+            multipleInstances = true;
+          }
+          const wrapper = document.createElement('span');
+          const wrapperId = 'result-' + index;
+          wrapper.id = wrapperId;
+          this.searchResultIndexArray.push(wrapper.id);
+          wrapper.classList.add('search-result');
+          range.surroundContents(wrapper);
+        }
+      }
+    }
+  }
+
+  private removeHighlights() {
+    this.searchResultIndexArray = [];
+    this.focusedSearchResult = '';
+    this.document.querySelectorAll('.search-result').forEach((el) => {
+      const p = el.parentNode;
+      el.replaceWith(...el.childNodes);
+      p.normalize();
+    });
+  }
+
+  private scrollToElement(id: string) {
+    this.focusedSearchResult = id;
+    const targetElement = document.getElementById(id);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 }

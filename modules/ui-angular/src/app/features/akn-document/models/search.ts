@@ -1,5 +1,5 @@
 export type DocumentSearchParams = {
   searchText: string;
-  wholeWords: boolean;
+  completeWords: boolean;
   matchCase: boolean;
 };

@@ -246,7 +246,7 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> compareAnnexVersions(@PathVariable("newVersionId") String newVersionId,
                                                        @PathVariable("oldVersionId") String oldVersionId) {
