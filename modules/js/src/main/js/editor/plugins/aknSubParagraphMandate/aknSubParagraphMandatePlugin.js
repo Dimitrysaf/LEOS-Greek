@@ -105,6 +105,9 @@ define(function aknSubParagraphMandatePluginModule(require) {
             html: 'ol[data-akn-name=aknSubParagraphMandate]',
             attr: [{
                 html: "data-akn-name=aknSubParagraphMandate"
+            }, {
+                akn : "leos:deletable",
+                html : "leos:deletable"
             }]
         },
         rootElementsForFrom: ["subparagraph"],
