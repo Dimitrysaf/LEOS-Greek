@@ -111,6 +111,9 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         LOG.debug("ENTER button clicked");
         var elementType = context.editor.LEOS.elementType;
         var selection = context.editor.getSelection();
+        if (selection.getStartElement().getName() === 'ol') {
+            selection = leosPluginUtils.selectLastEditableElement(selection);
+        }
         if (_isElementInsideTable(selection.getStartElement())) {
             context.event.cancel();
         } else if (elementType && (elementType === 'level' || elementType === 'paragraph') && (_isStartElementOrderedListOrContent(selection))) {

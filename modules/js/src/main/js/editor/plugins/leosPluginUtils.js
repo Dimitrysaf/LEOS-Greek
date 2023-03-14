@@ -1107,6 +1107,26 @@ define(function leosPluginUtilsModule(require) {
         return _isDefinitionArticle(editor) ? MAX_LEVEL_LIST_DEPTH_DEF : MAX_LEVEL_LIST_DEPTH;
     }
 
+    function _selectLastEditableElement(selection) {
+         /*
+          * This method was created to solve a conflict in CKEditor when
+          * we use contenteditable attribute in some elements.
+          * When open ckeditor to edit text with double click or using
+          * the icon, and then we don't move the cursor and don't click
+          * in any place, then the selected element is the "ol".
+          * Then we need to change the selected element to the last one.
+          * It was affecting the ENTER and also the indent and outdent.
+          *
+          */
+        var elementToSelect = selection.getStartElement().findOne('p:last-child');
+        if (!elementToSelect) {
+            elementToSelect = selection.getStartElement().findOne('li:not(:has(li)):last-child');
+        }
+        var newRange = new CKEDITOR.dom.range(selection.document);
+        newRange.moveToPosition(elementToSelect, CKEDITOR.POSITION_BEFORE_END);
+        return newRange.select();
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1170,6 +1190,7 @@ define(function leosPluginUtilsModule(require) {
         getMaxListLevelDepth: _getMaxListLevelDepth,
         isFirstSubParagraph: _isFirstSubParagraph,
         isDefinitionArticleElement: _isDefinitionArticleElement,
+        selectLastEditableElement: _selectLastEditableElement,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
