@@ -1501,6 +1501,10 @@ define(function leosAnnexIndentListPluginModule(require) {
     }
 
     function _onSelectionChange(event) {
+        var selection = event.data.selection;
+        if (selection.getStartElement().getName() === 'ol') {
+            event.data.selection = leosPluginUtils.selectLastEditableElement(selection);
+        }
         leosCommandStateHandler.changeCommandState(event, "indent");
         leosCommandStateHandler.changeCommandState(event, "outdent");
     }

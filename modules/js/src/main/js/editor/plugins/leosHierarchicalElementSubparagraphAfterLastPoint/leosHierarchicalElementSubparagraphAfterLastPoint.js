@@ -70,7 +70,6 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
     };
 
     var _handleJQueryEvent = function _handleJQueryEvent(event) {
-        console.log("_handleJQueryEvent for " + event.name);
         var evtDataArray = event.data;
         var editor = evtDataArray[0];
         var cmd = evtDataArray[1];
@@ -80,7 +79,6 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
     }
 
     var _handleCKEvent = function _handleCKEvent(event) {
-        console.log("_handleCKEvent for " + event.name);
         var editor = event.editor;
         var cmd = event.listenerData;
         _setCurrentShiftCtrlEnterStatus(editor, cmd);
