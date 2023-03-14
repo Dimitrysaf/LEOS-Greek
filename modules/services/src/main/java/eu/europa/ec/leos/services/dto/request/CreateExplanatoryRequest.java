@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.dto.request;
 
-public class CreateDraftProposalRequest {
+public class CreateExplanatoryRequest {
     private String docPurpose;
     private String templateId;
     private boolean eeaRelevance;

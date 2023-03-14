@@ -308,7 +308,7 @@ public class ApiServiceImpl implements ApiService {
     @Override
     public void createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY.toString());
+        LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY);
         String[] templates = (templateId != null) ? templateId.split(";") : new String[0];
 
         CollectionContextService context = collectionContextProvider.get();
@@ -320,7 +320,7 @@ public class ApiServiceImpl implements ApiService {
         context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
         context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
         LOG.info("New document of type {} created in {} milliseconds ({} sec)", LeosCategory.PROPOSAL.toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        context.executeCreateProposal();
+        context.executeCreateExplanatory();
     }
 
     @Override

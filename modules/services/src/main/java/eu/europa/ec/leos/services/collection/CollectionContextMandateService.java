@@ -73,8 +73,8 @@ public class CollectionContextMandateService extends CollectionContextService {
     }
 
     @Override
-    public Proposal executeCreateProposal() {
-        LOG.trace("Executing 'Create Proposal' use case...");
+    public void executeCreateExplanatory() {
+        LOG.trace("Executing 'Create Explanatory' use case...");
         LeosPackage leosPackage = packageService.createPackage();
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         proposal = proposal == null ? proposalTemplate : proposal;
@@ -96,7 +96,7 @@ public class CollectionContextMandateService extends CollectionContextService {
 
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
         proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
-        return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+        proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
     private Explanatory getExplanatory(ProposalMetadata metadata, ExplanatoryContextService explanatoryContext, String template,

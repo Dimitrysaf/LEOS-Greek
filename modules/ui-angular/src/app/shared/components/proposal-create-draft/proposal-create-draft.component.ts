@@ -15,9 +15,8 @@ import { createPromise } from '@/shared/utils';
 
 import {
   CatalogItem,
-  CreateDrafProposaltBody,
-  CreateDraftBody,
-  CreateDraftResponse,
+  CreateExplanatoryBody,
+  CreateExplanatoryDocumentBody,
 } from '../../../features/proposals/models';
 import { ProposalService } from '../../../features/proposals/services/proposal.service';
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
@@ -167,7 +166,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
       this.proposalDetailsService
         .createExplanatory(this.getDataForCreateExplanatory())
         .subscribe({
-          next: async (response) => {
+          next: (response) => {
             this.createWizard.closeDialog();
             this.resetInitials();
             if (this.fromProposal)
@@ -176,8 +175,6 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
                 .subscribe(({ proposalId }) => {
                   this.proposalDetailsService.setProposalRef(proposalId);
                 });
-            if (!this.fromProposal)
-              await this.router.navigate([`collection/${response.proposalId}`]);
           },
           error: (err) => {},
         });
@@ -200,7 +197,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     return this.currentStepIndex === 2;
   }
 
-  private getDataForCreateExplanatory(): CreateDraftBody {
+  private getDataForCreateExplanatory(): CreateExplanatoryDocumentBody {
     const proposalRef = this.proposalDetailsService.proposalRef;
     const { templateId } = this.createForm.getRawValue();
     return {
@@ -209,7 +206,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     };
   }
 
-  private getDataForCreateDraftProposal(): CreateDrafProposaltBody {
+  private getDataForCreateDraftProposal(): CreateExplanatoryBody {
     const { templateId, docPurpose, eeaRelevance } =
       this.createForm.getRawValue();
     return {

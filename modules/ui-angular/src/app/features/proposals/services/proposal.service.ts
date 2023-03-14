@@ -19,9 +19,8 @@ import { apiBaseUrl } from 'src/config';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import {
-  CreateDrafProposaltBody,
-  CreateDraftBody,
-  CreateDraftResponse,
+  CreateExplanatoryBody,
+  CreateExplanatoryDocumentBody,
   CreateProposalBody,
   CreateProposalResponse,
   DEFAULT_LIMIT,
@@ -210,7 +209,7 @@ export class ProposalService {
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
-  createProposalDraft(data: CreateDrafProposaltBody) {
+  createProposalDraft(data: CreateExplanatoryBody) {
     this.loadingService.setLoading(true);
     return this.http
       .post<Document>('api/secured/proposal/createExplanatoryDocument', data)

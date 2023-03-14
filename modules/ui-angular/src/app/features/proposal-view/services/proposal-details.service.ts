@@ -22,10 +22,7 @@ import {
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import {
-  CreateDraftBody,
-  CreateDraftResponse,
-} from '@/features/proposals/models';
+import { CreateExplanatoryDocumentBody } from '@/features/proposals/models';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import { ExportPackageVO } from '../models/export-package.model';
@@ -279,10 +276,10 @@ export class ProposalDetailsService {
     );
   }
 
-  createExplanatory(data: CreateDraftBody) {
+  createExplanatory(data: CreateExplanatoryDocumentBody) {
     this.loadingService.setLoading(true);
     return this.http
-      .post<CreateDraftResponse>(`api/secured/proposal/createExplanatory`, data)
+      .post(`api/secured/proposal/createExplanatory`, data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
