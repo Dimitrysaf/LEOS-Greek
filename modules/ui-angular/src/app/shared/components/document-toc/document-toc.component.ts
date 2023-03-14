@@ -18,10 +18,11 @@ import {
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep, head, truncate } from 'lodash-es';
+import { cloneDeep, head, includes, take, truncate } from 'lodash-es';
 import { Subject, takeUntil } from 'rxjs';
 
 import { DragAction } from '@/shared/models/drag-action.model';
+import { NodeValidationResponse } from '@/shared/models/drop-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { convertArticle } from '@/shared/utils/toc.utils';
@@ -54,8 +55,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   //toc related
   toc: TableOfContentItemVO[];
+  selectedNode: TableOfContentItemVO = null;
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
+  messageFromValidation: string;
+  isDropValid: boolean;
 
   dragAction: DragAction;
 
@@ -140,28 +144,32 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   handleHeadingChange(value) {
-    this.selectedNodeToMove.heading = value;
+    this.selectedNode.heading = value;
   }
 
-  handlePlaceBefore(node: TableOfContentItemVO) {
-    this.insertBefore(node, this.selectedNodeToMove, false);
-    this.selectedNodeToMove = null;
-  }
-
-  handlePlaceChild(node: TableOfContentItemVO) {
-    this.insertChild(node, this.selectedNodeToMove, false);
-    this.selectedNodeToMove = null;
-  }
-  handlePlaceAfter(node: TableOfContentItemVO) {
-    this.insertAfter(node, this.selectedNodeToMove, false);
-    this.selectedNodeToMove = null;
+  handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
+    const nodeTargetParent = this.findNodeById(
+      this.treeControl.dataNodes,
+      nodeTarget.parentItem,
+    );
+    this.validateAndMove(
+      this.selectedNodeToMove,
+      nodeTarget,
+      nodeTargetParent,
+      position,
+    );
   }
 
   handleMove(node: TableOfContentItemVO) {
+    this.hanldeNodeSelect(node);
     this.selectedNodeToMove = node;
   }
 
   isNodeSelected() {
+    return this.selectedNode !== null;
+  }
+
+  isNodeSelectedToMove() {
     return this.selectedNodeToMove !== null;
   }
 
@@ -188,14 +196,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.removeNode(newTree, this.selectedNodeToMove);
       this.treeHistory.push(this.treeControl.dataNodes);
       this.documentService.setToc(newTree);
-      this.selectedNodeToMove = null;
+      this.selectedNode = null;
     }
   }
 
-  hanldeNodeClick(node: TableOfContentItemVO) {
+  hanldeNodeSelect(node: TableOfContentItemVO) {
+    this.selectedNode = node;
     this.scrollToElement(node);
     this.hilightSelectedNode(node);
-    console.log(node);
     this.heading = node.heading;
     this.type = this.getDisplayableTocItem(node.tocItem);
     this.number = node.number;
@@ -219,7 +227,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     );
   }
   isItemHeadingEditable(tocItem: TocItem) {
-    return tocItem.aknTag === 'division'
+    return tocItem.aknTag === 'DIVISION'
       ? false
       : this.isItemHeadingVisible(tocItem);
   }
@@ -236,23 +244,23 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   handleTypeChange(event: string) {
     const oldValue = this.heading;
-    this.selectedNodeToMove.tocItemType = event;
+    this.selectedNode.tocItemType = event;
     this.tocType = event;
     const tocUpdate = {
       actionOnItem: 'TYPE_UPDATE',
-      item: this.selectedNodeToMove,
+      item: this.selectedNode,
     };
     this.tocUpdate.has({
       actionOnItem: 'HEADING_UPDATE',
-      item: this.selectedNodeToMove,
+      item: this.selectedNode,
     });
     const isHeadingUpdated: boolean = this.tocUpdate.has({
-      item: this.selectedNodeToMove,
+      item: this.selectedNode,
       actionOnItem: 'HEADING_UPDATE',
     });
     convertArticle(
       this.tocItems,
-      this.selectedNodeToMove,
+      this.selectedNode,
       oldValue.toUpperCase(),
       event.toUpperCase(),
     );
@@ -260,27 +268,25 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     const restored: boolean = this.tocUpdate.has(tocUpdate);
     if (!isHeadingUpdated) {
       if (restored) {
-        this.selectedNodeToMove.isAffected = false;
+        this.selectedNode.isAffected = false;
         const originalValue = this.tocUpdate.get(tocUpdate).originalValue();
         if (originalValue !== '') {
           this.heading = originalValue;
-          this.selectedNodeToMove.heading = this.heading;
+          this.selectedNode.heading = this.heading;
         } else {
           this.heading = this.tranlsateService.instant(
             'toc.item.type.' +
-              this.selectedNodeToMove.tocItemType +
+              this.selectedNode.tocItemType +
               '.article.heading',
           );
-          this.selectedNodeToMove.heading = this.heading;
+          this.selectedNode.heading = this.heading;
         }
       } else {
-        this.selectedNodeToMove.isAffected = false;
+        this.selectedNode.isAffected = false;
         this.heading = this.tranlsateService.instant(
-          'toc.item.type.' +
-            this.selectedNodeToMove.tocItemType +
-            '.article.heading',
+          'toc.item.type.' + this.selectedNode.tocItemType + '.article.heading',
         );
-        this.selectedNodeToMove.heading = this.heading;
+        this.selectedNode.heading = this.heading;
       }
     }
   }
@@ -294,78 +300,30 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const nodeDropped = this.findNodeById(
+    const nodeTarget = this.findNodeById(
       this.treeControl.dataNodes,
       this.dragAction.targetId,
     );
+
+    const nodeDragged = event.item.data as TableOfContentItemVO;
     //TODO : Fix this => this is a hack for allowing the root to go for validation otherwise it will fail to find the nodeParent and will not send it for validaiton
-    if (nodeDropped.tocItem.root) {
-      nodeDropped.parentItem = nodeDropped.id;
+    if (nodeTarget.tocItem.root) {
+      nodeTarget.parentItem = nodeTarget.id;
     }
 
+    const parentNode = this.findNodeById(
+      this.treeControl.dataNodes,
+      nodeTarget.parentItem,
+    );
+
     // validate Drop
-    // this.documentService
-    //   .validateNodeDrop(
-    //     [event.item.data],
-    //     nodeDropped,
-    //     this.dragAction.action,
-    //     this.documentType,
-    //     this.documentRef,
-    //   )
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe({
-    //     next: (response) => {
-    //       if (this.dragAction.isAdd) {
-    //         const newItem = event.item.data;
-    //       } else {
-    //         this.selectedNodeToMove = event.item.data;
-    //       }
-    //       if (response) {
-    //         switch (this.dragAction.action) {
-    //           case 'AFTER':
-    //             this.insertAfter(nodeDropped);
-    //             break;
-    //           case 'BEFORE':
-    //             this.insertBefore(nodeDropped);
-    //             break;
-    //           case 'AS_CHILDREN':
-    //             this.insertChild(nodeDropped);
-    //             break;
-    //         }
-    //       }
-    //       this.clearDragInfo(true);
-    //     },
-    //     error: (err) => {
-    //       console.error(err);
-    //       this.clearDragInfo(true);
-    //     },
-    //   });
-    try {
-      switch (this.dragAction.action) {
-        case 'AFTER':
-          this.insertAfter(nodeDropped, event.item.data, this.dragAction.isAdd);
-          break;
-        case 'BEFORE':
-          this.insertBefore(
-            nodeDropped,
-            event.item.data,
-            this.dragAction.isAdd,
-          );
-          break;
-        case 'AS_CHILDREN':
-          this.insertChild(nodeDropped, event.item.data, this.dragAction.isAdd);
-          break;
-      }
-    } catch (e) {
-      this.clearDragInfo(true);
-      return;
-    }
-    //if source was the tocitems rebuild to change the uuid
-    if (this.dragAction.isAdd) {
-      // this.dragItems = this.tocItemToTOC(this.tocItems);
-      this.reBuildTocItems.emit(true);
-    }
-    this.isToCDraft = true;
+    this.validateAndMove(
+      nodeDragged,
+      nodeTarget,
+      parentNode,
+      this.dragAction.action,
+      this.dragAction.isAdd,
+    );
   }
 
   dragMoved(event: CdkDragMove, isAdd: boolean = false) {
@@ -411,6 +369,189 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       }
       this.showNodeInsertion();
     }
+  }
+
+  private validateAndMove(
+    nodeDragged: TableOfContentItemVO,
+    nodeTarget: TableOfContentItemVO,
+    parentNode: any,
+    position: string,
+    isAdd: boolean = false,
+  ) {
+    this.documentService
+      .validateNodeDrop(
+        [nodeDragged.id],
+        nodeDragged.tocItem.aknTag,
+        nodeTarget.id,
+        nodeTarget.tocItem.aknTag,
+        parentNode.id,
+        parentNode.tocItem.aknTag,
+        position,
+        this.documentType,
+        this.documentRef,
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.populateValidationMessage(response);
+          setTimeout(() => {
+            this.clearValidationMessage();
+          }, 10000);
+          if (response.result.success) {
+            // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
+            // so the resutl.success will now mean that it can be dropped as a sibling
+            console.log('before check', position);
+            if (position === 'AS_CHILDREN') {
+              position = this.checkPositionAfterValidation(
+                nodeTarget,
+                nodeDragged,
+                position,
+              );
+            }
+            console.log('after check ', position);
+            try {
+              switch (position) {
+                case 'AFTER':
+                  this.insertAfter(nodeTarget, nodeDragged, isAdd);
+                  break;
+                case 'BEFORE':
+                  this.insertBefore(nodeTarget, nodeDragged, isAdd);
+                  break;
+                case 'AS_CHILDREN':
+                  this.insertChild(nodeTarget, nodeDragged, isAdd);
+                  break;
+              }
+              //if source was the tocitems rebuild to change the uuid
+              if (isAdd) {
+                // this.dragItems = this.tocItemToTOC(this.tocItems);
+                this.reBuildTocItems.emit(true);
+              }
+              this.isToCDraft = true;
+              this.hanldeNodeSelect(nodeDragged);
+              this.selectedNodeToMove = null;
+            } catch (e) {
+              this.clearDragInfo(true);
+              return;
+            }
+          } else {
+            this.clearDragInfo(false);
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.clearDragInfo(true);
+        },
+      });
+  }
+
+  private checkPositionAfterValidation(
+    nodeTarget: TableOfContentItemVO,
+    nodeDragged: TableOfContentItemVO,
+    position: string,
+  ) {
+    //TODO add cn rules
+    switch (nodeDragged.tocItem.aknTag) {
+      case 'CITATION': {
+        if (['CITATIONS'].includes(nodeTarget.tocItem.aknTag)) return position;
+        if (['CITATION'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+        return position;
+      }
+      case 'RECITAL': {
+        if (['RECITALS'].includes(nodeTarget.tocItem.aknTag)) return position;
+        if (['RECITAL'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+        break;
+      }
+      case 'PART': {
+        if (['BODY'].includes(nodeTarget.tocItem.aknTag)) return position;
+        if (
+          ['PART', 'TITLE', ' CHAPTER', 'SECTION', 'ARTICLE'].includes(
+            nodeTarget.tocItem.aknTag,
+          )
+        )
+          return 'AFTER';
+        return position;
+      }
+      case 'TITLE': {
+        if (['BODY', 'PART'].includes(nodeTarget.tocItem.aknTag))
+          return position;
+        if (
+          ['TITLE', 'CHAPTER', 'SECTION', 'ARTICLE', 'LEVEL'].includes(
+            nodeTarget.tocItem.aknTag,
+          )
+        )
+          return 'AFTER';
+        return position;
+      }
+      case 'CHAPTER': {
+        if (['BODY', 'PART', 'TITLE'].includes(nodeTarget.tocItem.aknTag))
+          return position;
+        if (
+          ['CHAPTER', 'SECTION', 'ARTICLE', 'LEVEL'].includes(
+            nodeTarget.tocItem.aknTag,
+          )
+        )
+          return 'AFTER';
+        return position;
+      }
+      case 'SECTION': {
+        if (
+          ['BODY', 'PART', 'TITLE', 'CHAPTER'].includes(
+            nodeTarget.tocItem.aknTag,
+          )
+        )
+          return position;
+        if (['SECTION', 'ARTICLE', 'LEVEL'].includes(nodeTarget.tocItem.aknTag))
+          return 'AFTER';
+        return position;
+      }
+      case 'ARTICLE': {
+        if (
+          ['PART', 'BODY', 'TITLE', 'CHAPTER', 'SECTION'].includes(
+            nodeTarget.tocItem.aknTag,
+          )
+        )
+          return position;
+        if (['ARTICLE']) return 'AFTER';
+        return position;
+      }
+      case 'PARAGRAPH': {
+        if (
+          ['ARTICLE', 'PARAGRAPH', 'LEVEL'].includes(nodeTarget.tocItem.aknTag)
+        )
+          return 'AFTER';
+        return position;
+      }
+      case 'SUBPARAGRAPH': {
+        if (['PARAGRAPH', 'POINT'].includes(nodeTarget.tocItem.aknTag))
+          return position;
+        if (['SUBPARAGRAPH'].includes(nodeTarget.tocItem.aknTag))
+          return 'AFTER';
+        return position;
+      }
+      case 'LEVEL': {
+        if (
+          ['SUBPARAGRAPH', 'SECTION', 'CHAPTER', 'TITLE', 'PART'].includes(
+            nodeTarget.tocItem.aknTag,
+          )
+        )
+          return position;
+        if (['LEVEL', 'PARAGRAPH'].includes(nodeTarget.tocItem.aknTag))
+          return 'AFTER';
+        return position;
+      }
+      default:
+        return position;
+    }
+  }
+
+  private populateValidationMessage(response: NodeValidationResponse) {
+    this.isDropValid = response.result.success;
+    this.messageFromValidation = response.result.messageKey;
+  }
+
+  private clearValidationMessage() {
+    this.isDropValid = null;
+    this.messageFromValidation = null;
   }
 
   private getDisplayableTocItem(tocItem: TocItem): string {
@@ -472,6 +613,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (dropped) {
       this.dragAction = null;
     }
+    this.selectedNode = null;
     this.document
       .querySelectorAll('.drop-before')
       .forEach((element) => element.classList.remove('drop-before'));

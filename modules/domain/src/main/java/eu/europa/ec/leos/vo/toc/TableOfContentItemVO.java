@@ -26,14 +26,15 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static eu.europa.ec.leos.util.LeosDomainUtil.addDateIfNotNull;
 import static eu.europa.ec.leos.util.LeosDomainUtil.addFieldIfNotNull;
 import static eu.europa.ec.leos.util.LeosDomainUtil.addListFieldIfNotNull;
 import static eu.europa.ec.leos.util.LeosDomainUtil.calculateLeftPadd;
-import static eu.europa.ec.leos.util.LeosDomainUtil.addDateIfNotNull;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "id", scope = TableOfContentItemVO.class)
 public class TableOfContentItemVO implements Serializable {
 
     public static final long serialVersionUID = -1;

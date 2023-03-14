@@ -24,6 +24,7 @@ import com.vaadin.ui.TreeGrid;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItem;
 
 public interface TocEditor {

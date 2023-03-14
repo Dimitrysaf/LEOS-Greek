@@ -142,11 +142,14 @@ public class TableOfContentHelper {
     }
 
     public static String getDisplayableTocItem(TocItem tocItem, MessageHelper messageHelper) {
-        if (tocItem.getNumberingType().equals(NumberingType.BULLET_NUM)) {
-            return messageHelper.getMessage("toc.item.type.bullet");
-        } else {
-            return messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value().toLowerCase());
+        if(tocItem != null) {
+            if (tocItem.getNumberingType().equals(NumberingType.BULLET_NUM)) {
+                return messageHelper.getMessage("toc.item.type.bullet");
+            } else {
+                return messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value().toLowerCase());
+            }
         }
+        return null;
     }
     
     public static String getItemSoftStyle(TableOfContentItemVO tableOfContentItemVO) {

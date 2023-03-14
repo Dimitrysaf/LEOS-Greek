@@ -12,12 +12,9 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-package eu.europa.ec.leos.ui.component.toc;
-
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+package eu.europa.ec.leos.vo.toc;
 
 public class TocDropResult {
-
     private boolean success;
     private String messageKey;
     private TableOfContentItemVO sourceItem;

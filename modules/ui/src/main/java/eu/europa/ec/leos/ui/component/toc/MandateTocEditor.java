@@ -32,6 +32,7 @@ import eu.europa.ec.leos.vo.toc.NumberingType;
 import eu.europa.ec.leos.vo.toc.OptionsType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItem;
 
 import org.apache.commons.lang3.StringUtils;
@@ -276,7 +277,7 @@ public class MandateTocEditor extends AbstractTocEditor {
                 break;
             case POINT:
             case INDENT:
-                indentAllowed = isIndentAllowed(tocTree.getTreeData(), actualTargetItem, MAX_INDENT_LEVEL - getIndentLevel(sourceItem));
+                indentAllowed = isIndentAllowed(actualTargetItem, MAX_INDENT_LEVEL - getIndentLevel(sourceItem));
                 if (!indentAllowed
                         || !Arrays.asList(PARAGRAPH, LEVEL, LIST, POINT, INDENT).contains(targetName)
                         || (Arrays.asList(PARAGRAPH, LEVEL).contains(targetName)
@@ -299,7 +300,7 @@ public class MandateTocEditor extends AbstractTocEditor {
                 }
                 break;
             case LIST:
-                indentAllowed = isIndentAllowed(tocTree.getTreeData(), actualTargetItem, MAX_INDENT_LEVEL - getIndentLevel(sourceItem));
+                indentAllowed = isIndentAllowed(actualTargetItem, MAX_INDENT_LEVEL - getIndentLevel(sourceItem));
                 if (!isPlaceholderForDroppedItem(targetItem, sourceItem) && (!indentAllowed || ((targetName.equals(PARAGRAPH) || targetName.equals(LEVEL)) && actualTargetItem.containsItem(LIST)) ||
                         ((targetName.equals(POINT) || targetName.equals(INDENT)) && actualTargetItem.containsItem(LIST)))) {
                     result.setSuccess(false);
@@ -345,13 +346,13 @@ public class MandateTocEditor extends AbstractTocEditor {
                 ((targetItemIndex == clauseItemIndex) && !position.equals(ItemPosition.BEFORE));
     }
 
-    private boolean isIndentAllowed(TreeData<TableOfContentItemVO> treeData, TableOfContentItemVO targetElement, int indentLevel) {
+    private boolean isIndentAllowed(TableOfContentItemVO targetElement, int indentLevel) {
         boolean isAllowed = true;
         if (indentLevel < 0) {
             isAllowed = false;
         } else if (targetElement != null) {
             String tagValue = getTagValueFromTocItemVo(targetElement);
-            isAllowed = isIndentAllowed(treeData, treeData.getParent(targetElement),
+            isAllowed = isIndentAllowed(targetElement.getParentItem(),
                     tagValue.equals(POINT) || tagValue.equals(INDENT) ? indentLevel - 1 : indentLevel);
         }
         return isAllowed;
