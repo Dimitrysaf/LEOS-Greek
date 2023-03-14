@@ -14,13 +14,16 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
@@ -34,6 +37,8 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.event.ExportPackageDeletedEvent;
+import eu.europa.ec.leos.model.event.ExportPackageUpdatedEvent;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -48,24 +53,24 @@ import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.*;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
-import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
+import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
+import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.ArchiveService;
+import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
@@ -75,6 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,6 +93,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 
 @Service
@@ -116,6 +123,10 @@ public class ApiServiceImpl implements ApiService {
     private ProposalConverterService proposalConverterService;
     private PostProcessingDocumentService postProcessingDocumentService;
     private ValidationService validationService;
+    private UpdateInternalReferencesProducer updateInternalReferencesProducer;
+    private ExplanatoryService explanatoryService;
+    private ExportPackageService exportPackageService;
+    private NotificationService notificationService;
 
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
@@ -139,7 +150,9 @@ public class ApiServiceImpl implements ApiService {
                           MilestoneService milestoneService,
                           ProposalConverterService proposalConverterService,
                           PostProcessingDocumentService postProcessingDocumentService,
-                          ValidationService validationService, Properties applicationProperties) {
+                          ValidationService validationService, Properties applicationProperties,
+                          UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService,
+                          ExportPackageService exportPackageService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -162,6 +175,8 @@ public class ApiServiceImpl implements ApiService {
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.validationService = validationService;
+        this.explanatoryService = explanatoryService;
+        this.exportPackageService = exportPackageService;
     }
 
     @Override
@@ -192,18 +207,18 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public LegFileValidation validateLegFile(File legDocument)  {
+    public LegFileValidation validateLegFile(File legDocument) {
         LegFileValidation legFileValidation = new LegFileValidation();
         DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
         DocumentVO updatedDocumentVO = proposalConverterService.createProposalFromLegFile(legDocument, proposal, true);
         Result result = postProcessingDocumentService.processDocument(updatedDocumentVO);
-        if(result.isOk()) {
-                legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
-                ValidationVO validation = new ValidationVO();
-                validation.addErrors(validationService.validateDocument(updatedDocumentVO));
-                if(validation.hasErrors()) {
-                    legFileValidation.setErrors(validation.getErrors());
-                }
+        if (result.isOk()) {
+            legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
+            ValidationVO validation = new ValidationVO();
+            validation.addErrors(validationService.validateDocument(updatedDocumentVO));
+            if (validation.hasErrors()) {
+                legFileValidation.setErrors(validation.getErrors());
+            }
         }
         return legFileValidation;
     }
@@ -234,6 +249,7 @@ public class ApiServiceImpl implements ApiService {
             throw e;
         }
     }
+
     private String getJobFileName(String proposalRef) {
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("Proposal_");
@@ -241,6 +257,7 @@ public class ApiServiceImpl implements ApiService {
         strBuilder.append(".zip");
         return strBuilder.toString();
     }
+
     @Override
     public byte[] downloadProposal(String proposalRef) throws Exception {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -249,11 +266,12 @@ public class ApiServiceImpl implements ApiService {
         try {
             packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportLW(ExportOptions.Output.WORD));
             return FileUtils.readFileToByteArray(packageFile);
-        }catch( Exception e){
+        } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
             throw e;
         }
     }
+
     @Override
     public void deleteCollection(String proposalRef) {
         CollectionContextService context = collectionContextProvider.get();
@@ -266,6 +284,7 @@ public class ApiServiceImpl implements ApiService {
     public List<UserJSON> searchUser(String searchKey) {
         return userService.searchUsersByKey(searchKey);
     }
+
     @Override
     public void createExplanatoryDocument(String proposalRef, String template) {
         try {
@@ -280,10 +299,122 @@ public class ApiServiceImpl implements ApiService {
             context.useProposal(proposal);
             context.useActionMessage(ContextActionService.EXPLANATORY_ADDED, messageHelper.getMessage("collection.block.explanatory.added"));
             context.executeCreateExplanatory();
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOG.error("Unexpected error occurred while creating the explanatory", e);
             throw e;
         }
+    }
+
+    @Override
+    public void createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY);
+        String[] templates = (templateId != null) ? templateId.split(";") : new String[0];
+
+        CollectionContextService context = collectionContextProvider.get();
+        for (String name : templates) {
+            context.useTemplate(name);
+        }
+        context.usePurpose(docPurpose);
+        context.useEeaRelevance(eeaRelevance);
+        context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+        context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+        LOG.info("New document of type {} created in {} milliseconds ({} sec)", LeosCategory.PROPOSAL.toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        context.executeCreateExplanatory();
+    }
+
+    @Override
+    public void deleteExplanatoryDocument(String proposalRef, String explanatoryRef) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(explanatoryRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        CollectionContextService collectionContext = collectionContextProvider.get();
+        collectionContext.useExplanatoryId(explanatory.getId());
+        collectionContext.usePackage(leosPackage);
+        collectionContext.useActionMessage(ContextActionService.EXPLANATORY_METADATA_UPDATED, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
+        collectionContext.useActionMessage(ContextActionService.EXPLANATORY_DELETED, messageHelper.getMessage("collection.block.explanatory.removed"));
+        collectionContext.executeRemoveExplanatory();
+//        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposal.getId(), explanatory.getMetadata().get().getRef(), id));
+        LOG.info("Deleted explanatory {} id {}, in {} milliseconds ({} sec)", explanatory.getMetadata().get().getRef(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+    }
+
+    @Override
+    public List<ExportPackageVO> updateExportDocument(String proposalRef, String id, List<String> comments) {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            ExportDocument exportDocument = this.exportPackageService.updateExportDocument(id, comments);
+            LOG.info("Export Package {} for proposal {} comments updated in {} milliseconds ({} sec)", id, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating comments for Export Package", e);
+        }
+        return this.getExportDocuments(proposalRef);
+
+    }
+
+    @Override
+    public List<ExportPackageVO> deleteExportDocument(String proposalRef, String id) {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            exportPackageService.deleteExportDocument(id);
+            LOG.info("Export Package {} for proposal {} deleted in {} milliseconds ({} sec)", id, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while deleting Export Package", e);
+        }
+        return this.getExportDocuments(proposalRef);
+    }
+
+    @Override
+    public void notifyExportPackage(String proposalRef, String exportId) {
+        ExportDocument exportDocument = null;
+        LeosExportStatus processedStatus = LeosExportStatus.PROCESSED_ERROR;
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            byte[] updatedContent = exportService.updateExportPackageWithComments(exportId);
+            exportDocument = exportPackageService.updateExportDocument(exportId, updatedContent);
+            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            notificationService.sendNotification(proposalRef, exportDocument.getId());
+            processedStatus = LeosExportStatus.PROCESSED_OK;
+            LOG.info("Export Package {} for proposal {} notified in {} milliseconds ({} sec)", exportDocument.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while notifiying Export Package", e);
+        } finally {
+            if (exportDocument != null) {
+                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+                if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
+                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<ExportPackageVO> getExportDocuments(String proposalRef) {
+        Proposal proposal = this.proposalService.getProposalByRef(proposalRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        List<ExportDocument> exportDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), ExportDocument.class, false, false);
+        List<ExportPackageVO> exportDocumentsVO = new ArrayList<>();
+        exportDocuments.forEach(exportDocument -> exportDocumentsVO.add(getExportPackageVO(exportDocument)));
+        return exportDocumentsVO;
+    }
+
+    @Override
+    public byte[] downloadExportPackage(String proposalRef, String exportId) throws Exception {
+        byte[] result = null;
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            final Map<String, byte[]> exportPackageContent = exportService.getExportPackageContent(exportId, ".docx");
+            Optional<Map.Entry<String, byte[]>> first = exportPackageContent.entrySet().stream().findFirst();
+            if (first.isPresent()) {
+                result = first.get().getValue();
+                LOG.info("Export Package {} for proposal {} downloaded in {} milliseconds ({} sec)", exportId, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            }
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while downloading Export Package", e);
+        }
+        if (result == null) throw new Exception("Error when download export document with id");
+        return result;
+
     }
 
     @Override
@@ -315,17 +446,17 @@ public class ApiServiceImpl implements ApiService {
         Set<String> docVersionSeriesIds = new HashSet<>();
         String proposalVersionSeriesId = null;
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
-        if(proposalRef != null) {
+        if (proposalRef != null) {
             proposal = this.proposalService.findProposalByRef(proposalRef);
             LOG.trace(proposal.toString());
         }
-        if(proposal !=null) {
+        if (proposal != null) {
             String proposalId = proposal.getId();
-            proposalXmlContent = proposal.getContent().exists(c -> c.getSource() !=null)
+            proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null)
                     ? proposal.getContent().get().getSource().getBytes()
                     : new byte[0];
             isClonedProposal = proposal.isClonedProposal();
-            if(isClonedProposal) {
+            if (isClonedProposal) {
                 cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
                 cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
             }
@@ -333,23 +464,31 @@ public class ApiServiceImpl implements ApiService {
             List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
             List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
             legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-            DocumentVO proposalVO =   this.createViewObject(documents,proposalXmlContent,proposalVersionSeriesId,docVersionSeriesIds);
+            DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, proposalVersionSeriesId, docVersionSeriesIds);
             proposalVO.setCloneProposalMetadataVO(cloneProposalMetadataVO);
             StampedLock milestonesVOsLock = new StampedLock();
             long stamp = milestonesVOsLock.writeLock();
             try {
                 milestonesVOs.clear();
-                legDocuments.forEach(document -> milestonesVOs.add(getMilestonesVO(document,proposalId,proposalRef)));
+                legDocuments.forEach(document -> milestonesVOs.add(getMilestonesVO(document, proposalId, proposalRef)));
             } finally {
                 milestonesVOsLock.unlockWrite(stamp);
             }
-            return  Optional.of(proposalVO);
+            return Optional.of(proposalVO);
         }
         //TODO : handle case no proposal
         return Optional.of(null);
     }
+
+    private ExportPackageVO getExportPackageVO(ExportDocument exportDocument) {
+        return new ExportPackageVO(exportDocument.getId(), exportDocument.getVersionSeriesId(),
+                exportDocument.getCmisVersionLabel(), exportDocument.getComments(),
+                Date.from(exportDocument.getLastModificationInstant()),
+                messageHelper.getMessage("collection.block.export.package.column.status.value." + exportDocument.getStatus().name()));
+    }
+
     //TODO : probably this code should be moved somewhere else
-    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent,String proposalVersionSeriesId,Set<String> docVersionSeriesIds) {
+    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, String proposalVersionSeriesId, Set<String> docVersionSeriesIds) {
         DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
         List<DocumentVO> annexVOList = new ArrayList<>();
         docVersionSeriesIds = new HashSet<>();
@@ -367,7 +506,7 @@ public class ApiServiceImpl implements ApiService {
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
-                        proposalVO.addChildDocument(getCoverPageVO(proposalVO,proposal.getOriginRef()));
+                        proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }
                     break;
                 }
@@ -483,7 +622,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     // FIXME refine
-    private DocumentVO getCoverPageVO(DocumentVO proposalVO,String  proposalRef) {
+    private DocumentVO getCoverPageVO(DocumentVO proposalVO, String proposalRef) {
         DocumentVO coverPageVO = new DocumentVO(proposalVO.getId(),
                 proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
                 LeosCategory.COVERPAGE,
@@ -578,7 +717,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public List<MilestonesVO> getProposalMilestones(String proposalRef){
+    public List<MilestonesVO> getProposalMilestones(String proposalRef) {
         List<MilestonesVO> milestonesVOS = new ArrayList<>();
         String proposalId = null;
         byte[] proposalXmlContent = new byte[0];
@@ -604,10 +743,9 @@ public class ApiServiceImpl implements ApiService {
 
         try {
             String finalProposalId = proposalId;
-            legDocuments.forEach(document -> milestonesVOS.add(getMilestonesVO(document, finalProposalId,proposalRef)));
+            legDocuments.forEach(document -> milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef)));
             milestonesVOS.forEach(milestone -> milestone.setStatus(messageHelper.getMessage("milestones.column.status.value." + LeosLegStatus.FILE_READY.name())));
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             LOG.error("Error while getting milestones for proposal " + e);
             throw e;
         }
@@ -615,7 +753,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
 
-    private MilestonesVO getMilestonesVO(LegDocument legDocument,String proposalId,String proposalRef) {
+    private MilestonesVO getMilestonesVO(LegDocument legDocument, String proposalId, String proposalRef) {
         List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
                 Date.from(legDocument.getCreationInstant()),
@@ -633,9 +771,9 @@ public class ApiServiceImpl implements ApiService {
                         null, cpmVo.getRevisionStatus(),
                         cpmVo.getLegFileName(), cpmVo.getCloneProposalRef());
                 milestoneVO.setClone(true);
-                if(cpmVo.getRevisionStatus().equalsIgnoreCase(
+                if (cpmVo.getRevisionStatus().equalsIgnoreCase(
                         messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
-                        identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName(),proposalId)) {
+                        identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName(), proposalId)) {
                     milestoneVO.setContributionChanged(true);
                 }
                 clonedMilestonesVOS.add(milestoneVO);
@@ -650,7 +788,7 @@ public class ApiServiceImpl implements ApiService {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         Annex annex = this.annexService.findAnnexByRef(annexRef);
         DocumentVO annexVO = createAnnexVO(annexService.findAnnexByRef(annexRef));
-        
+
         if (proposal != null) {
             String proposalId = proposal.getId();
             LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
@@ -663,14 +801,14 @@ public class ApiServiceImpl implements ApiService {
             try {
                 archiveService.archiveDocument(annexVO, Annex.class, leosPackage.getPath());
             } catch (Exception e) {
-                LOG.error("Error while using archive service {}",e.getMessage());
+                LOG.error("Error while using archive service {}", e.getMessage());
             }
             billContext.executeRemoveBillAnnex();
         }
     }
 
     @Override
-    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove){
+    public void updateAnnexOrder(String proposalRef, String annexRef, String moveDirection, Integer timesToMove) {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
             for (int i = 0; i < timesToMove; i++) {
@@ -689,7 +827,7 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public void updateAnnexTitle(String proposalRef, String annexId, String annexTitle) {
-        Annex annex = annexService.findAnnex(annexId,true);
+        Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
         annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));

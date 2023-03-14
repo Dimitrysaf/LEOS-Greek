@@ -11,9 +11,9 @@ import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
+import { ProposalCreateTemplateSelectorComponent } from '@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { createPromise } from '@/shared/utils';
 
-import { ProposalCreateTemplateSelectorComponent } from '../../components';
 import {
   CatalogItem,
   CreateProposalBody,

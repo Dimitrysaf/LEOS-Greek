@@ -1,13 +1,15 @@
-<div class="eui-u-flex eui-u-flex-justify-content-end">
-  <button
-    euiButton
-    euiPrimary
-    (click)="openDialog()"
-    class="eui-u-mb-m eui-u-mt-2xs"
-  >
-    Add
-  </button>
-</div>
+<ng-container *appUserHasPermission="['CAN_CREATE_MILESTONE']">
+  <div class="eui-u-flex eui-u-flex-justify-content-end">
+    <button
+      euiButton
+      euiPrimary
+      (click)="openDialog()"
+      class="eui-u-mb-m eui-u-mt-2xs"
+    >
+      {{ 'page.collection.milestones.add-button.title' | translate }}
+    </button>
+  </div>
+</ng-container>
 
 <app-proposal-milestone-view
   [proposal]="proposal"
@@ -15,7 +17,9 @@
 
 <eui-dialog
   #milestonesDialog
-  [title]="'Add Milestones'"
+  [title]="
+    this.tranlsateSerice.instant('page.collection.milestones.add-dialog.title')
+  "
   (clickOutside)="onClickOutside()"
   (close)="onClickOutside()"
 >

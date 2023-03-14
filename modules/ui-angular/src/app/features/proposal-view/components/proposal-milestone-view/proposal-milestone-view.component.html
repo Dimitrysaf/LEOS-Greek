@@ -5,7 +5,7 @@
   [width]="'85vw'"
 >
   <eui-tabs>
-    <eui-tab *ngFor="let doc of documents; let i = index">
+    <eui-tab *ngFor="let doc of getDocumentsForMilestoneView(); let i = index">
       <ng-container>
         <eui-tab-label>{{ getDocTitle(doc) }}</eui-tab-label>
         <eui-page>

@@ -10,6 +10,11 @@ import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
 import { DocumentTocComponent } from './components/document-toc/document-toc.component';
+import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
+import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
+import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
+import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
+import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
 
 @NgModule({
   imports: [
@@ -25,6 +30,13 @@ import { DocumentTocComponent } from './components/document-toc/document-toc.com
     DocumentTocComponent,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
+    ProposalCreateDraftComponent,
+    ShowOnInstanceDirective,
+    UserHasPermissionDirective,
+
+    ProposalCreateDraftComponent,
+    ProposalCreateFormComponent,
+    ProposalCreateTemplateSelectorComponent,
   ],
   exports: [
     UxAllModule,
@@ -37,6 +49,11 @@ import { DocumentTocComponent } from './components/document-toc/document-toc.com
     DocumentTocComponent,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
+    ShowOnInstanceDirective,
+    UserHasPermissionDirective,
+    ProposalCreateDraftComponent,
+    ProposalCreateFormComponent,
+    ProposalCreateTemplateSelectorComponent,
   ],
 })
 export class SharedModule {}

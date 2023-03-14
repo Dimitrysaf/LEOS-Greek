@@ -9,6 +9,7 @@ import { ProposalMilestoneViewComponent } from './components/proposal-milestone-
 import { ProposalCollaboratorsComponent } from './containers/proposal-collaborators/proposal-collaborators.component';
 import { ProposalCollaboratorsDialogComponent } from './containers/proposal-collaborators-dialog/proposal-collaborators-dialog.component';
 import { ProposalDraftsComponent } from './containers/proposal-drafts/proposal-drafts.component';
+import { ProposalExportsComponent } from './containers/proposal-exports/proposal-exports.component';
 import { ProposalMilestonesComponent } from './containers/proposal-milestones/proposal-milestones.component';
 import { ProposalViewComponent } from './containers/proposal-view/proposal-view.component';
 import { ProposalViewRoutingModule } from './proposal-view-routing.module';
@@ -25,6 +26,7 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalHeaderComponent,
     ProposalLastUpdatedOnComponent,
     ProposalMilestoneViewComponent,
+    ProposalExportsComponent,
   ],
   imports: [ProposalViewRoutingModule, SharedModule],
 })

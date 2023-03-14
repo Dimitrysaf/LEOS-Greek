@@ -1,0 +1,225 @@
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
+import { from, Subject, takeUntil } from 'rxjs';
+
+import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
+import { createPromise } from '@/shared/utils';
+
+import {
+  CatalogItem,
+  CreateExplanatoryBody,
+  CreateExplanatoryDocumentBody,
+} from '../../../features/proposals/models';
+import { ProposalService } from '../../../features/proposals/services/proposal.service';
+import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
+
+@Component({
+  selector: 'app-proposal-create-draft',
+  templateUrl: './proposal-create-draft.component.html',
+  styleUrls: ['./proposal-create-draft.component.scss'],
+})
+export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
+  @Input() showCreateButton = true;
+  @Input() fromProposal = true;
+  stepSelected: any;
+  isNavigationAllowed = false;
+  currentStepIndex = 1;
+  stepsCount = 2;
+
+  createForm: FormGroup;
+  selectedTemplate: CatalogItem | null;
+  selectedLanguage: string;
+  @ViewChild('createWizardDialog') createWizard: EuiDialogComponent;
+  @ViewChild('templateSelector')
+  templateSelector: ProposalCreateTemplateSelectorComponent;
+
+  private destroy$ = new Subject();
+
+  constructor(
+    private fb: FormBuilder,
+    private proposalService: ProposalService,
+    private proposalDetailsService: ProposalDetailsService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
+  ngOnInit() {
+    if (this.fromProposal) {
+      this.createForm = this.fb.group({
+        templateId: new FormControl('', { validators: Validators.required }),
+        templateName: new FormControl('', {}),
+      });
+    }
+    if (!this.fromProposal) {
+      this.createForm = this.fb.group({
+        templateName: new FormControl(
+          { value: '', disabled: true },
+          { validators: Validators.required },
+        ),
+        documentLanguage: new FormControl({ value: '', disabled: true }),
+        confidentialityLevel: new FormControl({ value: '', disabled: true }),
+        docPurpose: new FormControl('', { validators: Validators.required }),
+        templateId: new FormControl(
+          { value: '', disabled: true },
+          { validators: Validators.required },
+        ),
+        langCode: new FormControl({ value: '', disabled: true }, {}),
+        internalReference: new FormControl({ value: '', disabled: true }),
+        interInstitutionalReference: new FormControl({
+          value: '',
+          disabled: true,
+        }),
+        packageTitleCheck: new FormControl({ value: false, disabled: true }),
+        packageTitle: new FormControl({ value: '', disabled: true }),
+        eeaRelevance: new FormControl(false, {
+          validators: Validators.required,
+        }),
+        eeaRelevanceText: new FormControl({ value: '', disabled: true }),
+      });
+    }
+  }
+
+  handleSelectTemplate(template: CatalogItem | null) {
+    this.selectedTemplate = template;
+    this.updateTemplateAndLanguage();
+  }
+
+  handleSelectLanguage(langCode: string) {
+    this.selectedLanguage = langCode;
+    this.updateTemplateAndLanguage();
+  }
+
+  updateTemplateAndLanguage() {
+    const template = this.selectedTemplate;
+    const langCode = this.selectedLanguage;
+
+    if (template) {
+      const templateName = this.proposalService.getTranslation(template.names);
+      const documentLanguage = this.proposalService.getTranslation(
+        template.languages,
+        langCode,
+      );
+      this.createForm.patchValue({
+        templateId: template.id,
+        templateName,
+        documentLanguage,
+        langCode,
+      });
+      this.isNavigationAllowed = true;
+    } else {
+      this.createForm.patchValue({
+        templateId: '',
+        templateName: '',
+        langCode: '',
+        documentLanguage: '',
+      });
+      this.isNavigationAllowed = false;
+    }
+  }
+
+  onNavigation(increment: number) {
+    const newIndex: number = this.currentStepIndex + increment;
+    if (newIndex >= 1 && newIndex <= this.stepsCount) {
+      this.currentStepIndex = newIndex;
+    }
+  }
+
+  onSelectStepRemoteNav(event: any) {
+    this.currentStepIndex = event.index;
+  }
+
+  onSelectStep(event: UxWizardStep) {
+    this.stepSelected = event;
+  }
+
+  openCreateWizard() {
+    this.createWizard.openDialog();
+  }
+
+  onCreate() {
+    if (!this.fromProposal) {
+      this.proposalService
+        .createProposalDraft(this.getDataForCreateDraftProposal())
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.proposalService.setPage(1);
+            this.closeDialog();
+          },
+          error: (err) => console.log(err),
+        });
+    }
+    if (this.fromProposal) {
+      this.proposalDetailsService
+        .createExplanatory(this.getDataForCreateExplanatory())
+        .subscribe({
+          next: (response) => {
+            this.createWizard.closeDialog();
+            this.resetInitials();
+            if (this.fromProposal)
+              this.route.params
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(({ proposalId }) => {
+                  this.proposalDetailsService.setProposalRef(proposalId);
+                });
+          },
+          error: (err) => {},
+        });
+    }
+  }
+
+  onClose() {}
+
+  closeDialog() {
+    this.createWizard.closeDialog();
+    this.resetInitials();
+  }
+
+  isFormValid(): boolean {
+    return this.createForm.valid;
+  }
+
+  showCreateHideNext() {
+    if (this.fromProposal) return true;
+    return this.currentStepIndex === 2;
+  }
+
+  private getDataForCreateExplanatory(): CreateExplanatoryDocumentBody {
+    const proposalRef = this.proposalDetailsService.proposalRef;
+    const { templateId } = this.createForm.getRawValue();
+    return {
+      template: templateId.split(';')[1],
+      proposalRef: proposalRef ?? null,
+    };
+  }
+
+  private getDataForCreateDraftProposal(): CreateExplanatoryBody {
+    const { templateId, docPurpose, eeaRelevance } =
+      this.createForm.getRawValue();
+    return {
+      templateId,
+      docPurpose,
+      eeaRelevance,
+    };
+  }
+
+  private resetInitials() {
+    this.templateSelector.reset();
+    this.createForm.reset();
+    this.stepSelected = null;
+    this.currentStepIndex = 1;
+  }
+}

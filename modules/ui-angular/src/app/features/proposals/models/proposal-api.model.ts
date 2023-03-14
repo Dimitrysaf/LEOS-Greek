@@ -31,6 +31,17 @@ export type CreateProposalBody = {
   eeaRelevance: boolean;
 };
 
+export interface CreateExplanatoryBody {
+  templateId: string;
+  docPurpose: string;
+  eeaRelevance: boolean;
+}
+
+export interface CreateExplanatoryDocumentBody {
+  proposalRef: string;
+  template: string;
+}
+
 export type CreateProposalResponse = {
   proposalId: string;
   billId: string | null;

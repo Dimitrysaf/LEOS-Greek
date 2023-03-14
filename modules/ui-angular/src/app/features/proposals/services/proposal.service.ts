@@ -19,6 +19,8 @@ import { apiBaseUrl } from 'src/config';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import {
+  CreateExplanatoryBody,
+  CreateExplanatoryDocumentBody,
   CreateProposalBody,
   CreateProposalResponse,
   DEFAULT_LIMIT,
@@ -150,9 +152,6 @@ export class ProposalService {
         limit,
         filters: ProposalService.extractParamFilters(filters),
       })),
-      distinctUntilChanged(
-        (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
-      ),
       finalize(() => this.loadingService.setLoading(false)),
     );
 
@@ -207,6 +206,13 @@ export class ProposalService {
     this.loadingService.setLoading(true);
     return this.http
       .post<CreateProposalResponse>(`${apiBaseUrl}/secured/createPackage`, data)
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
+  }
+
+  createProposalDraft(data: CreateExplanatoryBody) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .post<Document>('api/secured/proposal/createExplanatoryDocument', data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 

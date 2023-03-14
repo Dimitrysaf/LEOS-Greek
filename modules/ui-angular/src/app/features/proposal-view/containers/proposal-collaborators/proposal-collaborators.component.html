@@ -83,27 +83,33 @@
             </button>
             <eui-dropdown-content>
               <div euiList>
-                <button
-                  euiListItem
-                  class="eui-u-p-s"
-                  (click)="editCollaborator(row.login, row.entity, row.role)"
+                <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                  <button
+                    euiListItem
+                    class="eui-u-p-s"
+                    (click)="editCollaborator(row.login, row.entity, row.role)"
+                  >
+                    {{
+                      'page.collection.collaborators.table.actions.edit-role'
+                        | translate
+                    }}
+                  </button>
+                </ng-container>
+                <ng-container
+                  *appUserHasPermission="['CAN_ADD_REMOVE_COLLABORATOR']"
                 >
-                  {{
-                    'page.collection.collaborators.table.actions.edit-role'
-                      | translate
-                  }}
-                </button>
-                <button
-                  euiListItem
-                  class="eui-u-p-s"
-                  euiDanger
-                  (click)="deleteCollaborator(row)"
-                >
-                  {{
-                    'page.collection.collaborators.table.actions.delete'
-                      | translate
-                  }}
-                </button>
+                  <button
+                    euiListItem
+                    class="eui-u-p-s"
+                    euiDanger
+                    (click)="deleteCollaborator(row)"
+                  >
+                    {{
+                      'page.collection.collaborators.table.actions.delete'
+                        | translate
+                    }}
+                  </button>
+                </ng-container>
               </div>
             </eui-dropdown-content>
           </eui-dropdown>

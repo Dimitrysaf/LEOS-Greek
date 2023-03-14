@@ -18,14 +18,16 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.CreateExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
-import eu.europa.ec.leos.services.dto.request.ExportPdfRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
+import eu.europa.ec.leos.services.export.ExportPackageVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +56,7 @@ public class ProposalApiController {
         this.apiService = apiService;
     }
 
-    @RequestMapping (value = "/{proposalRef}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<Object> updateProposalMetadata(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
         try {
@@ -65,7 +67,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping (value = "/{proposalRef}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{proposalRef}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<Object> deleteProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
@@ -78,7 +80,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping (value = "/searchUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> searchUser(@RequestParam("searchKey") String searchKey) {
         try {
@@ -91,7 +93,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping (value = "/createExplanatory", method = RequestMethod.POST)
+    @RequestMapping(value = "/createExplanatory", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> createExplanatory(@RequestBody ExplanatoryRequest request) {
         try {
@@ -104,14 +106,106 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping (value = "/{proposalRef}/export", method = RequestMethod.GET)
+    @RequestMapping(value = "/createExplanatoryDocument", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> createExplanatoryDocument(@RequestBody CreateExplanatoryRequest request) {
+        try {
+            apiService.createExplanatoryDocument(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while creating the explanatory", e);
+            return new ResponseEntity<>("Error occurred while creating the explanatory document: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/getExports", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> getExports(@PathVariable String proposalRef) {
+        try {
+            List<ExportPackageVO> exports = apiService.getExportDocuments(proposalRef);
+            return new ResponseEntity<>(exports, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while getting exports to e-consilium", e);
+            return new ResponseEntity<>("Error occurred while getting to e-consilium: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/updateExport/{exportId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateExport(@PathVariable String proposalRef, @PathVariable String exportId, @RequestBody List<String> comments) {
+        try {
+            List<ExportPackageVO> exports = apiService.updateExportDocument(proposalRef, exportId, comments);
+            return new ResponseEntity<>(exports, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/deleteExport/{exportId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> deleteExport(@PathVariable String proposalRef, @PathVariable String exportId) {
+        try {
+            List<ExportPackageVO> exports = apiService.deleteExportDocument(proposalRef, exportId);
+            return new ResponseEntity<>(exports, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/notifyExport/{exportId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> notifyExport(@PathVariable String proposalRef, @PathVariable String exportId) {
+        try {
+            apiService.notifyExportPackage(proposalRef, exportId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/previewExport/{exportId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> previewExport(@PathVariable String proposalRef, @PathVariable String exportId) {
+        try {
+            byte[] result = apiService.downloadExportPackage(proposalRef, exportId);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating export ", e);
+            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @RequestMapping(value = "/{proposalRef}/deleteExplanatory/{explanatoryRef}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<Object> deleteExplanatory(@PathVariable String proposalRef, @PathVariable String explanatoryRef) {
+        try {
+            apiService.deleteExplanatoryDocument(proposalRef, explanatoryRef);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while deleting explanatory", e);
+            return new ResponseEntity<>("Error occurred while deleting explanatory document: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/{proposalRef}/export", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> exportProposal(
-                @PathVariable("proposalRef") String  proposalRef,
-                @RequestParam String  exportOutput) {
+            @PathVariable("proposalRef") String proposalRef,
+            @RequestParam String exportOutput) {
         try {
-            String jobId = apiService.exportProposal(proposalRef,exportOutput);
-            return new ResponseEntity<>(jobId , HttpStatus.OK);
+            String jobId = apiService.exportProposal(proposalRef, exportOutput);
+            return new ResponseEntity<>(jobId, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while trying to export proposal", e);
             return new ResponseEntity<>("Error occurred while exporting proposal : " + e.getMessage(),
@@ -138,17 +232,18 @@ public class ProposalApiController {
             return new ResponseEntity<>("Error occurred while creating proposal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @RequestMapping(value = "/validateLegFile", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
-            File content = new File(legFile.getName());
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(legFile.getBytes());
-            } catch (IOException ioe) {
-                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            LegFileValidation result = this.apiService.validateLegFile(content);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+        File content = new File(legFile.getName());
+        try (FileOutputStream fos = new FileOutputStream(content)) {
+            fos.write(legFile.getBytes());
+        } catch (IOException ioe) {
+            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        LegFileValidation result = this.apiService.validateLegFile(content);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

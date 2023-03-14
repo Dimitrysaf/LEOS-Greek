@@ -1,24 +1,26 @@
-<eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="coverpage">
-  <eui-card-header>
-    <eui-card-header-title>
-      <a
-        [routerLink]="['/coverpage', proposalId]"
-        (click)="$event.preventDefault()"
-        ><strong>{{
-          'page.collection.drafts.coverPage' | translate
-        }}</strong></a
+<ng-container *appShowOnInstance="['ec', 'os']">
+  <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="coverpage">
+    <eui-card-header>
+      <eui-card-header-title>
+        <a
+          [routerLink]="['/coverpage', proposalRef]"
+          (click)="$event.preventDefault()"
+          ><strong>{{
+            'page.collection.drafts.coverPage' | translate
+          }}</strong></a
+        >
+      </eui-card-header-title>
+      <eui-card-header-subtitle
+        *ngIf="coverpage.updatedOn && coverpage.updatedBy"
       >
-    </eui-card-header-title>
-    <eui-card-header-subtitle
-      *ngIf="coverpage.updatedOn && coverpage.updatedBy"
-    >
-      <app-proposal-last-updated-on
-        [date]="coverpage.updatedOn"
-        [name]="coverpage.updatedBy"
-      ></app-proposal-last-updated-on>
-    </eui-card-header-subtitle>
-  </eui-card-header>
-</eui-card>
+        <app-proposal-last-updated-on
+          [date]="coverpage.updatedOn"
+          [name]="coverpage.updatedBy"
+        ></app-proposal-last-updated-on>
+      </eui-card-header-subtitle>
+    </eui-card-header>
+  </eui-card>
+</ng-container>
 
 <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
   <eui-card-header>
@@ -41,6 +43,106 @@
     </eui-card-header-subtitle>
   </eui-card-header>
 </eui-card>
+
+<ng-container *appShowOnInstance="['cn']">
+  <eui-card class="eui-u-mt-s eui-u-mb-l">
+    <eui-card-header>
+      <eui-card-header-title>
+        <a
+          [routerLink]="['/explanatory', proposalRef]"
+          (click)="$event.preventDefault()"
+          ><strong>{{
+            'page.collection.drafts.explanatory' | translate
+          }}</strong></a
+        >
+      </eui-card-header-title>
+      <eui-card-header-right-content>
+        <button euiButton euiBasicButton class="" (click)="handleCreateDraft()">
+          <span
+            class="eui-icon eui-icon-plus eui-u-color-success-100 eui-icon--rounded"
+          ></span>
+        </button>
+      </eui-card-header-right-content>
+    </eui-card-header>
+    <eui-card-content>
+      <app-proposal-create-draft
+        #createDraftDialog
+        [showCreateButton]="false"
+        [fromProposal]="true"
+      ></app-proposal-create-draft>
+      <table
+        class="eui-u-mt-m"
+        euiTable
+        euiTableResponsive
+        [rows]="explanatories"
+        *ngIf="true"
+      >
+        <ng-template euiTemplate="header">
+          <tr>
+            <th>
+              {{ 'page.collection.drafts.explanatory.table.title' | translate }}
+            </th>
+            <th>
+              {{
+                'page.collection.drafts.explanatory.table.language' | translate
+              }}
+            </th>
+            <th>
+              {{
+                'page.collection.drafts.explanatory.table.last-updated-on'
+                  | translate
+              }}
+            </th>
+            <th>
+              {{
+                'page.collection.drafts.explanatory.table.last-updated-by'
+                  | translate
+              }}
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template let-row euiTemplate="body">
+          <tr>
+            <td>
+              <a
+                *ngIf="row.title"
+                [routerLink]="['/explanatory', row.metadata.internalRef]"
+                (click)="$event.preventDefault()"
+                ><strong>{{ row.title }}</strong></a
+              >
+              <button
+                *ngIf="!row.title"
+                euiButton
+                euiBasicButton
+                euiPrimary
+                class="eui-u-mr-s"
+                (click)="handleAnnexEditTitle(row)"
+              >
+                Edit title
+              </button>
+            </td>
+            <td>{{ row.language }}</td>
+            <td>{{ row.updatedBy }}</td>
+            <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
+            <td>
+              <button
+                euiButton
+                euiBasicButton
+                class=""
+                (click)="handleExplanatoryDelete(row)"
+              >
+                <span
+                  class="eui-icon eui-icon-remove-circle-o eui-u-color-danger-100 eui-icon--rounded"
+                ></span>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </table>
+    </eui-card-content>
+  </eui-card>
+</ng-container>
 
 <eui-card
   class="eui-u-mt-s eui-u-mb-l"
@@ -79,23 +181,27 @@
             {{ 'page.collection.drafts.annex.no-annex' | translate }}
           </div>
         </div>
-        <button
-          class="eui-u-ml-l"
-          euiButton
-          euiPrimary
-          (click)="handleAnnexAdd()"
-        >
-          Add
-        </button>
-        <button
-          class="eui-u-ml-l"
-          euiButton
-          euiPrimary
-          euiOutline
-          (click)="handleAnnexReorder()"
-        >
-          Reorder
-        </button>
+        <ng-container *appUserHasPermission="['CAN_UPDATE']">
+          <button
+            class="eui-u-ml-l"
+            euiButton
+            euiPrimary
+            (click)="handleAnnexAdd()"
+          >
+            Add
+          </button>
+        </ng-container>
+        <ng-container *appUserHasPermission="['CAN_UPDATE']">
+          <button
+            class="eui-u-ml-l"
+            euiButton
+            euiPrimary
+            euiOutline
+            (click)="handleAnnexReorder()"
+          >
+            Reorder
+          </button>
+        </ng-container>
       </div>
 
       <table
@@ -122,16 +228,18 @@
                 (click)="$event.preventDefault()"
                 ><strong>{{ row.title }}</strong></a
               >
-              <button
-                *ngIf="!row.title"
-                euiButton
-                euiBasicButton
-                euiPrimary
-                class="eui-u-mr-s"
-                (click)="handleAnnexEditTitle(row)"
-              >
-                Edit title
-              </button>
+              <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                <button
+                  *ngIf="!row.title"
+                  euiButton
+                  euiBasicButton
+                  euiPrimary
+                  class="eui-u-mr-s"
+                  (click)="handleAnnexEditTitle(row)"
+                >
+                  Edit title
+                </button>
+              </ng-container>
             </td>
             <td>{{ row.updatedBy }}</td>
             <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
@@ -154,12 +262,16 @@
                   </button>
                   <eui-dropdown-content>
                     <ul euiList>
-                      <li euiListItem (click)="handleAnnexEditTitle(row)">
-                        <button euiListItem>Edit title</button>
-                      </li>
-                      <li euiListItem (click)="handleAnnexDelete(row)">
-                        <button euiListItem>Delete</button>
-                      </li>
+                      <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                        <li euiListItem (click)="handleAnnexEditTitle(row)">
+                          <button euiListItem>Edit title</button>
+                        </li>
+                      </ng-container>
+                      <ng-container *appUserHasPermission="['CAN_DELETE']">
+                        <li euiListItem (click)="handleAnnexDelete(row)">
+                          <button euiListItem>Delete</button>
+                        </li>
+                      </ng-container>
                     </ul>
                   </eui-dropdown-content>
                 </eui-dropdown>
