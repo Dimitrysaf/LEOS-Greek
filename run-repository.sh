@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# Copyright 2017 European Commission
+# Copyright 2020 European Commission
 #
 # Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
 # You may not use this work except in compliance with the Licence.
@@ -15,12 +15,22 @@
 #
 
 #TITLE Repository
-echo "---------------------REPOSITORY-----------------------------------------------"
+echo "---------------------Repository-----------------------------------------------"
 
-cd ./tools/cmis/chemistry-opencmis-server-inmemory
+cd ./tools/repository || {
+  echo "Can't change to ./tools/repository"
+  exit
+}
 
-echo "---------------------REPOSITORY STARTING...-----------------------------------"
-mvn clean
-mvn jetty:run-war
+echo "---------------------Repository COMPILING...----------------------------------"
+mvn clean install
+echo "---------------------Repository COMPILED.-------------------------------------"
 
-echo "---------------------REPOSITORY STOPPED....-----------------------------------"
+cd ./web || {
+  echo "Can't change to ./tools/repository/web"
+  exit
+}
+
+echo "---------------------Repository STARTING...-----------------------------------"
+mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
+echo "---------------------Repository STOPPED....-----------------------------------"
