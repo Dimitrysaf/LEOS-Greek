@@ -10,7 +10,9 @@ import eu.europa.ec.leos.ui.event.DownloadActualVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.DownloadCleanVersion;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.AddTrackChangesMenuEvent;
 import eu.europa.ec.leos.web.event.view.ChangeDetailsRequestEvent;
+import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.PaneAddEvent;
 import eu.europa.ec.leos.web.event.view.PaneEnableEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
@@ -38,6 +40,7 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
     protected MenuItem viewSeparator;
     protected MenuItem guidance;
     protected MenuItem changeDetails;
+    protected MenuItem trackChangesItem;
     private SimpleFileDownloader fileDownloader;
     private Class<?> childClass;
     private MenuItem showCleanVersionItem;
@@ -127,6 +130,15 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         if(changeDetails == null) {
             changeDetails = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.see.change.details"),
                     new ChangeDetailsCommand(), guidance  != null ? guidance : tocOffItem);
+        }
+    }
+
+    @Subscribe
+    public void addTrackChangesActionMenu(AddTrackChangesMenuEvent event) {
+        // Track changes menu item
+        if (trackChangesItem == null) {
+            trackChangesItem = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.enable.trackchanges"),
+                    new TrackChangesCommand(), changeDetails);
         }
     }
 
@@ -225,6 +237,16 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         public void menuSelected(MenuItem selectedItem) {
             LOG.debug("Change details menu item clicked...");
             eventBus.post(new ChangeDetailsRequestEvent(selectedItem.isChecked()));
+        }
+    }
+
+    protected class TrackChangesCommand implements Command {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void menuSelected(MenuItem selectedItem) {
+            LOG.debug("Track changes menu item clicked...");
+            eventBus.post(new EnableTrackChangesEvent(selectedItem.isChecked()));
         }
     }
 

@@ -818,6 +818,10 @@ CKEDITOR.dom.range = function( root ) {
 				var container = limit.container,
 					offset = limit.offset;
 
+				if ((container.type == CKEDITOR.NODE_ELEMENT) && (offset > container.getChildCount())) {
+					return;
+				}
+
 				// If limit is between text nodes move it to the end of preceding one,
 				// because they will be merged.
 				if ( betweenTextNodes( container, offset ) ) {

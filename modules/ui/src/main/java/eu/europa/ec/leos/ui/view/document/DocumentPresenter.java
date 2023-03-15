@@ -988,6 +988,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         documentScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(bill.getVersionSeriesId()), id);
         documentScreen.setPermissions(billVO, isClonedProposal());
         documentScreen.initAnnotations(billVO, proposalRef, connectedEntity);
+        documentScreen.initTrackChanges(proposalRef);
         return bill;
     }
 

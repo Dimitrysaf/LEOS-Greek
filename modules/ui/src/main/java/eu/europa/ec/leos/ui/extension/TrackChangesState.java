@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -16,25 +16,10 @@ package eu.europa.ec.leos.ui.extension;
 import eu.europa.ec.leos.ui.shared.js.LeosJavaScriptExtensionState;
 import eu.europa.ec.leos.web.model.UserVO;
 
-public class LeosEditorState extends LeosJavaScriptExtensionState {
+public class TrackChangesState extends LeosJavaScriptExtensionState {
 
     private static final long serialVersionUID = 1L;
 
     public UserVO user;
-    public String[] permissions;
-
-    public boolean isImplicitSaveEnabled;
-    public boolean isSpellCheckerEnabled;
-    public String spellCheckerServiceUrl;
-    public String spellCheckerSourceUrl;
-
-    public String tocItemsJsonArray;
-    public String numberingConfigsJsonArray;
-    public String listNumberConfigJsonArray;
-    public String articleTypesConfigJsonArray;
-    public String alternateConfigsJsonArray;
-    public String documentsMetadataJsonArray;
-    public String documentRef;
-    public boolean isTrackChangesEnabled;
-
+    public String proposalRef;
 }

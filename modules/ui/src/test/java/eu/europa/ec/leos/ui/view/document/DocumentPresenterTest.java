@@ -318,6 +318,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
         verify(documentScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id")), eq(false));
         verify(documentScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id")), any(), any());
+        verify(documentScreen).initTrackChanges(any());
         verify(documentScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(contributionService).getDocumentContributions(docId, 0, Bill.class);
         verify(documentScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
@@ -413,6 +414,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
         verify(documentScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id")), eq(true));
         verify(documentScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id")), any(), any());
+        verify(documentScreen).initTrackChanges(any());
         verify(documentScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(documentScreen).findContributionAndShowTab(docRef);
         verify(contributionService).getDocumentContributions(docId, 0, Bill.class);
@@ -616,6 +618,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
         verify(documentScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id")), eq(false));
         verify(documentScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id")), any(), any());
+        verify(documentScreen).initTrackChanges(any());
         verify(documentScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(packageService).findPackageByDocumentId(document.getId());
         verify(proposalService).findProposalByPackagePath(leosPackage.getPath());

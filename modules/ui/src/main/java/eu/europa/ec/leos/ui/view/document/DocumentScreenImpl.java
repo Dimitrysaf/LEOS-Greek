@@ -594,4 +594,8 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
     public Optional<ContributionVO> findContributionAndShowTab(String revisionVersion) {
         return Optional.empty();
     }
+
+    @Override
+    public void initTrackChanges(String proposalRef) {
+    }
 }

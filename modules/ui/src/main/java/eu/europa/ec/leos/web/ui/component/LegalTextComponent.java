@@ -49,6 +49,7 @@ import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
 import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
 import eu.europa.ec.leos.ui.extension.MathJaxExtension;
 import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
+import eu.europa.ec.leos.ui.extension.TrackChangesExtension;
 import eu.europa.ec.leos.ui.extension.UserCoEditionExtension;
 import eu.europa.ec.leos.ui.extension.UserGuidanceExtension;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
@@ -107,6 +108,7 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
     protected ActionManagerExtension<LeosDisplayField> actionManagerExtension;
     protected UserCoEditionExtension<LeosDisplayField, String> userCoEditionExtension;
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
+    private TrackChangesExtension<LeosDisplayField, String> trackChangesExtension;
     private Provider<StructureContext> structureContextProvider;
     private InstanceTypeResolver instanceTypeResolver;
 
@@ -470,5 +472,11 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
 
     public void closeSearchBarComponent() {
         searchDelegate.closeSearchBarComponent();
+    }
+
+    public void initTrackChanges(final String proposalRef) {
+        if (trackChangesExtension == null) {
+            trackChangesExtension = new TrackChangesExtension<>(docContent, securityContext, proposalRef);
+        }
     }
 }

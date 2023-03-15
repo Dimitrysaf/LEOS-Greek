@@ -38,6 +38,7 @@ import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.component.ResetRevisionComponentEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.AddTrackChangesMenuEvent;
 import eu.europa.ec.leos.web.event.view.document.CreateEventParameter;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.support.LeosCacheToken;
@@ -106,6 +107,7 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
     public void refreshContent(final String documentContent) {
         if(isClonedProposal()) {
             eventBus.post(new AddChangeDetailsMenuEvent());
+            eventBus.post(new AddTrackChangesMenuEvent());
         }
         legalTextPaneComponent.populateContent(documentContent);
     }
@@ -267,5 +269,12 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
 
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    @Override
+    public void initTrackChanges(String proposalRef) {
+        if (isClonedProposal()) {
+            legalTextPaneComponent.initTrackChanges(proposalRef);
+        }
     }
 }

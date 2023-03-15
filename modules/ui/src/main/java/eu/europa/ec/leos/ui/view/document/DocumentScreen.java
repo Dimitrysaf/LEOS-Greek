@@ -88,6 +88,8 @@ interface DocumentScreen {
 
     void initAnnotations(DocumentVO bill, String proposalRef, String connectedEntity);
 
+    void initTrackChanges(String proposalRef);
+
     void scrollToMarkedChange(final String elementId);
 
     void scrollTo(final String elementId);
