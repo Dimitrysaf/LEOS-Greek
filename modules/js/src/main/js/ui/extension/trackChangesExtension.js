@@ -74,7 +74,7 @@ define(function trackChangesExtensionModule(require) {
 
     function _generateColor(str) {
         for (var i = 0, hashCode = 0; i < str.length; hashCode = str.charCodeAt(i++) + ((hashCode << 5) - hashCode));
-        return "hsl(" + (Math.abs(hashCode) % 360) + ", 100%, 50%)";
+        return "hsl(" + (Math.abs(hashCode) % 360) + ", 100%, 35%)";
     }
 
     return {
