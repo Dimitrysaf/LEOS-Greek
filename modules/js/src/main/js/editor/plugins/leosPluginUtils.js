@@ -443,13 +443,19 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _manageListIntro(element) {
-        if (element.type == CKEDITOR.NODE_TEXT) {
+        if (element.hasAscendant('table', false)
+                && element.getAscendant('table', false).hasAscendant('li', false)) {
+            // if the element is inside a table
+            var tmpElement = element.getAscendant('li', false);
+            element = !!tmpElement ? tmpElement : element;
+        } else if (element.type == CKEDITOR.NODE_TEXT) {
             var tmpElement = element;
             while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
                 tmpElement = tmpElement.getParent();
             }
             element = !!tmpElement ? tmpElement : element;
         }
+
         if (_isListIntroAndFirstSubelement(element)) {
             return element.getParent().getParent();
         }
