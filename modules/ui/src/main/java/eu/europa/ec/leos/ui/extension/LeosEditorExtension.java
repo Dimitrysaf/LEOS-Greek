@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.TocItemType;
 import eu.europa.ec.leos.web.event.NotificationEvent;
+import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -92,6 +93,7 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         getState().alternateConfigsJsonArray = toJsonString(alternateConfigs);
         getState().documentsMetadataJsonArray = toJsonString(documents);
         getState().documentRef = documentRef;
+        getState().isTrackChangesEnabled = false;
 
         registerServerSideAPI();
         extend(target);
@@ -153,6 +155,11 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
     public void closeElement(CloseElementEvent event) {
         LOG.trace("Closing element...");
         callFunction("closeElement");
+    }
+
+    @Subscribe
+    public void enableTrackChanges(EnableTrackChangesEvent event) {
+        getState(false).isTrackChangesEnabled = event.isEnabled();
     }
 
     @Override

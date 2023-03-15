@@ -32,6 +32,8 @@
         @extend %editorFocus;
         
         @extend %editorWidget;
+
+        @extend %editorTrackChanges;
     }
     .cke_editable.cke_show_blocks {
         @extend %showblockCitations;

@@ -55,6 +55,7 @@ define(function aknInlineArticleProfileModule(require) {
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/leosSubElementMove/leosSubElementMovePlugin"));
+    plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -104,7 +105,8 @@ define(function aknInlineArticleProfileModule(require) {
             '/',
             {name: 'insert', items: ['Mathjax', 'Table', 'SpecialChar']},
             {name: 'tools', items: ['LeosShowBlocks']},
-            {name: "mode", items: ['Sourcedialog']}
+            {name: "mode", items: ['Sourcedialog']},
+            {name: 'trackChanges', items: ['toggleDisplay']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

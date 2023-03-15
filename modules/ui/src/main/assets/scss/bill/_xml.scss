@@ -60,6 +60,8 @@
         @extend %compare;
         @extend %documentFooter;
 
+        @extend %xmlTrackChanges;
+
         display: block;
     }
 

@@ -50,7 +50,7 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
 
     @Override
     public String toEditableContent(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext, byte[] coverPageContent) {
-        if(isCloneProposal()) {
+        /*if(isCloneProposal()) {
             String[] contentsToCompare = getContentsToCompare(xmlDocument, contextPath, securityContext, coverPageContent);
             if(contentsToCompare != null) {
                 switch (contentsToCompare.length) {
@@ -71,7 +71,7 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
                         return null;
                 }
             }
-        }
+        }*/
         return getEditableXml(xmlDocument, contextPath, securityContext, coverPageContent);
     }
 

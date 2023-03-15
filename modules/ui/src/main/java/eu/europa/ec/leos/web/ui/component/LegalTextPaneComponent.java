@@ -302,4 +302,8 @@ public class LegalTextPaneComponent extends CustomComponent {
         legalTextComponent.initLeosEditor(bill, documentsMetadata);
     }
 
+    public void initTrackChanges(String proposalRef) {
+        legalTextComponent.initTrackChanges(proposalRef);
+    }
+
 }

@@ -155,7 +155,8 @@ define(function elementEditorModule(require) {
                 articleTypesConfig : params.articleTypesConfig,
                 documentsMetadata: JSON.parse(connector.getState().documentsMetadataJsonArray),
                 documentRef: connector.getState().documentRef,
-                isClonedProposal: params.isClonedProposal
+                isClonedProposal: params.isClonedProposal,
+                isTrackChangesEnabled: connector.getState().isTrackChangesEnabled
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));
