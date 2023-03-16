@@ -110,6 +110,7 @@ public class WorkspaceOptions {
                 }
             } else {
                 workspaceFilter.removeFilter(id);
+                initRoleFilter();
                 workspaceFilter.addFilter(new QueryFilter.Filter(id, "IN", nullCheck,
                         values.toArray(new String[]{})));
             }
