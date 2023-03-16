@@ -10,7 +10,9 @@ import {
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Document, DocumentType } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -33,6 +35,11 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
   @ViewChild('createDraftDialog')
   createDraftDialog: ProposalCreateDraftComponent;
+  @ViewChild('confirmationForDelete')
+  confirmDeleteComp: ConfirmDeleteDialogComponent;
+
+  @ViewChild('confirmationForDeleteExpl')
+  confirmDeleteCompExpl: ConfirmDeleteDialogComponent;
 
   title: string;
   activeAnnexId: string;
@@ -40,6 +47,7 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   constructor(
     private proposalDetailsService: ProposalDetailsService,
     private route: ActivatedRoute,
+    public tranlsateService: TranslateService,
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if ('proposal' in changes) {
@@ -70,7 +78,19 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   }
 
   handleAnnexDelete(annex: Document) {
+    this.confirmDeleteComp.deleteDialog.openDialog();
+  }
+
+  handleAnnexCancelDelete() {
+    this.confirmDeleteComp.deleteDialog.closeDialog();
+  }
+
+  hanldeConfirmationDelete(annex: Document) {
     this.proposalDetailsService.deleteAnnex(annex.metadata.internalRef);
+  }
+
+  hanldeConfirmationDeleteExpl() {
+    this.confirmDeleteCompExpl.deleteDialog.openDialog();
   }
 
   handleSave() {

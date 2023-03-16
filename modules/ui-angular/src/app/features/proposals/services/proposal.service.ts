@@ -7,6 +7,7 @@ import {
   combineLatest,
   debounceTime,
   distinctUntilChanged,
+  lastValueFrom,
   map,
   Observable,
   pluck,
@@ -16,11 +17,13 @@ import {
 import { finalize, switchMap } from 'rxjs/operators';
 import { apiBaseUrl } from 'src/config';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import {
-  CreateExplanatoryBody,
-  CreateExplanatoryDocumentBody,
+  CreateDraftBody,
+  CreateDraftResponse,
+  CreateExplanatoryDocument,
   CreateProposalBody,
   CreateProposalResponse,
   DEFAULT_LIMIT,
@@ -209,7 +212,7 @@ export class ProposalService {
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
-  createProposalDraft(data: CreateExplanatoryBody) {
+  createExplanatoryDocument(data: CreateExplanatoryDocument) {
     this.loadingService.setLoading(true);
     return this.http
       .post<Document>('api/secured/proposal/createExplanatoryDocument', data)

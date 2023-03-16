@@ -462,6 +462,10 @@ public abstract class CollectionContextService {
         financialStatementContext.executeCreateMilestone();
     }
 
+    public Proposal executeCreateExplanatoryDocument() {
+        throw new UnsupportedOperationException("Method not supported");
+    }
+
     public void executeCreateExplanatory() {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
         ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();

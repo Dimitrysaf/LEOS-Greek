@@ -21,12 +21,7 @@
   <ng-template let-row euiTemplate="body">
     <tr>
       <td class="d-flex flex-column">
-        <input
-          euiInputText
-          type="text"
-          [value]="row.comments[0]"
-          (change)="handleTitleChange($event, row)"
-        />
+        <span euiLabel>{{ row.comments[0] }}</span>
         <span euiSublabel class="mt-2 ml-2" euiLabel>{{
           row.comments[1]
         }}</span>
@@ -47,23 +42,96 @@
             euiTooltip="Menu"
             [attr.aria-label]="'Menu'"
           >
-            <span euiIcon iconClass="eui-icon eui-icon-ecl-hamburger"></span>
+            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
           </button>
           <eui-dropdown-content>
             <div euiList>
-              <button euiListItem (click)="handleNotifyExport(row.id)">
+              <ng-container>
+                <button
+                  euiListItem
+                  class="p-2"
+                  (click)="openEditExportDialog(row)"
+                >
+                  {{ 'page.collection.exports.table.actions.edit' | translate }}
+                </button>
+
+                <eui-dialog #editTitleExport title="Edit title export">
+                  <div euiInputGroup class="flex-row align-items-center">
+                    <label class="label">
+                      {{
+                        'page.collection.drafts.annex.title-dialog.label'
+                          | translate
+                      }}</label
+                    >
+                    <input euiInputText [(ngModel)]="titleToEdit" />
+                  </div>
+                  <eui-dialog-footer>
+                    <div class="d-flex flex-row justify-content-end">
+                      <button
+                        euiButton
+                        euiSecondary
+                        (click)="closeEditExportDialog()"
+                      >
+                        {{
+                          'page.collection.drafts.annex.title-dialog.cancel'
+                            | translate
+                        }}
+                      </button>
+                      <button
+                        euiButton
+                        euiPrimary
+                        class="save-button"
+                        (click)="handleTitleChange(row)"
+                      >
+                        <span>{{
+                          'page.collection.drafts.annex.title-dialog.save'
+                            | translate
+                        }}</span>
+                      </button>
+                    </div>
+                  </eui-dialog-footer>
+                </eui-dialog>
+              </ng-container>
+              <button
+                euiListItem
+                class="p-2"
+                (click)="handleNotifyExport(row.id)"
+              >
                 {{
                   'page.collection.exports.table.actions.re-export' | translate
                 }}
               </button>
-              <button euiListItem (click)="handlePreviewExport(row.id)">
+              <button
+                euiListItem
+                class="p-2"
+                (click)="handlePreviewExport(row.id)"
+              >
                 {{
                   'page.collection.exports.table.actions.preview' | translate
                 }}
               </button>
-              <button euiListItem (click)="handleDeleteExport(row.id)">
+              <button
+                euiListItem
+                euiDanger
+                class="p-2"
+                (click)="handleDeleteExport(row.id)"
+              >
                 {{ 'page.collection.exports.table.actions.delete' | translate }}
               </button>
+              <app-confirm-delete-dialog
+                #confirmationForDelete
+                [title]="
+                  this.translateService.instant(
+                    'page.collection.exports.table.actions.delete-dialog.title'
+                  )
+                "
+                [description]="
+                  this.translateService.instant(
+                    'page.collection.exports.table.actions.delete-dialog.description'
+                  )
+                "
+                (confrimDelete)="hanldeConfirmationDelete(row)"
+              ></app-confirm-delete-dialog>
             </div>
           </eui-dropdown-content>
         </eui-dropdown>

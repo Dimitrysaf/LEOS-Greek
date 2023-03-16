@@ -37,13 +37,26 @@
       <uxWizardStepContent>
         <form [formGroup]="uploadForm" enctype="multipart/form-data">
           <eui-file-upload
-            hasDragArea
-            [isMultiple]="false"
+            #uploadFile
             formControlName="legFile"
             [progress]="progress"
+            [isMultiple]="false"
+            [accept]="'.leg'"
             (drop)="onDrop()"
+            [hasResetButton]="false"
           ></eui-file-upload>
         </form>
+        <div class="d-flxe flxe-column">
+          <button
+            euiButton
+            euiSecondary
+            (click)="resetInitials()"
+            *ngIf="showResetButton()"
+            class="my-3"
+          >
+            Reset
+          </button>
+        </div>
         <eui-card *ngIf="errorsVO">
           <eui-card-header
             ><eui-card-header-title>

@@ -1,30 +1,5 @@
 <div class="filters-container eui-u-ph-m">
   <form class="filters-form" [formGroup]="form" *ngIf="form">
-    <!-- Header Row -->
-
-    <div
-      class="filters-title eui-u-pb-2xs eui-u-flex eui-u-flex-align-items-center eui-u-flex-justify-content-between eui-u-shadow-z-depth-0"
-    >
-      <h4 class="eui-u-font-xl eui-u-font-bold">
-        {{ 'page.workspace.filter.filters' | translate }}
-      </h4>
-      <div class="filters-title--actions">
-        <button
-          euiButton
-          euiBasicButton
-          class="eui-u-font-s eui-u-ph-none"
-          (click)="resetFilters()"
-        >
-          <span class="eui-u-color-primary-100">
-            {{ 'page.workspace.filter.reset' | translate }}
-          </span>
-          <span
-            class="eui-icon eui-icon-angle-left eui-u-font-size-s eui-u-pl-xl eui-u-color-grey-100"
-          ></span>
-        </button>
-      </div>
-    </div>
-
     <!-- Search Title Row -->
 
     <div class="filters-search-input eui-u-shadow-z-depth-0 eui-u-pb-xs">
@@ -38,6 +13,7 @@
         </label>
         <div class="eui-input-group-addon eui-u-pr-3xl">
           <input
+            (keydown.enter)="handleSubmit($event)"
             euiInputText
             id="with_action-button_disabled"
             placeholder="Search for a proposal"

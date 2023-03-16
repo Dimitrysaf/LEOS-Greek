@@ -8,9 +8,10 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { EuiFileUploadComponent } from '@eui/components/eui-file-upload';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { debounce, debounceTime, filter, Subject, takeUntil, tap } from 'rxjs';
 
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 
@@ -36,6 +37,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   step1Complete = false;
   fileName = '';
   @ViewChild('uploadWizard') uploadWizard: EuiDialogComponent;
+  @ViewChild('uploadFile') uploadEuiFile: EuiFileUploadComponent;
   public progress = 0;
 
   private destroy$ = new Subject();
@@ -114,7 +116,6 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
         langCode,
         documentLanguage,
       });
-      this.isNavigationAllowed = true;
     } else {
       this.uploadForm.patchValue({
         templateId: '',
@@ -122,7 +123,6 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
         langCode: '',
         documentLanguage: '',
       });
-      this.isNavigationAllowed = false;
     }
   }
 
@@ -177,6 +177,12 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   onDrop() {
+    if (this.uploadEuiFile.files.length > 1) {
+      this.uploadEuiFile.files.shift();
+      this.errorsVO = null;
+      this.stepSelected = null;
+      this.currentStepIndex = 1;
+    }
     this.validateLegFile();
   }
 
@@ -187,6 +193,10 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     this.currentStepIndex = 1;
   }
 
+  showResetButton() {
+    return this.uploadEuiFile && this.uploadEuiFile.files?.length > 0;
+  }
+
   private getDataForCreate(): CreateProposalBody {
     const { templateId, templateName, langCode, docPurpose, eeaRelevance } =
       this.uploadForm.getRawValue();
@@ -194,26 +204,35 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   private validateLegFile() {
-    const legFile = this.uploadForm.get('legFile').value[0];
-    this.proposalService.validateLegFile(legFile).subscribe((res) => {
-      if (res.errors) {
-        this.errorsVO = res.errors;
-        this.fileName = (legFile as File).name;
-      }
-      if (res.errors === null && res.documentToBeCreated) {
-        this.isNavigationAllowed = true;
-        this.step1Complete = true;
-        this.currentStepIndex = 2;
-        this.uploadForm.patchValue({
-          templateName: res.documentToBeCreated.metadata.templateName,
-          documentLanguage: res.documentToBeCreated.metadata.language,
-          docPurpose: res.documentToBeCreated.metadata.docPurpose,
-          eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
-          confidentialityLevel: res.documentToBeCreated.metadata.securityLevel,
-          packageTitle: res.documentToBeCreated.metadata.packageTitle,
-          internalReference: res.documentToBeCreated.metadata.internalRef,
-        });
-      }
-    });
+    const legFile = this.uploadEuiFile.files[0];
+
+    if (legFile === undefined) return;
+    this.proposalService
+      .validateLegFile(legFile)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        if (res.errors) {
+          this.errorsVO = res.errors;
+          this.fileName = (legFile as File).name;
+          this.uploadForm.get('legFile').setValue(null);
+          this.isNavigationAllowed = false;
+        }
+        if (res.errors === null && res.documentToBeCreated) {
+          this.errorsVO = null;
+          this.isNavigationAllowed = true;
+          this.step1Complete = true;
+          this.currentStepIndex = 2;
+          this.uploadForm.patchValue({
+            templateName: res.documentToBeCreated.metadata.templateName,
+            documentLanguage: res.documentToBeCreated.metadata.language,
+            docPurpose: res.documentToBeCreated.metadata.docPurpose,
+            eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
+            confidentialityLevel:
+              res.documentToBeCreated.metadata.securityLevel,
+            packageTitle: res.documentToBeCreated.metadata.packageTitle,
+            internalReference: res.documentToBeCreated.metadata.internalRef,
+          });
+        }
+      });
   }
 }

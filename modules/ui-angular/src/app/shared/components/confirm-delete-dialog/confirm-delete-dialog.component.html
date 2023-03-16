@@ -1,0 +1,18 @@
+<eui-dialog #deleteDialog>
+  <eui-dialog-header>
+    <h3>{{ title }}</h3>
+  </eui-dialog-header>
+  <div class="d-flex flex-column">
+    <p>{{ description }}</p>
+  </div>
+  <eui-dialog-footer class="">
+    <div class="dialog-footer-content">
+      <button euiButton euiSecondary class="mr-3" (click)="handleCancel()">
+        {{ 'shared.delete-dialog-confirm.footer.button.cancel' | translate }}
+      </button>
+      <button euiButton euiDanger class="ml-2" (click)="handleConfirm()">
+        {{ 'shared.delete-dialog-confirm.footer.button.delete' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

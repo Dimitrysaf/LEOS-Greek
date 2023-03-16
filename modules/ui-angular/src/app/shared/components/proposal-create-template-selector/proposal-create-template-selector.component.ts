@@ -102,7 +102,6 @@ export class ProposalCreateTemplateSelectorComponent
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
       item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates);
-
     return templates.reduce(
       (map, item) => map.set(item.id, item),
       new Map<string, CatalogItem>(),
@@ -110,22 +109,22 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private catalogToTreeNodes(catalogItems: CatalogItem[]) {
+    catalogItems = catalogItems.filter((c) => !c.hidden);
     return catalogItems.map((item) => this.catalogItemToUxLink(item));
   }
 
   private catalogItemToUxLink(item: CatalogItem): UxLink {
-    const { id, names, type, enabled, items } = item;
+    const { id, names, type, enabled, items, hidden } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
     const disabled = !enabled;
     const children =
-      type === 'CATEGORY' && enabled
+      type === 'CATEGORY' && !hidden && enabled
         ? items
             .filter((child) => !child.hidden)
             .map((child) => this.catalogItemToUxLink(child))
         : [];
-
     return new UxLink({ id, label, iconClass, disabled, children });
   }
 

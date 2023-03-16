@@ -22,7 +22,10 @@ import {
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import { CreateExplanatoryDocumentBody } from '@/features/proposals/models';
+import {
+  CreateDraftBody,
+  CreateDraftResponse,
+} from '@/features/proposals/models';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import { ExportPackageVO } from '../models/export-package.model';
@@ -272,38 +275,41 @@ export class ProposalDetailsService {
 
   deleteExplanatory(proposalRef: string, explanatoryRef: string) {
     return this.http.delete<any>(
-      `api/secured/proposal/${proposalRef}/deleteExplanatory/${explanatoryRef}`,
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/deleteExplanatory/${explanatoryRef}`,
     );
   }
 
-  createExplanatory(data: CreateExplanatoryDocumentBody) {
+  createExplanatory(data: CreateDraftBody) {
     this.loadingService.setLoading(true);
     return this.http
-      .post(`api/secured/proposal/createExplanatory`, data)
+      .post<CreateDraftResponse>(
+        `${apiBaseUrl}/secured/proposal/createExplanatory`,
+        data,
+      )
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
   deleteExportDocument(proposalRef: string, exportId: string) {
     return this.http.delete<ExportPackageVO[]>(
-      `api/secured/proposal/${proposalRef}/deleteExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/deleteExport/${exportId}`,
     );
   }
 
   previewExport(proposalRef: string, exportId: string) {
     return this.http.get(
-      `api/secured/proposal/${proposalRef}/previewExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/previewExport/${exportId}`,
     );
   }
 
   notifyExport(proposalRef: string, exportId: string) {
     return this.http.get(
-      `api/secured/proposal/${proposalRef}/notiftExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/notiftExport/${exportId}`,
     );
   }
 
   getAllExportDocuments(proposalRef: string) {
     return this.http.get<ExportPackageVO[]>(
-      `api/secured/proposal/${proposalRef}/getExports`,
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/getExports`,
     );
   }
 
@@ -313,7 +319,7 @@ export class ProposalDetailsService {
     comments: string[],
   ) {
     return this.http.put<ExportPackageVO[]>(
-      `api/secured/proposal/${proposalRef}/updateExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/updateExport/${exportId}`,
       comments,
     );
   }

@@ -1,3 +1,17 @@
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
@@ -52,7 +66,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     @Autowired
     public TocApiServiceImpl(Provider<StructureContext> structureContextProvider, BillService billService, AnnexService annexService,
-            MessageHelper messageHelper) {
+                             MessageHelper messageHelper) {
         this.structureContextProvider = structureContextProvider;
         this.billService = billService;
         this.annexService = annexService;
@@ -64,7 +78,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         String documentRef = request.getDocumentRef();
         LeosCategory category = request.getDocumentType();
         byte[] xmlContent = new byte[0];
-        switch(category) {
+        switch (category) {
             case BILL:
                 Bill bill = billService.findBillByRef(documentRef);
                 xmlContent = bill.getContent().getOrError(() -> "Document content is required!").getSource().getBytes();
@@ -112,9 +126,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private static TableOfContentItemVO getTableOfContentItemVO(String nodeId, String nodeName, List<TocItem> tocItems,
-            List<NumberingConfig> numberingConfigs, Document document) {
+                                                                List<NumberingConfig> numberingConfigs, Document document) {
         TableOfContentItemVO tableOfContentItemVO = null;
-        if(nodeId != null) {
+        if (nodeId != null) {
             Node node = getElementById(document, nodeId);
             if (node != null) {
                 tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node);
@@ -128,7 +142,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean isItemDroppedOnSameTarget(final TocDropResult result, final TableOfContentItemVO sourceItem,
-            final TableOfContentItemVO targetItem) {
+                                              final TableOfContentItemVO targetItem) {
         if (sourceItem.equals(targetItem)) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.same.item.message");
@@ -140,9 +154,9 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected boolean validateAddingItemAsChildOrSibling(final TocDropResult result, final TableOfContentItemVO sourceItem,
-            final TableOfContentItemVO targetItem,
-            final Map<TocItem, List<TocItem>> tableOfContentRules,
-            final TableOfContentItemVO parentItem, final TocItemPosition position) {
+                                                         final TableOfContentItemVO targetItem,
+                                                         final Map<TocItem, List<TocItem>> tableOfContentRules,
+                                                         final TableOfContentItemVO parentItem, final TocItemPosition position) {
 
         TocItem targetTocItem = targetItem.getTocItem();
         List<TocItem> targetTocItems = tableOfContentRules.get(targetTocItem);
@@ -160,13 +174,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected TableOfContentItemVO getActualTargetItem(final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final TableOfContentItemVO parentItem,
-            final TocItemPosition position, boolean isTocItemSibling) {
+                                                       final TocItemPosition position, boolean isTocItemSibling) {
         switch (position) {
             case AS_CHILDREN:
                 if ((isTocItemSibling && parentItem != null && !targetItem.getTocItem().isSameParentAsChild() && !isCrossheading(sourceItem)
                         || (targetItem.getTocItem().isSameParentAsChild() && targetItem.containsItem(LIST)))
                         || (targetItem.getId().equals(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + sourceItem.getId()))
-                        || (getTagValueFromTocItemVo(targetItem).equalsIgnoreCase(SUBPARAGRAPH) && isCrossheading(sourceItem)) ) {
+                        || (getTagValueFromTocItemVo(targetItem).equalsIgnoreCase(SUBPARAGRAPH) && isCrossheading(sourceItem))) {
                     return parentItem;
                 } else if (!sourceItem.equals(targetItem)) {
                     return targetItem;
@@ -197,14 +211,14 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected boolean validateAddingItemAsSibling(final TocDropResult result, final TableOfContentItemVO sourceItem,
-            final TableOfContentItemVO targetItem, final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO parentItem,
-            final TocItemPosition position) {
+                                                  final TableOfContentItemVO targetItem, final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO parentItem,
+                                                  final TocItemPosition position) {
         TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
         return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position);
     }
 
     protected boolean validateAddingToActualTargetItem(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,
-            final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO actualTargetItem, final TocItemPosition position) {
+                                                       final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO actualTargetItem, final TocItemPosition position) {
 
         TocItem parentTocItem = actualTargetItem != null ? actualTargetItem.getTocItem() : null;
         List<TocItem> parentTocItems = tableOfContentRules.get(parentTocItem);
@@ -215,14 +229,14 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected abstract boolean validateAddingToItem(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,
-            final TableOfContentItemVO actualTargetItem, final TocItemPosition position);
+                                                    final TableOfContentItemVO actualTargetItem, final TocItemPosition position);
 
 
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
-            final TocItem parentTocItem, final List<TocItem> parentTocItems) {
+                                                             final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
         if (parentTocItems == null || parentTocItems.size() == 0 || !parentTocItems.contains(sourceItem.getTocItem())
-                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))){
+                || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");
             result.setSourceItem(sourceItem);
