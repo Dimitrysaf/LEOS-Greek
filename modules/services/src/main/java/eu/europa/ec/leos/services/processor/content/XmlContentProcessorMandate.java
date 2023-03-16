@@ -292,7 +292,6 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                     || tagValue.equals(INDENT)
                     || tagValue.equalsIgnoreCase(CROSSHEADING)
                     || child.isMovedOnEmptyParent()
-                    || content.isEmpty()
                     || (tagValue.equals(LIST)
                     && (!content.isEmpty()  && child.getChildItemsView().size() > 0
                     && getTagValueFromTocItemVo(child.getChildItemsView().get(0)).equals(SUBPARAGRAPH)));
