@@ -13,6 +13,7 @@ import {
 } from './containers';
 import { ProposalUploadWizardComponent } from './containers/proposal-upload-wizard/proposal-upload-wizard.component';
 import { ProposalsRoutingModule } from './proposals-routing.module';
+import { ProposalService } from './services/proposal.service';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ProposalsRoutingModule } from './proposals-routing.module';
     ProposalCreateWizardComponent,
     ProposalUploadWizardComponent,
   ],
+  providers: [ProposalService],
   imports: [SharedModule, ReactiveFormsModule, ProposalsRoutingModule],
 })
 export class ProposalsModule {}

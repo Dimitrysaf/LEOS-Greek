@@ -48,9 +48,7 @@ const initialFilters: ProposalFilter = {
   roles: [],
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ProposalService {
   private static extractParamFilters(formFilters: ProposalFilter) {
     const reqFilters: ListProposalsWithFilterBodyFilter[] = [];

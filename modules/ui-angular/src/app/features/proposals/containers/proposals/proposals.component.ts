@@ -1,11 +1,17 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import {
   EuiPaginationEvent,
   EuiPaginatorComponent,
 } from '@eui/components/eui-paginator';
 import { ProcedureType } from '@leos/shared';
-import { combineLatest, distinctUntilChanged, map, take, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, take } from 'rxjs';
 
 import { ProposalsFiltersComponent } from '../../components';
 import {
@@ -28,8 +34,96 @@ type ProposalsState = {
   selector: 'app-proposals',
   templateUrl: './proposals.component.html',
   styleUrls: ['./proposals.component.scss'],
+  providers: [ProposalService],
 })
-export class ProposalsComponent implements OnInit {
+export class ProposalsComponent implements OnInit, AfterViewInit {
+  isFilterCollapsed = false;
+  filters$ = this.proposalService.filters$;
+  page$ = this.proposalService.page$;
+  limit$ = this.proposalService.limit$;
+  proposals$ = this.proposalService.proposals$;
+  totalResults$ = this.proposalService.totalResults$;
+  sortOrder = DEFAULT_SORT_ORDER;
+
+  @ViewChild('paginatorComponent')
+  paginatorComponent: EuiPaginatorComponent;
+  @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private proposalService: ProposalService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngAfterViewInit(): void {
+    // Sync service.page$ -> paginator
+    this.proposalService.proposals$.pipe(take(1)).subscribe(() => {
+      // waiting for `proposals$` required for initial value from queryParams
+      this.proposalService.page$.subscribe((page) => {
+        // `getPage` (?!) + timeout + `detectChanges()` required so that paginatorComponent gets updated
+        this.paginatorComponent.getPage(page);
+        setTimeout(() => this.cdr.detectChanges());
+      });
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe((paramsMap) =>
+      this.applyQueryParams(paramsMap),
+    );
+
+    this.proposalService.sortOrder$.subscribe((so) => (this.sortOrder = so));
+
+    combineLatest({
+      filters: this.proposalService.filters$,
+      sortOrder: this.proposalService.sortOrder$,
+      limit: this.proposalService.limit$,
+      page: this.proposalService.page$,
+    })
+      .pipe(
+        map(ProposalsComponent.stateToQueryParams),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+      )
+      .subscribe((params) => {
+        this.setQueryParams(params);
+      });
+  }
+
+  onToggleTOCColumnCollapsed() {
+    this.isFilterCollapsed = !this.isFilterCollapsed;
+  }
+
+  resetFilter() {
+    this.filtersComponent.resetFilters();
+  }
+
+  handlePagerChange($event: EuiPaginationEvent) {
+    this.proposalService.setLimit($event.pageSize);
+    this.proposalService.setPage($event.page);
+  }
+
+  toggleSortOrder() {
+    this.proposalService.setSortOrder(!this.sortOrder);
+  }
+
+  private applyQueryParams(paramsMap: ParamMap) {
+    const { filters, limit, page } =
+      ProposalsComponent.queryParamsToState(paramsMap);
+
+    this.proposalService.setFilters(filters);
+    this.proposalService.setLimit(limit);
+    this.proposalService.setPage(page);
+  }
+
+  private setQueryParams(queryParams: Params) {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: '',
+    });
+  }
+
   private static queryParamsToState(paramsMap: ParamMap): ProposalsState {
     const getIntParam = (name: string, defaultVal: number) => {
       const val = paramsMap.get(name);
@@ -82,89 +176,5 @@ export class ProposalsComponent implements OnInit {
     }
 
     return queryParams;
-  }
-  isFilterCollapsed = false;
-  filters$ = this.proposalService.filters$;
-  page$ = this.proposalService.page$;
-  limit$ = this.proposalService.limit$;
-  proposals$ = this.proposalService.proposals$;
-  totalResults$ = this.proposalService.totalResults$;
-  sortOrder = DEFAULT_SORT_ORDER;
-
-  @ViewChild('paginatorComponent')
-  paginatorComponent: EuiPaginatorComponent;
-  @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private proposalService: ProposalService,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit(): void {
-    this.route.queryParamMap.subscribe((paramsMap) =>
-      this.applyQueryParams(paramsMap),
-    );
-
-    this.proposalService.sortOrder$.subscribe((so) => (this.sortOrder = so));
-
-    combineLatest({
-      filters: this.proposalService.filters$,
-      sortOrder: this.proposalService.sortOrder$,
-      limit: this.proposalService.limit$,
-      page: this.proposalService.page$,
-    })
-      .pipe(
-        map(ProposalsComponent.stateToQueryParams),
-        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-      )
-      .subscribe((params) => {
-        this.setQueryParams(params);
-      });
-
-    // Sync service.page$ -> paginator
-    this.proposalService.proposals$.pipe(take(1)).subscribe(() => {
-      // waiting for `proposals$` required for initial value from queryParams
-      this.proposalService.page$.subscribe((page) => {
-        // `getPage` (?!) + timeout + `detectChanges()` required so that paginatorComponent gets updated
-        this.paginatorComponent.getPage(page);
-        setTimeout(() => this.cdr.detectChanges());
-      });
-    });
-  }
-
-  onToggleTOCColumnCollapsed() {
-    this.isFilterCollapsed = !this.isFilterCollapsed;
-  }
-
-  resetFilter() {
-    this.filtersComponent.resetFilters();
-  }
-
-  handlePagerChange($event: EuiPaginationEvent) {
-    this.proposalService.setLimit($event.pageSize);
-    this.proposalService.setPage($event.page);
-  }
-
-  toggleSortOrder() {
-    this.proposalService.setSortOrder(!this.sortOrder);
-  }
-
-  private applyQueryParams(paramsMap: ParamMap) {
-    const { filters, limit, page } =
-      ProposalsComponent.queryParamsToState(paramsMap);
-
-    this.proposalService.setFilters(filters);
-    this.proposalService.setLimit(limit);
-    this.proposalService.setPage(page);
-  }
-
-  private setQueryParams(queryParams: Params) {
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams,
-      queryParamsHandling: '',
-    });
   }
 }
