@@ -15,7 +15,7 @@ export type LeosConfig = {
   implicitSaveAndClose: boolean;
   spellCheckerEnabled: boolean;
   spellCheckerServiceUrl: string | null;
-  getSpellCheckerSourceUrl: string | null;
+  spellCheckerSourceUrl: string | null;
   searchAndReplaceEnabled: boolean;
   sendForRevisionEnabled: boolean;
   coverPageSeparated: boolean;
@@ -23,6 +23,11 @@ export type LeosConfig = {
   supportDocumentCatalogKey: string | null;
   permissions: Permission[];
   user: User;
+  annotateAuthority: string;
+  annotateClientUrl: string;
+  annotateHostUrl: string;
+  annotateJwtIssuerClientId: string;
+  annotatePopupDefaultStatus: 'ON' | 'OFF';
 };
 
 export type LeosAppConfig = LeosConfig & {

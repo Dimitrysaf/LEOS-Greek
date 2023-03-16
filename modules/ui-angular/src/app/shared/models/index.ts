@@ -1,3 +1,4 @@
+export * from './annotate.model';
 export * from './document.model';
 export * from './leos.model';
 export * from './roles.model';

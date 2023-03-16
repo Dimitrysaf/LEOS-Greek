@@ -91,6 +91,7 @@ export abstract class AbstractJavaScriptComponent<
     this.onUnregister?.(this, 'onUnregister');
     this.resizeListeners.clear();
     this.resizeObserver?.disconnect();
+    this._stateChanged.cancel();
   }
 
   private getResizeObserver() {

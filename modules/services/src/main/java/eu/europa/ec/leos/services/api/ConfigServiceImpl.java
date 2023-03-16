@@ -60,12 +60,17 @@ public class ConfigServiceImpl implements ConfigService {
         boolean supportDocumentEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.supporting.documents.enable"));
         String[] permissions = authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
         String headerTitle = messageHelper.getMessage("leos.ui.header.title");
+        String annotateAuthority = applicationProperties.getProperty("annotate.authority");
+        String annotateClientUrl = applicationProperties.getProperty("annotate.client.url");
+        String annotateHostUrl = applicationProperties.getProperty("annotate.server.url");
+        String annotateJwtIssuerClientId = applicationProperties.getProperty("annotate.jwt.issuer.client.id");
+        String annotatePopupDefaultStatus = applicationProperties.getProperty("annotate.popup.default.status");
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
         appConfigResponse.setSpellCheckerEnabled(isSpellCheckerEnabled);
         appConfigResponse.setSpellCheckerServiceUrl(spellCheckServiceUrl);
-        appConfigResponse.setGetSpellCheckerSourceUrl(spellCheckSourceUrl);
+        appConfigResponse.setSpellCheckerSourceUrl(spellCheckSourceUrl);
         appConfigResponse.setSearchAndReplaceEnabled(searchAndReplaceEnabled);
         appConfigResponse.setSendForRevisionEnabled(sendForRevisionEnabled);
         appConfigResponse.setCoverPageSeparated(coverPageSeparated);
@@ -74,6 +79,11 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setPermissions(permissions);
         appConfigResponse.setUser(securityContext.getUser());
         appConfigResponse.setHeaderTitle(headerTitle);
+        appConfigResponse.setAnnotateAuthority(annotateAuthority);
+        appConfigResponse.setAnnotateClientUrl(annotateClientUrl);
+        appConfigResponse.setAnnotateHostUrl(annotateHostUrl);
+        appConfigResponse.setAnnotateJwtIssuerClientId(annotateJwtIssuerClientId);
+        appConfigResponse.setAnnotatePopupDefaultStatus(annotatePopupDefaultStatus);
 
         return appConfigResponse;
     }

@@ -145,7 +145,7 @@
             </ul>
           </div>
           <app-annex-document
-            id="docContainer"
+            [id]="containerId"
             [xml]="xml"
           ></app-annex-document>
         </eui-page-column-body>
@@ -239,6 +239,10 @@
         <eui-page-column-body class="flex-grow-1">
           <app-document-annotations
             [documentId]="documentRef"
+            [containerId]="containerId"
+            [connectedEntity]="connectedEntity"
+            [proposalRef]="proposalRef"
+            [showStatusFilter]="showStatusFilter"
           ></app-document-annotations>
         </eui-page-column-body>
       </eui-page-column>
