@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.web.support.user;
+package eu.europa.ec.leos.services.user;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
@@ -19,19 +19,16 @@ import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.user.UserService;
 import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
-@Scope("singleton")
-@Component("userHelper")
+@Component
 public class UserHelper {
     private static final Logger LOG = LoggerFactory.getLogger(UserHelper.class);
 
@@ -63,10 +60,19 @@ public class UserHelper {
         try {
             User user = getUser(value);
             value = ((user.getName() == null) || (user.getName().isEmpty())) ? user.getLogin() : user.getName();
+            value = value + " (" + getEntity(user) + ")";
         }catch(Exception e){
         }
         return value;
     }
+
+    private String getEntity(User user) {
+        if(user.getEntities()!=null && user.getEntities().size()> 0){
+            return user.getEntities().get(0).getOrganizationName();
+        }
+        return "";
+    }
+
     public List<User> searchUsersByKey(String key) {
         List<UserJSON> results = userService.searchUsersByKey(key);
         return (List<User>) (List<? extends User>) results;

@@ -35,7 +35,7 @@ import eu.europa.ec.leos.web.event.component.CleanComparedContentEvent;
 import eu.europa.ec.leos.web.event.component.RestoreVersionRequestEvent;
 import eu.europa.ec.leos.web.event.component.ShowVersionRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.component.actions.VersionsActionsMenuBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -68,6 +68,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -80,7 +81,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,6 +127,7 @@ public class ApiServiceImpl implements ApiService {
     private ExplanatoryService explanatoryService;
     private ExportPackageService exportPackageService;
     private NotificationService notificationService;
+    private final UserHelper userHelper;
 
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
@@ -152,7 +153,8 @@ public class ApiServiceImpl implements ApiService {
                           PostProcessingDocumentService postProcessingDocumentService,
                           ValidationService validationService, Properties applicationProperties,
                           UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService,
-                          ExportPackageService exportPackageService) {
+                          ExportPackageService exportPackageService,
+                          UserHelper userHelper) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -175,6 +177,7 @@ public class ApiServiceImpl implements ApiService {
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.validationService = validationService;
+        this.userHelper = userHelper;
         this.explanatoryService = explanatoryService;
         this.exportPackageService = exportPackageService;
     }
@@ -500,8 +503,8 @@ public class ApiServiceImpl implements ApiService {
                     MetadataVO metadataVO = createMetadataVO(proposal);
                     proposalVO.setMetaData(metadataVO);
                     proposalVO.addCollaborators(proposal.getCollaborators());
-                    proposalVersionSeriesId = proposal.getVersionSeriesId();
-                    proposalVO.setUpdatedBy(proposal.getLastModifiedBy());
+                    proposalVO.setUpdatedBy(userHelper.convertToPresentation(proposal.getLastModifiedBy()));
+                    proposalVO.setCreatedBy(userHelper.convertToPresentation(proposal.getCreatedBy()));
                     proposalVO.setUpdatedOn(Date.from(proposal.getLastModificationInstant()));
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
@@ -517,6 +520,8 @@ public class ApiServiceImpl implements ApiService {
                     explanatoryVO.getMetadata().setInternalRef(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getRef());
                     explanatoryVO.setVersionSeriesId(explanatory.getVersionSeriesId());
                     explanatoryVO.setTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getTemplate());
+                    explanatoryVO.setUpdatedBy(userHelper.convertToPresentation(explanatoryVO.getUpdatedBy()));
+                    explanatoryVO.setCreatedBy(userHelper.convertToPresentation(explanatoryVO.getCreatedBy()));
                     proposalVO.addChildDocument(explanatoryVO);
                     docVersionSeriesIds.add(explanatory.getVersionSeriesId());
                     break;
@@ -528,6 +533,8 @@ public class ApiServiceImpl implements ApiService {
                     memorandumVO.addCollaborators(memorandum.getCollaborators());
                     memorandumVO.getMetadata().setInternalRef(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is not available!").getRef());
                     memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
+                    memorandumVO.setUpdatedBy(userHelper.convertToPresentation(memorandumVO.getUpdatedBy()));
+                    memorandumVO.setCreatedBy(userHelper.convertToPresentation(memorandumVO.getCreatedBy()));
                     docVersionSeriesIds.add(memorandum.getVersionSeriesId());
                     break;
                 }
@@ -538,6 +545,8 @@ public class ApiServiceImpl implements ApiService {
                     billVO.addCollaborators(bill.getCollaborators());
                     billVO.getMetadata().setInternalRef(bill.getMetadata().getOrError(() -> "Legal text metadata is not available!").getRef());
                     billVO.setVersionSeriesId(bill.getVersionSeriesId());
+                    billVO.setUpdatedBy(userHelper.convertToPresentation(billVO.getUpdatedBy()));
+                    billVO.setCreatedBy(userHelper.convertToPresentation(billVO.getCreatedBy()));
                     docVersionSeriesIds.add(bill.getVersionSeriesId());
                     break;
                 }
@@ -548,6 +557,8 @@ public class ApiServiceImpl implements ApiService {
                     annexVO.getMetadata().setInternalRef(annex.getMetadata().getOrError(() -> "Annex metadata is not available!").getRef());
                     annexVOList.add(annexVO);
                     annexVO.setVersionSeriesId(annex.getVersionSeriesId());
+                    annexVO.setUpdatedBy(userHelper.convertToPresentation(annexVO.getUpdatedBy()));
+                    annexVO.setCreatedBy(userHelper.convertToPresentation(annexVO.getCreatedBy()));
                     docVersionSeriesIds.add(annex.getVersionSeriesId());
                     break;
                 }

@@ -14,7 +14,6 @@
 package eu.europa.ec.leos.ui.view.collection;
 
 import com.google.common.eventbus.EventBus;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
@@ -22,7 +21,6 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.ViewScope;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import eu.europa.ec.leos.domain.common.InstanceType;
@@ -42,10 +40,9 @@ import eu.europa.ec.leos.ui.event.view.collection.DownloadProposalEvent;
 import eu.europa.ec.leos.ui.event.view.collection.ExportProposalEvent;
 import eu.europa.ec.leos.ui.wizard.document.CreateSupportDocumentWizard;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import eu.europa.ec.leos.web.event.view.repository.SupportingDocumentsCreateWizardRequestEvent;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

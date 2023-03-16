@@ -21,6 +21,7 @@ import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import org.slf4j.Logger;
@@ -45,11 +46,13 @@ class WorkspaceServiceImpl implements WorkspaceService {
     protected String workspacesPath;
 
     private final TemplateService templateService;
+    private final UserHelper userHelper;
 
     @Autowired
-    WorkspaceServiceImpl(WorkspaceRepository workspaceRepository, TemplateService templateService) {
+    WorkspaceServiceImpl(WorkspaceRepository workspaceRepository, TemplateService templateService, UserHelper userHelper) {
         this.workspaceRepository = workspaceRepository;
         this.templateService = templateService;
+        this.userHelper = userHelper;
     }
 
     @Override
@@ -98,6 +101,8 @@ class WorkspaceServiceImpl implements WorkspaceService {
             List<DocumentVO> proposalList = new ArrayList<>();
             proposals.forEach(proposal -> {
                 DocumentVO documentVO = new DocumentVO(proposal);
+                documentVO.setUpdatedBy(userHelper.convertToPresentation(documentVO.getUpdatedBy()));
+                documentVO.setCreatedBy(userHelper.convertToPresentation(documentVO.getCreatedBy()));
                 proposalList.add(documentVO);
             });
             Integer count = findDocumentCount(Proposal.class, workspaceFilter);

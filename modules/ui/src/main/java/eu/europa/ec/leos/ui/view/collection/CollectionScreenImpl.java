@@ -86,7 +86,7 @@ import eu.europa.ec.leos.web.model.CollaboratorVO;
 import eu.europa.ec.leos.web.model.UserVO;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.component.AnnexBlockComponent;
 import eu.europa.ec.leos.web.ui.component.EditBoxComponent;
