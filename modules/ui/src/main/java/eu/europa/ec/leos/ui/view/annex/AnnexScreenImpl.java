@@ -109,7 +109,7 @@ import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
 import eu.europa.ec.leos.web.event.view.document.RenumberingEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.component.AnnexComponent;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
 import eu.europa.ec.leos.web.ui.component.SearchDelegate;

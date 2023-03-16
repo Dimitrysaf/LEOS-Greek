@@ -35,7 +35,7 @@ import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.web.event.view.annex.OpenAnnexEvent;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.converter.LangCodeToDescriptionV8Converter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,6 @@ import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

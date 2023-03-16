@@ -26,7 +26,7 @@ import eu.europa.ec.leos.ui.event.DownloadXmlVersionRequestEvent;
 import eu.europa.ec.leos.ui.extension.CollapsibleEllipsisExtension;
 import eu.europa.ec.leos.ui.view.TriFunction;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

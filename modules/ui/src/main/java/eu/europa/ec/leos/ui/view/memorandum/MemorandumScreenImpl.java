@@ -84,7 +84,7 @@ import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.LeosCacheToken;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
 import eu.europa.ec.leos.web.ui.component.MemorandumComponent;
 import eu.europa.ec.leos.web.ui.component.SearchDelegate;
@@ -103,7 +103,6 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Provider;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

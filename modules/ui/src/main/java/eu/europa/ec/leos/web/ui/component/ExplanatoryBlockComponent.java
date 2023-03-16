@@ -22,7 +22,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.ui.event.view.collection.DeleteExplanatoryRequest;
 import eu.europa.ec.leos.ui.event.view.collection.SaveExplanatoryMetaDataRequest;
 import eu.europa.ec.leos.web.event.view.explanatory.OpenExplanatoryEvent;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.component.collaborators.GridWithEditorListener;
 import org.springframework.beans.factory.annotation.Autowired;
 

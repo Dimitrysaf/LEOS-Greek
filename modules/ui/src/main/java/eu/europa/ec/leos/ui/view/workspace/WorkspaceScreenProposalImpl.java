@@ -3,20 +3,15 @@ package eu.europa.ec.leos.ui.view.workspace;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.ViewScope;
-import com.vaadin.ui.UI;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.ui.wizard.document.CreateDocumentWizard;
-import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.web.event.view.repository.DocumentCreateWizardRequestEvent;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 import static eu.europa.ec.leos.security.LeosPermission.CAN_UPLOAD;
 

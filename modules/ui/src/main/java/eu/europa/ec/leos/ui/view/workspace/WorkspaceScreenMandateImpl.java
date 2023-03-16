@@ -13,7 +13,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.ui.wizard.document.CreateMandateWizard;
 import eu.europa.ec.leos.web.event.view.repository.ExplanatoryCreateWizardRequestEvent;
 import eu.europa.ec.leos.web.event.view.repository.MandateCreateWizardRequestEvent;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static eu.europa.ec.leos.security.LeosPermission.CAN_UPLOAD;

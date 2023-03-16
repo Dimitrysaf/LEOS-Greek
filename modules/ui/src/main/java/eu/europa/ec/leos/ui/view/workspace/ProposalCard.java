@@ -24,7 +24,7 @@ import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.web.event.view.repository.SelectDocumentEvent;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;

@@ -27,7 +27,7 @@ import eu.europa.ec.leos.ui.extension.SliderPinsExtension;
 import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.support.LeosCacheToken;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.component.TimeLineHeaderComponent;
 
 import java.util.HashMap;

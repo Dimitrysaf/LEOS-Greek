@@ -28,7 +28,7 @@ import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

@@ -42,7 +42,7 @@ import eu.europa.ec.leos.web.event.component.CompareTimeLineRequestEvent;
 import eu.europa.ec.leos.web.event.component.RestoreVersionRequestEvent;
 import eu.europa.ec.leos.web.support.StepValueComparator;
 import eu.europa.ec.leos.util.VersionComparator;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

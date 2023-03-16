@@ -63,7 +63,7 @@ import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
-import eu.europa.ec.leos.web.support.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import io.atlassian.fugue.Option;
 import org.hamcrest.Matchers;
