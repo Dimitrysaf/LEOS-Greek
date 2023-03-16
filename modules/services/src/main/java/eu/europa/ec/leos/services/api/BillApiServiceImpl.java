@@ -48,6 +48,9 @@ import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
+import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -62,10 +65,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -212,6 +213,21 @@ public class BillApiServiceImpl implements BillApiService {
         return chosenDocument.getContent().get().getSource().getBytes();
 //            LOG.error("Unexpected error occurred while downloadXmlVersion", e);
 
+    }
+
+    @Override
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
+        return new byte[0];
+    }
+
+    @Override
+    public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
+        return null;
     }
 
     @Override

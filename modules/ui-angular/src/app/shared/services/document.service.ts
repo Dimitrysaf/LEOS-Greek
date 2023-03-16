@@ -22,6 +22,7 @@ import {
 
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
+import { VersionSearchParams } from '@/shared/models/versionSearch';
 
 import { apiBaseUrl } from '../../../config';
 import { DocumentViewResponse } from '../models/document-view-response.model';
@@ -52,6 +53,8 @@ export class DocumentService implements OnDestroy {
   versionCompareIds$: Observable<any | null>;
   searchResultIndexArray: string[];
   focusedSearchResult: string;
+  versionSearchParams$: Observable<VersionSearchParams>;
+  versionFilter$: Observable<string>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -69,6 +72,11 @@ export class DocumentService implements OnDestroy {
   private versionSearchOpenBS = new BehaviorSubject(false);
   private versionIdBS = new BehaviorSubject<string | null>(null);
   private versionCompareIdsBS = new BehaviorSubject<any | null>(null);
+  private versionSearchParamsBS = new BehaviorSubject({
+    type: 'all',
+    author: '',
+  });
+  private versionFilterBS = new BehaviorSubject<string>('All');
 
   private destroy$ = new Subject<void>();
 
@@ -91,7 +99,11 @@ export class DocumentService implements OnDestroy {
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
+    this.versionFilter$ = this.versionFilterBS.asObservable();
     this.searchParams$ = this.searchParamsBS.pipe(
+      distinctUntilChanged(DocumentService.searchStateComparator),
+    );
+    this.versionSearchParams$ = this.versionSearchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
     this.versions$ = this.documentId$.pipe(
@@ -116,9 +128,17 @@ export class DocumentService implements OnDestroy {
         filter((x) => !x),
       )
       .subscribe(() => this.setSearchParams({ searchText: '' }));
+
     this.searchParams$
       .pipe(takeUntil(this.destroy$), skip(2))
       .subscribe((params) => this.doSearch(params));
+
+    this.versionSearchOpen$
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((x) => !x),
+      )
+      .subscribe(() => this.setVersionSearchParams({ author: '' }));
 
     this.versionView$ = this.versionId$.pipe(
       takeUntil(this.destroy$),
@@ -131,15 +151,18 @@ export class DocumentService implements OnDestroy {
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
       skip(1),
-      tap((x) => {
-        console.log(x);
-      }),
       takeUntil(this.destroy$),
       combineLatestWith(this.documentCategory$),
       mergeMap(([versionCompareIds, category]) =>
         this.getDocumentVersionsComparison(versionCompareIds, category),
       ),
     );
+
+    this.versionSearchParams$
+      .pipe(takeUntil(this.destroy$), skip(1))
+      .subscribe((params) => this.handleVersionSearch(params));
+
+    this.setVersionFilter('all');
   }
 
   ngOnDestroy() {
@@ -156,7 +179,22 @@ export class DocumentService implements OnDestroy {
   }
 
   download() {
-    console.warn('stub:', 'download'); // FIXME
+    const documentType = this.documentCategoryBS.value;
+    const documentRef = this.documentIdBS.value;
+    let versionId = '';
+    this.versions$
+      .pipe(take(1))
+      .subscribe((versionArray) => (versionId = versionArray[0].documentId));
+
+    this.http
+      .get(`${apiBaseUrl}/secured/${documentType}/${documentRef}`, {
+        params: { versionId },
+      })
+      .subscribe((data: DocumentViewResponse) => {
+        const blob = new Blob([data.editableXml], { type: 'text/xml' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      });
   }
 
   downloadWithAnnotation() {
@@ -243,9 +281,14 @@ export class DocumentService implements OnDestroy {
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
-    console.log('setSearchParams:', values);
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.searchParamsBS.next({ ...oldVal, ...values });
+    });
+  }
+
+  setVersionSearchParams(values: Partial<VersionSearchParams>) {
+    this.versionSearchParamsBS.pipe(take(1)).subscribe((oldVal) => {
+      this.versionSearchParamsBS.next({ ...oldVal, ...values });
     });
   }
 
@@ -257,6 +300,9 @@ export class DocumentService implements OnDestroy {
     return this.versionCompareIdsBS.value;
   }
 
+  setVersionFilter(filterValue: string) {
+    this.versionFilterBS.next(filterValue);
+  }
   toggleAnnotations(enabled?: boolean) {
     this.toggleSubject(this.annotationsEnabledBS, enabled);
   }
@@ -417,7 +463,6 @@ export class DocumentService implements OnDestroy {
   }
 
   private doSearch(parameters: DocumentSearchParams) {
-    console.log('dosearch:', parameters);
     const documentType = this.documentCategoryBS.value;
     const documentRef = this.documentIdBS.value;
     this.http
@@ -514,6 +559,58 @@ export class DocumentService implements OnDestroy {
     const targetElement = document.getElementById(id);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  private handleVersionSearch(params: VersionSearchParams) {
+    this.removeVersionSearchHighlight();
+    if (params.type !== 'all') {
+      this.setVersionFilter(params.type);
+    } else {
+      this.setVersionFilter('all');
+    }
+
+    if (params.author !== '') {
+      this.document.querySelectorAll('.version-panes').forEach((element) => {
+        this.handleNode(element, params.author);
+      });
+    } else {
+    }
+  }
+
+  private handleNode(node: any, searchText: string) {
+    if (node.childNodes.length > 0) {
+      if (node.childNodes.length === 1) {
+        if (node.innerText && node.innerText.search(searchText) !== -1) {
+          const cardParentNode = this.findClosestParentByClass(
+            node,
+            'version-panes',
+          );
+          if (cardParentNode) {
+            cardParentNode.classList.add('version-search-found');
+          }
+        }
+      } else if (node.childNodes.length > 1) {
+        node.childNodes.forEach((n) => {
+          this.handleNode(n, searchText);
+        });
+      }
+    }
+  }
+
+  private removeVersionSearchHighlight() {
+    this.document
+      .querySelectorAll('.version-search-found')
+      .forEach((element) => {
+        element.classList.remove('version-search-found');
+      });
+  }
+
+  private findClosestParentByClass(node: any, searchByClass: string) {
+    if (node.parentElement.classList.contains(searchByClass)) {
+      return node.parentElement;
+    } else {
+      return this.findClosestParentByClass(node.parentElement, searchByClass);
     }
   }
 }

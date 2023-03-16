@@ -1,5 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { uniqueId } from '@eui/core';
@@ -8,9 +9,11 @@ import { cloneDeep } from 'lodash';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { DocumentSearchParams } from '@/features/akn-document/models';
 import { DocumentTocComponent } from '@/shared/components/document-toc/document-toc.component';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
+import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
@@ -43,6 +46,11 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
 
   isEditMode = false;
+
+  versionSearchForm = new FormGroup({
+    type: new FormControl('all'),
+    author: new FormControl(''),
+  });
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
 
@@ -59,7 +67,14 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     private cdkEditor: CKEditorService,
     private tranlsateService: TranslateService,
     private config: AppConfigService,
-  ) {}
+  ) {
+    this.versionSearchForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const values = this.getFormValues();
+        this.documentService.setVersionSearchParams(values);
+      });
+  }
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
@@ -367,7 +382,6 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private setVersionComparisonViewHeader(oldVersion, newVersion) {
-    console.log('setVersionComparisonViewHeader', oldVersion, newVersion);
     this.translate
       .get(
         oldVersion && newVersion
@@ -379,5 +393,13 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       .subscribe((header: string) => {
         this.versionsComparisonForViewHeaderTitle = header;
       });
+  }
+
+  private getFormValues(): VersionSearchParams {
+    const { type, author } = this.versionSearchForm.getRawValue();
+    return {
+      type: type ?? 'all',
+      author: author ?? '',
+    };
   }
 }

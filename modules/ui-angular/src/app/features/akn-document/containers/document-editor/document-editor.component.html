@@ -304,10 +304,64 @@
           </div>
 
           <div
-            class="eui-u-display-block eui-u-pt-m_"
+            class="eui-u-display-flex app-u-gap-m"
             *ngIf="documentService.versionSearchOpen$ | async"
           >
-            <!-- TODO : add search controls [search-controls] -->
+            <eui-card euiNoShadow>
+              <eui-card-content>
+                <form [formGroup]="versionSearchForm">
+                  <div class="row g-0">
+                    <div class="col-md-3">
+                      {{ 'version.search.form.type' | translate }}
+                    </div>
+                    <div class="col-md-3 no-g">
+                      <div class="eui-u-display-flex eui-u-flex-row">
+                        <input
+                          name="type"
+                          euiInputRadio
+                          id="type-all"
+                          formControlName="type"
+                          value="all"
+                          label="All"
+                          euiSizeXS
+                        />
+                        <div>
+                          <input
+                            name="type"
+                            euiInputRadio
+                            id="type-save"
+                            formControlName="type"
+                            value="save"
+                            label="Save"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            name="type"
+                            euiInputRadio
+                            id="type-milestone"
+                            formControlName="type"
+                            value="milestone"
+                            label="Milestone"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row g-0">
+                    <div class="col-md-3">
+                      <label for="author">{{
+                        'version.search.form.author' | translate
+                      }}</label>
+                    </div>
+                    <div class="col-md-9">
+                      <input id="author" formControlName="author" />
+                    </div>
+                  </div>
+                </form>
+              </eui-card-content>
+            </eui-card>
           </div>
         </eui-page-column-header-body>
         <eui-page-column-body>

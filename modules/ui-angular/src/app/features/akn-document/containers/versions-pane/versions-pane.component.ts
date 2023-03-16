@@ -10,7 +10,5 @@ import { DocumentService } from '@/shared/services/document.service';
 export class VersionsPaneComponent implements OnInit {
   constructor(public doc: DocumentService) {}
 
-  ngOnInit(): void {
-    console.log('VersionsPaneComponent', this.doc.recentChanges$);
-  }
+  ngOnInit(): void {}
 }

@@ -22,6 +22,9 @@ import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
+import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -311,6 +314,45 @@ public class AnnexController {
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
+                                                 @RequestBody ReplaceMatchRequest request) {
+        try {
+            byte[] response = this.annexAPIService.replaceOneTextInDocument(request);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.TEXT_XML_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
+                                                 @RequestBody ReplaceAllMatchRequest request) {
+        try {
+            byte[] response = this.annexAPIService.replaceAllTextInDocument(request);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{documentRef}/save-after-replace", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
+                                                      @RequestBody SaveAfterReplaceRequest request) {
+        try {
+            DocumentViewResponse view = this.annexAPIService.saveAfterReplace(request);
+            return ResponseEntity.ok().body(view);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
