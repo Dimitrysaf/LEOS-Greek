@@ -48,7 +48,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
               this.userAutocompleteData.push(
                 new EuiAutoCompleteItem({
                   id: user.id,
-                  label: user.name + ' (' + entity.organizationName + ')',
+                  label: user.name + ' (' + entity.organizationName ?? '' + ')',
                   roles: user.role,
                   entities: user.entities,
                   defaultEntity: entity,
@@ -61,7 +61,8 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
               new EuiAutoCompleteItem({
                 id: user.id,
                 label:
-                  user.name + ' (' + user.defaultEntity.organizationName + ')',
+                  user.name + ' (' + user.defaultEntity?.organizationName ??
+                  '' + ')',
                 roles: user.role,
                 entities: user.entities,
                 defaultEntity: user.defaultEntity,
