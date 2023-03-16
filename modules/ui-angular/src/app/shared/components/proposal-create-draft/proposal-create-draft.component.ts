@@ -157,7 +157,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res) => {
-            this.proposalService.setPage(1);
+            this.proposalService.setPage(0);
             this.closeDialog();
           },
           error: (err) => console.log(err),

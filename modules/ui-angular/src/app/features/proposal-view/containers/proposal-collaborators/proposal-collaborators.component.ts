@@ -4,6 +4,8 @@ import { EuiTableComponent } from '@eui/components/eui-table';
 import { Collaborator, Entity, User, UserEntity } from '@leos/shared';
 import { debounceTime, filter, Subject, take, takeUntil } from 'rxjs';
 
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
+
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({
@@ -23,7 +25,8 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   selectedRole: string;
 
   @ViewChild('collaboratos') collaboratorsTable: EuiTableComponent;
-
+  @ViewChild('confirmCollabDelete') confirmComp: ConfirmDeleteDialogComponent;
+  collaboratorToDelete: Collaborator = null;
   constructor(
     private fb: FormBuilder,
     private detailsService: ProposalDetailsService,
@@ -41,6 +44,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destory$.next(null);
+    this.destory$.complete();
   }
 
   ngOnInit(): void {}
@@ -52,12 +56,19 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.selectedRole = role;
   }
 
-  deleteCollaborator(row) {
+  handleConfirmDeletion(coll: Collaborator) {
+    this.collaboratorToDelete = coll;
+    this.confirmComp.deleteDialog.openDialog();
+  }
+
+  deleteCollaborator() {
+    const collab = this.collaboratorToDelete;
     this.detailsService.deleteCollaborator({
-      userId: row.login,
-      roleName: row.role,
-      connectedDG: row.entity.organizationName,
+      userId: collab.login,
+      roleName: collab.role,
+      connectedDG: collab.entity.organizationName,
     });
+    this.collaboratorToDelete = null;
   }
 
   hanldeOnChange(event) {

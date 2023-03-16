@@ -1,5 +1,8 @@
 <eui-page>
   <eui-page-content>
-    <h1>403 | Forbidden</h1>
+    <h1>{{ 'page.error.forbidden.title' | translate }}</h1>
+    <button euiButton euiBasicButton euiPrimary [routerLink]="['/workspace']">
+      {{ 'page.error.forbidden.home' | translate }}
+    </button>
   </eui-page-content>
 </eui-page>

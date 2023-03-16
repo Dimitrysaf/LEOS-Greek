@@ -16,11 +16,16 @@
     </button>
   </ng-container>
 
-  <eui-dialog #editTitle title="Edit title">
+  <eui-dialog
+    #editTitle
+    [title]="
+      'page.collection.proposal-header.edit-title-dialog.title' | translate
+    "
+  >
     <div euiInputGroup class="flex-row">
       <label class="label">
         {{
-          'page.collection.proposal-header.edit-title-dialog.title' | translate
+          'page.collection.proposal-header.edit-title-dialog.label' | translate
         }}</label
       >
       <div class="d-flex flex-wrap">

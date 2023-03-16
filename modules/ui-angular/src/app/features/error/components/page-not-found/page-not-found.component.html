@@ -1,5 +1,8 @@
 <eui-page>
   <eui-page-content>
-    <h1>404 | Page not found</h1>
+    <h1>{{ 'page.error.page-not-found.title' | translate }}</h1>
+    <button euiButton euiBasicButton euiPrimary [routerLink]="['/workspace']">
+      {{ 'page.error.page-not-found.home' | translate }}
+    </button>
   </eui-page-content>
 </eui-page>

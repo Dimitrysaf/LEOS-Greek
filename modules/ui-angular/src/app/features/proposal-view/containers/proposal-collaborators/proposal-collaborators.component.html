@@ -102,7 +102,7 @@
                     euiListItem
                     class="eui-u-p-s"
                     euiDanger
-                    (click)="deleteCollaborator(row)"
+                    (click)="handleConfirmDeletion(row)"
                   >
                     {{
                       'page.collection.collaborators.table.actions.delete'
@@ -125,3 +125,14 @@
     </ng-template>
   </table>
 </div>
+
+<app-confirm-delete-dialog
+  #confirmCollabDelete
+  [title]="
+    'page.collection.collaborators.table.delete-dialog.title' | translate
+  "
+  [description]="
+    'page.collection.collaborators.table.delete-dialog.desc' | translate
+  "
+  (confirmDeletion)="deleteCollaborator()"
+></app-confirm-delete-dialog>

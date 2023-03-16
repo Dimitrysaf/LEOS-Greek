@@ -111,16 +111,6 @@
                 (click)="$event.preventDefault()"
                 ><strong>{{ row.title }}</strong></a
               >
-              <button
-                *ngIf="!row.title"
-                euiButton
-                euiBasicButton
-                euiPrimary
-                class="eui-u-mr-s"
-                (click)="handleAnnexEditTitle(row)"
-              >
-                Edit title
-              </button>
             </td>
             <td>{{ row.language }}</td>
             <td>{{ row.updatedBy }}</td>
@@ -133,8 +123,14 @@
                   euiIconButton
                   euiBasicButton
                   euiSecondary
-                  euiTooltip="Annex actions"
-                  [attr.aria-label]="'Annex actions'"
+                  [euiTooltip]="
+                    'page.collection.drafts.explanatory.table.actions.tooltip'
+                      | translate
+                  "
+                  [attr.aria-label]="
+                    'page.collection.drafts.explanatory.table.actions.tooltip'
+                      | translate
+                  "
                 >
                   <span euiIcon iconClass="eui-icon eui-icon-more-vertical">
                   </span>
@@ -144,28 +140,16 @@
                     <li
                       euiListItem
                       class="p-3"
-                      (click)="hanldeConfirmationDeleteExpl()"
+                      (click)="hanldeConfirmationDeleteExpl(row)"
                     >
-                      <span class="eui-u-color-danger-100">Delete</span>
+                      <span class="eui-u-color-danger-100">{{
+                        'page.collection.drafts.explanatory.table.actions.button.delete'
+                          | translate
+                      }}</span>
                     </li>
                   </ul>
                 </eui-dropdown-content></eui-dropdown
               >
-
-              <app-confirm-delete-dialog
-                #confirmationForDeleteExpl
-                [title]="
-                  this.tranlsateService.instant(
-                    'page.collection.drafts.explanatory.table.actions.delete-dialog.title'
-                  )
-                "
-                [description]="
-                  this.tranlsateService.instant(
-                    'page.collection.drafts.explanatory.table.actions.delete-dialog.desc'
-                  )
-                "
-                (confrimDelete)="handleExplanatoryDelete(row)"
-              ></app-confirm-delete-dialog>
             </td>
           </tr>
         </ng-template>
@@ -304,8 +288,14 @@
                     euiIconButton
                     euiBasicButton
                     euiSecondary
-                    euiTooltip="Annex actions"
-                    [attr.aria-label]="'Annex actions'"
+                    [euiTooltip]="
+                      'page.collection.drafts.annex.table.tr.actions.tooltip'
+                        | translate
+                    "
+                    [attr.aria-label]="
+                      'page.collection.drafts.annex.table.tr.actions.tooltip'
+                        | translate
+                    "
                   >
                     <span
                       euiIcon
@@ -341,20 +331,6 @@
                                 | translate
                             }}
                           </button>
-                          <app-confirm-delete-dialog
-                            #confirmationForDelete
-                            [title]="
-                              this.tranlsateService.instant(
-                                'page.collection.drafts.annex.delete-dialog.title'
-                              )
-                            "
-                            [description]="
-                              this.tranlsateService.instant(
-                                'page.collection.drafts.annex.delete-dialog.desc'
-                              )
-                            "
-                            (confrimDelete)="hanldeConfirmationDelete(row)"
-                          ></app-confirm-delete-dialog>
                         </li>
                       </ng-container>
                     </ul>
@@ -369,7 +345,40 @@
   </eui-card-content>
 </eui-card>
 
-<eui-dialog #editTitle title="Edit title">
+<app-confirm-delete-dialog
+  #confirmationForDelete
+  [title]="
+    this.tranlsateService.instant(
+      'page.collection.drafts.annex.delete-dialog.title'
+    )
+  "
+  [description]="
+    this.tranlsateService.instant(
+      'page.collection.drafts.annex.delete-dialog.desc'
+    )
+  "
+  (confirmDeletion)="hanldeConfirmationDelete()"
+></app-confirm-delete-dialog>
+
+<app-confirm-delete-dialog
+  #confirmationForDeleteExpl
+  [title]="
+    this.tranlsateService.instant(
+      'page.collection.drafts.explanatory.table.actions.delete-dialog.title'
+    )
+  "
+  [description]="
+    this.tranlsateService.instant(
+      'page.collection.drafts.explanatory.table.actions.delete-dialog.desc'
+    )
+  "
+  (confirmDeletion)="handleExplanatoryDelete()"
+></app-confirm-delete-dialog>
+
+<eui-dialog
+  #editTitle
+  [title]="'page.collection.drafts.annex.title-dialog.title' | translate"
+>
   <div euiInputGroup class="flex-row align-items-center">
     <label class="label">
       {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}</label

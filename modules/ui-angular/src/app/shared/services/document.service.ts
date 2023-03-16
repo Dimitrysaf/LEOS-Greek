@@ -421,12 +421,14 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentVersionsData(documentType: string, documentRef: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
     );
   }
 
   getDocumentRecentChangesData(documentType: string, documentRef: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<any[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/recent-changes`,
     );
@@ -437,6 +439,7 @@ export class DocumentService implements OnDestroy {
     documentRef: string,
     data: any,
   ) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.post<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/save-version`,
       {
@@ -446,12 +449,14 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentVersion(documentType: string, versionId: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<DocumentViewResponse>(
       `api/secured/${documentType}/${versionId}/show-version`,
     );
   }
 
   getDocumentVersionsComparison(versionArray: any, documentType: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     if (versionArray && versionArray.newVersion !== null) {
       return this.http.get<string>(
         `api/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
@@ -463,7 +468,10 @@ export class DocumentService implements OnDestroy {
   }
 
   private doSearch(parameters: DocumentSearchParams) {
-    const documentType = this.documentCategoryBS.value;
+    const documentType =
+      this.documentCategoryBS.value === 'coverpage'
+        ? 'coverPage'
+        : this.documentCategoryBS.value;
     const documentRef = this.documentIdBS.value;
     this.http
       .get(`api/secured/${documentType}/${documentRef}/search-text`, {
