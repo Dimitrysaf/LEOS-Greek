@@ -19,6 +19,7 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
 
   titleToEdit;
+  exportToDelete: ExportPackageVO;
   exportDocuments: ExportPackageVO[];
   destroy$: Subject<any> = new Subject<any>();
 
@@ -55,7 +56,8 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
       .subscribe((exports) => (this.exportDocuments = exports));
   }
 
-  handleDeleteExport(id: string) {
+  handleDeleteExport(exportData: ExportPackageVO) {
+    this.exportToDelete = exportData;
     this.confirmDeleteComp.deleteDialog.openDialog();
   }
 
@@ -79,8 +81,8 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
       });
   }
 
-  hanldeConfirmationDelete(data: ExportPackageVO) {
-    this.deleteExport(data.id);
+  hanldeConfirmationDelete() {
+    this.deleteExport(this.exportToDelete.id);
   }
 
   openEditExportDialog(data: ExportPackageVO) {

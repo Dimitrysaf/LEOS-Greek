@@ -191,6 +191,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     this.errorsVO = null;
     this.stepSelected = null;
     this.currentStepIndex = 1;
+    this.isNavigationAllowed = false;
   }
 
   showResetButton() {

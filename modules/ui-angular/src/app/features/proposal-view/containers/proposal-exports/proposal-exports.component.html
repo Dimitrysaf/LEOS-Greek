@@ -55,7 +55,13 @@
                   {{ 'page.collection.exports.table.actions.edit' | translate }}
                 </button>
 
-                <eui-dialog #editTitleExport title="Edit title export">
+                <eui-dialog
+                  #editTitleExport
+                  [title]="
+                    'page.collection.exports.table.dialog.edit-title.title'
+                      | translate
+                  "
+                >
                   <div euiInputGroup class="flex-row align-items-center">
                     <label class="label">
                       {{
@@ -66,7 +72,7 @@
                     <input euiInputText [(ngModel)]="titleToEdit" />
                   </div>
                   <eui-dialog-footer>
-                    <div class="d-flex flex-row justify-content-end">
+                    <div class="dialog-footer-content">
                       <button
                         euiButton
                         euiSecondary
@@ -114,24 +120,10 @@
                 euiListItem
                 euiDanger
                 class="p-2"
-                (click)="handleDeleteExport(row.id)"
+                (click)="handleDeleteExport(row)"
               >
                 {{ 'page.collection.exports.table.actions.delete' | translate }}
               </button>
-              <app-confirm-delete-dialog
-                #confirmationForDelete
-                [title]="
-                  this.translateService.instant(
-                    'page.collection.exports.table.actions.delete-dialog.title'
-                  )
-                "
-                [description]="
-                  this.translateService.instant(
-                    'page.collection.exports.table.actions.delete-dialog.description'
-                  )
-                "
-                (confrimDelete)="hanldeConfirmationDelete(row)"
-              ></app-confirm-delete-dialog>
             </div>
           </eui-dropdown-content>
         </eui-dropdown>
@@ -139,3 +131,18 @@
     </tr>
   </ng-template>
 </table>
+
+<app-confirm-delete-dialog
+  #confirmationForDelete
+  [title]="
+    this.translateService.instant(
+      'page.collection.exports.table.actions.delete-dialog.title'
+    )
+  "
+  [description]="
+    this.translateService.instant(
+      'page.collection.exports.table.actions.delete-dialog.description'
+    )
+  "
+  (confirmDeletion)="hanldeConfirmationDelete()"
+></app-confirm-delete-dialog>

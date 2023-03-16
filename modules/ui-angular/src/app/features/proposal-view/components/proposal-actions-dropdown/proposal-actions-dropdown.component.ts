@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
+
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
@@ -19,6 +21,8 @@ export class ProposalActionsDropdownComponent {
   bodyProp = 'body=';
   amp = '&amp;';
   breakStr = '%0D%0A';
+  @ViewChild('proposalDeleteConf')
+  proposalDeleteConf: ConfirmDeleteDialogComponent;
 
   constructor(
     private proposalDetailsService: ProposalDetailsService,
@@ -40,6 +44,10 @@ export class ProposalActionsDropdownComponent {
 
   handleDelete() {
     this.proposalDetailsService.deleteProposal();
+  }
+
+  handleConfirmationDelete() {
+    this.proposalDeleteConf.deleteDialog.openDialog();
   }
 
   getStringifiedMailTo() {

@@ -1,5 +1,8 @@
 <eui-page>
   <eui-page-content>
-    <h1>401 | Unauthorized Access</h1>
+    <h1>{{ 'page.error.unathorized.title' | translate }}</h1>
+    <button euiButton euiBasicButton euiPrimary [routerLink]="['/workspace']">
+      {{ 'page.error.unathorized.home' | translate }}
+    </button>
   </eui-page-content>
 </eui-page>

@@ -50,7 +50,7 @@ export class ProposalDetailsService {
   );
 
   private userAutocompleteDataResponse$ = this.userInputFieldChangeBS.pipe(
-    filter((name) => name !== null),
+    filter((name) => name !== null && name.length > 2),
     switchMap((name) => this.searchUsers(name)),
   );
 
@@ -246,7 +246,6 @@ export class ProposalDetailsService {
     this.deleteProposalCollaborators(req)
       .pipe()
       .subscribe(() => {
-        console.log('fethcijg collaborators');
         this.getAllCollaborators(proposalId);
       });
   }

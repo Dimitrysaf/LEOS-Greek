@@ -16,7 +16,7 @@ import { EuiDialogComponent } from '@eui/components/eui-dialog';
 export class ConfirmDeleteDialogComponent implements OnInit {
   @Input() title: string;
   @Input() description: string;
-  @Output() confrimDelete: EventEmitter<any> = new EventEmitter();
+  @Output() confirmDeletion: EventEmitter<any> = new EventEmitter();
   @Output() cancelDelete: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('deleteDialog') deleteDialog: EuiDialogComponent;
@@ -30,7 +30,7 @@ export class ConfirmDeleteDialogComponent implements OnInit {
   ngOnInit(): void {}
 
   handleConfirm() {
-    this.confrimDelete.emit();
+    this.confirmDeletion.emit();
     this.deleteDialog.closeDialog();
   }
 

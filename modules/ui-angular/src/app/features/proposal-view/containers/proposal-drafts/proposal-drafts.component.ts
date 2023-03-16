@@ -29,6 +29,8 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   memorandum: Document | null = null;
   document: Document | null = null;
   annexes: Document[] = [];
+  annexToDelete: Document = null;
+  explToDelete: Document = null;
   proposalRef: string;
 
   @ViewChild('editTitle') dialog: EuiDialogComponent;
@@ -78,6 +80,7 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   }
 
   handleAnnexDelete(annex: Document) {
+    this.annexToDelete = annex;
     this.confirmDeleteComp.deleteDialog.openDialog();
   }
 
@@ -85,11 +88,16 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
     this.confirmDeleteComp.deleteDialog.closeDialog();
   }
 
-  hanldeConfirmationDelete(annex: Document) {
-    this.proposalDetailsService.deleteAnnex(annex.metadata.internalRef);
+  hanldeConfirmationDelete() {
+    if (!this.annexToDelete) return;
+    this.proposalDetailsService.deleteAnnex(
+      this.annexToDelete.metadata.internalRef,
+    );
+    this.annexToDelete = null;
   }
 
-  hanldeConfirmationDeleteExpl() {
+  hanldeConfirmationDeleteExpl(expl: Document) {
+    this.explToDelete = expl;
     this.confirmDeleteCompExpl.deleteDialog.openDialog();
   }
 
@@ -127,11 +135,17 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
     );
   }
 
-  handleExplanatoryDelete(expl: Document) {
+  handleExplanatoryDelete() {
     this.proposalDetailsService
-      .deleteExplanatory(this.proposalRef, expl.metadata.internalRef)
+      .deleteExplanatory(
+        this.proposalRef,
+        this.explToDelete.metadata.internalRef,
+      )
       .subscribe((res) => {
-        this.explanatories = this.explanatories.filter((d) => d.id !== expl.id);
+        this.explanatories = this.explanatories.filter(
+          (d) => d.id !== this.explToDelete.id,
+        );
+        this.explToDelete = null;
       });
   }
 
