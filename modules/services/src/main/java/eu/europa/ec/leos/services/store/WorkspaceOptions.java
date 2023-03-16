@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.store;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.permissions.Role;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -59,6 +60,8 @@ public class WorkspaceOptions {
     void initializeOptions(List<CatalogItem> catalogItems, FilterProposalsRequest.Filter[] filters) {
         if (filters != null && filters.length > 0) {
             initFilter(filters);
+        } else {
+            initRoleFilter();
         }
         initSortOrder();
     }
@@ -111,6 +114,28 @@ public class WorkspaceOptions {
                         values.toArray(new String[]{})));
             }
         });
+    }
+
+    private void initRoleFilter() {
+        List<Role> appRoles = authorityMap.getAllRoles().stream()
+                .filter(Role::isApplicationRole)
+                .collect(Collectors.toList());
+
+        List<Role> roles = authorityMap.getAllRoles().stream()
+                .filter(Role::isCollaborator)
+                .collect(Collectors.toList());
+        if (securityContext.hasPermission(null, LeosPermission.CAN_SEE_ALL_DOCUMENTS)) {
+            roles.addAll(appRoles);
+        }
+
+        User user = securityContext.getUser();
+        List<String> roleCondition = roles.stream()
+                .flatMap(role -> user.getEntities().stream()
+                        .map(entity -> user.getLogin() + "::" + role.getName() + "::" + entity.getName()))
+                .collect(Collectors.toList());
+        roles.forEach(role -> roleCondition.add(user.getLogin() + "::" + role.getName()));
+
+        workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.role.name(), "IN", false, roleCondition.toArray(new String[]{})));
     }
 
     QueryFilter getQueryFilter() {

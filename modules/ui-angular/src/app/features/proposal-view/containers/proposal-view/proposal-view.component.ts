@@ -5,6 +5,8 @@ import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
 import { Observable, Subject, take, takeUntil } from 'rxjs';
 
+import { ProposalService } from '@/features/proposals/services/proposal.service';
+
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({

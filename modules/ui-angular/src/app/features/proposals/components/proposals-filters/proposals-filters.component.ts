@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ProcedureType, Role } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, Subscription, take } from 'rxjs';
+
+import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 
 import {
   CatalogItem,
@@ -35,6 +38,7 @@ export class ProposalsFiltersComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private proposalService: ProposalService,
+    private tranlsateService: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +82,9 @@ export class ProposalsFiltersComponent implements OnInit {
     const roleToOption = (role: Role): FilterOption => ({
       id: `roles-${role}`,
       fieldName: `roles-${role}`,
-      label: role[0].toUpperCase() + role.substring(1).toLowerCase(),
+      label: this.tranlsateService.instant(
+        `page.workspace.filter.filters.roles.${role.toLowerCase()}`,
+      ),
       value: `roles-${role}`,
       checked: false,
     });
@@ -100,7 +106,7 @@ export class ProposalsFiltersComponent implements OnInit {
       },
       {
         title: 'Roles',
-        filterOptions: ['AUTHOR', 'CONTRIBUTOR', 'REVIEWER'].map(roleToOption),
+        filterOptions: ['OWNER', 'CONTRIBUTOR', 'REVIEWER'].map(roleToOption),
       },
     ];
   }

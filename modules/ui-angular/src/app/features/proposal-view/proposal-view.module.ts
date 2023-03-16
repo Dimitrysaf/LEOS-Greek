@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 
+import { ProposalService } from '../proposals/services/proposal.service';
 import { ProposalActionsDropdownComponent } from './components/proposal-actions-dropdown/proposal-actions-dropdown.component';
 import { ProposalDetailsComponent } from './components/proposal-details/proposal-details.component';
 import { ProposalHeaderComponent } from './components/proposal-header/proposal-header.component';
@@ -28,6 +29,7 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalMilestoneViewComponent,
     ProposalExportsComponent,
   ],
+  providers: [ProposalService],
   imports: [ProposalViewRoutingModule, SharedModule],
 })
 export class ProposalViewModule {}
