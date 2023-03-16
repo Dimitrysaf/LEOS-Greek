@@ -41,6 +41,9 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
+import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -56,7 +59,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -244,6 +246,21 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
         LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return chosenDocument.getContent().get().getSource().getBytes();
+    }
+
+    @Override
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
+        return new byte[0];
+    }
+
+    @Override
+    public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
+        return null;
     }
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {

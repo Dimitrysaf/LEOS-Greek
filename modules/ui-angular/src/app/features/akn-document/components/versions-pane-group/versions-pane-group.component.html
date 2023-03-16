@@ -1,4 +1,55 @@
-<eui-card euiNoShadow>
+<eui-card
+  class="version-panes"
+  euiNoShadow
+  *ngIf="isRecent && (docService.versionFilter$ | async) === 'all'"
+>
+  <eui-card-header>
+    <eui-card-header-left-content *ngIf="isRecent">
+      <eui-chip euiRounded euiChip euiAccent>
+        <span
+          euiLabel
+          translate="page.editor.versions.group-tag.recent-changes"
+        ></span
+      ></eui-chip>
+    </eui-card-header-left-content>
+  </eui-card-header>
+
+  <eui-card-content
+    *ngIf="isRecent && recentChanges?.length && showModifications"
+  >
+    <div class="subversions" *ngIf="recentChanges.length > 0">
+      <ng-container
+        *ngFor="let version of recentChanges; trackByProperty: 'versionNumber'"
+      >
+        <div class="version">
+          {{ version.cmisVersionNumber }}
+        </div>
+        <div>{{ version.checkinCommentVO.title }}</div>
+        <div>
+          <app-version-actions-dropdown
+            [version]="version"
+          ></app-version-actions-dropdown>
+        </div>
+      </ng-container>
+    </div>
+  </eui-card-content>
+  <eui-card-content *ngIf="isRecent && recentChanges?.length === 0">
+    <span euiLabel>{{
+      'page.editor.versions.group-recents-subtitle-empty' | translate
+    }}</span>
+  </eui-card-content>
+</eui-card>
+
+<eui-card
+  class="version-panes"
+  euiNoShadow
+  *ngIf="
+    !isRecent &&
+    !isMilestone &&
+    ((docService.versionFilter$ | async) === 'all' ||
+      (docService.versionFilter$ | async) === 'save')
+  "
+>
   <eui-card-header>
     <eui-card-header-title *ngIf="!isRecent">
       {{ title }}
@@ -10,28 +61,15 @@
     <eui-card-header-subtitle *ngIf="!isRecent">
       {{ subtitle }}
     </eui-card-header-subtitle>
-    <eui-card-header-subtitle *ngIf="!isRecent"> </eui-card-header-subtitle>
-    <eui-card-header-left-content *ngIf="isRecent">
-      <eui-chip euiRounded euiChip euiAccent>
-        <span
-          euiLabel
-          translate="page.editor.versions.group-tag.recent-changes"
-        ></span
-      ></eui-chip>
-    </eui-card-header-left-content>
+    <eui-card-header-subtitle *ngIf="!isRecent"></eui-card-header-subtitle>
 
     <eui-card-header-right-content>
-      <eui-chip euiRounded euiPrimary *ngIf="!isRecent && isMilestone">
-        <span
-          euiLabel
-          translate="page.editor.versions.group-tag.milestone"
-        ></span>
-      </eui-chip>
       <eui-chip
         euiRounded
         euiSuccess
         *ngIf="
           !isRecent &&
+          !isMilestone &&
           isCreation &&
           (docService.compareModeEnabled$ | async) === false
         "
@@ -58,12 +96,17 @@
       />
     </eui-card-header-right-content>
   </eui-card-header>
+
   <eui-card-content
-    *ngIf="isRecent && recentChanges?.length && showModifications"
+    *ngIf="!isRecent && group?.subVersions.length && showModifications"
+    class="eui-u-pb-none"
   >
-    <div class="subversions" *ngIf="recentChanges.length > 0">
+    <div class="subversions">
       <ng-container
-        *ngFor="let version of recentChanges; trackByProperty: 'versionNumber'"
+        *ngFor="
+          let version of group.subVersions;
+          trackByProperty: 'versionNumber'
+        "
       >
         <div class="version">
           {{ version.cmisVersionNumber }}
@@ -77,11 +120,99 @@
       </ng-container>
     </div>
   </eui-card-content>
-  <eui-card-content *ngIf="isRecent && recentChanges?.length === 0">
-    <span euiLabel>{{
-      'page.editor.versions.group-recents-subtitle-empty' | translate
-    }}</span>
+
+  <eui-card-content
+    *ngIf="group?.subVersions.length > 0 || recentChanges?.length > 0"
+  >
+    <button
+      class="eui-u-pv-none eui-u-pl-none eui-u-pr-xs"
+      euiButton
+      euiSizeS
+      euiBasicButton
+      euiSecondary
+      (click)="showModifications = !showModifications"
+    >
+      <eui-icon-svg
+        *ngIf="showModifications"
+        icon="chevron-up"
+        set="sharp"
+        size="s"
+        fillColor="primary-100"
+      ></eui-icon-svg>
+      <eui-icon-svg
+        *ngIf="!showModifications"
+        icon="chevron-down"
+        set="sharp"
+        size="s"
+        fillColor="primary-100"
+      ></eui-icon-svg>
+      <span
+        class="eui-u-ml-2xs"
+        euiLabel
+        [translate]="
+          showModifications
+            ? 'page.editor.versions.modifications-hide'
+            : 'page.editor.versions.modifications-show'
+        "
+      ></span>
+    </button>
   </eui-card-content>
+</eui-card>
+
+<eui-card
+  class="version-panes"
+  euiNoShadow
+  *ngIf="
+    !isRecent &&
+    !isCreation &&
+    isMilestone &&
+    ((docService.versionFilter$ | async) === 'all' ||
+      (docService.versionFilter$ | async) === 'milestone')
+  "
+>
+  <eui-card-header>
+    <eui-card-header-title *ngIf="!isRecent">
+      {{ title }}
+    </eui-card-header-title>
+
+    <eui-card-header-subtitle *ngIf="description && !isRecent">
+      {{ description }}
+    </eui-card-header-subtitle>
+    <eui-card-header-subtitle *ngIf="!isRecent">
+      {{ subtitle }}
+    </eui-card-header-subtitle>
+    <eui-card-header-subtitle *ngIf="!isRecent"></eui-card-header-subtitle>
+
+    <eui-card-header-right-content>
+      <eui-chip
+        euiRounded
+        euiPrimary
+        *ngIf="!isRecent && isMilestone && !isCreation"
+      >
+        <span
+          euiLabel
+          translate="page.editor.versions.group-tag.milestone"
+        ></span>
+      </eui-chip>
+
+      <app-version-actions-dropdown
+        *ngIf="(docService.compareModeEnabled$ | async) === false"
+        [version]="group"
+      ></app-version-actions-dropdown>
+      <input
+        id="select-{{ group.documentId }}"
+        euiInputCheckBox
+        (change)="onSelectVersion($event)"
+        *ngIf="
+          ((docService.compareModeEnabled$ | async) && !isRecent) ||
+          ((docService.compareModeEnabled$ | async) &&
+            isRecent &&
+            recentChanges?.length !== 0)
+        "
+      />
+    </eui-card-header-right-content>
+  </eui-card-header>
+
   <eui-card-content
     *ngIf="!isRecent && group?.subVersions.length && showModifications"
     class="eui-u-pb-none"

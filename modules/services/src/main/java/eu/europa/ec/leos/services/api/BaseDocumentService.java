@@ -21,6 +21,9 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
+import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -66,5 +69,11 @@ public interface BaseDocumentService<T extends XmlDocument> {
     byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception;
 
     byte[] downloadXmlVersionFiles(String documentRef, String versionId);
+
+    byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event);
+
+    byte[] replaceOneTextInDocument(ReplaceMatchRequest event);
+
+    DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event);
 
 }

@@ -44,9 +44,7 @@ export class VersionsPaneGroupComponent implements OnInit {
   onSelectVersion(event) {
     if (event.target.checked) {
       const idParts = event.target.id.split('-');
-      console.log('on Select Version:', idParts);
       const currentIdsArray = this.docService.getVersionsIdsArray();
-      console.log('on Select Version:', currentIdsArray);
       if (!currentIdsArray || currentIdsArray.newVersion !== null) {
         this.docService.setVersionIdsForCompare({
           oldVersion: idParts[1],

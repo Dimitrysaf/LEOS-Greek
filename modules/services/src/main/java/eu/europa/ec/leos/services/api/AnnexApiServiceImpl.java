@@ -16,12 +16,9 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -42,13 +39,13 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
-import eu.europa.ec.leos.services.export.ExportDW;
-import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
+import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -59,9 +56,9 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -288,6 +285,39 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
         LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return chosenDocument.getContent().get().getSource().getBytes();
+    }
+
+    @Override
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
+        Annex annex = annexService.findAnnexByRef(event.getDocumentRef());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(annex),
+                event.getSearchText(),
+                event.getReplaceText(),
+                event.getSearchMatchVOs());
+        return updatedContent;
+    }
+
+    @Override
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
+        Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
+
+        byte[] updatedContent = searchService.replaceText(
+                getContent(annex),
+                event.getSearchText(),
+                event.getReplaceText(),
+                Arrays.asList(event.getSearchMatchVO()));
+
+        return updatedContent;
+    }
+
+    @Override
+    public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
+        Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
+
+        Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent(),
+                VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
+        return this.documentViewService.getDocumentView(updateAnnex);
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {
