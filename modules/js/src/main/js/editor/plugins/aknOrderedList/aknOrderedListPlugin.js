@@ -252,8 +252,9 @@ define(function aknOrderedListPluginModule(require) {
     //This is removing num and origin() on indent and outdent also
     function _resetDataNumOnIndent(event) {
         var editor = event.editor, range, node;
-        var selection = editor.getSelection(),
-            ranges = selection && selection.getRanges(),
+        var selection = editor.getSelection();
+        selection = leosPluginUtils.selectCorrectElementForList(selection);
+        var ranges = selection && selection.getRanges(),
             iterator = ranges.createIterator();
 
         while ((range = iterator.getNextRange())) {
