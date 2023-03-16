@@ -42,7 +42,6 @@
 	</properties>
 
 	<modules>
-		<module>config</module>
 		<module>server</module>
 		<module>web</module>
 	</modules>
