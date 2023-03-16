@@ -8,7 +8,11 @@ import {
   OnDestroy,
 } from '@angular/core';
 
-import { AnnotateService } from '@/features/akn-document/services/annotate.service';
+import { AppConfigService } from '@/core/services/app-config.service';
+import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
+import { AnnotateOperationMode } from '@/shared';
+
+import { AnnotateManager } from './annotate-manager';
 
 @Component({
   selector: 'app-document-annotations',
@@ -17,21 +21,42 @@ import { AnnotateService } from '@/features/akn-document/services/annotate.servi
 })
 export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() documentId: string;
+  @Input() connectedEntity: string | null = null;
+  @Input() containerId = 'docContainer';
+  @Input() operationMode: AnnotateOperationMode = 'NORMAL';
+  @Input() proposalRef: string | null = null;
+  @Input() showGuideLinesButton = true;
+  @Input() showStatusFilter = true;
 
+  private annotate: AnnotateManager;
   private mutationObserver?: MutationObserver;
 
   constructor(
-    private annotate: AnnotateService,
     @Inject(DOCUMENT) private document: Document,
     private elementRef: ElementRef<HTMLElement>,
+    private leos: LeosLegacyService,
+    private appConfig: AppConfigService,
   ) {}
 
   ngAfterViewInit() {
     void this.interceptAndEmbedAnnotatorFrame();
-    this.annotate.setDocumentId(this.documentId);
+    this.annotate = new AnnotateManager(
+      this.leos,
+      this.appConfig,
+      this.documentId,
+      {
+        annotationContainer: `#${this.containerId}`,
+        connectedEntity: this.connectedEntity,
+        operationMode: this.operationMode,
+        proposalRef: this.proposalRef,
+        showGuideLinesButton: this.showGuideLinesButton,
+        showStatusFilter: this.showStatusFilter,
+      },
+    );
   }
 
   ngOnDestroy() {
+    this.annotate.destroy();
     this.mutationObserver?.disconnect();
   }
 

@@ -1,12 +1,18 @@
 import { of } from 'rxjs';
 
-import {
+import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
+import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import type {
   AnnotateConnectorState,
   AnnotateMetadata,
   MergeSuggestion,
-} from '@/features/akn-document/models';
-import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
-import { Permission } from '@/shared';
+  Permission,
+} from '@/shared';
+
+export type AnnotateConnectorInitialState = Omit<
+  AnnotateConnectorState,
+  keyof LeosJavaScriptExtensionState
+>;
 
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
@@ -18,8 +24,8 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   receiveDocumentMetadata?: (metadata: AnnotateMetadata) => void;
   receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
 
-  constructor(state: AnnotateConnectorState) {
-    super(state, null);
+  constructor(state: AnnotateConnectorInitialState) {
+    super({ ...leosJavaScriptExtensionState, ...state }, null);
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
@@ -58,16 +64,19 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestMergeSuggestion(...args) {
     console.warn('stub:', 'requestMergeSuggestion', args); // FIXME
+    // this.receiveMergeSuggestion?.(/*...*/);
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestMergeSuggestions(...args) {
     console.warn('stub:', 'requestMergeSuggestions', args); // FIXME
+    // this.receiveMergeSuggestions?.(/*...*/);
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestSearchMetadata(...args) {
     console.warn('stub:', 'requestSearchMetadata', args); // FIXME
+    // this.receiveSearchMetadata?.(/*...*/);
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
@@ -91,10 +100,29 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       console.error(
         'Expected to find DEBUG_annotateToken in localStorage.\n' +
           'To obtain it, open a document page on :8080 server and search for a request to `...ui/UIDL/`' +
-          ' containing "requestSecurityToken" in its response.\n' +
+          ' containing "receiveSecurityToken" in its response.\n' +
           'Then set it with localStorage.setItem("DEBUG_annotateToken", "<TOKEN>")',
       );
     }
     return of(token);
   }
 }
+
+const leosJavaScriptExtensionState: LeosJavaScriptExtensionState = {
+  callbackNames: [
+    'requestDocumentMetadata',
+    'requestUserPermissions',
+    'requestMergeSuggestion',
+    'requestMergeSuggestions',
+    'requestSearchMetadata',
+    'requestSecurityToken',
+    'responseFilteredAnnotations',
+  ],
+  rpcInterfaces: {
+    'eu.europa.ec.leos.ui.shared.js.LeosJavaScriptServerRpc': [
+      'clientJSDepsInited',
+    ],
+  },
+  jsDepsInited: true,
+  dirtyTimestamp: -1,
+};

@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
-import { AnnotateService } from '@/features/akn-document/services/annotate.service';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
 import { SharedModule } from '@/shared/shared.module';
 
@@ -35,6 +34,6 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     SharedModule,
     MatTreeModule,
   ],
-  providers: [AnnotateService],
+  providers: [],
 })
 export class AknDocumentModule {}

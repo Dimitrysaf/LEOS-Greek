@@ -21,7 +21,7 @@ public class AppConfigResponse {
     private boolean implicitSaveAndClose;
     private boolean isSpellCheckerEnabled;
     private String spellCheckerServiceUrl;
-    private String getSpellCheckerSourceUrl;
+    private String spellCheckerSourceUrl;
     private boolean searchAndReplaceEnabled;
     private boolean sendForRevisionEnabled;
     private boolean coverPageSeparated;
@@ -31,6 +31,11 @@ public class AppConfigResponse {
     private User user;
     private String headerTitle;
     private String headerPath;
+    private String annotateAuthority;
+    private String annotateClientUrl;
+    private String annotateHostUrl;
+    private String annotateJwtIssuerClientId;
+    private String annotatePopupDefaultStatus;
 
     public AppConfigResponse() {
     }
@@ -69,12 +74,12 @@ public class AppConfigResponse {
         this.spellCheckerServiceUrl = spellCheckerServiceUrl;
     }
 
-    public String getGetSpellCheckerSourceUrl() {
-        return getSpellCheckerSourceUrl;
+    public String getSpellCheckerSourceUrl() {
+        return spellCheckerSourceUrl;
     }
 
-    public void setGetSpellCheckerSourceUrl(String getSpellCheckerSourceUrl) {
-        this.getSpellCheckerSourceUrl = getSpellCheckerSourceUrl;
+    public void setSpellCheckerSourceUrl(String spellCheckerSourceUrl) {
+        this.spellCheckerSourceUrl = spellCheckerSourceUrl;
     }
 
     public boolean isSearchAndReplaceEnabled() {
@@ -147,5 +152,45 @@ public class AppConfigResponse {
 
     public void setHeaderPath(String headerPath) {
         this.headerPath = headerPath;
+    }
+
+    public String getAnnotateAuthority() {
+        return annotateAuthority;
+    }
+
+    public void setAnnotateAuthority(String annotateAuthority) {
+        this.annotateAuthority = annotateAuthority;
+    }
+
+    public String getAnnotateClientUrl() {
+        return annotateClientUrl;
+    }
+
+    public void setAnnotateClientUrl(String annotateClientUrl) {
+        this.annotateClientUrl = annotateClientUrl;
+    }
+
+    public String getAnnotateHostUrl() {
+        return annotateHostUrl;
+    }
+
+    public void setAnnotateHostUrl(String annotateHostUrl) {
+        this.annotateHostUrl = annotateHostUrl;
+    }
+
+    public String getAnnotateJwtIssuerClientId() {
+        return annotateJwtIssuerClientId;
+    }
+
+    public void setAnnotateJwtIssuerClientId(String annotateJwtIssuerClientId) {
+        this.annotateJwtIssuerClientId = annotateJwtIssuerClientId;
+    }
+
+    public String getAnnotatePopupDefaultStatus() {
+        return annotatePopupDefaultStatus;
+    }
+
+    public void setAnnotatePopupDefaultStatus(String annotatePopupDefaultStatus) {
+        this.annotatePopupDefaultStatus = annotatePopupDefaultStatus;
     }
 }

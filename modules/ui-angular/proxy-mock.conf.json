@@ -1,9 +1,4 @@
 {
-  "/leos-pilot/ui-a/annotate": {
-    "target": "http://localhost:9099",
-    "pathRewrite": { "^/leos-pilot/ui-a": "" },
-    "secure": false
-  },
   "/leos-pilot/api": {
     "target": "http://127.0.0.1:3000",
     "pathRewrite": { "^/leos-pilot": "" },

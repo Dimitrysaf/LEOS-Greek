@@ -6,7 +6,7 @@ import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { uniqueId } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
@@ -26,10 +26,14 @@ import { CKEditorService } from '../../services/ckeditor.service';
   styleUrls: ['./document-editor.component.scss'],
 })
 export class DocumentEditorComponent implements OnDestroy, OnInit {
+  connectedEntity: string;
+  containerId = 'docContainer';
   documentRef: string;
   documentType: string;
   pageTitle: string;
   pageSubTitle: string;
+  proposalRef: string;
+  showStatusFilter: boolean;
   xml: string;
   isCollapseToc = false;
   versionForView: string;
@@ -56,7 +60,6 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
-  private proposalRef: string;
 
   constructor(
     private domService: DomService,
@@ -77,16 +80,22 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      this.documentRef = params.id;
-      this.documentType = this.route.snapshot.data['category'];
-      this.documentService.setDocumentCategory(this.documentType);
-      this.documentService.setDocumentId(this.documentRef);
-      this.documentService.setDocumentCategory(this.documentType);
-      this.cdkEditor.setDocumentRef(this.documentRef);
-      this.cdkEditor.setDocumentType(this.documentType);
-      this.setVersionComparisonViewHeader(null, null);
-    });
+    combineLatest([this.route.params, this.route.data, this.config.config])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([params, data, config]) => {
+        this.connectedEntity = (
+          config.user.connectedEntity ?? config.user.defaultEntity
+        ).name;
+        this.showStatusFilter = config.annotateAuthority === 'LEOS';
+        this.documentRef = params.id;
+        this.documentType = data.category;
+        this.documentService.setDocumentCategory(this.documentType);
+        this.documentService.setDocumentId(this.documentRef);
+        this.documentService.setDocumentCategory(this.documentType);
+        this.cdkEditor.setDocumentRef(this.documentRef);
+        this.cdkEditor.setDocumentType(this.documentType);
+        this.setVersionComparisonViewHeader(null, null);
+      });
 
     this.loadStyleSheet();
 

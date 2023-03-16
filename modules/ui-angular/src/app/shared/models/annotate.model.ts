@@ -1,0 +1,55 @@
+import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import type { AnnotateConnector } from '@/shared/components/document-annotations/annotate-connector';
+
+export type AnnotateExtension = {
+  init(connector: AnnotateConnector);
+};
+
+export type AnnotateOperationMode = 'READ_ONLY' | 'PRIVATE' | 'NORMAL';
+
+/* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
+export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
+  // Set on server start (instance + env + dependent)
+  authority: string;
+  anotClient: string;
+  anotHost: string;
+  oauthClientId: string;
+  annotationPopupDefaultStatus: 'ON' | 'OFF';
+  isSpellCheckerEnabled: boolean;
+  spellCheckerServiceUrl: string;
+  spellCheckerSourceUrl: string;
+
+  // these 3 are used only in Proposal* documents (EC?)
+  sidebarAppId?: string | null;
+  temporaryDataId?: string;
+  temporaryDataDocument?: string;
+
+  // Component context options
+  operationMode: AnnotateOperationMode;
+  /* CSS selector */
+  annotationContainer: string;
+
+  // Calculated on the server (instance + env + document + user dependent)
+  proposalRef: string;
+
+  // Client-side only state
+  showStatusFilter: boolean;
+  showGuideLinesButton: boolean;
+
+  // App session depended properties
+  connectedEntity: string;
+};
+
+export type MergeSuggestion = {
+  origText: string;
+  elementId: string;
+  startOffset: string;
+  endOffset: number;
+  newText: number;
+};
+
+export type AnnotateMetadata = {
+  id: string;
+  title: string;
+  version: string;
+};
