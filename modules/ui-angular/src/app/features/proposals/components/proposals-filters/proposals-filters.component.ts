@@ -50,6 +50,10 @@ export class ProposalsFiltersComponent implements OnInit {
     });
   }
 
+  handleSubmit(event: Event) {
+    event.preventDefault();
+  }
+
   resetFilters() {
     this.proposalService.setFilters(
       ProposalsFiltersComponent.emptyFilterParams,
@@ -61,6 +65,7 @@ export class ProposalsFiltersComponent implements OnInit {
   }
 
   private createFilters(catalog: CatalogItem[]): ProposalFilterGroup[] {
+    console.log('creating filters for', catalog);
     const catalogItemToOption =
       (group: keyof typeof groups) =>
       (item: CatalogItem): FilterOption => ({
@@ -114,9 +119,12 @@ export class ProposalsFiltersComponent implements OnInit {
     }
 
     const addCatalogItemToGroups = (item: CatalogItem, depth = 0) => {
-      if (item.hidden) {
-        return;
-      }
+      // i am commenting out this line of code since it seems that hidden isn't used for the groupping of the filters
+      // instead for the filtering of the selection in the template tree
+      // TODO : Confirm the remove of this code
+      // if (item.hidden) {
+      //   return;
+      // }
 
       if (depth === proceduresDepth) {
         groups.procedures.push(item);

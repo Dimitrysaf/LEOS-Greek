@@ -1,9 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ForbiddenComponent } from './features/error/components/forbidden/forbidden.component';
+import { PageNotFoundComponent } from './features/error/components/page-not-found/page-not-found.component';
+import { UnathorizedComponent } from './features/error/components/unathorized/unathorized.component';
+
 const routes: Routes = [
   { path: '', redirectTo: 'workspace', pathMatch: 'full' },
   { path: 'index.jsp', redirectTo: 'workspace' },
+  {
+    path: 'error/page-not-found',
+    component: PageNotFoundComponent,
+  },
+  {
+    path: 'error/unauthorized',
+    component: UnathorizedComponent,
+  },
+  {
+    path: 'error/forbidden',
+    component: ForbiddenComponent,
+  },
   {
     path: 'workspace',
     loadChildren: () =>
@@ -34,6 +50,10 @@ const routes: Routes = [
       import('./features/akn-document/akn-document.module').then(
         (m) => m.AknDocumentModule,
       ),
+  },
+  {
+    path: '**',
+    redirectTo: 'error/not-found',
   },
 ];
 

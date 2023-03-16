@@ -1,5 +1,6 @@
 .dialog-footer-content {
   display: flex;
+  flex-direction: row;
   gap: var(--eui-base-spacing-m);
   justify-content: flex-end;
 }

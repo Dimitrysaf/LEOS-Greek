@@ -1,0 +1,8 @@
+:host ::ng-deep {
+  .eui-page-content {
+    align-items: center;
+    display: flex;
+    height: calc(100vh - var(--eui-app-toolbar-height));
+    justify-content: center;
+  }
+}

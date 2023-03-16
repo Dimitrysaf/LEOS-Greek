@@ -15,8 +15,9 @@ import { createPromise } from '@/shared/utils';
 
 import {
   CatalogItem,
-  CreateExplanatoryBody,
-  CreateExplanatoryDocumentBody,
+  CreateDraftBody,
+  CreateDraftResponse,
+  CreateExplanatoryDocument,
 } from '../../../features/proposals/models';
 import { ProposalService } from '../../../features/proposals/services/proposal.service';
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
@@ -152,7 +153,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   onCreate() {
     if (!this.fromProposal) {
       this.proposalService
-        .createProposalDraft(this.getDataForCreateDraftProposal())
+        .createExplanatoryDocument(this.getDataForCreateDraftProposal())
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res) => {
@@ -166,7 +167,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
       this.proposalDetailsService
         .createExplanatory(this.getDataForCreateExplanatory())
         .subscribe({
-          next: (response) => {
+          next: async (response) => {
             this.createWizard.closeDialog();
             this.resetInitials();
             if (this.fromProposal)
@@ -175,6 +176,8 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
                 .subscribe(({ proposalId }) => {
                   this.proposalDetailsService.setProposalRef(proposalId);
                 });
+            if (!this.fromProposal)
+              await this.router.navigate([`collection/${response.proposalId}`]);
           },
           error: (err) => {},
         });
@@ -197,7 +200,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     return this.currentStepIndex === 2;
   }
 
-  private getDataForCreateExplanatory(): CreateExplanatoryDocumentBody {
+  private getDataForCreateExplanatory(): CreateDraftBody {
     const proposalRef = this.proposalDetailsService.proposalRef;
     const { templateId } = this.createForm.getRawValue();
     return {
@@ -206,7 +209,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     };
   }
 
-  private getDataForCreateDraftProposal(): CreateExplanatoryBody {
+  private getDataForCreateDraftProposal(): CreateExplanatoryDocument {
     const { templateId, docPurpose, eeaRelevance } =
       this.createForm.getRawValue();
     return {

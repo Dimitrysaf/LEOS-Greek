@@ -8,6 +8,7 @@ import {
   CsrfPreventionInterceptor,
   EUI_CONFIG_TOKEN,
   EuLoginSessionTimeoutHandlingInterceptor,
+  HttpErrorHandlerInterceptor,
   translateConfig,
 } from '@eui/core';
 import { EffectsModule } from '@ngrx/effects';
@@ -20,6 +21,7 @@ import { environment } from '../../environments/environment';
 import { SharedModule } from '../shared/shared.module';
 import { getReducers, metaReducers, REDUCER_TOKEN } from './reducers/index';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { ErrorInterceptor } from './services/error-handler.interceptor';
 
 @NgModule({
   imports: [
@@ -78,6 +80,11 @@ import { AuthInterceptor } from './services/auth.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
       multi: true,
     },
   ],

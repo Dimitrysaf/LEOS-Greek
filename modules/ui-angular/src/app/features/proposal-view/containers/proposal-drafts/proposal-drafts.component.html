@@ -21,7 +21,7 @@
     </eui-card-header>
   </eui-card>
 </ng-container>
-
+<!-- MEMORANDUM SECTION-->
 <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
   <eui-card-header>
     <eui-card-header-title>
@@ -43,7 +43,7 @@
     </eui-card-header-subtitle>
   </eui-card-header>
 </eui-card>
-
+<!-- EXAPLANATORY | DRAFTS -->
 <ng-container *appShowOnInstance="['cn']">
   <eui-card class="eui-u-mt-s eui-u-mb-l">
     <eui-card-header>
@@ -57,10 +57,10 @@
         >
       </eui-card-header-title>
       <eui-card-header-right-content>
-        <button euiButton euiBasicButton class="" (click)="handleCreateDraft()">
-          <span
-            class="eui-icon eui-icon-plus eui-u-color-success-100 eui-icon--rounded"
-          ></span>
+        <button euiButton euiPrimary (click)="handleCreateDraft()">
+          <span>
+            {{ 'page.collection.drafts.explanatory.add-button' | translate }}
+          </span>
         </button>
       </eui-card-header-right-content>
     </eui-card-header>
@@ -126,16 +126,46 @@
             <td>{{ row.updatedBy }}</td>
             <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
             <td>
-              <button
-                euiButton
-                euiBasicButton
-                class=""
-                (click)="handleExplanatoryDelete(row)"
+              <eui-dropdown>
+                <button
+                  euiButton
+                  euiRounded
+                  euiIconButton
+                  euiBasicButton
+                  euiSecondary
+                  euiTooltip="Annex actions"
+                  [attr.aria-label]="'Annex actions'"
+                >
+                  <span euiIcon iconClass="eui-icon eui-icon-more-vertical">
+                  </span>
+                </button>
+                <eui-dropdown-content>
+                  <ul euiList>
+                    <li
+                      euiListItem
+                      class="p-3"
+                      (click)="hanldeConfirmationDeleteExpl()"
+                    >
+                      <span class="eui-u-color-danger-100">Delete</span>
+                    </li>
+                  </ul>
+                </eui-dropdown-content></eui-dropdown
               >
-                <span
-                  class="eui-icon eui-icon-remove-circle-o eui-u-color-danger-100 eui-icon--rounded"
-                ></span>
-              </button>
+
+              <app-confirm-delete-dialog
+                #confirmationForDeleteExpl
+                [title]="
+                  this.tranlsateService.instant(
+                    'page.collection.drafts.explanatory.table.actions.delete-dialog.title'
+                  )
+                "
+                [description]="
+                  this.tranlsateService.instant(
+                    'page.collection.drafts.explanatory.table.actions.delete-dialog.desc'
+                  )
+                "
+                (confrimDelete)="handleExplanatoryDelete(row)"
+              ></app-confirm-delete-dialog>
             </td>
           </tr>
         </ng-template>
@@ -144,6 +174,7 @@
   </eui-card>
 </ng-container>
 
+<!-- -->
 <eui-card
   class="eui-u-mt-s eui-u-mb-l"
   *ngIf="document"
@@ -172,10 +203,14 @@
     <ng-container *ngIf="!documentCard.euiCollapsed">
       <div class="eui-u-flex">
         <div class="flex-grow-1">
-          <div><strong>Annexes</strong></div>
+          <div>
+            <strong>{{
+              'page.collection.drafts.annex.table.title' | translate
+            }}</strong>
+          </div>
           <div *ngIf="annexes.length">
             <strong>{{ annexes.length }}</strong>
-            {{ 'page.collection.drafts.annex.annex-found' | translate }}
+            {{ 'page.collection.drafts.annex.table.annex-found' | translate }}
           </div>
           <div *ngIf="!annexes.length">
             {{ 'page.collection.drafts.annex.no-annex' | translate }}
@@ -188,7 +223,7 @@
             euiPrimary
             (click)="handleAnnexAdd()"
           >
-            Add
+            {{ 'page.collection.drafts.annex.table.add' | translate }}
           </button>
         </ng-container>
         <ng-container *appUserHasPermission="['CAN_UPDATE']">
@@ -199,7 +234,7 @@
             euiOutline
             (click)="handleAnnexReorder()"
           >
-            Reorder
+            {{ 'page.collection.drafts.annex.table.re-order' | translate }}
           </button>
         </ng-container>
       </div>
@@ -213,10 +248,24 @@
       >
         <ng-template euiTemplate="header">
           <tr>
-            <th>Annex title</th>
-            <th>Last Updated by</th>
-            <th>Last Updated on</th>
-            <th>Actions</th>
+            <th>
+              {{ 'page.collection.drafts.annex.table.tr.title' | translate }}
+            </th>
+            <th>
+              {{
+                'page.collection.drafts.annex.table.tr.last-updated-by'
+                  | translate
+              }}
+            </th>
+            <th>
+              {{
+                'page.collection.drafts.annex.table.tr.last-updated-on'
+                  | translate
+              }}
+            </th>
+            <th>
+              {{ 'page.collection.drafts.annex.table.tr.actions' | translate }}
+            </th>
           </tr>
         </ng-template>
         <ng-template let-row euiTemplate="body">
@@ -237,7 +286,10 @@
                   class="eui-u-mr-s"
                   (click)="handleAnnexEditTitle(row)"
                 >
-                  Edit title
+                  {{
+                    'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
+                      | translate
+                  }}
                 </button>
               </ng-container>
             </td>
@@ -263,13 +315,46 @@
                   <eui-dropdown-content>
                     <ul euiList>
                       <ng-container *appUserHasPermission="['CAN_UPDATE']">
-                        <li euiListItem (click)="handleAnnexEditTitle(row)">
-                          <button euiListItem>Edit title</button>
+                        <li
+                          euiListItem
+                          class="p-2"
+                          (click)="handleAnnexEditTitle(row)"
+                        >
+                          <button euiListItem>
+                            {{
+                              'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
+                                | translate
+                            }}
+                          </button>
                         </li>
                       </ng-container>
                       <ng-container *appUserHasPermission="['CAN_DELETE']">
-                        <li euiListItem (click)="handleAnnexDelete(row)">
-                          <button euiListItem>Delete</button>
+                        <li
+                          euiListItem
+                          euiDanger
+                          class="p-2"
+                          (click)="handleAnnexDelete(row)"
+                        >
+                          <button euiListItem euiDanger>
+                            {{
+                              'page.collection.drafts.annex.table.tr.actions.dropdown.delete'
+                                | translate
+                            }}
+                          </button>
+                          <app-confirm-delete-dialog
+                            #confirmationForDelete
+                            [title]="
+                              this.tranlsateService.instant(
+                                'page.collection.drafts.annex.delete-dialog.title'
+                              )
+                            "
+                            [description]="
+                              this.tranlsateService.instant(
+                                'page.collection.drafts.annex.delete-dialog.desc'
+                              )
+                            "
+                            (confrimDelete)="hanldeConfirmationDelete(row)"
+                          ></app-confirm-delete-dialog>
                         </li>
                       </ng-container>
                     </ul>

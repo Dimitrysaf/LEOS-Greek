@@ -1,8 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { debounce, debounceTime, Subject, take, takeUntil } from 'rxjs';
 
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import { Document } from '@/shared';
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 import { ExportPackageVO } from '../../models/export-package.model';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -16,25 +18,34 @@ const DEBOUNCE_TIME = 300;
 export class ProposalExportsComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
 
+  titleToEdit;
   exportDocuments: ExportPackageVO[];
   destroy$: Subject<any> = new Subject<any>();
 
-  constructor(private proposalDetailsService: ProposalDetailsService) {}
+  @ViewChild('confirmationForDelete')
+  confirmDeleteComp: ConfirmDeleteDialogComponent;
+
+  @ViewChild('editTitleExport') editExporTittleDialog: EuiDialogComponent;
+
+  constructor(
+    private proposalDetailsService: ProposalDetailsService,
+    public translateService: TranslateService,
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next('');
     this.destroy$.complete();
   }
 
-  handleTitleChange(event: Event, data: ExportPackageVO) {
-    console.log(event);
+  handleTitleChange(data: ExportPackageVO) {
     const proposalRef = this.proposalDetailsService.proposalRef;
-    data.comments[0] = (event.target as HTMLInputElement).value;
+    data.comments[0] = this.titleToEdit;
     this.proposalDetailsService
       .updateExportDocument(proposalRef, data.id, data.comments)
       .pipe(debounceTime(DEBOUNCE_TIME), takeUntil(this.destroy$))
       .subscribe((res) => {
         this.exportDocuments = res;
+        this.closeEditExportDialog();
       });
   }
 
@@ -45,13 +56,7 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   }
 
   handleDeleteExport(id: string) {
-    const ref = this.proposalDetailsService.proposalRef;
-    this.proposalDetailsService
-      .deleteExportDocument(ref, id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
-        this.exportDocuments = res;
-      });
+    this.confirmDeleteComp.deleteDialog.openDialog();
   }
 
   handleNotifyExport(id: string) {
@@ -71,6 +76,30 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.downloadFile(res);
+      });
+  }
+
+  hanldeConfirmationDelete(data: ExportPackageVO) {
+    this.deleteExport(data.id);
+  }
+
+  openEditExportDialog(data: ExportPackageVO) {
+    this.titleToEdit = data.comments[0];
+    this.editExporTittleDialog.openDialog();
+  }
+
+  closeEditExportDialog() {
+    this.titleToEdit = null;
+    this.editExporTittleDialog.closeDialog();
+  }
+
+  private deleteExport(id: string) {
+    const ref = this.proposalDetailsService.proposalRef;
+    this.proposalDetailsService
+      .deleteExportDocument(ref, id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.exportDocuments = res;
       });
   }
 

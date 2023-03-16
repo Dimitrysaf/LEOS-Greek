@@ -18,7 +18,7 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
-import eu.europa.ec.leos.services.dto.request.CreateExplanatoryRequest;
+import eu.europa.ec.leos.services.dto.request.CreateExplanatoryDocumentRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -108,10 +108,13 @@ public class ProposalApiController {
 
     @RequestMapping(value = "/createExplanatoryDocument", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createExplanatoryDocument(@RequestBody CreateExplanatoryRequest request) {
+    public ResponseEntity<Object> createExplanatoryDocument(@RequestBody CreateExplanatoryDocumentRequest request) {
         try {
             apiService.createExplanatoryDocument(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UnsupportedOperationException e) {
+            LOG.error("Method not supported in current instance", e);
+            return new ResponseEntity<>("Method not supported in the current instance of the application", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while creating the explanatory", e);
             return new ResponseEntity<>("Error occurred while creating the explanatory document: " + e.getMessage(),

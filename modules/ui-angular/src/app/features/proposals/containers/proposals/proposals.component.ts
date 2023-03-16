@@ -7,6 +7,7 @@ import {
 import { ProcedureType } from '@leos/shared';
 import { combineLatest, distinctUntilChanged, map, take, tap } from 'rxjs';
 
+import { ProposalsFiltersComponent } from '../../components';
 import {
   DEFAULT_LIMIT,
   DEFAULT_PAGE,
@@ -82,7 +83,7 @@ export class ProposalsComponent implements OnInit {
 
     return queryParams;
   }
-
+  isFilterCollapsed = false;
   filters$ = this.proposalService.filters$;
   page$ = this.proposalService.page$;
   limit$ = this.proposalService.limit$;
@@ -92,6 +93,7 @@ export class ProposalsComponent implements OnInit {
 
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
+  @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
 
   constructor(
     private router: Router,
@@ -130,6 +132,14 @@ export class ProposalsComponent implements OnInit {
         setTimeout(() => this.cdr.detectChanges());
       });
     });
+  }
+
+  onToggleTOCColumnCollapsed() {
+    this.isFilterCollapsed = !this.isFilterCollapsed;
+  }
+
+  resetFilter() {
+    this.filtersComponent.resetFilters();
   }
 
   handlePagerChange($event: EuiPaginationEvent) {
