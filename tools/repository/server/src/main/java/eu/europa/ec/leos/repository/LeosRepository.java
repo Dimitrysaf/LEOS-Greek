@@ -2,16 +2,21 @@ package eu.europa.ec.leos.repository;
 
 import java.util.Arrays;
 
-import org.apache.catalina.core.ApplicationContext;
-import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class LeosRepository {
+public class LeosRepository extends SpringBootServletInitializer {
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(LeosRepository.class);
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(LeosRepository.class, args);
 	}
+
 }
