@@ -23,6 +23,10 @@
   .eui-page-column__header-left-content {
     font-size: inherit;
   }
+
+  .eui-page-column__body {
+    overflow: scroll !important;
+  }
 }
 
 .tree-drag-content {
