@@ -4,6 +4,7 @@
   display: block;
   height: 100%;
   padding-left: 33px; // .annotator-frame .annotator-toolbar { left: -33px }
+  overflow: hidden;
 }
 
 :host ::ng-deep .annotator-frame {
