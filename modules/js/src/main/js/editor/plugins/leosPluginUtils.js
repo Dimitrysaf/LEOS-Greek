@@ -59,6 +59,7 @@ define(function leosPluginUtilsModule(require) {
     var EC = "ec";
     var CN = "cn";
     var REFERS_TO = "refersto";
+    var INP = "~_INP";
 
     var NUMBERED_ITEM = "point, indent, paragraph";
     var UNUMBERED_ITEM = "alinea, subparagraph";
@@ -1114,23 +1115,60 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _selectLastEditableElement(selection) {
-         /*
-          * This method was created to solve a conflict in CKEditor when
-          * we use contenteditable attribute in some elements.
-          * When open ckeditor to edit text with double click or using
-          * the icon, and then we don't move the cursor and don't click
-          * in any place, then the selected element is the "ol".
-          * Then we need to change the selected element to the last one.
-          * It was affecting the ENTER and also the indent and outdent.
-          *
-          */
+        /*
+         * This method was created to solve a conflict in CKEditor when
+         * we use contenteditable attribute in some elements.
+         * When open ckeditor to edit text with double click or using
+         * the icon, and then we don't move the cursor and don't click
+         * in any place, then the selected element is the "ol".
+         * Then we need to change the selected element to the last one.
+         * It was affecting the ENTER and also the indent and outdent.
+         *
+         */
         var elementToSelect = selection.getStartElement().findOne('p:last-child');
         if (!elementToSelect) {
             elementToSelect = selection.getStartElement().findOne('li:not(:has(li)):last-child');
         }
+        return _selectNewElement(elementToSelect, selection);
+    }
+
+    function _selectCorrectElementForList(selection) {
+        if (selection.getStartElement().getName() !== 'li' && selection.getStartElement().getName() !== 'p') {
+            var elementToSelect = selection.getStartElement();
+            while (elementToSelect && elementToSelect.getName() !== 'li' && elementToSelect.getName() !== 'p') {
+                elementToSelect = elementToSelect.getParent();
+            }
+            selection = _selectNewElement(elementToSelect, selection);
+        }
+        if (_isIntro(selection.getStartElement())) {
+            selection = _selectNewElement(selection.getStartElement().getParent().getParent(), selection);
+        }
+        return selection;
+    }
+
+    function _selectNewElement(newElement, selection) {
         var newRange = new CKEDITOR.dom.range(selection.document);
-        newRange.moveToPosition(elementToSelect, CKEDITOR.POSITION_BEFORE_END);
+        newRange.moveToPosition(newElement, CKEDITOR.POSITION_BEFORE_END);
         return newRange.select();
+    }
+
+    function _isIntroInPath(path) {
+        if (!!path) {
+            var currentElement = path.lastElement;
+            if (currentElement.getName() !== 'li' && currentElement.getName() !== 'p') {
+                while (currentElement && currentElement.getName() !== 'li' && currentElement.getName() !== 'p') {
+                    currentElement = currentElement.getParent();
+                }
+            }
+            return _isIntro(currentElement);
+        }
+        return false;
+    }
+
+    function _isIntro(currentElement) {
+        return (!!currentElement && currentElement.type === CKEDITOR.NODE_ELEMENT
+            && !!currentElement.getAttribute(REFERS_TO)
+            && currentElement.getAttribute(REFERS_TO) === INP);
     }
 
     return {
@@ -1197,6 +1235,9 @@ define(function leosPluginUtilsModule(require) {
         isFirstSubParagraph: _isFirstSubParagraph,
         isDefinitionArticleElement: _isDefinitionArticleElement,
         selectLastEditableElement: _selectLastEditableElement,
+        isIntroInPath: _isIntroInPath,
+        isIntro: _isIntro,
+        selectCorrectElementForList: _selectCorrectElementForList,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
