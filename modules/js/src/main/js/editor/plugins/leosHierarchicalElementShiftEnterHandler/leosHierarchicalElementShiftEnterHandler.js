@@ -133,8 +133,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     function _isStartElementOrderedListOrContent(selection) {
         var startElement = selection.getStartElement();
         return startElement
-            && (startElement.getAscendant('ol') && startElement.getAscendant('ol').getAttribute(DATA_AKN_NAME) !== 'aknAnnexOrderedList')
-            ||  startElement.getAttribute(DATA_AKN_NAME) === 'aknContent';
+            && (
+                (startElement.getAscendant('ol')
+                && startElement.getAscendant('ol').getAttribute(DATA_AKN_NAME) !== 'aknAnnexOrderedList'
+                && startElement.getAttribute(DATA_AKN_NAME) !== 'aknHeading' )
+            ||  startElement.getAttribute(DATA_AKN_NAME) === 'aknContent');
     }
 
     function _renameIntroToP(editor, element) {

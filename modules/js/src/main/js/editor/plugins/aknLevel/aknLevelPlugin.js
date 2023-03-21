@@ -24,7 +24,7 @@ define(function aknLevelPluginModule(require) {
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var UNDERLINE = CKEDITOR.CTRL + 85;
-
+    var BACKSPACE =  8;
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
         init : function init(editor) {
@@ -33,6 +33,7 @@ define(function aknLevelPluginModule(require) {
             editor.on("toDataFormat", _unWrapContentFromSubparagraph, null, null, 15);
             editor.on("levelIndent", _renumberOnIndent);
             editor.on("levelOutdent", _renumberOnOutdent);
+            $(editor.element.$).on("keydown", null, [editor], _checkAndBlockCustom);
 
             leosKeyHandler.on({
                 editor : editor,
@@ -54,9 +55,25 @@ define(function aknLevelPluginModule(require) {
                 key : UNDERLINE,
                 action : _onCtrlUKey
             });
+
         }
     };
-    
+    function _checkAndBlockCustom(e) {
+        var editor = e.data[0];
+        if(e.keyCode === BACKSPACE){
+            var selection = editor.getSelection();
+            var startElement = leosKeyHandler.getSelectedElement(selection);
+            if (startElement) {
+                var tagName = startElement.$.localName;
+                if (tagName === 'h2'|| startElement.$.getAttribute('contenteditable') === 'false') {
+                   //Cancel the event
+                   e.stopImmediatePropagation();
+                   return false;
+                }
+            }
+        }
+    }
+
     function _onEnterKey(context) {
         var selection = context.event.editor.getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
