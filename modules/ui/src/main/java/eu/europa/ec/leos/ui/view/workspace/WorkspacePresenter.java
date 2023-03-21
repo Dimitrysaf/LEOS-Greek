@@ -157,8 +157,9 @@ class WorkspacePresenter extends AbstractLeosPresenter {
             //if it has id means that it is an uploaded document.
             CollectionContextService context = proposalContextServiceProvider.get();
             context.useDocument(event.getDocument());
-            addTemplateInContext(context, event.getDocument());
             context.useIdsAndUrlsHolder(new CollectionIdsAndUrlsHolder());
+            context.useCloneProposal(false);
+            addTemplateInContext(context, event.getDocument());
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.document.imported"));
             context.useActionMessage(ContextActionService.ANNEX_BLOCK_UPDATED, messageHelper.getMessage("operation.document.imported"));
             context.useActionMessage(ContextActionService.ANNEX_ADDED, messageHelper.getMessage("collection.block.annex.added"));
