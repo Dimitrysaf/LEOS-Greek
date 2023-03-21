@@ -9,6 +9,8 @@ export type AnnotateOperationMode = 'READ_ONLY' | 'PRIVATE' | 'NORMAL';
 
 /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
 export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
+  isAngularUI: boolean;
+
   // Set on server start (instance + env + dependent)
   authority: string;
   anotClient: string;

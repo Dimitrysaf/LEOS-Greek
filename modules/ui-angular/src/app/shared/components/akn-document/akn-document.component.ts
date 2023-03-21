@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   Input,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -19,7 +20,7 @@ import { DomService } from '@/shared/services/dom.service';
   templateUrl: './akn-document.component.html',
   styleUrls: ['./akn-document.component.scss'],
 })
-export class AknDocumentComponent implements OnInit, AfterViewInit {
+export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() docId: string;
   @Input() docCategory: string;
   xml: string;
@@ -47,9 +48,14 @@ export class AknDocumentComponent implements OnInit, AfterViewInit {
   ) {
     console.log(this.xml);
   }
+
   ngOnInit(): void {
     this.docCategory = this.docCategory.toLowerCase();
     this.loadStyleSheet();
+  }
+
+  ngOnDestroy() {
+    this.unloadStyleSheet?.();
   }
 
   ngAfterViewInit(): void {

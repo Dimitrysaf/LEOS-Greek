@@ -4,9 +4,12 @@ export type DocumentRole = 'OWNER' | 'CONTRIBUTOR' | 'REVIEWER';
 
 export type Role = ApplicationRole | DocumentRole;
 
+/** @see modules/security/src/main/java/eu/europa/ec/leos/security/LeosPermission.java */
 export type Permission =
+  | 'CAN_CREATE'
   | 'CAN_READ'
   | 'CAN_UPDATE'
+  | 'CAN_EDIT_ALL_ANNOTATIONS'
   | 'CAN_DELETE'
   | 'CAN_COMMENT'
   | 'CAN_SUGGEST'
@@ -18,9 +21,11 @@ export type Permission =
   | 'CAN_RESTORE_PREVIOUS_VERSION'
   | 'CAN_ADD_REMOVE_COLLABORATOR'
   | 'CAN_DOWNLOAD_PROPOSAL'
-  | 'CAN_DOWNLOAD_XML_COMPARISON'
   | 'CAN_UPLOAD'
+  | 'CAN_DOWNLOAD_XML_COMPARISON'
   | 'CAN_SEE_SOURCE'
   | 'CAN_SEE_ALL_DOCUMENTS'
   | 'CAN_WORK_WITH_EXPORT_PACKAGE'
-  | 'CAN_CLOSE_PROPOSAL';
+  | 'CAN_CLOSE_PROPOSAL'
+  | 'CAN_RENUMBER'
+  | 'CAN_TOGGLE_LIVE_DIFFING';

@@ -1,4 +1,4 @@
-import { Permission, User } from '@/shared';
+import { Permission, Role, User } from '@/shared';
 
 /** @see modules/domain/src/main/java/eu/europa/ec/leos/domain/common/InstanceType.java */
 export enum InstanceType {
@@ -22,6 +22,7 @@ export type LeosConfig = {
   supportDocumentEnabled: boolean;
   supportDocumentCatalogKey: string | null;
   permissions: Permission[];
+  permissionMap: Record<Role, Permission[]>;
   user: User;
   annotateAuthority: string;
   annotateClientUrl: string;

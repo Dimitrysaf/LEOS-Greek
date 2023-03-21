@@ -10,7 +10,7 @@ import {
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import { AnnotateOperationMode } from '@/shared';
+import { AnnotateOperationMode, Permission } from '@/shared';
 
 import { AnnotateManager } from './annotate-manager';
 
@@ -24,6 +24,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() connectedEntity: string | null = null;
   @Input() containerId = 'docContainer';
   @Input() operationMode: AnnotateOperationMode = 'NORMAL';
+  @Input() permissions: Permission[] = [];
   @Input() proposalRef: string | null = null;
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
@@ -44,6 +45,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
       this.leos,
       this.appConfig,
       this.documentId,
+      this.permissions,
       {
         annotationContainer: `#${this.containerId}`,
         connectedEntity: this.connectedEntity,
