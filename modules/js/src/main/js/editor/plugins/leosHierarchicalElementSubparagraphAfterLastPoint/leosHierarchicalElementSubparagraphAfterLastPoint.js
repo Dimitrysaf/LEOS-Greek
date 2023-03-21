@@ -17,6 +17,7 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var CKEDITOR = require("promise!ckEditor");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
     var LOG = require("logger");
@@ -123,7 +124,7 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
         }
         
         // make selection at the beginning of the new subparagraph
-        setNewSelection(editor, emptyElement);
+        leosPluginUtils.setFocus(emptyElement, editor);
         editor.fire("change");
     }
 

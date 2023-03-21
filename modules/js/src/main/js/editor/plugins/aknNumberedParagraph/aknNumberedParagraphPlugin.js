@@ -114,6 +114,7 @@ define(function aknNumberedParagraphPluginModule(require) {
             editor.on("change", resetDataAknNameForOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
             editor.on("beforeCommandExec", _transformSubparagraphs, null, null, 0);
+            editor.on("afterCommandExec", _checkParagraphsStructureAfterInsertSubparagraph, null, null, 100);
             editor.on("change", _transformSubparagraphs, null, null, 100);
             editor.on("receiveData", _startObservingAllParagraphs);
             editor.on("focus", _setCurrentParaMode, null, paraCommand);
@@ -158,6 +159,22 @@ define(function aknNumberedParagraphPluginModule(require) {
                 if(isOnlyChild){
                     parent.appendBogus();
                 }
+            }
+        }
+    }
+
+    function _checkParagraphsStructureAfterInsertSubparagraph(event) {
+        if ((event.data.name === 'leosHierarchicalElementSubparagraphAfterLastPoint') && PARA_MODE === UNNUMBERED) {
+            var editor = event.editor;
+            var selectedElement = leosKeyHandler.getSelectedElement(editor.getSelection());
+            var parent = selectedElement.getParent();
+            var previousNode = selectedElement.hasPrevious() && selectedElement.getPrevious() instanceof CKEDITOR.dom.element
+                ? selectedElement.getPrevious() : null;
+            // transforms subparagraphs to paragraphs
+            if (_isSubParagraph(selectedElement) && parent.is(HTML_PARAGRAPH) && previousNode.is('ol')) {
+                _convertToParagraph(selectedElement);
+                selectedElement.insertAfter(parent);
+                leosPluginUtils.setFocus(selectedElement, editor);
             }
         }
     }
@@ -299,13 +316,13 @@ define(function aknNumberedParagraphPluginModule(require) {
     }
 
     function _isSubParagraph(element) {
-        return !!element && ((element.is('p') && !element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
+        return !!element && (element instanceof CKEDITOR.dom.element) && ((element.is(HTML_SUB_PARAGRAPH) && !element.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT)
             && !element.getAttribute(leosPluginUtils.DATA_AKN_NAME)) || leosPluginUtils.isSubparagraph(element));
     }
 
     function _transformSubparagraphs(event) {
         if (PARA_MODE === UNNUMBERED && !!event.data && !!event.data.name && (event.data.name.includes("save")
-            || event.data.name.includes("change") || event.data.name === 'indent' || event.data.name === 'outdent')) {
+            || event.data.name == "change")) {
             transformSubparagraphs(event.editor);
         }
     }
