@@ -129,23 +129,20 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult createCollectionFromLeg(File legDocument) throws CreateCollectionException {
-
-        String proposalUrl;
-        String proposalId;
-
+    public CreateCollectionResult createCollectionFromLeg(File legDocument) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         DocumentVO propDocument = createDocumentVOFromLegfile(legDocument);
 
         CollectionContextService context = proposalContextProvider.get();
         context.useDocument(propDocument);
         context.useIdsAndUrlsHolder(idsAndUrlsHolder);
+        context.useCloneProposal(false);
         addTemplateInContext(context, propDocument);
         postProcessingDocumentService.processDocument(propDocument);
         Proposal proposal = context.executeImportProposal();
 
-        proposalId = proposal.getMetadata().get().getRef();
-        proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
+        String proposalId = proposal.getMetadata().get().getRef();
+        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
         idsAndUrlsHolder.setProposalId(proposalId);
         idsAndUrlsHolder.setProposalUrl(proposalUrl);
 
@@ -153,11 +150,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult cloneCollection(File legDocument, String iscRef, String targetUser, String connectedEntity) throws CreateCollectionException {
-        String proposalUrl;
-        String proposalId;
-        String cmisObjectId;
-
+    public CreateCollectionResult cloneCollection(File legDocument, String iscRef, String targetUser, String connectedEntity) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         DocumentVO propDocument = createDocumentVOFromLegfile(legDocument);
 
@@ -188,9 +181,9 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         }
 
         Proposal proposal = context.executeImportProposal();
-        proposalId = proposal.getMetadata().get().getRef();
-        cmisObjectId = proposal.getId();
-        proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
+        String proposalId = proposal.getMetadata().get().getRef();
+        String cmisObjectId = proposal.getId();
+        String proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
         idsAndUrlsHolder.setProposalId(proposalId);
         idsAndUrlsHolder.setProposalUrl(proposalUrl);
         idsAndUrlsHolder.addDocCloneAndOriginIdMap(proposalId, propDocument.getRef());

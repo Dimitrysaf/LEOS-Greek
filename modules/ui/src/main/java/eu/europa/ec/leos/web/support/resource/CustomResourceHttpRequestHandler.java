@@ -36,7 +36,7 @@ public class CustomResourceHttpRequestHandler extends ResourceHttpRequestHandler
     private static final Logger logger = LoggerFactory.getLogger(CustomResourceHttpRequestHandler.class);
 
     @Override
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IOException {
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Resource resource = this.getResource(request);
         if (resource == null) {
             String path = this.processPathAndRemoveParams((String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
@@ -62,7 +62,7 @@ public class CustomResourceHttpRequestHandler extends ResourceHttpRequestHandler
         String[] names = factory.getBeanNamesForType(ResourceHttpRequestHandler.class);
         for (String name : names) {
             BeanDefinition bd = factory.getBeanDefinition(name);
-            bd.setBeanClassName("eu.europa.ec.leos.web.support.resource.CustomResourceHttpRequestHandler");
+            bd.setBeanClassName(this.getClass().getName());
         }
     }
 }
