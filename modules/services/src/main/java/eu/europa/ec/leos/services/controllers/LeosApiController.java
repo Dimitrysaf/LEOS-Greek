@@ -52,7 +52,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -112,7 +111,7 @@ public class LeosApiController {
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
-                             ConfigService configService1, SecurityContext securityContext) {
+                             SecurityContext securityContext) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -413,7 +412,6 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/proposals/{proposalRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
-
         Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef);
         if (requestedProposal.isPresent()) {
             return ResponseEntity.ok(requestedProposal.get());

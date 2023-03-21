@@ -1,12 +1,16 @@
 package eu.europa.ec.leos.api.auth;
 
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.SecurityUser;
 import eu.europa.ec.leos.security.SecurityUserProvider;
 import eu.europa.ec.leos.security.TokenService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -15,8 +19,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static org.springframework.util.StringUtils.isEmpty;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -56,7 +61,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
 
         userLogin = tokenService.extractUserFromToken(token);
 
-        if(isEmpty(userLogin)) {
+        if(StringUtils.isEmpty(userLogin)) {
             authRequest = new JwtAuthenticationToken();
             authRequest.setAuthenticated(true);
             return getAuthenticationManager().authenticate(authRequest);
@@ -68,7 +73,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
             throw new LeosApiAuthenticationException("The provided user login cannot be validated: user login not found");
         }
 
-        preAuthRequest = new PreAuthenticatedAuthenticationToken(user,"");
+        preAuthRequest = new PreAuthenticatedAuthenticationToken(user,"", getAuthorities(user));
         preAuthRequest.setAuthenticated(true);
         return getAuthenticationManager().authenticate(preAuthRequest);
     }
@@ -78,5 +83,16 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
             throws IOException, ServletException {
         super.successfulAuthentication(request, response, chain, authResult);
         chain.doFilter(request, response);
+    }
+
+    private Collection<GrantedAuthority> getAuthorities(User user) {
+        List<GrantedAuthority> allRoles = new ArrayList<>();
+        if(user instanceof SecurityUser) {
+            List<String> leosRoles = ((SecurityUser) user).getRoles();
+            leosRoles.forEach(auth -> {
+                allRoles.add(new SimpleGrantedAuthority(auth));
+            });
+        }
+        return allRoles;
     }
 }
