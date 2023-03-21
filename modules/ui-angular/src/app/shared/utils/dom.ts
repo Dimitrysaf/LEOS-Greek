@@ -4,7 +4,6 @@ export const setDynamicStyle = (
 ): HTMLLinkElement => {
   const head = document.getElementsByTagName('head')[0];
   const style = document.createElement('link');
-  style.id = 'css-styling';
   style.rel = 'stylesheet';
   style.href = cssURL;
   head.appendChild(style);

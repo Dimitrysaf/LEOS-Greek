@@ -20,8 +20,10 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
+import { Collaborator, LeosAppConfig, Permission } from '@/shared';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 
 import { apiBaseUrl } from '../../../config';
@@ -36,7 +38,7 @@ export class DocumentService implements OnDestroy {
   documentCategory$: Observable<string | null>;
   annotationsEnabled$: Observable<boolean>;
   compareModeEnabled$: Observable<boolean>;
-  documentId$: Observable<string | null>;
+  documentId$: Observable<string>;
   documentView$: Observable<DocumentViewResponse | null>;
   versionView$: Observable<DocumentViewResponse | null>;
   versionCompareView$: Observable<string | null>;
@@ -55,6 +57,8 @@ export class DocumentService implements OnDestroy {
   focusedSearchResult: string;
   versionSearchParams$: Observable<VersionSearchParams>;
   versionFilter$: Observable<string>;
+  collaborators$: Observable<Collaborator[]>;
+  permissions$: Observable<Permission[]>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -77,15 +81,24 @@ export class DocumentService implements OnDestroy {
     author: '',
   });
   private versionFilterBS = new BehaviorSubject<string>('All');
+  private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
+  private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
     @Inject(DOCUMENT) private document: Document,
+    private appConfig: AppConfigService,
   ) {
-    this.documentId$ = this.documentIdBS.asObservable();
-    this.documentCategory$ = this.documentCategoryBS.asObservable();
+    this.documentId$ = this.documentIdBS.pipe(
+      filter(Boolean),
+      distinctUntilChanged(),
+    );
+    this.documentCategory$ = this.documentCategoryBS.pipe(
+      filter(Boolean),
+      distinctUntilChanged(),
+    );
     this.tocItems$ = this.tocItemBS.asObservable();
     this.documentView$ = this.documentId$.pipe(
       combineLatestWith(this.documentCategory$),
@@ -161,6 +174,21 @@ export class DocumentService implements OnDestroy {
     this.versionSearchParams$
       .pipe(takeUntil(this.destroy$), skip(1))
       .subscribe((params) => this.handleVersionSearch(params));
+
+    this.collaborators$ = this.collaboratorsBS.asObservable();
+    this.documentView$
+      .pipe(
+        takeUntil(this.destroy$),
+        mergeMap((doc) => this.getCollaborators(doc.proposalRef)),
+      )
+      .subscribe((collaborators) => this.collaboratorsBS.next(collaborators));
+    this.permissions$ = this.permissionsBS.asObservable();
+    this.collaborators$
+      .pipe(takeUntil(this.destroy$), combineLatestWith(this.appConfig.config))
+      .subscribe(([collaborators, config]) => {
+        const permissions = this.resolvePermissions(collaborators, config);
+        this.permissionsBS.next(permissions);
+      });
 
     this.setVersionFilter('all');
   }
@@ -620,5 +648,23 @@ export class DocumentService implements OnDestroy {
     } else {
       return this.findClosestParentByClass(node.parentElement, searchByClass);
     }
+  }
+
+  private getCollaborators(proposalRef: string) {
+    return this.http.get<Collaborator[]>(
+      `${apiBaseUrl}/secured/proposal/${proposalRef}/collaborators`,
+    );
+  }
+
+  private resolvePermissions(
+    collaborators: Collaborator[],
+    config: LeosAppConfig,
+  ) {
+    const docRoles = collaborators
+      .filter((c) => c.login === config.user.login)
+      .map((c) => c.role);
+    const roles = [...config.user.roles, ...docRoles];
+    const permissions = roles.flatMap((r) => config.permissionMap[r]);
+    return [...new Set(permissions)];
   }
 }

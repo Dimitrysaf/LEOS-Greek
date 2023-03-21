@@ -3,8 +3,8 @@
    `annotator-toolbar` */
   display: block;
   height: 100%;
-  padding-left: 33px; // .annotator-frame .annotator-toolbar { left: -33px }
   overflow: hidden;
+  padding-left: 33px; // .annotator-frame .annotator-toolbar { left: -33px }
 }
 
 :host ::ng-deep .annotator-frame {
@@ -14,4 +14,8 @@
   position: relative !important;
   top: 0 !important;
   width: unset !important;
+
+  .annotator-frame-button--sidebar_toggle {
+    display: none;
+  }
 }

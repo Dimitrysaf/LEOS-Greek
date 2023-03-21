@@ -10,7 +10,11 @@ import {
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import { AnnotateConnectorState, AnnotateExtension } from '@/shared/models';
+import {
+  AnnotateConnectorState,
+  AnnotateExtension,
+  Permission,
+} from '@/shared/models';
 
 import { AnnotateConnector } from './annotate-connector';
 
@@ -32,11 +36,12 @@ export class AnnotateManager {
     private leos: LeosLegacyService,
     private appConfig: AppConfigService,
     private documentId: string,
+    permissions: Permission[],
     private options: AnnotateConnectorOptions,
   ) {
     const connector$ = this.createConnectorState().pipe(
       tap(() => this.connector?.destroy()),
-      map((state) => new AnnotateConnector(state)),
+      map((state) => new AnnotateConnector(state, { permissions })),
       tap((connector) => (this.connector = connector)),
     );
     const annotateExtension$ = leos.require$.pipe(
@@ -69,6 +74,7 @@ export class AnnotateManager {
       map(
         (config) =>
           ({
+            isAngularUI: true,
             authority: config.annotateAuthority,
             anotClient: config.annotateClientUrl,
             anotHost: config.annotateHostUrl,

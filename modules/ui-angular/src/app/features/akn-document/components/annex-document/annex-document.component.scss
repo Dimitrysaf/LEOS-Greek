@@ -1,12 +1,12 @@
+@import 'node_modules/@eui/styles-base/src/styles/02-base/functions/utils';
+@import 'node_modules/@eui/styles/src/styles/02-base/mixins/eui-scrollbars';
+
 :host {
+  align-items: center;
   display: flex;
+  flex: 1 1 0; // take all available space but use scrollbars when necessary
+  flex-direction: column;
+  overflow: auto;
   width: 100%;
-
-  @media screen and (max-width: 767px) {
-    justify-content: start;
-  }
-
-  @media screen and (min-width: 768px) {
-    justify-content: center;
-  }
+  @include eui-scrollbars();
 }

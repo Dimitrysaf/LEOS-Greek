@@ -13,18 +13,24 @@ export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
   keyof LeosJavaScriptExtensionState
 >;
+export type AnnotateConnectorOptions = {
+  permissions: Permission[];
+};
 
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
   target?: Element;
-  receiveUserPermissions?: (...userPermissions: Permission[]) => void;
+  receiveUserPermissions?: (userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
   receiveMergeSuggestion?: (result: MergeSuggestion) => void;
-  receiveMergeSuggestions?: (...results: MergeSuggestion[]) => void;
+  receiveMergeSuggestions?: (results: MergeSuggestion[]) => void;
   receiveDocumentMetadata?: (metadata: AnnotateMetadata) => void;
   receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
 
-  constructor(state: AnnotateConnectorInitialState) {
+  constructor(
+    state: AnnotateConnectorInitialState,
+    private options: AnnotateConnectorOptions,
+  ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
   }
 
@@ -35,30 +41,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestUserPermissions(...args) {
-    console.warn('stub:', 'requestUserPermissions', args); // FIXME
-    // FIXME: combine permissions from User.roles and Document.proposal.collaborators relationship
-    const permissions: Permission[] = [
-      'CAN_READ',
-      'CAN_UPDATE',
-      'CAN_DELETE',
-      'CAN_COMMENT',
-      'CAN_SUGGEST',
-      'CAN_MERGE_SUGGESTION',
-      'CAN_MARK_TREATED',
-      'CAN_EXPORT_LW',
-      'CAN_EXPORT_DW',
-      'CAN_CREATE_MILESTONE',
-      'CAN_RESTORE_PREVIOUS_VERSION',
-      'CAN_ADD_REMOVE_COLLABORATOR',
-      'CAN_DOWNLOAD_PROPOSAL',
-      'CAN_DOWNLOAD_XML_COMPARISON',
-      'CAN_UPLOAD',
-      'CAN_SEE_SOURCE',
-      'CAN_SEE_ALL_DOCUMENTS',
-      'CAN_WORK_WITH_EXPORT_PACKAGE',
-      'CAN_CLOSE_PROPOSAL',
-    ];
-    this.receiveUserPermissions?.(...permissions);
+    this.receiveUserPermissions?.(this.options.permissions);
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */

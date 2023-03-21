@@ -10,8 +10,17 @@ export class DomService {
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   setDynamicStyle(cssURL: string): () => void {
-    const style = setDynamicStyle(this.document, cssURL);
-    return () => style.remove();
+    const existingStyle = this.document.querySelector(
+      `link[href="${cssURL}"]`,
+    ) as HTMLLinkElement | null;
+    const style = existingStyle ?? setDynamicStyle(this.document, cssURL);
+    this.increaseCount(style);
+
+    return () => {
+      if (!this.decreaseCount(style)) {
+        style.remove();
+      }
+    };
   }
 
   async loadScript(
@@ -39,5 +48,19 @@ export class DomService {
     document.head.appendChild(script);
 
     await promise;
+  }
+
+  private increaseCount(style: HTMLLinkElement) {
+    const oldCount = Number(style.dataset.count) || 0;
+    const newCount = oldCount + 1;
+    style.dataset.count = String(newCount);
+    return newCount;
+  }
+
+  private decreaseCount(style: HTMLLinkElement) {
+    const oldCount = Number(style.dataset.count) || 1;
+    const newCount = oldCount - 1;
+    style.dataset.count = String(newCount);
+    return newCount;
   }
 }

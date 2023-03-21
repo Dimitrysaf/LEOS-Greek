@@ -43,7 +43,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
 
   isVersionForViewOpen = false;
   isTOCColumnCollapsed = true;
-  isAnnotationsColumnCollapsed = true;
+  isAnnotationsColumnCollapsed = false;
   isVersionsColumnCollapsed = true;
 
   tocItems: Array<TocItem> = [];
@@ -173,6 +173,11 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   onToggleAnnotationsColumnCollapsed() {
+    (
+      document.querySelector(
+        'button.annotator-frame-button--sidebar_toggle',
+      ) as HTMLButtonElement
+    )?.click();
     this.isAnnotationsColumnCollapsed = !this.isAnnotationsColumnCollapsed;
   }
 

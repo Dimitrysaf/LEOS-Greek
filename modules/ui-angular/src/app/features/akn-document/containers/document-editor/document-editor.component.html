@@ -28,6 +28,7 @@
 
   <eui-page-content>
     <eui-page-columns>
+      <!-- ToC -->
       <eui-page-column
         [label]="'page.editor.toc-column.label' | translate"
         isCollapsible
@@ -104,7 +105,11 @@
         </eui-page-column-body>
       </eui-page-column>
 
-      <eui-page-column interactiveScrollbars>
+      <!-- document -->
+      <eui-page-column
+        class="eui-u-p-none eui-page-column--no-scrollbars"
+        [interactiveScrollbars]="false"
+      >
         <eui-page-column-header-body
           *ngIf="documentService.searchPaneOpen$ | async"
         >
@@ -116,7 +121,7 @@
         </eui-page-column-header-body>
 
         <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center"
+          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
           <div class="tree-drag-content" *ngIf="isEditMode && tocItems.length">
             <h3 class="">{{ 'page.editor.drag-items.title' | translate }}</h3>
@@ -147,9 +152,12 @@
           <app-annex-document
             [id]="containerId"
             [xml]="xml"
+            class="leos-doc-content"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
+
+      <!-- compare: a -->
       <eui-page-column interactiveScrollbars *ngIf="isVersionForViewOpen">
         <eui-page-column-header-left-content class="font-inherit-header">{{
           versionForViewHeaderTitle
@@ -171,6 +179,7 @@
         </eui-page-column-body>
       </eui-page-column>
 
+      <!-- compare: b -->
       <eui-page-column
         interactiveScrollbars
         *ngIf="documentService.compareModeEnabled$ | async"
@@ -227,6 +236,8 @@
           </div>
         </eui-dialog-footer>
       </eui-dialog>
+
+      <!-- annotations -->
       <eui-page-column
         class="eui-page-column--right-column"
         [label]="'page.editor.annotations-column.label' | translate"
@@ -241,11 +252,13 @@
             [containerId]="containerId"
             [connectedEntity]="connectedEntity"
             [proposalRef]="proposalRef"
+            [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
           ></app-document-annotations>
         </eui-page-column-body>
       </eui-page-column>
 
+      <!-- versions -->
       <eui-page-column
         class="eui-page-column--right-column"
         [label]="'page.editor.versions-column.label' | translate"
