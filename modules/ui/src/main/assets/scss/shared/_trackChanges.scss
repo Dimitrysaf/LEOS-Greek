@@ -30,6 +30,10 @@
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
   }
 
+  inline[name="trackchanges"][leos\:action="insert"] {
+    text-decoration: underline;
+  }
+
   inline[name="trackchanges"][leos\:action="delete"] {
     text-decoration: line-through;
   }
@@ -38,6 +42,10 @@
 
 //------------------------------- Editor Styles -----------------------------//
 %editorTrackChanges {
+
+  span[data-akn-name="trackchanges"][data-akn-action="insert"] {
+    text-decoration: underline;
+  }
 
   span[data-akn-name="trackchanges"][data-akn-action="delete"] {
     text-decoration: line-through;

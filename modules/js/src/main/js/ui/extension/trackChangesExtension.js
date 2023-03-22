@@ -19,62 +19,69 @@ define(function trackChangesExtensionModule(require) {
     var log = require("logger");
     var $ = require("jquery");
 
+    const xmlTcSelector = "div#docContainer akomantoso inline[name='trackchanges']";
+    const editorTcSelector = "div#docContainer akomantoso span[data-akn-name='trackchanges']";
+
     function _init(connector) {
-        log.debug("Initializing Track Changes extension...");
-        log.debug("Registering Track Changes listeners...");
+        log.debug("Initializing track changes extension...");
+        log.debug("Registering track changes listeners...");
         connector.onUnregister = _connectorUnregistrationListener;
         connector.onStateChange = _connectorStateChangeListener;
     }
 
     function _connectorUnregistrationListener() {
         var connector = this;
-        log.debug("Unregistering Track Changes extension...");
+        log.debug("Unregistering track changes extension...");
     }
 
     function _connectorStateChangeListener() {
         var connector = this;
-        log.debug("Track Changes extension state changed...");
+        log.debug("Track changes extension state changed...");
         // KLUGE delay execution due to sync issues with target update
         setTimeout(_updateTrackChangesStyles, 500, connector.getState().user, connector.getState().proposalRef);
     }
 
     function _updateTrackChangesStyles(currentUser, proposalRef) {
-        log.debug("Track Changes _updateTrackChangesStyles invoked...");
+        log.debug("Track changes _updateTrackChangesStyles invoked...");
 
         let usersUid = [currentUser.login];
-        $("div#docContainer akomantoso inline[name='trackchanges']").each(function() {
+        $(xmlTcSelector).each(function() {
+            // Add on hover popup for showing user information
+            $(this).hover(function() {
+                $(this).append("<div>" + $(this).attr("leos:title") + "</div>");
+                $(this).find("div").css("left", $(this).position().left + 10).fadeIn("fast");
+            }, function() {
+                $("div", this).remove();
+            });
+            // Retrieve user and add it to users array if not exists
             let userUid = $(this).attr("leos:uid");
             if ($.inArray(userUid, usersUid) === -1) {
                 usersUid.push(userUid);
             }
         });
 
-        let xmlStyle = "";
-        let editorStyle = "";
+        // Create styles for users
+        let xmlTcStyle = "";
+        let editorTcStyle = "";
         for (let i = 0; usersUid.length > i; i++) {
-            let userColor = (usersUid[i] !== "willajh") ? _generateColor(usersUid[i].repeat(5) + proposalRef) : "hsl(330, 100%, 50%)";
-            xmlStyle += "div#docContainer akomantoso inline[name='trackchanges'][leos\\:uid='" + usersUid[i] + "'] { color: " + userColor + " }\n";
-            editorStyle += "div#docContainer akomantoso span[data-akn-name='trackchanges'][data-akn-uid='" + usersUid[i] + "'] { color: " + userColor + " }\n";
+            let userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
+            xmlTcStyle += xmlTcSelector + "[leos\\:uid='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
+            xmlTcStyle += xmlTcSelector + "[leos\\:uid='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
+            editorTcStyle += editorTcSelector + "[data-akn-uid='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
+            editorTcStyle += editorTcSelector + "[data-akn-uid='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
         }
 
-        $("head #trackChangesXmlStyle").remove();
-        $("head").prepend("<style id='trackChangesXmlStyle'>" + xmlStyle + "</style>");
+        $("head #xmlTcStyle").remove();
+        $("head").prepend("<style id='xmlTcStyle'>" + xmlTcStyle + "</style>");
 
-        $("head #trackChangesEditorStyle").remove();
-        $("head").prepend("<style id='trackChangesEditorStyle'>" + editorStyle + "</style>");
-
-        $("div#docContainer akomantoso inline[name='trackchanges']").hover(
-            function() {
-                $(this).append("<div>" + $(this).attr("leos:title") + "</div>");
-                $(this).find("div").css("left", $(this).position().left + 10).fadeIn("fast");
-            }, function() {
-                $("div", this).remove();
-            });
+        $("head #editorTcStyle").remove();
+        $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
     }
 
-    function _generateColor(str) {
+    function _generateColors(str) {
         for (var i = 0, hashCode = 0; i < str.length; hashCode = str.charCodeAt(i++) + ((hashCode << 5) - hashCode));
-        return "hsl(" + (Math.abs(hashCode) % 360) + ", 100%, 35%)";
+        let hue = Math.abs(hashCode) % 360;
+        return ["hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"];
     }
 
     return {
