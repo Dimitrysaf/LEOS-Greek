@@ -18,9 +18,9 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -45,14 +45,21 @@ import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
+import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.vo.toc.AlternateConfig;
+import eu.europa.ec.leos.vo.toc.Attribute;
+import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +69,9 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service("memorandum")
@@ -285,6 +294,19 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         return this.documentViewService.getDocumentView(updateMemorandum);
     }
 
+    @Override
+    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+        Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
+        this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
+        List<TocItem> tocItems = this.structureContext.get().getTocItems();
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getId());
+
+        return new DocumentConfigResponse(
+                documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
+                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef()
+        );
+    }
+
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -359,6 +381,5 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
     }
-
 
 }

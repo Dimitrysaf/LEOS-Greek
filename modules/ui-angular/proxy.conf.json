@@ -2,5 +2,9 @@
   "/leos-pilot/api": {
     "target": "http://localhost:8080",
     "secure": false
+  },
+  "/leos-pilot/js/editor/core/templates": {
+    "target": "http://localhost:8080",
+    "secure": false
   }
 }

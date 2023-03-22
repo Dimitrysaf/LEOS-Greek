@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { coerceStringArray } from '@angular/cdk/coercion';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  combineLatestWith,
   distinctUntilChanged,
+  filter,
   map,
+  mergeMap,
   Observable,
   of,
   Subject,
@@ -18,7 +20,9 @@ import {
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
+import { LeosAppConfig } from '@/shared';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -669,7 +673,7 @@ const params = {
             </level>`,
   docType: 'annex',
   instanceType: 'OS',
-  alternatives: null,
+  alternatives: '',
   levelItemVo:
     '{"id":"_body_level_1","levelNum":"1.","levelDepth":1,"origin":null,"children":[{"id":"_body_level_1_1","levelNum":"1.1.","levelDepth":2,"origin":null,"children":[]}]}',
   isClonedProposal: false,
@@ -698,43 +702,9 @@ export class CKEditorService implements OnDestroy {
     getParentId: () => 123,
     getElement: (...args) => document.getElementById('docContainer'),
     getState: () => ({
-      instanceType: 'OS',
-      isImplicitSaveEnabled: true,
-      isSpellCheckerEnabled: false,
-      spellCheckerServiceUrl:
-        'https://webgate.acceptance.ec.testa.eu/qas/spellcheck',
-      spellCheckerSourceUrl:
-        'https://webgate.acceptance.ec.testa.eu/qas/static/wscbundle/wscbundle.js',
-      tocItemsJsonArray: JSON.stringify(tocItemsList),
-      numberingConfigsJsonArray: JSON.stringify(numberingConfigsJsonArray),
-      listNumberConfigJsonArray: JSON.stringify(listNumberConfigJsonArray),
-      articleTypesConfigJsonArray: '{}',
-      alternateConfigsJsonArray: 'null',
-      documentsMetadataJsonArray: JSON.stringify(documentsMetadataJsonArray),
-      documentRef: 'annex_1',
-      user: {
-        entity: 'DGT',
-        login: 'jane',
-        roles: ['SUPPORT', 'USER'],
-      },
-      permissions: [
-        'CAN_SEE_ALL_DOCUMENTS',
-        'CAN_SEE_SOURCE',
-        'CAN_DOWNLOAD_PROPOSAL',
-        'CAN_DELETE',
-        'CAN_MARK_TREATED',
-        'CAN_UPLOAD',
-        'CAN_COMMENT',
-        'CAN_UPDATE',
-        'CAN_RESTORE_PREVIOUS_VERSION',
-        'CAN_ADD_REMOVE_COLLABORATION',
-        'CAN_SUGGEST',
-        'CAN_DOWNLOAD_XML_COMPARISON',
-        'CAN_MERGE_SUGGESTION',
-        'CAN_CREATE_MILESTONE',
-        'CAN_READ',
-        'CAN_EXPORT_LW',
-      ],
+      ...this.leosStateBS.value,
+      instanceType: process.env.NG_APP_LEOS_INSTANCE,
+      alternateConfigsJsonArray: JSON.stringify('[]'),
     }),
     editElementAction: (data: {
       action: string;
@@ -769,8 +739,8 @@ export class CKEditorService implements OnDestroy {
             res.elementId,
             res.elementTagName,
             res.element,
-            docType,
-            instanceType,
+            documentType,
+            process.env.NG_APP_LEOS_INSTANCE,
             alternatives,
             JSON.stringify(res.levelItem),
             isClonedProposal,
@@ -880,12 +850,24 @@ export class CKEditorService implements OnDestroy {
   };
 
   private destroy$ = new Subject<void>();
+  private leosStateBS = new BehaviorSubject<any | null>(null);
 
   constructor(
     private leosLegacyService: LeosLegacyService,
     private http: HttpClient,
     private documentService: DocumentService,
-  ) {}
+    private appConfig: AppConfigService,
+  ) {
+    this.appConfig.config
+      .pipe(
+        combineLatestWith(this.getConnectorExtraConfig()),
+        mergeMap(([config, extraConfig]) => of({ ...config, ...extraConfig })),
+      )
+      .subscribe((c) => {
+        console.log(c);
+        this.renameConfigKeysForEditor(c);
+      });
+  }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -1132,6 +1114,7 @@ export class CKEditorService implements OnDestroy {
       { elementContent },
     );
   }
+
   private getResizeObserver() {
     if (!this.resizeObserver) {
       const fireResizeListeners = (el: Element) =>
@@ -1142,5 +1125,70 @@ export class CKEditorService implements OnDestroy {
       this.resizeObserver = new ResizeObserver(callback);
     }
     return this.resizeObserver;
+  }
+
+  private getConnectorExtraConfig() {
+    return this.documentService.documentId$.pipe(
+      takeUntil(this.destroy$),
+      filter((x) => x !== null),
+      combineLatestWith(this.documentService.documentCategory$),
+      mergeMap(([documentRef, documentType]) =>
+        this.http.get<any>(
+          `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
+        ),
+      ),
+    );
+  }
+
+  private renameConfigKeysForEditor(config: any) {
+    //toc-items
+    Object.defineProperty(
+      config,
+      'tocItemsJsonArray',
+      Object.getOwnPropertyDescriptor(config, 'tocItems'),
+    );
+    const tocArray = config.tocItems;
+    config.tocItemsJsonArray = JSON.stringify(tocArray);
+    delete config['tocItems'];
+
+    //numberingConfigsJsonArray
+    Object.defineProperty(
+      config,
+      'numberingConfigsJsonArray',
+      Object.getOwnPropertyDescriptor(config, 'numberingConfig'),
+    );
+    const numConfigArray = config.numberingConfig;
+    config.numberingConfigsJsonArray = JSON.stringify(numConfigArray);
+    delete config['numberingConfig'];
+
+    //listNumberConfigJsonArray
+    const tmplistNumberConfigJsonArray = config.listNumberConfigJsonArray;
+    config.listNumberConfigJsonArray = JSON.stringify(
+      tmplistNumberConfigJsonArray,
+    );
+
+    //articleTypesConfig
+    Object.defineProperty(
+      config,
+      'articleTypesConfigJsonArray',
+      Object.getOwnPropertyDescriptor(config, 'articleTypesConfig'),
+    );
+    const articleTypesConfigObj = config.articleTypesConfig;
+    config.articleTypesConfigJsonArray = JSON.stringify(articleTypesConfigObj);
+    delete config['articleTypesConfig'];
+
+    //documentsMetadata
+    Object.defineProperty(
+      config,
+      'documentsMetadataJsonArray',
+      Object.getOwnPropertyDescriptor(config, 'documentsMetadata'),
+    );
+    const documentsMetadataJsonArrayVal = config.documentsMetadata;
+    config.documentsMetadataJsonArray = JSON.stringify(
+      documentsMetadataJsonArrayVal,
+    );
+    delete config['documentsMetadata'];
+
+    this.leosStateBS.next(config);
   }
 }
