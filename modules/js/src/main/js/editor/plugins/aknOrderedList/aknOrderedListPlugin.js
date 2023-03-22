@@ -38,6 +38,7 @@ define(function aknOrderedListPluginModule(require) {
         init: function init(editor) {
             numberModule.init(editor);
             editor.on("beforeAknIndentList", _resetDataNumOnIndent);
+            editor.on("toDataFormat", _checkLists, null, null, 0);
             editor.on("change", resetDataAknNameForOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
             editor.on("change", _startObservingAllLists);
@@ -58,6 +59,13 @@ define(function aknOrderedListPluginModule(require) {
             LOCAL_MAX_LEVEL_LIST =  leosPluginUtils.getMaxListLevel(editor);
         }
     };
+
+    function _checkLists(event) {
+        var newDiv = new CKEDITOR.dom.element('div')
+        newDiv.appendHtml(event.data.dataValue);
+        leosPluginUtils.checkLists(newDiv);
+        event.data.dataValue = newDiv.getHtml();
+    }
 
     function _onEnterKey(context) {
         var selection = context.event.editor.getSelection();
@@ -335,6 +343,7 @@ define(function aknOrderedListPluginModule(require) {
                         listItems[jj].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     }
                 }
+                leosPluginUtils.checkPointsInList(orderedList);
             }
 
         }
