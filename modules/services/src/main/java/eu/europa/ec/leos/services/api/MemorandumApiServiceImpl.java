@@ -18,6 +18,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -59,6 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -249,18 +251,38 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
-        return new byte[0];
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+
+        Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(memorandum), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(memorandum),
+                event.getSearchText(),
+                event.getReplaceText(),
+                searchMatchVOS);
+
+        return updatedContent;
     }
 
     @Override
-    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
-        return new byte[0];
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
+        Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(memorandum), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(memorandum),
+                event.getSearchText(),
+                event.getReplaceText(),
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+
+        return updatedContent;
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
-        return null;
+        Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
+        Memorandum updateMemorandum = memorandumService.updateMemorandum(memorandum, event.getUpdatedContent().getBytes(),
+                VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
+        return this.documentViewService.getDocumentView(updateMemorandum);
     }
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {

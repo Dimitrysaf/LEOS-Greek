@@ -27,6 +27,7 @@ public class ElementMatchVO {
         this.matchStartIndex = matchStartIndex;
         this.isEditable = isEditable;
     }
+
     public String getElementId() {
         return elementId;
     }

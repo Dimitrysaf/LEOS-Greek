@@ -39,11 +39,16 @@ export class DocumentSearchComponent implements OnDestroy {
   }
 
   setReplaceText(event: Event) {
-    this.replaceText = (event.target as HTMLInputElement).value;
+    const replaceText = (event.target as HTMLInputElement).value;
+    this.replaceText = replaceText;
+    this.doc.setSearchAndReplaceText(replaceText);
   }
 
   toggleReplace(isReplace = !this.isReplace) {
     this.isReplace = isReplace;
+    if (!this.isReplace) {
+      this.doc.setSearchAndReplaceText('');
+    }
   }
 
   private getFormValues(): DocumentSearchParams {

@@ -13,13 +13,12 @@
  */
 package eu.europa.ec.leos.services.request;
 
-import eu.europa.ec.leos.domain.vo.SearchMatchVO;
-
 public class ReplaceMatchRequest {
     private String documentRef;
     private String searchText;
     private String replaceText;
-    private SearchMatchVO searchMatchVO;
+    private boolean caseSensitive;
+    private boolean completeWords;
     private int matchIndex;
 
     public String getDocumentRef() {
@@ -47,12 +46,20 @@ public class ReplaceMatchRequest {
         this.replaceText = replaceText;
     }
 
-    public SearchMatchVO getSearchMatchVO() {
-        return searchMatchVO;
+    public boolean isCaseSensitive() {
+        return caseSensitive;
     }
 
-    public void setSearchMatchVO(SearchMatchVO searchMatchVO) {
-        this.searchMatchVO = searchMatchVO;
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public boolean isCompleteWords() {
+        return completeWords;
+    }
+
+    public void setCompleteWords(boolean completeWords) {
+        this.completeWords = completeWords;
     }
 
     public int getMatchIndex() {

@@ -8,7 +8,7 @@ public class SearchMatchVO {
     private List<ElementMatchVO> matchedElements;
     private boolean replaceable;
 
-    public SearchMatchVO(){
+    public SearchMatchVO() {
     }
 
     public SearchMatchVO(List<ElementMatchVO> matchedElements, boolean replaceable) {

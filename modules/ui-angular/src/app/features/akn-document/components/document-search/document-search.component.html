@@ -105,24 +105,14 @@
       </div>
     </div>
     <div class="replace-controls eui-u-flex app-u-gap-m">
-      <button
-        euiButton
-        euiOutline
-        euiPrimary
-        (click)="doc.searchReplace(replaceText)"
-      >
+      <button euiButton euiOutline euiPrimary (click)="doc.searchReplace()">
         <span
           euiLabel
           translate="page.editor.search.replace-button.label"
         ></span>
       </button>
 
-      <button
-        euiButton
-        euiOutline
-        euiPrimary
-        (click)="doc.searchReplaceAll(replaceText)"
-      >
+      <button euiButton euiOutline euiPrimary (click)="doc.searchReplaceAll()">
         <span
           euiLabel
           translate="page.editor.search.replaceAll-button.label"

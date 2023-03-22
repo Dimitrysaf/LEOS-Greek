@@ -13,15 +13,13 @@
  */
 package eu.europa.ec.leos.services.request;
 
-import eu.europa.ec.leos.domain.vo.SearchMatchVO;
-
-import java.util.List;
-
 public class ReplaceAllMatchRequest {
     private String documentRef;
     private String searchText;
     private String replaceText;
-    private List<SearchMatchVO> searchMatchVOs;
+    private boolean caseSensitive;
+    private boolean completeWords;
+
 
     public String getDocumentRef() {
         return documentRef;
@@ -47,11 +45,19 @@ public class ReplaceAllMatchRequest {
         this.replaceText = replaceText;
     }
 
-    public List<SearchMatchVO> getSearchMatchVOs() {
-        return searchMatchVOs;
+    public boolean isCaseSensitive() {
+        return caseSensitive;
     }
 
-    public void setSearchMatchVOs(List<SearchMatchVO> searchMatchVOs) {
-        this.searchMatchVOs = searchMatchVOs;
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public boolean isCompleteWords() {
+        return completeWords;
+    }
+
+    public void setCompleteWords(boolean completeWords) {
+        this.completeWords = completeWords;
     }
 }

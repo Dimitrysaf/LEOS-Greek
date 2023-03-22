@@ -29,6 +29,7 @@ import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { apiBaseUrl } from '../../../config';
 import { DocumentViewResponse } from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
+import { SearchMatchVO } from '../models/search.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
 
 @Injectable({
@@ -38,7 +39,7 @@ export class DocumentService implements OnDestroy {
   documentCategory$: Observable<string | null>;
   annotationsEnabled$: Observable<boolean>;
   compareModeEnabled$: Observable<boolean>;
-  documentId$: Observable<string>;
+  documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
   versionView$: Observable<DocumentViewResponse | null>;
   versionCompareView$: Observable<string | null>;
@@ -53,10 +54,12 @@ export class DocumentService implements OnDestroy {
   recentChanges$: Observable<any[]>;
   versionId$: Observable<string | null>;
   versionCompareIds$: Observable<any | null>;
-  searchResultIndexArray: string[];
-  focusedSearchResult: string;
+  searchResultIndexArray: any[];
+  focusedSearchResult: any | null;
+  currentSearchResults: Array<SearchMatchVO>;
   versionSearchParams$: Observable<VersionSearchParams>;
   versionFilter$: Observable<string>;
+  documentReplaceView$: Observable<DocumentViewResponse | null>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
 
@@ -81,8 +84,13 @@ export class DocumentService implements OnDestroy {
     author: '',
   });
   private versionFilterBS = new BehaviorSubject<string>('All');
+  private searchAndReplaceTextBS = new BehaviorSubject<string>('');
+  private documentReplaceVieBS =
+    new BehaviorSubject<DocumentViewResponse | null>(null);
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
+
+  private updatedContentToSaveAfterReplace: string = null;
 
   private destroy$ = new Subject<void>();
 
@@ -104,6 +112,7 @@ export class DocumentService implements OnDestroy {
       combineLatestWith(this.documentCategory$),
       switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
     );
+    // this.documentView$ = this.documentReplaceView$.pipe();
 
     this.annotationsEnabled$ = this.annotationsEnabledBS.asObservable();
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
@@ -207,7 +216,6 @@ export class DocumentService implements OnDestroy {
   }
 
   download() {
-    const documentType = this.documentCategoryBS.value;
     const documentRef = this.documentIdBS.value;
     let versionId = '';
     this.versions$
@@ -215,7 +223,7 @@ export class DocumentService implements OnDestroy {
       .subscribe((versionArray) => (versionId = versionArray[0].documentId));
 
     this.http
-      .get(`${apiBaseUrl}/secured/${documentType}/${documentRef}`, {
+      .get(`${apiBaseUrl}/secured/${this.documentType}/${documentRef}`, {
         params: { versionId },
       })
       .subscribe((data: DocumentViewResponse) => {
@@ -246,8 +254,8 @@ export class DocumentService implements OnDestroy {
 
   saveVersion(requestBody: any) {
     return this.saveDocumentVersionWithData(
-      this.documentCategoryBS.value,
-      this.documentIdBS.value,
+      this.documentType,
+      this.documentRef,
       requestBody,
     );
   }
@@ -275,16 +283,86 @@ export class DocumentService implements OnDestroy {
     }
   }
 
-  searchReplace(text: string) {
-    console.warn('stub:', 'searchReplace', text); // FIXME
+  searchReplace() {
+    const currentIndex = this.searchResultIndexArray.indexOf(
+      this.focusedSearchResult,
+    );
+    this.http
+      .put<any>(
+        `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/replace-one`,
+        {
+          documentRef: this.documentRef,
+          searchText: this.searchParamsBS.value.searchText,
+          replaceText: this.searchAndReplaceTextBS.value,
+          caseSensitive: this.searchParamsBS.value.matchCase,
+          completeWords: this.searchParamsBS.value.wholeWords,
+          matchIndex: currentIndex,
+        },
+        { responseType: 'text' as 'json' },
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.updatedContentToSaveAfterReplace = res;
+      });
+    if (
+      currentIndex >= 0 &&
+      currentIndex < this.searchResultIndexArray.length
+    ) {
+      this.document.getElementById(this.focusedSearchResult.id).innerText =
+        this.searchAndReplaceTextBS.value;
+      if (currentIndex < this.searchResultIndexArray.length - 1) {
+        this.scrollToElement(this.searchResultIndexArray[currentIndex + 1]);
+      }
+    }
   }
 
-  searchReplaceAll(text: string) {
-    console.warn('stub:', 'searchReplaceAll', text); // FIXME
+  searchReplaceAll() {
+    this.http
+      .put<any>(
+        `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/replace-all`,
+        {
+          documentRef: this.documentRef,
+          searchText: this.searchParamsBS.value.searchText,
+          replaceText: this.searchAndReplaceTextBS.value,
+          caseSensitive: this.searchParamsBS.value.matchCase,
+          completeWords: this.searchParamsBS.value.wholeWords,
+        },
+        { responseType: 'text' as 'json' },
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.updatedContentToSaveAfterReplace = res;
+      });
+    this.searchResultIndexArray.forEach((el, i) => {
+      this.document.getElementById(el.id).innerText =
+        this.searchAndReplaceTextBS.value;
+      if (i < this.searchResultIndexArray.length - 1) {
+        this.scrollToElement(this.searchResultIndexArray[i + 1]);
+      }
+    });
   }
 
   searchSave() {
-    console.warn('stub:', 'searchSave'); // FIXME
+    this.removeHighlights();
+    const updatedContent =
+      this.document.getElementById('docContainer').childNodes[0];
+
+    const xmlSerializer = new XMLSerializer();
+    let xmlContent = xmlSerializer.serializeToString(updatedContent);
+    xmlContent = xmlContent.replaceAll('id', 'xml:id');
+    const documentRef = this.documentIdBS.value;
+
+    this.http
+      .put<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${this.documentType}/${documentRef}/save-after-replace`,
+        {
+          documentRef,
+          updatedContent: this.updatedContentToSaveAfterReplace,
+        },
+      )
+      .subscribe((updateResult) => {
+        this.setDocumentId(this.documentRef);
+      });
   }
 
   searchSaveAndClose() {
@@ -314,6 +392,10 @@ export class DocumentService implements OnDestroy {
     });
   }
 
+  setSearchAndReplaceText(text: string) {
+    this.searchAndReplaceTextBS.next(text);
+  }
+
   setVersionSearchParams(values: Partial<VersionSearchParams>) {
     this.versionSearchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.versionSearchParamsBS.next({ ...oldVal, ...values });
@@ -331,6 +413,7 @@ export class DocumentService implements OnDestroy {
   setVersionFilter(filterValue: string) {
     this.versionFilterBS.next(filterValue);
   }
+
   toggleAnnotations(enabled?: boolean) {
     this.toggleSubject(this.annotationsEnabledBS, enabled);
   }
@@ -351,6 +434,13 @@ export class DocumentService implements OnDestroy {
   }
 
   toggleSearchPane(open?: boolean) {
+    if (!open) {
+      this.removeHighlights();
+    }
+    this.searchResultIndexArray = [];
+    this.currentSearchResults = [];
+    this.focusedSearchResult = null;
+    // this.setSearchParams({ searchText: '' });
     this.toggleSubject(this.searchPaneOpenBS, open);
   }
 
@@ -372,8 +462,6 @@ export class DocumentService implements OnDestroy {
       .subscribe((r) => {
         this.setDocumentId(documentRef);
       });
-
-    console.warn('stub:', 'versionRevert', versionNumber); // FIXME
   }
 
   versionView(versionNumber: string) {
@@ -496,19 +584,22 @@ export class DocumentService implements OnDestroy {
   }
 
   private doSearch(parameters: DocumentSearchParams) {
-    const documentType =
-      this.documentCategoryBS.value === 'coverpage'
-        ? 'coverPage'
-        : this.documentCategoryBS.value;
-    const documentRef = this.documentIdBS.value;
-    this.http
-      .get(`api/secured/${documentType}/${documentRef}/search-text`, {
-        params: parameters,
-      })
-      .subscribe((results: any[]) => {
-        this.highlightSearchResults(results);
-        this.scrollToElement(this.searchResultIndexArray[0]);
-      });
+    if (parameters.searchText !== '') {
+      const documentRef = this.documentIdBS.value;
+      this.currentSearchResults = [];
+      this.http
+        .get<SearchMatchVO[]>(
+          `${apiBaseUrl}/secured/${this.documentType}/${documentRef}/search-text`,
+          {
+            params: parameters,
+          },
+        )
+        .subscribe((results) => {
+          this.currentSearchResults = results;
+          this.highlightSearchResults(results);
+          this.scrollToElement(this.searchResultIndexArray[0]);
+        });
+    }
   }
 
   private toggleSubject(subj: Subject<boolean>, value?: boolean) {
@@ -564,7 +655,10 @@ export class DocumentService implements OnDestroy {
             const wrapper2 = document.createElement('span');
             const wrapperId2 = 'result-' + (index + 1);
             wrapper2.id = wrapperId2;
-            this.searchResultIndexArray.push(wrapper2.id);
+            this.searchResultIndexArray.push({
+              id: wrapper2.id,
+              resultArrayIndex: index + 1,
+            });
             wrapper2.classList.add('search-result');
             range2.surroundContents(wrapper2);
             multipleInstances = true;
@@ -572,7 +666,10 @@ export class DocumentService implements OnDestroy {
           const wrapper = document.createElement('span');
           const wrapperId = 'result-' + index;
           wrapper.id = wrapperId;
-          this.searchResultIndexArray.push(wrapper.id);
+          this.searchResultIndexArray.push({
+            id: wrapper.id,
+            resultArrayIndex: index,
+          });
           wrapper.classList.add('search-result');
           range.surroundContents(wrapper);
         }
@@ -582,7 +679,7 @@ export class DocumentService implements OnDestroy {
 
   private removeHighlights() {
     this.searchResultIndexArray = [];
-    this.focusedSearchResult = '';
+    this.focusedSearchResult = null;
     this.document.querySelectorAll('.search-result').forEach((el) => {
       const p = el.parentNode;
       el.replaceWith(...el.childNodes);
@@ -590,9 +687,9 @@ export class DocumentService implements OnDestroy {
     });
   }
 
-  private scrollToElement(id: string) {
-    this.focusedSearchResult = id;
-    const targetElement = document.getElementById(id);
+  private scrollToElement(searchObj: any) {
+    this.focusedSearchResult = searchObj;
+    const targetElement = document.getElementById(searchObj.id);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -648,6 +745,12 @@ export class DocumentService implements OnDestroy {
     } else {
       return this.findClosestParentByClass(node.parentElement, searchByClass);
     }
+  }
+
+  get documentType() {
+    return this.documentCategoryBS.value === 'coverpage'
+      ? 'coverPage'
+      : this.documentCategoryBS.value;
   }
 
   private getCollaborators(proposalRef: string) {

@@ -288,25 +288,26 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Annex annex = annexService.findAnnexByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(annex), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         byte[] updatedContent = searchService.replaceText(
                 getContent(annex),
                 event.getSearchText(),
                 event.getReplaceText(),
-                event.getSearchMatchVOs());
+                searchMatchVOS);
         return updatedContent;
     }
 
     @Override
-    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
-
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(annex), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         byte[] updatedContent = searchService.replaceText(
                 getContent(annex),
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(event.getSearchMatchVO()));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
 
         return updatedContent;
     }
@@ -315,7 +316,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
 
-        Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent(),
+        Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         return this.documentViewService.getDocumentView(updateAnnex);
     }

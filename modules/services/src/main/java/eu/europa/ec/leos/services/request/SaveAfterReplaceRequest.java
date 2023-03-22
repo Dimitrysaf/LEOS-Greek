@@ -2,7 +2,7 @@ package eu.europa.ec.leos.services.request;
 
 public class SaveAfterReplaceRequest {
     private String documentRef;
-    private byte[] updatedContent;
+    private String updatedContent;
 
     public String getDocumentRef() {
         return documentRef;
@@ -12,11 +12,11 @@ public class SaveAfterReplaceRequest {
         this.documentRef = documentRef;
     }
 
-    public byte[] getUpdatedContent() {
+    public String getUpdatedContent() {
         return updatedContent;
     }
 
-    public void setUpdatedContent(byte[] updatedContent) {
+    public void setUpdatedContent(String updatedContent) {
         this.updatedContent = updatedContent;
     }
 

@@ -286,7 +286,7 @@
   "page.error.forbidden.home": " Go to Home",
   "page.error.forbidden.title": " 403 | Forbidden",
   "page.error.unathorized.home": " Go to Home",
-  "page.error.unathorized.title": "401 | Unathroized",
+  "page.error.unathorized.title": "401 | Unauthorized",
   "page.error.page-not-found.home": " Go to Home",
   "page.error.page-not-found.tilte": "404 | Page not found"
 }
