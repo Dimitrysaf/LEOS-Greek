@@ -292,6 +292,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                     || tagValue.equals(INDENT)
                     || tagValue.equalsIgnoreCase(CROSSHEADING)
                     || child.isMovedOnEmptyParent()
+                    || content.isEmpty()
                     || (tagValue.equals(LIST)
                     && (!content.isEmpty()  && child.getChildItemsView().size() > 0
                     && getTagValueFromTocItemVo(child.getChildItemsView().get(0)).equals(SUBPARAGRAPH)));
@@ -494,10 +495,15 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 pointChildrenNode.addAll(XercesUtils.getChildren(node));
             } else {
                 pointChildrenNode.add(extractOrBuildNumElement(node, tocVo));
-                pointChildrenNode.add(convertToSubPoint(tocItems, node, tocVo, user));
-                if (newNode.getChildNodes().getLength() > 0 && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(LIST)
+                Node content = node != null ? getFirstChild(node, CONTENT) : null;
+                if(content != null) {
+                	pointChildrenNode.add(convertToSubPoint(tocItems, node, tocVo, user));
+                }
+                if (newNode.getChildNodes().getLength() > 0 
+                		&& !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(LIST)
                         && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(CROSSHEADING)
-                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(SUBPARAGRAPH)) {
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(SUBPARAGRAPH)
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(CONTENT)) {
                     pointChildrenNode.add(wrapWithList(newNode, tocVo, user));
                 } else {
                     pointChildrenNode.addAll(XercesUtils.getChildren(newNode));
