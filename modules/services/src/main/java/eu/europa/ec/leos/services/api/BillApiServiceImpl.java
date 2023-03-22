@@ -18,6 +18,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
@@ -216,18 +217,37 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
-        return new byte[0];
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+        Bill bill = this.billService.findBillByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(bill), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(bill),
+                event.getSearchText(),
+                event.getReplaceText(),
+                searchMatchVOS);
+
+        return updatedContent;
     }
 
     @Override
-    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
-        return new byte[0];
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
+        Bill bill = this.billService.findBillByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(bill), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(bill),
+                event.getSearchText(),
+                event.getReplaceText(),
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+
+        return updatedContent;
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
-        return null;
+        Bill bill = this.billService.findBillByRef(event.getDocumentRef());
+        String comment = messageHelper.getMessage("operation.search.replace.updated");
+        Bill updateBill = billService.updateBill(bill, event.getUpdatedContent().getBytes(), comment);
+        return this.documentViewService.getDocumentView(updateBill);
     }
 
     @Override

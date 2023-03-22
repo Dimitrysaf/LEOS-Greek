@@ -70,9 +70,9 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     byte[] downloadXmlVersionFiles(String documentRef, String versionId);
 
-    byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event);
+    byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception;
 
-    byte[] replaceOneTextInDocument(ReplaceMatchRequest event);
+    byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception;
 
     DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event);
 

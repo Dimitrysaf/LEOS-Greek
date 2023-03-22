@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -270,18 +271,37 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) {
-        return new byte[0];
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+        Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(proposal), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(proposal),
+                event.getSearchText(),
+                event.getReplaceText(),
+                searchMatchVOS);
+
+        return updatedContent;
     }
 
     @Override
-    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) {
-        return new byte[0];
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
+        Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(proposal), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] updatedContent = searchService.replaceText(
+                getContent(proposal),
+                event.getSearchText(),
+                event.getReplaceText(),
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+
+        return updatedContent;
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
-        return null;
+        Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
+        Proposal updateProposal = proposalService.updateProposal(proposal, event.getUpdatedContent().getBytes(), VersionType.MINOR,
+                messageHelper.getMessage("operation.search.replace.updated"));
+        return documentViewService.getDocumentView(updateProposal);
     }
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {
