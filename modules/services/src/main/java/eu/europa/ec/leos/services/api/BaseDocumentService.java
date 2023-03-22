@@ -24,12 +24,19 @@ import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
+import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.vo.toc.Attribute;
+import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.http.MethodNotSupportedException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface BaseDocumentService<T extends XmlDocument> {
     String getElement(String documentRef, String elementName, String elementId);
@@ -75,5 +82,22 @@ public interface BaseDocumentService<T extends XmlDocument> {
     byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception;
 
     DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event);
+
+    DocumentConfigResponse getDocumentConfig(String documentRef);
+
+    default Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
+        Map<String, Attribute> articleTypesAttributes = new HashMap<>();
+        List<TocItemType> tocItemTypes = StructureConfigUtils.getTocItemTypesByTagName(tocItems, XmlHelper.ARTICLE);
+        tocItemTypes.forEach(tocItemType -> {
+            Attribute attribute = tocItemType.getAttribute();
+            if (attribute == null) {
+                attribute = new Attribute();
+                attribute.setAttributeName("");
+                attribute.setAttributeValue("");
+            }
+            articleTypesAttributes.put(tocItemType.getName().name(), attribute);
+        });
+        return articleTypesAttributes;
+    }
 
 }

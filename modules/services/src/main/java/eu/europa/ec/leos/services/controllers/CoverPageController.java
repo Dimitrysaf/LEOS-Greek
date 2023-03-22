@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
+import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -306,7 +307,7 @@ public class CoverPageController {
             return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
@@ -343,6 +344,18 @@ public class CoverPageController {
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
             return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef) {
+        try {
+            DocumentConfigResponse view = this.coverPageApiService.getDocumentConfig(documentRef);
+            return ResponseEntity.ok().body(view);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while getting document config  - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
