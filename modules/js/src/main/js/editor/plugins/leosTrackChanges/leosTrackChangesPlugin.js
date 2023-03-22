@@ -25,6 +25,9 @@ define(function leosTrackChangesPluginModule(require) {
     var trackChangesEnabled;
     var defaultTrackChangesEditorStyle;
 
+    // Track changes editor selector
+    const editorTcSelector = "div#docContainer akomantoso span[data-akn-name='trackchanges']";
+
     // Track changes names and element types
     const TRACKCHANGE_ELEMENT = "span";
     const ACTION_ATTR = "data-akn-action";
@@ -38,7 +41,7 @@ define(function leosTrackChangesPluginModule(require) {
     const CARET_START = false;
     const CARET_END = true;
 
-    //TC Locations / Where the TC is found
+    // TC Locations / Where the TC is found
     const CURRENT = "current";
     const PARENT = "parent";
 
@@ -63,7 +66,7 @@ define(function leosTrackChangesPluginModule(require) {
                 // Initialize toggle display
                 trackChangesVisible = true;
                 trackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
-                defaultTrackChangesEditorStyle = $("head #trackChangesEditorStyle");
+                defaultTrackChangesEditorStyle = $("head #editorTcStyle");
 
                 let editable = editor.editable();
 
@@ -109,7 +112,7 @@ define(function leosTrackChangesPluginModule(require) {
 
     function addToggleDisplay(editor, path) {
         editor.ui.addButton("toggleDisplay", {
-            label: "Toggle display of the Track Changes",
+            label: "Toggle track changes display",
             icon: path + "icons/display.png",
             command: "toggleDisplayCommand",
             toolbar: "trackChanges",
@@ -120,11 +123,13 @@ define(function leosTrackChangesPluginModule(require) {
             exec: function(editor) {
                 trackChangesVisible = !trackChangesVisible;
                 this.setState(trackChangesVisible ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
-                $("head #trackChangesEditorStyle").remove();
+                $("head #editorTcStyle").remove();
                 if (trackChangesVisible) {
                     $("head").prepend(defaultTrackChangesEditorStyle);
                 } else {
-                    $("head").prepend("<style id='trackChangesEditorStyle'>div#docContainer akomantoso span[data-akn-name='trackchanges'][data-akn-action='delete'] { display: none }</style>");
+                    let editorTcStyle = editorTcSelector + "[data-akn-action='insert'] { text-decoration: none; }\n";
+                    editorTcStyle += editorTcSelector + "[data-akn-action='delete'] { display: none; }\n";
+                    $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
                 }
             }
         });
@@ -318,7 +323,6 @@ define(function leosTrackChangesPluginModule(require) {
             "data-akn-status" : NEW_STATUS,
             "data-akn-action": action,
             "data-akn-uid": user[1],
-            "data-akn-uname": user[0],
             "title": user[0] + " : " + getDateFormat()
         };
         return tcAttributes;
@@ -382,9 +386,6 @@ define(function leosTrackChangesPluginModule(require) {
         }, {
             akn : "leos:uid",
             html : "data-akn-uid"
-        }, {
-            akn : "leos:uname",
-            html : "data-akn-uname"
         }, {
             akn : "leos:title",
             html : "title"
