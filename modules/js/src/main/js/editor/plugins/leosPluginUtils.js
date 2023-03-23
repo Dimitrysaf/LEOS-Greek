@@ -60,6 +60,7 @@ define(function leosPluginUtilsModule(require) {
     var CN = "cn";
     var REFERS_TO = "refersto";
     var INP = "~_INP";
+    var WRP = "~_WRP";
 
     var NUMBERED_ITEM = "point, indent, paragraph";
     var UNUMBERED_ITEM = "alinea, subparagraph";
@@ -184,7 +185,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isListIntroAndFirstSubparaOfPointOrPara(element) {
-        return _isListIntro(element) && !(element.getParent().getPrevious());
+        return _isListIntro(element) && !(element.getParent().getPrevious(liOrp));
     }
 
     function _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara(element) {
@@ -194,7 +195,7 @@ define(function leosPluginUtilsModule(require) {
     function _isListIntro(element) {
         if (!!element
             && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
-            && element.getParent().getFirst().equals(element)) {
+            && element.getParent().getFirst(liOrp).equals(element)) {
             return _isSubparagraph(element);
         }
     }
@@ -202,11 +203,16 @@ define(function leosPluginUtilsModule(require) {
     function _isListEnding(element) {
         if (!!element
             && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
-            && element.getParent().getLast().equals(element)
-            && !element.getParent().getFirst().equals(element)) {
+            && element.getParent().getLast(liOrp).equals(element)
+            && !element.getParent().getFirst(liOrp).equals(element)) {
             return _isSubparagraph(element);
         }
     }
+
+    function liOrp( node ) {
+        return node instanceof CKEDITOR.dom.element && (node.is(HTML_SUB_POINT) || node.is(HTML_POINT));
+    }
+
 
     function _moveChildren(source, target) {
         if ( !source || !target )
@@ -332,6 +338,81 @@ define(function leosPluginUtilsModule(require) {
             var list = lists.getItem(i);
             if ((_isOrderedAnnexList(list) || _isOrderedList(list)) && _isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
                 _moveChildrenToParent(list);
+            }
+        }
+    }
+
+    // Check lists: are the lists well formed about intros and wrappers,
+    function _checkLists(element) {
+        var lists = element.find('ol');
+        for (var i = 0; i < lists.count(); i++) {
+            var list = lists.getItem(i);
+            if (_isOrderedAnnexList(list) || _isOrderedList(list)) {
+                _checkList(list);
+            }
+        }
+    }
+
+    // Check list: is the list well formed about intros and wrappers,
+    function _checkList(list) {
+        var listChildren = list.getChildren().toArray();
+        for (var j = 0; j < listChildren.length; j++) {
+            var listItem = listChildren[j];
+            if (liOrp(listItem)) {
+                // FIRST CASE: subparagraph in the middle of a list (not intro, not wrapper)
+                // We must split the list in two parts
+                if (_isSubparagraph(listItem) && !_isListIntro(listItem) && !_isListEnding(listItem)) {
+                    var newList = new CKEDITOR.dom.element('ol');
+                    if (_isOrderedAnnexList(list)) {
+                        newList.setAttribute(DATA_AKN_NAME, AKN_ORDERED_ANNEX_LIST);
+                    } else {
+                        newList.setAttribute(DATA_AKN_NAME, AKN_ORDERED_LIST);
+                    }
+                    newList.insertAfter(list);
+                    var $ = list.$
+                    var targetHtml = newList.$;
+                    var nextChildren = listChildren.splice(j);
+                    listItem.setAttribute(REFERS_TO, INP);
+                    for (var k = 0; k < nextChildren.length; k++) {
+                        targetHtml.appendChild($.removeChild(nextChildren[k].$));
+                    }
+                    _checkList(newList);
+                    break;
+                }
+                // SECOND CASE: this is not a subparagraph (not intro, not wrapper), remove "refersTo" attribute
+                if (!_isSubparagraph(listItem)) {
+                    listItem.removeAttribute(REFERS_TO);
+                }
+            }
+        }
+        // CHECK is possible to add intro in the list
+        if (_isSubparagraph(list.getPrevious()) && !_isListIntro(list.getFirst(liOrp))) {
+            list.getPrevious().renameNode(HTML_POINT);
+            list.getPrevious().setAttribute(REFERS_TO, INP);
+            list.getPrevious().insertBefore(list.getFirst());
+        }
+        // CHECK is possible to add wrapper in the list
+        if (_isSubparagraph(list.getNext()) && !_isListEnding(list.getLast(liOrp))) {
+            list.getNext().renameNode(HTML_POINT);
+            list.getNext().setAttribute(REFERS_TO, WRP);
+            list.getNext().insertAfter(list.getLast());
+        }
+        if (_isListContainsOnlySubparagraphsCrossheadingsOrEmpty(list)) {
+            _moveChildrenToParent(list);
+        }
+    }
+
+    // Check list: is the list well formed about attributes of points,
+    function _checkPointsInList(list) {
+        var ckList = new CKEDITOR.dom.element(list);
+        var listChildren = ckList.getChildren().toArray();
+        for (var j = 0; j < listChildren.length; j++) {
+            var listItem = listChildren[j];
+            if (liOrp(listItem)) {
+                // SECOND CASE: this is not a subparagraph (not intro, not wrapper), remove "refersTo" attribute
+                if (!_isSubparagraph(listItem)) {
+                    listItem.removeAttribute(REFERS_TO);
+                }
             }
         }
     }
@@ -1238,6 +1319,8 @@ define(function leosPluginUtilsModule(require) {
         isIntroInPath: _isIntroInPath,
         isIntro: _isIntro,
         selectCorrectElementForList: _selectCorrectElementForList,
+        checkLists: _checkLists,
+        checkPointsInList: _checkPointsInList,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
