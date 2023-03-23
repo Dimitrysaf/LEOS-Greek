@@ -19,7 +19,7 @@ define(function testAknAuthorialNotePlugin(require) {
     describe(
         "Unit tests for plugins/aknAuthorialNote",
         function() {
-            var transformationConfigForAknAuthorialNote = '{"akn":"authorialNote","html":"span[class=authorialnote]","attr":[{"html":"class=authorialnote"},{"akn":"marker","html":"marker"},{"akn":"placement","html":"placement"},{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=aknAuthorialNote"}],"sub":{"akn":"mp","html":"span","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":[{"akn":"text","html":"span[title]"}]}}';
+            var transformationConfigForAknAuthorialNote = '{"akn":"authorialNote","html":"span[class=authorialnote]","attr":[{"html":"class=authorialnote"},{"akn":"marker","html":"marker"},{"akn":"placement","html":"placement"},{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=aknAuthorialNote"},{"akn":"leos:editable","html":"contenteditable"}],"sub":{"akn":"mp","html":"span","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":[{"akn":"text","html":"span[title]"}]}}';
 
             it("Tests if transformation config is valid.", function() {
                 expect(JSON.stringify(aknAuthorialNotePluginToTest.transformationConfig)).toEqual(transformationConfigForAknAuthorialNote);
