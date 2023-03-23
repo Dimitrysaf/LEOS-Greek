@@ -25,6 +25,7 @@ define(function aknLevelPluginModule(require) {
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var UNDERLINE = CKEDITOR.CTRL + 85;
     var BACKSPACE =  8;
+    var DELETE = 46;
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
         init : function init(editor) {
@@ -60,7 +61,7 @@ define(function aknLevelPluginModule(require) {
     };
     function _checkAndBlockCustom(e) {
         var editor = e.data[0];
-        if(e.keyCode === BACKSPACE){
+        if(e.keyCode === BACKSPACE  || e.keyCode === DELETE){
             var selection = editor.getSelection();
             var startElement = leosKeyHandler.getSelectedElement(selection);
             if (startElement) {
