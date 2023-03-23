@@ -298,6 +298,19 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
         return skipPointContent;
     }
+    
+    private boolean shouldConvertToSubparagraph(TableOfContentItemVO tocVo) {
+    	boolean shouldConvertToSubparagraph = false;
+    	List<TableOfContentItemVO> childList = tocVo.getChildItems();
+    	if (childList != null && !childList.isEmpty()) {
+            TableOfContentItemVO child = childList.get(0);
+            String tagValue = getTagValueFromTocItemVo(child);
+            shouldConvertToSubparagraph = child.isMovedOnEmptyParent() 
+            		|| tagValue.equals(POINT) || tagValue.equals(INDENT) || tagValue.equalsIgnoreCase(CROSSHEADING) || tagValue.equalsIgnoreCase(SUBPARAGRAPH)
+                    || (tagValue.equals(LIST) && (child.getChildItemsView().size() > 0 && getTagValueFromTocItemVo(child.getChildItemsView().get(0)).equals(SUBPARAGRAPH)));
+        }
+        return shouldConvertToSubparagraph;
+    }
 
     private Node extractOrBuildNumElement(Node node, TableOfContentItemVO tocVo) {
         Node numNode = XmlContentProcessorHelper.extractOrBuildNumElement(node, tocVo);
@@ -490,17 +503,28 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     private void buildPointContent(List<TocItem> tocItems, Node node, Node newNode, TableOfContentItemVO tocVo, User user) {
         if  (!hasTocItemSoftAction(tocVo, SoftActionType.TRANSFORM)) {
             List<Node> pointChildrenNode = new ArrayList<>();
-            if (!skipPointContent(tocVo)) {
+            List<Node> content = node != null ? XercesUtils.getChildren(node, CONTENT) : new ArrayList<>();
+            if (!content.isEmpty() && !shouldConvertToSubparagraph(tocVo)) {
                 pointChildrenNode.addAll(XercesUtils.getChildren(node));
             } else {
-                pointChildrenNode.add(extractOrBuildNumElement(node, tocVo));
-                pointChildrenNode.add(convertToSubPoint(tocItems, node, tocVo, user));
-                if (newNode.getChildNodes().getLength() > 0 && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(LIST)
+            	pointChildrenNode.add(extractOrBuildNumElement(node, tocVo));
+                if(!content.isEmpty()) {
+                	pointChildrenNode.add(convertToSubPoint(tocItems, node, tocVo, user));
+                }
+                if (newNode.getChildNodes().getLength() > 0) {
+                	if(!newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(LIST)
                         && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(CROSSHEADING)
-                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(SUBPARAGRAPH)) {
-                    pointChildrenNode.add(wrapWithList(newNode, tocVo, user));
-                } else {
-                    pointChildrenNode.addAll(XercesUtils.getChildren(newNode));
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(SUBPARAGRAPH)
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(CONTENT)
+                        && !newNode.getChildNodes().item(0).getNodeName().equalsIgnoreCase(NUM)) {
+                		pointChildrenNode.add(wrapWithList(newNode, tocVo, user));
+                	} else {
+                        for(Node child : XercesUtils.getChildren(newNode)) {
+                        	if(!child.getNodeName().equalsIgnoreCase(NUM)) {
+                        		pointChildrenNode.add(child);
+                        	}
+                        }
+                    }
                 }
             }
             newNode.setTextContent(EMPTY_STRING);
