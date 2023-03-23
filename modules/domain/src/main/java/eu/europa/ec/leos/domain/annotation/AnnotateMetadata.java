@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.ui.model;
+package eu.europa.ec.leos.domain.annotation;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;

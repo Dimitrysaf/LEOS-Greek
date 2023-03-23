@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.ui.event.metadata;
 
-import eu.europa.ec.leos.ui.model.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 
 import java.util.List;
 

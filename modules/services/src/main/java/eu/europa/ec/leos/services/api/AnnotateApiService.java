@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -11,18 +11,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.ui.event.metadata;
+
+package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
+import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.security.LeosPermission;
 
-public class DocumentMetadataResponse {
-    private final AnnotateMetadata metadata;
-    
-    public DocumentMetadataResponse(AnnotateMetadata metadata){
-        this.metadata = metadata;    
-    }
-    
-    public AnnotateMetadata getMetadata() {
-        return metadata;
-    }
+import java.util.List;
+
+public interface AnnotateApiService {
+
+    List<LeosPermission> requestUserPermissions(String documentRef, LeosCategory category);
+
+    String getAnnotationToken();
+
+    AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategory category);
+
 }
