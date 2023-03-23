@@ -20,10 +20,10 @@ export type AnnotateConnectorOptions = {
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
   target?: Element;
-  receiveUserPermissions?: (userPermissions: Permission[]) => void;
+  receiveUserPermissions?: (...userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
   receiveMergeSuggestion?: (result: MergeSuggestion) => void;
-  receiveMergeSuggestions?: (results: MergeSuggestion[]) => void;
+  receiveMergeSuggestions?: (...results: MergeSuggestion[]) => void;
   receiveDocumentMetadata?: (metadata: AnnotateMetadata) => void;
   receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
 
@@ -41,7 +41,11 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestUserPermissions(...args) {
-    this.receiveUserPermissions?.(this.options.permissions);
+    //the legacy file defaults behaviour is to first hide the suggestBtn and then after we have received the permissions from the request we check to display the btn
+    //for now we will emulate this "request being set" with timeout, and once we have the the requested api we will replace it
+    setTimeout(() => {
+      this.receiveUserPermissions?.(...this.options.permissions);
+    });
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
