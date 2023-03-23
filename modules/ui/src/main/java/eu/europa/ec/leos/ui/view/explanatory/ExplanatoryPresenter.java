@@ -108,7 +108,7 @@ import eu.europa.ec.leos.ui.event.toc.InlineTocEditRequestEvent;
 import eu.europa.ec.leos.ui.event.toc.RefreshTocEvent;
 import eu.europa.ec.leos.ui.event.toc.SaveTocRequestEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
-import eu.europa.ec.leos.ui.model.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.ui.model.AnnotationStatus;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;

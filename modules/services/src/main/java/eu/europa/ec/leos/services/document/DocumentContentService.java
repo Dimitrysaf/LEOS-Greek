@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
@@ -63,6 +64,8 @@ public interface DocumentContentService {
     boolean isProposalComparisonRequired(byte[] contentBytes);
 
     boolean isFinancialStatementComparisonRequired(byte[] contentBytes);
+
+    XmlDocument getDocument(String documentRef, LeosCategory category);
 
     String getDocumentAsHtml(XmlDocument xmlDocument, String contextPath, List<LeosPermission> permissions);
 

@@ -90,7 +90,7 @@ import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
 import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
-import eu.europa.ec.leos.ui.model.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.ui.model.AnnotationStatus;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;

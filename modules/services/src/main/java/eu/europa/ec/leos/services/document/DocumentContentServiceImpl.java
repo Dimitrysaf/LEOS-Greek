@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
@@ -174,6 +175,22 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         String originalDocumentEditableXml = getEditableXml(originalDocument, contextPath, securityContext,
                 coverPageContent != null && coverPageContent.length > 0 ? getCoverPageContent(originalDocument.getContent().get().getSource().getBytes()) : coverPageContent);
         return new String[]{currentDocumentEditableXml, originalDocumentEditableXml};
+    }
+
+    @Override
+    public XmlDocument getDocument(String documentRef, LeosCategory category) {
+        XmlDocument document = null;
+        switch (category) {
+            case BILL:
+                document = billService.findBillByRef(documentRef);
+                break;
+            case ANNEX:
+                document = annexService.findAnnexByRef(documentRef);
+                break;
+            default:
+                LOG.error("Invalid document type");
+        }
+        return document;
     }
 
     protected String getEditableXml(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext,
@@ -465,7 +482,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     public boolean isCouncilExplanatoryComparisonRequired(Explanatory explanatory, SecurityContext securityContext) {
         return securityContext.hasPermission(explanatory, LeosPermission.CAN_TOGGLE_LIVE_DIFFING) && explanatory.isLiveDiffingRequired();
     }
-    
+
     @Override
     public boolean isRevisionAnnex(XmlDocument xmlDocument) {
     	return xmlContentProcessor.isRevisionAnnex(xmlDocument.getContent().get().getSource().getBytes());

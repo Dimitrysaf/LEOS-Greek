@@ -89,7 +89,7 @@ import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;
 import eu.europa.ec.leos.ui.event.toc.InlineTocEditRequestEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
-import eu.europa.ec.leos.ui.model.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.ui.view.CommonDelegate;
 import eu.europa.ec.leos.web.event.component.CompareRequestEvent;
 import eu.europa.ec.leos.web.event.component.CleanComparedContentEvent;
