@@ -452,7 +452,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                 break;
             }
         } while (currentElement = currentElement.getParent());
-        
+
+        // element contains table and cursor is outside table
+        if(startElement.findOne('table') !== null){
+            return false;
+        }
         return true;
     };
 
