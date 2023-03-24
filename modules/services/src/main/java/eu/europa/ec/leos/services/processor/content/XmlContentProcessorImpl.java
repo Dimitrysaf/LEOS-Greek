@@ -253,8 +253,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private Node navigateToTocElement(TableOfContentItemVO tocVo, Node document) {
-        Node node = getFirstElementByName(document, tocVo.getTocItem().getAknTag().value());
-        return node;
+        return getFirstElementByName(document, tocVo.getTocItem().getAknTag().value());
     }
 
     protected abstract Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,

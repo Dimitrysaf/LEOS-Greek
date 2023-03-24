@@ -115,6 +115,7 @@ public class XmlHelper {
 
     public static final String ID = "id";
     public static final String XMLID = "xml:id";
+    public static final String LEOS_HTML_OL_ID_ATTR = "leos:listIdAttr";
     public static final String LEOS_REF = "leos:ref";
     public static final String INLINE_NUM = "crossHnum";
     public static final String INDENT_LEVEL_PROPERTY = "--indent-level";
@@ -183,8 +184,8 @@ public class XmlHelper {
     public static final String ORIENTATION_LANDSCAPE = "landscape";
     public static final String ORIENTATION_PORTRAIT = "portrait";
 
-    private static final String ID_PLACEHOLDER = "${id}";
-    private static final String ID_PLACEHOLDER_ESCAPED = "\\Q${id}\\E";
+    public static final String ID_PLACEHOLDER = "${id}";
+    public static final String ID_PLACEHOLDER_ESCAPED = "\\Q${id}\\E";
     private static final String NUM_PLACEHOLDER = "${num}";
     private static final String NUM_PLACEHOLDER_ESCAPED = "\\Q${num}\\E";
     private static final String HEADING_PLACEHOLDER = "${heading}";
@@ -321,7 +322,7 @@ public class XmlHelper {
     }
     
     private static String replaceContent(TocItem tocItem, Map<String, Map<String, String>> templateItems, StringBuilder template) {
-    	replaceAll(template, ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + tocItem.getAknTag().value(), 7));
+    	   replaceAll(template, ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + tocItem.getAknTag().value(), 7));
 
         replaceTemplateItems(template, NUM, tocItem.getItemNumber(), templateItems.get(NUM));
         replaceTemplateItems(template, HEADING, tocItem.getItemHeading(), templateItems.get(HEADING));

@@ -22,6 +22,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -40,7 +41,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLAUSE;
+import static eu.europa.ec.leos.services.support.XmlHelper.ID_PLACEHOLDER;
+import static eu.europa.ec.leos.services.support.XmlHelper.ID_PLACEHOLDER_ESCAPED;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_HTML_OL_ID_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
@@ -49,6 +53,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static org.apache.commons.lang3.StringUtils.replaceAll;
 
 @Service
 public class BillProcessorImpl implements BillProcessor {
@@ -92,7 +97,8 @@ public class BillProcessorImpl implements BillProcessor {
                 break;
             case ARTICLE:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, "Article heading...", messageHelper);
-                updatedContent = insertNewElement(document, elementId, before, tagName, template);
+                String updatedTemplate = insertListIdAttr(template, items);
+                updatedContent = insertNewElement(document, elementId, before, tagName, updatedTemplate);
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case PARAGRAPH:
@@ -135,6 +141,12 @@ public class BillProcessorImpl implements BillProcessor {
 
         updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         return updatedContent;
+    }
+
+    private static String insertListIdAttr(String template, List<TocItem> items) {
+        StringBuilder builder = XmlHelper.insertOrUpdateAttributeValue(new StringBuilder(template), LEOS_HTML_OL_ID_ATTR, ID_PLACEHOLDER);
+        template = replaceAll(builder.toString(), ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE).getAknTag().value(), 7));
+        return template;
     }
 
     public byte[] renumberDocument(Bill document) {
