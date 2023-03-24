@@ -351,9 +351,8 @@
                 <heading xml:id="_body__level_17__heading" leos:editable="false">
                     <b xml:id="_body__level_17__heading__b" leos:editable="false">Method(s) of budget implementation planned</b>
                     <authorialNote leos:editable="false" marker="2" placement="bottom" xml:id="_body__level_17__heading__authorialnote">
-                        <p leos:editable="false" xml:id="_body__level_17__heading__authorialnote__p">Details of budget implementation methods and references to the Financial Regulation may be found on the BUDGpedia site:
-                            <ref leos:editable="false" href="https://myintracomm.ec.europa.eu/corp/budget/financial-rules/budget-implementation/Pages/implementation-methods.aspx" xml:id="_body__level_17__heading__authorialnote__p__ref">https://myintracomm.ec.europa.eu/corp/budget/financial-rules/budget-implementation/Pages/implementation-methods.aspx</ref>
-                            .
+                        <p xml:id="_body__level_17__heading__authorialnote__p">Details of budget implementation methods and references to the Financial Regulation may be found on the BUDGpedia site:
+                            https://myintracomm.ec.europa.eu/corp/budget/financial-rules/budget-implementation/Pages/implementation-methods.aspx.
                         </p>
                     </authorialNote>
                 </heading>
@@ -364,10 +363,9 @@
                         </num>
                         <subparagraph leos:editable="false" xml:id="_body__level_17__list__indent_1__subparagraph">
                             <content xml:id="_body__level_17__list__indent_1__subparagraph__content">
-                                <p leos:editable="false" xml:id="_body__level_17__list__indent_1__subparagraph__content__p">
+                                <p xml:id="_body__level_17__list__indent_1__subparagraph__content__p">
                                     <b leos:editable="false" xml:id="_body__level_17__list__indent_1__subparagraph__content__p__b">Direct management</b>
-                                    by the Commission
-                                </p>
+                                    by the Commission</p>
                             </content>
                         </subparagraph>
                         <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list__indent_1__list">
@@ -394,10 +392,9 @@
                             <inline name="unchecked" xml:id="_body__level_17__list__indent_2_2__num__inline">&#x2610;</inline>
                         </num>
                         <content xml:id="_body__level_17__list__indent_2_2__content">
-                            <p leos:editable="false" xml:id="_body__level_17__list__indent_2_2__content__p">
+                            <p xml:id="_body__level_17__list__indent_2_2__content__p">
                                 <b leos:editable="false" xml:id="_body__level_17__list__indent_2_2__content__p__b">Shared management</b>
-                                with the Member States
-                            </p>
+                                with the Member States</p>
                         </content>
                     </indent>
                     <indent leos:editable="false" xml:id="_body__level_17__list__indent_3">
@@ -406,10 +403,9 @@
                         </num>
                         <subparagraph leos:editable="false" xml:id="_body__level_17__list__indent_3__subparagraph">
                             <content xml:id="_body__level_17__list__indent_3__subparagraph__content">
-                                <p leos:editable="false" xml:id="_body__level_17__list__indent_3__subparagraph__content__p">
+                                <p xml:id="_body__level_17__list__indent_3__subparagraph__content__p">
                                     <b leos:editable="false" xml:id="_body__level_17__list__indent_3__subparagraph__content__p__b">Indirect management</b>
-                                    by entrusting budget implementation tasks to:
-                                </p>
+                                    by entrusting budget implementation tasks to:</p>
                             </content>
                         </subparagraph>
                         <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list__indent_3__list">
@@ -482,7 +478,7 @@
                 </list>
                 <subparagraph leos:editable="false" xml:id="_body__level_17__subparagraph_4">
                     <content xml:id="_body__level_17__subparagraph_4__content">
-                        <p leos:editable="false" xml:id="_17__p">Comments</p>
+                        <p xml:id="_17__p">Comments</p>
                     </content>
                 </subparagraph>
                 <subparagraph xml:id="_body__level_17__subparagraph_5">
@@ -3541,7 +3537,7 @@
                             <p leos:editable="false" xml:id="_body__level_33__list__indent_1__content__p">The proposal/initiative has no financial impact on revenue.</p>
                         </content>
                     </indent>
-                    <indent xml:id="_body__level_33__list__indent_2">
+                    <indent leos:editable="false" xml:id="_body__level_33__list__indent_2">
                         <num xml:id="_body__level_33__list__indent_2__num">
                             <inline name="unchecked" xml:id="_body__level_33__list__indent_2__num__inline">&#x2610;</inline>
                         </num>

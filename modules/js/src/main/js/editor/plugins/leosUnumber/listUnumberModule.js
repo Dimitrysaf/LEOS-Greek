@@ -179,7 +179,14 @@ define(function listUnumberModule(require) {
         if (!!numberingConfig && !numberingConfig.numbered) {
             listItems.forEach(listItem => listItem.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.INDENT));
         } else {
-            listItems.forEach(listItem => listItem.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT));
+            listItems.forEach(function (listItem) {
+                var number = listItem.getAttribute('data-akn-num');
+                if (number === "\u2610" || number === "\u2611") {
+                    listItem.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.INDENT);
+                } else {
+                    listItem.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
+                }
+            });
         }
     }
 

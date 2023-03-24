@@ -187,6 +187,9 @@ define(function aknLevelPluginModule(require) {
             }, {
                 akn : "leos:deletable",
                 html : "leos:deletable"
+            }, {
+                akn : "class",
+                html : "data-akn-class"
             }]
         },
         rootElementsForFrom: ["level"],

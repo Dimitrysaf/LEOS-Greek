@@ -137,7 +137,7 @@ define(function leosPluginUtilsModule(require) {
     function _isListElement(el) {
         return (el && (el.getAscendant(ORDER_LIST_ELEMENT) || el.getAscendant(HTML_POINT)));
     }
-    
+
     function _isAnnexList(element) {
         return !!element && 'aknAnnexList' === element.getAttribute(DATA_AKN_NAME);
     }
@@ -151,8 +151,8 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isUnnumberedCNParagraph(el) {
-		return el && (!el.getAttribute(DATA_ORIGIN) || el.getAttribute(DATA_ORIGIN).toLowerCase() === 'cn') 
-			&& el.getAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT).toLowerCase() === PARAGRAPH 
+		return el && (!el.getAttribute(DATA_ORIGIN) || el.getAttribute(DATA_ORIGIN).toLowerCase() === 'cn')
+			&& el.getAttribute(DATA_AKN_ELEMENT) && el.getAttribute(DATA_AKN_ELEMENT).toLowerCase() === PARAGRAPH
 			&& !el.getAttribute(DATA_AKN_NUM);
 	}
 
@@ -264,7 +264,7 @@ define(function leosPluginUtilsModule(require) {
         }
         return listDepth === 1;
     }
-    
+
     function _getAnnexList(element) {
         var olElement = element.getAscendant(ORDER_LIST_ELEMENT);
         while (olElement && !_isAnnexList(olElement)) {
@@ -1206,9 +1206,12 @@ define(function leosPluginUtilsModule(require) {
          * It was affecting the ENTER and also the indent and outdent.
          *
          */
-        var elementToSelect = selection.getStartElement().findOne('p:last-child');
-        if (!elementToSelect) {
+        var listOfElementToSelect = selection.getStartElement().find('p');
+        var elementToSelect;
+        if (!listOfElementToSelect) {
             elementToSelect = selection.getStartElement().findOne('li:not(:has(li)):last-child');
+        } else {
+            elementToSelect = listOfElementToSelect.getItem(listOfElementToSelect.count()-1);
         }
         return _selectNewElement(elementToSelect, selection);
     }

@@ -141,6 +141,9 @@ define(function aknAuthorialNotePluginModule(require) {
             html : "data-akn-attr-softdate"
         }, {
             html : ["data-akn-name", "aknAuthorialNote"].join("=")
+        }, {
+            akn : "leos:editable",
+            html : "contenteditable"
         } ],
         sub : {
             akn : 'mp',

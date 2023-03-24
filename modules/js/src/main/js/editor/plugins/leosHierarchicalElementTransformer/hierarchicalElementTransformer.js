@@ -21,7 +21,9 @@ define(function hierarchicalElementTransformer(require) {
     var TABLE_ELEMENT_MATCH = /^(table)$/;
 
     var DATA_AKN_NUM = "data-akn-num";
+    var DATA_AKN_INLINE_NAME = "data-akn-inline-name";
     var DATA_AKN_NUM_ID = "data-akn-num-id";
+    var DATA_AKN_INLINE_NUM_ID = "data-akn-inline-num-id";
     var DATA_AKN_CONTENT_ID = "data-akn-content-id";
     var DATA_AKN_WRAPPED_CONTENT_ID = "data-akn-wrapped-content-id";
     var DATA_AKN_MP_ID = "data-akn-mp-id";
@@ -448,16 +450,12 @@ define(function hierarchicalElementTransformer(require) {
         return result;
     }
 
-    function getChildElementFromRootElement(element, rootElementsForFrom) {
-        var result = getRootsElementsPathForFrom(element, rootElementsForFrom);
-        if (result && result.indexOf("\/") != -1) {
-            return result.substring(result.lastIndexOf("\/") + 1, result.length);
-        }
-        return result;
+    function getChildElementFromRootElement(element) {
+        return element.hierarchicalPartsOfPath[element.hierarchicalPartsOfPath.length-1];
     }
 
-    function getElementNameFromRootElement(element, rootElementsForFrom) {
-        var result = getChildElementFromRootElement(element, rootElementsForFrom);
+    function getElementNameFromRootElement(element) {
+        var result = getChildElementFromRootElement(element);
         if (result && result === PARAGRAPH) {
             return AKN_NUMBERED_PARAGRAPH;
         }
@@ -479,6 +477,7 @@ define(function hierarchicalElementTransformer(require) {
             var rootElementsWithTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/text"].join("")));
             var rootElementsWithNumAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/num\/text"].join("")));
             var rootElementsWithInlineNumAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/num\/inline\/text"].join("")));
+            var rootElementsWithInlineNumForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/num\/inline"].join("")));
             var rootElementsWithCrossHeadingInlineAndTextForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/inline\/text"].join("")));
             var rootElementsWithContentForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content"].join("")));
             var rootElementsWithContentAndMpForFromRegExp = new RegExp(anchor([rootElementsForFromRegExpString, "\/content\/mp"].join("")));
@@ -633,11 +632,11 @@ define(function hierarchicalElementTransformer(require) {
                                             action: "passAttributeTransformer"
                                         }, {
                                             to: "data-akn-element",
-                                            toValue: getChildElementFromRootElement.call(that, element, rootElementsForFrom),
+                                            toValue: getChildElementFromRootElement.call(that, element),
                                             action: "passAttributeTransformer"
                                         }, {
                                             to: "data-akn-name",
-                                            toValue: getElementNameFromRootElement.call(that, element, rootElementsForFrom),
+                                            toValue: getElementNameFromRootElement.call(that, element),
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: "leos:renumbered",
@@ -677,6 +676,19 @@ define(function hierarchicalElementTransformer(require) {
                                     }, {
                                         from: "leos:softdate",
                                         to: DATA_AKN_NUM_SOFTDATE,
+                                        action: "passAttributeTransformer"
+                                    }]
+                                });
+                            } else if (rootElementsWithInlineNumForFromRegExp.test(path)) {
+                                this.mapToProducts(element, {
+                                    toPath: rootsElementsPathForTo,
+                                    attrs: [{
+                                        from: "xml:id",
+                                        to: DATA_AKN_INLINE_NUM_ID,
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        from: "name",
+                                        to: DATA_AKN_INLINE_NAME,
                                         action: "passAttributeTransformer"
                                     }]
                                 });
@@ -929,7 +941,7 @@ define(function hierarchicalElementTransformer(require) {
                                         toPath: [rootsElementsPathForFrom, "inline", "text"].join("/"),
                                         fromAttribute: DATA_AKN_NUM
                                     }]);
-                                } else if (element.attributes[DATA_AKN_NUM]) {
+                                } else if (element.attributes[DATA_AKN_NUM] && element.attributes['data-akn-num'] !== '\u2610' && element.attributes['data-akn-num'] !== '\u2611') {
                                     this.mapToProducts(element, [{
                                         toPath: rootsElementsPathForFrom,
                                         attrs: [{
@@ -1050,6 +1062,140 @@ define(function hierarchicalElementTransformer(require) {
                                         }]
                                     }, {
                                         toPath: [rootsElementsPathForFrom, "num", "text"].join("/"),
+                                        fromAttribute: DATA_AKN_NUM
+                                    }]);
+                                } else if (element.attributes['data-akn-num'] === '\u2610' || element.attributes['data-akn-num'] === '\u2611') {
+                                    this.mapToProducts(element, [{
+                                        toPath: rootsElementsPathForFrom,
+                                        attrs: [{
+                                            from: "id",
+                                            to: "xml:id",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_ORIGIN,
+                                            to: "leos:origin",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_EDITABLE,
+                                            to: "leos:editable",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: LEOS_ORIGINAL_DEPTH_ATTR,
+                                            to: LEOS_ORIGINAL_DEPTH_ATTR,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_LEVEL,
+                                            to: LEOS_INDENT_LEVEL,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_NUMBERED,
+                                            to: LEOS_INDENT_NUMBERED,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_ORIGIN_LEVEL,
+                                            to: LEOS_INDENT_ORIGIN_LEVEL,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_ORIGIN_NUMBER,
+                                            to: LEOS_INDENT_ORIGIN_NUMBER,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_ORIGIN_NUMBER_ID,
+                                            to: LEOS_INDENT_ORIGIN_NUMBER_ID,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
+                                            to: LEOS_INDENT_ORIGIN_NUMBER_ORIGIN,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_ORIGIN_TYPE,
+                                            to: LEOS_INDENT_ORIGIN_TYPE,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_INDENT_UNUMBERED_PARAGRAPH,
+                                            to: LEOS_INDENT_UNUMBERED_PARAGRAPH,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_REFERS_TO,
+                                            to: LEOS_REFERS_TO,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTACTION,
+                                            to: "leos:softaction",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTACTION_ROOT,
+                                            to: "leos:softactionroot",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTUSER,
+                                            to: "leos:softuser",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTDATE,
+                                            to: "leos:softdate",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTMOVE_TO,
+                                            to: "leos:softmove_to",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTMOVE_FROM,
+                                            to: "leos:softmove_from",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTMOVE_LABEL,
+                                            to: "leos:softmove_label",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_SOFTTRANS_FROM,
+                                            to: "leos:softtrans_from",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_ATTR_RENUMBERED,
+                                            to: "leos:renumbered",
+                                            action: "passAttributeTransformer"
+                                        }]
+                                    }, {
+                                        toPath: [rootsElementsPathForFrom, "num"].join("/"),
+                                        attrs: [{
+                                            from: DATA_AKN_NUM_ID,
+                                            to: "xml:id",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_NUM_ORIGIN,
+                                            to: "leos:origin",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_NUM_SOFTACTION,
+                                            to: "leos:softaction",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_NUM_SOFTACTION_ROOT,
+                                            to: "leos:softactionroot",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_NUM_SOFTUSER,
+                                            to: "leos:softuser",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_NUM_SOFTDATE,
+                                            to: "leos:softdate",
+                                            action: "passAttributeTransformer"
+                                        }]
+                                    }, {
+                                        toPath: [rootsElementsPathForFrom, "num", "inline"].join("/"),
+                                        attrs: [{
+                                            from: DATA_AKN_INLINE_NUM_ID,
+                                            to: "xml:id",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_INLINE_NAME,
+                                            to: "name",
+                                            action: "passAttributeTransformer"
+                                        }]
+                                    }, {
+                                        toPath: [rootsElementsPathForFrom, "num", "inline", "text"].join("/"),
                                         fromAttribute: DATA_AKN_NUM
                                     }]);
                                 } else {

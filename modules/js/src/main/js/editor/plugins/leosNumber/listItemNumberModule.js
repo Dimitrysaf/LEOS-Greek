@@ -256,7 +256,7 @@ define(function listItemNumberModule(require) {
         var newIdx = 0;
         var deleted = "deleted_";
         for (var idx = 0; idx < listItems.length; idx++) {
-            if (!(listItems[idx].getAttribute('contenteditable') === "false")) {
+            if (!(listItems[idx].getAttribute('contenteditable') === "false") && !(listItems[idx].getAttribute('data-akn-num') === '\u2610') && !(listItems[idx].getAttribute('data-akn-num') === '\u2611')) {
                 var numID = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
                 // To keep the num id on indentation and avoid diffing issues
                 var originNumID = listItems[idx].getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUM_ID);
