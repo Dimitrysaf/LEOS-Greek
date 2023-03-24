@@ -15,6 +15,7 @@ import {
   AnnotateExtension,
   Permission,
 } from '@/shared/models';
+import { AnnotateService } from '@/shared/services/annotate.service';
 
 import { AnnotateConnector } from './annotate-connector';
 
@@ -38,10 +39,14 @@ export class AnnotateManager {
     private documentId: string,
     permissions: Permission[],
     private options: AnnotateConnectorOptions,
+    private annotateService: AnnotateService,
   ) {
     const connector$ = this.createConnectorState().pipe(
       tap(() => this.connector?.destroy()),
-      map((state) => new AnnotateConnector(state, { permissions })),
+      map(
+        (state) =>
+          new AnnotateConnector(state, { permissions }, annotateService),
+      ),
       tap((connector) => (this.connector = connector)),
     );
     const annotateExtension$ = leos.require$.pipe(
