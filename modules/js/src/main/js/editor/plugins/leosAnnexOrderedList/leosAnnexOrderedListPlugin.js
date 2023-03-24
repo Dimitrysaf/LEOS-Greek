@@ -106,7 +106,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             var hasTextNext = leosPluginUtils.hasTextOrBogusAsNextSibling(selectedElement);
             var parent = selectedElement.getParent();
             var isLevelElement = leosPluginUtils.isAnnexList(parent);
-            var isSubPoint = leosPluginUtils.isSubparagraph(selectedElement);
+            var isSubPoint = leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
             var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
             var isFirstLevelListSubparagraph = leosPluginUtils.isFirstLevelListSubparagraph(selectedElement);
             var point = isParentSubPoint ? parent.getParent() : parent;
@@ -118,7 +118,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             } else if (isSelectedElementSubPoint && isSelectedElementEmpty && (hasTextNext || isParentSubPoint)) {
                 var listParent = point.getParent();
                 var listParentHasIntro = (isParentSubPoint && isSubPoint) || listParent.getPrevious(); //if not, it means that enter was pressed in the last
-                selectedElement.insertBefore(listParentHasIntro ? parent : listParent);
+                selectedElement.insertAfter(listParentHasIntro ? parent : listParent);
                 leosPluginUtils.setFocus(selectedElement, event.editor);
                 if (isOnlyChild) {
                     parent.appendBogus();
