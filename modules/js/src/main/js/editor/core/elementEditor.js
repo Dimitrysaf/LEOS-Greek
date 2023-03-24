@@ -40,17 +40,17 @@ define(function elementEditorModule(require) {
     }
 
     function _editElement(elementId, elementType, elementFragment, docType, instanceType, alternatives, levelItemVo,
-                            isClonedProposal) {
+                          isClonedProposal) {
         log.debug("Initializing element editor...");
         let connector = this;
 
         let rootElement = UTILS.getParentElement(connector);
         let element = _createEditorPlaceholder(rootElement, elementId);
         let placeholder = _getEditorPlaceholder(rootElement, elementId);
-        if(NUM === elementType) {
+        if (NUM === elementType) {
             _updatePlaceholderStyleForNumElement(placeholder);
         }
-       
+
         if (!placeholder) {
             throw new Error("Editing element wrapper not found!");
         }
@@ -95,26 +95,28 @@ define(function elementEditorModule(require) {
 
     function _getEditorProfileId(tocItemsList, elementType, element, isAlternative, alternateConfigs) {
         let selectedProfile = null;
-          if(isAlternative) {
-              selectedProfile = alternateConfigs.find(function(config){return (config.type.toLowerCase() ===
-                elementType.toLowerCase())}).profile;
-          } else {
-              tocItemsList.forEach(function(e) {
-                if(elementType.toLowerCase() === e.aknTag.toLowerCase()) {
-                     e.profiles["profiles"].forEach(function(profile) {
-                         if(!profile.elementSelector || $(element).is(profile.elementSelector)) {
-                             selectedProfile = profile.profileName;
-                             return false;        
-                          }
-                     });
+        if (isAlternative) {
+            selectedProfile = alternateConfigs.find(function (config) {
+                return (config.type.toLowerCase() ===
+                    elementType.toLowerCase())
+            }).profile;
+        } else {
+            tocItemsList.forEach(function (e) {
+                if (elementType.toLowerCase() === e.aknTag.toLowerCase()) {
+                    e.profiles["profiles"].forEach(function (profile) {
+                        if (!profile.elementSelector || $(element).is(profile.elementSelector)) {
+                            selectedProfile = profile.profileName;
+                            return false;
+                        }
+                    });
                 }
-                if(selectedProfile != null) {
+                if (selectedProfile != null) {
                     return false;
                 }
             });
-          }
-          return selectedProfile;
-     }
+        }
+        return selectedProfile;
+    }
 
     function _initEditor(connector, params, profile) {
         log.debug("Initializing element editor with %s profile...", profile.name);
@@ -149,10 +151,10 @@ define(function elementEditorModule(require) {
                 spellCheckerServiceUrl: connector.getState().spellCheckerServiceUrl,
                 spellCheckerSourceUrl: connector.getState().spellCheckerSourceUrl,
                 alternatives: params.alternatives,
-                tocItemsList : params.tocItemsList,
-                numberingConfigs : params.numberingConfigs,
-                listNumberConfig : params.listNumberConfig,
-                articleTypesConfig : params.articleTypesConfig,
+                tocItemsList: params.tocItemsList,
+                numberingConfigs: params.numberingConfigs,
+                listNumberConfig: params.listNumberConfig,
+                articleTypesConfig: params.articleTypesConfig,
                 documentsMetadata: JSON.parse(connector.getState().documentsMetadataJsonArray),
                 documentRef: connector.getState().documentRef,
                 isClonedProposal: params.isClonedProposal,
@@ -170,10 +172,10 @@ define(function elementEditorModule(require) {
             // load XML fragment in editor
             var options = {
                 internal: true,
-                callback: function() {
+                callback: function () {
                     var editor = this;
                     editor.fire("receiveData", params.elementFragment);
-                    if(params.levelItemObject) {
+                    if (params.levelItemObject) {
                         editor.fire("receiveLevelItemVo", params.levelItemObject);
                     }
                     placeholder.style.height = ''; //reset the height to let editor grow
@@ -202,7 +204,7 @@ define(function elementEditorModule(require) {
         $(element).wrap(function () {
             return `<div class="leos-placeholder" data-wrapped-id='${elementId}' style='height:${_getEditableAreaHeight(elementId)}px'></div>`;
         });
-        
+
         return element;
     }
 
@@ -220,9 +222,9 @@ define(function elementEditorModule(require) {
         }
         return wrap;
     }
-    
+
     function _updatePlaceholderStyleForNumElement(placeholder) {
-       $(placeholder).addClass("num-placeholder");
+        $(placeholder).addClass("num-placeholder");
     }
 
     var _setEventType = function (event) {
@@ -231,8 +233,8 @@ define(function elementEditorModule(require) {
 
     function _scopeEvents(contentWrap) {
         // Scope all events from editor by a specific type
-        for(var key in contentWrap){
-            if(key.search('on') === 0) {
+        for (var key in contentWrap) {
+            if (key.search('on') === 0) {
                 contentWrap.addEventListener(key.slice(2), _setEventType)
             }
         }
@@ -240,8 +242,8 @@ define(function elementEditorModule(require) {
 
     function _unscopeEvents(contentWrap) {
         // Remove scoping on all events by removing listeners
-        for(var key in contentWrap){
-            if(key.search('on') === 0) {
+        for (var key in contentWrap) {
+            if (key.search('on') === 0) {
                 contentWrap.removeEventListener(key.slice(2), _setEventType)
             }
         }
@@ -296,7 +298,7 @@ define(function elementEditorModule(require) {
         log.debug("Saving element...");
         var editor = event.editor;
         // LEOS-3418 : to save modification in the Alternatives clause.
-        if (!editor.readOnly||editor.config.isClause) {
+        if (!editor.readOnly || editor.config.isClause) {
             _removeZeroWidthSpaces(elementId);
             if (!_isEmptyElement(elementId, editor)) {
                 // set read-only to prevent changes
@@ -321,21 +323,25 @@ define(function elementEditorModule(require) {
     }
 
     function _removeZeroWidthSpaces(elementId) {
-        $("#" + elementId).find("*").addBack().contents().filter(function() {
+        $("#" + elementId).find("*").addBack().contents().filter(function () {
             if (this.nodeType === Node.TEXT_NODE && this.textContent) {
                 return this.textContent.match(ZERO_WIDTH_SPACE);
             }
             return false;
         }).remove();
-        $("#" + elementId).parent().contents().filter(function() {
+        $("#" + elementId).parent().contents().filter(function () {
             if (this.nodeType === Node.TEXT_NODE && this.textContent) {
                 return this.textContent.match(ZERO_WIDTH_SPACE);
             }
             return false;
-         }).remove();
+        }).remove();
     }
 
     function _isEmptyElement(elementId, editor) {
+        var bogus = $("#" + elementId).find("br");
+        if (bogus) {
+            bogus.remove();
+        }
         var emptyElements = $("#" + elementId + ", h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
         if (emptyElements.length > 0) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
@@ -354,12 +360,12 @@ define(function elementEditorModule(require) {
             editor.setReadOnly(false);
             // reload XML fragment in editor
             var options = {
-                    callback: function() {
-                        var editor = this;
-                        editor.fire("receiveData", elementFragment);
-                        // reset dirty state as for unchanged content
-                        editor.resetDirty();
-                    }
+                callback: function () {
+                    var editor = this;
+                    editor.fire("receiveData", elementFragment);
+                    // reset dirty state as for unchanged content
+                    editor.resetDirty();
+                }
             };
             editor.setData(elementFragment, options);
         }
@@ -379,7 +385,7 @@ define(function elementEditorModule(require) {
         log.debug("Received element...");
         var editor = _getEditor();
         var data = {
-            elementId :elementId,
+            elementId: elementId,
             elementType: elementType,
             elementFragment: elementFragment,
             documentRef: documentRef
@@ -398,7 +404,7 @@ define(function elementEditorModule(require) {
     function _receiveToc(tocWrapper) {
         log.debug("Received toc...");
         var editor = _getEditor();
-        editor.fire("receiveToc", tocWrapper );
+        editor.fire("receiveToc", tocWrapper);
     }
 
     function _requestRefLabel(connector, event) {

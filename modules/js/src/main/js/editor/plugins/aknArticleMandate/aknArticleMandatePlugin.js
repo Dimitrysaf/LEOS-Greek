@@ -206,7 +206,7 @@ define(function aknArticleMandatePluginModule(require) {
             akn : "article",
             html : "article/ol",
             attr : [ {
-                akn : "xml:id",
+                akn : "leos:listIdAttr",
                 html : "id"
             }, {
                 akn : "leos:origin",

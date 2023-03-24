@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.toc.Attribute;
@@ -43,6 +44,7 @@ import java.util.Map;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
 import static eu.europa.ec.leos.model.action.SoftActionType.DELETE_TRANSFORM;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
+import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
@@ -61,6 +63,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_CROSSHEADING_TYP
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_HTML_OL_ID_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_INDENT_LEVEL_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_NUM_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_NUM_ID_ATTR;
@@ -654,6 +657,10 @@ public class XmlContentProcessorHelper {
         Attribute attribute = getAttributeByTagNameAndTocItemType(tocItems, item.getTocItemType(), tagName);
         if (attribute != null) {
             XercesUtils.addAttribute(node, attribute.getAttributeName(), attribute.getAttributeValue());
+        }
+        if (tagName.equals(ARTICLE)) {
+            XercesUtils.insertAttributeIfNotPresent(node, LEOS_HTML_OL_ID_ATTR,
+                    IdGenerator.generateId("akn_" + StructureConfigUtils.getTocItemByNameOrThrow(tocItems, ARTICLE).getAknTag().value(), 7));
         }
     }
 }

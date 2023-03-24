@@ -67,7 +67,8 @@ public class TestUtils {
     public static String squeezeXml(String input, String attr) {
         return input.replaceAll("\\s+", "")
                 .replaceAll(attr+"=\".+?\"", "")
-                .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"");
+                .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"")
+                .replaceAll("leos:listIdAttr=\".+?\"", "");
     }
 
     public static String squeezeXml(String input) {
@@ -75,7 +76,8 @@ public class TestUtils {
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"")
                 .replaceAll("id=\".+?\"", "id=\"dummyId\"")
                 .replaceAll("xml:id=\".+?\"", "xml:id=\"dummyId\"")
-                .replaceAll("leos:editable=\".+?\"", "");
+                .replaceAll("leos:editable=\".+?\"", "")
+                .replaceAll("leos:listIdAttr=\".+?\"", "");
     }
     
     public static String squeezeXmlRemoveNum(String input) {
@@ -86,7 +88,8 @@ public class TestUtils {
     public static String squeezeXmlWithoutXmlIds(String input) {
         return input.replaceAll("\\s+", "")
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"")
-                .replaceAll("id=\".+?\"", "id=\"dummyId\"");
+                .replaceAll("id=\".+?\"", "id=\"dummyId\"")
+                .replaceAll("leos:listIdAttr=\".+?\"", "");
     }
 
     public static String squeezeXmlWithoutIds(String input) {
