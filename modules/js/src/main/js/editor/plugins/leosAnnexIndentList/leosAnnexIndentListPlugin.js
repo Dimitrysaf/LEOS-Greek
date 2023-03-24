@@ -157,7 +157,9 @@ define(function leosAnnexIndentListPluginModule(require) {
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
                             var crossheading = _getCrossHeading(path);
-                            if (!!crossheading && leosPluginUtils.isCrossHeading(crossheading)) {
+                            if (list && list.getAttribute("data-akn-class") && list.getAttribute("data-akn-class") === "~CHECK") {
+                                return TRISTATE_DISABLED;
+                            } else if (!!crossheading && leosPluginUtils.isCrossHeading(crossheading)) {
                                 var indentLevel = _getCrossheadingIndentAttribute(crossheading) ? _getCrossheadingIndentAttribute(crossheading): 0;
                                 if (indentLevel == MAX_INDENT_FOR_CROSSHEADING) {
                                     return TRISTATE_DISABLED;
@@ -230,7 +232,9 @@ define(function leosAnnexIndentListPluginModule(require) {
                             var list = this.getContext(path);
                             var isSubparagraph = leosPluginUtils.isSubparagraphInPath(path);
                             var crossheading = _getCrossHeading(path);
-                            if (!!crossheading && leosPluginUtils.isCrossHeading(crossheading)) {
+                            if (list && list.getAttribute("data-akn-class") && list.getAttribute("data-akn-class") === "~CHECK") {
+                                return TRISTATE_DISABLED;
+                            } else if (!!crossheading && leosPluginUtils.isCrossHeading(crossheading)) {
                                 var indentLevel = _getCrossheadingIndentAttribute(crossheading) ? _getCrossheadingIndentAttribute(crossheading): 0;
                                 if (indentLevel == 0) {
                                     return TRISTATE_DISABLED;

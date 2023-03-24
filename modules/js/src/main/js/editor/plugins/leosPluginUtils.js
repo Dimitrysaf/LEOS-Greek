@@ -1206,13 +1206,8 @@ define(function leosPluginUtilsModule(require) {
          * It was affecting the ENTER and also the indent and outdent.
          *
          */
-        var listOfElementToSelect = selection.getStartElement().find('p');
-        var elementToSelect;
-        if (!listOfElementToSelect) {
-            elementToSelect = selection.getStartElement().findOne('li:not(:has(li)):last-child');
-        } else {
-            elementToSelect = listOfElementToSelect.getItem(listOfElementToSelect.count()-1);
-        }
+        var listOfElementToSelect = selection.getStartElement().find('p, li');
+        var elementToSelect = listOfElementToSelect.getItem(listOfElementToSelect.count()-1);
         return _selectNewElement(elementToSelect, selection);
     }
 
