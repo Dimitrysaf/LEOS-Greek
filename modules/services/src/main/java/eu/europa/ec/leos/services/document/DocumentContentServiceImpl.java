@@ -89,42 +89,42 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
 
     protected boolean isComparisonRequired(XmlDocument xmlDocument, SecurityContext securityContext) {
-    	byte[] contentBytes = xmlDocument.getContent().get().getSource().getBytes();
-    	switch (xmlDocument.getCategory()) {
-	        case MEMORANDUM:
-	        	return isMemorandumComparisonRequired(contentBytes);
-	        case COUNCIL_EXPLANATORY:
-	            return isCouncilExplanatoryComparisonRequired((Explanatory) xmlDocument, securityContext);
-	        case ANNEX:
-	            return isAnnexComparisonRequired((Annex) xmlDocument, securityContext);
-	        case BILL:
-	            return true;
+        byte[] contentBytes = xmlDocument.getContent().get().getSource().getBytes();
+        switch (xmlDocument.getCategory()) {
+            case MEMORANDUM:
+                return isMemorandumComparisonRequired(contentBytes);
+            case COUNCIL_EXPLANATORY:
+                return isCouncilExplanatoryComparisonRequired((Explanatory) xmlDocument, securityContext);
+            case ANNEX:
+                return isAnnexComparisonRequired((Annex) xmlDocument, securityContext);
+            case BILL:
+                return true;
             case STAT_FINANC_LEGIS:
                 return isFinancialStatementComparisonRequired(contentBytes);
-	        case PROPOSAL:
-	        	return true;
-	        default:
-	            throw new UnsupportedOperationException("No transformation supported for this category");
-	    }
+            case PROPOSAL:
+                return true;
+            default:
+                throw new UnsupportedOperationException("No transformation supported for this category");
+        }
     }
 
     protected XmlDocument getOriginalDocument(XmlDocument xmlDocument) {
-    	switch (xmlDocument.getCategory()) {
-	        case MEMORANDUM:
-	        	return getOriginalMemorandum((Memorandum) xmlDocument);
-	        case COUNCIL_EXPLANATORY:
-	        	return getOriginalExplanatory((Explanatory) xmlDocument);
-	        case ANNEX:
-	        	return getOriginalAnnex((Annex) xmlDocument);
-	        case BILL:
-	        	return getOriginalBill((Bill) xmlDocument);
-	        case PROPOSAL:
-	        	return getOriginalProposal((Proposal) xmlDocument);
+        switch (xmlDocument.getCategory()) {
+            case MEMORANDUM:
+                return getOriginalMemorandum((Memorandum) xmlDocument);
+            case COUNCIL_EXPLANATORY:
+                return getOriginalExplanatory((Explanatory) xmlDocument);
+            case ANNEX:
+                return getOriginalAnnex((Annex) xmlDocument);
+            case BILL:
+                return getOriginalBill((Bill) xmlDocument);
+            case PROPOSAL:
+                return getOriginalProposal((Proposal) xmlDocument);
             case STAT_FINANC_LEGIS:
                 return getOriginalFinancialStatement((FinancialStatement) xmlDocument);
-	        default:
-	            throw new UnsupportedOperationException("No transformation supported for this category");
-	    }
+            default:
+                throw new UnsupportedOperationException("No transformation supported for this category");
+        }
     }
 
     protected String[] getContentsToCompare(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext,
@@ -187,6 +187,19 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case ANNEX:
                 document = annexService.findAnnexByRef(documentRef);
                 break;
+            case MEMORANDUM:
+                document = memorandumService.findMemorandumByRef(documentRef);
+                break;
+            case COUNCIL_EXPLANATORY:
+                document = explanatoryService.findExplanatoryByRef(documentRef);
+                break;
+            case PROPOSAL:
+            case COVERPAGE:
+                document = proposalService.findProposalByRef(documentRef);
+                break;
+            case STAT_FINANC_LEGIS:
+                document = financialStatementService.findFinancialStatementByRef(documentRef);
+                break;
             default:
                 LOG.error("Invalid document type");
         }
@@ -197,7 +210,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                                     byte[] coverPageContent) {
         String content = transformationService.toEditableXml(getContentInputStream(xmlDocument), contextPath, xmlDocument.getCategory(),
                 securityContext.getPermissions(xmlDocument), getContentInputStream(coverPageContent));
-        if(STAT_FINANC_LEGIS.equals(xmlDocument.getCategory())){
+        if (STAT_FINANC_LEGIS.equals(xmlDocument.getCategory())) {
             final Document document = XercesUtils.createXercesDocument(content.getBytes(XmlHelper.UTF_8));
             final byte[] node = LeosXercesUtils.wrapWithPageOrientationDivs(document);
             content = new String(node, XmlHelper.UTF_8);
@@ -328,7 +341,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment) {
-        for (XmlDocument doc: documents) {
+        for (XmlDocument doc : documents) {
             byte[] xmlContent = getDocumentContent(doc);
             xmlContent = setAkn4euVersion(xmlContent, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS);
             xmlContent = xmlContentProcessor.convertAlineasInDocumentContent(xmlContent);
@@ -485,7 +498,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public boolean isRevisionAnnex(XmlDocument xmlDocument) {
-    	return xmlContentProcessor.isRevisionAnnex(xmlDocument.getContent().get().getSource().getBytes());
+        return xmlContentProcessor.isRevisionAnnex(xmlDocument.getContent().get().getSource().getBytes());
     }
 
 }

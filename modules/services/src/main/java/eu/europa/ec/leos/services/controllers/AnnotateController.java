@@ -68,7 +68,7 @@ public class AnnotateController {
         }
     }
 
-    @RequestMapping(value = "/requestDocumentMetadata/{documentRef}", method = RequestMethod.GET)
+    @RequestMapping(value = "/requestDocumentMetadata/{documentType}/{documentRef}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> requestDocumentMetadata(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {

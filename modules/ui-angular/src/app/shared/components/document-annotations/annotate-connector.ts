@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, take, takeUntil } from 'rxjs';
 
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
@@ -8,6 +8,7 @@ import type {
   MergeSuggestion,
   Permission,
 } from '@/shared';
+import { AnnotateService } from '@/shared/services/annotate.service';
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
@@ -24,27 +25,29 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   receiveSecurityToken?: (token: string) => void;
   receiveMergeSuggestion?: (result: MergeSuggestion) => void;
   receiveMergeSuggestions?: (...results: MergeSuggestion[]) => void;
-  receiveDocumentMetadata?: (metadata: AnnotateMetadata) => void;
+  receiveDocumentMetadata?: (metadata: string) => void;
   receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
 
   constructor(
     state: AnnotateConnectorInitialState,
     private options: AnnotateConnectorOptions,
+    private annotateService: AnnotateService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestDocumentMetadata(...args) {
-    console.warn('stub:', 'requestDocumentMetadata', args); // FIXME
+    this.annotateService
+      .getDocumentsMetadata()
+      .pipe(take(1))
+      .subscribe((metadata) => {
+        this.receiveDocumentMetadata(JSON.stringify(metadata));
+      });
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestUserPermissions(...args) {
-    //the legacy file defaults behaviour is to first hide the suggestBtn and then after we have received the permissions from the request we check to display the btn
-    //for now we will emulate this "request being set" with timeout, and once we have the the requested api we will replace it
-    setTimeout(() => {
-      this.receiveUserPermissions?.(...this.options.permissions);
+    this.annotateService.getUserPermissions().subscribe((perms) => {
+      this.receiveUserPermissions(...perms);
     });
   }
 
@@ -66,32 +69,18 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     // this.receiveSearchMetadata?.(/*...*/);
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestSecurityToken() {
-    console.warn('stub:', 'requestSecurityToken'); // FIXME
-    this.fetchSecurityToken().subscribe((token) => {
-      this.receiveSecurityToken?.(token);
-    });
+    this.annotateService
+      .getSecurityAnnotateToken()
+      .pipe(take(1))
+      .subscribe((token) => {
+        this.receiveSecurityToken?.(token as string);
+      });
   }
 
   /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   responseFilteredAnnotations(...args) {
     console.warn('stub:', 'responseFilteredAnnotations', args); // FIXME
-  }
-
-  private fetchSecurityToken() {
-    // TODO: fetch from server API - eg `/api/secured/annotate/token`
-    const token = localStorage.getItem('DEBUG_annotateToken');
-    if (!token && !window['_annotateTokenErrorLogged']) {
-      window['_annotateTokenErrorLogged'] = true;
-      console.error(
-        'Expected to find DEBUG_annotateToken in localStorage.\n' +
-          'To obtain it, open a document page on :8080 server and search for a request to `...ui/UIDL/`' +
-          ' containing "receiveSecurityToken" in its response.\n' +
-          'Then set it with localStorage.setItem("DEBUG_annotateToken", "<TOKEN>")',
-      );
-    }
-    return of(token);
   }
 }
 
