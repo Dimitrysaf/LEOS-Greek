@@ -47,6 +47,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XPathCatalog.LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XPathCatalog.AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
@@ -312,6 +313,16 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return akn4euVersionContent;
     }
 
+    private String getLeosTemplateVersion(byte[] xmlContent) {
+        String leosTemplateVersionContent = "";
+        String leosTemplateVersionXPath = xPathCatalog.getLeosTemplateVersion();
+        boolean leosTemplateVersionPresent = xmlContentProcessor.evalXPath(xmlContent, leosTemplateVersionXPath, true);
+        if (leosTemplateVersionPresent) {
+            leosTemplateVersionContent = xmlContentProcessor.getElementValue(xmlContent, leosTemplateVersionXPath, true);
+        }
+        return leosTemplateVersionContent;
+    }
+
     public byte[] setAkn4euVersion(byte[] xmlContent, String akn4euVersion) {
         String akn4euVersionXPath = xPathCatalog.getXPathAkn4euVersion();
         String akn4euAttributeXPath = xPathCatalog.getXPathAkn4euAttribute();
@@ -326,12 +337,21 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return xmlContent;
     }
 
+    public byte[] setLeosTemplateVersion(byte[] xmlContent, String leosTemplateVersion) {
+        String leosTemplateVersionXPath = xPathCatalog.getLeosTemplateVersion();
+        String existingLeosTemplateVersion = getLeosTemplateVersion(xmlContent);
+        VersionComparator comparator = new VersionComparator();
+        if (comparator.compare(existingLeosTemplateVersion, leosTemplateVersion) < 0) {
+            xmlContent = xmlNodeProcessor.setValuesInXml(xmlContent, leosTemplateVersionXPath, leosTemplateVersion);
+        }
+        return xmlContent;
+    }
+
     @Override
     public void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment) {
         for (XmlDocument doc: documents) {
             byte[] xmlContent = getDocumentContent(doc);
-            xmlContent = setAkn4euVersion(xmlContent, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS);
-            xmlContent = xmlContentProcessor.convertAlineasInDocumentContent(xmlContent);
+            xmlContent = akn4euVersionDocumentConversion(xmlContent);
             updateDocumentContent(doc, xmlContent, versionComment);
         }
     }
@@ -339,6 +359,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     @Override
     public byte[] akn4euVersionDocumentConversion(byte[] xmlContent) {
         xmlContent = setAkn4euVersion(xmlContent, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS);
+        xmlContent = setLeosTemplateVersion(xmlContent, LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS);
         xmlContent = xmlContentProcessor.convertAlineasInDocumentContent(xmlContent);
         return xmlContent;
     }
@@ -347,14 +368,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     public boolean isDeprecatedDocument(XmlDocument xmlDocument) {
         // Should be temporary as for performance reason, getting content for each document while opening proposal screen is not good
         byte[] xmlContent = getDocumentContent(xmlDocument);
-        Document document = createXercesDocument(xmlContent);
-        if (!xmlContentProcessor.containsAlineas(document)) {
-            String akn4euVersion = getAkn4euVersion(xmlContent);
-            VersionComparator comparator = new VersionComparator();
-            return comparator.compare(akn4euVersion, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS) >= 0;
-        } else {
-            return false;
-        }
+        return isDeprecatedDocument(xmlContent);
     }
 
     @Override
@@ -362,8 +376,10 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         Document document = createXercesDocument(xmlContent);
         if (!xmlContentProcessor.containsAlineas(document)) {
             String akn4euVersion = getAkn4euVersion(xmlContent);
+            String leosTemplateVersion = getLeosTemplateVersion(xmlContent);
             VersionComparator comparator = new VersionComparator();
-            return comparator.compare(akn4euVersion, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS) >= 0;
+            return comparator.compare(akn4euVersion, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS) < 0
+                    || comparator.compare(leosTemplateVersion, LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS) < 0;
         } else {
             return false;
         }

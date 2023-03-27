@@ -35,7 +35,7 @@
                 <!--  draft  -->
             </references>
             <proprietary source="~leos">
-                <leos:templateVersion>0.1.0</leos:templateVersion>
+                <leos:templateVersion>2.2.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:docTemplate>FS-001</leos:docTemplate>
                 <leos:docType>LEGISLATIVE FINANCIAL STATEMENT</leos:docType>
