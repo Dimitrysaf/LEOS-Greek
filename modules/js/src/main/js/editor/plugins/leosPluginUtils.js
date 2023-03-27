@@ -560,6 +560,34 @@ define(function leosPluginUtilsModule(require) {
         return range.startPath();
     }
 
+	function _manageNestedSubparagraphs(editor) {
+		moveSubparagraphs(editor.element.find('li'));
+        moveSubparagraphs(editor.element.find('p'));
+	}
+
+	function moveSubparagraphs(subparagraphs) {
+        if(subparagraphs && subparagraphs.count() > 0) {
+            for (var i = 0; i < subparagraphs.count(); i++) {
+                var subparagraph = subparagraphs.getItem(i);
+                if (_isSubparagraph(subparagraph) && subparagraph.getChildren().count() > 0) {
+                	var hasOnlySubParagraphs = true;
+                    for(var j = 0; j < subparagraph.getChildren().count(); j++) {
+                        var child = subparagraph.getChildren().getItem(j);
+                        if(!_isSubparagraph(child)) {
+                            hasOnlySubParagraphs = false;
+                        }
+                    }
+					if(hasOnlySubParagraphs) {
+    					_moveElementChildren(subparagraph, subparagraph.getParent());
+						if(subparagraph.getChildren().count() == 0) {
+							subparagraph.remove();
+						}
+					}
+                }
+            }
+        }
+    }
+
     // Check crossheadings:
     // 1. A crossheading should not contain a list -> crossheadings should be moved inside the list
     // and list should be moved to the previous point, indent
@@ -1324,6 +1352,7 @@ define(function leosPluginUtilsModule(require) {
         selectCorrectElementForList: _selectCorrectElementForList,
         checkLists: _checkLists,
         checkPointsInList: _checkPointsInList,
+		manageNestedSubparagraphs: _manageNestedSubparagraphs,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
