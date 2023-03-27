@@ -7,12 +7,15 @@ import { apiBaseUrl } from 'src/config';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 
+import { LocalStorageService } from './core/services/local-storage.service';
 import { User } from './shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppStarterService {
+  private storage = new LocalStorageService();
+
   constructor(
     protected configService: AppConfigService,
     protected userService: UserService,
@@ -21,10 +24,12 @@ export class AppStarterService {
   ) {}
 
   start(): Observable<any> {
+    const lang = this.storage.get('lang');
+
     return zip(
       this.configService.config,
       this.initUserService(),
-      (config, user) => this.i18nService.init(/*config.user.lang*/),
+      (config, user) => this.i18nService.init({ activeLang: lang }),
     );
   }
 
