@@ -65,8 +65,6 @@ public interface DocumentContentService {
 
     boolean isFinancialStatementComparisonRequired(byte[] contentBytes);
 
-    XmlDocument getDocument(String documentRef, LeosCategory category);
-
     String getDocumentAsHtml(XmlDocument xmlDocument, String contextPath, List<LeosPermission> permissions);
 
     String getDocumentAsHtml(XmlDocument xmlDocument, String contextPath, List<LeosPermission> permissions, boolean includeCoverPage);
@@ -120,4 +118,8 @@ public interface DocumentContentService {
     boolean isCouncilExplanatoryComparisonRequired(Explanatory explanatory, SecurityContext securityContext);
     
     boolean isRevisionAnnex(XmlDocument xmlDocument);
+
+    XmlDocument getDocumentByRef(String documentRef, LeosCategory category);
+
+    XmlDocument updateDocument(XmlDocument document, byte[] resultXmlContent, String message);
 }

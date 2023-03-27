@@ -177,35 +177,6 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return new String[]{currentDocumentEditableXml, originalDocumentEditableXml};
     }
 
-    @Override
-    public XmlDocument getDocument(String documentRef, LeosCategory category) {
-        XmlDocument document = null;
-        switch (category) {
-            case BILL:
-                document = billService.findBillByRef(documentRef);
-                break;
-            case ANNEX:
-                document = annexService.findAnnexByRef(documentRef);
-                break;
-            case MEMORANDUM:
-                document = memorandumService.findMemorandumByRef(documentRef);
-                break;
-            case COUNCIL_EXPLANATORY:
-                document = explanatoryService.findExplanatoryByRef(documentRef);
-                break;
-            case PROPOSAL:
-            case COVERPAGE:
-                document = proposalService.findProposalByRef(documentRef);
-                break;
-            case STAT_FINANC_LEGIS:
-                document = financialStatementService.findFinancialStatementByRef(documentRef);
-                break;
-            default:
-                LOG.error("Invalid document type");
-        }
-        return document;
-    }
-
     protected String getEditableXml(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext,
                                     byte[] coverPageContent) {
         String content = transformationService.toEditableXml(getContentInputStream(xmlDocument), contextPath, xmlDocument.getCategory(),
@@ -501,4 +472,44 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return xmlContentProcessor.isRevisionAnnex(xmlDocument.getContent().get().getSource().getBytes());
     }
 
+    @Override
+    public XmlDocument getDocumentByRef(String documentRef, LeosCategory category) {
+        XmlDocument document;
+        switch (category) {
+            case BILL:
+                document = billService.findBillByRef(documentRef);
+                break;
+            case ANNEX:
+                document = annexService.findAnnexByRef(documentRef);
+                break;
+            case MEMORANDUM:
+                document = memorandumService.findMemorandumByRef(documentRef);
+                break;
+            case COUNCIL_EXPLANATORY:
+                document = explanatoryService.findExplanatoryByRef(documentRef);
+                break;
+            case PROPOSAL:
+            case COVERPAGE:
+                document = proposalService.findProposalByRef(documentRef);
+                break;
+            case STAT_FINANC_LEGIS:
+                document = financialStatementService.findFinancialStatementByRef(documentRef);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid document type");
+        }
+        return document;
+    }
+
+    @Override
+    public XmlDocument updateDocument(XmlDocument document, byte[] xmlContent, String message) {
+        if (document instanceof Bill) {
+            document = billService.updateBill((Bill)document, xmlContent, message);
+        } else if (document instanceof Annex) {
+            document = annexService.updateAnnex((Annex) document, xmlContent, message);
+        } else {
+            LOG.error("Invalid document type");
+        }
+        return document;
+    }
 }

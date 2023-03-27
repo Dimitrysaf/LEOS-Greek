@@ -18,6 +18,9 @@ import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.services.api.AnnotateApiService;
+import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequest;
+import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequests;
+import eu.europa.ec.leos.services.dto.request.AnnotateResponseFilteredRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +81,90 @@ public class AnnotateController {
             return new ResponseEntity<>(documentMetadata, HttpStatus.OK);
         } catch (Exception e) {
             String msg = "Error occurred while requesting Annotation DocumentMetadata ";
+            LOG.error(msg, e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/requestSearchMetadata", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> requestSearchMetadata() {
+        try {
+             List<AnnotateMetadata> searchMetadata = annotateApiService.requestSearchMetadata();
+            return new ResponseEntity<>(searchMetadata, HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = "Error occurred while requesting Annotation DocumentMetadata ";
+            LOG.error(msg, e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/requestMergeSuggestion/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> requestMergeSuggestion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
+                                                         @RequestBody AnnotateMergeSuggestionRequest mergeSuggestionRequest) {
+        try {
+            final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
+            final String origText = mergeSuggestionRequest.getOrigText();
+            final String newText = mergeSuggestionRequest.getNewText();
+            final String elementId = mergeSuggestionRequest.getElementId();
+            final int startOffset = mergeSuggestionRequest.getStartOffset();
+            final int endOffset = mergeSuggestionRequest.getEndOffset();
+            if (origText == null || newText == null || elementId == null || startOffset < 0 || endOffset < 0 || startOffset == endOffset) {
+                throw new Exception("Invalid request parameters");
+            }
+            annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = "Error occurred while requesting Annotation Merge Suggestion";
+            LOG.error(msg, e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/requestMergeSuggestions/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> requestMergeSuggestions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
+                                                          @RequestBody AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
+        try {
+            AnnotateMergeSuggestionRequest mergeSuggestionRequest = null;
+            for (int i = 0; i < mergeSuggestionRequests.getMergeSuggestionRequests().size(); i++) {
+                try {
+                    mergeSuggestionRequest = mergeSuggestionRequests.getMergeSuggestionRequests().get(i);
+                    final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
+                    final String origText = mergeSuggestionRequest.getOrigText();
+                    final String newText = mergeSuggestionRequest.getNewText();
+                    final String elementId = mergeSuggestionRequest.getElementId();
+                    final int startOffset = mergeSuggestionRequest.getStartOffset();
+                    final int endOffset = mergeSuggestionRequest.getEndOffset();
+                    if (origText == null || newText == null || elementId == null || startOffset < 0 || endOffset < 0 || startOffset == endOffset) {
+                        throw new Exception("Invalid request parameters");
+                    }
+                    annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
+                } catch (Exception e) {
+                    LOG.error("Error in for suggestion: {}", mergeSuggestionRequest);
+                    throw e;
+                }
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = "Error occurred while requesting Annotation Merge Suggestion";
+            LOG.error(msg, e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //TODO to be completed
+    @RequestMapping(value = "/responseFilteredAnnotations/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> responseFilteredAnnotations(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
+                                                              @RequestBody AnnotateResponseFilteredRequest filteredAnnotation) {
+        try {
+            final String filteredAnnotations = filteredAnnotation.getAnnotations();
+            annotateApiService.responseFilteredAnnotations(filteredAnnotations);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = "Error occurred while requesting Annotation filtering";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -53,7 +53,7 @@ import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.MathJaxExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.ui.model.AnnotationStatus;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.component.WindowClosedEvent;

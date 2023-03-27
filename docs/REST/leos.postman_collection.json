@@ -1,0 +1,602 @@
+{
+	"info": {
+		"_postman_id": "6c78538a-f6db-41ab-9bcf-bd19a4ac277d",
+		"name": "LEOS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "collaborators",
+			"item": [
+				{
+					"name": "getCollaborators",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/collaborators/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"collaborators",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addCollaborator",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"demo\",\r\n    \"roleName\": \"REVIEWER\",\r\n    \"connectedDG\": \"CNECT\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/collaborators/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"collaborators",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addBulkCollaborators",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"collaborators\": [\r\n        {\r\n            \"userId\": \"nystepa\",\r\n            \"roleName\": \"OWNER\",\r\n            \"connectedDG\": \"AAE\"\r\n        },\r\n        {\r\n            \"userId\": \"gautare\",\r\n            \"roleName\": \"REVIEWER\",\r\n            \"connectedDG\": \"CNECT\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/bulkCollaborators/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"bulkCollaborators",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editCollaborator",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"demo\",\r\n    \"roleName\": \"OWNER\",\r\n    \"connectedDG\": \"CNECT\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/collaborators",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"collaborators"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editBulkCollaborator",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"collaborators\": [\r\n        {\r\n            \"userId\": \"nystepa\",\r\n            \"roleName\": \"OWNER\",\r\n            \"connectedDG\": \"AAE\"\r\n        },\r\n        {\r\n            \"userId\": \"gautare\",\r\n            \"roleName\": \"REVIEWER\",\r\n            \"connectedDG\": \"CNECT\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/bulkCollaborators",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"bulkCollaborators"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removeCollaborator",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"demo\",\r\n    \"roleName\": \"REVIEWER\",\r\n    \"connectedDG\": \"CNECT\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/collaborators/demo",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"collaborators",
+								"demo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removeBulkCollaborator",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"collaborators\": [\r\n        {\r\n            \"userId\": \"nystepa\",\r\n            \"roleName\": \"OWNER\",\r\n            \"connectedDG\": \"AAE\"\r\n        },\r\n        {\r\n            \"userId\": \"gautare\",\r\n            \"roleName\": \"REVIEWER\",\r\n            \"connectedDG\": \"CNECT\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/proposal/{{proposalRef}}/bulkCollaborators",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"proposal",
+								"{{proposalRef}}",
+								"bulkCollaborators"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "annotations",
+			"item": [
+				{
+					"name": "requestUserPermissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/secured/annotation/requestUserPermissions/{{documentType}}/{{documentRef}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"annotation",
+								"requestUserPermissions",
+								"{{documentType}}",
+								"{{documentRef}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requestSecurityToken",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/annotation/requestSecurityToken",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"annotation",
+								"requestSecurityToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requestDocumentMetadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/secured/annotation/requestDocumentMetadata/{{documentType}}/{{documentRef}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"annotation",
+								"requestDocumentMetadata",
+								"{{documentType}}",
+								"{{documentRef}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requestSearchMetadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/secured/annotation/requestSearchMetadata",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"annotation",
+								"requestSearchMetadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requestMergeSuggestion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"origText\": \"this\",\r\n    \"newText\": \"this is the new phrase\",\r\n    \"elementId\": \"_body_level_1_1_content_p\",\r\n    \"startOffset\": 1,\r\n    \"endOffset\": 4\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/annotation/requestMergeSuggestion/{{documentType}}/{{documentRef}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"annotation",
+								"requestMergeSuggestion",
+								"{{documentType}}",
+								"{{documentRef}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requestMergeSuggestions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mergeSuggestionRequests\": [\r\n        {\r\n            \"origText\": \"ext\",\r\n            \"newText\": \"this is the new phrase\",\r\n            \"elementId\": \"_body_level_1_1_content_p\",\r\n            \"startOffset\": 1,\r\n            \"endOffset\": 4\r\n        },\r\n        {\r\n            \"origText\": \"Te\",\r\n            \"newText\": \"Starting here\",\r\n            \"elementId\": \"_body_level_2_content_p\",\r\n            \"startOffset\": 0,\r\n            \"endOffset\": 2\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/annotation/requestMergeSuggestions/{{documentType}}/{{documentRef}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"annotation",
+								"requestMergeSuggestions",
+								"{{documentType}}",
+								"{{documentRef}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "responseFilteredAnnotations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/secured/responseFilteredAnnotations/{{documentType}}/{{documentRef}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"responseFilteredAnnotations",
+								"{{documentType}}",
+								"{{documentRef}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"console.log(\"accessToken\", jsonData.accessToken)\r",
+							"postman.setEnvironmentVariable('auth', jsonData.accessToken);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "grant-type",
+						"value": "jwt-bearer",
+						"type": "text"
+					},
+					{
+						"key": "assertion",
+						"value": "{{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{url}}/api/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ud-repo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "inputFile",
+							"type": "file",
+							"src": "/D:/Users/ALIRAER/Downloads/PROP_ACT_7696532427481632009.leg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9095/ud-repo/users?searchKey=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9095",
+					"path": [
+						"ud-repo",
+						"users"
+					],
+					"query": [
+						{
+							"key": "searchKey",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
