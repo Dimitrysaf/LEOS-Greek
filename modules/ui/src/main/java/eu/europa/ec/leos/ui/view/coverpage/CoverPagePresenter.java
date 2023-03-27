@@ -411,6 +411,14 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
         coverPageScreen.refreshVersions(allVersions, comparisonMode);
+        if (coverPageScreen.isCleanVersionShowed()) {
+            showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
+        if (event.isModified()) {
+            CollectionContext context = proposalContextProvider.get();
+            context.useChildDocument(documentId);
+            context.executeUpdateProposalAsync();
+        }
     }
 
     private Integer countMinorVersionsFn(String currIntVersion) {
@@ -1039,13 +1047,6 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void refreshCleanVersion(DocumentUpdatedEvent event) {
-        if (coverPageScreen.isCleanVersionShowed()) {
-            showCleanVersion(new ShowCleanVersionRequestEvent());
-        }
-    }
-
-    @Subscribe
     public void fetchMilestoneByVersionedReference(FetchMilestoneByVersionedReferenceEvent event) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         LegDocument legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
@@ -1088,7 +1089,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
             eventBus.post(layoutEvent);
             eventBus.post(new ResetRevisionComponentEvent());
         }
-        updateVersionsTab(new DocumentUpdatedEvent());
+        updateVersionsTab(new DocumentUpdatedEvent(false));
     }
 
     @Subscribe
@@ -1137,15 +1138,6 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         }
 
         return proposalVO;
-    }
-
-    @Subscribe
-    void updateProposalMetadata(DocumentUpdatedEvent event) {
-        if (event.isModified()) {
-            CollectionContext context = proposalContextProvider.get();
-            context.useChildDocument(documentId);
-            context.executeUpdateProposalAsync();
-        }
     }
 
     @Subscribe

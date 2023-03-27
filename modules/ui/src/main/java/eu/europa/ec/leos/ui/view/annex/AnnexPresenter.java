@@ -496,6 +496,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
         annexScreen.refreshVersions(allVersions, comparisonMode);
+        if (annexScreen.isCleanVersionVisible()) {
+            showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
+        if (event.isModified()) {
+            CollectionContext context = proposalContextProvider.get();
+            context.useChildDocument(documentId);
+            context.executeUpdateProposalAsync();
+        }
     }
 
     @Subscribe
@@ -1383,13 +1391,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void refreshCleanVersion(DocumentUpdatedEvent event) {
-        if (annexScreen.isCleanVersionVisible()) {
-            showCleanVersion(new ShowCleanVersionRequestEvent());
-        }
-    }
-
-    @Subscribe
     public void fetchMilestoneByVersionedReference(FetchMilestoneByVersionedReferenceEvent event) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         LegDocument legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
@@ -1491,7 +1492,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             eventBus.post(layoutEvent);
             eventBus.post(new ResetRevisionComponentEvent());
         }
-        updateVersionsTab(new DocumentUpdatedEvent());
+        updateVersionsTab(new DocumentUpdatedEvent(false));
     }
 
     @Subscribe
@@ -1623,15 +1624,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexVO.addCollaborators(annex.getCollaborators());
         }
         return annexVO;
-    }
-
-    @Subscribe
-    void updateProposalMetadata(DocumentUpdatedEvent event) {
-        if (event.isModified()) {
-            CollectionContext context = proposalContextProvider.get();
-            context.useChildDocument(documentId);
-            context.executeUpdateProposalAsync();
-        }
     }
 
     @Subscribe
