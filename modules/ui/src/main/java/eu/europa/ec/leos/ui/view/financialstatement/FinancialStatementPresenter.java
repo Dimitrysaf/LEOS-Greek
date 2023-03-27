@@ -963,6 +963,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
         financialStatementScreen.refreshVersions(allVersions, comparisonMode);
+        if (financialStatementScreen.isCleanVersionShowed()) {
+            showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
     }
 
     @Subscribe
@@ -1174,13 +1177,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void refreshCleanVersion(DocumentUpdatedEvent event) {
-        if (financialStatementScreen.isCleanVersionShowed()) {
-            showCleanVersion(new ShowCleanVersionRequestEvent());
-        }
-    }
-
-    @Subscribe
     void compare(CompareRequestEvent event) {
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         final FinancialStatement oldVersion = financialStatementService.findFinancialStatementVersion(event.getOldVersionId());
@@ -1215,7 +1211,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             eventBus.post(layoutEvent);
             eventBus.post(new ResetRevisionComponentEvent());
         }
-        updateVersionsTab(new DocumentUpdatedEvent());
+        updateVersionsTab(new DocumentUpdatedEvent(false));
     }
 
     @Subscribe

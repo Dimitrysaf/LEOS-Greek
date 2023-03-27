@@ -415,6 +415,14 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     public void updateVersionsTab(DocumentUpdatedEvent event) {
         final List<VersionVO> allVersions = getVersionVOS();
         memorandumScreen.refreshVersions(allVersions, comparisonMode);
+        if (memorandumScreen.isCleanVersionShowed()) {
+            showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
+        if (event.isModified()) {
+            CollectionContext context = proposalContextProvider.get();
+            context.useChildDocument(documentId);
+            context.executeUpdateProposalAsync();
+        }
     }
     
     private Integer countMinorVersionsFn(String currIntVersion) {
@@ -1011,13 +1019,6 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void refreshCleanVersion(DocumentUpdatedEvent event) {
-        if (memorandumScreen.isCleanVersionShowed()) {
-            showCleanVersion(new ShowCleanVersionRequestEvent());
-        }
-    }
-    
-    @Subscribe
     public void fetchMilestoneByVersionedReference(FetchMilestoneByVersionedReferenceEvent event) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         LegDocument legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
@@ -1069,7 +1070,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
             eventBus.post(layoutEvent);
             eventBus.post(new ResetRevisionComponentEvent());
         }
-        updateVersionsTab(new DocumentUpdatedEvent());
+        updateVersionsTab(new DocumentUpdatedEvent(false));
     }
 
     @Subscribe
@@ -1118,15 +1119,6 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         }
         
         return memorandumVO;
-    }
-
-    @Subscribe
-    void updateProposalMetadata(DocumentUpdatedEvent event) {
-        if (event.isModified()) {
-            CollectionContext context = proposalContextProvider.get();
-            context.useChildDocument(documentId);
-            context.executeUpdateProposalAsync();
-        }
     }
 
     @Subscribe

@@ -1820,14 +1820,15 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void updateDocument(DocumentUpdatedEvent event) {
+        // 1. Refresh versions
+        final List<VersionVO> allVersions = billService.getAllVersions(documentId, documentRef);
+        documentScreen.refreshVersions(allVersions, comparisonMode);
+
+        // 2. show clean version on right pane
+        if (documentScreen.isCleanVersionShowed()) {
+            showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
         if (event.isModified()) {
-            // 1. Refresh versions
-            final List<VersionVO> allVersions = billService.getAllVersions(documentId, documentRef);
-            documentScreen.refreshVersions(allVersions, comparisonMode);
-            // 2. show clean version on right pane
-            if (documentScreen.isCleanVersionShowed()) {
-                showCleanVersion(new ShowCleanVersionRequestEvent());
-            }
             //3. Update proposalMetadata async
             CollectionContext context = proposalContextProvider.get();
             context.useChildDocument(documentId);
@@ -1884,7 +1885,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             eventBus.post(layoutEvent);
             eventBus.post(new ResetRevisionComponentEvent());
         }
-        eventBus.post(new DocumentUpdatedEvent());
+        eventBus.post(new DocumentUpdatedEvent(false));
     }
 
     /**
