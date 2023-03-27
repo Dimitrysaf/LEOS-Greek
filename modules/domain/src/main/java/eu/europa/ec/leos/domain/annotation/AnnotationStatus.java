@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.ui.model;
+package eu.europa.ec.leos.domain.annotation;
 
 public enum AnnotationStatus {
     NORMAL,

@@ -28,4 +28,10 @@ public interface AnnotateApiService {
 
     AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategory category);
 
+    List<AnnotateMetadata> requestSearchMetadata();
+
+    void mergeSuggestion(LeosCategory documentType, String documentRef, String origText, String newText, String elementId, int startOffset, int endOffset);
+
+    void responseFilteredAnnotations(String filteredAnnotations);
+
 }

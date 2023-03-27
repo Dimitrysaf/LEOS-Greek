@@ -15,16 +15,21 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.exception.AnnotateException;
+import eu.europa.ec.leos.services.processor.ElementProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,15 +41,19 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
 
     private final DocumentContentService documentContentService;
     private final SecurityContext securityContext;
+    private final ElementProcessor<XmlDocument> elementProcessor;
+    private final MessageHelper messageHelper;
 
-    public AnnotateApiServiceImpl(DocumentContentService documentContentService, SecurityContext securityContext) {
+    public AnnotateApiServiceImpl(DocumentContentService documentContentService, SecurityContext securityContext, ElementProcessor<XmlDocument> elementProcessor, MessageHelper messageHelper) {
         this.documentContentService = documentContentService;
         this.securityContext = securityContext;
+        this.elementProcessor = elementProcessor;
+        this.messageHelper = messageHelper;
     }
 
     @Override
     public List<LeosPermission> requestUserPermissions(String documentRef, LeosCategory category) {
-        XmlDocument document = documentContentService.getDocument(documentRef, category);
+        XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
         List<LeosPermission> userPermissions = securityContext.getPermissions(document);
         return userPermissions;
     }
@@ -57,10 +66,45 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     @Override
     public AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategory category) {
         AnnotateMetadata metadata = new AnnotateMetadata();
-        XmlDocument document = documentContentService.getDocument(documentRef, category);
+        XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
         metadata.setVersion(document.getVersionLabel());
         metadata.setId(document.getId());
         metadata.setTitle(document.getTitle());
         return metadata;
+    }
+
+    @Override
+    public List<AnnotateMetadata> requestSearchMetadata() {
+        List<AnnotateMetadata> metadataList = new ArrayList<>();
+        AnnotateMetadata metadata = new AnnotateMetadata();
+        List<String> statusList = new ArrayList<>();
+        statusList.add(AnnotationStatus.ALL.name());
+        metadata.setStatus(statusList);
+        metadataList.add(metadata);
+        return metadataList;
+    }
+
+    @Override
+    public void mergeSuggestion(LeosCategory documentType, String documentRef, String origText, String newText, String elementId, int startOffset, int endOffset) {
+        XmlDocument document = documentContentService.getDocumentByRef(documentRef, documentType);
+        byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, origText, newText, elementId, startOffset, endOffset, false);
+        if (resultXmlContent == null) {
+            throw new AnnotateException(messageHelper.getMessage("document.merge.suggestion.failed"));
+        }
+        document = documentContentService.updateDocument(document, resultXmlContent, messageHelper.getMessage("operation.merge.suggestion"));
+        if (document == null) {
+            throw new AnnotateException(messageHelper.getMessage("document.merge.suggestion.failed"));
+        }
+        LOG.info("Merged suggestion in document {}, elementId {}, startOffset {}, endOffset {}", documentRef, elementId, startOffset, endOffset);
+    }
+
+    @Override
+    public void responseFilteredAnnotations(String filteredAnnotations) {
+        //TODO to be completed
+//        if (this.downloadExportRequest.getRequestType().equals(DownloadExportRequest.RequestType.DOWNLOAD)) {
+//            doDownloadActualVersion(true, filteredAnnotations);
+//        } else {
+//            doExportPackage(filteredAnnotations);
+//        }
     }
 }
