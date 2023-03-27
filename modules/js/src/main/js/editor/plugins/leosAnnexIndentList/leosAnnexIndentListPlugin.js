@@ -1022,6 +1022,7 @@ define(function leosAnnexIndentListPluginModule(require) {
                 }
                 leosPluginUtils.manageEmptyLists(editor);
                 leosPluginUtils.managePoints(editor);
+				leosPluginUtils.manageNestedSubparagraphs(editor);
                 leosPluginUtils.manageEmptySubparagraphs(editor);
                 leosPluginUtils.manageCrossheadings(editor);
                 leosPluginUtils.manageSiblingLists(editor);
