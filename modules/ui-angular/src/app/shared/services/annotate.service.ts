@@ -1,8 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { finalize, tap } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import { AnnotateMetadata, Permission } from '../models';
+import {
+  AnnotateMetadata,
+  MergeSuggestionRequest,
+  MergeSuggestionResponse,
+  Permission,
+} from '../models';
 import { DocumentService } from './document.service';
 
 @Injectable({ providedIn: 'root' })
@@ -27,6 +33,34 @@ export class AnnotateService {
   getDocumentsMetadata() {
     return this.httpClient.get<AnnotateMetadata>(
       `${apiBaseUrl}/secured/annotation/requestDocumentMetadata/${this.documentType}/${this.documentRef}`,
+    );
+  }
+
+  requestMergeSuggestion(mergeRequest: MergeSuggestionRequest) {
+    return this.httpClient
+      .post(
+        `${apiBaseUrl}/secured/annotation/requestMergeSuggestion/${this.documentType}/${this.documentRef}`,
+        mergeRequest,
+      )
+      .pipe(
+        finalize(() => this.documentService.setDocumentId(this.documentRef)),
+      );
+  }
+
+  requestMergeSuggestions(mergeRequests: MergeSuggestionRequest[]) {
+    return this.httpClient
+      .post<MergeSuggestionResponse[]>(
+        `${apiBaseUrl}/secured/annotation/requestMergeSuggestions/${this.documentType}/${this.documentRef}`,
+        { mergeSuggestionRequests: mergeRequests },
+      )
+      .pipe(
+        finalize(() => this.documentService.setDocumentId(this.documentRef)),
+      );
+  }
+
+  fetchSearchMetada() {
+    return this.httpClient.get<AnnotateMetadata[]>(
+      `${apiBaseUrl}/secured/annotation/requestSearchMetadata`,
     );
   }
 

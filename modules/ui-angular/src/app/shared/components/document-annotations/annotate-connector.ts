@@ -1,4 +1,4 @@
-import { of, take, takeUntil } from 'rxjs';
+import { distinctUntilChanged, of, take, takeUntil } from 'rxjs';
 
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
@@ -6,6 +6,7 @@ import type {
   AnnotateConnectorState,
   AnnotateMetadata,
   MergeSuggestion,
+  MergeSuggestionRequest,
   Permission,
 } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
@@ -23,8 +24,8 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   target?: Element;
   receiveUserPermissions?: (...userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
-  receiveMergeSuggestion?: (result: MergeSuggestion) => void;
-  receiveMergeSuggestions?: (...results: MergeSuggestion[]) => void;
+  receiveMergeSuggestion?: (result) => void;
+  receiveMergeSuggestions?: (...results) => void;
   receiveDocumentMetadata?: (metadata: string) => void;
   receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
 
@@ -51,22 +52,70 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     });
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestMergeSuggestion(...args) {
-    console.warn('stub:', 'requestMergeSuggestion', args); // FIXME
-    // this.receiveMergeSuggestion?.(/*...*/);
+    const mergeRequests: MergeSuggestionRequest[] = args.map(
+      ({
+        completeOuterHTML,
+        elementId,
+        endOffset,
+        newText,
+        origText,
+        parentElementId,
+        startOffset,
+      }) => ({
+        completeOuterHTML: completeOuterHTML as string,
+        elementId: elementId as string,
+        newText: newText as string,
+        origText: origText as string,
+        parentElementId: parentElementId as string,
+        startOffset: startOffset as number,
+        endOffset: endOffset as number,
+      }),
+    );
+
+    this.annotateService
+      .requestMergeSuggestion(mergeRequests[0])
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.receiveMergeSuggestion(res);
+      });
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
   requestMergeSuggestions(...args) {
-    console.warn('stub:', 'requestMergeSuggestions', args); // FIXME
-    // this.receiveMergeSuggestions?.(/*...*/);
+    const mergeRequests: MergeSuggestionRequest[] = args[0].map(
+      ({
+        completeOuterHTML,
+        elementId,
+        endOffset,
+        newText,
+        origText,
+        parentElementId,
+        startOffset,
+      }) => ({
+        completeOuterHTML: completeOuterHTML as string,
+        elementId: elementId as string,
+        newText: newText as string,
+        origText: origText as string,
+        parentElementId: parentElementId as string,
+        startOffset: startOffset as number,
+        endOffset: endOffset as number,
+      }),
+    );
+    this.annotateService
+      .requestMergeSuggestions(mergeRequests)
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.receiveMergeSuggestions(...res);
+      });
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
-  requestSearchMetadata(...args) {
-    console.warn('stub:', 'requestSearchMetadata', args); // FIXME
-    // this.receiveSearchMetadata?.(/*...*/);
+  requestSearchMetadata() {
+    this.annotateService
+      .fetchSearchMetada()
+      .pipe(take(1), distinctUntilChanged())
+      .subscribe((res) => {
+        this.receiveSearchMetadata(res);
+      });
   }
 
   requestSecurityToken() {

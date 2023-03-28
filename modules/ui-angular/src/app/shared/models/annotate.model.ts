@@ -54,4 +54,25 @@ export type AnnotateMetadata = {
   id: string;
   title: string;
   version: string;
+  status: string[];
+};
+
+export type MergeSuggestionRequest = {
+  completeOuterHTML: string;
+  elementId: string;
+  newText: string;
+  origText: string;
+  parentElementId: string;
+  endOffset: number;
+  startOffset: number;
+};
+
+export type MergeSuggestionResponse = {
+  elementId: string;
+  newText: string;
+  origText: string;
+  parentElementId: string;
+  endOffset: number;
+  startOffset: number;
+  result: string;
 };
