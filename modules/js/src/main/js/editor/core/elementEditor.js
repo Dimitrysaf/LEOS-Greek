@@ -331,7 +331,7 @@ define(function elementEditorModule(require) {
         }).remove();
         $("#" + elementId).parent().contents().filter(function () {
             if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE);
+                return this.textContent.match(ZERO_WIDTH_SPACE); 
             }
             return false;
         }).remove();
@@ -339,11 +339,12 @@ define(function elementEditorModule(require) {
 
     function _isEmptyElement(elementId, editor) {
         var bogus = $("#" + elementId).find("br");
-        if (bogus) {
-            bogus.remove();
+        var sibling;
+        if (bogus && bogus[0]) {
+            sibling = bogus[0].previousSibling;
         }
         var emptyElements = $("#" + elementId + ", h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
-        if (emptyElements.length > 0) {
+        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && sibling.nodeType === Node.TEXT_NODE))) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
             dialogCommand.exec();
