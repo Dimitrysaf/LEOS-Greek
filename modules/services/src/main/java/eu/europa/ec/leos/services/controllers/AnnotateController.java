@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.api.AnnotateApiService;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequest;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequests;
 import eu.europa.ec.leos.services.dto.request.AnnotateResponseFilteredRequest;
+import eu.europa.ec.leos.services.dto.response.AnnotateMergeSuggestionsResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -90,7 +92,7 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestSearchMetadata() {
         try {
-             List<AnnotateMetadata> searchMetadata = annotateApiService.requestSearchMetadata();
+            List<AnnotateMetadata> searchMetadata = annotateApiService.requestSearchMetadata();
             return new ResponseEntity<>(searchMetadata, HttpStatus.OK);
         } catch (Exception e) {
             String msg = "Error occurred while requesting Annotation DocumentMetadata ";
@@ -126,27 +128,27 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestMergeSuggestions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                           @RequestBody AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
+        List<AnnotateMergeSuggestionsResponse> results = new ArrayList<>();
         try {
-            AnnotateMergeSuggestionRequest mergeSuggestionRequest = null;
-            for (int i = 0; i < mergeSuggestionRequests.getMergeSuggestionRequests().size(); i++) {
+            for (AnnotateMergeSuggestionRequest suggestionRequest : mergeSuggestionRequests.getMergeSuggestionRequests()) {
                 try {
-                    mergeSuggestionRequest = mergeSuggestionRequests.getMergeSuggestionRequests().get(i);
                     final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
-                    final String origText = mergeSuggestionRequest.getOrigText();
-                    final String newText = mergeSuggestionRequest.getNewText();
-                    final String elementId = mergeSuggestionRequest.getElementId();
-                    final int startOffset = mergeSuggestionRequest.getStartOffset();
-                    final int endOffset = mergeSuggestionRequest.getEndOffset();
+                    final String origText = suggestionRequest.getOrigText();
+                    final String newText = suggestionRequest.getNewText();
+                    final String elementId = suggestionRequest.getElementId();
+                    final int startOffset = suggestionRequest.getStartOffset();
+                    final int endOffset = suggestionRequest.getEndOffset();
                     if (origText == null || newText == null || elementId == null || startOffset < 0 || endOffset < 0 || startOffset == endOffset) {
                         throw new Exception("Invalid request parameters");
                     }
                     annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
+                    results.add(new AnnotateMergeSuggestionsResponse(origText, newText, elementId, startOffset, endOffset, "SUCCESS"));
                 } catch (Exception e) {
-                    LOG.error("Error in for suggestion: {}", mergeSuggestionRequest);
+                    LOG.error("Error in for suggestion: {}", suggestionRequest);
                     throw e;
                 }
             }
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
             String msg = "Error occurred while requesting Annotation Merge Suggestion";
             LOG.error(msg, e);
