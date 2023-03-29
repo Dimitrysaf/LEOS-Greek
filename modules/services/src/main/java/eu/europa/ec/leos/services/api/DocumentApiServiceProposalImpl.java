@@ -22,7 +22,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
-import eu.europa.ec.leos.services.exception.AnnotateException;
+import eu.europa.ec.leos.services.exception.ExportException;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -52,7 +52,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
             return new byte[0];
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
-            throw new AnnotateException(messageHelper.getMessage("export.package.error.message"));
+            throw new ExportException(messageHelper.getMessage("export.package.error.message"));
         }
     }
 
