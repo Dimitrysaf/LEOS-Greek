@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -15,13 +15,14 @@ import { Observable, Subscription } from 'rxjs';
 import { AppConfigService } from '@/core/services/app-config.service';
 
 import { LocalStorageService } from './core/services/local-storage.service';
+import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   headerTitleHtml = '';
   headerLogoUrl =
     process.env.NG_APP_LEOS_INSTANCE === 'cn'
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private store: Store<any>,
     private config: AppConfigService,
     private translateService: TranslateService,
+    private webSocket: CoEditionServiceWS,
   ) {
     this.i18nState = this.store.select(getI18nState);
     this.userPreferencesState = this.store.select(getUserPreferences);
@@ -50,10 +52,15 @@ export class AppComponent implements OnInit, OnDestroy {
       }),
     );
   }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.webSocket.sendMessage('test');
+    }, 3000);
+  }
 
   ngOnInit() {
+    this.webSocket.connect();
     const lang = this.storage.get('lang');
-
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
     this.subs.push(
       this.config.config.subscribe(
