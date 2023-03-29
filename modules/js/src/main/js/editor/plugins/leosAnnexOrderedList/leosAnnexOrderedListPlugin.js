@@ -35,6 +35,8 @@ define(function leosAnnexOrderedListPluginModule(require) {
     var config = { attributes: false, childList: true, subtree: true };
 
     var LOCAL_MAX_LEVEL_LIST;
+
+    var CHECKBOXES = ['☐','&#9744;','&#x2610;', '☑', '&#9745;' , '&#x2611;' ];
     var pluginDefinition = {
         lang: 'en',
         init: function init(editor) {
@@ -112,13 +114,15 @@ define(function leosAnnexOrderedListPluginModule(require) {
             var point = isParentSubPoint ? parent.getParent() : parent;
             var isSelectedElementInsidePoint = (leosPluginUtils.getElementName(point) === leosPluginUtils.HTML_POINT) && _getAscendantPoint(point);
             var isSelectedElementSubPoint = isSelectedElementInsidePoint && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
-
+            var dataAknNumAttr = selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+            var isCheckbox =CHECKBOXES.includes(dataAknNumAttr);
             if(isLevelElement && isSelectedElementEmpty){
                 selectedElement.remove();
             } else if (isSelectedElementSubPoint && isSelectedElementEmpty && (hasTextNext || isParentSubPoint)) {
                 var listParent = point.getParent();
                 var listParentHasIntro = (isParentSubPoint && isSubPoint) || listParent.getPrevious(); //if not, it means that enter was pressed in the last
                 selectedElement.insertAfter(listParentHasIntro ? parent : listParent);
+                selectedElement.setAttribute("contenteditable", "true");
                 leosPluginUtils.setFocus(selectedElement, event.editor);
                 if (isOnlyChild) {
                     parent.appendBogus();
@@ -135,7 +139,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
                     $(newElement.$).insertBefore($(parent.$));
                     parent.getChildren().$[0].remove()
                 } else if (selectedElement.$ === parentElementChildList[parentElementChildList.length -1]) {
-                    selectedElement.renameNode('p')
+                    selectedElement.renameNode('p');
                     selectedElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
                     selectedElement.removeAttribute(leosPluginUtils.REFERS_TO);
                     selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
@@ -143,6 +147,18 @@ define(function leosAnnexOrderedListPluginModule(require) {
                     $(selectedElement.$).insertAfter($(parent.$));
                 }
                 leosPluginUtils.setFocus(selectedElement, event.editor);
+            }else if(isCheckbox){
+                selectedElement.renameNode('p');
+                selectedElement.setAttribute("contenteditable", "true");
+                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
+                selectedElement.removeAttribute(leosPluginUtils.REFERS_TO);
+                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
+                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                var previousSibling = selectedElement.getPrevious();
+                previousSibling.append(selectedElement);
+                leosPluginUtils.setFocus(selectedElement, event.editor);
+                leosPluginUtils.manageNestedHtmlP(event.editor);
             }
         }
     }
