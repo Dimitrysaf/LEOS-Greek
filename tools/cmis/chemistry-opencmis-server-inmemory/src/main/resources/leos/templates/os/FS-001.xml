@@ -3305,10 +3305,14 @@
                         </table>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_6_6">
+                <subparagraph leos:deletable="false" leos:editable="true" xml:id="_body__level_3231__subparagraph_6_6">
                     <content xml:id="_body__level_3231__subparagraph_6_6__content">
                         <p xml:id="_body__level_3231__subparagraph_6_6__content__p_1">XX is the policy area or budget title concerned.</p>
-                        <p xml:id="_body__level_3231__subparagraph_6_6__content__p_2">The human resources required will be met by staff from the DG who are already assigned to management of the action and/or have been redeployed within the DG, together if necessary with any additional allocation which may be granted to the managing DG under the annual allocation procedure and in the light of budgetary constraints.</p>
+                    </content>
+                </subparagraph>
+                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_6_7">
+                    <content xml:id="_body__level_3231__subparagraph_6_7__content">
+                        <p xml:id="_body__level_3231__subparagraph_6_7__content__p_2">The human resources required will be met by staff from the DG who are already assigned to management of the action and/or have been redeployed within the DG, together if necessary with any additional allocation which may be granted to the managing DG under the annual allocation procedure and in the light of budgetary constraints.</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_7_7">
