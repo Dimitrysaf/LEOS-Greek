@@ -111,14 +111,14 @@ define(function leosArticleIndentListPluginModule(require) {
                     refresh: this.isIndent ?
                         function(editor, path) {
                             var range = getSelectedRange(editor);
-                            path = leosPluginUtils.selectCorrectPathForList(range, path);
+                            path = leosPluginUtils.selectCorrectPathForList(range, path, true);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext( path );
                             var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
                             if (isListEnding) {
                                 return TRISTATE_OFF;
                             } else if (leosPluginUtils.isSubparagraph(path.lastElement)
-                                        && !_isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)) {
+                                        && leosPluginUtils.calculateListLevel(path.lastElement)<LOCAL_MAX_LEVEL_LIST) {
                                 return TRISTATE_OFF;
                             } else if (!list
                                 || firstItemInPath( this.context, path, list )
@@ -129,12 +129,12 @@ define(function leosArticleIndentListPluginModule(require) {
                             }
                         } : function(editor, path) {
                             var range = getSelectedRange(editor);
-                            path = leosPluginUtils.selectCorrectPathForList(range, path);
+                            path = leosPluginUtils.selectCorrectPathForList(range, path, false);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
                             var isSubParagraph = leosPluginUtils.isSubparagraphInPath(path);
                             // custom code to disable the outdent toolbar button for first level list items.
-                            if (isSubParagraph) {
+                            if (isSubParagraph || leosPluginUtils.calculateListLevel(path.lastElement)<=1) {
                                 return TRISTATE_DISABLED;
                             } else if (!list || isFirstLevelList(editor, list)) {
                                 return TRISTATE_DISABLED;
@@ -295,7 +295,7 @@ define(function leosArticleIndentListPluginModule(require) {
         }
 
         var selection = editor.getSelection();
-        selection = leosPluginUtils.selectCorrectElementForList(selection);
+        selection = leosPluginUtils.selectCorrectElementForList(selection, that.isIndent);
         var ranges = selection && selection.getRanges(),
             iterator = ranges.createIterator();
 
@@ -475,7 +475,7 @@ define(function leosArticleIndentListPluginModule(require) {
             var child_name = leosPluginUtils.getElementName(child);
             // only if we find an order_list_element (ol) it means we found another depth level
             if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT) {
-                level++;
+                level=1;
                 //LOG.debug(child_idx+"-th child found: " + child_name + ", calculated level: " + level + ", stopLevel: " + stopLevel);
                 if (level >= stopLevel) {
                     return true;

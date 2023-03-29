@@ -94,25 +94,15 @@ define(function aknOrderedListPluginModule(require) {
     function _restoreListStructure(event) {
         if (event.data.name === 'enter') {
             var selectedElement = leosKeyHandler.getSelectedElement(event.editor.getSelection());
-            var isSelectedElementEmpty = leosKeyHandler.isContentEmptyTextNode(selectedElement);
-            var isOnlyChild = !selectedElement.hasNext() && !selectedElement.hasPrevious();
-            var hasTextNext = leosPluginUtils.hasTextOrBogusAsNextSibling(selectedElement);
             var parent = selectedElement.getParent();
             var isSubPoint = leosPluginUtils.isSubparagraph(selectedElement);
-            var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
-            var point = isParentSubPoint ? parent.getParent() : parent;
-            var isSelectedElementInsidePoint = (leosPluginUtils.getElementName(point) === leosPluginUtils.HTML_POINT) && _getAscendantPoint(point);
-            var isSelectedElementSubPoint = isSelectedElementInsidePoint && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
+            var isParentPoint = !leosPluginUtils.isSubparagraph(parent);
+            var pointWithoutContent = !selectedElement.getPrevious() && !parent.getPrevious() && leosPluginUtils.isOrderedList(parent.getParent())
+                && !parent.getParent().getPrevious();
 
-            if(isSelectedElementSubPoint && isSelectedElementEmpty && (hasTextNext || isParentSubPoint)){
-                var listParent = point.getParent();
-                var listParentHasIntro = (isParentSubPoint && isSubPoint) || listParent.getPrevious(); //if not, it means that enter was pressed in the last
-                // sub-point before the list
-                selectedElement.insertBefore(listParentHasIntro ? parent : listParent);
+            if(isSubPoint && isParentPoint && pointWithoutContent){
+                selectedElement.insertBefore(parent.getParent());
                 leosPluginUtils.setFocus(selectedElement, event.editor);
-                if(isOnlyChild){
-                    parent.appendBogus();
-                }
             }
         }
     }
@@ -187,7 +177,7 @@ define(function aknOrderedListPluginModule(require) {
         for (var i = 0; i < node.childNodes.length; i++){
             var child = node.childNodes[i];
             if(child.childNodes.length > 0){
-                _pushMutations(child, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed);
+                _pushMutations(child, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed);
             }
             _pushListsWithoutIntro(child, listsWithoutIntro, isListPushed);
             _pushSingleSubPoints(node, child, singleSubPoints, isSubPointPushed);
@@ -261,7 +251,7 @@ define(function aknOrderedListPluginModule(require) {
     function _resetDataNumOnIndent(event) {
         var editor = event.editor, range, node;
         var selection = editor.getSelection();
-        selection = leosPluginUtils.selectCorrectElementForList(selection);
+        selection = leosPluginUtils.selectCorrectElementForList(selection, true);
         var ranges = selection && selection.getRanges(),
             iterator = ranges.createIterator();
 
