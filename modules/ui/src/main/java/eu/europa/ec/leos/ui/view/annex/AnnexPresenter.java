@@ -1434,7 +1434,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final Annex version = annexService.findAnnexVersion(event.getVersionId());
         final byte[] resultXmlContent = getContent(version);
 
-        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+        if (akn4euConversionDocumentsEnabled && documentContentService.isDeprecatedDocument(resultXmlContent)) {
             ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()), null),
                     this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
                     messageHelper.getMessage("document.akn4eu.version.convert.message"),

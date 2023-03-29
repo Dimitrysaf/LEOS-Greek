@@ -10,6 +10,7 @@ public class XPathCatalog {
     public static final String NAMESPACE_AKN4EU_NAME = "akn4eu";
     public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
     public static final String AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS = "4.0.0.0";
+    public static final String LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS = "2.2.0";
 
     public static String getXPathElement(String element) {
         return "//akn:" + element;
@@ -145,6 +146,10 @@ public class XPathCatalog {
 
     public String getXPathAkn4euAttribute() {
         return "//akn:meta/akn:identification/akn:FRBRManifestation/akn:preservation/@xmlns:akn4eu";
+    }
+
+    public String getLeosTemplateVersion() {
+        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:templateVersion";
     }
 
     public String getXPathSubparagraphWithReferToINPAttribute() {

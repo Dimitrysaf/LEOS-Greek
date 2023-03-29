@@ -1743,7 +1743,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Bill version = billService.findBillVersion(versionId);
         byte[] resultXmlContent = getContent(version);
 
-        if (akn4euConversionDocumentsEnabled && !documentContentService.isDeprecatedDocument(resultXmlContent)) {
+        if (akn4euConversionDocumentsEnabled && documentContentService.isDeprecatedDocument(resultXmlContent)) {
             ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()), null),
                     this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
                     messageHelper.getMessage("document.akn4eu.version.convert.message"),

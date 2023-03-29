@@ -360,7 +360,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO));
                     }
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(proposal) ? isValid : false;
+                        isValid = documentContentService.isDeprecatedDocument(proposal) ? false : isValid;
                     }
                     break;
                 }
@@ -374,7 +374,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     proposalVO.addChildDocument(explanatoryVO);
                     docVersionSeriesIds.add(explanatory.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(explanatory) ? isValid : false;
+                        isValid = documentContentService.isDeprecatedDocument(explanatory) ? false : isValid;
                     }
                     break;
                 }
@@ -387,7 +387,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
                     docVersionSeriesIds.add(memorandum.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(memorandum) ? isValid : false;
+                        isValid = documentContentService.isDeprecatedDocument(memorandum) ? false : isValid;
                     }
                     break;
                 }
@@ -400,7 +400,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     billVO.setVersionSeriesId(bill.getVersionSeriesId());
                     docVersionSeriesIds.add(bill.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(bill) ? isValid : false;
+                        isValid = documentContentService.isDeprecatedDocument(bill) ? false : isValid;
                     }
                     break;
                 }
@@ -413,7 +413,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     annexVO.setVersionSeriesId(annex.getVersionSeriesId());
                     docVersionSeriesIds.add(annex.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(annex) ? isValid : false;
+                        isValid = documentContentService.isDeprecatedDocument(annex) ? false : isValid;
                     }
                     break;
                 }
@@ -426,7 +426,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
                     docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(financialStatement) ? isValid : false;
+                        isValid = documentContentService.isDeprecatedDocument(financialStatement) ? false : isValid;
                     }
                     break;
                 }
