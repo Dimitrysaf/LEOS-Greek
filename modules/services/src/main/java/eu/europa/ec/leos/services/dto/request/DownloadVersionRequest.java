@@ -17,24 +17,34 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class AnnotateMergeSuggestionRequests implements Serializable {
+public class DownloadVersionRequest implements Serializable {
 
-    private List<AnnotateMergeSuggestionRequest> mergeSuggestionRequests;
+    private boolean withAnnotations;
+    private String annotations;
 
-    public List<AnnotateMergeSuggestionRequest> getMergeSuggestionRequests() {
-        return mergeSuggestionRequests;
+    public boolean isWithAnnotations() {
+        return withAnnotations;
     }
 
-    public void setMergeSuggestionRequests(List<AnnotateMergeSuggestionRequest> mergeSuggestionRequests) {
-        this.mergeSuggestionRequests = mergeSuggestionRequests;
+    public void setWithAnnotations(boolean withAnnotations) {
+        this.withAnnotations = withAnnotations;
+    }
+
+    public String getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(String annotations) {
+        this.annotations = annotations;
     }
 
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .appendSuper(super.toString())
-                .append("mergeSuggestionRequests", mergeSuggestionRequests)
+                .append("withAnnotations", withAnnotations)
+                .append("annotations", annotations)
                 .toString();
     }
+
 }

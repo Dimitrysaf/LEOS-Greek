@@ -15,12 +15,11 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.services.api.AnnotateApiService;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequest;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequests;
-import eu.europa.ec.leos.services.dto.request.AnnotateResponseFilteredRequest;
 import eu.europa.ec.leos.services.dto.response.AnnotateMergeSuggestionsResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestUserPermissions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {
-            final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
 
             List<LeosPermission> documentPermissions = annotateApiService.requestUserPermissions(documentRef, documentCategory);
             return new ResponseEntity<>(documentPermissions, HttpStatus.OK);
@@ -77,7 +76,7 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestDocumentMetadata(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {
-            final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
 
             AnnotateMetadata documentMetadata = annotateApiService.requestDocumentMetadata(documentRef, documentCategory);
             return new ResponseEntity<>(documentMetadata, HttpStatus.OK);
@@ -106,7 +105,7 @@ public class AnnotateController {
     public ResponseEntity<Object> requestMergeSuggestion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                          @RequestBody AnnotateMergeSuggestionRequest mergeSuggestionRequest) {
         try {
-            final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             final String origText = mergeSuggestionRequest.getOrigText();
             final String newText = mergeSuggestionRequest.getNewText();
             final String elementId = mergeSuggestionRequest.getElementId();
@@ -128,11 +127,11 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestMergeSuggestions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                           @RequestBody AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
+        final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
         List<AnnotateMergeSuggestionsResponse> results = new ArrayList<>();
         try {
             for (AnnotateMergeSuggestionRequest suggestionRequest : mergeSuggestionRequests.getMergeSuggestionRequests()) {
                 try {
-                    final LeosCategory documentCategory = LeosCategory.valueOf(documentType);
                     final String origText = suggestionRequest.getOrigText();
                     final String newText = suggestionRequest.getNewText();
                     final String elementId = suggestionRequest.getElementId();
@@ -151,22 +150,6 @@ public class AnnotateController {
             return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
             String msg = "Error occurred while requesting Annotation Merge Suggestion";
-            LOG.error(msg, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    //TODO to be completed
-    @RequestMapping(value = "/responseFilteredAnnotations/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> responseFilteredAnnotations(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                              @RequestBody AnnotateResponseFilteredRequest filteredAnnotation) {
-        try {
-            final String filteredAnnotations = filteredAnnotation.getAnnotations();
-            annotateApiService.responseFilteredAnnotations(filteredAnnotations);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            String msg = "Error occurred while requesting Annotation filtering";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
