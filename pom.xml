@@ -14,7 +14,8 @@
     See the Licence for the specific language governing permissions and limitations under the Licence.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.leos.pilot</groupId>
@@ -124,6 +125,7 @@
         <spring-webmvc.version>5.3.19</spring-webmvc.version>
         <spring-security.version>4.2.20.RELEASE</spring-security.version>
         <spring-data.version>Codd-SR3</spring-data.version>
+        <spring-boot.version>2.6.7</spring-boot.version>
         <hibernate-orm.version>4.2.10.Final</hibernate-orm.version><!--UPGRADE PENDING-->
         <auth0.version>3.2.0</auth0.version>
         <jboss-logging.version>3.3.0.Final</jboss-logging.version>
@@ -232,6 +234,27 @@
                 <version>${spring-data.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <!-- Spring boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>${spring-boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-annotations</artifactId>
+                    </exclusion>
+                    <!--  this is only needed for jetty , should be commented out i just added for the reviewing process with shailesh-->
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- security Frameworks-->
             <dependency>
@@ -563,10 +586,10 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-			    <groupId>org.apache.commons</groupId>
-			    <artifactId>commons-text</artifactId>
-			    <version>${commons-text.version}</version>
-			</dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jvnet.jaxb2_commons</groupId>
                 <artifactId>jaxb2-basics</artifactId>
@@ -625,14 +648,14 @@
                                     <requireMavenVersion>
                                         <version>${project.maven.version}</version>
                                     </requireMavenVersion>
-                                    <requirePluginVersions />
+                                    <requirePluginVersions/>
                                     <requireJavaVersion>
                                         <version>${project.java.version}</version>
                                     </requireJavaVersion>
                                     <DependencyConvergence>
                                         <uniqueVersions>true</uniqueVersions>
                                     </DependencyConvergence>
-                                    <banCircularDependencies />
+                                    <banCircularDependencies/>
                                     <bannedDependencies>
                                         <searchTransitive>true</searchTransitive>
                                         <excludes>
