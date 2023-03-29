@@ -15,7 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
@@ -109,7 +109,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         }
     }
 
-    protected XmlDocument getOriginalDocument(XmlDocument xmlDocument) {
+    @Override
+    public XmlDocument getOriginalDocument(XmlDocument xmlDocument) {
         switch (xmlDocument.getCategory()) {
             case MEMORANDUM:
                 return getOriginalMemorandum((Memorandum) xmlDocument);
@@ -489,7 +490,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
 
     @Override
-    public XmlDocument getDocumentByRef(String documentRef, LeosCategory category) {
+    public XmlDocument getDocumentByRef(String documentRef, LeosCategoryClass category) {
         XmlDocument document;
         switch (category) {
             case BILL:

@@ -16,7 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -52,7 +52,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     }
 
     @Override
-    public List<LeosPermission> requestUserPermissions(String documentRef, LeosCategory category) {
+    public List<LeosPermission> requestUserPermissions(String documentRef, LeosCategoryClass category) {
         XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
         List<LeosPermission> userPermissions = securityContext.getPermissions(document);
         return userPermissions;
@@ -64,7 +64,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     }
 
     @Override
-    public AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategory category) {
+    public AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategoryClass category) {
         AnnotateMetadata metadata = new AnnotateMetadata();
         XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
         metadata.setVersion(document.getVersionLabel());
@@ -85,7 +85,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     }
 
     @Override
-    public void mergeSuggestion(LeosCategory documentType, String documentRef, String origText, String newText, String elementId, int startOffset, int endOffset) {
+    public void mergeSuggestion(LeosCategoryClass documentType, String documentRef, String origText, String newText, String elementId, int startOffset, int endOffset) {
         XmlDocument document = documentContentService.getDocumentByRef(documentRef, documentType);
         byte[] resultXmlContent = elementProcessor.replaceTextInElement(document, origText, newText, elementId, startOffset, endOffset, false);
         if (resultXmlContent == null) {
@@ -98,13 +98,4 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
         LOG.info("Merged suggestion in document {}, elementId {}, startOffset {}, endOffset {}", documentRef, elementId, startOffset, endOffset);
     }
 
-    @Override
-    public void responseFilteredAnnotations(String filteredAnnotations) {
-        //TODO to be completed
-//        if (this.downloadExportRequest.getRequestType().equals(DownloadExportRequest.RequestType.DOWNLOAD)) {
-//            doDownloadActualVersion(true, filteredAnnotations);
-//        } else {
-//            doExportPackage(filteredAnnotations);
-//        }
-    }
 }

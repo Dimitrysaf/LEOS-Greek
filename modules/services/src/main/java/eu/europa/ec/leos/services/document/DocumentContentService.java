@@ -15,7 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 
 import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
@@ -42,7 +42,9 @@ public interface DocumentContentService {
     }
 
     String toEditableContent(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext, byte[] coverPageContent);
-    
+
+    XmlDocument getOriginalDocument(XmlDocument xmlDocument);
+
     XmlDocument getOriginalAnnex(Annex annex);
 
     XmlDocument getOriginalExplanatory(Explanatory explanatory);
@@ -119,7 +121,7 @@ public interface DocumentContentService {
     
     boolean isRevisionAnnex(XmlDocument xmlDocument);
 
-    XmlDocument getDocumentByRef(String documentRef, LeosCategory category);
+    XmlDocument getDocumentByRef(String documentRef, LeosCategoryClass category);
 
     XmlDocument updateDocument(XmlDocument document, byte[] resultXmlContent, String message);
 }

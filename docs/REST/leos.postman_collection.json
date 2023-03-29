@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c78538a-f6db-41ab-9bcf-bd19a4ac277d",
+		"_postman_id": "01609434-12d5-4533-894e-d03faf185a1d",
 		"name": "LEOS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -500,6 +500,465 @@
 								"api",
 								"secured",
 								"responseFilteredAnnotations",
+								"{{documentType}}",
+								"{{documentRef}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cri",
+			"item": [
+				{
+					"name": "getToc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/annex/annex_1/getToc?tocMode=SIMPLIFIED",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"annex",
+								"annex_1",
+								"getToc"
+							],
+							"query": [
+								{
+									"key": "tocMode",
+									"value": "SIMPLIFIED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getConfig",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY3ODM2NjYwNiwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjc4MzcwMjA2LCJpYXQiOjE2NzgzNjY2MDYsInVzZXIiOiJqYW5lIn0.N4IQGh8BOhXpscUQJAkOOqIl2COCWHuqSIoH0J2kx4A",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/config",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateToc",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"draggedNodeId\": [\r\n        \"_title1\"\r\n    ],\r\n    \"draggedNodeTagName\":\"title\",\r\n    \"targetNodeId\": \"_title2\",\r\n    \"targetNodeTagName\": \"title\",\r\n    \"parentNodeId\": \"_body\",\r\n    \"position\": \"AS_CHILDREN\",\r\n    \"documentRef\": \"ANNEX-clfkyw8f90000x401fsfokc9b-en\",\r\n    \"documentType\": \"ANNEX\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/toc/ANNEX-clfkyw8f90000x401fsfokc9b-en/validate-node-drop",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"toc",
+								"ANNEX-clfkyw8f90000x401fsfokc9b-en",
+								"validate-node-drop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exportProposal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODE2NzYxNSwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4MTcxMjE1LCJpYXQiOjE2NjgxNjc2MTUsInVzZXIiOiJqYW5lIn0.k2PBw-sVgtWKUixAcjjYq-fXLIlVjqfwmYcbqZaFOJg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"proposalRef\":\"main-cla87b3m1000o0p56vzajexln-en\",\r\n    \"exportOutput\": \"PDF\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/proposal/export",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"proposal",
+								"export"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createExplanaotry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODE2NzYxNSwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4MTcxMjE1LCJpYXQiOjE2NjgxNjc2MTUsInVzZXIiOiJqYW5lIn0.k2PBw-sVgtWKUixAcjjYq-fXLIlVjqfwmYcbqZaFOJg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"proposalRef\":\"proposal_cla9hqkwi0001qs587o2ec5ky\",\r\n    \"template\":\"CE-003\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/proposal/createExplanatory",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"proposal",
+								"createExplanatory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchUser",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODE2NzYxNSwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4MTcxMjE1LCJpYXQiOjE2NjgxNjc2MTUsInVzZXIiOiJqYW5lIn0.k2PBw-sVgtWKUixAcjjYq-fXLIlVjqfwmYcbqZaFOJg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/proposal/searchUser/demo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"proposal",
+								"searchUser",
+								"demo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteProposal",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODA5MjcyMCwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4MDk2MzIwLCJpYXQiOjE2NjgwOTI3MjAsInVzZXIiOiJqYW5lIn0.kBYp36tCgkm_13TRYVdZCCn0WaFEPUM_92cfmk9VHYM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/proposal/main-clacg8qzh0005q058be271yku-en",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"proposal",
+								"main-clacg8qzh0005q058be271yku-en"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getProposalDetails",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2OTcxNzY3NCwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY5NzIxMjc0LCJpYXQiOjE2Njk3MTc2NzQsInVzZXIiOiJqYW5lIn0.DIXA08PmOCAHtfIsjukDT6Xz5CGM7ruoDQqTLWzdLnI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/proposals/main-clb247pz20001vw58holkv81e-en",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"proposals",
+								"main-clb247pz20001vw58holkv81e-en"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateProposalMetadata",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODE2NzYxNSwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4MTcxMjE1LCJpYXQiOjE2NjgxNjc2MTUsInVzZXIiOiJqYW5lIn0.k2PBw-sVgtWKUixAcjjYq-fXLIlVjqfwmYcbqZaFOJg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"eeaRelevance\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/proposal/main-clacg8qzh0005q058be271yku-en",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"proposal",
+								"main-clacg8qzh0005q058be271yku-en"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTemplates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/getTemplates",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"getTemplates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filterProposals",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODQzNjQyOCwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4NDQwMDI4LCJpYXQiOjE2Njg0MzY0MjgsInVzZXIiOiJqYW5lIn0.0OKMQnFoL10-EO3BFIKbTk6D4z8O9sjie75pZsHtdB4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"startIndex\":0,\r\n    \"limit\":0,\r\n    \"sortOrder\":false,\r\n    \"filters\": [\r\n        {\r\n            \"type\": \"procedureType\",\r\n            \"value\": [\"ORDINARY_LEGISLATIVE_PROC\"]\r\n        },\r\n        {\r\n            \"type\": \"template\",\r\n            \"value\": [\"SJ-023\"]\r\n        },\r\n        {\r\n            \"type\": \"docType\",\r\n            \"value\": [\"REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL\"]\r\n        },\r\n        {\r\n            \"type\": \"role\",\r\n            \"value\": [\"OWNER\"]\r\n        },\r\n        {\r\n            \"type\": \"title\",\r\n            \"value\": [\"TEST\"]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/filterProposals",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"filterProposals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createPackage",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsIm5iZiI6MTY2ODQzNjQyOCwiaXNzIjoiTGVvc0FwaUlkIiwiZXhwIjoxNjY4NDQwMDI4LCJpYXQiOjE2Njg0MzY0MjgsInVzZXIiOiJqYW5lIn0.0OKMQnFoL10-EO3BFIKbTk6D4z8O9sjie75pZsHtdB4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"templateId\":\"PR-023;EM-LP01;BL-023\",\r\n\"templateName\":\"SJ-023\",\r\n\"langCode\":\"EN\",\r\n\"docPurpose\":\"TEST123\",\r\n\"eeaRelevance\":false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leos-pilot/api/secured/createPackage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leos-pilot",
+								"api",
+								"secured",
+								"createPackage"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "document",
+			"item": [
+				{
+					"name": "downloadVersion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rows\": [\r\n    {\r\n      \"created\": \"2023-03-27T09:46:28.579Z\",\r\n      \"document\": {\r\n        \"title\": null,\r\n        \"link\": [\r\n          {\r\n            \"href\": \"uri://LEOS/REG-clfqlz35r0003ss01jfqv3wgk-en\"\r\n          }\r\n        ],\r\n        \"metadata\": {\r\n          \"systemId\": \"LEOS\",\r\n          \"id\": \"200\",\r\n          \"title\": \"Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL on ...\",\r\n          \"version\": \"0.1.1\"\r\n        }\r\n      },\r\n      \"text\": \"e opinion of the Ey\",\r\n      \"group\": \"__world__\",\r\n      \"tags\": [\r\n        \"suggestion\"\r\n      ],\r\n      \"uri\": \"uri://LEOS/REG-clfqlz35r0003ss01jfqv3wgk-en\",\r\n      \"target\": [\r\n        {\r\n          \"selector\": [\r\n            {\r\n              \"type\": \"LeosSelector\",\r\n              \"id\": \"_cit_4__p\",\r\n              \"exact\": \"e opinion of the E\",\r\n              \"prefix\": \"Having regard to th\",\r\n              \"suffix\": \"uropean Economic and Social Comm\",\r\n              \"start\": 19,\r\n              \"end\": 37\r\n            },\r\n            {\r\n              \"type\": \"FragmentSelector\",\r\n              \"value\": \"_cit_4__p\",\r\n              \"conformsTo\": \"https://tools.ietf.org/html/rfc3236\"\r\n            },\r\n            {\r\n              \"type\": \"RangeSelector\",\r\n              \"startContainer\": \"//akomantoso[1]/bill[1]/preamble[1]/citations[1]/citation[4]/aknp[1]\",\r\n              \"startOffset\": 19,\r\n              \"endContainer\": \"//akomantoso[1]/bill[1]/preamble[1]/citations[1]/citation[4]/aknp[1]\",\r\n              \"endOffset\": 37\r\n            },\r\n            {\r\n              \"type\": \"TextPositionSelector\",\r\n              \"start\": 515,\r\n              \"end\": 533\r\n            },\r\n            {\r\n              \"type\": \"TextQuoteSelector\",\r\n              \"exact\": \"e opinion of the E\",\r\n              \"prefix\": \" Parliaments,Having regard to th\",\r\n              \"suffix\": \"uropean Economic and Social Comm\"\r\n            }\r\n          ],\r\n          \"source\": \"uri://LEOS/REG-clfqlz35r0003ss01jfqv3wgk-en\"\r\n        }\r\n      ],\r\n      \"references\": null,\r\n      \"user\": \"acct:jane@LEOS\",\r\n      \"permissions\": {\r\n        \"read\": [\r\n          \"group:__world__\"\r\n        ],\r\n        \"admin\": [\r\n          \"acct:jane@LEOS\"\r\n        ],\r\n        \"update\": [\r\n          \"acct:jane@LEOS\"\r\n        ],\r\n        \"delete\": [\r\n          \"acct:jane@LEOS\"\r\n        ]\r\n      },\r\n      \"precedingText\": \"Having regard to th\",\r\n      \"succeedingText\": \"uropean Economic and Social Committee,\",\r\n      \"justification\": {\r\n        \"text\": \"\"\r\n      },\r\n      \"originGroup\": \"\",\r\n      \"feedback\": null,\r\n      \"updated\": \"2023-03-27T09:46:30.913Z\",\r\n      \"id\": \"2oi8OGtjQQmxmMzwUMkBew\",\r\n      \"user_info\": {\r\n        \"display_name\": \"DOE Jane\",\r\n        \"entity_name\": \"DGT.R.3\"\r\n      },\r\n      \"status\": {\r\n        \"status\": \"NORMAL\",\r\n        \"updated\": null,\r\n        \"updated_by\": null,\r\n        \"user_info\": null,\r\n        \"sent_deleted\": false\r\n      },\r\n      \"forwardJustification\": \"\",\r\n      \"replyText\": null,\r\n      \"forwarded\": false,\r\n      \"linkedAnnot\": null,\r\n      \"$anchorTimeout\": false,\r\n      \"$tag\": \"t2\",\r\n      \"$orphan\": false,\r\n      \"showHighlight\": true,\r\n      \"anchoredRangeText\": \"e opinion of the E\",\r\n      \"hovered\": false\r\n    },\r\n    {\r\n      \"created\": \"2023-03-27T09:10:32.883Z\",\r\n      \"document\": {\r\n        \"title\": null,\r\n        \"link\": [\r\n          {\r\n            \"href\": \"uri://LEOS/REG-clfqlz35r0003ss01jfqv3wgk-en\"\r\n          }\r\n        ],\r\n        \"metadata\": {\r\n          \"systemId\": \"LEOS\",\r\n          \"id\": \"197\",\r\n          \"title\": \"Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL on ...\",\r\n          \"version\": \"0.1.0\"\r\n        }\r\n      },\r\n      \"text\": \"Teerger\",\r\n      \"group\": \"__world__\",\r\n      \"tags\": [\r\n        \"suggestion\"\r\n      ],\r\n      \"uri\": \"uri://LEOS/REG-clfqlz35r0003ss01jfqv3wgk-en\",\r\n      \"target\": [\r\n        {\r\n          \"selector\": [\r\n            {\r\n              \"type\": \"LeosSelector\",\r\n              \"id\": \"_art_1__para_1__content__p\",\r\n              \"exact\": \"Te\",\r\n              \"prefix\": \"\",\r\n              \"suffix\": \"xt...\",\r\n              \"start\": 0,\r\n              \"end\": 2\r\n            },\r\n            {\r\n              \"type\": \"FragmentSelector\",\r\n              \"value\": \"_art_1__para_1__content__p\",\r\n              \"conformsTo\": \"https://tools.ietf.org/html/rfc3236\"\r\n            },\r\n            {\r\n              \"type\": \"RangeSelector\",\r\n              \"startContainer\": \"//akomantoso[1]/bill[1]/aknbody[1]/article[1]/paragraph[1]/content[1]/aknp[1]\",\r\n              \"startOffset\": 0,\r\n              \"endContainer\": \"//akomantoso[1]/bill[1]/aknbody[1]/article[1]/paragraph[1]/content[1]/aknp[1]\",\r\n              \"endOffset\": 2\r\n            },\r\n            {\r\n              \"type\": \"TextPositionSelector\",\r\n              \"start\": 821,\r\n              \"end\": 823\r\n            },\r\n            {\r\n              \"type\": \"TextQuoteSelector\",\r\n              \"exact\": \"Te\",\r\n              \"prefix\": \"THIS REGULATION:Article 1Scope1.\",\r\n              \"suffix\": \"xt...Article 2DefinitionsTe\"\r\n            }\r\n          ],\r\n          \"source\": \"uri://LEOS/REG-clfqlz35r0003ss01jfqv3wgk-en\"\r\n        }\r\n      ],\r\n      \"references\": null,\r\n      \"user\": \"acct:jane@LEOS\",\r\n      \"permissions\": {\r\n        \"read\": [\r\n          \"group:__world__\"\r\n        ],\r\n        \"admin\": [\r\n          \"acct:jane@LEOS\"\r\n        ],\r\n        \"update\": [\r\n          \"acct:jane@LEOS\"\r\n        ],\r\n        \"delete\": [\r\n          \"acct:jane@LEOS\"\r\n        ]\r\n      },\r\n      \"precedingText\": \"\",\r\n      \"succeedingText\": \"xt...\",\r\n      \"justification\": {\r\n        \"text\": \"\"\r\n      },\r\n      \"originGroup\": \"\",\r\n      \"feedback\": null,\r\n      \"updated\": \"2023-03-27T09:10:36.169Z\",\r\n      \"id\": \"8x-j2TPqQmGpWaZDqmwAyA\",\r\n      \"user_info\": {\r\n        \"display_name\": \"DOE Jane\",\r\n        \"entity_name\": \"DGT.R.3\"\r\n      },\r\n      \"status\": {\r\n        \"status\": \"NORMAL\",\r\n        \"updated\": null,\r\n        \"updated_by\": null,\r\n        \"user_info\": null,\r\n        \"sent_deleted\": false\r\n      },\r\n      \"forwardJustification\": \"\",\r\n      \"replyText\": null,\r\n      \"forwarded\": false,\r\n      \"linkedAnnot\": null,\r\n      \"$anchorTimeout\": false,\r\n      \"$tag\": \"t1\",\r\n      \"$orphan\": false,\r\n      \"showHighlight\": true,\r\n      \"anchoredRangeText\": \"th\",\r\n      \"hovered\": false\r\n    }\r\n  ],\r\n  \"total\": 2,\r\n  \"replies\": []\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/secured/document/downloadVersion/{{documentType}}/{{documentRef}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"secured",
+								"document",
+								"downloadVersion",
 								"{{documentType}}",
 								"{{documentRef}}"
 							]

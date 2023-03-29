@@ -14,22 +14,10 @@
 
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.security.LeosPermission;
 
-import java.util.List;
+public interface DocumentApiService {
 
-public interface AnnotateApiService {
-
-    List<LeosPermission> requestUserPermissions(String documentRef, LeosCategoryClass category);
-
-    String getAnnotationToken();
-
-    AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategoryClass category);
-
-    List<AnnotateMetadata> requestSearchMetadata();
-
-    void mergeSuggestion(LeosCategoryClass documentType, String documentRef, String origText, String newText, String elementId, int startOffset, int endOffset);
+    byte[] downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations);
 
 }
