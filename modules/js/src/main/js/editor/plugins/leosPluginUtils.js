@@ -1243,7 +1243,7 @@ define(function leosPluginUtilsModule(require) {
         var element = selection.getStartElement();
         if (element.getName() === "p") {
             var parentElement = element.$.parentElement;
-            if (parentElement.getAttribute("data-akn-name") === "point") {
+            if (parentElement.getAttribute("data-akn-element") === "point") {
                 if (parentElement.firstChild != element) {
                     selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
                 }
@@ -1251,9 +1251,31 @@ define(function leosPluginUtilsModule(require) {
         }
         if (element.getName() === "li" && !element.getAttribute("data-akn-num-id")) {
             var parentElement = element.$.parentElement.parentElement;
-            if (parentElement.getAttribute("data-akn-name") === "point") {
+            if (parentElement.getAttribute("data-akn-element") === "point") {
                 if (parentElement.firstChild != element) {
                     selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
+                }
+            }
+        }
+        if (element.getName() !== "p" && element.getName() !== "li") {
+            var parentOlElement = element.getAscendant('ol');
+            if (parentOlElement && 'aknOrderedList' === parentOlElement.getAttribute('data-akn-name')) {
+                var pElement = element.getAscendant('p');
+                if (pElement) {
+                    var parentElement = pElement.$.parentElement;
+                    if (parentElement.getAttribute("data-akn-element") === "point") {
+                        if (parentElement.firstChild != pElement.$) {
+                            selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
+                        }
+                    }
+                } else {
+                    pElement = element.getAscendant('li');
+                    var parentElement = pElement.$.parentElement.parentElement;
+                    if (parentElement.getAttribute("data-akn-element") === "point") {
+                        if (parentElement.firstChild != pElement.$) {
+                            selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
+                        }
+                    }
                 }
             }
         }
@@ -1263,7 +1285,7 @@ define(function leosPluginUtilsModule(require) {
     function _selectCorrectPathForList(range, path) {
         if (path.lastElement.$.localName === "p") {
             var parentElement = path.lastElement.$.parentElement;
-            if (parentElement.getAttribute("data-akn-name") === "point") {
+            if (parentElement.getAttribute("data-akn-element") === "point") {
                 if (parentElement.firstChild != path.lastElement.$) {
                     range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
                     path = range.startPath();
@@ -1272,10 +1294,35 @@ define(function leosPluginUtilsModule(require) {
         }
         if (path.lastElement.$.localName === "li" && !path.lastElement.$.getAttribute("data-akn-num")) {
             var parentElement = path.lastElement.$.parentElement.parentElement;
-            if (parentElement.getAttribute("data-akn-name") === "point") {
+            if (parentElement.getAttribute("data-akn-element") === "point") {
                 if (parentElement.firstChild != path.lastElement.$) {
                     range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
                     path = range.startPath();
+                }
+            }
+        }
+        if (path.lastElement.$.localName !== "p" && path.lastElement.$.localName !== "li") {
+            var element = path.lastElement;
+            var parentOlElement = element.getAscendant('ol');
+            if (parentOlElement && 'aknOrderedList' === parentOlElement.getAttribute('data-akn-name')) {
+                var pElement = element.getAscendant('p');
+                if (pElement) {
+                    var parentElement = pElement.$.parentElement;
+                    if (parentElement.getAttribute("data-akn-element") === "point") {
+                        if (parentElement.firstChild != pElement.$) {
+                            range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
+                            path = range.startPath();
+                        }
+                    }
+                } else {
+                    pElement = element.getAscendant('li');
+                    var parentElement = pElement.$.parentElement.parentElement;
+                    if (parentElement.getAttribute("data-akn-element") === "point") {
+                        if (parentElement.firstChild != pElement.$) {
+                            range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
+                            path = range.startPath();
+                        }
+                    }
                 }
             }
         }
