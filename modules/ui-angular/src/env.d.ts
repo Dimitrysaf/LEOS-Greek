@@ -14,3 +14,6 @@ declare namespace NodeJS {
 declare const process: {
   env: NodeJS.ProcessEnv;
 };
+
+//TODO: fix without this hack we are getting can't redeclare process as it already defined in some modules
+export {};
