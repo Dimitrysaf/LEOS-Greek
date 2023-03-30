@@ -301,13 +301,14 @@ define(function elementEditorModule(require) {
         if (!editor.readOnly || editor.config.isClause) {
             _removeZeroWidthSpaces(elementId);
             if (!_isEmptyElement(elementId, editor)) {
+                var eventData = _removeNonBreakingSpaceFromElement(elementId, event.data.data);
                 // set read-only to prevent changes
                 editor.setReadOnly(true);
                 // save the element being edited
                 var data = {
                     elementId: elementId,
                     elementType: elementType,
-                    elementFragment: event.data.data,
+                    elementFragment: eventData,
                     isSplit: event.data.origin === "split" ? true : false
                 };
                 editor.LEOS.saveCmdExecuted = true;
@@ -335,6 +336,25 @@ define(function elementEditorModule(require) {
             }
             return false;
         }).remove();
+    }
+
+    function _removeNonBreakingSpaceFromElement(elementId, eventData){
+        var newVal = $("#" + elementId).html()
+            .replace(/&amp;nbsp;/g, ' ')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&#xa0;/g, ' ')
+            .replace(/&#160;/g, ' ')
+            .replace(/&amp;#xa0;/g, ' ')
+            .replace(/\u00A0/g, ' ');
+
+        $("#" + elementId).html(newVal);
+
+        return eventData.replace(/&amp;nbsp;/g, ' ')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&#xa0;/g, ' ')
+            .replace(/&#160;/g, ' ')
+            .replace(/&amp;#xa0;/g, ' ')
+            .replace(/\u00A0/g, ' ');
     }
 
     function _isEmptyElement(elementId, editor) {
