@@ -275,7 +275,7 @@ define(function transformationConfigResolverModule(require) {
                     }
                 },
                 /*
-                 * Adds transformation configs representing exactly one element and one of the to possible direction: 'to' or 'from'
+                 * Adds transformation configs representing exactly one element and one of the two possible direction: 'to' or 'from'
                  */
                 _addTransformationConfigsForDirection : function _addTransformationConfigs(params) {
                     var transformationConfigsForDirection = params.transformationConfigs[params.direction];

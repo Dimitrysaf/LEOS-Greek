@@ -22,6 +22,7 @@ define(function leosPastePluginModule(require) {
     // load module dependencies
     var pluginTools = require('plugins/pluginTools');
     var pluginName = 'leosPaste';
+    var REF = "ref";
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -65,7 +66,7 @@ define(function leosPastePluginModule(require) {
                 delete element.attributes.style;
                 delete element.attributes.class;
 
-                if (numberingRegex.test(element.getHtml()) && element.parent) {
+                if (numberingRegex.test(element.getHtml()) && element.name !== REF && element.parent) {
                     return false;
                 }
 
@@ -77,7 +78,7 @@ define(function leosPastePluginModule(require) {
                 }
 
                 function allowedInEditor(element){
-                    return element.editor.config.pasteFilter.replace(/\[\*\]/g,'').split('; ').includes(element.name)
+                    return (element.editor.config.pasteFilter.replace(/\[\*\]/g,'').split('; ').includes(element.name));
                 }
             },
             u: function (element) {
@@ -181,6 +182,10 @@ define(function leosPastePluginModule(require) {
     }
 
     function _processPaste(editor, fragment, type) {
+        if(_isWidgetPresent(fragment)) {
+            let child = fragment.children[1].getFirst(); //get first child after widget <span>
+            fragment.children[1].replaceWith(child);
+        }
         if (type === 'html') {
             fragment.filter(htmlFilter);//clean using filter for html and text
             _convertToAknXmlFragment(editor, fragment);
@@ -192,6 +197,17 @@ define(function leosPastePluginModule(require) {
 			}
             //it will come here as text for PDF
             //TODO
+        }
+    }
+
+    function _isWidgetPresent(fragment) {
+        if(!fragment || !fragment.children || fragment.children.length <= 0) {
+            return false;
+        }
+        for ( var idx = 0, len = fragment.children.length; idx < len; idx++ ) {
+            if(fragment.children[idx].type == CKEDITOR.NODE_ELEMENT) {
+                return fragment.children[idx].attributes.class.includes('cke_widget_wrapper');
+            }
         }
     }
 

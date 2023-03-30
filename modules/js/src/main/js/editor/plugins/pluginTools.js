@@ -70,9 +70,14 @@ define(function pluginToolsModule(require) {
         var filterList = [];
         var config = transformationConfigResolver._.resolverConfigs.from;
         for (var el in config) {
-            var entry = el.split("/")[0] + '[*]'; //allow attributes and classes
-            if (filterList.indexOf(entry) <= -1) {
-                filterList.push(entry);
+            var entryArr = el.split("/");
+            for(var i=0; i < entryArr.length; i++) {
+                if(entryArr[i] !== 'text') {
+                    var entry = entryArr[i] + '[*]'; //allow attributes and classes
+                    if (filterList.indexOf(entry) <= -1) {
+                        filterList.push(entry);
+                    }
+                }
             }
         }
         return filterList.join("; ");

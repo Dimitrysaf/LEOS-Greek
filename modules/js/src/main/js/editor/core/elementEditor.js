@@ -364,7 +364,8 @@ define(function elementEditorModule(require) {
             sibling = bogus[0].previousSibling;
         }
         var emptyElements = $("#" + elementId + ", h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
-        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && sibling.nodeType === Node.TEXT_NODE))) {
+        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
+            || sibling.nodeType === Node.ELEMENT_NODE)))) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
             dialogCommand.exec();
