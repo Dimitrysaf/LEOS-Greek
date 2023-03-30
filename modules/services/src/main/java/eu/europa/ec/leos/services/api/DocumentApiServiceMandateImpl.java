@@ -21,7 +21,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
-import eu.europa.ec.leos.services.exception.AnnotateException;
+import eu.europa.ec.leos.services.exception.ExportException;
 import eu.europa.ec.leos.services.export.*;
 import eu.europa.ec.leos.services.store.PackageService;
 import org.slf4j.Logger;
@@ -40,12 +40,14 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         super(documentContentService, packageService, proposalService, exportService, securityContext, messageHelper);
     }
 
-    public ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations) {
+    @Override
+    protected ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations) {
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, clazz, isWithAnnotations);
         exportOptions.setExportVersions(new ExportVersions<>(original, currentDocument));
         return exportOptions;
     }
 
+    @Override
     protected byte[] doDownloadVersion(String proposalId, ExportOptions exportOptions) {
         try {
             final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
@@ -53,7 +55,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             LOG.info("Downloaded DocuWrite Document: {}", jobFileName);
             return exportedBytes;
         } catch (Exception e) {
-            throw new AnnotateException(messageHelper.getMessage("export.docuwrite.error.message"));
+            throw new ExportException(messageHelper.getMessage("export.docuwrite.error.message"));
         }
     }
 
