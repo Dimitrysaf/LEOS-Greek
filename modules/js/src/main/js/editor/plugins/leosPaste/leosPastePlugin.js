@@ -28,13 +28,19 @@ define(function leosPastePluginModule(require) {
 
             editor.on('paste', function (evt) {
                 // Parse the HTML string to pseudo-DOM structure.
-                var dataValue = evt.data.dataValue.replaceAll(/\sid=".*?"/g, '');
-                dataValue = dataValue.replaceAll(/\sdata-akn-mp-id=".*?"/g, '');
-                dataValue = dataValue.replaceAll(/<em /g, '<i ');
-                dataValue = dataValue.replaceAll(/<em>/g, '<i>');
-                dataValue = dataValue.replaceAll(/<\/em>/g, '<\/i>');
-                dataValue = dataValue.replaceAll(/<strong/g, '<b');
-                dataValue = dataValue.replaceAll(/strong>/g, 'b>');
+                var dataValue = evt.data.dataValue.replaceAll(/\sid=".*?"/g, '')
+                    .replaceAll(/\sdata-akn-mp-id=".*?"/g, '')
+                    .replaceAll(/<em /g, '<i ')
+                    .replaceAll(/<em>/g, '<i>')
+                    .replaceAll(/<\/em>/g, '<\/i>')
+                    .replaceAll(/<strong/g, '<b')
+                    .replaceAll(/strong>/g, 'b>')
+                    .replace(/&amp;nbsp;/g, ' ')// process non breaking spaces
+                    .replace(/&nbsp;/g, ' ')
+                    .replace(/&#xa0;/g, ' ')
+                    .replace(/&amp;#xa0;/g, ' ')
+                    .replace(/\u00A0/g, ' ')
+                    .replace(/&#160;/g, ' ');
                 var fragment = CKEDITOR.htmlParser.fragment.fromHtml(dataValue);
                 fragment.forEach( function( node ) {//saving editor to reuse later
                     node.editor = editor;
