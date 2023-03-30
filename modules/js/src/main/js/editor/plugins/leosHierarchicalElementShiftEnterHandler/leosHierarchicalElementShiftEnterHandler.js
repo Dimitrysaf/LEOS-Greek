@@ -394,6 +394,13 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             return false;
         }
 
+        if (selection.getRanges([0])) {
+            var range = selection.getRanges()[0];
+            if (range.startContainer.getAscendant('ol') && range.startContainer.getAscendant('ol').getAttribute('data-akn-allow-shift-enter') === 'false') {
+                return false;
+            }
+        }
+
         var allowedElementsForShiftEnter = editor.LEOS.profile.config.allowedElementsForShiftEnter;
         if (allowedElementsForShiftEnter) {
             var elements = Object.values(allowedElementsForShiftEnter);
