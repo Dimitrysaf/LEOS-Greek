@@ -123,6 +123,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 if (isOnlyChild) {
                     parent.appendBogus();
                 }
+                leosPluginUtils.manageNestedHtmlP(event.editor);
             } else if (isFirstLevelListSubparagraph) {
                 event.data.cancelIdentityHandler = 'cancel';
                 var parentElementChildList = parent.getChildren().$;
