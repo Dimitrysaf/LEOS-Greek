@@ -14,12 +14,6 @@
 */
 $DIVISION_WIDTH: 78px;
 
-%xmlDivisionNumber {
-  division > num {
-    padding-right: 10px;
-  }
-}
-
 //------------------------------- Editor Styles -----------------------------//
 %editorDivisionNumber {
   p[data-akn-name="aknDivisionNum"] {

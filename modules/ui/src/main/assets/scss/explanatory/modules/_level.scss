@@ -76,12 +76,6 @@ $LEVEL_SPACING: 22px;
     }
   }
 
-  level {
-    & > num {
-      padding-left: 10px;
-    }
-  }
-
   level, level[leos\:depth="1"], level[leos\:depth="2"], level[leos\:depth="3"], level[leos\:depth="4"] {
     & > num {
       min-width: 72px;
