@@ -3305,7 +3305,7 @@
                         </table>
                     </content>
                 </subparagraph>
-                <subparagraph leos:deletable="false" leos:editable="true" xml:id="_body__level_3231__subparagraph_6_6">
+                <subparagraph leos:allow-soft-enter="false" leos:deletable="false" leos:editable="true" xml:id="_body__level_3231__subparagraph_6_6">
                     <content xml:id="_body__level_3231__subparagraph_6_6__content">
                         <p xml:id="_body__level_3231__subparagraph_6_6__content__p_1">XX is the policy area or budget title concerned.</p>
                     </content>
