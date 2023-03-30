@@ -165,8 +165,8 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         // insert new subparagraph with extracted content in the next line
         contentAfterShiftEnter.insertAfter(wrappingP);
         // make selection at the beginning of the new subparagraph
-        setNewSelection(editor, contentAfterShiftEnter);
-        
+        leosPluginUtils.setFocus(contentAfterShiftEnter, editor);
+
         editor.fire("change");
     }
 
@@ -306,15 +306,6 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         return selection.getRanges()[0];
     };
 
-    var setNewSelection = function setNewSelection(editor, content) {
-        var rangeToSelect, firstChildElement = content.getFirst();
-        rangeToSelect = editor.createRange();
-        rangeToSelect.setStart(firstChildElement, 0);
-        rangeToSelect.setEnd(firstChildElement, 0);
-        rangeToSelect.collapse(true);
-        rangeToSelect.select();
-    };
-
     var _getBlockElement = function _getBlockElement(element) {
         while (element.type != CKEDITOR.NODE_ELEMENT || !element.isBlockBoundary()) {
             element = element.getParent();
@@ -355,7 +346,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             } while (currentElement = currentElement.getParent());
         } else if (leosPluginUtils.isSubparagraph(element)) { // When you able to edit entire paragraphs (Annex)
             // We need to enable it for articles (Legal text)
-            if (leosPluginUtils.isListEnding(element) || leosPluginUtils.isListIntro(element)) {
+            if (leosPluginUtils.isInsideList(element)) {
                 currentElement = currentElement.getAscendant('ol');
             }
             if (leosPluginUtils.isAnnexList(currentElement)) { // For annexes, all paragraphs are unumbered

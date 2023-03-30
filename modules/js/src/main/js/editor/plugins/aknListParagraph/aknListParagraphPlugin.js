@@ -82,7 +82,10 @@ define(function aknListParagraphPluginModule(require) {
     }
 
     function _onShiftEnterKey(context) {
-        context.event.cancel();
+        var shiftEnterCmd = context.editor.getCommand("leosHierarchicalElementShiftEnterHandler");
+        if (!shiftEnterCmd || shiftEnterCmd.state == CKEDITOR.TRISTATE_DISABLED) {
+            context.event.cancel();
+        }
     }
 
     function _transformParagraph(event) {

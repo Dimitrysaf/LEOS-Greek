@@ -276,7 +276,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                 }
             }
         }
-        if (!!event.editor.getCommand('indent')) {
+        if (!!event.editor.getCommand('indent') && !!event.editor.elementPath()) {
             event.editor.getCommand('indent').refresh(event.editor, event.editor.elementPath());
         }
         event.editor.fire('unlockSnapshot');

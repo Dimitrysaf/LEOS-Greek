@@ -94,6 +94,11 @@ define(function leosPluginUtilsModule(require) {
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
     }
 
+    function _hasEmptyTextAsPrevSibling(element){
+        return (element instanceof CKEDITOR.dom.element) && element.hasPrevious()
+            && ((_getElementName(element.getPrevious()) === TEXT && element.getHtml().trim() == "") || _getElementName(element.getPrevious()) === BOGUS);
+    }
+
     function _getElementName(element) {
         var elementName = UNKNOWN;
         if (element instanceof CKEDITOR.dom.element) {
@@ -125,7 +130,9 @@ define(function leosPluginUtilsModule(require) {
         var level = 0;
         var actualEL = selected;
         while (_isListElement(actualEL)) {
-            level++;
+            if (!_isListIntro(actualEL)) {
+                level++;
+            }
             actualEL = actualEL.getAscendant(ORDER_LIST_ELEMENT);
         }
         return level;
@@ -179,6 +186,14 @@ define(function leosPluginUtilsModule(require) {
             && !element.is("table"));
     }
 
+    function _isParagraph(element) {
+        return (!!element && element.type === CKEDITOR.NODE_ELEMENT
+            && element.is(HTML_POINT)
+            && !!element.getAttribute(DATA_AKN_ELEMENT)
+            && element.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH
+            && !element.is("table"));
+    }
+
     function _isPointOrIndent(element) {
         return (!!element && element.type == CKEDITOR.NODE_ELEMENT && !!element.getAttribute(DATA_AKN_ELEMENT)
             && (element.getAttribute(DATA_AKN_ELEMENT) == POINT || element.getAttribute(DATA_AKN_ELEMENT) == INDENT));
@@ -193,7 +208,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isListIntro(element) {
-        if (!!element
+        if (!!element && element instanceof CKEDITOR.dom.element
             && (_isOrderedAnnexList(element.getParent()) || _isOrderedList(element.getParent()))
             && element.getParent().getFirst(liOrp).equals(element)) {
             return _isSubparagraph(element);
@@ -207,6 +222,11 @@ define(function leosPluginUtilsModule(require) {
             && !element.getParent().getFirst(liOrp).equals(element)) {
             return _isSubparagraph(element);
         }
+    }
+
+    function _isInsideList(element) {
+        return (!!element
+            && (_getElementName(element.getParent()) == ORDER_LIST_ELEMENT));
     }
 
     function liOrp( node ) {
@@ -550,8 +570,9 @@ define(function leosPluginUtilsModule(require) {
     function _isFirstLevelListSubparagraph(element) {
         var elementType = element && element.getAttribute(DATA_AKN_ELEMENT);
         var parentElement = element.getAscendant('ol').getParent();
+        var liElementType = element.getAscendant("li") && element.getAscendant('li').getAttribute(DATA_AKN_ELEMENT);
         var parentElementType = parentElement && parentElement.getAttribute(DATA_AKN_ELEMENT);
-        return elementType === SUBPARAGRAPH && parentElementType === PARAGRAPH;
+        return elementType === SUBPARAGRAPH && liElementType === PARAGRAPH && parentElementType === PARAGRAPH;
     }
 
     function _manageSubparagraphs(range) {
@@ -1060,12 +1081,22 @@ define(function leosPluginUtilsModule(require) {
         for (var i = 0; i < notInlineSubElements.length; i++){
             var subElem = notInlineSubElements[i];
             var parent = subElem.getParent();
-            if (parent) {
+            var hasNext = subElem.hasNext();
+            var hasPrevious = subElem.hasPrevious() && !_hasEmptyTextAsPrevSibling(subElem);
+            // Previous n'est pas nul mais est text vide-> trouver solution
+            var isParentSubParagraph = !!parent && _isSubparagraph(parent);
+            if (isParentSubParagraph && !hasNext && !hasPrevious) {
+                _moveChildrenToParent(subElem);
+            } else if (parent) {
                 var newParentElement = new CKEDITOR.dom.element(HTML_POINT);
                 newParentElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
                 newParentElement.setAttribute(DATA_AKN_NAME, AKN_NUMBERED_PARAGRAPH);
                 newParentElement.append(subElem);
-                newParentElement.insertAfter(parent);
+                if (hasNext) {
+                    newParentElement.insertBefore(parent);
+                } else {
+                    newParentElement.insertAfter(parent);
+                }
             }
         }
     }
@@ -1102,7 +1133,7 @@ define(function leosPluginUtilsModule(require) {
             // keep the first element of the <li>
             for (var j = 1; j < node.childNodes.length; j++){
                var child = node.childNodes[j];
-               if(isNotInlinePushed[child] !== 1){
+               if(!!isNotInlinePushed && isNotInlinePushed[child] !== 1){
                    isNotInlinePushed[child] = 1;
                    var elem = new CKEDITOR.dom.element(child);
                    notInlineElements.push(elem);
@@ -1239,93 +1270,31 @@ define(function leosPluginUtilsModule(require) {
         return _selectNewElement(elementToSelect, selection);
     }
 
-    function _selectCorrectElementForList(selection) {
-        var element = selection.getStartElement();
-        if (element.getName() === "p") {
-            var parentElement = element.$.parentElement;
-            if (parentElement.getAttribute("data-akn-element") === "point") {
-                if (parentElement.firstChild != element) {
-                    selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
-                }
+    function _getCorrectElementOnIndent(element, indent) {
+        var newElement = element;
+        if (!liOrp(element)) {
+             newElement = element.getAscendant(liOrp);
+        }
+        if (_isSubparagraph(newElement) && !indent) {
+            var parentElement = !_isInsideList(newElement) ? newElement.getParent() : newElement.getParent().getParent();
+            if (_isPointOrIndent(parentElement) || _isParagraph(parentElement)) {
+                return parentElement.getFirst();
             }
         }
-        if (element.getName() === "li" && !element.getAttribute("data-akn-num-id")) {
-            var parentElement = element.$.parentElement.parentElement;
-            if (parentElement.getAttribute("data-akn-element") === "point") {
-                if (parentElement.firstChild != element) {
-                    selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
-                }
-            }
-        }
-        if (element.getName() !== "p" && element.getName() !== "li") {
-            var parentOlElement = element.getAscendant('ol');
-            if (parentOlElement && 'aknOrderedList' === parentOlElement.getAttribute('data-akn-name')) {
-                var pElement = element.getAscendant('p');
-                if (pElement) {
-                    var parentElement = pElement.$.parentElement;
-                    if (parentElement.getAttribute("data-akn-element") === "point") {
-                        if (parentElement.firstChild != pElement.$) {
-                            selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
-                        }
-                    }
-                } else {
-                    pElement = element.getAscendant('li');
-                    var parentElement = pElement.$.parentElement.parentElement;
-                    if (parentElement.getAttribute("data-akn-element") === "point") {
-                        if (parentElement.firstChild != pElement.$) {
-                            selection = _selectNewElement(new CKEDITOR.dom.element(parentElement.firstChild), selection);
-                        }
-                    }
-                }
-            }
-        }
-        return selection;
+        return !!newElement ? newElement : element;
     }
 
-    function _selectCorrectPathForList(range, path) {
-        if (path.lastElement.$.localName === "p") {
-            var parentElement = path.lastElement.$.parentElement;
-            if (parentElement.getAttribute("data-akn-element") === "point") {
-                if (parentElement.firstChild != path.lastElement.$) {
-                    range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
-                    path = range.startPath();
-                }
-            }
-        }
-        if (path.lastElement.$.localName === "li" && !path.lastElement.$.getAttribute("data-akn-num")) {
-            var parentElement = path.lastElement.$.parentElement.parentElement;
-            if (parentElement.getAttribute("data-akn-element") === "point") {
-                if (parentElement.firstChild != path.lastElement.$) {
-                    range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
-                    path = range.startPath();
-                }
-            }
-        }
-        if (path.lastElement.$.localName !== "p" && path.lastElement.$.localName !== "li") {
-            var element = path.lastElement;
-            var parentOlElement = element.getAscendant('ol');
-            if (parentOlElement && 'aknOrderedList' === parentOlElement.getAttribute('data-akn-name')) {
-                var pElement = element.getAscendant('p');
-                if (pElement) {
-                    var parentElement = pElement.$.parentElement;
-                    if (parentElement.getAttribute("data-akn-element") === "point") {
-                        if (parentElement.firstChild != pElement.$) {
-                            range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
-                            path = range.startPath();
-                        }
-                    }
-                } else {
-                    pElement = element.getAscendant('li');
-                    var parentElement = pElement.$.parentElement.parentElement;
-                    if (parentElement.getAttribute("data-akn-element") === "point") {
-                        if (parentElement.firstChild != pElement.$) {
-                            range.startContainer = new CKEDITOR.dom.element(parentElement.firstChild);
-                            path = range.startPath();
-                        }
-                    }
-                }
-            }
-        }
+    function _selectCorrectElementForList(selection, indent) {
+        var element = selection.getStartElement();
+        element = _getCorrectElementOnIndent(element, indent);
+        return _selectNewElement(element, selection);
+    }
+
+    function _selectCorrectPathForList(range, path, indent) {
+        var element = path.lastElement;
+        element = _getCorrectElementOnIndent(element, indent);
+        range.startContainer = element;
+        path = range.startPath();
         return path;
     }
 
@@ -1393,6 +1362,7 @@ define(function leosPluginUtilsModule(require) {
         isSelectionInFirstLevelList: _isSelectionInFirstLevelList,
         isAnnexList: _isAnnexList,
         isOrderedAnnexList: _isOrderedAnnexList,
+        isOrderedList: _isOrderedList,
 		isUnnumberedCNParagraph: _isUnnumberedCNParagraph,
 		isAnnexUnnumberedCNParagraph: _isAnnexUnnumberedCNParagraph,
 		isAnnexSubparagraphElement: _isAnnexSubparagraphElement,
@@ -1403,6 +1373,7 @@ define(function leosPluginUtilsModule(require) {
         isSubParaButNotListIntroOrFirstSubparaOfPointOrPara: _isSubParaButNotListIntroOrFirstSubparaOfPointOrPara,
         isListIntro: _isListIntro,
         isListEnding: _isListEnding,
+        isInsideList: _isInsideList,
         getNestingLevelForOl: _getNestingLevelForOl,
         convertToCrossheading: _convertToCrossheading,
         setCrossheadingIndentAttribute: _setCrossheadingIndentAttribute,

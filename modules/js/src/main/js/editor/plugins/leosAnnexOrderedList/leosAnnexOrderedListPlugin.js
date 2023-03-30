@@ -49,7 +49,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             editor.on("change", resetNumbering, null, null, 1);
             editor.on("change", _startObservingAllLists);
             editor.on("receiveData", _startObservingAllLists);
-            editor.on('afterCommandExec', _restoreListStructure, null, null, 1);
+            editor.on('afterCommandExec', _restoreListStructure, null, null, 100);
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -103,49 +103,16 @@ define(function leosAnnexOrderedListPluginModule(require) {
     function _restoreListStructure(event) {
         if (event.data.name === 'enter') {
             var selectedElement = leosKeyHandler.getSelectedElement(event.editor.getSelection());
-            var isSelectedElementEmpty = leosKeyHandler.isContentEmptyTextNode(selectedElement);
-            var isOnlyChild = !selectedElement.hasNext() && !selectedElement.hasPrevious();
-            var hasTextNext = leosPluginUtils.hasTextOrBogusAsNextSibling(selectedElement);
             var parent = selectedElement.getParent();
-            var isLevelElement = leosPluginUtils.isAnnexList(parent);
-            var isSubPoint = leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
-            var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
-            var isFirstLevelListSubparagraph = leosPluginUtils.isFirstLevelListSubparagraph(selectedElement);
-            var point = isParentSubPoint ? parent.getParent() : parent;
-            var isSelectedElementInsidePoint = (leosPluginUtils.getElementName(point) === leosPluginUtils.HTML_POINT) && _getAscendantPoint(point);
-            var isSelectedElementSubPoint = isSelectedElementInsidePoint && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
+            var isSubPoint = leosPluginUtils.isSubparagraph(selectedElement);
+            var isParentPoint = !leosPluginUtils.isSubparagraph(parent);
+            var pointWithoutContent = !selectedElement.getPrevious() && !parent.getPrevious() && leosPluginUtils.isOrderedAnnexList(parent.getParent())
+                && !parent.getParent().getPrevious();
             var dataAknNumAttr = selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM);
-            var isCheckbox =CHECKBOXES.includes(dataAknNumAttr);
-            if(isLevelElement && isSelectedElementEmpty){
-                selectedElement.remove();
-            } else if (isSelectedElementSubPoint && isSelectedElementEmpty && (hasTextNext || isParentSubPoint)) {
-                var listParent = point.getParent();
-                var listParentHasIntro = (isParentSubPoint && isSubPoint) || listParent.getPrevious(); //if not, it means that enter was pressed in the last
-                selectedElement.insertAfter(listParentHasIntro ? parent : listParent);
-                selectedElement.setAttribute("contenteditable", "true");
-                leosPluginUtils.setFocus(selectedElement, event.editor);
-                if (isOnlyChild) {
-                    parent.appendBogus();
-                }
-                leosPluginUtils.manageNestedHtmlP(event.editor);
-            } else if (isFirstLevelListSubparagraph) {
-                event.data.cancelIdentityHandler = 'cancel';
-                var parentElementChildList = parent.getChildren().$;
-                if (selectedElement.$ === parentElementChildList[1]) {
-                    let doc = selectedElement.getDocument();
-                    let newElement = doc.createElement('p');
-                    newElement.setHtml(parent.getChildren().$[0].getInnerHTML().replaceAll('<br>',''));
-                    newElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
-                    $(newElement.$).insertBefore($(parent.$));
-                    parent.getChildren().$[0].remove()
-                } else if (selectedElement.$ === parentElementChildList[parentElementChildList.length -1]) {
-                    selectedElement.renameNode('p');
-                    selectedElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
-                    selectedElement.removeAttribute(leosPluginUtils.REFERS_TO);
-                    selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
-                    selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
-                    $(selectedElement.$).insertAfter($(parent.$));
-                }
+            var isCheckbox = !!dataAknNumAttr && CHECKBOXES.includes(dataAknNumAttr);
+
+            if(isSubPoint && isParentPoint && pointWithoutContent){
+                selectedElement.insertBefore(parent.getParent());
                 leosPluginUtils.setFocus(selectedElement, event.editor);
             }else if(isCheckbox){
                 selectedElement.renameNode('p');
@@ -308,7 +275,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
         for (var i = 0; i < node.childNodes.length; i++){
             var child = node.childNodes[i];
             if(child.childNodes.length > 0){
-                _pushMutations(child, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed);
+                _pushMutations(child, listsWithoutIntro, isListPushed, singleSubPoints, isSubPointPushed, notInlineElements, isNotInlinePushed);
             }
             _pushListsWithoutIntro(child, listsWithoutIntro, isListPushed);
             _pushSingleSubPoints(node, child, singleSubPoints, isSubPointPushed);
