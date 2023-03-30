@@ -62,6 +62,7 @@
             cuid: "lib/cuid_1.3.8/client-cuid",
             ckEditor: "lib/ckeditor_4.12.1/ckeditor",
             "ckEditor.jquery": "lib/ckeditor_4.12.1/adapters/jquery",
+            diff_match_patch: "lib/diff-match-patch_1.0.0/diff_match_patch",
             // CKEditor External Plugins
             /*=> start section with external ckEditor plugins,      // FIXME re-evaluate the need to keep this!!!
              * they are not valid requirejs modules so they shouldn't be resolved as one
@@ -157,7 +158,10 @@
             "ckEditor.jquery": {
                 deps: ["jquery", "promise!ckEditor"],
                 exports: "jQuery.fn.ckeditor"
-            }
+            },
+            diff_match_patch: {
+                exports: "diff_match_patch"
+            },
         },
         // initial modules to load asynchronously asap
         deps: ["npo", "logger", "jquery"]
