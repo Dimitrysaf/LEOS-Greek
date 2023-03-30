@@ -108,6 +108,9 @@ define(function aknSubParagraphMandatePluginModule(require) {
             }, {
                 akn : "leos:deletable",
                 html : "leos:deletable"
+            }, {
+                akn : "leos:allow-soft-enter",
+                html : "data-akn-allow-soft-enter"
             }]
         },
         rootElementsForFrom: ["subparagraph"],
