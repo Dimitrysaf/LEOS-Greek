@@ -206,7 +206,8 @@ define(function leosPastePluginModule(require) {
         }
         for ( var idx = 0, len = fragment.children.length; idx < len; idx++ ) {
             if(fragment.children[idx].type == CKEDITOR.NODE_ELEMENT) {
-                return fragment.children[idx].attributes.class.includes('cke_widget_wrapper');
+                return fragment.children[idx].attributes && fragment.children[idx].attributes.class &&
+                    fragment.children[idx].attributes.class.includes('cke_widget_wrapper');
             }
         }
     }
