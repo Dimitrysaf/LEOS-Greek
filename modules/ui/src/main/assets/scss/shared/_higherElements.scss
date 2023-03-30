@@ -110,7 +110,8 @@
     }
 
     block {
-        @extend %paddedText;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
         display: block;
     }
 
