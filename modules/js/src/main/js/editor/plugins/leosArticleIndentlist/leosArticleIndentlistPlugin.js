@@ -111,32 +111,30 @@ define(function leosArticleIndentListPluginModule(require) {
                     refresh: this.isIndent ?
                         function(editor, path) {
                             var range = getSelectedRange(editor);
+                            path = leosPluginUtils.selectCorrectPathForList(range, path);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext( path );
                             var isListEnding = leosPluginUtils.isListEnding(path.lastElement);
-                            var isINP = leosPluginUtils.isIntroInPath(path);
                             if (isListEnding) {
                                 return TRISTATE_OFF;
                             } else if (leosPluginUtils.isSubparagraph(path.lastElement)
-                                        && !_isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)
-                                        && !isINP) {
+                                        && !_isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)) {
                                 return TRISTATE_OFF;
                             } else if (!list
                                 || firstItemInPath( this.context, path, list )
-                                || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)
-                                || isINP) {
+                                || _isListDepthMoreThanThreshold(getEnclosedLiElement(range.startContainer), getEnclosedLiElement(range.endContainer), LOCAL_MAX_LEVEL_LIST)) {
                                 return TRISTATE_DISABLED;
                             } else {
                                 return TRISTATE_OFF;
                             }
                         } : function(editor, path) {
                             var range = getSelectedRange(editor);
+                            path = leosPluginUtils.selectCorrectPathForList(range, path);
                             path = leosPluginUtils.manageSubparagraphs(range, path);
                             var list = this.getContext(path);
                             var isSubParagraph = leosPluginUtils.isSubparagraphInPath(path);
-                            var isINP = leosPluginUtils.isIntroInPath(path);
                             // custom code to disable the outdent toolbar button for first level list items.
-                            if (isSubParagraph && !isINP) {
+                            if (isSubParagraph) {
                                 return TRISTATE_DISABLED;
                             } else if (!list || isFirstLevelList(editor, list)) {
                                 return TRISTATE_DISABLED;
