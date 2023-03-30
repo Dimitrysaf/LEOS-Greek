@@ -20,8 +20,6 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var diff_match_patch = require("diff_match_patch");
 
-    var isTrackChangesVisible = true, isTrackChangesEnabled = false, defaultTrackChangesEditorStyle;
-
     var pluginName = "leosTrackChanges";
 
     var pluginDefinition = {
@@ -30,6 +28,10 @@ define(function leosTrackChangesPluginModule(require) {
             if (!editor.LEOS.isClonedProposal) {
                 return;
             }
+
+            var core = trackChanges.core, actions = trackChanges.actions;
+            var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
+            var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -63,16 +65,8 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
-                // Initialize toggle display
-                isTrackChangesVisible = true;
-                isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
-                defaultTrackChangesEditorStyle = $("head #editorTcStyle");
-
-                // Variable definition
                 var savedSnapshot, savedTcLocation, keyCodeLock, betweenFix, wasInsert, wasCollapsed;
                 var ctrlDown = false, cutText;
-                var core = trackChanges.core, actions = trackChanges.actions;
-
                 var editable = editor.editable();
 
                 // Delete functionality - keydown - catch snapshots
