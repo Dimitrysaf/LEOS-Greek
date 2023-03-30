@@ -396,7 +396,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
         if (selection.getRanges([0])) {
             var range = selection.getRanges()[0];
-            if (range.startContainer.getAscendant('ol') && range.startContainer.getAscendant('ol').getAttribute('data-akn-allow-shift-enter') === 'false') {
+            if (range.startContainer.getAscendant('ol') && range.startContainer.getAscendant('ol').getAttribute('data-akn-allow-soft-enter') === 'false') {
                 return false;
             }
         }
