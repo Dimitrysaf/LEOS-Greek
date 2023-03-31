@@ -385,9 +385,9 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             return false;
         }
 
-        if (selection.getRanges([0])) {
+        if (selection.getRanges() && selection.getRanges()[0]) {
             var range = selection.getRanges()[0];
-            if (range.startContainer.getAscendant('ol') && range.startContainer.getAscendant('ol').getAttribute('data-akn-allow-soft-enter') === 'false') {
+            if (range.startContainer && range.startContainer.getAscendant('ol') && range.startContainer.getAscendant('ol').getAttribute('data-akn-allow-soft-enter') === 'false') {
                 return false;
             }
         }
