@@ -15,7 +15,11 @@ import { debounce, debounceTime, filter, Subject, takeUntil, tap } from 'rxjs';
 
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 
-import { CatalogItem, CreateProposalBody } from '../../models';
+import {
+  CatalogItem,
+  CreateProposalBody,
+  UpdateProposalMetadataModel,
+} from '../../models';
 import { ErrorVO } from '../../models/upload-response.model';
 import { ProposalService } from '../../services/proposal.service';
 
@@ -153,9 +157,24 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
       }
       if (e.type === HttpEventType.Response) {
         if (e.ok) {
-          this.router.navigate([`collection/${e.body.proposalId}`]);
-          this.resetInitials();
-          this.closeDialog();
+          const docPurpose = this.uploadForm.get('docPurpose').value;
+          const eeaRelevance = this.uploadForm.get('eeaRelevance').value;
+          const requestData: UpdateProposalMetadataModel = {
+            docPurpose,
+            eeaRelevance,
+          };
+
+          this.proposalService
+            .updateProposalMetadata(e.body.proposalId, requestData)
+            .subscribe((response) => {
+              console.log(
+                'this.proposalService.updateProposalMetadata:',
+                response,
+              );
+              this.router.navigate([`collection/${e.body.proposalId}`]);
+              this.resetInitials();
+              this.closeDialog();
+            });
         }
       }
     });

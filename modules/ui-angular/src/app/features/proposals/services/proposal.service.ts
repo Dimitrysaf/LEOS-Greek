@@ -34,6 +34,7 @@ import {
   ListProposalsWithFilterBodyFilter,
   ListProposalsWithFilterResponse,
   ProposalFilter,
+  UpdateProposalMetadataModel,
 } from '../models';
 import {
   LegFileValidationResponse,
@@ -229,21 +230,30 @@ export class ProposalService {
           observe: 'events',
         },
       )
-      .pipe(
-        tap(() => this.loadingService.setLoading(true)),
-        finalize(() => this.loadingService.setLoading(false)),
-      );
+      .pipe(tap(() => this.loadingService.setLoading(true)));
   }
 
   validateLegFile(data: File) {
     const formData: FormData = new FormData();
     formData.append('legFile', data);
-    return this.http.post<LegFileValidationResponse>(
-      `${apiBaseUrl}/secured/proposal/validateLegFile`,
-      formData,
-      {
-        reportProgress: true,
-      },
+    return this.http
+      .post<LegFileValidationResponse>(
+        `${apiBaseUrl}/secured/proposal/validateLegFile`,
+        formData,
+        {
+          reportProgress: true,
+        },
+      )
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
+  }
+
+  updateProposalMetadata(
+    proposalRef: string,
+    requestData: UpdateProposalMetadataModel,
+  ) {
+    return this.http.put(
+      `${apiBaseUrl}/secured/proposal/${proposalRef}`,
+      requestData,
     );
   }
 }
