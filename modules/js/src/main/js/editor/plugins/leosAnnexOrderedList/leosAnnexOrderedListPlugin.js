@@ -31,6 +31,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
     var SPAN = "span";
     var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknAnnexOrderedList']";
     var ENTER_KEY = 13;
+    var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var TAB_KEY = 9;
     var config = { attributes: false, childList: true, subtree: true };
 
@@ -86,6 +87,12 @@ define(function leosAnnexOrderedListPluginModule(require) {
             && leosPluginUtils.getElementName(selectedElement.getParent()) === leosPluginUtils.HTML_POINT
             && _getAscendantPoint(selectedElement.getParent())) {
             context.event.cancel();
+        } else if(selectedElement.getAscendant('li') && selectedElement.getAscendant('li').getAttribute(leosPluginUtils.DATA_AKN_NUM)){
+            var dataAknNumAttr = selectedElement.getAscendant('li').getAttribute(leosPluginUtils.DATA_AKN_NUM);
+            if(!!dataAknNumAttr && CHECKBOXES.includes(dataAknNumAttr)){
+                 context.event.cancel();
+                 context.event.editor.fire( 'key', { keyCode: SHIFT_ENTER} );
+            }
         }
     }
 
@@ -108,24 +115,10 @@ define(function leosAnnexOrderedListPluginModule(require) {
             var isParentPoint = !leosPluginUtils.isSubparagraph(parent);
             var pointWithoutContent = !selectedElement.getPrevious() && !parent.getPrevious() && leosPluginUtils.isOrderedAnnexList(parent.getParent())
                 && !parent.getParent().getPrevious();
-            var dataAknNumAttr = selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM);
-            var isCheckbox = !!dataAknNumAttr && CHECKBOXES.includes(dataAknNumAttr);
 
             if(isSubPoint && isParentPoint && pointWithoutContent){
                 selectedElement.insertBefore(parent.getParent());
                 leosPluginUtils.setFocus(selectedElement, event.editor);
-            }else if(isCheckbox){
-                selectedElement.renameNode('p');
-                selectedElement.setAttribute("contenteditable", "true");
-                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_ELEMENT);
-                selectedElement.removeAttribute(leosPluginUtils.REFERS_TO);
-                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
-                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
-                selectedElement.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
-                var previousSibling = selectedElement.getPrevious();
-                previousSibling.append(selectedElement);
-                leosPluginUtils.setFocus(selectedElement, event.editor);
-                leosPluginUtils.manageNestedHtmlP(event.editor);
             }
         }
     }

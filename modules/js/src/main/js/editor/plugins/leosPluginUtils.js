@@ -1304,31 +1304,6 @@ define(function leosPluginUtilsModule(require) {
         return newRange.select();
     }
 
-    function _manageNestedHtmlP(editor) {
-        moveHtmlP(editor.element.find('p'));
-    }
-
-    function moveHtmlP(subparagraphs) {
-        if(subparagraphs && subparagraphs.count() > 0) {
-            for (var i = 0; i < subparagraphs.count(); i++) {
-                var subparagraph = subparagraphs.getItem(i);
-                if (_getElementName(subparagraph) === HTML_SUB_POINT && subparagraph.getChildren().count() > 0) {
-                    var hasOnlySubParagraphs = true;
-                    for(var j = 0; j < subparagraph.getChildren().count(); j++) {
-                        var child = subparagraph.getChildren().getItem(j);
-                        if(_getElementName(child) !== HTML_SUB_POINT) {
-                            hasOnlySubParagraphs = false;
-                        }
-                    }
-
-                    if(hasOnlySubParagraphs) {
-                        _moveElementChildrenKeepFirstChild(subparagraph, subparagraph.getParent());
-                    }
-                }
-            }
-        }
-    }
-
     function _moveElementChildrenKeepFirstChild(source, target) {
         if ( !source || !target )
             return;
@@ -1404,7 +1379,6 @@ define(function leosPluginUtilsModule(require) {
         managePoints: _managePoints,
         manageEmptyLists: _manageEmptyLists,
         manageEmptySubparagraphs: _manageEmptySubparagraphs,
-        manageNestedHtmlP: _manageNestedHtmlP,
         manageSiblingLists: _manageSiblingLists,
         manageSubparagraphs: _manageSubparagraphs,
         manageListIntro: _manageListIntro,
