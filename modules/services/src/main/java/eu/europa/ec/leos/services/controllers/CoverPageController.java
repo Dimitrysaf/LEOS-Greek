@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.api.CoverPageApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -356,6 +357,42 @@ public class CoverPageController {
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+        try {
+            String userGuidance = this.coverPageApiService.fetchUserGuidance(documentRef);
+            return ResponseEntity.ok().body(userGuidance);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get user guidance for coverPage " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for coverPage", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+        try {
+            byte[] cleanVersion = this.coverPageApiService.downloadCleanVersion(documentRef);
+            return ResponseEntity.ok().body(cleanVersion);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get download clean version for coverPage " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get download clean version for coverPage", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+        try {
+            ShowCleanVersionResponse cleanVersion = this.coverPageApiService.showCleanVersion(documentRef);
+            return ResponseEntity.ok().body(cleanVersion);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get  clean version for coverPage " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for coverPage", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

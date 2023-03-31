@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -37,8 +38,8 @@ import javax.inject.Provider;
 public class MandateAnnexApiService extends AnnexApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateAnnexApiService.class);
 
-    MandateAnnexApiService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
-        super(structureContext, cloneContext, context);
+    MandateAnnexApiService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
+        super(structureContext, cloneContext, context, annexContext);
     }
 
     @Override

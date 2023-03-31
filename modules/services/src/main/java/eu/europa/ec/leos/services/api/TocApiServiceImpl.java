@@ -17,9 +17,11 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.cmis.document.Explanatory;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
+import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.dto.request.NodeDropValidationRequest;
 import eu.europa.ec.leos.services.dto.response.NodeValidationResponse;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
@@ -63,14 +65,16 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private String docTemplate;
 
     private MessageHelper messageHelper;
+    private ExplanatoryService explanatoryService;
 
     @Autowired
     public TocApiServiceImpl(Provider<StructureContext> structureContextProvider, BillService billService, AnnexService annexService,
-                             MessageHelper messageHelper) {
+                             MessageHelper messageHelper, ExplanatoryService explanatoryService) {
         this.structureContextProvider = structureContextProvider;
         this.billService = billService;
         this.annexService = annexService;
         this.messageHelper = messageHelper;
+        this.explanatoryService = explanatoryService;
     }
 
     @Override
@@ -88,6 +92,11 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 Annex annex = annexService.findAnnexByRef(documentRef);
                 xmlContent = annex.getContent().getOrError(() -> "Document content is required!").getSource().getBytes();
                 this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+                break;
+            case COUNCIL_EXPLANATORY:
+                Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
+                xmlContent = explanatory.getContent().getOrError(() -> "Document content is required!").getSource().getBytes();
+                this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
                 break;
             default:
                 LOG.error("Invalid document type");

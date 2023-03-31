@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -75,6 +76,10 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception;
 
+    byte[] downloadCleanVersion(String documentRef);
+
+    ShowCleanVersionResponse showCleanVersion(String documentRef);
+
     byte[] downloadXmlVersionFiles(String documentRef, String versionId);
 
     byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception;
@@ -84,6 +89,8 @@ public interface BaseDocumentService<T extends XmlDocument> {
     DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event);
 
     DocumentConfigResponse getDocumentConfig(String documentRef);
+
+    String fetchUserGuidance(String documentRef);
 
     default Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
         Map<String, Attribute> articleTypesAttributes = new HashMap<>();

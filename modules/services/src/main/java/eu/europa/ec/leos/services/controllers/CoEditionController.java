@@ -21,6 +21,4 @@ public class CoEditionController {
     public Greeting greeting(HelloMessage message) {
         return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
     }
-
-
 }

@@ -123,6 +123,15 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "development-cn": {
+              "baseHref": "/leos-pilot-cn/ui-a/",
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -130,7 +139,8 @@
         "serve": {
           "builder": "@ngx-env/builder:dev-server",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "app:build",
+            "proxyConfig": "proxy.conf.mjs"
           },
           "configurations": {
             "proxy-mock": {
@@ -142,6 +152,9 @@
             },
             "development": {
               "browserTarget": "app:build:development"
+            },
+            "development-cn": {
+              "browserTarget": "app:build:development-cn"
             }
           },
           "defaultConfiguration": "development"

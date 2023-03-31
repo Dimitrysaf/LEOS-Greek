@@ -21,7 +21,9 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
+import eu.europa.ec.leos.services.dto.request.SwitchAnnexStructureTypeRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -367,6 +369,67 @@ public class AnnexController {
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{documentRef}/switch-annex-structure", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> switchAnnexStructure(@PathVariable("documentRef") String documentRef,
+                                                       @RequestBody SwitchAnnexStructureTypeRequest switchAnnexStructureTypeRequest) {
+        try {
+            DocumentViewResponse view = this.annexAPIService.changeAnnexStructureType(documentRef, switchAnnexStructureTypeRequest.getAnnexStructureType());
+            return ResponseEntity.ok().body(view);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to switch annex structure" + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to switch annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{documentRef}/renumber-document", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> renumberAnnex(@PathVariable("documentRef") String documentRef) {
+        try {
+            DocumentViewResponse view = this.annexAPIService.renumberAnnex(documentRef);
+            return ResponseEntity.ok().body(view);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to renumber annex " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to renumber annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+        try {
+            String userGuidance = this.annexAPIService.fetchUserGuidance(documentRef);
+            return ResponseEntity.ok().body(userGuidance);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get user guidance for annex " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+        try {
+            byte[] cleanVersion = this.annexAPIService.downloadCleanVersion(documentRef);
+            return ResponseEntity.ok().body(cleanVersion);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get download clean version for annex " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get download clean version for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+        try {
+            ShowCleanVersionResponse cleanVersion = this.annexAPIService.showCleanVersion(documentRef);
+            return ResponseEntity.ok().body(cleanVersion);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get  clean version for annex " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

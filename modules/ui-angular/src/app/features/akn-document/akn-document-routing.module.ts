@@ -27,7 +27,7 @@ const routes: Routes = [
   {
     path: 'explanatory/:id',
     component: DocumentEditorComponent,
-    data: { category: 'explanatory' },
+    data: { category: 'council_explanatory' },
   },
 ];
 

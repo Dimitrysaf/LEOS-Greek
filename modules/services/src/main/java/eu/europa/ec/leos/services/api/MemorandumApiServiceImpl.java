@@ -18,14 +18,17 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
@@ -36,6 +39,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -53,6 +57,7 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -67,6 +72,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -103,11 +110,14 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     TemplateConfigurationService templateConfigurationService;
     @Autowired
     ExportService exportService;
+    @Autowired
+    UserHelper userHelper;
     private Provider<BillContextService> context;
 
     private Provider<StructureContext> structureContext;
 
     private static final Logger LOG = LoggerFactory.getLogger(MemorandumApiServiceImpl.class);
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
 
     MemorandumApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
@@ -126,8 +136,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        return this.memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED);
+        this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
+        return this.memorandumService.getTableOfContent(memorandum, tocMode);
     }
 
     @Override
@@ -251,6 +261,36 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
+    public byte[] downloadCleanVersion(String documentRef) {
+        byte[] cleanVersion = new byte[0];
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(memorandum.getId());
+        context.get().usePackage(leosPackage);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
+        String proposalId = proposal.getId();
+        try {
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
+            ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Memorandum.class, false, true);
+            exportOptions.setExportVersions(new ExportVersions(null, memorandum));
+            exportOptions.setWithCoverPage(false);
+            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+        }
+        LOG.info("The actual version of CLEANED Memorandum for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return cleanVersion;
+    }
+
+    @Override
+    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+        final Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(memorandum, "", securityContext.getPermissions(memorandum));
+        final String versionInfo = getVersionInfoAsString(memorandum);
+        return new ShowCleanVersionResponse(versionContent, versionInfo);
+    }
+
+    @Override
     public byte[] downloadXmlVersionFiles(String documentRef, String versionId) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         final Memorandum chosenDocument = memorandumService.findMemorandumVersion(versionId);
@@ -305,6 +345,14 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef()
         );
+    }
+
+    @Override
+    public String fetchUserGuidance(String documentRef) {
+        // KLUGE temporary hack for compatibility with new domain model
+        Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
+        Proposal proposal = proposalService.findProposal(memorandum.getId(), true);
+        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
     }
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {
@@ -380,6 +428,29 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    private VersionInfoVO getVersionInfo(XmlDocument document) {
+        String userId = document.getLastModifiedBy();
+        User user = userHelper.getUser(userId);
+
+        return new VersionInfoVO(
+                document.getVersionLabel(),
+                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
+                dateFormatter.format(document.getLastModificationInstant()),
+                document.getVersionType());
+    }
+
+    private String getVersionInfoAsString(XmlDocument document) {
+        final VersionInfoVO versionInfo = getVersionInfo(document);
+        final String versionInfoString = messageHelper.getMessage(
+                "document.version.caption",
+                versionInfo.getDocumentVersion(),
+                versionInfo.getLastModifiedBy(),
+                versionInfo.getEntity(),
+                versionInfo.getLastModificationInstant()
+        );
+        return versionInfoString;
     }
 
 }

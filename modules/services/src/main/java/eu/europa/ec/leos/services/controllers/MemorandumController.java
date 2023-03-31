@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.api.MemorandumApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -359,5 +360,40 @@ public class MemorandumController {
         }
     }
 
+    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+        try {
+            String userGuidance = this.memorandumApiService.fetchUserGuidance(documentRef);
+            return ResponseEntity.ok().body(userGuidance);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get user guidance for memorandum " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for memorandum", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+        try {
+            byte[] cleanVersion = this.memorandumApiService.downloadCleanVersion(documentRef);
+            return ResponseEntity.ok().body(cleanVersion);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get download clean version for memorandum " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get download clean version for memorandum", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+        try {
+            ShowCleanVersionResponse cleanVersion = this.memorandumApiService.showCleanVersion(documentRef);
+            return ResponseEntity.ok().body(cleanVersion);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get  clean version for memorandum " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for memorandum", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
