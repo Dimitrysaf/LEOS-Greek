@@ -402,7 +402,7 @@ define(function actionManagerExtensionModule(require) {
 
     function _insertBeforeAndAfterIcon($element, deletable, connector) {
         var insertBeforeAndAfter;
-        let type = _getType($element);
+        let type = _getType($element).toLowerCase();
         switch (type) {
             case 'citation':
             case 'recital':

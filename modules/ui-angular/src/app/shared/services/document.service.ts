@@ -51,7 +51,7 @@ export class DocumentService implements OnDestroy {
   versionSearchOpen$: Observable<boolean>;
   toc$: Observable<TableOfContentItemVO[]>;
   tocItems$: Observable<any[]>;
-  recentChanges$: Observable<any[]>;
+  recentChanges$: Observable<Version[]>;
   versionId$: Observable<string | null>;
   versionCompareIds$: Observable<any | null>;
   searchResultIndexArray: any[];
@@ -89,6 +89,9 @@ export class DocumentService implements OnDestroy {
     new BehaviorSubject<DocumentViewResponse | null>(null);
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
+  // private documentViewBS = new BehaviorSubject<DocumentViewResponse | null>(
+  //   null,
+  // );
 
   private updatedContentToSaveAfterReplace: string = null;
 
@@ -99,15 +102,10 @@ export class DocumentService implements OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private appConfig: AppConfigService,
   ) {
-    this.documentId$ = this.documentIdBS.pipe(
-      filter(Boolean),
-      distinctUntilChanged(),
-    );
-    this.documentCategory$ = this.documentCategoryBS.pipe(
-      filter(Boolean),
-      distinctUntilChanged(),
-    );
+    this.documentId$ = this.documentIdBS.asObservable();
+    this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
+
     this.documentView$ = this.documentId$.pipe(
       combineLatestWith(this.documentCategory$),
       switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
@@ -141,7 +139,9 @@ export class DocumentService implements OnDestroy {
         this.getDocumentRecentChangesData(category, ref),
       ),
     );
+
     this.toc$ = this.documentId$.pipe(switchMap((ref) => this.getToc(ref)));
+
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
     this.searchPaneOpen$
@@ -249,7 +249,7 @@ export class DocumentService implements OnDestroy {
   }
 
   reloadDocument() {
-    console.warn('stub:', 'reloadDocument'); // FIXME
+    this.setDocumentId(this.documentIdBS.value);
   }
 
   saveVersion(requestBody: any) {
@@ -378,6 +378,11 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'seeUserGuidance'); // FIXME
   }
 
+  // setDocumentView(view: DocumentViewResponse) {
+  //   console.log('elemState in setDocumentView:', view);
+  //   this.documentViewBS.next(view);
+  // }
+
   setDocumentId(id: string) {
     this.documentIdBS.next(id);
   }
@@ -440,8 +445,9 @@ export class DocumentService implements OnDestroy {
     this.searchResultIndexArray = [];
     this.currentSearchResults = [];
     this.focusedSearchResult = null;
-    // this.setSearchParams({ searchText: '' });
+    this.setSearchParams({ searchText: '' });
     this.toggleSubject(this.searchPaneOpenBS, open);
+    this.setDocumentId(this.documentIdBS.value);
   }
 
   toggleVersionsSearchPane(open?: boolean) {
@@ -545,9 +551,11 @@ export class DocumentService implements OnDestroy {
 
   getDocumentRecentChangesData(documentType: string, documentRef: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<any[]>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/recent-changes`,
-    );
+    return this.http
+      .get<Version[]>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/recent-changes`,
+      )
+      .pipe(take(1));
   }
 
   saveDocumentVersionWithData(
@@ -567,7 +575,7 @@ export class DocumentService implements OnDestroy {
   getDocumentVersion(documentType: string, versionId: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<DocumentViewResponse>(
-      `api/secured/${documentType}/${versionId}/show-version`,
+      `${apiBaseUrl}/secured/${documentType}/${versionId}/show-version`,
     );
   }
 
@@ -575,7 +583,7 @@ export class DocumentService implements OnDestroy {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     if (versionArray && versionArray.newVersion !== null) {
       return this.http.get<string>(
-        `api/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
+        `${apiBaseUrl}/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
         { responseType: 'text' as 'json' },
       );
     } else {
