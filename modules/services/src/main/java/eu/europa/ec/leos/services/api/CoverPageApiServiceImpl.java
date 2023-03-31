@@ -19,7 +19,7 @@ import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
@@ -40,6 +40,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -56,15 +57,12 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.Attribute;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
@@ -110,6 +108,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     XmlContentProcessor xmlContentProcessor;
     @Autowired
     ExportService exportService;
+    @Autowired
+    TemplateConfigurationService templateConfigurationService;
     private Provider<CloneContext> cloneContext;
     private Provider<BillContextService> context;
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
@@ -135,7 +135,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         this.setStructureContext(proposal.getMetadata().getOrError(() -> "Cover Page metadata is required!").getDocTemplate());
-        return this.proposalService.getCoverPageTableOfContent(proposal, TocMode.SIMPLIFIED);
+        return this.proposalService.getCoverPageTableOfContent(proposal, tocMode);
     }
 
     @Override
@@ -271,6 +271,34 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
+    public byte[] downloadCleanVersion(String documentRef) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        byte[] cleanVersion = new byte[0];
+        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        context.get().usePackage(leosPackage);
+        String proposalId = proposal.getId();
+        try {
+            final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
+            ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Proposal.class, false, true);
+            exportOptions.setExportVersions(new ExportVersions(null, proposal));
+            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using ExportService", e);
+        }
+        LOG.info("The actual version of CLEANED Coverpage for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return cleanVersion;
+    }
+
+    @Override
+    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+        final Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(proposal, "", securityContext.getPermissions(proposal));
+        final String versionInfo = getVersionInfoAsString(proposal);
+        return new ShowCleanVersionResponse(versionContent, versionInfo);
+    }
+
+    @Override
     public byte[] downloadXmlVersionFiles(String documentRef, String versionId) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         final Proposal chosenDocument = proposalService.findProposalVersion(versionId);
@@ -325,6 +353,26 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef()
         );
     }
+
+    @Override
+    public String fetchUserGuidance(String documentRef) {
+        // KLUGE temporary hack for compatibility with new domain model
+        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+    }
+
+    private String getVersionInfoAsString(XmlDocument document) {
+        final VersionInfoVO versionInfo = getVersionInfo(document);
+        final String versionInfoString = messageHelper.getMessage(
+                "document.version.caption",
+                versionInfo.getDocumentVersion(),
+                versionInfo.getLastModifiedBy(),
+                versionInfo.getEntity(),
+                versionInfo.getLastModificationInstant()
+        );
+        return versionInfoString;
+    }
+
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {
         try {

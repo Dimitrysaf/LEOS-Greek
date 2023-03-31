@@ -15,6 +15,12 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.model.annex.AnnexStructureType;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 
 public interface AnnexApiService extends BaseDocumentService<Annex> {
+
+    public DocumentViewResponse changeAnnexStructureType(String documentRef, AnnexStructureType annexStructureType);
+
+    public DocumentViewResponse renumberAnnex(String annexRef);
 }

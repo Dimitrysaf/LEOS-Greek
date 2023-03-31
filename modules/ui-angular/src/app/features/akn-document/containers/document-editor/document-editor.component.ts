@@ -346,8 +346,12 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private loadStyleSheet() {
-    const category =
+    let category =
       this.documentType === 'coverPage' ? 'coverpage' : this.documentType;
+    category =
+      this.documentType === 'council_explanatory'
+        ? 'explanatory'
+        : this.documentType;
 
     this.config.config.subscribe((config) => {
       // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'

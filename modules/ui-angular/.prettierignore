@@ -12,6 +12,7 @@
 # build configurations and scripts
 !/*.js
 !/*.json
+!/*.mjs
 
 # modified by npm / yarn
 package.json

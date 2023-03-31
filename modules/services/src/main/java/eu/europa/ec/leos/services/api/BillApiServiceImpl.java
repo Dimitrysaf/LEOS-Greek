@@ -15,7 +15,9 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.eventbus.Subscribe;
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
@@ -32,6 +34,8 @@ import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.annex.AnnexStructureType;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -41,13 +45,21 @@ import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.document.models.DocType;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.export.ExportDW;
+import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.export.FileHelper;
+import eu.europa.ec.leos.services.importoj.ImportService;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
@@ -77,6 +89,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Provider;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,11 +135,17 @@ public class BillApiServiceImpl implements BillApiService {
     ProposalService proposalService;
     @Autowired
     ExportService exportService;
+    @Autowired
+    ImportService importService;
+    @Autowired
+    TransformationService transformationService;
+
     private Provider<CloneContext> cloneContext;
     protected Provider<BillContextService> contex;
     private static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
     private static final Logger LOG = LoggerFactory.getLogger(BillApiService.class);
 
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     private Provider<StructureContext> structureContext;
 
@@ -213,7 +235,47 @@ public class BillApiServiceImpl implements BillApiService {
 
     @Override
     public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
+        //implemented on ProposalBillServiceImpl and MandateBillServiceImpl
         return null;
+    }
+
+    @Override
+    public byte[] downloadCleanVersion(String documentRef) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        byte[] cleanVersion = new byte[0];
+        Bill bill = this.billService.findBillByRef(documentRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(bill.getId());
+        contex.get().usePackage(leosPackage);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        String proposalId = proposal.getId();
+        if (isClonedProposal()) {
+            try {
+                final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
+                ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Bill.class, false, true);
+                exportOptions.setExportVersions(new ExportVersions(null, bill));
+                exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using ExportService", e);
+            }
+        } else {
+            try {
+                final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Bill.class, false, true);
+                cleanVersion = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using ExportService", e);
+            }
+        }
+        LOG.info("The actual version of CLEANED Bill for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return cleanVersion;
+    }
+
+    @Subscribe
+    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+        final Bill bill = billService.findBillByRef(documentRef);
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(bill, "", securityContext.getPermissions(bill));
+        final String versionInfo = getVersionInfoAsString(bill);
+        return new ShowCleanVersionResponse(versionContent, versionInfo);
     }
 
     @Override
@@ -277,10 +339,34 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
+    public String fetchUserGuidance(String documentRef) {
+        // KLUGE temporary hack for compatibility with new domain model
+        Bill bill = this.billService.findBillByRef(documentRef);
+        Proposal proposal = proposalService.findProposal(bill.getId(), true);
+        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+    }
+
+    @Override
+    public String searchForImport(Integer number, Integer year, DocType type) {
+        try {
+            String aknDocument = importService.getAknDocument(type.getValue(), year, number);
+            if (aknDocument != null) {
+                String transformedAknDocument = getImportXml(aknDocument);
+                return transformedAknDocument;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to perform searchAct operation", e);
+            return null;
+        }
+    }
+
+    @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
-        return this.billService.getTableOfContent(bill, TocMode.SIMPLIFIED);
+        return this.billService.getTableOfContent(bill, tocMode);
     }
 
     @Override
@@ -303,6 +389,26 @@ public class BillApiServiceImpl implements BillApiService {
         //leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         //updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
         return documentViewService.getDocumentView(bill);
+    }
+
+    @Override
+    public DocumentViewResponse renumberBill(String documentRef) {
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final Bill bill = this.billService.findBillByRef(documentRef);
+
+        final byte[] newXmlContent = billProcessor.renumberDocument(bill);
+
+        final String title = messageHelper.getMessage("operation.element.document_renumbered");
+        final String description = messageHelper.getMessage("operation.checkin.minor");
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.DOCUMENT_RENUMBERED));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+
+        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+
+//        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
+        LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return this.documentViewService.getDocumentView(updatedBill);
     }
 
     private String generateLabel(String reference, XmlDocument sourceDocument) {
@@ -412,6 +518,12 @@ public class BillApiServiceImpl implements BillApiService {
         return this.structureContext.get().getTocItems();
     }
 
+    private String getImportXml(String content) {
+        return transformationService.toImportXml(
+                new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)),
+                "", securityContext.getPermissions(content));
+    }
+
 
     private byte[] getContent(Bill bill) {
         final Content content = bill.getContent().getOrError(() -> "Annex content is required!");
@@ -446,5 +558,29 @@ public class BillApiServiceImpl implements BillApiService {
             cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }
-    
+
+    private String getVersionInfoAsString(XmlDocument document) {
+        final VersionInfoVO versionInfo = getVersionInfo(document);
+        final String versionInfoString = messageHelper.getMessage(
+                "document.version.caption",
+                versionInfo.getDocumentVersion(),
+                versionInfo.getLastModifiedBy(),
+                versionInfo.getEntity(),
+                versionInfo.getLastModificationInstant()
+        );
+        return versionInfoString;
+    }
+
+    private VersionInfoVO getVersionInfo(XmlDocument document) {
+        String userId = document.getLastModifiedBy();
+        User user = userHelper.getUser(userId);
+
+        return new VersionInfoVO(
+                document.getVersionLabel(),
+                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
+                dateFormatter.format(document.getLastModificationInstant()),
+                document.getVersionType());
+    }
+
+
 }

@@ -16,32 +16,46 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.Content;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.ActionType;
+import eu.europa.ec.leos.model.action.CheckinCommentVO;
+import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.export.ExportDW;
+import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
@@ -53,23 +67,25 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
-import eu.europa.ec.leos.vo.toc.Attribute;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.inject.Provider;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -105,14 +121,24 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     ComparisonDelegateAPI<Annex> comparisonDelegate;
     @Autowired
     ExportService exportService;
+    @Autowired
+    UserHelper userHelper;
+    @Autowired
+    TemplateConfigurationService templateConfigurationService;
+    @Autowired
+    @Qualifier("applicationProperties")
+    private Properties applicationProperties;
     private Provider<CloneContext> cloneContext;
+    private Provider<AnnexContextService> annexContext;
     protected Provider<BillContextService> contex;
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
 
-    AnnexApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
+    AnnexApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
         this.structureContext = structureContext;
         this.cloneContext = cloneContext;
         this.contex = context;
+        this.annexContext = annexContext;
     }
 
     @Override
@@ -284,7 +310,48 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     @Override
     public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
+        //implemented on ProposalAnnexServiceImpl & MandateAnnexServiceImpl
         return null;
+    }
+
+    @Override
+    public byte[] downloadCleanVersion(String documentRef) {
+        byte[] cleanVersion = new byte[0];
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+        contex.get().usePackage(leosPackage);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+        String proposalId = proposal.getId();
+        if (isClonedProposal()) {
+            try {
+                final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false, true);
+                exportOptions.setExportVersions(new ExportVersions(null, annex));
+                exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using ExportService", e);
+            }
+        } else {
+            try {
+                final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false, true);
+                exportOptions.setExportVersions(new ExportVersions<Annex>(null, annex));
+                cleanVersion = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using ExportService", e);
+            }
+        }
+        LOG.info("The actual version of CLEANED Annex for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return cleanVersion;
+    }
+
+    @Override
+    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+        final Annex annex = this.annexService.findAnnexByRef(documentRef);
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(annex, "", securityContext.getPermissions(annex));
+        final String versionInfo = getVersionInfoAsString(annex);
+        return new ShowCleanVersionResponse(versionContent, versionInfo);
     }
 
     @Override
@@ -344,6 +411,46 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         );
     }
 
+    @Override
+    public DocumentViewResponse changeAnnexStructureType(String documentRef, AnnexStructureType annexStructureType) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        String template = applicationProperties.getProperty("leos.annex." + annexStructureType + ".template");
+        structureContext.get().useDocumentTemplate(template);
+        annexContext.get().useTemplate(template);
+        annexContext.get().useAnnexId(annex.getId());
+        annexContext.get().useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + annexStructureType + ".structure"));
+        annexContext.get().executeUpdateAnnexStructure();
+        Annex updatedAnnex = this.annexService.findAnnexByRef(documentRef);
+        return this.documentViewService.getDocumentView(annex);
+    }
+
+    @Override
+    public DocumentViewResponse renumberAnnex(String documentRef) {
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+
+        AnnexStructureType structureType = getStructureType();
+        final byte[] newXmlContent = annexProcessor.renumberDocument(annex, structureType);
+
+        final String title = messageHelper.getMessage("operation.element.document_renumbered");
+        final String description = messageHelper.getMessage("operation.checkin.minor");
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.DOCUMENT_RENUMBERED));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        Annex updateAnnex = annexService.updateAnnex(annex, newXmlContent, checkinCommentJson);
+
+        LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return this.documentViewService.getDocumentView(updateAnnex);
+    }
+
+    @Override
+    public String fetchUserGuidance(String documentRef) {
+        // KLUGE temporary hack for compatibility with new domain model
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        Proposal proposal = proposalService.findProposal(annex.getId(), true);
+        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+    }
+
     protected void populateCloneProposalMetadata(Proposal proposal) {
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
@@ -382,6 +489,29 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     protected boolean isClonedProposal() {
         return cloneContext != null && cloneContext.get().isClonedProposal();
+    }
+
+    private VersionInfoVO getVersionInfo(XmlDocument document) {
+        String userId = document.getLastModifiedBy();
+        User user = userHelper.getUser(userId);
+
+        return new VersionInfoVO(
+                document.getVersionLabel(),
+                user.getName(), user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "",
+                dateFormatter.format(document.getLastModificationInstant()),
+                document.getVersionType());
+    }
+
+    private String getVersionInfoAsString(XmlDocument document) {
+        final VersionInfoVO versionInfo = getVersionInfo(document);
+        final String versionInfoString = messageHelper.getMessage(
+                "document.version.caption",
+                versionInfo.getDocumentVersion(),
+                versionInfo.getLastModifiedBy(),
+                versionInfo.getEntity(),
+                versionInfo.getLastModificationInstant()
+        );
+        return versionInfoString;
     }
 
 }
