@@ -22,6 +22,7 @@ define(function elementEditorModule(require) {
     var CKEDITOR = require("promise!ckEditor");
     var UTILS = require("core/leosUtils");
     var pluginTools = require("../plugins/pluginTools");
+    var leosPluginUtils = require("../plugins/leosPluginUtils");
     var dialogDefinition = require("./leosEmptyElementDialog");
     var ZERO_WIDTH_SPACE = "^\u200B{7}$";
     var NUM = "num";
@@ -301,14 +302,13 @@ define(function elementEditorModule(require) {
         if (!editor.readOnly || editor.config.isClause) {
             _removeZeroWidthSpaces(elementId);
             if (!_isEmptyElement(elementId, editor)) {
-                var eventData = _removeNonBreakingSpaceFromElement(elementId, event.data.data);
                 // set read-only to prevent changes
                 editor.setReadOnly(true);
                 // save the element being edited
                 var data = {
                     elementId: elementId,
                     elementType: elementType,
-                    elementFragment: eventData,
+                    elementFragment: event.data.data,
                     isSplit: event.data.origin === "split" ? true : false
                 };
                 editor.LEOS.saveCmdExecuted = true;
@@ -358,14 +358,14 @@ define(function elementEditorModule(require) {
     }
 
     function _isEmptyElement(elementId, editor) {
-        var bogus = $("#" + elementId).find("br");
+        var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
         var sibling;
         if (bogus && bogus[0]) {
             sibling = bogus[0].previousSibling;
         }
         var emptyElements = $("#" + elementId + ", h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
         if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
-            || sibling.nodeType === Node.ELEMENT_NODE)))) {
+            || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
             dialogCommand.exec();

@@ -19,6 +19,7 @@ define(function leosPluginUtilsModule(require) {
 
     var TEXT = "text";
     var BOGUS = "br";
+    var TD = "td";
     var UNKNOWN = "unknown";
     var DATA_AKN_NUM = "data-akn-num";
     var DATA_AKN_NUM_ID = "data-akn-num-id";
@@ -1466,6 +1467,8 @@ define(function leosPluginUtilsModule(require) {
         AKN_ORDERED_ANNEX_LIST: AKN_ORDERED_ANNEX_LIST,
         AKN_NUMBERED_PARAGRAPH: AKN_NUMBERED_PARAGRAPH,
         COUNCIL_INSTANCE: COUNCIL_INSTANCE,
-        INLINE_FROM_MATCH: INLINE_FROM_MATCH
+        INLINE_FROM_MATCH: INLINE_FROM_MATCH,
+        BOGUS: BOGUS,
+        TD: TD
     };
 });
