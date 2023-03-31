@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
@@ -691,12 +692,17 @@ export class CKEditorService implements OnDestroy {
   private xmlBS = new BehaviorSubject<string>('');
   private documentTypeBS = new BehaviorSubject<string>(null);
   private resizeObserver?: ResizeObserver;
+  private elementEditAndSaveBS = new BehaviorSubject<any>({
+    isEdited: false,
+    isSaved: false,
+  });
   resizeListeners = new Map<Element, Set<ResizeListener>>();
   elementEditor$: Observable<any>;
   xml$ = this.xmlBS.asObservable();
   documentRef$ = this.documentRefBS.asObservable();
   annexRef$ = this.annexRefBS.asObservable();
   documentType$ = this.documentTypeBS.asObservable();
+  elementEditAndSave$ = this.elementEditAndSaveBS.asObservable();
 
   connector: any = {
     getParentId: () => 123,
@@ -735,6 +741,8 @@ export class CKEditorService implements OnDestroy {
 
           const res = JSON.parse(response);
 
+          this.setElementEditAndSave(true, null);
+
           this.connector.editElement(
             res.elementId,
             res.elementTagName,
@@ -755,6 +763,7 @@ export class CKEditorService implements OnDestroy {
     }) => {
       const documentRef = this.documentRefBS.value;
       const documentType = this.documentTypeBS.value;
+      this.setElementEditAndSave(null, true);
       this.saveDocumentElement(
         documentRef,
         elemData.elementId,
@@ -767,7 +776,6 @@ export class CKEditorService implements OnDestroy {
       });
     },
     closeElement: () => {},
-
     addResizeListener: <T extends Element>(
       element: T,
       callbackFunction: ResizeListener<T>,
@@ -803,7 +811,7 @@ export class CKEditorService implements OnDestroy {
       const documentType = this.documentTypeBS.value;
       this.deleteDocumentElement(
         documentRef,
-        elementData.elementType,
+        elementData.elementType.toLowerCase(),
         elementData.elementId,
         documentType,
       ).subscribe((response) => {
@@ -820,7 +828,7 @@ export class CKEditorService implements OnDestroy {
       const documentType = this.documentTypeBS.value;
       this.insertDocumentElement(
         documentRef,
-        elementData.elementType,
+        elementData.elementType.toLowerCase(),
         elementData.elementId,
         documentType,
         elementData.position,
@@ -857,6 +865,7 @@ export class CKEditorService implements OnDestroy {
     private http: HttpClient,
     private documentService: DocumentService,
     private appConfig: AppConfigService,
+    @Inject(DOCUMENT) private domDocument: Document,
   ) {
     this.appConfig.config
       .pipe(
@@ -864,9 +873,20 @@ export class CKEditorService implements OnDestroy {
         mergeMap(([config, extraConfig]) => of({ ...config, ...extraConfig })),
       )
       .subscribe((c) => {
-        console.log(c);
         this.renameConfigKeysForEditor(c);
       });
+
+    this.elementEditAndSave$.subscribe((elemState) => {
+      if (elemState.isEdited && !elemState.isSaved) {
+        this.domDocument
+          .querySelectorAll('.leos-placeholder')
+          .forEach((element) => {
+            element.addEventListener('blur', () =>
+              this.inlineEditorCancelHandler(element),
+            );
+          });
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -1035,16 +1055,16 @@ export class CKEditorService implements OnDestroy {
     documentType: string,
   ) {
     return this.http
-      .put(
+      .put<DocumentViewResponse>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
         elementFragment,
-        { responseType: 'text', headers: { contentType: 'text' } },
+        { headers: { contentType: 'text' } },
       )
       .pipe(
         tap(() => {
           this.documentService.getToc(this.annexRefBS.value);
         }),
-        tap(() => this.connector.closeElement()),
+        // tap(() => this.connector.closeElement()),
       );
   }
 
@@ -1082,9 +1102,8 @@ export class CKEditorService implements OnDestroy {
     elementId: string,
     documentType: string,
   ) {
-    return this.http.delete(
+    return this.http.delete<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
-      { responseType: 'arraybuffer' },
     );
   }
 
@@ -1095,10 +1114,9 @@ export class CKEditorService implements OnDestroy {
     documentType: string,
     position: string,
   ) {
-    return this.http.put(
+    return this.http.put<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/insert-element`,
       { position: position.toUpperCase() },
-      { responseType: 'arraybuffer' },
     );
   }
 
@@ -1189,6 +1207,59 @@ export class CKEditorService implements OnDestroy {
     );
     delete config['documentsMetadata'];
 
+    //implicitSaveEnabled
+
+    Object.defineProperty(
+      config,
+      'isImplicitSaveEnabled',
+      Object.getOwnPropertyDescriptor(config, 'implicitSaveAndClose'),
+    );
+    const implicitSaveAndCloseVal = config.implicitSaveAndClose;
+    config.isImplicitSaveEnabled = JSON.stringify(implicitSaveAndCloseVal);
+    delete config['implicitSaveAndClose'];
+
+    //spellCheckerEnabled
+
+    Object.defineProperty(
+      config,
+      'isSpellCheckerEnabled',
+      Object.getOwnPropertyDescriptor(config, 'spellCheckerEnabled'),
+    );
+    const spellCheckerEnabledVal = config.spellCheckerEnabled;
+    config.isSpellCheckerEnabled = JSON.stringify(spellCheckerEnabledVal);
+    delete config['spellCheckerEnabled'];
+
+    if (!config.spellCheckerServiceUrl) {
+      config.spellCheckerServiceUrl =
+        'https://webgate.acceptance.ec.testa.eu/qas/spellcheck';
+    }
+
+    if (!config.spellCheckerSourceUrl) {
+      config.spellCheckerSourceUrl =
+        'https://webgate.acceptance.ec.testa.eu/qas/static/wscbundle/wscbundle.js';
+    }
+
     this.leosStateBS.next(config);
+  }
+
+  private setElementEditAndSave(
+    isElementEdited: boolean,
+    isElementSaved: boolean,
+  ) {
+    const payload = { isEdited: false, isSaved: false };
+    payload.isEdited =
+      isElementEdited !== null
+        ? isElementEdited
+        : this.elementEditAndSaveBS.value.isEdited;
+    payload.isSaved =
+      isElementSaved !== null
+        ? isElementSaved
+        : this.elementEditAndSaveBS.value.isSaved;
+    this.elementEditAndSaveBS.next(payload);
+  }
+
+  private inlineEditorCancelHandler(element: Node) {
+    element.removeEventListener('onBlur', null);
+    this.documentService.setDocumentId(this.documentRefBS.value);
   }
 }

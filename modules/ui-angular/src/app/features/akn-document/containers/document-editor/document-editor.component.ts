@@ -1,4 +1,5 @@
 import { formatDate } from '@angular/common';
+import { Parser } from '@angular/compiler';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -117,13 +118,20 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     this.documentService.versionView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((versionView) => {
-        if (versionView !== null) this.versionForView = versionView.editableXml;
-        this.setVersionForViewHeader({
-          version: versionView.versionInfoVO.documentVersion,
-          updatedByFull: `${versionView.versionInfoVO.lastModifiedBy} (${versionView.versionInfoVO.entity})`,
-          updatedOn: versionView.versionInfoVO.lastModificationInstant,
-        });
-        this.isVersionForViewOpen = true;
+        if (versionView !== null) {
+          const pars = new DOMParser();
+          const versionXMl = pars.parseFromString(
+            versionView.editableXml,
+            'text/xml',
+          );
+          this.versionForView = this.cleanupAndSerializeXML(versionXMl);
+          this.setVersionForViewHeader({
+            version: versionView.versionInfoVO.documentVersion,
+            updatedByFull: `${versionView.versionInfoVO.lastModifiedBy} (${versionView.versionInfoVO.entity})`,
+            updatedOn: versionView.versionInfoVO.lastModificationInstant,
+          });
+          this.isVersionForViewOpen = true;
+        }
       });
 
     this.documentService.versionCompareView$

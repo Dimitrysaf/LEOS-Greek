@@ -13,21 +13,18 @@
       ></eui-chip>
     </eui-card-header-left-content>
   </eui-card-header>
-
-  <eui-card-content
-    *ngIf="isRecent && recentChanges?.length && showModifications"
-  >
+  <eui-card-content *ngIf="isRecent && recentChanges.length">
     <div class="subversions" *ngIf="recentChanges.length > 0">
       <ng-container
-        *ngFor="let version of recentChanges; trackByProperty: 'versionNumber'"
+        *ngFor="let a of recentChanges; trackByProperty: 'cmisVersionNumber'"
       >
         <div class="version">
-          {{ version.cmisVersionNumber }}
+          {{ a.cmisVersionNumber }}
         </div>
-        <div>{{ version.checkinCommentVO.title }}</div>
+        <div>{{ a.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
-            [version]="version"
+            [version]="a"
           ></app-version-actions-dropdown>
         </div>
       </ng-container>
