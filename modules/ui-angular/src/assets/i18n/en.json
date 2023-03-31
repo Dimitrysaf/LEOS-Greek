@@ -279,7 +279,7 @@
   "version.compare.header.default": "Select 2 versions to compare",
   "version.compare.header": "Comparing {{ oldVersion }} and {{ newVersion }}",
   "version.search.form.type": "By Type",
-  "version.search.form.author": "Author",
+  "version.search.form.author": "By Author",
   "shared.delete-dialog-confirm.footer.button.delete": "Delete",
   "shared.delete-dialog-confirm.footer.button.cancel": "Cancel",
   "page.error.forbidden.home": " Go to Home",

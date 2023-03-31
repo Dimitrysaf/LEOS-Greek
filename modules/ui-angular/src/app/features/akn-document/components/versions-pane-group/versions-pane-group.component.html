@@ -3,15 +3,15 @@
   euiNoShadow
   *ngIf="isRecent && (docService.versionFilter$ | async) === 'all'"
 >
-  <eui-card-header>
-    <eui-card-header-left-content *ngIf="isRecent">
+  <eui-card-header isHeaderBodyOnly="true">
+    <eui-card-header-body *ngIf="isRecent">
       <eui-chip euiRounded euiChip euiAccent>
         <span
           euiLabel
           translate="page.editor.versions.group-tag.recent-changes"
         ></span
       ></eui-chip>
-    </eui-card-header-left-content>
+    </eui-card-header-body>
   </eui-card-header>
   <eui-card-content *ngIf="isRecent && recentChanges.length">
     <div class="subversions" *ngIf="recentChanges.length > 0">
