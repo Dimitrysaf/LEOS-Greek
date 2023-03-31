@@ -463,7 +463,7 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentIdBS.value;
     this.http
       .get(
-        `api/secured/${documentCategory}/${documentRef}/restore/${versionNumber}`,
+        `${apiBaseUrl}/secured/${documentCategory}/${documentRef}/restore/${versionNumber}`,
       )
       .subscribe((r) => {
         this.setDocumentId(documentRef);
