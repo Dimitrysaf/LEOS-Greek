@@ -1120,7 +1120,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         FinancialStatement version = financialStatementService.findFinancialStatementVersion(versionId);
         byte[] resultXmlContent = getContent(version);
 
-        if (akn4euConversionDocumentsEnabled && documentContentService.isDeprecatedDocument(resultXmlContent)) {
+        if (akn4euConversionDocumentsEnabled && documentContentService.isDeprecatedDocument(resultXmlContent, cfgHelper.getProperty(
+                "akn4eu.first.version.with.intro.in.lists"), cfgHelper.getProperty(
+                "leos.template.first.version.with.intro.in.lists"))) {
             ConfirmDialogHelper.showConvertEditorDialog(this.leosUI, new ShowConfirmDialogEvent(new ConvertAkn4euVersionDocument(resultXmlContent, version.getVersionLabel()),
                             null),
                     this.eventBus, messageHelper.getMessage("document.akn4eu.version.convert.title"),
@@ -1133,8 +1135,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void doAkn4euConversion(ConvertAkn4euVersionDocument event) {
-        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent());
-        //, messageHelper.getMessage("operation.akn4eu.version.conversion")
+        byte[] xmlContent = documentContentService.akn4euVersionDocumentConversion(event.getXmlContent(), cfgHelper.getProperty(
+                "akn4eu.first.version.with.intro.in.lists"), cfgHelper.getProperty(
+                "leos.template.first.version.with.intro.in.lists"));
         NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
                 "document.akn4eu.version.converted.message",
                 NotificationEvent.Type.TRAY);

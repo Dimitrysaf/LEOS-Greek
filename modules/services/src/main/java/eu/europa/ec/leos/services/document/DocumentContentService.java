@@ -86,28 +86,30 @@ public interface DocumentContentService {
      * @param document
      * @return is deprecated document
      */
-    boolean isDeprecatedDocument(XmlDocument document);
+    boolean isDeprecatedDocument(XmlDocument document, String akn4euVersionValue, String templateVersionValue);
 
     /**
      * This method is checking for backward compatibility of old documents containing alineas and old akn4eu version.
      * @param xmlContent
      * @return is deprecated document
      */
-    boolean isDeprecatedDocument(byte[] xmlContent);
+    boolean isDeprecatedDocument(byte[] xmlContent, String akn4euVersionValue, String templateVersionValue);
 
     /**
      * This method is used for backward compatibility of old documents containing alineas and old akn4eu version.
      * @param documents
      * @param versionComment
+     * @param akn4euVersionValue
      */
-    void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment);
+    void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment, String akn4euVersionValue, String templateVersionValue);
 
     /**
      * This method is used for backward compatibility of old documents containing alineas and old akn4eu version.
      * @param xmlContent
+     * @param akn4euVersionValue
      * @return updated xml content
      */
-    byte[] akn4euVersionDocumentConversion(byte[] xmlContent);
+    byte[] akn4euVersionDocumentConversion(byte[] xmlContent, String akn4euVersionValue, String templateVersionValue);
 
     /**
      * This method is used for backward compatibility of old documents containing cover page to remove it.
