@@ -702,7 +702,6 @@ export class CKEditorService implements OnDestroy {
   documentRef$ = this.documentRefBS.asObservable();
   annexRef$ = this.annexRefBS.asObservable();
   documentType$ = this.documentTypeBS.asObservable();
-  // elementEditAndSave$ = this.elementEditAndSaveBS.asObservable();
 
   connector: any = {
     getParentId: () => 123,
@@ -741,7 +740,6 @@ export class CKEditorService implements OnDestroy {
 
           const res = JSON.parse(response);
 
-          // this.setElementEditAndSave(true, null);
 
           this.connector.editElement(
             res.elementId,
@@ -763,7 +761,6 @@ export class CKEditorService implements OnDestroy {
     }) => {
       const documentRef = this.documentRefBS.value;
       const documentType = this.documentTypeBS.value;
-      // this.setElementEditAndSave(null, true);
       this.saveDocumentElement(
         documentRef,
         elemData.elementId,
@@ -841,7 +838,6 @@ export class CKEditorService implements OnDestroy {
         .subscribe((response) => {
           this.documentService.setDocumentId(documentRef);
           this.documentService.getToc(documentRef);
-          // this.documentService.getToc(documentRef);
         });
     },
     mergeElement: (elementData: {
@@ -879,18 +875,6 @@ export class CKEditorService implements OnDestroy {
       .subscribe((c) => {
         this.renameConfigKeysForEditor(c);
       });
-
-    // this.elementEditAndSave$.subscribe((elemState) => {
-    //   if (elemState.isEdited && !elemState.isSaved) {
-    //     this.domDocument
-    //       .querySelectorAll('.leos-placeholder')
-    //       .forEach((element) => {
-    //         element.addEventListener('blur', () =>
-    //           this.inlineEditorCancelHandler(element),
-    //         );
-    //       });
-    //   }
-    // });
   }
 
   ngOnDestroy() {
@@ -1262,8 +1246,4 @@ export class CKEditorService implements OnDestroy {
     this.elementEditAndSaveBS.next(payload);
   }
 
-  // private inlineEditorCancelHandler(element: Node) {
-  //   element.removeEventListener('onBlur', null);
-  //   this.documentService.setDocumentId(this.documentRefBS.value);
-  // }
 }
