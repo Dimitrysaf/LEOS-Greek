@@ -47,9 +47,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
-import static eu.europa.ec.leos.services.support.XPathCatalog.LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XPathCatalog.AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 
@@ -333,38 +331,38 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     }
 
     @Override
-    public void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment) {
+    public void akn4euVersionDocumentConversion(List<XmlDocument> documents, String versionComment, String akn4euVersionValue, String templateVersionValue) {
         for (XmlDocument doc : documents) {
             byte[] xmlContent = getDocumentContent(doc);
-            xmlContent = akn4euVersionDocumentConversion(xmlContent);
+            xmlContent = akn4euVersionDocumentConversion(xmlContent, akn4euVersionValue, templateVersionValue);
             updateDocumentContent(doc, xmlContent, versionComment);
         }
     }
 
     @Override
-    public byte[] akn4euVersionDocumentConversion(byte[] xmlContent) {
-        xmlContent = setAkn4euVersion(xmlContent, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS);
-        xmlContent = setLeosTemplateVersion(xmlContent, LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS);
+    public byte[] akn4euVersionDocumentConversion(byte[] xmlContent, String akn4euVersionValue, String templateVersionValue) {
+        xmlContent = setAkn4euVersion(xmlContent, akn4euVersionValue);
+        xmlContent = setLeosTemplateVersion(xmlContent, templateVersionValue);
         xmlContent = xmlContentProcessor.convertAlineasInDocumentContent(xmlContent);
         return xmlContent;
     }
 
     @Override
-    public boolean isDeprecatedDocument(XmlDocument xmlDocument) {
+    public boolean isDeprecatedDocument(XmlDocument xmlDocument, String akn4euVersionValue, String templateVersionValue) {
         // Should be temporary as for performance reason, getting content for each document while opening proposal screen is not good
         byte[] xmlContent = getDocumentContent(xmlDocument);
-        return isDeprecatedDocument(xmlContent);
+        return isDeprecatedDocument(xmlContent, akn4euVersionValue, templateVersionValue);
     }
 
     @Override
-    public boolean isDeprecatedDocument(byte[] xmlContent) {
+    public boolean isDeprecatedDocument(byte[] xmlContent, String akn4euVersionValue, String templateVersionValue) {
         Document document = createXercesDocument(xmlContent);
         if (!xmlContentProcessor.containsAlineas(document)) {
             String akn4euVersion = getAkn4euVersion(xmlContent);
             String leosTemplateVersion = getLeosTemplateVersion(xmlContent);
             VersionComparator comparator = new VersionComparator();
-            return comparator.compare(akn4euVersion, AKN4EU_FIRST_VERSION_WITH_INTRO_IN_LISTS) < 0
-                    || comparator.compare(leosTemplateVersion, LEOS_TEMPLATE_FIRST_VERSION_WITH_INTRO_IN_LISTS) < 0;
+            return comparator.compare(akn4euVersion, akn4euVersionValue) < 0
+                    || comparator.compare(leosTemplateVersion, templateVersionValue) < 0;
         } else {
             return false;
         }

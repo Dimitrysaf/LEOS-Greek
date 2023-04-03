@@ -343,6 +343,10 @@ class CollectionPresenter extends AbstractLeosPresenter {
         List<DocumentVO> annexVOList = new ArrayList<>();
         docVersionSeriesIds = new HashSet<>();
         boolean isValid = true;
+        String akn4euVersionConversionValue = cfgHelper.getProperty(
+                "akn4eu.first.version.with.intro.in.lists");
+        String leosTemplateVersionConversionValue = cfgHelper.getProperty(
+                "leos.template.first.version.with.intro.in.lists");
         //We have the latest version of the document, no need to search for them again
         for (XmlDocument document : documents) {
             switch (document.getCategory()) {
@@ -360,7 +364,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO));
                     }
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(proposal) ? false : isValid;
+                        isValid = documentContentService.isDeprecatedDocument(proposal, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
                     }
                     break;
                 }
@@ -374,7 +378,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     proposalVO.addChildDocument(explanatoryVO);
                     docVersionSeriesIds.add(explanatory.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(explanatory) ? false : isValid;
+                        isValid = documentContentService.isDeprecatedDocument(explanatory, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
                     }
                     break;
                 }
@@ -387,7 +391,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
                     docVersionSeriesIds.add(memorandum.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(memorandum) ? false : isValid;
+                        isValid = documentContentService.isDeprecatedDocument(memorandum, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
                     }
                     break;
                 }
@@ -400,7 +404,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     billVO.setVersionSeriesId(bill.getVersionSeriesId());
                     docVersionSeriesIds.add(bill.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(bill) ? false : isValid;
+                        isValid = documentContentService.isDeprecatedDocument(bill, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
                     }
                     break;
                 }
@@ -413,7 +417,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     annexVO.setVersionSeriesId(annex.getVersionSeriesId());
                     docVersionSeriesIds.add(annex.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(annex) ? false : isValid;
+                        isValid = documentContentService.isDeprecatedDocument(annex, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
                     }
                     break;
                 }
@@ -426,7 +430,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
                     docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
-                        isValid = documentContentService.isDeprecatedDocument(financialStatement) ? false : isValid;
+                        isValid = documentContentService.isDeprecatedDocument(financialStatement, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
                     }
                     break;
                 }
@@ -1562,7 +1566,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void convertProposal(ConvertAkn4euVersionProposal convertAkn4euVersionProposal) {
-        documentContentService.akn4euVersionDocumentConversion(convertAkn4euVersionProposal.getDocuments(), messageHelper.getMessage("operation.akn4eu.version.conversion"));
+        documentContentService.akn4euVersionDocumentConversion(convertAkn4euVersionProposal.getDocuments(), messageHelper.getMessage("operation.akn4eu.version.conversion"), cfgHelper.getProperty(
+                "akn4eu.first.version.with.intro.in.lists"), cfgHelper.getProperty(
+                "leos.template.first.version.with.intro.in.lists"));
         NotificationEvent notificationEvent = new NotificationEvent("document.akn4eu.version.converted.caption",
                 "document.akn4eu.version.converted.message",
                 NotificationEvent.Type.TRAY);

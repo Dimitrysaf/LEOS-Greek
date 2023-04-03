@@ -43,7 +43,7 @@
                 <TLCConcept xml:id="_council_explanatory" href="/software/leos/council_explanatory" showAs="Council Explanatory"/>
             </references>
             <proprietary source="~_leos">
-                <leos:templateVersion>2.2.0</leos:templateVersion>
+                <leos:templateVersion>3.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:template>CN-001</leos:template>
                 <leos:docTemplate>IDC-001</leos:docTemplate>
