@@ -639,6 +639,10 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  applyContinuousNumbering() {
+    console.warn('Stub: applyContinuousNumbering');
+  }
+
   private doSearch(parameters: DocumentSearchParams) {
     if (parameters.searchText !== '') {
       const documentRef = this.documentIdBS.value;
