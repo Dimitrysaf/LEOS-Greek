@@ -105,6 +105,7 @@ import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
 import eu.europa.ec.leos.web.event.view.document.RequestFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.MergeSuggestionRequest;
 import eu.europa.ec.leos.web.event.view.document.MergeSuggestionsRequest;
+import eu.europa.ec.leos.web.event.view.document.ResponseFilteredAnnotations;
 import eu.europa.ec.leos.web.event.view.document.ShowCleanVersionRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
 import eu.europa.ec.leos.web.event.view.document.ShowIntermediateVersionWindowEvent;
@@ -1044,6 +1045,12 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         } else {
             doDownloadActualVersion(false, null);
         }
+    }
+
+    @Subscribe
+    void responseFilteredAnnotations(ResponseFilteredAnnotations event) {
+        String filteredAnnotations = event.getAnnotations();
+        doDownloadActualVersion(true, filteredAnnotations);
     }
 
     private void doDownloadActualVersion(Boolean isWithAnnotations, String annotations) {
