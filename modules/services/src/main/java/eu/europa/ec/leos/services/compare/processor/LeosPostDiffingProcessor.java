@@ -288,4 +288,11 @@ public class LeosPostDiffingProcessor {
         return content;
     }
 
+    public static String adjustTrackChanges(String content) {
+        content = content.replaceAll("<(inline)", "\n<inline");
+        content = content.replaceAll("<(inline)[^>]*(name=\\\"trackchanges\\\")[^>]*>(.*)</\\1>", "$3");
+        content = content.replace("\n", "");
+        return content;
+    }
+
 }
