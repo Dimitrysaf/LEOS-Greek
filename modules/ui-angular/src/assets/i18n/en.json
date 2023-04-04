@@ -159,6 +159,7 @@
   "page.editor.actions-dropdown.see-user-guidance": "See user guidance",
   "page.editor.actions-dropdown.see-navigation": "See navigation panel",
   "page.editor.actions-dropdown.renumber-document": "Renumber Document",
+  "page.editor.actions-dropdown.change-document-structure": "Change Annex Structure",
   "page.editor.annotations-button.tooltip-enable": "Enable annotations' popup",
   "page.editor.annotations-button.tooltip-disable": "Disable annotations' popup",
   "page.editor.annotations-column.label": "Annotations & document notes",

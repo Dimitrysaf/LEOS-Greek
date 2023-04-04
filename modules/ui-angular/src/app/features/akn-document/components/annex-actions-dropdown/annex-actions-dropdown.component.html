@@ -57,6 +57,16 @@
             translate="page.editor.actions-dropdown.renumber-document"
           ></button>
         </li>
+        <li
+          euiListItem
+          (click)="doc.switchDocumentStructure()"
+          *ngIf="doc.documentType === 'annex'"
+        >
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.change-document-structure"
+          ></button>
+        </li>
       </ul>
     </eui-dropdown-content>
   </eui-dropdown>

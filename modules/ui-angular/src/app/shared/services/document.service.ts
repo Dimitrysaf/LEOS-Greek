@@ -606,6 +606,20 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  switchDocumentStructure() {
+    let documentType = this.documentCategoryBS.value;
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .put<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
+        {},
+      )
+      .subscribe((response) => {
+        this.documentIdBS.next(documentRef);
+      });
+  }
+
   private doSearch(parameters: DocumentSearchParams) {
     if (parameters.searchText !== '') {
       const documentRef = this.documentIdBS.value;
