@@ -34,11 +34,15 @@
             translate="page.editor.actions-dropdown.import"
           ></button>
         </li>
-        <li euiListItem (click)="doc.seeUserGuidance()">
-          <button
-            euiListItem
-            translate="page.editor.actions-dropdown.see-user-guidance"
-          ></button>
+        <li euiListItem (click)="ckEditorService.receiveUserGuidance()">
+          <button euiListItem>
+            {{
+              (doc.userGuidanceVisible$ | async) === false
+                ? ('page.editor.actions-dropdown.see-user-guidance' | translate)
+                : ('page.editor.actions-dropdown.hide-user-guidance'
+                  | translate)
+            }}
+          </button>
         </li>
         <li euiListItem (click)="doc.seeNavigation()">
           <button

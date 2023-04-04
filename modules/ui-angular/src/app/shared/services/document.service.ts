@@ -63,6 +63,7 @@ export class DocumentService implements OnDestroy {
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
   navigationPaneCollapse$: Observable<boolean>;
+  userGuidanceVisible$: Observable<boolean>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -91,6 +92,7 @@ export class DocumentService implements OnDestroy {
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
   private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
+  private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
 
   private updatedContentToSaveAfterReplace: string = null;
 
@@ -201,6 +203,7 @@ export class DocumentService implements OnDestroy {
     this.setVersionFilter('all');
 
     this.navigationPaneCollapse$ = this.navigationPaneCollapseBS.asObservable();
+    this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -376,7 +379,18 @@ export class DocumentService implements OnDestroy {
   }
 
   seeUserGuidance() {
-    console.warn('stub:', 'seeUserGuidance'); // FIXME
+    this.userGuidanceVisibleBS.next(!this.userGuidanceVisibleBS.value);
+
+    if (this.userGuidanceVisibleBS.value) {
+      let documentType = this.documentCategoryBS.value;
+      documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+      const documentRef = this.documentIdBS.value;
+      return this.http.get<string>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
+      );
+    } else {
+      return of('');
+    }
   }
 
   // setDocumentView(view: DocumentViewResponse) {

@@ -157,6 +157,7 @@
   "page.editor.actions-dropdown.download-with-annotation": "Download to this version with annotation",
   "page.editor.actions-dropdown.import": "Import from the Office Journal",
   "page.editor.actions-dropdown.see-user-guidance": "See user guidance",
+  "page.editor.actions-dropdown.hide-user-guidance": "Hide user guidance",
   "page.editor.actions-dropdown.see-navigation": "See navigation panel",
   "page.editor.actions-dropdown.renumber-document": "Renumber Document",
   "page.editor.actions-dropdown.change-document-structure": "Change Annex Structure",

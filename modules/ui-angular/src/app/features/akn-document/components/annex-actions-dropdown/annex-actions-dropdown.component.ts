@@ -8,6 +8,7 @@ import {
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { of, Subject } from 'rxjs';
 
+import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -21,7 +22,11 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
   private destroy$ = new Subject();
 
-  constructor(private fb: FormBuilder, public doc: DocumentService) {}
+  constructor(
+    private fb: FormBuilder,
+    public doc: DocumentService,
+    public ckEditorService: CKEditorService,
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next(null);
