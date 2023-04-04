@@ -44,6 +44,7 @@
           <button
             euiListItem
             translate="page.editor.actions-dropdown.see-navigation"
+            [disabled]="(doc.navigationPaneCollapse$ | async) === false"
           ></button>
         </li>
       </ul>

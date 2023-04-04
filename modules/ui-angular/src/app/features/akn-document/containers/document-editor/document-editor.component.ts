@@ -178,6 +178,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
 
   onToggleTOCColumnCollapsed() {
     this.isTOCColumnCollapsed = !this.isTOCColumnCollapsed;
+    this.documentService.seeNavigation();
   }
 
   onToggleAnnotationsColumnCollapsed() {

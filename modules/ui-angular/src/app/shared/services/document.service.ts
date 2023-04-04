@@ -62,6 +62,7 @@ export class DocumentService implements OnDestroy {
   documentReplaceView$: Observable<DocumentViewResponse | null>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
+  navigationPaneCollapse$: Observable<boolean>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -89,9 +90,7 @@ export class DocumentService implements OnDestroy {
     new BehaviorSubject<DocumentViewResponse | null>(null);
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
-  // private documentViewBS = new BehaviorSubject<DocumentViewResponse | null>(
-  //   null,
-  // );
+  private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
 
   private updatedContentToSaveAfterReplace: string = null;
 
@@ -200,6 +199,8 @@ export class DocumentService implements OnDestroy {
       });
 
     this.setVersionFilter('all');
+
+    this.navigationPaneCollapse$ = this.navigationPaneCollapseBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -371,7 +372,7 @@ export class DocumentService implements OnDestroy {
   }
 
   seeNavigation() {
-    console.warn('stub:', 'seeNavigation'); // FIXME
+    this.navigationPaneCollapseBS.next(!this.navigationPaneCollapseBS.value);
   }
 
   seeUserGuidance() {

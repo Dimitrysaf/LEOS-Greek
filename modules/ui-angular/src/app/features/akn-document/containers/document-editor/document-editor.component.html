@@ -32,7 +32,7 @@
       <eui-page-column
         [label]="'page.editor.toc-column.label' | translate"
         isCollapsible
-        [isCollapsed]="isTOCColumnCollapsed"
+        [isCollapsed]="documentService.navigationPaneCollapse$ | async"
         interactiveScrollbars
         (collapsed)="onToggleTOCColumnCollapsed()"
         class="scrollable-page-column"
