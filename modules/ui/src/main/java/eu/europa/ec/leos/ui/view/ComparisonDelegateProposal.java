@@ -20,7 +20,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
-import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
+import eu.europa.ec.leos.services.compare.processor.LeosPreDiffingProcessor;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -55,9 +55,9 @@ public class ComparisonDelegateProposal<T extends XmlDocument> extends Compariso
         String secondItemHtml = documentContentService.getDocumentAsHtml(newVersion, contextPath, securityContext.getPermissions(newVersion),
                 includeCoverPage);
 
-        LeosPostDiffingProcessor postDiffingProcessor = new LeosPostDiffingProcessor();
-        firstItemHtml = postDiffingProcessor.adjustTrackChanges(firstItemHtml);
-        secondItemHtml = postDiffingProcessor.adjustTrackChanges(secondItemHtml);
+        LeosPreDiffingProcessor leosPreDiffingProcessor = new LeosPreDiffingProcessor();
+        firstItemHtml = leosPreDiffingProcessor.adjustTrackChanges(firstItemHtml);
+        secondItemHtml = leosPreDiffingProcessor.adjustTrackChanges(secondItemHtml);
 
         return compareService.compareContents(new ContentComparatorContext.Builder(firstItemHtml, secondItemHtml)
                 .withAttrName(ATTR_NAME)
