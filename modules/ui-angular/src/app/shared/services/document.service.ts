@@ -500,7 +500,12 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+  getTocItems(
+    annexRef: string,
+    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
+      ? 'NOT_SIMPLIFIED'
+      : 'SIMPLIFIED',
+  ) {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<TocItem[]>(
