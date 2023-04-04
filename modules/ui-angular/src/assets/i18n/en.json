@@ -158,6 +158,7 @@
   "page.editor.actions-dropdown.import": "Import from the Office Journal",
   "page.editor.actions-dropdown.see-user-guidance": "See user guidance",
   "page.editor.actions-dropdown.see-navigation": "See navigation panel",
+  "page.editor.actions-dropdown.renumber-document": "Renumber Document",
   "page.editor.annotations-button.tooltip-enable": "Enable annotations' popup",
   "page.editor.annotations-button.tooltip-disable": "Disable annotations' popup",
   "page.editor.annotations-column.label": "Annotations & document notes",

@@ -47,6 +47,16 @@
             [disabled]="(doc.navigationPaneCollapse$ | async) === false"
           ></button>
         </li>
+        <li
+          euiListItem
+          (click)="doc.renumberDocument()"
+          *ngIf="doc.documentType !== 'council_explanatory'"
+        >
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.renumber-document"
+          ></button>
+        </li>
       </ul>
     </eui-dropdown-content>
   </eui-dropdown>

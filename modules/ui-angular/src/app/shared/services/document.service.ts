@@ -592,6 +592,20 @@ export class DocumentService implements OnDestroy {
     }
   }
 
+  renumberDocument() {
+    let documentType = this.documentCategoryBS.value;
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .put<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/renumber-document`,
+        {},
+      )
+      .subscribe((response) => {
+        this.documentIdBS.next(documentRef);
+      });
+  }
+
   private doSearch(parameters: DocumentSearchParams) {
     if (parameters.searchText !== '') {
       const documentRef = this.documentIdBS.value;
