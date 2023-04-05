@@ -415,17 +415,19 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     @Override
     public DocumentViewResponse changeAnnexStructureType(String documentRef) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         AnnexStructureType currAnnexStructureType = getStructureType();
-        AnnexStructureType newAnnexStructureType = (currAnnexStructureType.getType().equals(AnnexStructureType.LEVEL))
+        AnnexStructureType newAnnexStructureType = (currAnnexStructureType.equals(AnnexStructureType.LEVEL))
                 ? AnnexStructureType.ARTICLE
                 : AnnexStructureType.LEVEL;
-        Annex annex = this.annexService.findAnnexByRef(documentRef);
-        String template = applicationProperties.getProperty("leos.annex." + newAnnexStructureType + ".template");
-        structureContext.get().useDocumentTemplate(template);
-        annexContext.get().useTemplate(template);
-        annexContext.get().useAnnexId(annex.getId());
-        annexContext.get().useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + newAnnexStructureType + ".structure"));
-        annexContext.get().executeUpdateAnnexStructure();
+        String template = applicationProperties.getProperty("leos.annex." + newAnnexStructureType.getType() + ".template");
+        this.setStructureContext(template);
+        AnnexContextService service = annexContext.get();
+        service.useTemplate(template);
+        service.useAnnexId(annex.getId());
+        service.useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + newAnnexStructureType.getType() + ".structure"));
+        service.executeUpdateAnnexStructure();
         Annex updatedAnnex = this.annexService.findAnnexByRef(documentRef);
         return this.documentViewService.getDocumentView(updatedAnnex);
     }

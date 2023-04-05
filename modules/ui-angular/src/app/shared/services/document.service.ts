@@ -630,7 +630,7 @@ export class DocumentService implements OnDestroy {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     const documentRef = this.documentIdBS.value;
     this.http
-      .put<DocumentViewResponse>(
+      .get<DocumentViewResponse>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
         {},
       )
