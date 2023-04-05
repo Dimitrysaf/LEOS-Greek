@@ -385,11 +385,11 @@ export class DocumentService implements OnDestroy {
       let documentType = this.documentCategoryBS.value;
       documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
       const documentRef = this.documentIdBS.value;
-      return this.http.get<string>(
+      return this.http.get<string | null>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
       );
     } else {
-      return of('');
+      return of(null);
     }
   }
 
@@ -632,15 +632,10 @@ export class DocumentService implements OnDestroy {
     this.http
       .get<DocumentViewResponse>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
-        {},
       )
       .subscribe((response) => {
         this.documentIdBS.next(documentRef);
       });
-  }
-
-  applyContinuousNumbering() {
-    console.warn('Stub: applyContinuousNumbering');
   }
 
   private doSearch(parameters: DocumentSearchParams) {

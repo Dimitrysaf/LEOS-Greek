@@ -43,7 +43,7 @@
         <div class="actions-menu-dividers">
           {{ 'page.editor.actions-dropdown.label-view' | translate }}
         </div>
-        <li euiListItem (click)="ckEditorService.receiveUserGuidance()">
+        <li euiListItem (click)="ckEditorService.toogleUserGuidance()">
           <button euiListItem>
             {{
               (doc.userGuidanceVisible$ | async) === false
@@ -70,7 +70,7 @@
         >
           <button
             euiListItem
-            translate="page.editor.actions-dropdown.renumber-document"
+            translate="page.editor.actions-dropdown.apply-continuous-numbering"
           ></button>
         </li>
         <li
@@ -81,12 +81,6 @@
           <button
             euiListItem
             translate="page.editor.actions-dropdown.change-document-structure"
-          ></button>
-        </li>
-        <li euiListItem (click)="doc.applyContinuousNumbering()">
-          <button
-            euiListItem
-            translate="page.editor.actions-dropdown.apply-continuous-numbering"
           ></button>
         </li>
       </ul>

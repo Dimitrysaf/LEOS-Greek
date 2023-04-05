@@ -1134,9 +1134,14 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
-  receiveUserGuidance() {
+  toogleUserGuidance() {
     this.documentService.seeUserGuidance().subscribe((userGuidance) => {
-      this.connector.receiveUserGuidance(userGuidance);
+      if (!userGuidance) {
+        this.connector.enableUserGuidance(false);
+      } else {
+        this.connector.receiveUserGuidance(JSON.stringify(userGuidance));
+        this.connector.enableUserGuidance(true);
+      }
     });
   }
 
