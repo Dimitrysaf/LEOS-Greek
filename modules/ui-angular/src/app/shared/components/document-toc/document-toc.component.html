@@ -250,11 +250,16 @@
             />
           </div>
           <!-- TODO : this will be done with ec/cn differences for screen 3 -->
-          <!-- <div
-            class="d-flex flex-row mt-4 justify-content-evenly"
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
             *ngIf="isArticle(selectedNode.tocItem)"
           >
-            <h5 class="mr-3">Type</h5>
+            <h5 class="mr-3 toc-editor-label">Type</h5>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="isArticle(selectedNode.tocItem)"
+          >
             <div class="d-flex flex-row align-items-center">
               <label>Regular</label>
               <input
@@ -273,7 +278,193 @@
                 (ngModelChange)="handleTypeChange($event)"
               />
             </div>
-          </div> -->
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              documentType === 'bill'
+            "
+          >
+            <h5 class="mr-3 toc-editor-label">Paragraph Numbering</h5>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              documentType === 'bill'
+            "
+          >
+            <div class="d-flex flex-row align-items-center">
+              <label>Numbered</label>
+              <input
+                euiInputRadio
+                value="numbered"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>Unnumbered</label>
+              <input
+                euiInputRadio
+                value="unnumbered"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              (documentType === 'memorandum' || documentType === 'annex')
+            "
+          >
+            <h5 class="mr-3 toc-editor-label">Type</h5>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              (documentType === 'memorandum' || documentType === 'annex')
+            "
+          >
+            <div class="d-flex flex-row align-items-center">
+              <label>None</label>
+              <input
+                euiInputRadio
+                value="none"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>Bullet</label>
+              <input
+                euiInputRadio
+                value="bullet"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>Numbered</label>
+              <input
+                euiInputRadio
+                value="numbered"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              (documentType === 'memorandum' || documentType === 'annex')
+            "
+          >
+            <h5 class="mr-3 toc-editor-label">Type</h5>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              (documentType === 'memorandum' || documentType === 'annex')
+            "
+          >
+            <div class="d-flex flex-row align-items-center">
+              <label>I.</label>
+              <input
+                euiInputRadio
+                value="type_1"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>A.</label>
+              <input
+                euiInputRadio
+                value="type_2"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>I</label>
+              <input
+                euiInputRadio
+                value="type_3"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>A</label>
+              <input
+                euiInputRadio
+                value="type_4"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              (documentType === 'memorandum' || documentType === 'annex')
+            "
+          >
+            <h5 class="mr-3 toc-editor-label">Type</h5>
+          </div>
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="
+              isArticle(selectedNode.tocItem) &&
+              environment === 'cn' &&
+              (documentType === 'memorandum' || documentType === 'annex')
+            "
+          >
+            <div
+              class="d-flex flex-row align-items-center justify-content-evenly"
+            >
+              <label>Bullet</label>
+              <input
+                euiInputRadio
+                value="bullet"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>Indent</label>
+              <input
+                euiInputRadio
+                value="indent"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+            <div class="d-flex flex-row align-items-center">
+              <label>Numbered</label>
+              <input
+                euiInputRadio
+                value="numbered"
+                [(ngModel)]="tocType"
+                (ngModelChange)="handleTypeChange($event)"
+              />
+            </div>
+          </div>
           <div class="mt-2 align-self-end">
             <button
               euiButton

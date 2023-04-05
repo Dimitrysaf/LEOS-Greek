@@ -63,6 +63,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   dragAction: DragAction;
 
+  //environment var
+  environment = process.env.NG_APP_LEOS_INSTANCE;
+
   //ng values for the selected node edit
   heading: string;
   number: string;
