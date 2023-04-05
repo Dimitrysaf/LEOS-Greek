@@ -1137,7 +1137,6 @@ export class CKEditorService implements OnDestroy {
   toogleUserGuidance() {
     this.documentService.seeUserGuidance().subscribe((userGuidance) => {
       if (!userGuidance) {
-        // this.connector.receiveUserGuidance(JSON.stringify(userGuidance));
         this.connector.enableUserGuidance(false);
       } else {
         this.connector.receiveUserGuidance(JSON.stringify(userGuidance));
