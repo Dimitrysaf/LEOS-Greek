@@ -393,8 +393,8 @@ public class BillController {
             DocumentViewResponse view = this.billApiService.renumberBill(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
-            LOG.error("Error occurred  while trying to renumber annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to renumber annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred  while trying to renumber bill " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to renumber bill ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

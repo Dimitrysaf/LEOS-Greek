@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
@@ -24,7 +25,6 @@ import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
-import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
@@ -67,7 +67,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -129,6 +128,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     @Override
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
+        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.deleteElement(explanatory, elementId, elementName);
 
         final String updatedLabel = generateLabel(elementId, explanatory);
@@ -141,6 +141,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     @Override
     public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
+        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
         byte[] newXmlContent = elementProcessor.updateElement(explanatory, elementName, elementId, elementFragment, false);
         explanatory = explanatoryService.updateExplanatory(explanatory, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
         return this.documentViewService.getDocumentView(explanatory);
@@ -206,14 +207,14 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     }
 
     @Override
-    public List<TocItem> getTocItems(String documentRef) {
+    public List<TocItem> getTocItems(@NotNull String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
         return this.structureContext.get().getTocItems();
     }
 
     @Override
-    public DocumentViewResponse getDocument(String documentRef) {
+    public DocumentViewResponse getDocument(@NotNull String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         return this.documentViewService.getDocumentView(explanatory);
     }
@@ -248,7 +249,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
     @Override
     public DocumentViewResponse showVersion(String versionId) {
-        Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(versionId);
+        Explanatory explanatory = this.explanatoryService.findExplanatoryVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(explanatory,
                 "",
                 securityContext.getPermissions(explanatory));
@@ -380,8 +381,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        Proposal proposal = proposalService.findProposal(explanatory.getId(), true);
-        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+        return templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(), "guidance");
     }
 
     private void setStructureContext(String docTemplate) {

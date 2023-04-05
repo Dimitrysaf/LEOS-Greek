@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
@@ -90,6 +91,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
+import static eu.europa.ec.leos.model.annex.AnnexStructureType.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
 public class AnnexApiServiceImpl implements AnnexApiService {
@@ -217,7 +219,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<TocItem> getTocItems(String documentRef) {
+    public List<TocItem> getTocItems(@NotNull String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.structureContext.get().getTocItems();
@@ -231,7 +233,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse getDocument(String documentRef) {
+    public DocumentViewResponse getDocument(@NotNull String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         return this.documentViewService.getDocumentView(annex);
     }
@@ -412,16 +414,20 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse changeAnnexStructureType(String documentRef, AnnexStructureType annexStructureType) {
+    public DocumentViewResponse changeAnnexStructureType(String documentRef) {
+        AnnexStructureType currAnnexStructureType = getStructureType();
+        AnnexStructureType newAnnexStructureType = (currAnnexStructureType.getType().equals(AnnexStructureType.LEVEL))
+                ? AnnexStructureType.ARTICLE
+                : AnnexStructureType.LEVEL;
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        String template = applicationProperties.getProperty("leos.annex." + annexStructureType + ".template");
+        String template = applicationProperties.getProperty("leos.annex." + newAnnexStructureType + ".template");
         structureContext.get().useDocumentTemplate(template);
         annexContext.get().useTemplate(template);
         annexContext.get().useAnnexId(annex.getId());
-        annexContext.get().useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + annexStructureType + ".structure"));
+        annexContext.get().useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + newAnnexStructureType + ".structure"));
         annexContext.get().executeUpdateAnnexStructure();
         Annex updatedAnnex = this.annexService.findAnnexByRef(documentRef);
-        return this.documentViewService.getDocumentView(annex);
+        return this.documentViewService.getDocumentView(updatedAnnex);
     }
 
     @Override
@@ -429,6 +435,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         Annex annex = this.annexService.findAnnexByRef(documentRef);
+
+        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
 
         AnnexStructureType structureType = getStructureType();
         final byte[] newXmlContent = annexProcessor.renumberDocument(annex, structureType);
@@ -447,8 +455,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        Proposal proposal = proposalService.findProposal(annex.getId(), true);
-        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+        return templateConfigurationService.getTemplateConfiguration(annex.getMetadata().get().getDocTemplate(), "guidance");
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {

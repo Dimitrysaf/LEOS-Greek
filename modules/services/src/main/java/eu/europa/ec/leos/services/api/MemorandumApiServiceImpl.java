@@ -15,10 +15,10 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -58,13 +58,9 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.Attribute;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +72,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service("memorandum")
@@ -128,7 +122,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public DocumentViewResponse getDocument(String documentRef) {
+    public DocumentViewResponse getDocument(@NotNull String documentRef) {
         Memorandum memorandum = memorandumService.findMemorandumByRef(documentRef);
         return this.documentViewService.getDocumentView(memorandum);
     }
@@ -190,7 +184,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<TocItem> getTocItems(String documentRef) {
+    public List<TocItem> getTocItems(@NotNull String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.structureContext.get().getTocItems();
@@ -351,8 +345,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        Proposal proposal = proposalService.findProposal(memorandum.getId(), true);
-        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+        return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(), "guidance");
     }
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) throws Exception {

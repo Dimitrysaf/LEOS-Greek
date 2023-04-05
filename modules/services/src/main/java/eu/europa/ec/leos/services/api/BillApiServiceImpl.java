@@ -16,12 +16,11 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.Subscribe;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
@@ -34,8 +33,6 @@ import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
-import eu.europa.ec.leos.model.annex.AnnexStructureType;
-import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -77,12 +74,10 @@ import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,9 +90,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BillApiServiceImpl implements BillApiService {
@@ -156,7 +149,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentViewResponse getDocument(String documentRef) {
+    public DocumentViewResponse getDocument(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
         return documentViewService.getDocumentView(bill);
     }
@@ -342,8 +335,7 @@ public class BillApiServiceImpl implements BillApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Bill bill = this.billService.findBillByRef(documentRef);
-        Proposal proposal = proposalService.findProposal(bill.getId(), true);
-        return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+        return templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "guidance");
     }
 
     @Override
@@ -396,9 +388,10 @@ public class BillApiServiceImpl implements BillApiService {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         final Bill bill = this.billService.findBillByRef(documentRef);
+        
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
 
         final byte[] newXmlContent = billProcessor.renumberDocument(bill);
-
         final String title = messageHelper.getMessage("operation.element.document_renumbered");
         final String description = messageHelper.getMessage("operation.checkin.minor");
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.DOCUMENT_RENUMBERED));
@@ -512,7 +505,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<TocItem> getTocItems(String documentRef) {
+    public List<TocItem> getTocItems(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         return this.structureContext.get().getTocItems();
