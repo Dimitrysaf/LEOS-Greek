@@ -20,6 +20,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
+import eu.europa.ec.leos.services.compare.processor.LeosPreDiffingProcessor;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -49,10 +50,15 @@ public class ComparisonDelegateProposal<T extends XmlDocument> extends Compariso
     @Override
     protected String getComparedContent(T oldVersion, T newVersion, boolean includeCoverPage) {
         final String contextPath = urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest());
-        final String firstItemHtml = documentContentService.getDocumentAsHtml(oldVersion, contextPath, securityContext.getPermissions(oldVersion),
+        String firstItemHtml = documentContentService.getDocumentAsHtml(oldVersion, contextPath, securityContext.getPermissions(oldVersion),
                 includeCoverPage);
-        final String secondItemHtml = documentContentService.getDocumentAsHtml(newVersion, contextPath, securityContext.getPermissions(newVersion),
+        String secondItemHtml = documentContentService.getDocumentAsHtml(newVersion, contextPath, securityContext.getPermissions(newVersion),
                 includeCoverPage);
+
+        LeosPreDiffingProcessor leosPreDiffingProcessor = new LeosPreDiffingProcessor();
+        firstItemHtml = leosPreDiffingProcessor.adjustTrackChanges(firstItemHtml);
+        secondItemHtml = leosPreDiffingProcessor.adjustTrackChanges(secondItemHtml);
+
         return compareService.compareContents(new ContentComparatorContext.Builder(firstItemHtml, secondItemHtml)
                 .withAttrName(ATTR_NAME)
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
