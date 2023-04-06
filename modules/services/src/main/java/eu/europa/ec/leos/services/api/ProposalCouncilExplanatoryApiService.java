@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -67,12 +68,12 @@ public class ProposalCouncilExplanatoryApiService implements CouncilExplanatoryA
     }
 
     @Override
-    public List<TocItem> getTocItems(String documentRef) {
+    public List<TocItem> getTocItems(@NotNull String documentRef) {
         throw new NotImplementedException();
     }
 
     @Override
-    public DocumentViewResponse getDocument(String documentRef) {
+    public DocumentViewResponse getDocument(@NotNull String documentRef) {
         throw new NotImplementedException();
     }
 

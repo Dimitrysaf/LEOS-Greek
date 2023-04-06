@@ -372,12 +372,11 @@ public class AnnexController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/switch-annex-structure", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{documentRef}/switch-annex-structure", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> switchAnnexStructure(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SwitchAnnexStructureTypeRequest switchAnnexStructureTypeRequest) {
+    public ResponseEntity<Object> switchAnnexStructure(@PathVariable("documentRef") String documentRef) {
         try {
-            DocumentViewResponse view = this.annexAPIService.changeAnnexStructureType(documentRef, switchAnnexStructureTypeRequest.getAnnexStructureType());
+            DocumentViewResponse view = this.annexAPIService.changeAnnexStructureType(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to switch annex structure" + e.getMessage());

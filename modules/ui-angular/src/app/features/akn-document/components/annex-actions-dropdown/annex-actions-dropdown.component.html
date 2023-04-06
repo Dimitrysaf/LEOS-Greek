@@ -10,6 +10,9 @@
     </button>
     <eui-dropdown-content>
       <ul euiList>
+        <div class="actions-menu-dividers">
+          {{ 'page.editor.actions-dropdown.label-versions' | translate }}
+        </div>
         <li euiListItem (click)="openVersionModal()">
           <button
             euiListItem
@@ -28,22 +31,56 @@
             translate="page.editor.actions-dropdown.download-with-annotation"
           ></button>
         </li>
+        <div class="actions-menu-dividers">
+          {{ 'page.editor.actions-dropdown.label-import' | translate }}
+        </div>
         <li euiListItem (click)="doc.import()">
           <button
             euiListItem
             translate="page.editor.actions-dropdown.import"
           ></button>
         </li>
-        <li euiListItem (click)="doc.seeUserGuidance()">
-          <button
-            euiListItem
-            translate="page.editor.actions-dropdown.see-user-guidance"
-          ></button>
+        <div class="actions-menu-dividers">
+          {{ 'page.editor.actions-dropdown.label-view' | translate }}
+        </div>
+        <li euiListItem (click)="ckEditorService.toogleUserGuidance()">
+          <button euiListItem>
+            {{
+              (doc.userGuidanceVisible$ | async) === false
+                ? ('page.editor.actions-dropdown.see-user-guidance' | translate)
+                : ('page.editor.actions-dropdown.hide-user-guidance'
+                  | translate)
+            }}
+          </button>
         </li>
         <li euiListItem (click)="doc.seeNavigation()">
           <button
             euiListItem
             translate="page.editor.actions-dropdown.see-navigation"
+            [disabled]="(doc.navigationPaneCollapse$ | async) === false"
+          ></button>
+        </li>
+        <div class="actions-menu-dividers">
+          {{ 'page.editor.actions-dropdown.label-extra' | translate }}
+        </div>
+        <li
+          euiListItem
+          (click)="doc.renumberDocument()"
+          *ngIf="doc.documentType !== 'council_explanatory'"
+        >
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.apply-continuous-numbering"
+          ></button>
+        </li>
+        <li
+          euiListItem
+          (click)="doc.switchDocumentStructure()"
+          *ngIf="doc.documentType === 'annex'"
+        >
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.change-document-structure"
           ></button>
         </li>
       </ul>

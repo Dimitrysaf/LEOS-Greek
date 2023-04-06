@@ -3,3 +3,9 @@
   gap: var(--eui-base-spacing-m);
   justify-content: flex-end;
 }
+
+.actions-menu-dividers {
+  border-bottom: thin solid black;
+  margin: 0.5rem;
+  text-align: center;
+}

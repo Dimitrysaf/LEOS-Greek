@@ -20,7 +20,7 @@ import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 
 public interface AnnexApiService extends BaseDocumentService<Annex> {
 
-    public DocumentViewResponse changeAnnexStructureType(String documentRef, AnnexStructureType annexStructureType);
+    public DocumentViewResponse changeAnnexStructureType(String documentRef);
 
     public DocumentViewResponse renumberAnnex(String annexRef);
 }

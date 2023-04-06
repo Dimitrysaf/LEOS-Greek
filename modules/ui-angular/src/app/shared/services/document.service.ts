@@ -62,6 +62,8 @@ export class DocumentService implements OnDestroy {
   documentReplaceView$: Observable<DocumentViewResponse | null>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
+  navigationPaneCollapse$: Observable<boolean>;
+  userGuidanceVisible$: Observable<boolean>;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -89,9 +91,8 @@ export class DocumentService implements OnDestroy {
     new BehaviorSubject<DocumentViewResponse | null>(null);
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
-  // private documentViewBS = new BehaviorSubject<DocumentViewResponse | null>(
-  //   null,
-  // );
+  private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
+  private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
 
   private updatedContentToSaveAfterReplace: string = null;
 
@@ -200,6 +201,9 @@ export class DocumentService implements OnDestroy {
       });
 
     this.setVersionFilter('all');
+
+    this.navigationPaneCollapse$ = this.navigationPaneCollapseBS.asObservable();
+    this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -371,11 +375,22 @@ export class DocumentService implements OnDestroy {
   }
 
   seeNavigation() {
-    console.warn('stub:', 'seeNavigation'); // FIXME
+    this.navigationPaneCollapseBS.next(!this.navigationPaneCollapseBS.value);
   }
 
   seeUserGuidance() {
-    console.warn('stub:', 'seeUserGuidance'); // FIXME
+    this.userGuidanceVisibleBS.next(!this.userGuidanceVisibleBS.value);
+
+    if (this.userGuidanceVisibleBS.value) {
+      let documentType = this.documentCategoryBS.value;
+      documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+      const documentRef = this.documentIdBS.value;
+      return this.http.get<string | null>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
+      );
+    } else {
+      return of(null);
+    }
   }
 
   // setDocumentView(view: DocumentViewResponse) {
@@ -485,7 +500,12 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getTocItems(annexRef: string, tocMode = 'SIMPLIFIED') {
+  getTocItems(
+    annexRef: string,
+    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
+      ? 'NOT_SIMPLIFIED'
+      : 'SIMPLIFIED',
+  ) {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<TocItem[]>(
@@ -589,6 +609,33 @@ export class DocumentService implements OnDestroy {
     } else {
       return of('');
     }
+  }
+
+  renumberDocument() {
+    let documentType = this.documentCategoryBS.value;
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .put<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/renumber-document`,
+        {},
+      )
+      .subscribe((response) => {
+        this.documentIdBS.next(documentRef);
+      });
+  }
+
+  switchDocumentStructure() {
+    let documentType = this.documentCategoryBS.value;
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    const documentRef = this.documentIdBS.value;
+    this.http
+      .get<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
+      )
+      .subscribe((response) => {
+        this.documentIdBS.next(documentRef);
+      });
   }
 
   private doSearch(parameters: DocumentSearchParams) {

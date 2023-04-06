@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -56,9 +57,9 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
 
-    List<TocItem> getTocItems(String documentRef);
+    List<TocItem> getTocItems(@NotNull String documentRef);
 
-    DocumentViewResponse getDocument(String documentRef);
+    DocumentViewResponse getDocument(@NotNull String documentRef);
 
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
 

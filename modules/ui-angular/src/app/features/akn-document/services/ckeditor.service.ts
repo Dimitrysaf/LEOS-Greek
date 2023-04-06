@@ -740,7 +740,6 @@ export class CKEditorService implements OnDestroy {
 
           const res = JSON.parse(response);
 
-
           this.connector.editElement(
             res.elementId,
             res.elementTagName,
@@ -989,6 +988,17 @@ export class CKEditorService implements OnDestroy {
       ),
     );
 
+    const userGuidanceExtension$ = this.leosLegacyService.require$.pipe(
+      switchMap(
+        (require) =>
+          new Observable((subscriber) => {
+            require(['extension/userGuidanceExtension'], (userGuidance) => {
+              subscriber.next(userGuidance);
+            });
+          }),
+      ),
+    );
+
     this.elementEditor$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -1008,6 +1018,7 @@ export class CKEditorService implements OnDestroy {
       changeDetailsExtension$,
       actionHandler$,
       toolbarPositionAdapter$,
+      userGuidanceExtension$,
       this.elementEditor$,
     ])
       .pipe(takeUntil(this.destroy$))
@@ -1020,6 +1031,7 @@ export class CKEditorService implements OnDestroy {
           changeDetails,
           actionHandler,
           toolbarPositionAdapter,
+          userGuidanceExtension,
           elementEditor,
         ]: any[]) => {
           actionManager.init(this.connector);
@@ -1029,6 +1041,7 @@ export class CKEditorService implements OnDestroy {
           changeDetails.init(this.connector);
           actionHandler.setup(this.connector);
           toolbarPositionAdapter.setup(this.connector);
+          userGuidanceExtension.init(this.connector);
           elementEditor.setup(this.connector);
         },
       );
@@ -1119,6 +1132,17 @@ export class CKEditorService implements OnDestroy {
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/merge-element`,
       { elementContent },
     );
+  }
+
+  toogleUserGuidance() {
+    this.documentService.seeUserGuidance().subscribe((userGuidance) => {
+      if (!userGuidance) {
+        this.connector.enableUserGuidance(false);
+      } else {
+        this.connector.receiveUserGuidance(JSON.stringify(userGuidance));
+        this.connector.enableUserGuidance(true);
+      }
+    });
   }
 
   private getResizeObserver() {
@@ -1245,5 +1269,4 @@ export class CKEditorService implements OnDestroy {
         : this.elementEditAndSaveBS.value.isSaved;
     this.elementEditAndSaveBS.next(payload);
   }
-
 }
