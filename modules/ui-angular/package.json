@@ -49,6 +49,7 @@
   "dependencies": {
     "@eui/deps-base": "14.0.7",
     "@ngx-env/core": "^15.0.1",
+    "content-disposition-attachment": "0.3.1",
     "net": "^1.0.2",
     "ng-for-track-by-property": "14.0.2",
     "sockjs-client": "^1.6.1",

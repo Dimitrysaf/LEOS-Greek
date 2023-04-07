@@ -1,0 +1,21 @@
+@import 'node_modules/@eui/styles-base/src/styles/base';
+
+form {
+  column-gap: var(--eui-base-spacing-m);
+  display: grid;
+  grid-template-columns: min-content 1fr;
+
+  .label-column .eui-label {
+    padding-right: 0;
+  }
+
+  .input-column:not(:last-child) {
+    margin-bottom: var(--eui-base-spacing-m);
+  }
+}
+
+@include media($eui-bkp-mobile-down) {
+  form {
+    grid-template-columns: 1fr;
+  }
+}

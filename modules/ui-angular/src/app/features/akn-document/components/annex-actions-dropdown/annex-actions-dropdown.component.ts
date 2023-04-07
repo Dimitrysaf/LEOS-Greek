@@ -6,8 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
+import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -18,8 +19,26 @@ import { DocumentService } from '@/shared/services/document.service';
 })
 export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   createForm: FormGroup;
+  isExportVersion = process.env.NG_APP_LEOS_INSTANCE !== 'cn';
+  downloadVersionVisible =
+    this.doc.documentType !== 'memorandum' &&
+    this.doc.documentType !== 'council_explanatory';
+  downloadVersionWithAnnotationsVisible =
+    this.doc.documentType !== 'memorandum';
+  // TODO: CN || proposal.isCloned() - see `setDownloadCleanVersionVisible`
+  downloadCleanVersionVisible =
+    process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
+    this.doc.documentType !== 'memorandum';
+  // TODO see `setShowCleanVersionVisible`
+  showCleanVersionVisible = false;
+  downloadEConsiliumVisible =
+    process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
+    this.doc.documentType !== 'memorandum';
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
+  @ViewChild('eConsiliumModal')
+  eConsiliumModal: DownloadEconsiliumModalComponent;
+
   private destroy$ = new Subject();
 
   constructor(

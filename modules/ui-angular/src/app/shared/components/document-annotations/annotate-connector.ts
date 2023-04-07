@@ -1,11 +1,10 @@
-import { distinctUntilChanged, of, take, takeUntil } from 'rxjs';
+import { distinctUntilChanged, take } from 'rxjs';
 
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import type {
   AnnotateConnectorState,
   AnnotateMetadata,
-  MergeSuggestion,
   MergeSuggestionRequest,
   Permission,
 } from '@/shared';
@@ -17,6 +16,7 @@ export type AnnotateConnectorInitialState = Omit<
 >;
 export type AnnotateConnectorOptions = {
   permissions: Permission[];
+  responseFilteredAnnotations?: (annotations: string) => void;
 };
 
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
@@ -28,6 +28,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   receiveMergeSuggestions?: (...results) => void;
   receiveDocumentMetadata?: (metadata: string) => void;
   receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
+  requestFilteredAnnotations?: () => void;
 
   constructor(
     state: AnnotateConnectorInitialState,
@@ -127,9 +128,8 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       });
   }
 
-  /* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
-  responseFilteredAnnotations(...args) {
-    console.warn('stub:', 'responseFilteredAnnotations', args); // FIXME
+  responseFilteredAnnotations(annotations: string) {
+    this.options.responseFilteredAnnotations?.(annotations);
   }
 }
 

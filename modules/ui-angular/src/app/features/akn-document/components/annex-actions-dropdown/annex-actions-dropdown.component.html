@@ -19,16 +19,48 @@
             translate="page.editor.actions-dropdown.save-version"
           ></button>
         </li>
-        <li euiListItem (click)="doc.download()">
+        <li euiListItem (click)="doc.download()" *ngIf="downloadVersionVisible">
+          <button euiListItem>
+            {{
+              (isExportVersion
+                ? 'page.editor.actions-dropdown.export'
+                : 'page.editor.actions-dropdown.download'
+              ) | translate
+            }}
+          </button>
+        </li>
+        <li
+          euiListItem
+          (click)="doc.download(true)"
+          *ngIf="downloadVersionWithAnnotationsVisible"
+        >
+          <button euiListItem>
+            {{
+              (isExportVersion
+                ? 'page.editor.actions-dropdown.export-with-annotations'
+                : 'page.editor.actions-dropdown.download-with-annotations'
+              ) | translate
+            }}
+          </button>
+        </li>
+        <li
+          euiListItem
+          (click)="doc.downloadCleanVersion()"
+          *ngIf="downloadCleanVersionVisible"
+        >
           <button
             euiListItem
-            translate="page.editor.actions-dropdown.download"
+            translate="page.editor.actions-dropdown.download-clean-version"
           ></button>
         </li>
-        <li euiListItem (click)="doc.downloadWithAnnotation()">
+        <li
+          euiListItem
+          (click)="eConsiliumModal.open()"
+          *ngIf="downloadEConsiliumVisible"
+        >
           <button
             euiListItem
-            translate="page.editor.actions-dropdown.download-with-annotation"
+            translate="page.editor.actions-dropdown.download-econsilium"
           ></button>
         </li>
         <div class="actions-menu-dividers">
@@ -124,3 +156,5 @@
     </div>
   </form>
 </eui-dialog>
+
+<app-download-econsilium-modal #eConsiliumModal></app-download-econsilium-modal>

@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
+import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
 import { SharedModule } from '@/shared/shared.module';
 
@@ -25,6 +26,7 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     VersionsPaneComponent,
     VersionsPaneGroupComponent,
     DocumentEditorComponent,
+    DownloadEconsiliumModalComponent,
   ],
   imports: [
     SharedModule,
