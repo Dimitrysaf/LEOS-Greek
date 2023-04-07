@@ -256,165 +256,185 @@
           >
             <h5 class="mr-3 toc-editor-label">Type</h5>
           </div>
+          <!-- Article Change Type-->
           <div
             class="d-flex flex-row mt-4 justify-content-start"
             *ngIf="isArticle(selectedNode.tocItem)"
           >
             <div class="d-flex flex-row align-items-center">
-              <label>Regular</label>
               <input
+                name="article_type"
+                id="article_type_reg"
                 euiInputRadio
                 value="regular"
                 [(ngModel)]="tocType"
                 (ngModelChange)="handleTypeChange($event)"
               />
+              <label euiLabel for="article_type_reg">Regular</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>Definition</label>
               <input
+                name="article_type"
+                id="article_type_def"
                 euiInputRadio
                 value="definition"
                 [(ngModel)]="tocType"
                 (ngModelChange)="handleTypeChange($event)"
               />
+              <label euiLabel for="article_type_def">Definition</label>
             </div>
           </div>
+          <!-- Paragraph Numbering -->
           <div
             class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              documentType === 'bill'
-            "
+            *ngIf="showNumParagraphToggle(selectedNode)"
           >
             <h5 class="mr-3 toc-editor-label">Paragraph Numbering</h5>
           </div>
           <div
             class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              documentType === 'bill'
-            "
+            *ngIf="showNumParagraphToggle(selectedNode)"
           >
             <div class="d-flex flex-row align-items-center">
-              <label>Numbered</label>
               <input
+                name="paragraph_type"
+                id="paragraph_type_numbered"
                 euiInputRadio
-                value="numbered"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="Numbered"
+                [(ngModel)]="active_paragraph_style"
+                (change)="handleParagraphToggle($event)"
               />
+              <label euiLabel for="paragraph_type_numbered">Numbered</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>Unnumbered</label>
               <input
+                name="paragraph_type"
+                id="paragraph_type_unnumbered"
                 euiInputRadio
-                value="unnumbered"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="Unnumbered"
+                [(ngModel)]="active_paragraph_style"
+                (change)="handleParagraphToggle($event)"
               />
+              <label euiLabel for="paragraph_type_unnumbered">Unnumbered</label>
             </div>
+          </div>
+          <!-- Cross heading -->
+          <div
+            class="d-flex flex-row mt-4 justify-content-start"
+            *ngIf="isCrossFading(selectedNode.tocItem)"
+          >
+            <h5 class="mr-3 toc-editor-label">
+              {{ 'toc.edit.window.item.list.type' | translate }}
+            </h5>
           </div>
           <div
             class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              (documentType === 'memorandum' || documentType === 'annex')
-            "
-          >
-            <h5 class="mr-3 toc-editor-label">Type</h5>
-          </div>
-          <div
-            class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              (documentType === 'memorandum' || documentType === 'annex')
-            "
+            *ngIf="isCrossFading(selectedNode.tocItem)"
           >
             <div class="d-flex flex-row align-items-center">
-              <label>None</label>
               <input
+                name="block_type"
+                id="block_type_none"
                 euiInputRadio
-                value="none"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="NONE"
+                [(ngModel)]="active_block_style"
+                (change)="handleListRadioButton($event)"
               />
+              <label euiLabel for="block_type_none">{{
+                'toc.edit.window.item.list.type.none' | translate
+              }}</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>Bullet</label>
               <input
+                name="block_type"
+                id="block_type_bullet"
                 euiInputRadio
-                value="bullet"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="BULLET_BLACK_CIRCLE"
+                [(ngModel)]="active_block_style"
+                (change)="handleListRadioButton($event)"
               />
+              <label
+                euiLabel
+                for="block_type_bullet"
+                [innerHTML]="
+                  'toc.edit.window.item.list.type.bullet' | translate
+                "
+              ></label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>Numbered</label>
               <input
+                name="block_type"
+                id="block_type_n"
                 euiInputRadio
-                value="numbered"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="INDENT"
+                [(ngModel)]="active_block_style"
+                (change)="handleListRadioButton($event)"
               />
+              <label euiLabel for="block_type_n">{{
+                'toc.edit.window.item.list.type.indent' | translate
+              }}</label>
             </div>
           </div>
+          <!-- Division-->
           <div
-            class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              (documentType === 'memorandum' || documentType === 'annex')
-            "
-          >
-            <h5 class="mr-3 toc-editor-label">Type</h5>
-          </div>
-          <div
-            class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              (documentType === 'memorandum' || documentType === 'annex')
-            "
+            class="d-flex flex-row mt-4 justify-content-start align-items-center"
+            *ngIf="isDivision(selectedNode.tocItem)"
           >
             <div class="d-flex flex-row align-items-center">
-              <label>I.</label>
               <input
                 euiInputRadio
+                id="division_type_1"
+                name="division_type"
                 value="type_1"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                [(ngModel)]="active_division_style"
+                [disabled]="!isDivisionStyleEnabled('type_1')"
+                (change)="handleDivisionChange($event)"
               />
+              <label euiLabel for="division_type_1">{{
+                'toc.division.number.caption.type_1' | translate
+              }}</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>A.</label>
               <input
                 euiInputRadio
+                id="division_type_2"
+                name="division_type"
                 value="type_2"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                [(ngModel)]="active_division_style"
+                [disabled]="!isDivisionStyleEnabled('type_2')"
+                (change)="handleDivisionChange($event)"
               />
+              <label euiLabel for="division_type_2">{{
+                'toc.division.number.caption.type_2' | translate
+              }}</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>I</label>
               <input
                 euiInputRadio
+                id="division_type_3"
+                name="division_type"
                 value="type_3"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                [(ngModel)]="active_division_style"
+                [disabled]="!isDivisionStyleEnabled('type_3')"
+                (change)="handleDivisionChange($event)"
               />
+              <label euiLabel for="division_type_3">{{
+                'toc.division.number.caption.type_3' | translate
+              }}</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>A</label>
               <input
+                id="division_type_4"
+                name="division_type"
                 euiInputRadio
                 value="type_4"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                [(ngModel)]="active_division_style"
+                [disabled]="!isDivisionStyleEnabled('type_4')"
+                (change)="handleDivisionChange($event)"
               />
+              <label euiLabel for="division_type_4">{{
+                'toc.division.number.caption.type_4' | translate
+              }}</label>
             </div>
           </div>
           <div
@@ -427,44 +447,52 @@
           >
             <h5 class="mr-3 toc-editor-label">Type</h5>
           </div>
+          <!-- Point a-->
           <div
             class="d-flex flex-row mt-4 justify-content-start"
-            *ngIf="
-              isArticle(selectedNode.tocItem) &&
-              environment === 'cn' &&
-              (documentType === 'memorandum' || documentType === 'annex')
-            "
+            *ngIf="isIndentList(selectedNode.tocItem)"
           >
             <div
               class="d-flex flex-row align-items-center justify-content-evenly"
             >
-              <label>Bullet</label>
               <input
+                id="point_a_b"
+                name="point_a"
                 euiInputRadio
-                value="bullet"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="BULLET_NUM"
+                [(ngModel)]="active_point_style"
+                (change)="handleIndentListRadioButtonGroupChange($event)"
               />
+              <label euiLabel for="point_a_b">{{
+                'toc.item.type.bullet' | translate
+              }}</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>Indent</label>
               <input
+                name="point_a"
+                id="point_a_i"
                 euiInputRadio
-                value="indent"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="INDENT"
+                [(ngModel)]="active_point_style"
+                (change)="handleIndentListRadioButtonGroupChange($event)"
               />
+              <label euiLabel for="point_a_i">{{
+                'toc.item.type.indent' | translate
+              }}</label>
             </div>
             <div class="d-flex flex-row align-items-center">
-              <label>Numbered</label>
               <input
+                name="point_a"
+                id="point_a_n"
                 euiInputRadio
-                value="numbered"
-                [(ngModel)]="tocType"
-                (ngModelChange)="handleTypeChange($event)"
+                value="POINT_NUM"
+                [(ngModel)]="active_point_style"
+                (change)="handleIndentListRadioButtonGroupChange($event)"
               />
             </div>
+            <label euiLabel for="point_a_n">Numbered</label>
           </div>
+          <!-- Delete -->
           <div class="mt-2 align-self-end">
             <button
               euiButton

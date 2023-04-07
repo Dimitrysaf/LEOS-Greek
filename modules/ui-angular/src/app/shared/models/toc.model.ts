@@ -1,3 +1,5 @@
+import { NumberingType } from './document.model';
+
 export class TableOfContentItemVO {
   tocItem: TocItem;
   id: string;
@@ -11,6 +13,8 @@ export class TableOfContentItemVO {
   node: Node;
   list: string;
   movedOnEmptyParent: boolean;
+  numSoftActionAttr: string;
+  numberingToggled: boolean;
   undeleted: boolean;
   isBlock: boolean;
   isCrossHeading: boolean;
@@ -41,30 +45,49 @@ export class TableOfContentItemVO {
   isAffected: boolean;
 }
 
-export type TagName =
-  | 'RECITAL'
-  | 'RECITALS'
-  | 'SECTION'
-  | 'CITATION'
-  | 'CITATIONS'
+export type AknTag =
   | 'PREFACE'
-  | 'PREAMBLE'
+  | 'DOCSTAGE'
+  | 'DOCTYPE'
+  | 'DOCPURPOSE'
   | 'BODY'
-  | 'MAIN_BODY'
-  | 'CONCLUSIONS'
-  | 'CHAPTER'
-  | 'ARTICLE'
-  | 'TITLE'
+  | 'PREAMBLE'
+  | 'CITATIONS'
+  | 'CITATION'
+  | 'RECITALS'
+  | 'RECITAL'
   | 'PART'
+  | 'TITLE'
+  | 'CHAPTER'
+  | 'SECTION'
   | 'DIVISION'
+  | 'ARTICLE'
   | 'PARAGRAPH'
   | 'SUBPARAGRAPH'
+  | 'LIST'
   | 'POINT'
-  | 'POINTS'
-  | 'LEVEL';
+  | 'INDENT'
+  | 'SUBPOINT'
+  | 'ALINEA'
+  | 'CLAUSE'
+  | 'CONCLUSIONS'
+  | 'MAIN_BODY'
+  | 'TBLOCK'
+  | 'BLOCK_CONTAINER'
+  | 'NUM'
+  | 'HEADING'
+  | 'CROSS_HEADING'
+  | 'BLOCK'
+  | 'LEVEL'
+  | 'CONTENT'
+  | 'FORMULA'
+  | 'COVER_PAGE'
+  | 'LONG_TITLE'
+  | 'DOC_PURPOSE'
+  | 'INLINE';
 
 export class TocItem {
-  aknTag: TagName;
+  aknTag: AknTag;
   root: boolean;
   higherElement: boolean;
   draggable: boolean;
@@ -80,7 +103,7 @@ export class TocItem {
   numWithType: boolean;
   expandedByDefault: boolean;
   sameParentAsChild: boolean;
-  numberingType: any;
+  numberingType: NumberingType;
   tocItemTypes: any;
   parentNameNumberingTypeDependency: any;
   profiles: any;

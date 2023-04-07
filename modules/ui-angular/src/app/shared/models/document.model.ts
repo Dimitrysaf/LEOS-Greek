@@ -1,6 +1,8 @@
 /** AKA `DocumentVO` in Java code */
 import { DocumentRole } from '@/shared';
 
+import { TocItem } from './toc.model';
+
 export interface Document {
   id: string;
   title: string;
@@ -71,6 +73,69 @@ export interface ClonedProposalMetadata {
   originRef: string;
   cloneProposalRef: string;
 }
+
+export interface DocumentConfig {
+  articleTypesConfig: ArticleType;
+  documentsMetadata: Metadata[];
+  internalRef: string;
+  listNumberConfigJsonArray: any;
+  numberingConfig: NumberingConfig[];
+  tocItems: TocItem[];
+}
+
+export interface ArticleType {
+  DEFINITION: ArticleTypeConfig;
+  REGULAR: ArticleTypeConfig;
+}
+
+export interface ArticleTypeConfig {
+  attributeName: string;
+  attributeValue: string;
+}
+
+export interface NumberingConfig {
+  description: string;
+  level: Level;
+  levels: Levels;
+  msgValidationError: string;
+  numbered: true;
+  prefix: '';
+  regex: string;
+  sequence: string;
+  suffix: string;
+  type: NumberingType;
+}
+export interface Levels {
+  levels: Level[];
+}
+export interface Level {
+  depth: string;
+  numberingType: NumberingType;
+}
+
+export type NumberingType =
+  | 'NONE'
+  | 'ARABIC'
+  | 'ARABIC_POSTFIXDOT'
+  | 'ARABIC_PARENTHESIS'
+  | 'ALPHA_LOWER_PARENTHESIS'
+  | 'ROMAN_LOWER_PARENTHESIS'
+  | 'ROMAN_UPPER'
+  | 'BULLET_BLACK_CIRCLE'
+  | 'BULLET_WHITE_CIRCLE'
+  | 'BULLET_BLACK_SQUARE'
+  | 'BULLET_WHITE_SQUARE'
+  | 'BULLET_NUM'
+  | 'INDENT'
+  | 'HIGHER_ELEMENT_NUM'
+  | 'POINT_NUM'
+  | 'POINT_NUM_DEF'
+  | 'LEVEL_NUM'
+  | 'DIVISION_NUM'
+  | 'ROMAN_UPPER_POSTFIXDOT'
+  | 'ROMAN_UPPER_POSTFIXPARENTHESIS'
+  | 'ALPHA_UPPER_POSTFIXDOT'
+  | 'ALPHA_UPPER_POSTFIXPARENTHESIS';
 
 /** AKA `LeosCategory` in Java code */
 export type DocumentType =

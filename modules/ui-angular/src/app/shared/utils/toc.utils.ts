@@ -1,3 +1,4 @@
+import { NumberingConfig, NumberingType } from '../models';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
 
 export const getNumberingTypeByTagNameAndTocItemType = (
@@ -45,7 +46,11 @@ export const convertArticle = (
     tocItems,
     article,
     getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, 'POINT'),
-    getNumberingTypeByTagNameAndTocItemType(tocItems, newValue, 'POINT'),
+    getNumberingTypeByTagNameAndTocItemType(
+      tocItems,
+      newValue,
+      'POINT',
+    ) as NumberingType,
   );
 };
 
@@ -72,7 +77,7 @@ const updateTocItemsNumberingConfig = (
   tocItems: TocItem[],
   item: TableOfContentItemVO,
   fromNumberingType: string,
-  toNumberingType: string,
+  toNumberingType: NumberingType,
 ): void => {
   for (const child of item.childItems) {
     if (child.tocItem.numberingType === fromNumberingType) {
@@ -96,23 +101,77 @@ const updateTocItemsNumberingConfig = (
 export const getTocItemsByName = (
   tocItems: TocItem[],
   tagName: string,
-): TocItem[] => tocItems.filter((m) => m.aknTag.toLowerCase() === tagName);
+): TocItem[] =>
+  tocItems.filter((m) => m.aknTag.toLowerCase() === tagName.toLowerCase());
 
 export const getTocItemByName = (tocItems: TocItem[], tagName: string) => {
   const items = tocItems.filter(
-    (tocItem) => tocItem.aknTag.toLowerCase() === tagName,
+    (tocItem) => tocItem.aknTag.toLowerCase() === tagName.toLowerCase(),
   );
   return items.length > 0 ? items[0] : null;
 };
 
 export const getTocItemByNumberingType = (
   tocItems: Array<TocItem>,
-  numType: string,
+  numType: NumberingType,
   tagName: string,
 ): TocItem => {
   const filtered = tocItems.filter(
     (tocItem) =>
-      tocItem.aknTag === tagName && tocItem.numberingType === numType,
+      tocItem.aknTag.toLowerCase() === tagName.toLowerCase() &&
+      tocItem.numberingType.toLocaleLowerCase() === numType.toLocaleLowerCase(),
   );
   return filtered.length > 0 ? filtered[0] : null;
+};
+
+export const getTocItemByNumberingConfig = (
+  tocItems: Array<TocItem>,
+  numType: NumberingType,
+): TocItem => {
+  const filtered = tocItems.filter(
+    (tocItem) =>
+      tocItem.numberingType.toLowerCase() === numType.toLocaleLowerCase(),
+  );
+  return filtered.length > 0 ? filtered[0] : null;
+};
+
+export const getNumberingConfig = (
+  numberConfigs: NumberingConfig[],
+  numType: NumberingType,
+): NumberingConfig | null => {
+  const filtered = numberConfigs.filter(
+    (numberConfig) => numType.toLowerCase() === numberConfig.type.toLowerCase(),
+  );
+  return filtered.length > 0 ? filtered[0] : null;
+};
+
+export const getItemIndentLevel = (
+  tree: TableOfContentItemVO[],
+  parent: TableOfContentItemVO,
+  startingDepth: number,
+  tags: string[],
+) => {
+  if (parent && tags.includes(parent.tocItem.aknTag)) startingDepth++;
+  if (parent.parentItem) {
+    const nextParent = findNodeById(tree, parent.parentItem);
+    getItemIndentLevel(tree, nextParent, startingDepth, tags);
+  }
+};
+
+export const findNodeById = (
+  root: TableOfContentItemVO[],
+  id: string,
+): TableOfContentItemVO | null => {
+  for (const node of root) {
+    if (node.id === id) {
+      return node;
+    }
+    if (node.childItems) {
+      const found = findNodeById(node.childItems, id);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
 };

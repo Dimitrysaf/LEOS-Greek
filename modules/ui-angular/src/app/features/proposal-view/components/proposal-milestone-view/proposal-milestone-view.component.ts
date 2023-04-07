@@ -18,7 +18,10 @@ export class ProposalMilestoneViewComponent implements OnInit {
   @ViewChild('milestoneView') milestoneView: EuiDialogComponent;
   constructor(private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  openDialog() {
+    this.milestoneView.openDialog();
     this.route.params.subscribe((params) => {
       this.proposalRef = params['proposalId'];
     });
@@ -38,10 +41,6 @@ export class ProposalMilestoneViewComponent implements OnInit {
       }
     }
     this.documents = this.documents.concat(this.annexDocs);
-  }
-
-  openDialog() {
-    this.milestoneView.openDialog();
   }
 
   getDocumentsForMilestoneView() {
