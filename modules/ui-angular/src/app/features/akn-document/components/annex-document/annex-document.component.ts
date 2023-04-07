@@ -26,7 +26,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class AnnexDocumentComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
-  @Input() xml: string;
+  @Input() xml: string[];
 
   destroy$: Subject<any> = new Subject();
 
@@ -47,9 +47,8 @@ export class AnnexDocumentComponent
   ngOnChanges(changes: SimpleChanges): void {
     if ('xml' in changes && changes.xml.currentValue !== undefined) {
       const rootEl = this.rootElementRef.nativeElement;
-      // this.xml = changes.xml.currentValue.replaceAll('xml:id', 'id');
       this.xml = changes.xml.currentValue;
-      rootEl.innerHTML = this.xml;
+      rootEl.innerHTML = this.xml[0];
     }
   }
 
