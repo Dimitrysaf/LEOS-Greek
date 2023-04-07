@@ -10,7 +10,7 @@ export default [
     secure: false,
   },
   {
-    context: ['/leos-pilot/api/ws', '/leos-pilot-cn/api/ws'],
+    context: ['/leos-pilot-cn/api/ws', '/leos-pilot/api/ws'],
     target: 'http://localhost:8080',
     secure: false,
     ws: true,

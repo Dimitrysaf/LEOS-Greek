@@ -8,6 +8,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
+import { CoEditionDetectedDialogComponent } from './components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import { CoEditionInfoComponent } from './components/co-edition-info/co-edition-info.component';
 import { ConfirmDeleteDialogComponent } from './components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
 import { DocumentTocComponent } from './components/document-toc/document-toc.component';
@@ -38,6 +40,8 @@ import { UserHasPermissionDirective } from './directives/userHasPermission.direc
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
+    CoEditionInfoComponent,
+    CoEditionDetectedDialogComponent,
   ],
   exports: [
     UxAllModule,
@@ -56,6 +60,8 @@ import { UserHasPermissionDirective } from './directives/userHasPermission.direc
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
+    CoEditionInfoComponent,
+    CoEditionDetectedDialogComponent,
   ],
 })
 export class SharedModule {}

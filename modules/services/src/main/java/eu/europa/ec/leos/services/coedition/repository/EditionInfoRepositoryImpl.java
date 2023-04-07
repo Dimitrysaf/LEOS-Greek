@@ -1,12 +1,12 @@
 /**
  * Copyright 2018 European Commission
- *
+ * <p>
  * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- *
- *     https://joinup.ec.europa.eu/software/page/eupl
- *
+ * <p>
+ * https://joinup.ec.europa.eu/software/page/eupl
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
@@ -25,44 +25,59 @@ public class EditionInfoRepositoryImpl implements EditionInfoRepository {
     private Map<String, ArrayList<CoEditionVO>> editInfoMap = new HashMap<>();
 
     @Override
-    public CoEditionVO store(CoEditionVO editionVo ){
-        String docId= editionVo.getDocumentId();
+    public CoEditionVO store(CoEditionVO editionVo) {
+        String docId = editionVo.getDocumentId();
         ArrayList<CoEditionVO> editInfoVos = editInfoMap.get(docId) == null ? new ArrayList<>() : editInfoMap.get(docId);
         editInfoMap.put(docId, editInfoVos);
         return editInfoVos.add(editionVo) ? editionVo : null;
     }
-    
+
     @Override
-    public CoEditionVO removeInfo(CoEditionVO editionVo){
-        String docId= editionVo.getDocumentId();
-        boolean removed=false;
+    public CoEditionVO removeInfo(CoEditionVO editionVo) {
+        String docId = editionVo.getDocumentId();
+        boolean removed = false;
         CoEditionVO removedInfo = null;
         ArrayList<CoEditionVO> editInfoVos = editInfoMap.get(docId);
 
-        if (editInfoVos==null)
+        if (editInfoVos == null)
             return null;
 
         Iterator<CoEditionVO> iterator = editInfoVos.iterator();
         while (iterator.hasNext()) {
             CoEditionVO exisingInfo = iterator.next();
-            if(exisingInfo.equals(editionVo)){
-                removedInfo=exisingInfo;
+            if (exisingInfo.equals(editionVo)) {
+                removedInfo = exisingInfo;
                 iterator.remove();
-                removed=true;
+                removed = true;
             }
         }
-        if(editInfoVos.isEmpty()){//clean up of map 
+        if (editInfoVos.isEmpty()) {//clean up of map
             editInfoMap.remove(docId);
         }
         return removed ? removedInfo : null;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
-    public  List<CoEditionVO> getCurrentEditInfo(String docId) {
-        return  Collections.unmodifiableList(editInfoMap.get(docId) == null
+    public List<CoEditionVO> getCurrentEditInfo(String docId) {
+        return Collections.unmodifiableList(editInfoMap.get(docId) == null
                 ? new ArrayList<>()
-                        : (List<CoEditionVO>) editInfoMap.get(docId).clone());
+                : (List<CoEditionVO>) editInfoMap.get(docId).clone());
+    }
+
+    @Override
+    public List<CoEditionVO> getSessionEditInfo(String sessionId) {
+        List<CoEditionVO> coEditions = new ArrayList<>();
+
+        for (ArrayList<CoEditionVO> editInfoList : editInfoMap.values()) {
+            for (CoEditionVO coEdition : editInfoList) {
+                if (coEdition.getSessionId().equals(sessionId)) {
+                    coEditions.add(coEdition);
+                }
+            }
+        }
+
+        return coEditions;
     }
 
     @Override

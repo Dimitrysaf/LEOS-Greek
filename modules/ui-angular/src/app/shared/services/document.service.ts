@@ -30,6 +30,7 @@ import { DocumentViewResponse } from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
+import { CoEditionServiceWS } from './coEdition.websocket.service';
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -125,6 +126,7 @@ export class DocumentService implements OnDestroy {
     private appConfig: AppConfigService,
     private appShell: UxAppShellService,
     private translate: TranslateService,
+    private coEditionService: CoEditionServiceWS,
   ) {
     this.documentId$ = this.documentIdBS.asObservable();
     this.documentCategory$ = this.documentCategoryBS.asObservable();
@@ -313,6 +315,7 @@ export class DocumentService implements OnDestroy {
   }
 
   reloadDocument() {
+    this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentId(this.documentIdBS.value);
   }
 

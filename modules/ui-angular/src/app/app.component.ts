@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -22,7 +22,7 @@ import { CoEditionServiceWS } from './shared/services/coEdition.websocket.servic
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AppComponent implements OnInit, OnDestroy {
   headerTitleHtml = '';
   headerLogoUrl =
     process.env.NG_APP_LEOS_INSTANCE === 'cn'
@@ -51,15 +51,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this.userInfos = { ...user };
       }),
     );
-  }
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.webSocket.sendMessage('test');
-    }, 3000);
+    this.webSocket.connect();
   }
 
   ngOnInit() {
-    this.webSocket.connect();
     const lang = this.storage.get('lang');
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
     this.subs.push(
@@ -77,6 +72,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.webSocket.removeSession();
+    this.webSocket.disconnect();
     this.subs.forEach((s: Subscription) => s.unsubscribe());
   }
 }
