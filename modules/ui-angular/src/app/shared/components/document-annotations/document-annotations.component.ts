@@ -12,6 +12,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { AnnotateOperationMode, Permission } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 import { AnnotateManager } from './annotate-manager';
 
@@ -39,6 +40,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     private leos: LeosLegacyService,
     private appConfig: AppConfigService,
     private annotateService: AnnotateService,
+    private documentService: DocumentService,
   ) {}
 
   ngAfterViewInit() {
@@ -57,6 +59,9 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
         showStatusFilter: this.showStatusFilter,
       },
       this.annotateService,
+    );
+    this.documentService.setAnnotationGetter(() =>
+      this.annotate.getAnnotations(),
     );
   }
 

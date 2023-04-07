@@ -1,13 +1,14 @@
 import { DOCUMENT } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { result } from 'lodash-es';
+import { UxAppShellService } from '@eui/core';
+import { TranslateService } from '@ngx-translate/core';
+import { parse as parseContentDisposition } from 'content-disposition-attachment';
 import {
   BehaviorSubject,
   combineLatestWith,
   distinctUntilChanged,
   filter,
-  map,
   mergeMap,
   Observable,
   of,
@@ -16,8 +17,6 @@ import {
   switchMap,
   take,
   takeUntil,
-  tap,
-  withLatestFrom,
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -31,6 +30,27 @@ import { DocumentViewResponse } from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
+
+export enum RelevantElements {
+  ALL = 'ALL',
+  ENACTING_TERMS = 'ENACTING_TERMS',
+  RECITALS = 'RECITALS',
+  RECITALS_AND_ENACTING_TERMS = 'RECITALS_AND_ENACTING_TERMS',
+  ANNOTATIONS = 'ANNOTATIONS',
+}
+
+export type DownloadEConsiliumParams = {
+  title: string;
+  relevantElements: RelevantElements;
+  isWithAnnotations: boolean;
+  annotations: string;
+  isCleanVersion: boolean;
+};
+
+export type DownloadEConsiliumOptions = Omit<
+  DownloadEConsiliumParams,
+  'annotations'
+>;
 
 @Injectable({
   providedIn: 'root',
@@ -95,6 +115,7 @@ export class DocumentService implements OnDestroy {
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
 
   private updatedContentToSaveAfterReplace: string = null;
+  private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
 
@@ -102,12 +123,15 @@ export class DocumentService implements OnDestroy {
     private http: HttpClient,
     @Inject(DOCUMENT) private document: Document,
     private appConfig: AppConfigService,
+    private appShell: UxAppShellService,
+    private translate: TranslateService,
   ) {
     this.documentId$ = this.documentIdBS.asObservable();
     this.documentCategory$ = this.documentCategoryBS.asObservable();
     this.tocItems$ = this.tocItemBS.asObservable();
 
     this.documentView$ = this.documentId$.pipe(
+      filter(Boolean), // skip null values
       combineLatestWith(this.documentCategory$),
       switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
     );
@@ -209,6 +233,7 @@ export class DocumentService implements OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.getAnnotations = null;
   }
 
   closeEditor() {
@@ -219,26 +244,61 @@ export class DocumentService implements OnDestroy {
     console.warn('stub:', 'createNote'); // FIXME
   }
 
-  download() {
+  async download(withAnnotations = false) {
+    const documentType = this.documentType.toUpperCase();
     const documentRef = this.documentIdBS.value;
-    let versionId = '';
-    this.versions$
-      .pipe(take(1))
-      .subscribe((versionArray) => (versionId = versionArray[0].documentId));
 
+    const annotations =
+      (withAnnotations && (await this.getAnnotations())) || '';
     this.http
-      .get(`${apiBaseUrl}/secured/${this.documentType}/${documentRef}`, {
-        params: { versionId },
-      })
-      .subscribe((data: DocumentViewResponse) => {
-        const blob = new Blob([data.editableXml], { type: 'text/xml' });
-        const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank');
-      });
+      .post(
+        `${apiBaseUrl}/secured/document/downloadVersion/${documentType}/${documentRef}`,
+        {
+          withAnnotations,
+          annotations,
+        },
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
+      )
+      .subscribe((resp) => this.handleDownloadResponse(resp));
   }
 
-  downloadWithAnnotation() {
-    console.warn('stub:', 'downloadWithAnnotation'); // FIXME
+  downloadCleanVersion() {
+    const documentType = this.documentType;
+    const documentRef = this.documentIdBS.value;
+
+    this.http
+      .get(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/download-clean-version`,
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
+      )
+      .subscribe((resp) => this.handleDownloadResponse(resp));
+  }
+
+  async downloadEConsilium(options: DownloadEConsiliumOptions) {
+    const documentType = this.documentType.toUpperCase();
+    const documentRef = this.documentIdBS.value;
+
+    const annotations =
+      (options.isWithAnnotations && (await this.getAnnotations())) || '';
+    this.http
+      .post(
+        `${apiBaseUrl}/secured/document/export-to-econsilium/${documentType}/${documentRef}`,
+        {
+          ...options,
+          annotations,
+        } as DownloadEConsiliumParams,
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
+      )
+      .subscribe((resp) => this.handleDownloadResponse(resp));
   }
 
   getDocumentByRef(ref: string, category: string) {
@@ -638,6 +698,10 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  setAnnotationGetter(getAnnotations: () => Promise<string>) {
+    this.getAnnotations = getAnnotations;
+  }
+
   private doSearch(parameters: DocumentSearchParams) {
     if (parameters.searchText !== '') {
       const documentRef = this.documentIdBS.value;
@@ -824,5 +888,51 @@ export class DocumentService implements OnDestroy {
     const roles = [...config.user.roles, ...docRoles];
     const permissions = roles.flatMap((r) => config.permissionMap[r]);
     return [...new Set(permissions)];
+  }
+
+  private handleDownloadResponse(resp: HttpResponse<Blob>) {
+    const blob = resp.body;
+    if (blob.size === 0) {
+      this.notifyExportEmailSent();
+    } else {
+      const cd = parseContentDisposition(
+        resp.headers.get('Content-Disposition'),
+      );
+      const filename = cd.attachment ? cd.filename : 'export';
+      this.downloadBlob(blob, filename);
+    }
+  }
+
+  private notifyExportEmailSent() {
+    this.appConfig.config.subscribe((config) => {
+      const userEmail = config.user.email;
+      this.translate
+        .get('page.editor.export-email-sent', { userEmail })
+        .subscribe((message) => {
+          this.appShell.growl({
+            severity: 'success',
+            detail: message,
+          });
+        });
+    });
+  }
+
+  private downloadBlob(blob: Blob, filename: string) {
+    const data = window.URL.createObjectURL(blob);
+
+    const link = this.document.createElement('a');
+    link.href = data;
+    link.download = filename;
+    document.body.appendChild(link);
+
+    link.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      }),
+    );
+
+    this.document.body.removeChild(link);
   }
 }

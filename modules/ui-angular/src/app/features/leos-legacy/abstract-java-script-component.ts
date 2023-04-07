@@ -1,4 +1,5 @@
 import { debounce } from 'lodash-es';
+import { Subject } from 'rxjs';
 
 type RpcObject = Record<string, (...args: any[]) => any>;
 
@@ -16,6 +17,8 @@ export abstract class AbstractJavaScriptComponent<
 > {
   onStateChange?: (connector: this, event: 'onStateChange') => void;
   onUnregister?: (connector: this, event: 'onUnregister') => void;
+
+  protected destroy$ = new Subject<void>();
 
   protected _state: State = new Proxy<State>({} as State, {
     set: (target, prop, value, receiver) => {
@@ -92,6 +95,8 @@ export abstract class AbstractJavaScriptComponent<
     this.resizeListeners.clear();
     this.resizeObserver?.disconnect();
     this._stateChanged.cancel();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private getResizeObserver() {

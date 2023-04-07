@@ -32,6 +32,7 @@ export type AnnotateConnectorOptions = Pick<
 export class AnnotateManager {
   private connector?: AnnotateConnector;
   private destroy$ = new Subject<void>();
+  private annotationsCb = new Set<(annotations: string) => void>();
 
   constructor(
     private leos: LeosLegacyService,
@@ -41,11 +42,22 @@ export class AnnotateManager {
     private options: AnnotateConnectorOptions,
     private annotateService: AnnotateService,
   ) {
+    const responseFilteredAnnotations = (annotations: string) => {
+      this.annotationsCb.forEach((cb) => cb(annotations));
+      this.annotationsCb.clear();
+    };
     const connector$ = this.createConnectorState().pipe(
       tap(() => this.connector?.destroy()),
       map(
         (state) =>
-          new AnnotateConnector(state, { permissions }, annotateService),
+          new AnnotateConnector(
+            state,
+            {
+              permissions,
+              responseFilteredAnnotations,
+            },
+            annotateService,
+          ),
       ),
       tap((connector) => (this.connector = connector)),
     );
@@ -72,6 +84,17 @@ export class AnnotateManager {
     this.destroy$.next();
     this.destroy$.complete();
     this.connector?.destroy();
+  }
+
+  async getAnnotations(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (this.connector) {
+        this.annotationsCb.add(resolve);
+        this.connector.requestFilteredAnnotations();
+      } else {
+        reject(new Error('Connector not initialized yet'));
+      }
+    });
   }
 
   private createConnectorState() {
