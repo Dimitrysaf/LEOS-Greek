@@ -52,6 +52,13 @@ interface TocUpdateValue {
   newValue: any;
 }
 
+const NUMBERED = 'Numbered';
+const UNNUMBERED = 'Unnumbered';
+const INDENT = 'INDENT';
+const POINT = 'POINT';
+const LIST = 'LIST';
+const BULLET_NUM = 'BULLET_NUM';
+const MAIN_BODY = 'MAIN_BODY';
 @Component({
   selector: 'app-document-toc',
   templateUrl: './document-toc.component.html',
@@ -251,8 +258,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (this.showNumParagraphToggle(node)) {
       this.active_paragraph_style =
         node.childItems && node.childItems.at(0).number?.length > 0
-          ? 'Numbered'
-          : 'Unnumbered' ?? 'Unnumbered';
+          ? NUMBERED
+          : UNNUMBERED ?? UNNUMBERED;
     }
   }
 
@@ -261,9 +268,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     console.log(item);
     const firstChild = item.childItems.at(0);
     if (firstChild.number?.length > 0 && item.numSoftActionAttr !== 'DELETE') {
-      toggleValue = 'Numbered';
+      toggleValue = NUMBERED;
     }
-    toggleValue = 'Unnumbered';
+    toggleValue = UNNUMBERED;
     return toggleValue;
   }
 
@@ -368,7 +375,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           break;
         }
       }
-      if (value === 'Numbered') {
+      if (value === NUMBERED) {
         if (
           !firstChild.number ||
           (firstChild.number && firstChild.number === '') ||
@@ -381,7 +388,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           this.treeHistory.push(this.treeControl.dataNodes);
           this.setTree(newTree);
         }
-      } else if (value === 'Unnumbered') {
+      } else if (value === UNNUMBERED) {
         if (firstChild.number && firstChild.number.length > 0 && !flag) {
           newSelectedNode.numberingToggled = false;
           for (const n of newSelectedNode.childItems) {
@@ -419,11 +426,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     const { value } = event.target;
     const oldValue = this.selectedNode.tocItem.numberingType;
     this.active_point_style = value;
-    const newTocItem = getTocItemByNumberingType(
-      this.tocItems,
-      value,
-      'INDENT',
-    );
+    const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT);
     const newTree = cloneDeep(this.toc);
     const newSelectedNode = this.findNodeById(newTree, this.selectedNode.id);
     const parentNode = this.findNodeById(newTree, this.selectedNode.parentItem);
@@ -450,7 +453,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.documentConfig.numberingConfig,
     );
     for (const n of list) {
-      if (n.tocItem.aknTag === 'POINT' || n.tocItem.aknTag === 'INDENT') {
+      if (n.tocItem.aknTag === POINT || n.tocItem.aknTag === INDENT) {
         n.tocItem = newTocItem;
         n.number = newNumberingValue;
 
@@ -632,7 +635,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           this.toc,
           this.findNodeById(this.toc, firstChild.parentItem),
           level,
-          ['INDENT', 'POINT'],
+          [POINT, INDENT],
         );
         if (level >= 0 && level < config.levels.levels.length) {
           const numberingLevel = config.levels.levels.at(level);
@@ -679,17 +682,17 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     let parentItem = this.findNodeById(root, item.parentItem);
     while (
       parentItem &&
-      (parentItem.tocItem.aknTag === 'LIST' ||
-        parentItem.tocItem.aknTag === 'POINT' ||
-        parentItem.tocItem.aknTag === 'INDENT')
+      (parentItem.tocItem.aknTag === LIST ||
+        parentItem.tocItem.aknTag === POINT ||
+        parentItem.tocItem.aknTag === INDENT)
     ) {
       tmpItem = parentItem;
       parentItem = this.findNodeById(root, parentItem.parentItem);
     }
-    if (tmpItem.tocItem.aknTag !== 'LIST')
+    if (tmpItem.tocItem.aknTag !== LIST)
       tmpItem = this.findNodeById(root, tmpItem.parentItem);
     return tmpItem.childItems.filter((n) =>
-      ['POINT', 'INDENT'].includes(n.tocItem.aknTag),
+      [POINT, INDENT].includes(n.tocItem.aknTag),
     );
   }
 
@@ -722,7 +725,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           if (response.result.success) {
             // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
             // so the resutl.success will now mean that it can be dropped as a sibling
-            console.log('before check', position);
             if (position === 'AS_CHILDREN') {
               position = this.checkPositionAfterValidation(
                 nodeTarget,
@@ -889,10 +891,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private getDisplayableTocItem(tocItem: TocItem): string {
-    if (tocItem.numberingType === 'BULLET_NUM') {
+    if (tocItem.numberingType === BULLET_NUM) {
       return this.tranlsateService.instant('toc.item.type.bullet');
     }
-    if (tocItem.aknTag === 'MAIN_BODY') {
+    if (tocItem.aknTag === MAIN_BODY) {
       return this.tranlsateService.instant('toc.item.type.mainbody');
     }
     return this.tranlsateService.instant(
