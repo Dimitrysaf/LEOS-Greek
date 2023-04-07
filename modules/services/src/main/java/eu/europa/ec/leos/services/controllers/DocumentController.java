@@ -15,14 +15,24 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.services.api.DocumentApiService;
 import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
+import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/secured/document")
@@ -45,12 +55,30 @@ public class DocumentController {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             final boolean isWithAnnotations = downloadVersionRequest.isWithAnnotations();
             final String filteredAnnotations = downloadVersionRequest.getAnnotations();
-            byte[] response = documentApiService.downloadVersion(documentCategory, documentRef, filteredAnnotations, isWithAnnotations);
-            // in case of sent to email we should notify it, not return a byte
-            return new ResponseEntity<>(response, HttpStatus.OK);
+
+            DownloadVersionResponse response = documentApiService.downloadVersion(documentCategory, documentRef, filteredAnnotations, isWithAnnotations);
+
+            // create the HttpHeaders object and set the Content-Type header
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.set("Content-Disposition", "attachment; filename="+response.getJobFileName());
+            return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
-            String msg = "Error occurred while requesting Annotation filtering";
-            LOG.error(msg, e);
+            LOG.error("Error occurred while requesting Annotation filtering", e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/export-to-econsilium/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> exportToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
+            @RequestBody ExportToConsiliumRequest exportToConsiliumRequest) {
+        try {
+            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            LeosExportStatus processedStatus = documentApiService.exportToConsilium(documentCategory, documentRef, exportToConsiliumRequest);
+            return new ResponseEntity<>(processedStatus, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while requesting export to eConsilium", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

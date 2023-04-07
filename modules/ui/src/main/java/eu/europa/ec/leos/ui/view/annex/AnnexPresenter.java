@@ -130,7 +130,7 @@ import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
-import eu.europa.ec.leos.ui.support.DownloadExportRequest;
+import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
 import eu.europa.ec.leos.ui.view.CommonDelegate;
 import eu.europa.ec.leos.ui.view.ComparisonDelegate;

@@ -11,18 +11,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
+package eu.europa.ec.leos.services.dto.response;
 
-package eu.europa.ec.leos.services.api;
+import java.io.Serializable;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
-import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
+public class DownloadVersionResponse implements Serializable {
 
-public interface DocumentApiService {
+    private final String jobFileName;
+    private final byte[] responseData;
 
-    DownloadVersionResponse downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations);
+    public DownloadVersionResponse(String jobFileName, byte[] responseData) {
+        this.jobFileName = jobFileName;
+        this.responseData = responseData;
+    }
 
-    LeosExportStatus exportToConsilium(LeosCategoryClass documentType, String documentRef, ExportToConsiliumRequest exportToConsiliumRequest);
+    public String getJobFileName() {
+        return jobFileName;
+    }
 
+    public byte[] getResponseData() {
+        return responseData;
+    }
 }

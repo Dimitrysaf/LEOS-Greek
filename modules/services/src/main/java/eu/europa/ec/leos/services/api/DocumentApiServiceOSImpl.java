@@ -14,6 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -21,23 +23,25 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
 import eu.europa.ec.leos.services.export.*;
+import eu.europa.ec.leos.services.notification.NotificationService;
+import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Instance(InstanceType.OS)
 @Service
 public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceOSImpl.class);
-
     protected DocumentApiServiceOSImpl(DocumentContentService documentContentService, PackageService packageService,
-                                       ProposalService proposalService, ExportService exportService, SecurityContext securityContext,
-                                       MessageHelper messageHelper) {
-        super(documentContentService, packageService, proposalService, exportService, securityContext, messageHelper);
+            ProposalService proposalService, ExportService exportService,
+            ExportPackageService exportPackageService, NotificationService notificationService,
+            SecurityContext securityContext, MessageHelper messageHelper) {
+        super(documentContentService, packageService, proposalService, exportService, exportPackageService, notificationService, securityContext,
+                messageHelper);
     }
 
     @Override
@@ -48,13 +52,12 @@ public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    protected byte[] doDownloadVersion(String proposalId, ExportOptions exportOptions) {
-        try {
-            LOG.info("You need to implement export service!");
-            return new byte[0];
-        } catch (Exception e) {
-            throw new ExportException(messageHelper.getMessage("export.docuwrite.error.message"));
-        }
+    public LeosExportStatus exportToConsilium(LeosCategoryClass documentType, String documentRef, ExportToConsiliumRequest exportToConsiliumRequest) {
+        throw new ExportException("External system to export documents not available for this instance");
     }
 
+    @Override
+    protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
+        throw new ExportException("External system to export documents not available for this instance");
+    }
 }
