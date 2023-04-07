@@ -8,12 +8,6 @@ public class SearchForImportCriteriaRequest {
     private Integer year;
     private Integer number;
 
-    public SearchForImportCriteriaRequest(DocType type, Integer year, Integer number) {
-        this.type = type;
-        this.year = year;
-        this.number = number;
-    }
-
     public DocType getType() {
         return type;
     }
