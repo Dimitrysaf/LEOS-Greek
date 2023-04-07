@@ -1,20 +1,32 @@
-import { formatDate } from '@angular/common';
-import { Parser } from '@angular/compiler';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DOCUMENT, formatDate } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { uniqueId } from '@eui/core';
+import {
+  EuiDialogComponent,
+  EuiDialogService,
+} from '@eui/components/eui-dialog';
+import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { combineLatest, filter, Subject, take, takeUntil } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
-import { DocumentSearchParams } from '@/features/akn-document/models';
+import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { DocumentTocComponent } from '@/shared/components/document-toc/document-toc.component';
+import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
+import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
@@ -26,7 +38,10 @@ import { CKEditorService } from '../../services/ckeditor.service';
   templateUrl: './document-editor.component.html',
   styleUrls: ['./document-editor.component.scss'],
 })
-export class DocumentEditorComponent implements OnDestroy, OnInit {
+export class DocumentEditorComponent
+  implements OnDestroy, OnInit, AfterViewInit
+{
+  presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
   documentRef: string;
@@ -71,6 +86,10 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
     private cdkEditor: CKEditorService,
     private tranlsateService: TranslateService,
     private config: AppConfigService,
+    private coEditionWSService: CoEditionServiceWS,
+    private dialogService: EuiDialogService,
+    private appShellService: UxAppShellService,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -81,6 +100,8 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    this.presenterId = uuidv4();
+    this.coEditionWSService.setPresenterId(this.presenterId);
     combineLatest([this.route.params, this.route.data, this.config.config])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([params, data, config]) => {
@@ -154,7 +175,30 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       });
   }
 
+  ngAfterViewInit(): void {
+    const presenterId = this.coEditionWSService.presenterId;
+    this.coEditionWSService.joinSubDocumentChannel(this.documentRef);
+    this.coEditionWSService.latestMessage
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((latestMessage) => {
+        if (latestMessage.info.presenterId !== presenterId)
+          this.appShellService.growl({
+            severity: 'info',
+            summary: 'Co Edition update',
+            detail: `${latestMessage.info.userName} ${this.translate.instant(
+              `page.editor.co-edition-update.co-edition-${
+                latestMessage.operation === 'REMOVE' ? 'stoped' : 'started'
+              }`,
+            )}`,
+            life: 4000,
+          });
+      });
+  }
+
   ngOnDestroy() {
+    //remove every session related actions from the user and clean the document relaod if it is present
+    this.coEditionWSService.setShouldReloadAfterUpdate();
+    this.coEditionWSService.removeSession();
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
@@ -195,8 +239,27 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   handleEdit() {
-    this.isEditMode = true;
+    const coEdition = this.coEditionWSService.checkForCoEdition('EDIT_TOC');
+    if (coEdition) {
+      this.dialogService.openDialog({
+        title: this.tranlsateService.instant(
+          'page.editor.co-edition-detected.title',
+        ),
+        bodyComponent: {
+          component: CoEditionDetectedDialogComponent,
+        },
+        accept: () => {
+          this.isEditMode = true;
+          this.coEditionWSService.sendTocInlineEdit(this.documentRef);
+        },
+        dismiss: () => (this.isEditMode = false),
+      });
+    } else {
+      this.coEditionWSService.sendTocInlineEdit(this.documentRef);
+      this.isEditMode = true;
+    }
   }
+
   handleUndo() {
     const oldToc = this.documentTocComponent.treeHistory.pop();
     if (oldToc.length > 0) {
@@ -224,7 +287,10 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       this.unSavedDialog.openDialog();
       //reset toc state
       this.documentTocComponent.isToCDraft = false;
-    } else this.isEditMode = false;
+    } else {
+      this.isEditMode = false;
+      this.coEditionWSService.removeTocInlineEdit(this.documentRef);
+    }
   }
 
   handleClose() {
@@ -356,10 +422,10 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   }
 
   private loadStyleSheet() {
-    let category =
-      this.documentType === 'coverPage' ? 'coverpage' : this.documentType;
-    category =
-      this.documentType === 'council_explanatory'
+    const category =
+      this.documentType === 'coverPage'
+        ? 'coverpage'
+        : this.documentType === 'council_explanatory'
         ? 'explanatory'
         : this.documentType;
 

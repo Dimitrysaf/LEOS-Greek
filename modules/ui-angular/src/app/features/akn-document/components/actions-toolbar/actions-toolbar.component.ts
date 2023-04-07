@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { mergeMap, Observable } from 'rxjs';
+import { mergeMap, Observable, retry, Subject, take, takeUntil } from 'rxjs';
 
+import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -9,16 +10,20 @@ import { DocumentService } from '@/shared/services/document.service';
   templateUrl: './actions-toolbar.component.html',
   styleUrls: ['./actions-toolbar.component.scss'],
 })
-export class ActionsToolbarComponent {
+export class ActionsToolbarComponent implements AfterViewInit, OnDestroy {
   annotationsTooltip$: Observable<string>;
   highlightsTooltip$: Observable<string>;
   guidelinesTooltip$: Observable<string>;
   guidelinesEnabled = true;
   highlightsEnabled = true;
 
+  shouldReloadAfterUpdate = false;
+  private destory$ = new Subject<void>();
+
   constructor(
     public doc: DocumentService,
     private translate: TranslateService,
+    private coEditionService: CoEditionServiceWS,
   ) {
     this.annotationsTooltip$ = this.translateByBooleanObservable(
       doc.annotationsEnabled$,
@@ -35,6 +40,26 @@ export class ActionsToolbarComponent {
       'page.editor.guidelines-button.tooltip-disable',
       'page.editor.guidelines-button.tooltip-enable',
     );
+  }
+  ngOnDestroy(): void {
+    this.destory$.next();
+    this.destory$.complete();
+  }
+
+  ngAfterViewInit(): void {
+    this.coEditionService.shouldReloadAfterUpdate
+      .pipe(takeUntil(this.destory$))
+      .subscribe((update) => {
+        if (update === null) {
+          this.shouldReloadAfterUpdate = false;
+          return;
+        } else {
+          const presenterId = this.coEditionService.presenterId;
+          if (presenterId !== update.presenterId) {
+            this.shouldReloadAfterUpdate = true;
+          }
+        }
+      });
   }
 
   private translateByBooleanObservable(

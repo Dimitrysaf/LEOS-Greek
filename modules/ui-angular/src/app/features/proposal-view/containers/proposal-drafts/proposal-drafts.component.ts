@@ -1,5 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
+  AfterViewInit,
   Component,
   Input,
   OnChanges,
@@ -14,6 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
+import { CoEditionVO } from '@/shared/models/coEditionVO.model';
+import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
@@ -22,7 +25,9 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
   templateUrl: './proposal-drafts.component.html',
   styleUrls: ['./proposal-drafts.component.scss'],
 })
-export class ProposalDraftsComponent implements OnInit, OnChanges {
+export class ProposalDraftsComponent
+  implements OnInit, OnChanges, AfterViewInit
+{
   @Input() proposal: Document;
   coverpage: Document | null = null;
   explanatories: Document[] | null = null;
@@ -32,6 +37,7 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
   annexToDelete: Document = null;
   explToDelete: Document = null;
   proposalRef: string;
+  coEditionMap: Record<string, CoEditionVO[]> = null;
 
   @ViewChild('editTitle') dialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -50,7 +56,15 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
     private proposalDetailsService: ProposalDetailsService,
     private route: ActivatedRoute,
     public tranlsateService: TranslateService,
+    private coEditionService: CoEditionServiceWS,
   ) {}
+
+  ngAfterViewInit(): void {
+    this.coEditionService.allCoEditionInfo.pipe().subscribe((c) => {
+      this.coEditionMap = c;
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if ('proposal' in changes) {
       this.populateView();
@@ -63,6 +77,7 @@ export class ProposalDraftsComponent implements OnInit, OnChanges {
       this.proposalRef = params['proposalId'];
     });
     this.populateView();
+    this.coEditionService.joinDocumentChannel();
   }
 
   handleAnnexAdd() {

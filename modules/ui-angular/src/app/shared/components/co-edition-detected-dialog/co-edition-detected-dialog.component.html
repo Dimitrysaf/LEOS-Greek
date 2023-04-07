@@ -1,0 +1,28 @@
+<!-- <eui-dialog
+  #coEditionDetectedDialog
+  [title]="'page.editor.co-edition-detected.title' | translate"
+> -->
+<div class="d-flex flex-column">
+  <p>{{ 'page.editor.co-edition-detected.body.part1' | translate }}</p>
+  <div class="d-flex flex-column">
+    <span *ngFor="let item of coEditionsVO">{{
+      item.userName +
+        ' ' +
+        ('page.editor.co-edition-detected.body.part2' | translate) +
+        ' ' +
+        (item.editionTime | date)
+    }}</span>
+  </div>
+  <p>{{ 'page.editor.co-edition-detected.body.part3' | translate }}</p>
+</div>
+<!-- <eui-dialog-footer>
+    <div class="dialog-footer-content">
+      <button (click)="handleCancel()" euiButton euiSecondary>
+        {{ 'page.editor.co-edition-detected.body.cancel' | translate }}
+      </button>
+      <button (click)="handleContinue()" euiButton euiPrimary>
+        {{ 'page.editor.co-edition-detected.body.continue' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog> -->

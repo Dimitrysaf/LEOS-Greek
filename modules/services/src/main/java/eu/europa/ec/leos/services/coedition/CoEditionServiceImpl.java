@@ -5,7 +5,7 @@
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
- *     https://joinup.ec.europa.eu/software/page/eupl
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,6 +85,18 @@ public class CoEditionServiceImpl implements CoEditionService {
             return actionInfo;
         } finally {
             infoHandlerLock.unlockWrite(stamp);
+        }
+    }
+
+    @Override
+    public List<CoEditionVO> getCoEditionsFromSession(String sessionId) {
+        Validate.notNull(sessionId, "sessionId must not be null");
+
+        long stamp = infoHandlerLock.readLock();
+        try {
+            return infoHandler.getSessionEditInfo(sessionId);
+        } finally {
+            infoHandlerLock.unlockRead(stamp);
         }
     }
 

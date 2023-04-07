@@ -5,7 +5,7 @@
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
- *     https://joinup.ec.europa.eu/software/page/eupl
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,8 @@
 package eu.europa.ec.leos.vo.coedition;
 
 public enum InfoType {
-		ELEMENT_INFO, 
-		DOCUMENT_INFO,
-		TOC_INFO
+    ELEMENT_INFO,
+    DOCUMENT_INFO,
+    TOC_INFO,
+    DOCUMENT_UPDATED
 }
