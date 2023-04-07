@@ -162,9 +162,7 @@ export class ProposalService {
 
     this.proposalResponse$ = this.params$.pipe(
       debounceTime(10),
-      tap(() =>
-        this.loadingService.setLoading(true)
-      ),
+      tap(() => this.loadingService.setLoading(true)),
       switchMap((params) =>
         this.http.post<ListProposalsWithFilterResponse>(
           `${apiBaseUrl}/secured/filterProposals`,
