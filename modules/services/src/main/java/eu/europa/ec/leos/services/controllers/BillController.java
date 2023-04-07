@@ -373,7 +373,7 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/search-for-import", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{documentRef}/search-for-import", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> searchForImportFromJournal(@PathVariable("documentRef") String documentRef,
                                                              @RequestBody SearchForImportCriteriaRequest searchForImportCriteriaRequest) {

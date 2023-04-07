@@ -49,7 +49,7 @@ export abstract class AbstractJavaScriptComponent<
     return '123';
   }
 
-  getElement(connectorId?: string) {
+  getElement(connectorId?: string): Element | null {
     console.warn('stub:', 'getElement', connectorId); // FIXME
     return null;
   }

@@ -9,6 +9,7 @@ import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Subject } from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
+import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -34,10 +35,13 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   downloadEConsiliumVisible =
     process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
     this.doc.documentType !== 'memorandum';
+  importerVisible = false;
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
   @ViewChild('eConsiliumModal')
   eConsiliumModal: DownloadEconsiliumModalComponent;
+  @ViewChild('importDialog')
+  importDialog: ImportFromJournalDialogComponent;
 
   private destroy$ = new Subject();
 
@@ -62,6 +66,10 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
         { value: '', disabled: false },
         { validators: Validators.required },
       ),
+    });
+    this.doc.permissions$.subscribe((permissions) => {
+      this.importerVisible =
+        this.doc.documentType === 'bill' && permissions.includes('CAN_UPDATE');
     });
   }
 
