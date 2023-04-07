@@ -35,7 +35,7 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
   pageSubTitle: string;
   proposalRef: string;
   showStatusFilter: boolean;
-  xml: string;
+  xml: string[];
   isCollapseToc = false;
   versionForView: string;
   versionForViewHeaderTitle: string;
@@ -351,7 +351,8 @@ export class DocumentEditorComponent implements OnDestroy, OnInit {
       updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
       updatedOn: versionInfo.lastModifiedBy,
     });
-    this.xml = this.cleanupAndSerializeXML(xmlDoc);
+    this.xml = [];
+    this.xml.push(this.cleanupAndSerializeXML(xmlDoc));
   }
 
   private loadStyleSheet() {
