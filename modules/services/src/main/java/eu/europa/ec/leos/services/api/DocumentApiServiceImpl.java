@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -22,8 +23,12 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.notification.NotificationService;
+import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,22 +40,27 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     protected final PackageService packageService;
     protected final ProposalService proposalService;
     protected final ExportService exportService;
+    protected final ExportPackageService exportPackageService;
+    protected final NotificationService notificationService;
     protected final SecurityContext securityContext;
     protected final MessageHelper messageHelper;
 
     protected DocumentApiServiceImpl(DocumentContentService documentContentService, PackageService packageService,
-                                     ProposalService proposalService, ExportService exportService,
-                                     SecurityContext securityContext, MessageHelper messageHelper) {
+            ProposalService proposalService, ExportService exportService,
+            ExportPackageService exportPackageService, NotificationService notificationService,
+            SecurityContext securityContext, MessageHelper messageHelper) {
         this.documentContentService = documentContentService;
         this.packageService = packageService;
         this.proposalService = proposalService;
         this.exportService = exportService;
+        this.exportPackageService = exportPackageService;
+        this.notificationService = notificationService;
         this.securityContext = securityContext;
         this.messageHelper = messageHelper;
     }
 
     @Override
-    public byte[] downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations) {
+    public DownloadVersionResponse downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations) {
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
         XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
@@ -66,11 +76,11 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         return doDownloadVersion(proposalId, exportOptions);
     }
 
-    abstract protected byte[] doDownloadVersion(String proposalId, ExportOptions exportOptions);
+    abstract protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions);
 
     abstract protected ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations);
 
-    private Proposal getProposal(String documentId) {
+    protected Proposal getProposal(String documentId) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         return proposalService.findProposalByPackagePath(leosPackage.getPath());
     }

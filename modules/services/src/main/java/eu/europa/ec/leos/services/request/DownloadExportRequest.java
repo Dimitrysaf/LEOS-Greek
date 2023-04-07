@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.ui.support;
+package eu.europa.ec.leos.services.request;
 
 import eu.europa.ec.leos.services.export.ExportOptions;
 
