@@ -149,12 +149,15 @@ export class ProposalService {
     ]).pipe(
       tap(() => this.loadingService.setLoading(true)),
       map(([filters, sortOrder, limit, page]) => ({
-        startIndex: page * limit,
+        startIndex: (page === -1 ? 0 : page) * limit,
         sortOrder,
         limit,
         filters: ProposalService.extractParamFilters(filters),
       })),
-      finalize(() => this.loadingService.setLoading(false)),
+      finalize(() => {
+        this.setPage(0);
+        this.loadingService.setLoading(false);
+      }),
     );
 
     this.proposalResponse$ = this.params$.pipe(
@@ -214,7 +217,10 @@ export class ProposalService {
   createExplanatoryDocument(data: CreateExplanatoryDocument) {
     this.loadingService.setLoading(true);
     return this.http
-      .post<Document>('api/secured/proposal/createExplanatoryDocument', data)
+      .post<Document>(
+        `${apiBaseUrl}/secured/proposal/createExplanatoryDocument`,
+        data,
+      )
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
