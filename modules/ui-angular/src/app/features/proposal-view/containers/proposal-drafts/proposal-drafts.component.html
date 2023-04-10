@@ -189,6 +189,14 @@
                 </button>
                 <eui-dropdown-content>
                   <div euiList>
+                    <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                      <button
+                        class="eui-u-p-s"
+                        euiListItem
+                        translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
+                        (click)="handleExplanatoryEditTitle(row)"
+                      ></button>
+                    </ng-container>
                     <button
                       class="eui-u-p-s"
                       euiListItem
@@ -455,6 +463,22 @@
       {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
     >
     <input euiInputText [(ngModel)]="title" />
+  </div>
+</eui-dialog>
+
+<!-- DIALOG: EDIT EXPLANATORY TITLE -->
+<eui-dialog
+  #editExplanatoryTitleDialog
+  [title]="'page.collection.drafts.title-dialog.title' | translate"
+  [acceptLabel]="'global.actions.save' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  (accept)="handleExplanatoryTitleSave()"
+>
+  <div euiInputGroup class="flex-row align-items-center">
+    <label euiLabel class="label" for="explanatoryTitle">
+      {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
+    >
+    <input euiInputText id="explanatoryTitle" [(ngModel)]="explanatoryTitle" />
   </div>
 </eui-dialog>
 

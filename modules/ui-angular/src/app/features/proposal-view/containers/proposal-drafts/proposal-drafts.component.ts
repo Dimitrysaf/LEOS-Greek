@@ -40,6 +40,10 @@ export class ProposalDraftsComponent
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
+  @ViewChild('editExplanatoryTitleDialog')
+  editExplanatoryTitleDialog: EuiDialogComponent;
+  explanatoryTitle: string;
+  explanatoryTitleActiveId: string;
   @ViewChild('createDraftDialog')
   createDraftDialog: ProposalCreateDraftComponent;
   @ViewChild('confirmationForDelete')
@@ -108,6 +112,20 @@ export class ProposalDraftsComponent
   handleConfirmationDeleteExpl(expl: Document) {
     this.explToDelete = expl;
     this.confirmDeleteCompExpl.deleteDialog.openDialog();
+  }
+
+  handleExplanatoryEditTitle({ title, id }: Document) {
+    this.explanatoryTitle = title;
+    this.explanatoryTitleActiveId = id;
+    this.editExplanatoryTitleDialog.openDialog();
+  }
+
+  handleExplanatoryTitleSave() {
+    this.editExplanatoryTitleDialog.closeDialog();
+    this.proposalDetailsService.updateExplanatoryTitle(
+      this.explanatoryTitleActiveId,
+      this.explanatoryTitle,
+    );
   }
 
   handleSave() {

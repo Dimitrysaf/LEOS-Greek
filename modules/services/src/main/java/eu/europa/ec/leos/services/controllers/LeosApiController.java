@@ -459,6 +459,22 @@ public class LeosApiController {
         }
     }
 
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/update-explanatory-title/{docId}",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateExplanatoryTitle(@PathVariable String proposalRef,
+                                                         @PathVariable String docId,
+                                                         @RequestParam String title) {
+        try {
+            this.apiService.updateExplanatoryTitle(proposalRef, docId, title);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            LOG.error("Error while updating explanatory title - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while explanatory title", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef) {
