@@ -107,6 +107,7 @@
   "page.collection.drafts.explanatory.table.last-updated-on": "Dernière mise à jour le",
   "page.collection.drafts.explanatory.table.last-updated-by": "Dernière mise à jour par",
   "page.collection.drafts.explanatory-memorandum": "Exposé des motifs",
+  "page.collection.drafts.explanatory.table.actions": "Actions",
   "page.collection.drafts.explanatory.table.actions.delete-dialog.title": "Confirmation de suppression de l'exposé des motifs",
   "page.collection.drafts.explanatory.table.actions.delete-dialog.desc": "Êtes-vous sûr de vouloir supprimer l'exposé des motifs",
   "page.collection.drafts.legal-act": "Texte legal",

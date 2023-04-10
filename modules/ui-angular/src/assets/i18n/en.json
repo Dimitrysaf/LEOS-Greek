@@ -119,6 +119,7 @@
   "page.collection.drafts.explanatory.table.last-updated-on": "Last updated on",
   "page.collection.drafts.explanatory.table.last-updated-by": "Last updated by",
   "page.collection.drafts.explanatory-memorandum": "Explanatory Memorandum",
+  "page.collection.drafts.explanatory.table.actions": "Actions",
   "page.collection.drafts.explanatory.table.actions.tooltip": "Explanatory Actions",
   "page.collection.drafts.explanatory.table.actions.delete-dialog.title": "Delete explanatory confirmation",
   "page.collection.drafts.explanatory.table.actions.delete-dialog.desc": "Are you sure you want to delete this explanatory",

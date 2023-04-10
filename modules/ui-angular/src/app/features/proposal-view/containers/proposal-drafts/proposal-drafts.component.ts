@@ -117,9 +117,6 @@ export class ProposalDraftsComponent
       this.title,
     );
   }
-  handleClose() {
-    this.editAnnexTitleDialog.closeDialog();
-  }
 
   handleCreateDraft() {
     this.createDraftDialog.openCreateWizard();

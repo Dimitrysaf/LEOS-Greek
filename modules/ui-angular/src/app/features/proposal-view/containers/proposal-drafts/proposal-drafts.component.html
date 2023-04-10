@@ -111,12 +111,20 @@
                   | translate
               }}
             </th>
-            <th></th>
+            <th style="width: 0">
+              {{
+                'page.collection.drafts.explanatory.table.actions' | translate
+              }}
+            </th>
           </tr>
         </ng-template>
         <ng-template let-row euiTemplate="body">
           <tr>
-            <td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.explanatory.table.title' | translate
+              "
+            >
               <div class="d-flex flex-row">
                 <app-co-edition-info
                   *ngIf="coEditionMap"
@@ -132,10 +140,34 @@
                 >
               </div>
             </td>
-            <td>{{ row.language }}</td>
-            <td>{{ row.updatedBy }}</td>
-            <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
-            <td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.explanatory.table.language' | translate
+              "
+            >
+              {{ row.language }}
+            </td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.explanatory.table.last-updated-on'
+                  | translate
+              "
+            >
+              {{ row.updatedBy }}
+            </td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.explanatory.table.last-updated-by'
+                  | translate
+              "
+            >
+              {{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}
+            </td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.explanatory.table.actions' | translate
+              "
+            >
               <eui-dropdown>
                 <button
                   euiButton
@@ -156,19 +188,17 @@
                   </span>
                 </button>
                 <eui-dropdown-content>
-                  <ul euiList>
-                    <li
+                  <div euiList>
+                    <button
+                      class="eui-u-p-s"
                       euiListItem
-                      class="p-3"
+                      euiDanger
+                      translate="global.actions.delete"
                       (click)="handleConfirmationDeleteExpl(row)"
-                    >
-                      <span class="eui-u-color-danger-100">{{
-                        'global.actions.delete' | translate
-                      }}</span>
-                    </li>
-                  </ul>
-                </eui-dropdown-content></eui-dropdown
-              >
+                    ></button>
+                  </div>
+                </eui-dropdown-content>
+              </eui-dropdown>
             </td>
           </tr>
         </ng-template>
@@ -274,14 +304,18 @@
                   | translate
               }}
             </th>
-            <th>
+            <th style="width: 0">
               {{ 'page.collection.drafts.annex.table.tr.actions' | translate }}
             </th>
           </tr>
         </ng-template>
         <ng-template let-row euiTemplate="body">
           <tr>
-            <td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.annex.table.tr.title' | translate
+              "
+            >
               <div class="d-flex flex-row">
                 <app-co-edition-info
                   *ngIf="coEditionMap"
@@ -312,9 +346,27 @@
                 </button>
               </ng-container>
             </td>
-            <td>{{ row.updatedBy }}</td>
-            <td>{{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}</td>
-            <td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.annex.table.tr.last-updated-by'
+                  | translate
+              "
+            >
+              {{ row.updatedBy }}
+            </td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.annex.table.tr.last-updated-on'
+                  | translate
+              "
+            >
+              {{ row.updatedOn | date: 'dd-MM-yyyy hh:mm:ss' }}
+            </td>
+            <td
+              [attr.data-col-label]="
+                'page.collection.drafts.annex.table.tr.actions' | translate
+              "
+            >
               <div class="eui-dropdown-button">
                 <eui-dropdown>
                   <button
@@ -338,34 +390,25 @@
                     ></span>
                   </button>
                   <eui-dropdown-content>
-                    <ul euiList>
+                    <div euiList>
                       <ng-container *appUserHasPermission="['CAN_UPDATE']">
-                        <li
+                        <button
+                          class="eui-u-p-s"
                           euiListItem
-                          class="p-2"
+                          translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
                           (click)="handleAnnexEditTitle(row)"
-                        >
-                          <button euiListItem>
-                            {{
-                              'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
-                                | translate
-                            }}
-                          </button>
-                        </li>
+                        ></button>
                       </ng-container>
                       <ng-container *appUserHasPermission="['CAN_DELETE']">
-                        <li
+                        <button
+                          class="eui-u-p-s"
                           euiListItem
                           euiDanger
-                          class="p-2"
+                          translate="global.actions.delete"
                           (click)="handleAnnexDelete(row)"
-                        >
-                          <button euiListItem euiDanger>
-                            {{ 'global.actions.delete' | translate }}
-                          </button>
-                        </li>
+                        ></button>
                       </ng-container>
-                    </ul>
+                    </div>
                   </eui-dropdown-content>
                 </eui-dropdown>
               </div>
