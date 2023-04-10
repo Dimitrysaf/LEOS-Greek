@@ -71,7 +71,7 @@
       <eui-card-header-right-content>
         <button euiButton euiPrimary (click)="handleCreateDraft()">
           <span>
-            {{ 'page.collection.drafts.explanatory.add-button' | translate }}
+            {{ 'global.actions.add' | translate }}
           </span>
         </button>
       </eui-card-header-right-content>
@@ -163,8 +163,7 @@
                       (click)="handleConfirmationDeleteExpl(row)"
                     >
                       <span class="eui-u-color-danger-100">{{
-                        'page.collection.drafts.explanatory.table.actions.button.delete'
-                          | translate
+                        'global.actions.delete' | translate
                       }}</span>
                     </li>
                   </ul>
@@ -235,7 +234,7 @@
             euiPrimary
             (click)="handleAnnexAdd()"
           >
-            {{ 'page.collection.drafts.annex.table.add' | translate }}
+            {{ 'global.actions.add' | translate }}
           </button>
         </ng-container>
         <ng-container *appUserHasPermission="['CAN_UPDATE']">
@@ -362,10 +361,7 @@
                           (click)="handleAnnexDelete(row)"
                         >
                           <button euiListItem euiDanger>
-                            {{
-                              'page.collection.drafts.annex.table.tr.actions.dropdown.delete'
-                                | translate
-                            }}
+                            {{ 'global.actions.delete' | translate }}
                           </button>
                         </li>
                       </ng-container>
@@ -406,34 +402,29 @@
 <!-- DIALOG: EDIT ANNEX TITLE -->
 <eui-dialog
   #editAnnexTitleDialog
-  [title]="'page.collection.drafts.annex.title-dialog.title' | translate"
+  [title]="'page.collection.drafts.title-dialog.title' | translate"
+  [acceptLabel]="'global.actions.save' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  (accept)="handleSave()"
 >
   <div euiInputGroup class="flex-row align-items-center">
     <label class="label">
-      {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}</label
+      {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
     >
     <input euiInputText [(ngModel)]="title" />
   </div>
-  <eui-dialog-footer>
-    <div class="d-flex flex-row justify-content-end">
-      <button euiButton euiSecondary (click)="handleClose()">
-        {{ 'page.collection.drafts.annex.title-dialog.cancel' | translate }}
-      </button>
-      <button euiButton euiPrimary class="save-button" (click)="handleSave()">
-        <span>{{
-          'page.collection.drafts.annex.title-dialog.save' | translate
-        }}</span>
-      </button>
-    </div>
-  </eui-dialog-footer>
 </eui-dialog>
 
 <!-- DIALOG: REORDER ANNEX -->
 <eui-dialog
   #editAnnexOrder
   [title]="'page.collection.drafts.annex.reorder-dialog.title' | translate"
+  [dismissLabel]="'global.actions.close' | translate"
+  [hasAcceptButton]="false"
 >
-  <div class="flex flex-col mb-5">
+  <div
+    class="eui-u-flex eui-u-flex-column eui-u-flex-align-items-start app-u-gap-m"
+  >
     <p>{{ 'page.collection.drafts.annex-reorder-dialog.hint' | translate }}</p>
     <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
       <div
@@ -446,11 +437,4 @@
       </div>
     </div>
   </div>
-  <eui-dialog-footer>
-    <div class="d-flex flex-row justify-content-end">
-      <button euiButton euiSecondary (click)="handleClose()">
-        {{ 'page.collection.drafts.annex.reorder-dialog.cancel' | translate }}
-      </button>
-    </div>
-  </eui-dialog-footer>
 </eui-dialog>

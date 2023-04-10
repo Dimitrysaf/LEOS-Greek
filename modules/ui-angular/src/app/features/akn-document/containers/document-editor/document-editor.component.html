@@ -13,7 +13,7 @@
       <button
         euiButton
         euiPrimary
-        translate="page.editor.close-button.label"
+        translate="global.actions.close"
         (click)="handleClose()"
       ></button>
     </eui-page-header-action-items>
@@ -81,7 +81,7 @@
               [disabled]="disableSaveButton()"
               (click)="handleSave()"
             >
-              {{ 'page.editor.toc.toc-column.actions.save' | translate }}
+              {{ 'global.actions.save' | translate }}
             </button>
             <button
               euiButton
@@ -89,7 +89,7 @@
               class="eui-u-mr-s"
               (click)="handleCancel()"
             >
-              {{ 'page.editor.toc.toc-column.actions.cancel' | translate }}
+              {{ 'global.actions.cancel' | translate }}
               <span class="eui-icon eui-icon-times"></span>
             </button>
           </div>

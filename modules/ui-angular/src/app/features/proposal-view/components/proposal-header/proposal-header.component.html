@@ -36,15 +36,10 @@
     <eui-dialog-footer>
       <div class="d-flex flex-row justify-content-end">
         <button euiButton euiSecondary (click)="handleClose()">
-          {{
-            'page.collection.proposal-header.edit-title-dialog.cancel'
-              | translate
-          }}
+          {{ 'global.actions.cancel' | translate }}
         </button>
         <button euiButton euiPrimary (click)="handleSave()" class="save-button">
-          {{
-            'page.collection.proposal-header.edit-title-dialog.save' | translate
-          }}
+          {{ 'global.actions.save' | translate }}
         </button>
       </div>
     </eui-dialog-footer>

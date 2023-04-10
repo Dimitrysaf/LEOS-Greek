@@ -6,7 +6,7 @@
       (click)="openDialog()"
       class="eui-u-mb-m eui-u-mt-2xs"
     >
-      {{ 'page.collection.milestones.add-button.title' | translate }}
+      {{ 'global.actions.add' | translate }}
     </button>
   </div>
 </ng-container>
@@ -86,10 +86,7 @@
         euiSecondary
         (click)="onDismiss()"
       >
-        {{
-          'page.collection.milestones.table.add-milestone-dialog.cancel'
-            | translate
-        }}
+        {{ 'global.actions.cancel' | translate }}
       </button>
       <button
         type="button"
