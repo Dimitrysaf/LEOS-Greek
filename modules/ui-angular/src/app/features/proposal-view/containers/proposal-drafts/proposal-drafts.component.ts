@@ -8,10 +8,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Document, DocumentType } from '@leos/shared';
-import { TranslateService } from '@ngx-translate/core';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
@@ -39,7 +38,7 @@ export class ProposalDraftsComponent
   proposalRef: string;
   coEditionMap: Record<string, CoEditionVO[]> = null;
 
-  @ViewChild('editTitle') dialog: EuiDialogComponent;
+  @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
   @ViewChild('createDraftDialog')
   createDraftDialog: ProposalCreateDraftComponent;
@@ -55,7 +54,6 @@ export class ProposalDraftsComponent
   constructor(
     private proposalDetailsService: ProposalDetailsService,
     private route: ActivatedRoute,
-    public tranlsateService: TranslateService,
     private coEditionService: CoEditionServiceWS,
   ) {}
 
@@ -91,7 +89,7 @@ export class ProposalDraftsComponent
   handleAnnexEditTitle(annex: Document) {
     this.title = annex.title;
     this.activeAnnexId = annex.id;
-    this.dialog.openDialog();
+    this.editAnnexTitleDialog.openDialog();
   }
 
   handleAnnexDelete(annex: Document) {
@@ -99,11 +97,7 @@ export class ProposalDraftsComponent
     this.confirmDeleteComp.deleteDialog.openDialog();
   }
 
-  handleAnnexCancelDelete() {
-    this.confirmDeleteComp.deleteDialog.closeDialog();
-  }
-
-  hanldeConfirmationDelete() {
+  handleConfirmationDelete() {
     if (!this.annexToDelete) return;
     this.proposalDetailsService.deleteAnnex(
       this.annexToDelete.metadata.internalRef,
@@ -111,20 +105,20 @@ export class ProposalDraftsComponent
     this.annexToDelete = null;
   }
 
-  hanldeConfirmationDeleteExpl(expl: Document) {
+  handleConfirmationDeleteExpl(expl: Document) {
     this.explToDelete = expl;
     this.confirmDeleteCompExpl.deleteDialog.openDialog();
   }
 
   handleSave() {
-    this.dialog.closeDialog();
+    this.editAnnexTitleDialog.closeDialog();
     this.proposalDetailsService.updateAnnexTitle(
       this.activeAnnexId,
       this.title,
     );
   }
   handleClose() {
-    this.dialog.closeDialog();
+    this.editAnnexTitleDialog.closeDialog();
   }
 
   handleCreateDraft() {
@@ -134,7 +128,7 @@ export class ProposalDraftsComponent
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.annexes, event.previousIndex, event.currentIndex);
     const annexRef = this.annexes[event.currentIndex].id;
-    //if droped in the same position do nothing
+    //if dropped in the same position do nothing
     if (event.currentIndex === event.previousIndex) return;
     //get whether the droped element went up or down to decide the moveDirection
     let moveDirection = 'UP';
