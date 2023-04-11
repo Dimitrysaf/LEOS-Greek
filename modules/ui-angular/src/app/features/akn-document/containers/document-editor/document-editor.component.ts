@@ -301,7 +301,10 @@ export class DocumentEditorComponent
 
   getTocItemDisplayTitle(item: TocItem) {
     if (item.numberingType === 'BULLET_NUM') {
-      return this.tranlsateService.instant('toc.item.typel.bullet');
+      return this.tranlsateService.instant('toc.item.type.bullet');
+    }
+    if (item.aknTag === 'CROSS_HEADING') {
+      return this.tranlsateService.instant('toc.item.type.crossheading');
     } else {
       return this.tranlsateService.instant(
         'toc.item.type.' + item.aknTag.toLowerCase(),

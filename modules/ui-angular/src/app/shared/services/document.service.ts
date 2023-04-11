@@ -22,7 +22,12 @@ import {
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
-import { Collaborator, LeosAppConfig, Permission } from '@/shared';
+import {
+  Collaborator,
+  DocumentConfig,
+  LeosAppConfig,
+  Permission,
+} from '@/shared';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 
 import { apiBaseUrl } from '../../../config';
@@ -73,6 +78,7 @@ export class DocumentService implements OnDestroy {
   toc$: Observable<TableOfContentItemVO[]>;
   tocItems$: Observable<any[]>;
   recentChanges$: Observable<Version[]>;
+  documentConfig$: Observable<DocumentConfig>;
   versionId$: Observable<string | null>;
   versionCompareIds$: Observable<any | null>;
   searchResultIndexArray: any[];
@@ -158,6 +164,11 @@ export class DocumentService implements OnDestroy {
       mergeMap(([ref, category]) =>
         this.getDocumentVersionsData(category, ref),
       ),
+    );
+
+    this.documentConfig$ = this.documentId$.pipe(
+      combineLatestWith(this.documentCategory$),
+      mergeMap(([ref, category]) => this.getDocumentConfig(ref, category)),
     );
 
     this.recentChanges$ = this.documentId$.pipe(
@@ -699,6 +710,12 @@ export class DocumentService implements OnDestroy {
       .subscribe((response) => {
         this.documentIdBS.next(documentRef);
       });
+  }
+
+  private getDocumentConfig(documentRef: string, documentType: string) {
+    return this.http.get<DocumentConfig>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
+    );
   }
 
   setAnnotationGetter(getAnnotations: () => Promise<string>) {
