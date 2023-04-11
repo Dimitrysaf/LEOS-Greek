@@ -59,7 +59,10 @@
               "node_modules/@eui/styles/dist/styles/eui.css",
               "node_modules/@eui/styles/dist/styles/eui-legacy.css",
               "src/styles.scss"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [".", "../.."]
+            }
           },
           "configurations": {
             "production": {

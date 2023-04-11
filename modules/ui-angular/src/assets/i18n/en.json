@@ -8,6 +8,7 @@
   "global.notifications.title.info": "Info",
   "global.notifications.title.success": "Success",
   "global.notifications.title.warning": "Warning",
+  "app.header.logo-alt": "{{ title }} home",
   "page.home.title": "Welcome to eUI!",
   "app.search.button": "Search",
   "eui.my-profile-informations": "My profile information",
