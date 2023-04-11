@@ -274,7 +274,8 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          console.log(res);
+          this.documentService.setDocumentId(this.documentRef);
+          // this.documentTocComponent.setTree(res);
         },
         error: (err) => {},
       });
