@@ -708,14 +708,14 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  setAnnotationGetter(getAnnotations: () => Promise<string>) {
+    this.getAnnotations = getAnnotations;
+  }
+
   private getDocumentConfig(documentRef: string, documentType: string) {
     return this.http.get<DocumentConfig>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
     );
-  }
-
-  setAnnotationGetter(getAnnotations: () => Promise<string>) {
-    this.getAnnotations = getAnnotations;
   }
 
   private doSearch(parameters: DocumentSearchParams) {

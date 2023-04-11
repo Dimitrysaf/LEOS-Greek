@@ -11,11 +11,11 @@ import { ActionsToolbarComponent } from './components/actions-toolbar/actions-to
 import { AnnexActionsDropdownComponent } from './components/annex-actions-dropdown/annex-actions-dropdown.component';
 import { AnnexDocumentComponent } from './components/annex-document/annex-document.component';
 import { DocumentSearchComponent } from './components/document-search/document-search.component';
+import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { VersionActionsDropdownComponent } from './components/version-actions-dropdown/version-actions-dropdown.component';
 import { VersionsPaneGroupComponent } from './components/versions-pane-group/versions-pane-group.component';
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
-import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
 
 @NgModule({
   declarations: [

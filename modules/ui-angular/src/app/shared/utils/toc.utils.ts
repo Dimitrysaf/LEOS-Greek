@@ -1,5 +1,7 @@
 import { NumberingConfig, NumberingType } from '../models';
-import { TableOfContentItemVO, TocItem } from '../models/toc.model';
+import { AknTag, TableOfContentItemVO, TocItem } from '../models/toc.model';
+
+const BULLET_NUM = 'BULLET_NUM';
 
 export const getNumberingTypeByTagNameAndTocItemType = (
   tocItems: TocItem[],
@@ -174,4 +176,291 @@ export const findNodeById = (
     }
   }
   return null;
+};
+
+export const checkPositionAfterValidationExplanatory = (
+  nodeTarget: TableOfContentItemVO,
+  nodeDragged: TableOfContentItemVO,
+  position: string,
+) => {
+  switch (nodeDragged.tocItem.aknTag) {
+    case 'PART': {
+      if (
+        (
+          [
+            'BLOCK',
+            'LEVEL',
+            'PART',
+            'CHAPTER',
+            'DIVISION',
+            'CROSS_HEADING',
+            'PARAGRAPH',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'TITLE': {
+      if (
+        (
+          [
+            'BLOCK',
+            'CHAPTER',
+            'DIVISION',
+            'CROSS_HEADING',
+            'PARAGRAPH',
+            'LEVEL',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      )
+        return 'AFTER';
+      if ((['PART'] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
+        return position;
+      }
+      return position;
+    }
+    case 'CHAPTER': {
+      if (
+        (
+          [
+            'BLOCK',
+            'LEVEL',
+            'CHAPTER',
+            'DIVISION',
+            'CROSS_HEADING',
+            'POINT',
+            'PARAGRAPH',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'SECTION': {
+      if (
+        (
+          [
+            'BLOCK',
+            'LEVEL',
+            'DIVISION',
+            'CROSS_HEADING',
+            'LEVEL',
+            'PARAGRAPH',
+            'SECTION',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'DIVISION': {
+      if (
+        (
+          [
+            'BLOCK',
+            'LEVEL',
+            'PART',
+            'CHAPTER',
+            'DIVISION',
+            'CROSS_HEADING',
+            'POINT',
+            'SECTION',
+            'PARAGRAPH',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'CROSS_HEADING': {
+      if (
+        (['DIVISION', 'PARAGRAPH'] as AknTag[]).includes(
+          nodeTarget.tocItem.aknTag,
+        )
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'LEVEL': {
+      if (
+        (
+          [
+            'DIVISON',
+            'CROSS_HEADING',
+            'LEVEL',
+            'PARAGRAPH',
+            'BLOCK',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'PARAGRAPH': {
+      if (
+        (
+          [
+            'BLOCK',
+            'PART',
+            'DIVISION',
+            'LEVEL',
+            'CROSS_HEADING',
+            'LEVEL',
+            'PARAGRAPH',
+          ] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'SUBPARAGRAPH': {
+      if (
+        (['DIVISION', 'SUBPARAGRAPH'] as AknTag[]).includes(
+          nodeTarget.tocItem.aknTag,
+        ) ||
+        nodeTarget.tocItem.numberingType === BULLET_NUM
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'POINT': {
+      if ((['SUBPARAGRAPH'] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case 'INDENT': {
+      if (
+        (['SUBPARAGRAPH'] as AknTag[]).includes(nodeTarget.tocItem.aknTag) &&
+        nodeDragged.tocItem.numberingType === BULLET_NUM
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+  }
+};
+
+export const checkPositionAfterValidation = (
+  nodeTarget: TableOfContentItemVO,
+  nodeDragged: TableOfContentItemVO,
+  position: string,
+) => {
+  //TODO add cn rules
+  switch (nodeDragged.tocItem.aknTag) {
+    case 'CITATION': {
+      if (['CITATIONS'].includes(nodeTarget.tocItem.aknTag)) return position;
+      if (['CITATION'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+      return position;
+    }
+    case 'RECITAL': {
+      if (['RECITALS'].includes(nodeTarget.tocItem.aknTag)) return position;
+      if (['RECITAL'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+      break;
+    }
+    case 'PART': {
+      if (
+        [
+          'PART',
+          'TITLE',
+          'CHAPTER',
+          'SECTION',
+          'ARTICLE',
+          'PARAGRAPH',
+        ].includes(nodeTarget.tocItem.aknTag)
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'TITLE': {
+      if (['BODY', 'PART'].includes(nodeTarget.tocItem.aknTag)) return position;
+      if (
+        [
+          'TITLE',
+          'CHAPTER',
+          'SECTION',
+          'ARTICLE',
+          'LEVEL',
+          'PARAGRAPH',
+        ].includes(nodeTarget.tocItem.aknTag)
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'CHAPTER': {
+      if (['BODY', 'PART', 'TITLE'].includes(nodeTarget.tocItem.aknTag))
+        return position;
+      if (
+        ['CHAPTER', 'SECTION', 'ARTICLE', 'LEVEL', 'PARAGRAPH'].includes(
+          nodeTarget.tocItem.aknTag,
+        )
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'SECTION': {
+      if (
+        ['BODY', 'PART', 'TITLE', 'CHAPTER'].includes(nodeTarget.tocItem.aknTag)
+      )
+        return position;
+      if (
+        ['SECTION', 'ARTICLE', 'LEVEL', 'PARAGRAPH'].includes(
+          nodeTarget.tocItem.aknTag,
+        )
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'ARTICLE': {
+      if (
+        ['PART', 'BODY', 'TITLE', 'CHAPTER', 'SECTION'].includes(
+          nodeTarget.tocItem.aknTag,
+        )
+      )
+        return position;
+      if (['ARTICLE']) return 'AFTER';
+      return position;
+    }
+    case 'PARAGRAPH': {
+      if (
+        [
+          'ARTICLE',
+          'PARAGRAPH',
+          'LEVEL',
+          'TITLE',
+          'CHAPTER',
+          'SECTION',
+          'POINT',
+        ].includes(nodeTarget.tocItem.aknTag)
+      )
+        return 'AFTER';
+      return position;
+    }
+    case 'SUBPARAGRAPH': {
+      if (['PARAGRAPH', 'POINT'].includes(nodeTarget.tocItem.aknTag))
+        return position;
+      if (['SUBPARAGRAPH'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+      return position;
+    }
+    case 'LEVEL': {
+      if (
+        ['SUBPARAGRAPH', 'SECTION', 'CHAPTER', 'TITLE', 'PART'].includes(
+          nodeTarget.tocItem.aknTag,
+        )
+      )
+        return position;
+      if (['LEVEL', 'PARAGRAPH'].includes(nodeTarget.tocItem.aknTag))
+        return 'AFTER';
+      return position;
+    }
+    default:
+      return position;
+  }
 };

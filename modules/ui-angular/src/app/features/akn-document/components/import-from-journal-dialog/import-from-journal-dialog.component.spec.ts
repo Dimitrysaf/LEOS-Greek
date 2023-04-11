@@ -8,9 +8,8 @@ describe('ImportFromJournalDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ImportFromJournalDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [ImportFromJournalDialogComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ImportFromJournalDialogComponent);
     component = fixture.componentInstance;
