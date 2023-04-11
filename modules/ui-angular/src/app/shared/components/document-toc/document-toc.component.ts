@@ -20,7 +20,7 @@ import { EuiDialogService } from '@eui/components/eui-dialog';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep, truncate } from 'lodash-es';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 
 import {
   DocumentConfig,
@@ -131,7 +131,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.documentService.setDocumentCategory(this.documentType.toLowerCase());
-    if (this.documentRef) {
+    this.documentService.toc$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((toc) => {
+        this.setTree(toc);
+      });
+    if (!this.tocItems) {
       this.documentService
         .getToc(this.documentRef)
         .pipe(takeUntil(this.destroy$))
@@ -618,6 +623,20 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
+  setTree(toc: TableOfContentItemVO[]) {
+    this.toc = toc;
+    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
+      this.getChildren,
+    );
+    this.dataSource = new MatTreeNestedDataSource();
+    this.dataSource.data = toc;
+    this.treeControl.dataNodes = this.dataSource.data;
+    //expand the default nodes if the expanded state is empty
+    if (toc && this.expandedNodes && this.expandedNodes.length === 0)
+      for (const nodes of toc) this.defaultExpanded(nodes);
+    else this.restoreExpanded();
+  }
+
   private getNewNumberingFromListTocItem(
     list: TableOfContentItemVO[],
     tocItem: TocItem,
@@ -1001,20 +1020,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       }
     }
     return null;
-  }
-
-  private setTree(toc: TableOfContentItemVO[]) {
-    this.toc = toc;
-    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
-      this.getChildren,
-    );
-    this.dataSource = new MatTreeNestedDataSource();
-    this.dataSource.data = toc;
-    this.treeControl.dataNodes = this.dataSource.data;
-    //expand the default nodes if the expanded state is empty
-    if (toc && this.expandedNodes && this.expandedNodes.length === 0)
-      for (const nodes of toc) this.defaultExpanded(nodes);
-    else this.restoreExpanded();
   }
 
   private defaultExpanded(node: TableOfContentItemVO) {
