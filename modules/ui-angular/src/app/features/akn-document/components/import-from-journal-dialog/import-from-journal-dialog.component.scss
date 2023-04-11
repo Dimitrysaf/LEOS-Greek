@@ -1,7 +1,5 @@
 @import 'node_modules/@eui/styles-base/src/styles/base';
 @import 'node_modules/@eui/styles/src/styles/02-base/mixins/eui-scrollbars';
-@import 'modules/ui/src/main/resources/VAADIN/themes/leos/_common.scss';
-@import 'modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_import.scss';
 
 .dialog-body {
   display: flex;
@@ -28,8 +26,6 @@
 }
 
 .document-wrapper ::ng-deep {
-  @include import();
-
   bill {
     margin-bottom: 2rem;
     margin-top: 2rem;
@@ -38,5 +34,47 @@
   bill > * {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  /*
+   * These styles have been copied from
+   * modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_import.scss
+   * and they are used inside the importElementExtension.js managed content.
+   */
+  $DARK_GREY: #808080;
+  $SPINDLE_BLUE: #adbdce;
+  $PALE_BLUE: #e1effe;
+  $HEATHER: #adb4bb;
+
+  .leos-import-wrapper {
+    border: 1px solid transparent;
+    position: relative;
+
+    & .leos-wrapped-content {
+      border: 1px solid transparent;
+      border-left: 5px solid transparent;
+      padding: 0 5px;
+    }
+
+    &:hover {
+      border-color: $SPINDLE_BLUE;
+    }
+
+    & > input[type='checkbox'] {
+      float: left;
+      left: -18px;
+      position: relative;
+      top: 15px;
+
+      &:checked ~ .leos-wrapped-content {
+        background-color: $PALE_BLUE;
+        border-color: $HEATHER;
+      }
+    }
+  }
+
+  .leos-non-import-wrapper {
+    color: $DARK_GREY;
+    padding: 0 5px;
   }
 }

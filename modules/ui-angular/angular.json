@@ -61,7 +61,7 @@
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": [".", "../.."]
+              "includePaths": ["."]
             }
           },
           "configurations": {
