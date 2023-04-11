@@ -9,6 +9,7 @@ import {
   combineLatestWith,
   distinctUntilChanged,
   filter,
+  finalize,
   mergeMap,
   Observable,
   of,
@@ -17,6 +18,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -36,6 +38,7 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
+import { LoadingService } from './loading.service';
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -133,6 +136,7 @@ export class DocumentService implements OnDestroy {
     private appShell: UxAppShellService,
     private translate: TranslateService,
     private coEditionService: CoEditionServiceWS,
+    private loadingService: LoadingService,
   ) {
     this.documentId$ = this.documentIdBS.asObservable();
     const documentRefNotNull$ = this.documentId$.pipe(filter(Boolean));
@@ -562,9 +566,15 @@ export class DocumentService implements OnDestroy {
     this.versionIdBS.next(versionNumber);
   }
 
-  getToc(annexRef: string, tocMode = 'SIMPLIFIED') {
+  getToc(
+    annexRef: string,
+    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
+      ? 'NOT_SIMPLIFIED'
+      : 'SIMPLIFIED',
+  ) {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
+
     return this.http.get<TableOfContentItemVO[]>(
       `${apiBaseUrl}/secured/${category}/${annexRef}/getToc`,
       {
@@ -592,12 +602,15 @@ export class DocumentService implements OnDestroy {
   saveToc(documentRef: string, toc: TableOfContentItemVO[]) {
     let category = this.documentCategoryBS.value;
     category = category === 'coverpage' ? 'coverPage' : category;
-    return this.http.post<TableOfContentItemVO[]>(
-      `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
-      {
-        tableOfContentItemVOs: toc,
-      },
-    );
+    this.loadingService.setLoading(true);
+    return this.http
+      .post<TableOfContentItemVO[]>(
+        `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
+        {
+          tableOfContentItemVOs: toc,
+        },
+      )
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
   validateNodeDrop(

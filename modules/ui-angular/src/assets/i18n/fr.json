@@ -4,6 +4,7 @@
   "global.actions.close": "Fermer",
   "global.actions.delete": "Supprimer",
   "global.actions.save": "Sauver",
+  "global.actions.save-close": "Save and close",
   "app.header.logo-alt": "accueil {{ title }}",
   "page.home.title": "Bienvenue dans eUI!",
   "app.search.button": "Chercher",
