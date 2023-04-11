@@ -1,5 +1,3 @@
-.modal-footer-content {
-  display: flex;
-  gap: var(--eui-base-spacing-m);
-  justify-content: flex-end;
+.eui-list--with-line-separators > .eui-list-item + .eui-list-item {
+  border-top: 1px solid #e5e5e5;
 }
