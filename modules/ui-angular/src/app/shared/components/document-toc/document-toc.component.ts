@@ -17,10 +17,16 @@ import {
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
-import { UxAppShellService } from '@eui/core';
+import {
+  getUserDetails,
+  UserDetails,
+  UserService,
+  UxAppShellService,
+} from '@eui/core';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep, truncate } from 'lodash-es';
-import { Subject, take, takeUntil } from 'rxjs';
+import { clone, cloneDeep, some, truncate } from 'lodash-es';
+import { of, Subject, take, takeUntil, withLatestFrom } from 'rxjs';
 
 import {
   DocumentConfig,
@@ -32,6 +38,7 @@ import { NodeValidationResponse } from '@/shared/models/drop-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
+  addOrMoveItem,
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
   convertArticle,
@@ -39,6 +46,10 @@ import {
   getNumberingConfig,
   getTocItemByNumberingConfig,
   getTocItemByNumberingType,
+  handleLevelMove,
+  setBlockOrCrossHeading,
+  setNumber,
+  updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
 
 import { TableOfContentItemVO, TocItem } from '../../models/toc.model';
@@ -52,6 +63,7 @@ const POINT = 'POINT';
 const LIST = 'LIST';
 const BULLET_NUM = 'BULLET_NUM';
 const MAIN_BODY = 'MAIN_BODY';
+const TYPING_TIME = 500;
 @Component({
   selector: 'app-document-toc',
   templateUrl: './document-toc.component.html',
@@ -66,6 +78,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   annexRef: string;
 
   documentConfig: DocumentConfig;
+  user: UserDetails;
 
   //toc related
   toc: TableOfContentItemVO[];
@@ -105,11 +118,13 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   expandedNodes: TableOfContentItemVO[] = [];
 
   destroy$: Subject<any> = new Subject();
+  private typingTimer;
   constructor(
     private documentService: DocumentService,
     private uxAppShellService: UxAppShellService,
     private dialogService: EuiDialogService,
     public tranlsateService: TranslateService,
+    private store: Store,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.documentService.tocItems$
@@ -122,6 +137,16 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
       .subscribe((dConfig) => (this.documentConfig = dConfig));
+
+    this.store
+      .select(getUserDetails)
+      .pipe(take(1))
+      .subscribe((state) => (this.user = state));
+
+    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
+      this.getChildren,
+    );
+    this.dataSource = new MatTreeNestedDataSource();
   }
 
   ngOnDestroy(): void {
@@ -175,9 +200,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     return this.isEdit;
   }
 
-  handleHeadingChange(value) {
-    this.preiviousHeading = this.heading;
-    this.selectedNode.heading = value;
+  handleHeadingChange(value: string) {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(() => {
+      this.preiviousHeading = this.heading;
+      this.treeHistory.push(this.treeControl.dataNodes);
+      const newTree = cloneDeep(this.toc);
+      const targetNode = this.findNodeById(newTree, this.selectedNode.id);
+      targetNode.heading = value;
+      if (this.environment === 'ec') {
+        targetNode.originHeadingAttr = 'DELETE';
+        targetNode.originHeadingAttr = 'ec';
+      }
+      this.treeHistory.push(this.treeControl.dataNodes);
+      this.setTree(newTree);
+    }, TYPING_TIME);
   }
 
   handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
@@ -623,18 +660,44 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
+  handleNumberChange(number: string) {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(() => {
+      const newTree = cloneDeep(this.toc);
+      const newSelectedNode = this.findNodeById(newTree, this.selectedNode.id);
+      newSelectedNode.isAutoNumOverwritten = true;
+      newSelectedNode.number = number;
+    }, TYPING_TIME);
+  }
+
+  updateUserInfo(item: TableOfContentItemVO) {
+    // sourceItem.setSoftUserAttr(user != null ? getSoftUserAttribute(user) : null);
+    // sourceItem.setSoftDateAttr((GregorianCalendar)GregorianCalendar.getInstance());
+    item.softUserAttr = this.getSoftUserAttribute(this.user);
+    item.softDateAttr = Date.now();
+  }
+
   setTree(toc: TableOfContentItemVO[]) {
     this.toc = toc;
-    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
-      this.getChildren,
-    );
-    this.dataSource = new MatTreeNestedDataSource();
     this.dataSource.data = toc;
     this.treeControl.dataNodes = this.dataSource.data;
+    if (this.treeHistory && this.treeHistory.length === 0)
+      this.isToCDraft = false;
+    if (this.treeHistory && this.treeHistory.length > 0) {
+      this.isToCDraft = true;
+    }
+    if (this.selectedNode) {
+      const newSelectedNode = this.findNodeById(toc, this.selectedNode.id);
+      this.selectedNode = newSelectedNode;
+    }
     //expand the default nodes if the expanded state is empty
     if (toc && this.expandedNodes && this.expandedNodes.length === 0)
       for (const nodes of toc) this.defaultExpanded(nodes);
     else this.restoreExpanded();
+  }
+
+  getSoftUserAttribute(user: UserDetails) {
+    return `${user.firstName} (${user['getDefaultEntity'] ?? ''})`;
   }
 
   private getNewNumberingFromListTocItem(
@@ -745,7 +808,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
             // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
             // so the resutl.success will now mean that it can be dropped as a sibling
             if (position === 'AS_CHILDREN') {
-              console.log(this.documentType);
               switch (this.documentType) {
                 case 'council_explanatory':
                   position = checkPositionAfterValidationExplanatory(
@@ -932,9 +994,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   ) {
     //clone the tree
     const newTree = cloneDeep(this.treeControl.dataNodes);
-    if (isAdd) {
-      this.addDefaultToNewItem(eventItem);
-    }
+    this.addDefaultToNewItem(isAdd, eventItem, target, 'AFTER');
+
     //remove the node from the tree
     if (!isAdd) this.removeNode(newTree, eventItem);
     //get parent of the node droped / to moved at
@@ -959,6 +1020,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     //deep clone the tree
     const newTree = cloneDeep(this.treeControl.dataNodes);
     //remove the already existing node
+    this.addDefaultToNewItem(isAdd, eventItem, target, 'BEFORE');
+
     if (!isAdd) this.removeNode(newTree, eventItem);
     const parentNode = this.findNodeById(newTree, target.parentItem);
     const targetIndex = parentNode.childItems.findIndex(
@@ -982,6 +1045,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     isAdd: boolean,
   ) {
     const newTree = cloneDeep(this.treeControl.dataNodes);
+    this.addDefaultToNewItem(isAdd, eventItem, target, 'AS_CHILDREN');
+
     if (!isAdd) this.removeNode(newTree, eventItem);
     //get node to insert to as child
     const parentToBeNode = this.findNodeById(newTree, target.id);
@@ -1029,15 +1094,78 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  private addDefaultToNewItem(eventItem: TableOfContentItemVO) {
+  //   private void moveOriginAttribute(final TableOfContentItemVO droppedElement, final TableOfContentItemVO targetElement) {
+  //     if (isElementAndTargetOriginDifferent(droppedElement, targetElement)) {
+  //         droppedElement.setOriginAttr(CN);
+  //     }
+  //     droppedElement.setOriginNumAttr(CN);
+  // }
+  private moveOriginAttribute(
+    droppedElement: TableOfContentItemVO,
+    targetElement: TableOfContentItemVO,
+  ) {
+    if (this.environment === 'cn') {
+      if (
+        this.isElementAndTargetOriginDifferent(droppedElement, targetElement)
+      ) {
+        droppedElement.originNumAttr = 'cn';
+      }
+      droppedElement.originAttr = 'cn';
+    } else {
+    }
+  }
+
+  private isElementAndTargetOriginDifferent(
+    element: TableOfContentItemVO,
+    parent: TableOfContentItemVO,
+  ): boolean {
+    let isDifferent = false;
+    if (element.originAttr === null) {
+      isDifferent = true;
+    } else if (element.originAttr !== parent.originAttr) {
+      isDifferent = true;
+    }
+    return isDifferent;
+  }
+
+  private addDefaultToNewItem(
+    isAdd: boolean,
+    eventItem: TableOfContentItemVO,
+    targetElement: TableOfContentItemVO,
+    position: string,
+  ) {
+    addOrMoveItem(isAdd, eventItem, targetElement, this.toc, null, position);
+    if (isAdd) {
+      eventItem.indentOriginIndentLevel = -1;
+
+      setNumber(this.toc, eventItem, targetElement);
+      this.moveOriginAttribute(eventItem, targetElement);
+      if (eventItem.tocItem.addSoftAttr) {
+        eventItem.softActionAttr = 'ADD';
+        eventItem.isSoftActionRoot = true;
+      }
+      if (eventItem.tocItem.aknTag === 'DIVISION') {
+        eventItem.style = 'type_1';
+      }
+    }
+
+    //for both add or move
+    updateDepthOfTocItems(this.toc);
+    handleLevelMove(eventItem, targetElement);
+    setBlockOrCrossHeading(this.toc, eventItem);
     switch (eventItem.tocItem.aknTag) {
       case 'DIVISION': {
-        eventItem.style = 'type_1';
         break;
       }
       case 'CROSS_HEADING': {
         eventItem.tocItem.numberingType = 'NONE';
         break;
+      }
+      case 'ARTICLE': {
+        eventItem.tocItemType = 'REGULAR';
+        eventItem.heading = this.tranlsateService.instant(
+          'toc.item.type.regular.article.heading',
+        );
       }
     }
   }

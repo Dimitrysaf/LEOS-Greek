@@ -23,14 +23,15 @@ export class TableOfContentItemVO {
   childItems: TableOfContentItemVO[];
   parentItem: string;
   softActionAttr: string;
-  isSoftActionRoot: string;
+  isSoftActionRoot: boolean;
   softMoveTo: string;
   softMoveFrom: string;
   softTransFrom: string;
   softUserAttr: string;
-  softDateAttr: string;
+  softDateAttr: number;
   restored: boolean;
   itemDepth: number;
+  originalDepthLevel: number;
   originalIndentLevel: number;
   indentLevel: number;
   elementNumberId: number;

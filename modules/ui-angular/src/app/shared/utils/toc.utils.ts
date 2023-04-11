@@ -354,52 +354,32 @@ export const checkPositionAfterValidation = (
   position: string,
 ) => {
   //TODO add cn rules
-  switch (nodeDragged.tocItem.aknTag) {
+  switch (nodeTarget.tocItem.aknTag) {
     case 'CITATION': {
-      if (['CITATIONS'].includes(nodeTarget.tocItem.aknTag)) return position;
-      if (['CITATION'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+      if (['CITATIONS'].includes(nodeDragged.tocItem.aknTag)) return position;
+      if (['CITATION'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       return position;
     }
     case 'RECITAL': {
-      if (['RECITALS'].includes(nodeTarget.tocItem.aknTag)) return position;
-      if (['RECITAL'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+      if (['RECITALS'].includes(nodeDragged.tocItem.aknTag)) return position;
+      if (['RECITAL'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       break;
     }
     case 'PART': {
-      if (
-        [
-          'PART',
-          'TITLE',
-          'CHAPTER',
-          'SECTION',
-          'ARTICLE',
-          'PARAGRAPH',
-        ].includes(nodeTarget.tocItem.aknTag)
-      )
-        return 'AFTER';
+      if (['PART'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       return position;
     }
     case 'TITLE': {
-      if (['BODY', 'PART'].includes(nodeTarget.tocItem.aknTag)) return position;
-      if (
-        [
-          'TITLE',
-          'CHAPTER',
-          'SECTION',
-          'ARTICLE',
-          'LEVEL',
-          'PARAGRAPH',
-        ].includes(nodeTarget.tocItem.aknTag)
-      )
+      if (['TITLE', 'PART'].includes(nodeDragged.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
     case 'CHAPTER': {
-      if (['BODY', 'PART', 'TITLE'].includes(nodeTarget.tocItem.aknTag))
+      if (['BODY', 'ARTICLE', 'TITLE'].includes(nodeDragged.tocItem.aknTag))
         return position;
       if (
-        ['CHAPTER', 'SECTION', 'ARTICLE', 'LEVEL', 'PARAGRAPH'].includes(
-          nodeTarget.tocItem.aknTag,
+        ['CHAPTER', 'PART', '', 'LEVEL', 'PARAGRAPH'].includes(
+          nodeDragged.tocItem.aknTag,
         )
       )
         return 'AFTER';
@@ -407,12 +387,14 @@ export const checkPositionAfterValidation = (
     }
     case 'SECTION': {
       if (
-        ['BODY', 'PART', 'TITLE', 'CHAPTER'].includes(nodeTarget.tocItem.aknTag)
+        ['BODY', 'PART', 'TITLE', 'CHAPTER'].includes(
+          nodeDragged.tocItem.aknTag,
+        )
       )
         return position;
       if (
         ['SECTION', 'ARTICLE', 'LEVEL', 'PARAGRAPH'].includes(
-          nodeTarget.tocItem.aknTag,
+          nodeDragged.tocItem.aknTag,
         )
       )
         return 'AFTER';
@@ -420,47 +402,275 @@ export const checkPositionAfterValidation = (
     }
     case 'ARTICLE': {
       if (
-        ['PART', 'BODY', 'TITLE', 'CHAPTER', 'SECTION'].includes(
-          nodeTarget.tocItem.aknTag,
+        ['PART', 'BODY', 'TITLE', 'CHAPTER', 'SECTION', 'ARTICLE'].includes(
+          nodeDragged.tocItem.aknTag,
         )
       )
         return position;
-      if (['ARTICLE']) return 'AFTER';
       return position;
     }
     case 'PARAGRAPH': {
-      if (
-        [
-          'ARTICLE',
-          'PARAGRAPH',
-          'LEVEL',
-          'TITLE',
-          'CHAPTER',
-          'SECTION',
-          'POINT',
-        ].includes(nodeTarget.tocItem.aknTag)
-      )
-        return 'AFTER';
+      if (['PARAGRAPH'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       return position;
     }
     case 'SUBPARAGRAPH': {
-      if (['PARAGRAPH', 'POINT'].includes(nodeTarget.tocItem.aknTag))
-        return position;
-      if (['SUBPARAGRAPH'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
+      if (['SUBPARAGRAPH', 'LEVEL'].includes(nodeDragged.tocItem.aknTag))
+        return 'AFTER';
       return position;
     }
     case 'LEVEL': {
       if (
-        ['SUBPARAGRAPH', 'SECTION', 'CHAPTER', 'TITLE', 'PART'].includes(
-          nodeTarget.tocItem.aknTag,
+        ['SECTION', 'CHAPTER', 'TITLE', 'PART', 'LEVEL', 'PARAGRAPH'].includes(
+          nodeDragged.tocItem.aknTag,
         )
       )
-        return position;
-      if (['LEVEL', 'PARAGRAPH'].includes(nodeTarget.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
     default:
       return position;
+  }
+};
+
+export const setNumber = (
+  toc: TableOfContentItemVO[],
+  droppedElement: TableOfContentItemVO,
+  targetElement: TableOfContentItemVO,
+) => {
+  if (isNumbered(toc, droppedElement, targetElement)) {
+    if (!droppedElement.isAutoNumOverwritten) {
+      droppedElement.number = '#';
+    }
+    if (droppedElement.numSoftActionAttr === 'DELETE') {
+      droppedElement.softActionAttr = null;
+    }
+  } else {
+    droppedElement.number = null;
+  }
+};
+
+export const isNumbered = (
+  toc: TableOfContentItemVO[],
+  droppedElement: TableOfContentItemVO,
+  targetElement: TableOfContentItemVO,
+): boolean => {
+  let numbered = true;
+  if (droppedElement.tocItem.itemNumber === 'NONE') {
+    numbered = false;
+  } else if (droppedElement.tocItem.itemNumber === 'OPTIONAL') {
+    if (targetElement.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+      if (
+        targetElement.number === '' ||
+        targetElement.softActionAttr === 'DELETE'
+      ) {
+        numbered = false;
+      }
+    } else if (
+      targetElement.childItems &&
+      targetElement.childItems.length > 0
+    ) {
+      for (const itemVO of targetElement.childItems) {
+        if (itemVO.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+          if (itemVO.number === '' || itemVO.numSoftActionAttr === 'DELETE') {
+            numbered = false;
+            break;
+          }
+        }
+      }
+    }
+  }
+  const droppedElementParent = findNodeById(toc, droppedElement.parentItem);
+  if (
+    numbered &&
+    droppedElement.tocItem.aknTag === 'PARAGRAPH' &&
+    droppedElementParent &&
+    droppedElementParent.numberingToggled &&
+    droppedElement.numberingToggled === false
+  ) {
+    return false;
+  }
+  if (
+    !numbered &&
+    droppedElement.tocItem.aknTag === 'PARAGRAPH' &&
+    droppedElementParent &&
+    droppedElementParent.numberingToggled &&
+    droppedElement.numberingToggled === false
+  ) {
+    return true;
+  }
+  return numbered;
+};
+
+export const setBlockOrCrossHeading = (
+  toc: TableOfContentItemVO[],
+  sourceItem: TableOfContentItemVO,
+) => {
+  const isCross =
+    sourceItem.tocItem.aknTag === 'CROSS_HEADING' ||
+    sourceItem.tocItem.aknTag === 'BLOCK';
+  const parentItem = findNodeById(toc, sourceItem.parentItem);
+  if (isCross && parentItem.tocItem.aknTag === 'MAIN_BODY') {
+    sourceItem.isBlock = true;
+  } else if (isCross) {
+    sourceItem.isCrossHeading = true;
+  }
+  if (isCross && isInList) {
+    sourceItem.isCrossHeadingInList = true;
+  }
+};
+
+export const isInList = (
+  toc: TableOfContentItemVO[],
+  sourceItem: TableOfContentItemVO,
+): boolean => {
+  const parent = findNodeById(toc, sourceItem.parentItem);
+  if (parent != null) {
+    if (parent.tocItem.aknTag === 'LIST') {
+      return true;
+    }
+    for (const item of parent.childItems) {
+      if (item.tocItem.aknTag === 'POINT' || item.tocItem.aknTag === 'INDENT')
+        return true;
+    }
+  }
+
+  return false;
+};
+
+export const handleLevelMove = (
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+) => {
+  if (
+    sourceItem.tocItem.aknTag === 'LEVEL' &&
+    targetItem.tocItem.aknTag === 'LEVEL'
+  )
+    sourceItem.itemDepth = targetItem.itemDepth;
+};
+
+const flattened = (node: TableOfContentItemVO): TableOfContentItemVO[] => {
+  const childItemsFlat = node.childItems.flatMap((child) =>
+    child.childItems.flatMap((l) => flattened(l)),
+  );
+  return [node, ...childItemsFlat];
+};
+
+export const updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
+  const tocItems = list
+    .flatMap((l) => flattened(l))
+    .filter(
+      (tocItemVO: TableOfContentItemVO) => tocItemVO.tocItem.aknTag === 'LEVEL',
+    );
+
+  for (let index = 0; index < tocItems.length; index++) {
+    const item = tocItems.at(index);
+    if (index !== 0) {
+      const previousDepth = tocItems.at(index - 1).itemDepth;
+      let depth = item.itemDepth;
+      if (depth - previousDepth > 1) {
+        depth = previousDepth + 1;
+      }
+      const numOrigin = item.originNumAttr;
+      if (numOrigin == null || numOrigin === 'CN') {
+        item.itemDepth = depth;
+      }
+    }
+  }
+};
+
+export const addOrMoveItem = (
+  isAdd: boolean,
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+  toc: TableOfContentItemVO[],
+  actualTargetItem: TableOfContentItemVO,
+  position: string,
+) => {
+  if (isAdd) {
+    if (actualTargetItem) {
+      sourceItem.itemDepth = 1;
+      sourceItem.parentItem = null;
+    } else if (sourceItem.parentItem) {
+      sourceItem.originalDepthLevel = sourceItem.itemDepth;
+    }
+  }
+  setItemDepth(sourceItem, targetItem, position);
+  setItemLevel(toc, sourceItem, targetItem, position);
+};
+
+const setItemDepth = (
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+  position: string,
+) => {
+  if (sourceItem.tocItem.higherElement || targetItem.tocItem.higherElement) {
+    setItemDepthInHigherElements(sourceItem, targetItem);
+  } else {
+    switch (position) {
+      case 'AFTER':
+        if (targetItem.tocItem.root) {
+          sourceItem.itemDepth = 1;
+        } else
+          sourceItem.itemDepth =
+            targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
+        break;
+      case 'BEFORE':
+        sourceItem.itemDepth =
+          targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
+        break;
+      case 'AS_CHILDREN':
+        sourceItem.itemDepth = targetItem.itemDepth + 1;
+        break;
+    }
+  }
+};
+
+const setItemDepthInHigherElements = (
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+) => {
+  sourceItem.itemDepth = targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
+  sourceItem.childItems.forEach((c) =>
+    setItemDepthInHigherElements(c, targetItem),
+  );
+};
+
+const setItemLevel = (
+  toc: TableOfContentItemVO[],
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+  position: string,
+) => {
+  const targetItemLevel = 0;
+  getItemIndentLevel(toc, targetItem, targetItemLevel, [
+    'LEVEL',
+    'PARAGRAPH',
+    'INDENT',
+    'POINT',
+  ]);
+
+  switch (position) {
+    case 'AS_CHILDREN':
+      if (targetItem.tocItem.root) {
+        sourceItem.indentLevel = 0;
+      } else if (
+        ['LEVEL', 'PARAGRAPH', 'INDENT', 'POINT'].includes(
+          targetItem.tocItem.aknTag,
+        )
+      ) {
+        sourceItem.indentLevel = targetItemLevel + 1;
+      } else {
+        sourceItem.indentLevel = targetItemLevel;
+      }
+      break;
+    case 'BEFORE':
+      sourceItem.indentLevel = targetItemLevel;
+      break;
+    case 'AFTER':
+      if (targetItem.tocItem.root) {
+        sourceItem.indentLevel = 0;
+      } else {
+        sourceItem.indentLevel = targetItemLevel;
+      }
   }
 };

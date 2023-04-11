@@ -274,6 +274,8 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
+          this.documentTocComponent.isToCDraft = false;
+          this.documentTocComponent.treeHistory = [];
           this.documentService.setDocumentId(this.documentRef);
           // this.documentTocComponent.setTree(res);
         },
@@ -328,6 +330,14 @@ export class DocumentEditorComponent
       }
       this.documentTocComponent.treeHistory = [];
     }
+    this.documentTocComponent.messageFromValidation = null;
+    this.documentTocComponent.isDropValid = null;
+    this.isEditMode = false;
+  }
+
+  handleSaveAndClose() {
+    this.handleSave();
+    this.documentTocComponent.treeHistory = [];
     this.documentTocComponent.messageFromValidation = null;
     this.documentTocComponent.isDropValid = null;
     this.isEditMode = false;

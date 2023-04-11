@@ -87,6 +87,15 @@
               euiButton
               euiBasicButton
               class="eui-u-mr-s"
+              [disabled]="disableSaveButton()"
+              (click)="handleSaveAndClose()"
+            >
+              {{ 'global.actions.save-close' | translate }}
+            </button>
+            <button
+              euiButton
+              euiBasicButton
+              class="eui-u-mr-s"
               (click)="handleCancel()"
             >
               {{ 'global.actions.cancel' | translate }}

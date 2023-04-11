@@ -20,6 +20,8 @@ export class TableOfContentItemVO {
   parentItem: string;
   softActionAttr: string;
   isSoftActionRoot: string;
+  numSoftActionAttr: string;
+  headingSoftActionAttr: string;
   softMoveTo: string;
   softMoveFrom: string;
   softTransFrom: string;

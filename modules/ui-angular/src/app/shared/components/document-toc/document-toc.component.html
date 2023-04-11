@@ -228,9 +228,10 @@
               }}</label
               ><input
                 euiInputText
-                type="text"
+                type="number"
                 [disabled]="!isItemNumberEditable(this.selectedNode.tocItem)"
                 [(ngModel)]="number"
+                (ngModelChange)="handleNumberChange($event)"
               />
             </div>
           </div>
