@@ -272,6 +272,20 @@ export class ProposalDetailsService {
       .subscribe((val) => this.getProposalMilestones(documentRef));
   }
 
+  updateExplanatoryTitle(docId: string, title: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .put<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/update-explanatory-title/${docId}`,
+        {},
+        { params: { title } },
+      )
+      .subscribe((val) => {
+        this.setProposalRef(this.proposalRef);
+        this.loadingService.setLoading(false);
+      });
+  }
+
   deleteExplanatory(proposalRef: string, explanatoryRef: string) {
     return this.http.delete<any>(
       `${apiBaseUrl}/secured/proposal/${proposalRef}/deleteExplanatory/${explanatoryRef}`,

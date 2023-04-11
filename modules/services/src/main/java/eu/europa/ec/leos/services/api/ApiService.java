@@ -84,5 +84,7 @@ public interface ApiService {
 
     void updateAnnexTitle(String proposalRef, String annexId, String annexTitle);
 
+    void updateExplanatoryTitle(String proposalRef, String docId, String title);
+
     LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception;
 }

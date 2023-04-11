@@ -30,7 +30,7 @@
         <ng-container *appUserHasPermission="['CAN_DELETE']">
           <li euiListItem (click)="handleConfirmationDelete()">
             <button euiListItem euiDanger>
-              {{ 'page.collection.actions-dropdown.delete' | translate }}
+              {{ 'global.actions.delete' | translate }}
             </button>
             <app-confirm-delete-dialog
               #proposalDeleteConf

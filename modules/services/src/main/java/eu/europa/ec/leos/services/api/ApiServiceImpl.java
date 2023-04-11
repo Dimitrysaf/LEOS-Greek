@@ -844,6 +844,14 @@ public class ApiServiceImpl implements ApiService {
         annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
     }
 
+    @Override
+    public void updateExplanatoryTitle(String proposalRef, String docId, String title) {
+        Explanatory explanatory = explanatoryService.findExplanatory(docId);
+        ExplanatoryMetadata metadata = explanatory.getMetadata().getOrError(() -> "Explanatory metadata not found!");
+        ExplanatoryMetadata updatedMetadata = metadata.builder().withTitle(title).build();
+        explanatoryService.updateExplanatory(explanatory, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
+    }
+
     private void createMajorVersions(String proposalRef, String milestoneComment, String versionComment, CollectionContextService context) {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         context.useProposal(proposal);

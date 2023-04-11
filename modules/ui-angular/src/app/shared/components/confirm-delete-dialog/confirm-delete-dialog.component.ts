@@ -21,10 +21,6 @@ export class ConfirmDeleteDialogComponent implements OnInit {
 
   @ViewChild('deleteDialog') deleteDialog: EuiDialogComponent;
 
-  get deleteDilaog(): EuiDialogComponent {
-    return this.deleteDialog;
-  }
-
   constructor() {}
 
   ngOnInit(): void {}
