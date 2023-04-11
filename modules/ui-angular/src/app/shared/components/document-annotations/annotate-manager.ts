@@ -97,6 +97,13 @@ export class AnnotateManager {
     });
   }
 
+  /** Refreshes the sidebar content, the document highlights and the lines. */
+  refresh() {
+    if (this.connector) {
+      this.connector.getState().dirtyTimestamp += 1;
+    }
+  }
+
   private createConnectorState() {
     return this.appConfig.config.pipe(
       map(

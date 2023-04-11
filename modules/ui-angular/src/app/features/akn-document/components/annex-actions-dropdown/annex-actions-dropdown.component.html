@@ -9,10 +9,7 @@
       ></span>
     </button>
     <eui-dropdown-content>
-      <ul euiList>
-        <div class="actions-menu-dividers">
-          {{ 'page.editor.actions-dropdown.label-versions' | translate }}
-        </div>
+      <ul euiList class="eui-list--with-line-separators">
         <li euiListItem (click)="openVersionModal()">
           <button
             euiListItem
@@ -64,9 +61,6 @@
           ></button>
         </li>
         <ng-container *ngIf="importerVisible">
-          <div class="actions-menu-dividers">
-            {{ 'page.editor.actions-dropdown.label-import' | translate }}
-          </div>
           <li euiListItem (click)="importDialog.open()">
             <button
               euiListItem
@@ -74,9 +68,6 @@
             ></button>
           </li>
         </ng-container>
-        <div class="actions-menu-dividers">
-          {{ 'page.editor.actions-dropdown.label-view' | translate }}
-        </div>
         <li euiListItem (click)="ckEditorService.toogleUserGuidance()">
           <button euiListItem>
             {{
@@ -94,9 +85,6 @@
             [disabled]="(doc.navigationPaneCollapse$ | async) === false"
           ></button>
         </li>
-        <div class="actions-menu-dividers">
-          {{ 'page.editor.actions-dropdown.label-extra' | translate }}
-        </div>
         <li
           euiListItem
           (click)="doc.renumberDocument()"
