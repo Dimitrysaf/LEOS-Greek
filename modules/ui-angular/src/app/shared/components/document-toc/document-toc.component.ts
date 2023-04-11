@@ -32,6 +32,8 @@ import { NodeValidationResponse } from '@/shared/models/drop-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
+  checkPositionAfterValidation,
+  checkPositionAfterValidationExplanatory,
   convertArticle,
   getItemIndentLevel,
   getNumberingConfig,
@@ -42,15 +44,6 @@ import {
 import { TableOfContentItemVO, TocItem } from '../../models/toc.model';
 
 const MAX_LABEL_TREE_LENGTH = 50;
-interface TocUpdate {
-  item: TableOfContentItemVO;
-  actionOnItem: string;
-}
-
-interface TocUpdateValue {
-  originalValue: any;
-  newValue: any;
-}
 
 const NUMBERED = 'Numbered';
 const UNNUMBERED = 'Unnumbered';
@@ -227,8 +220,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   hanldeTocRemove() {
     const newTree = cloneDeep(this.treeControl.dataNodes);
     //TODO : handle if a node can remove or not show message
-    if (this.selectedNodeToMove.tocItem.deletable) {
+    if (this.selectedNodeToMove && this.selectedNodeToMove.tocItem.deletable) {
       this.removeNode(newTree, this.selectedNodeToMove);
+      this.treeHistory.push(this.treeControl.dataNodes);
+      this.documentService.setToc(newTree);
+      this.selectedNodeToMove = null;
+    }
+    if (this.selectedNode && this.selectedNode.tocItem.deletable) {
+      this.removeNode(newTree, this.selectedNode);
       this.treeHistory.push(this.treeControl.dataNodes);
       this.documentService.setToc(newTree);
       this.selectedNode = null;
@@ -242,7 +241,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.heading = node.heading;
     this.type = this.getDisplayableTocItem(node.tocItem);
     this.number = node.number;
-    this.tocType = node.tocItemType.toLocaleLowerCase();
+    this.tocType = node.tocItemType?.toLowerCase();
     if (this.isDivision(node.tocItem)) {
       this.active_division_style = node.style;
       this.possibleDivisionType = this.getDivisionTypesToEnable(
@@ -422,6 +421,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.treeHistory.push(this.treeControl.dataNodes);
     this.setTree(newTree);
   }
+
   handleIndentListRadioButtonGroupChange(event) {
     const { value } = event.target;
     const oldValue = this.selectedNode.tocItem.numberingType;
@@ -726,13 +726,23 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
             // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
             // so the resutl.success will now mean that it can be dropped as a sibling
             if (position === 'AS_CHILDREN') {
-              position = this.checkPositionAfterValidation(
-                nodeTarget,
-                nodeDragged,
-                position,
-              );
+              console.log(this.documentType);
+              switch (this.documentType) {
+                case 'council_explanatory':
+                  position = checkPositionAfterValidationExplanatory(
+                    nodeTarget,
+                    nodeDragged,
+                    position,
+                  );
+                  break;
+                default:
+                  position = checkPositionAfterValidation(
+                    nodeTarget,
+                    nodeDragged,
+                    position,
+                  );
+              }
             }
-            console.log('after check ', position);
             try {
               switch (position) {
                 case 'AFTER':
@@ -766,106 +776,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           this.clearDragInfo(true);
         },
       });
-  }
-
-  private checkPositionAfterValidation(
-    nodeTarget: TableOfContentItemVO,
-    nodeDragged: TableOfContentItemVO,
-    position: string,
-  ) {
-    //TODO add cn rules
-    switch (nodeDragged.tocItem.aknTag) {
-      case 'CITATION': {
-        if (['CITATIONS'].includes(nodeTarget.tocItem.aknTag)) return position;
-        if (['CITATION'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
-        return position;
-      }
-      case 'RECITAL': {
-        if (['RECITALS'].includes(nodeTarget.tocItem.aknTag)) return position;
-        if (['RECITAL'].includes(nodeTarget.tocItem.aknTag)) return 'AFTER';
-        break;
-      }
-      case 'PART': {
-        if (['BODY'].includes(nodeTarget.tocItem.aknTag)) return position;
-        if (
-          ['PART', 'TITLE', ' CHAPTER', 'SECTION', 'ARTICLE'].includes(
-            nodeTarget.tocItem.aknTag,
-          )
-        )
-          return 'AFTER';
-        return position;
-      }
-      case 'TITLE': {
-        if (['BODY', 'PART'].includes(nodeTarget.tocItem.aknTag))
-          return position;
-        if (
-          ['TITLE', 'CHAPTER', 'SECTION', 'ARTICLE', 'LEVEL'].includes(
-            nodeTarget.tocItem.aknTag,
-          )
-        )
-          return 'AFTER';
-        return position;
-      }
-      case 'CHAPTER': {
-        if (['BODY', 'PART', 'TITLE'].includes(nodeTarget.tocItem.aknTag))
-          return position;
-        if (
-          ['CHAPTER', 'SECTION', 'ARTICLE', 'LEVEL'].includes(
-            nodeTarget.tocItem.aknTag,
-          )
-        )
-          return 'AFTER';
-        return position;
-      }
-      case 'SECTION': {
-        if (
-          ['BODY', 'PART', 'TITLE', 'CHAPTER'].includes(
-            nodeTarget.tocItem.aknTag,
-          )
-        )
-          return position;
-        if (['SECTION', 'ARTICLE', 'LEVEL'].includes(nodeTarget.tocItem.aknTag))
-          return 'AFTER';
-        return position;
-      }
-      case 'ARTICLE': {
-        if (
-          ['PART', 'BODY', 'TITLE', 'CHAPTER', 'SECTION'].includes(
-            nodeTarget.tocItem.aknTag,
-          )
-        )
-          return position;
-        if (['ARTICLE']) return 'AFTER';
-        return position;
-      }
-      case 'PARAGRAPH': {
-        if (
-          ['ARTICLE', 'PARAGRAPH', 'LEVEL'].includes(nodeTarget.tocItem.aknTag)
-        )
-          return 'AFTER';
-        return position;
-      }
-      case 'SUBPARAGRAPH': {
-        if (['PARAGRAPH', 'POINT'].includes(nodeTarget.tocItem.aknTag))
-          return position;
-        if (['SUBPARAGRAPH'].includes(nodeTarget.tocItem.aknTag))
-          return 'AFTER';
-        return position;
-      }
-      case 'LEVEL': {
-        if (
-          ['SUBPARAGRAPH', 'SECTION', 'CHAPTER', 'TITLE', 'PART'].includes(
-            nodeTarget.tocItem.aknTag,
-          )
-        )
-          return position;
-        if (['LEVEL', 'PARAGRAPH'].includes(nodeTarget.tocItem.aknTag))
-          return 'AFTER';
-        return position;
-      }
-      default:
-        return position;
-    }
   }
 
   private getDivisionTypesToEnable(previousDivisionType) {
@@ -1003,6 +913,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   ) {
     //clone the tree
     const newTree = cloneDeep(this.treeControl.dataNodes);
+    if (isAdd) {
+      this.addDefaultToNewItem(eventItem);
+    }
     //remove the node from the tree
     if (!isAdd) this.removeNode(newTree, eventItem);
     //get parent of the node droped / to moved at
@@ -1098,14 +1011,29 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTreeNestedDataSource();
     this.dataSource.data = toc;
     this.treeControl.dataNodes = this.dataSource.data;
-    if (toc) for (const nodes of toc) this.defaultExpanded(nodes);
-    this.restoreExpanded();
+    //expand the default nodes if the expanded state is empty
+    if (toc && this.expandedNodes && this.expandedNodes.length === 0)
+      for (const nodes of toc) this.defaultExpanded(nodes);
+    else this.restoreExpanded();
   }
 
   private defaultExpanded(node: TableOfContentItemVO) {
     if (node.tocItem.expandedByDefault) this.treeControl.expand(node);
     if (node.childItems) {
       for (const n of node.childItems) this.defaultExpanded(n);
+    }
+  }
+
+  private addDefaultToNewItem(eventItem: TableOfContentItemVO) {
+    switch (eventItem.tocItem.aknTag) {
+      case 'DIVISION': {
+        eventItem.style = 'type_1';
+        break;
+      }
+      case 'CROSS_HEADING': {
+        eventItem.tocItem.numberingType = 'NONE';
+        break;
+      }
     }
   }
 }

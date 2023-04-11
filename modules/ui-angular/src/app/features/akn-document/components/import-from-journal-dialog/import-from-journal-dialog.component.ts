@@ -41,8 +41,7 @@ export class ImportFromJournalDialogComponent implements OnInit {
     private translateService: TranslateService,
   ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   open() {
     this.importManager = new ImportManager(
