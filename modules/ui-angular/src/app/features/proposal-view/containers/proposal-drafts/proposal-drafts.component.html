@@ -234,7 +234,7 @@
         ></app-co-edition-info>
         <a
           [routerLink]="['/document', document.metadata.internalRef]"
-          (click)="$event.preventDefault()"
+          (click)="$event.stopPropagation()"
           ><strong>{{
             'page.collection.drafts.legal-act' | translate
           }}</strong></a
