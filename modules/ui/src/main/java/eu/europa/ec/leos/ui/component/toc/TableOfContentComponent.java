@@ -866,7 +866,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         if (tocUpdates.containsKey(tocUpdate)) {
             TocUpdateValue storedTocUpdateValue = tocUpdates.get(tocUpdate);
             originalValue = storedTocUpdateValue.getOriginalValue();
-            if (originalValue.equals(newValue)) {
+            if (originalValue != null && originalValue.equals(newValue)) {
                 tocUpdates.remove(tocUpdate);
             } else {
                 tocUpdates.replace(tocUpdate, new TocUpdateValue(originalValue, newValue));

@@ -14,7 +14,6 @@
 
 package eu.europa.ec.leos.services.controllers;
 
-
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -39,16 +38,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -166,9 +165,7 @@ public class BillController {
             LOG.error("Error occurred while saving toc - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while saving toc recent", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -195,7 +192,6 @@ public class BillController {
             LOG.error("Error occurred while getting bill toc items - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting bill toc items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -14,12 +14,9 @@ package eu.europa.ec.leos.services.request;
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-
-import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
-import java.util.Set;
 
 public class SaveTocRequestEvent {
     private List<TableOfContentItemVO> tableOfContentItemVOs;
