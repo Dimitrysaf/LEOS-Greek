@@ -16,7 +16,9 @@ package eu.europa.ec.leos.services.exception.advice;
 
 
 import eu.europa.ec.leos.services.controllers.AnnexController;
+import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
+import eu.europa.ec.leos.services.exception.ImportElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,6 +47,13 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleCollaboratorException(CollaboratorException exception) {
         LOG.info(" ---- Controller Advice --- handle CollaborationException: {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(ImportElementException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleImportElementException(ImportElementException exception) {
+        LOG.info(" ---- Controller Advice --- handle ImportElementException: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 

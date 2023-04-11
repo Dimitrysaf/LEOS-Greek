@@ -63,15 +63,17 @@
             translate="page.editor.actions-dropdown.download-econsilium"
           ></button>
         </li>
-        <div class="actions-menu-dividers">
-          {{ 'page.editor.actions-dropdown.label-import' | translate }}
-        </div>
-        <li euiListItem (click)="doc.import()">
-          <button
-            euiListItem
-            translate="page.editor.actions-dropdown.import"
-          ></button>
-        </li>
+        <ng-container *ngIf="importerVisible">
+          <div class="actions-menu-dividers">
+            {{ 'page.editor.actions-dropdown.label-import' | translate }}
+          </div>
+          <li euiListItem (click)="importDialog.open()">
+            <button
+              euiListItem
+              translate="page.editor.actions-dropdown.import"
+            ></button>
+          </li>
+        </ng-container>
         <div class="actions-menu-dividers">
           {{ 'page.editor.actions-dropdown.label-view' | translate }}
         </div>
@@ -158,3 +160,5 @@
 </eui-dialog>
 
 <app-download-econsilium-modal #eConsiliumModal></app-download-econsilium-modal>
+
+<app-import-from-journal-dialog #importDialog></app-import-from-journal-dialog>

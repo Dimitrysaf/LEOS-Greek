@@ -321,10 +321,6 @@ export class DocumentService implements OnDestroy {
       .pipe(take(1));
   }
 
-  import() {
-    console.warn('stub:', 'import'); // FIXME
-  }
-
   reloadDocument() {
     this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentId(this.documentIdBS.value);

@@ -16,10 +16,13 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.services.document.models.DocType;
+import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 
 public interface BillApiService extends BaseDocumentService<Bill> {
     public DocumentViewResponse renumberBill(String documentRef);
 
     public String searchForImport(Integer number, Integer year, DocType type);
+
+    public DocumentViewResponse importElements(String documentRef, ImportElementRequest importElementRequest);
 }

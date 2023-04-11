@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -46,10 +47,12 @@ import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.models.DocType;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.exception.ImportElementException;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -156,8 +159,8 @@ public class BillApiServiceImpl implements BillApiService {
 
     @Override
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
-        Bill annex = this.billService.findBillByRef(documentRef);
-        Bill newVersion = this.billService.createVersion(annex.getId(), versionType, checkInComment);
+        Bill bill = this.billService.findBillByRef(documentRef);
+        Bill newVersion = this.billService.createVersion(bill.getId(), versionType, checkInComment);
         return this.getVersionsData(documentRef);
     }
 
@@ -318,16 +321,16 @@ public class BillApiServiceImpl implements BillApiService {
 
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
-        Bill annex = this.billService.findBillByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         List<TocItem> tocItems = this.structureContext.get().getTocItems();
         List<NumberingConfig> numberConfigs = this.structureContext.get().getNumberingConfigs();
         List<AlternateConfig> alternateConfigs = this.structureContext.get().getAlternateConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getId());
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, alternateConfigs, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef()
+                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef()
         );
     }
 
@@ -350,7 +353,27 @@ public class BillApiServiceImpl implements BillApiService {
             }
         } catch (Exception e) {
             LOG.error("Unable to perform searchAct operation", e);
-            return null;
+            throw new ImportElementException("Search returned with no result! Please modify the search parameters");
+        }
+    }
+
+    @Override
+    public DocumentViewResponse importElements(String documentRef, ImportElementRequest importElementRequest) throws ImportElementException {
+        List<String> elementIds = importElementRequest.getElementIds();
+        String aknDocument = importService.getAknDocument(importElementRequest.getType().getValue(), Integer.parseInt(importElementRequest.getYear()),
+                Integer.parseInt(importElementRequest.getNumber()));
+        if (aknDocument != null) {
+            Bill bill = billService.findBillByRef(documentRef);
+            this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+            BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
+            byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds,
+                    metadata.getLanguage());
+            String notificationMsg = "document.import.element.inserted" + (elementIds.stream().anyMatch((s) -> s.startsWith("rec_")) ? ".recitals" : "") +
+                    (elementIds.stream().anyMatch((s) -> s.startsWith("art_")) ? ".articles" : "");
+            bill = billService.updateBill(bill, newXmlContent, notificationMsg);
+            return this.documentViewService.getDocumentView(bill);
+        } else {
+            throw new ImportElementException("Search returned with no result! Please modify the search parameters");
         }
     }
 
@@ -388,7 +411,7 @@ public class BillApiServiceImpl implements BillApiService {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         final Bill bill = this.billService.findBillByRef(documentRef);
-        
+
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
 
         final byte[] newXmlContent = billProcessor.renumberDocument(bill);
@@ -452,7 +475,7 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        this.setStructureContext(bill.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = this.billProcessor.insertNewElement(bill, elementId, position.equals(Position.BEFORE), elementName);
         final String title = messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage("operation.checkin.minor");
@@ -507,7 +530,7 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        this.setStructureContext(bill.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         return this.structureContext.get().getTocItems();
     }
 
@@ -519,7 +542,7 @@ public class BillApiServiceImpl implements BillApiService {
 
 
     private byte[] getContent(Bill bill) {
-        final Content content = bill.getContent().getOrError(() -> "Annex content is required!");
+        final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         return content.getSource().getBytes();
     }
 

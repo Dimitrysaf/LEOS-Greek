@@ -15,11 +15,11 @@
 package eu.europa.ec.leos.services.controllers;
 
 
-import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.BillApiService;
+import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -373,7 +373,7 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/search-for-import", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{documentRef}/search-for-import", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> searchForImportFromJournal(@PathVariable("documentRef") String documentRef,
                                                              @RequestBody SearchForImportCriteriaRequest searchForImportCriteriaRequest) {
@@ -432,6 +432,13 @@ public class BillController {
             LOG.error("Error occurred  while trying to get  clean version for bill " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while trying to get clean version for bill", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping(value = "/{documentRef}/import-elements", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> importElements(@PathVariable("documentRef") String documentRef, @RequestBody ImportElementRequest request) {
+        DocumentViewResponse view = this.billApiService.importElements(documentRef, request);
+        return ResponseEntity.ok().body(view);
     }
 
 

@@ -15,6 +15,7 @@ import { VersionActionsDropdownComponent } from './components/version-actions-dr
 import { VersionsPaneGroupComponent } from './components/versions-pane-group/versions-pane-group.component';
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
+import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     VersionsPaneGroupComponent,
     DocumentEditorComponent,
     DownloadEconsiliumModalComponent,
+    ImportFromJournalDialogComponent,
   ],
   imports: [
     SharedModule,
