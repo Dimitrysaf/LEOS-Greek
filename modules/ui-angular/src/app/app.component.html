@@ -2,12 +2,19 @@
   <eui-app-toolbar>
     <eui-toolbar>
       <eui-toolbar-items style="margin-left: 0">
-        <eui-toolbar-logo *ngIf="!headerLogoUrl"></eui-toolbar-logo>
-        <img
-          class="eui-toolbar-logo eui-toolbar-logo--custom"
-          [src]="headerLogoUrl"
-          *ngIf="headerLogoUrl"
-        />
+        <eui-toolbar-logo
+          *ngIf="!headerLogoImgUrl"
+          [homeUrl]="headerLogoUrl"
+        ></eui-toolbar-logo>
+        <a [href]="headerLogoUrl" *ngIf="headerLogoImgUrl"
+          ><img
+            class="eui-toolbar-logo eui-toolbar-logo--custom"
+            [alt]="
+              'app.header.logo-alt'
+                | translate: { title: headerTitleHtml | htmlToPlaintext }
+            "
+            [src]="headerLogoImgUrl"
+        /></a>
         <div class="eui-toolbar-app" [innerHTML]="headerTitleHtml"></div>
       </eui-toolbar-items>
       <eui-toolbar-items euiPositionRight>

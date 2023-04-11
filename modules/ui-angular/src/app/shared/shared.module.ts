@@ -18,6 +18,7 @@ import { ProposalCreateFormComponent } from './components/proposal-create-form/p
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
+import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import { UserHasPermissionDirective } from './directives/userHasPermission.direc
     ConfirmDeleteDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
+    HtmlToPlaintextPipe,
   ],
   exports: [
     UxAllModule,
@@ -62,6 +64,7 @@ import { UserHasPermissionDirective } from './directives/userHasPermission.direc
     ConfirmDeleteDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
+    HtmlToPlaintextPipe,
   ],
 })
 export class SharedModule {}

@@ -24,7 +24,8 @@ import { CoEditionServiceWS } from './shared/services/coEdition.websocket.servic
 })
 export class AppComponent implements OnInit, OnDestroy {
   headerTitleHtml = '';
-  headerLogoUrl =
+  headerLogoUrl = document.baseURI;
+  headerLogoImgUrl =
     process.env.NG_APP_LEOS_INSTANCE === 'cn'
       ? 'assets/images/logo-cn-w.svg'
       : '';

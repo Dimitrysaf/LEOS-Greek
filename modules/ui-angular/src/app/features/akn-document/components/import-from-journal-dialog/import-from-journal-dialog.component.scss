@@ -1,7 +1,7 @@
 @import 'node_modules/@eui/styles-base/src/styles/base';
 @import 'node_modules/@eui/styles/src/styles/02-base/mixins/eui-scrollbars';
-@import '/media/work/projects/cri-DIGIT-SM-18/dev/leos/modules/ui/src/main/resources/VAADIN/themes/leos/_common.scss';
-@import '/media/work/projects/cri-DIGIT-SM-18/dev/leos/modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_import.scss';
+@import 'modules/ui/src/main/resources/VAADIN/themes/leos/_common.scss';
+@import 'modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_import.scss';
 
 .dialog-body {
   display: flex;

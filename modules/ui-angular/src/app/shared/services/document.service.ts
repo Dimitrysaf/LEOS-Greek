@@ -135,12 +135,15 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
   ) {
     this.documentId$ = this.documentIdBS.asObservable();
+    const documentRefNotNull$ = this.documentId$.pipe(filter(Boolean));
     this.documentCategory$ = this.documentCategoryBS.asObservable();
+    const documentCategoryNotNull$ = this.documentCategory$.pipe(
+      filter(Boolean),
+    );
     this.tocItems$ = this.tocItemBS.asObservable();
 
-    this.documentView$ = this.documentId$.pipe(
-      filter(Boolean), // skip null values
-      combineLatestWith(this.documentCategory$),
+    this.documentView$ = documentRefNotNull$.pipe(
+      combineLatestWith(documentCategoryNotNull$),
       switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
     );
     // this.documentView$ = this.documentReplaceView$.pipe();
@@ -159,26 +162,26 @@ export class DocumentService implements OnDestroy {
     this.versionSearchParams$ = this.versionSearchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
-    this.versions$ = this.documentId$.pipe(
-      combineLatestWith(this.documentCategory$),
+    this.versions$ = documentRefNotNull$.pipe(
+      combineLatestWith(documentCategoryNotNull$),
       mergeMap(([ref, category]) =>
         this.getDocumentVersionsData(category, ref),
       ),
     );
 
-    this.documentConfig$ = this.documentId$.pipe(
-      combineLatestWith(this.documentCategory$),
+    this.documentConfig$ = documentRefNotNull$.pipe(
+      combineLatestWith(documentCategoryNotNull$),
       mergeMap(([ref, category]) => this.getDocumentConfig(ref, category)),
     );
 
-    this.recentChanges$ = this.documentId$.pipe(
-      combineLatestWith(this.documentCategory$),
+    this.recentChanges$ = documentRefNotNull$.pipe(
+      combineLatestWith(documentCategoryNotNull$),
       mergeMap(([ref, category]) =>
         this.getDocumentRecentChangesData(category, ref),
       ),
     );
 
-    this.toc$ = this.documentId$.pipe(switchMap((ref) => this.getToc(ref)));
+    this.toc$ = documentRefNotNull$.pipe(switchMap((ref) => this.getToc(ref)));
 
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
