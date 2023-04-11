@@ -552,6 +552,9 @@ public class XercesUtils {
     }
 
     public static Node importNodeInDocument(Document document, Node node) {
+        if(node.getNodeType() == Node.DOCUMENT_NODE) {
+            node = node.getFirstChild();
+        }
         return document.importNode(node, true);
     }
 
