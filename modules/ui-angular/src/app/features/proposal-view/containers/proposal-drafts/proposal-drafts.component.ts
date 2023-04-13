@@ -182,8 +182,8 @@ export class ProposalDraftsComponent
     this.explanatories = this.proposal.childDocuments.filter(
       (d) => d.category === 'COUNCIL_EXPLANATORY',
     );
-    this.annexes = this.document.childDocuments.filter(
-      (d) => d.category === 'ANNEX',
-    );
+    this.annexes =
+      this.document?.childDocuments.filter((d) => d.category === 'ANNEX') ??
+      null;
   }
 }

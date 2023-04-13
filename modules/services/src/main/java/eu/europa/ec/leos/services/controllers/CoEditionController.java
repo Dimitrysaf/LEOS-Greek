@@ -55,9 +55,12 @@ public class CoEditionController {
         GenericMessage message = (GenericMessage) event.getMessage();
         String simpDestination = (String) message.getHeaders().get("simpDestination");
 
-        if (simpDestination.startsWith("/topic/document")) {
+
+        // handle subscription for all the documents
+        if (simpDestination.equals("/topic/document")) {
             simpMessagingTemplate.convertAndSend("/topic/document", this.coEditionService.getAllEditInfo());
         }
+        // handle subscription for specific document
         if (simpDestination.startsWith("/topic/document/")) {
             String[] parts = simpDestination.split("/");
             String documentId = parts[3];
@@ -115,9 +118,10 @@ public class CoEditionController {
     public void removeSession(Message<CoEditionRequest> message) {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received message to remove session {} ", event.getSessionId());
-        this.coEditionService.removeUserEditInfo(event.getSessionId());
+        CoEditionActionInfo coEditionActionInfo = this.coEditionService.removeUserEditInfo(event.getSessionId());
         simpMessagingTemplate.convertAndSend("/topic/document", this.coEditionService.getAllEditInfo());
-        simpMessagingTemplate.convertAndSend("/topic/document/" + event.getDocumentId(), this.coEditionService.getCurrentEditInfo(event.getDocumentId()));
-
+        if (coEditionActionInfo.sucesss()) {
+            simpMessagingTemplate.convertAndSend("/topic/document/" + event.getDocumentId(), coEditionActionInfo.getCoEditionVos());
+        }
     }
 }

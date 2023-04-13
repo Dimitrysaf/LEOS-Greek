@@ -6,8 +6,8 @@
         <a
           [routerLink]="['/coverpage', proposalRef]"
           (click)="$event.preventDefault()"
-          ><strong>{{
-            'page.collection.drafts.coverPage' | translate
+        ><strong>{{
+          'page.collection.drafts.coverPage' | translate
           }}</strong></a
         >
         <app-co-edition-info [documentCoEditions]="null"></app-co-edition-info>
@@ -38,8 +38,8 @@
         <a
           [routerLink]="['/memorandum', memorandum.metadata.internalRef]"
           (click)="$event.preventDefault()"
-          ><strong>{{
-            'page.collection.drafts.explanatory-memorandum' | translate
+        ><strong>{{
+          'page.collection.drafts.explanatory-memorandum' | translate
           }}</strong></a
         >
       </div>
@@ -60,13 +60,18 @@
   <eui-card class="eui-u-mt-s eui-u-mb-l">
     <eui-card-header>
       <eui-card-header-title>
-        <a
-          [routerLink]="['/explanatory', proposalRef]"
-          (click)="$event.preventDefault()"
+        <div class="d-flex flex-row">
+          <a
+            [routerLink]="['/explanatory', proposalRef]"
+            (click)="$event.preventDefault()"
           ><strong>{{
             'page.collection.drafts.explanatory' | translate
-          }}</strong></a
-        >
+            }}</strong></a
+          >
+          <app-co-edition-info
+            [documentCoEditions]="null"
+          ></app-co-edition-info>
+        </div>
       </eui-card-header-title>
       <eui-card-header-right-content>
         <button euiButton euiPrimary (click)="handleCreateDraft()">
@@ -96,24 +101,24 @@
             </th>
             <th>
               {{
-                'page.collection.drafts.explanatory.table.language' | translate
+              'page.collection.drafts.explanatory.table.language' | translate
               }}
             </th>
             <th>
               {{
-                'page.collection.drafts.explanatory.table.last-updated-on'
-                  | translate
+              'page.collection.drafts.explanatory.table.last-updated-on'
+              | translate
               }}
             </th>
             <th>
               {{
-                'page.collection.drafts.explanatory.table.last-updated-by'
-                  | translate
+              'page.collection.drafts.explanatory.table.last-updated-by'
+              | translate
               }}
             </th>
             <th style="width: 0">
               {{
-                'page.collection.drafts.explanatory.table.actions' | translate
+              'page.collection.drafts.explanatory.table.actions' | translate
               }}
             </th>
           </tr>
@@ -136,7 +141,7 @@
                   *ngIf="row.title"
                   [routerLink]="['/explanatory', row.metadata.internalRef]"
                   (click)="$event.preventDefault()"
-                  ><strong>{{ row.title }}</strong></a
+                ><strong>{{ row.title }}</strong></a
                 >
               </div>
             </td>
@@ -235,8 +240,8 @@
         <a
           [routerLink]="['/document', document.metadata.internalRef]"
           (click)="$event.stopPropagation()"
-          ><strong>{{
-            'page.collection.drafts.legal-act' | translate
+        ><strong>{{
+          'page.collection.drafts.legal-act' | translate
           }}</strong></a
         >
       </div>
@@ -255,7 +260,7 @@
           <div>
             <strong>{{
               'page.collection.drafts.annex.table.title' | translate
-            }}</strong>
+              }}</strong>
           </div>
           <div *ngIf="annexes.length">
             <strong>{{ annexes.length }}</strong>
@@ -302,14 +307,14 @@
             </th>
             <th>
               {{
-                'page.collection.drafts.annex.table.tr.last-updated-by'
-                  | translate
+              'page.collection.drafts.annex.table.tr.last-updated-by'
+              | translate
               }}
             </th>
             <th>
               {{
-                'page.collection.drafts.annex.table.tr.last-updated-on'
-                  | translate
+              'page.collection.drafts.annex.table.tr.last-updated-on'
+              | translate
               }}
             </th>
             <th style="width: 0">
@@ -335,7 +340,7 @@
                   *ngIf="row.title"
                   [routerLink]="['/annex', row.metadata.internalRef]"
                   (click)="$event.preventDefault()"
-                  ><strong>{{ row.title }}</strong></a
+                ><strong>{{ row.title }}</strong></a
                 >
               </div>
               <ng-container *appUserHasPermission="['CAN_UPDATE']">
@@ -348,8 +353,8 @@
                   (click)="handleAnnexEditTitle(row)"
                 >
                   {{
-                    'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
-                      | translate
+                  'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
+                  | translate
                   }}
                 </button>
               </ng-container>
@@ -462,7 +467,7 @@
     <label class="label">
       {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
     >
-    <input euiInputText [(ngModel)]="title" />
+    <input euiInputText [(ngModel)]="title"/>
   </div>
 </eui-dialog>
 
@@ -478,7 +483,7 @@
     <label euiLabel class="label" for="explanatoryTitle">
       {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
     >
-    <input euiInputText id="explanatoryTitle" [(ngModel)]="explanatoryTitle" />
+    <input euiInputText id="explanatoryTitle" [(ngModel)]="explanatoryTitle"/>
   </div>
 </eui-dialog>
 
