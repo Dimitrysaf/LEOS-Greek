@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { getI18nState, I18nService, I18nState } from '@eui/core';
 import { ProcedureType, Role } from '@leos/shared';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { debounceTime, Subscription, take } from 'rxjs';
+import { debounceTime, Subject, Subscription, take, takeUntil } from 'rxjs';
 
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 
@@ -19,7 +21,7 @@ import { ProposalService } from '../../services/proposal.service';
   templateUrl: './proposals-filters.component.html',
   styleUrls: ['./proposals-filters.component.scss'],
 })
-export class ProposalsFiltersComponent implements OnInit {
+export class ProposalsFiltersComponent implements OnInit, OnDestroy {
   private static get emptyFilterParams(): ProposalFilter {
     return {
       searchTerm: '',
@@ -34,12 +36,32 @@ export class ProposalsFiltersComponent implements OnInit {
   form: FormGroup;
 
   private formChangesSub: Subscription;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private tranlsateService: TranslateService,
-  ) {}
+    private i18nService: I18nService,
+    private store: Store<any>,
+    private cd: ChangeDetectorRef,
+  ) {
+    //rebuild the form on language change
+    this.store
+      .select(getI18nState)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state) => {
+        this.proposalService.templateCatalog$
+          .pipe(take(1))
+          .subscribe((catalog) => {
+            this.setupFilterGroups(catalog);
+          });
+      });
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
     this.proposalService.templateCatalog$.subscribe((catalog) => {
@@ -68,8 +90,15 @@ export class ProposalsFiltersComponent implements OnInit {
     this.filterGroups = this.createFilters(catalog);
   }
 
+  private roleToOption = (role: Role): FilterOption => ({
+    id: `roles-${role}`,
+    fieldName: `roles-${role}`,
+    label: `page.workspace.filter.filters.roles.${role.toLowerCase()}`,
+    value: `roles-${role}`,
+    checked: false,
+  });
+
   private createFilters(catalog: CatalogItem[]): ProposalFilterGroup[] {
-    console.log('creating filters for', catalog);
     const catalogItemToOption =
       (group: keyof typeof groups) =>
       (item: CatalogItem): FilterOption => ({
@@ -79,34 +108,27 @@ export class ProposalsFiltersComponent implements OnInit {
         value: `${group}-${item.key}`,
         checked: false,
       });
-    const roleToOption = (role: Role): FilterOption => ({
-      id: `roles-${role}`,
-      fieldName: `roles-${role}`,
-      label: this.tranlsateService.instant(
-        `page.workspace.filter.filters.roles.${role.toLowerCase()}`,
-      ),
-      value: `roles-${role}`,
-      checked: false,
-    });
-
     const groups = this.groupFilterCatalogItems(catalog);
-
     return [
       {
-        title: 'Procedures',
+        title: this.tranlsateService.instant(
+          'page.workspace.filter.procedures',
+        ),
         filterOptions: groups.procedures.map(catalogItemToOption('procedures')),
       },
       {
-        title: 'Acts',
+        title: this.tranlsateService.instant('page.workspace.filter.acts'),
         filterOptions: groups.acts.map(catalogItemToOption('acts')),
       },
       {
-        title: 'Templates',
+        title: this.tranlsateService.instant('page.workspace.filter.templates'),
         filterOptions: groups.templates.map(catalogItemToOption('templates')),
       },
       {
-        title: 'Roles',
-        filterOptions: ['OWNER', 'CONTRIBUTOR', 'REVIEWER'].map(roleToOption),
+        title: this.tranlsateService.instant('page.workspace.filter.roles'),
+        filterOptions: ['OWNER', 'CONTRIBUTOR', 'REVIEWER'].map(
+          this.roleToOption,
+        ),
       },
     ];
   }
