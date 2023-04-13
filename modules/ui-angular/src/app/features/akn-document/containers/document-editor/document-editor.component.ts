@@ -187,7 +187,7 @@ export class DocumentEditorComponent
             summary: 'Co Edition update',
             detail: `${latestMessage.info.userName} ${this.translate.instant(
               `page.editor.co-edition-update.co-edition-${
-                latestMessage.operation === 'REMOVE' ? 'stoped' : 'started'
+                latestMessage.operation === 'REMOVE' ? 'stopped' : 'started'
               }`,
             )}`,
             life: 4000,
