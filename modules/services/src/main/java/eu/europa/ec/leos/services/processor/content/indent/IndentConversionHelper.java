@@ -1,11 +1,13 @@
 package eu.europa.ec.leos.services.processor.content.indent;
 
 import com.google.common.base.Strings;
+import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.ArrayUtils;
@@ -48,7 +50,8 @@ public class IndentConversionHelper {
     @Autowired
     TableOfContentProcessor tableOfContentProcessor;
 
-    public Pair<TableOfContentItemVO, Boolean> convertIndentedItem(List<TocItem> tocItems, TableOfContentItemVO originalItem
+    public Pair<TableOfContentItemVO, Boolean> convertIndentedItem(List<TocItem> tocItems,
+                                                                   TableOfContentItemVO originalItem
             , boolean isNumbered, IndentedItemType beforeIndentItemType, int originalIndentLevel, boolean isIndent) {
         IndentedItemType originalIndentItemType = originalItem.getIndentOriginType() == null ? beforeIndentItemType : originalItem.getIndentOriginType();
         IndentedItemType targetIndentItemType;
@@ -297,8 +300,9 @@ public class IndentConversionHelper {
         populateIndentInfoIfNotRestored(originalItem, originalIndentLevel, (notSameKind == toParagraph) ? IndentedItemType.OTHER_SUBPOINT : IndentedItemType.OTHER_SUBPARAGRAPH, restored);
 
         // Ok, checking is done, convert to point
-        TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
+        TocItem parentTocItem = getTocItemFromTagName(tocItems, originalItem, toParagraph ? PARAGRAPH : POINT);
         originalItem.setTocItem(parentTocItem);
+
         if (restored) {
             removeTransformPrefix(originalItem);
         }
@@ -333,7 +337,7 @@ public class IndentConversionHelper {
 
         //Convert paragraph to point or reverse
         if (notSameKind) {
-            TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
+            TocItem parentTocItem = getTocItemFromTagName(tocItems, originalItem, toParagraph ? PARAGRAPH : POINT);
             originalItem.setTocItem(parentTocItem);
         }
 
@@ -352,7 +356,7 @@ public class IndentConversionHelper {
         populateIndentInfoIfNotRestored(originalItem, originalIndentLevel, toParagraph ? IndentedItemType.POINT : IndentedItemType.PARAGRAPH, restored);
 
         // Ok, checking is done, convert to point or paragraph
-        TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
+        TocItem parentTocItem = getTocItemFromTagName(tocItems, originalItem, toParagraph ? PARAGRAPH : POINT);
         originalItem.setTocItem(parentTocItem);
 
         tableOfContentProcessor.convertTocItemContent(originalItem, null, toParagraph ? IndentedItemType.POINT : IndentedItemType.PARAGRAPH, toParagraph ? IndentedItemType.PARAGRAPH : IndentedItemType.POINT, false);
@@ -381,7 +385,7 @@ public class IndentConversionHelper {
         originalItem.addChildItem(0, firstSubelement);
 
         if (notSameKind) {
-            TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
+            TocItem parentTocItem = getTocItemFromTagName(tocItems, originalItem, toParagraph ? PARAGRAPH : POINT);
             originalItem.setTocItem(parentTocItem);
         }
         if (restored) {
@@ -399,7 +403,7 @@ public class IndentConversionHelper {
                                                                  int originalIndentLevel,
                                                                  boolean restored, boolean toParagraph) {
         TableOfContentItemVO firstSubelement;
-        TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
+        TocItem parentTocItem = getTocItemFromTagName(tocItems, originalItem, toParagraph ? PARAGRAPH : POINT);
         TocItem subElementTocItem = StructureConfigUtils.getTocItemByName(tocItems, SUBPARAGRAPH);
 
         // If it has more than one child or does not contain the subpoint, conversion is not possible
@@ -433,7 +437,7 @@ public class IndentConversionHelper {
                                                          boolean notSameKind,
                                                          boolean toParagraph) {
         // Ok, checking is done, convert the subelement
-        TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, toParagraph ? PARAGRAPH : POINT);
+        TocItem parentTocItem = getTocItemFromTagName(tocItems, originalItem, toParagraph ? PARAGRAPH : POINT);
         TableOfContentItemVO parent = buildTransItemFromItem(originalItem);
         parent.setTocItem(parentTocItem);
 
@@ -820,5 +824,14 @@ public class IndentConversionHelper {
 
     public boolean isUnumberedInAlist(TableOfContentItemVO item) {
         return Arrays.asList(UNUMBERED_ITEMS).contains(getTagValueFromTocItemVo(item)) && getTagValueFromTocItemVo(item.getParentItem()).equals(LIST);
+    }
+
+    private TocItem getTocItemFromTagName(List<TocItem> tocItems, TableOfContentItemVO item, String tagName) {
+        TableOfContentItemVO article = TableOfContentHelper.getFirstAscendant(item, Arrays.asList(ARTICLE));
+        if (article != null && article.getTocItemType().equals(TocItemTypeName.DEFINITION)) {
+            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, TocItemTypeName.DEFINITION, tagName);
+        } else {
+            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, TocItemTypeName.REGULAR, tagName);
+        }
     }
 }

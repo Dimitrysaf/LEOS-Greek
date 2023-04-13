@@ -71,8 +71,8 @@ public class StructureConfigUtils {
                     }
                 }
             }
-        } else if (subElementTocItems.size() == 1) {
-            return getTocItemByNumberingType(tocItems, subElementTocItems.get(0).getNumberingType(), subElementTagName);
+        } else if (subElementTocItems.size() >= 1) {
+            return subElementTocItems.get(0);
         }
         return null;
     }
