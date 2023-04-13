@@ -697,23 +697,23 @@ define(function leosPluginUtilsModule(require) {
                 && !!point.getParent().getAttribute(DATA_AKN_ELEMENT)
                 && (point.getParent().getAttribute(DATA_AKN_ELEMENT) == LEVEL || point.getParent().getAttribute(DATA_AKN_ELEMENT) == PARAGRAPH)
                 && _isPointOrIndent(point)) {
-				if(point.getChildren().count() === 0 && point.getHtml().trim() === "") {
-					point.remove();
-					continue;
-				} else {
-					var parentElement = point.getParent().getAttribute(DATA_AKN_ELEMENT);
-					if (parentElement === LEVEL) {
-						point.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
-					} else if (parentElement === PARAGRAPH) {
-						point.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
-					}
-					if (!!point.is && point.is('li') && !point.getParent().is('ol')) {
-						point.renameNode('p');
-						point.removeAttribute(DATA_AKN_NAME);
-					} else if (!!point.is && point.is('p') && point.getParent().is('ol')) {
-						point.renameNode('li');
-					}
-				}
+                if(point.getChildren().count() === 0 && point.getHtml().trim() === "") {
+                    point.remove();
+                    continue;
+                } else {
+                    var parentElement = point.getParent().getAttribute(DATA_AKN_ELEMENT);
+                    if (parentElement === LEVEL) {
+                        point.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+                    } else if (parentElement === PARAGRAPH) {
+                        point.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
+                    }
+                    if (!!point.is && point.is('li') && !point.getParent().is('ol')) {
+                        point.renameNode('p');
+                        point.removeAttribute(DATA_AKN_NAME);
+                    } else if (!!point.is && point.is('p') && point.getParent().is('ol')) {
+                        point.renameNode('li');
+                    }
+                }
             }
             // Case when point has been outdented to paragraph
             if (_isPointOrIndent(point) && !point.getAscendant('li')) {
