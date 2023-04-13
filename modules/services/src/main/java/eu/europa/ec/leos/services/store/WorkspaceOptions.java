@@ -68,10 +68,6 @@ public class WorkspaceOptions {
         Arrays.stream(filters).forEach(filter -> {
             boolean nullCheck = false;
             String id = filter.getType();
-            // in order to make this new fields compatible with the existing proposals
-            if (id.equalsIgnoreCase(FilterType.procedureType.name()) || id.equalsIgnoreCase(FilterType.actType.name())) {
-                nullCheck = true;
-            }
 
             List<String> values = new ArrayList<>(Arrays.asList(filter.getValue()));
             // FIXME For the release query filters for explanatory are added manually
