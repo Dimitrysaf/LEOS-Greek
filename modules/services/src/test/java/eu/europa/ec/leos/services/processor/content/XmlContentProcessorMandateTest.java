@@ -21,22 +21,33 @@ import io.atlassian.fugue.Pair;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.mockito.InjectMocks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
+import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
+import static eu.europa.ec.leos.services.support.XmlHelper.skipNodeAndChildren;
+import static eu.europa.ec.leos.services.support.XmlHelper.skipNodeOnly;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.spy;
-
 public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @InjectMocks
@@ -489,6 +500,38 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
                     assertEquals(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + id, node.getAttributes().getNamedItem("xml:id").getNodeValue());
                 }
             }
+        }
+    }
+    @Test
+    public void test_removeDuplicateIds() throws Exception {
+        byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_removeDuplicateIds.xml");
+        byte[] result = xercesXmlContentProcessor.removeDuplicateIds(xmlInput,  true);
+        assertNotNull(result);
+        String resultString = new String(result);
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        logger.info(resultString);
+        Map<String, Integer> idsMap = new TreeMap<>();
+        Node expectedNode = XercesUtils.createNodeFromXmlFragment(result);
+        searchForIds(expectedNode, idsMap);
+        idsMap.entrySet().forEach(entry ->{
+            logger.info("key {}, value {} ",entry.getKey(), entry.getValue());
+            assertEquals( 1, entry.getValue().intValue());
+        });
+    }
+
+    private void searchForIds(Node node,  Map<String, Integer> idsMap) {
+        String tagName = node.getNodeName();
+        if (skipNodeAndChildren(tagName)) {// skipping node processing along with children
+            return;
+        }
+        String idAttrValue = getAttributeValue(node, XMLID);
+        if (!skipNodeOnly(tagName)) {// do not update id for this tag
+            idsMap.merge(idAttrValue, 1, Integer::sum);
+        }
+
+        List<Node> children = getChildren(node);
+        for (int i = 0; i < children.size(); i++) {
+            searchForIds(children.get(i), idsMap);
         }
     }
 

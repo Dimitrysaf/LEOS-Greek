@@ -337,4 +337,6 @@ public interface XmlContentProcessor {
     boolean containsAlineas(Node node);
 
     byte[] convertAlineasInDocumentContent(byte[] xmlContent);
+
+    byte[] removeDuplicateIds(byte[] xmlContent, boolean namespaceEnabled);
 }
