@@ -217,7 +217,7 @@ export class ProposalService {
   createExplanatoryDocument(data: CreateExplanatoryDocument) {
     this.loadingService.setLoading(true);
     return this.http
-      .post<Document>(
+      .post<any>(
         `${apiBaseUrl}/secured/proposal/createExplanatoryDocument`,
         data,
       )
