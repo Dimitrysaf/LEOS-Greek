@@ -46,13 +46,6 @@ define(function trackChangesExtensionModule(require) {
 
         let usersUid = [currentUser.login];
         $(xmlTcSelector).each(function() {
-            // Add on hover popup for showing user information
-            $(this).hover(function() {
-                $(this).append("<div>" + $(this).attr("leos:title") + "</div>");
-                $(this).find("div").css("left", $(this).position().left + 10).fadeIn("fast");
-            }, function() {
-                $("div", this).remove();
-            });
             // Retrieve user and add it to users array if not exists
             let userUid = $(this).attr("leos:uid");
             if ($.inArray(userUid, usersUid) === -1) {

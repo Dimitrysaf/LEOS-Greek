@@ -42,6 +42,10 @@ public class XPathCatalog {
         return String.format("//akn:akomaNtoso/akn:documentCollection/akn:collectionBody/akn:component/akn:documentRef[@href=\"%s\"]", elementRef);
     }
 
+    public String getXPathTrackChanges() {
+        return "//akn:inline[@name=\"trackchanges\"]";
+    }
+
     public String getXPathAttachments() {
         return "//akn:attachments";
     }

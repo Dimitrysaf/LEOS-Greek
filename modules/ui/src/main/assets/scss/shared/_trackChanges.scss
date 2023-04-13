@@ -16,8 +16,12 @@
 //------------------------------- XML Styles --------------------------------//
 %xmlTrackChanges {
 
-  inline[name="trackchanges"] div {
+  inline[name="trackchanges"]::before {
+    content: attr(leos\:title);
+    display: none;
     position: absolute;
+    margin-top: 20px;
+    margin-left: 10px;
     padding: 3px 7px;
     width: auto;
     white-space: nowrap;
@@ -28,14 +32,23 @@
     background-color: rgba(51, 51, 51, 0.9);
     -webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    -webkit-transition: opacity 250ms ease-in-out;
+    -moz-transition: opacity 250ms ease-in-out;
+    -o-transition: opacity 250ms ease-in-out;
+    transition: opacity 250ms ease-in-out;
+  }
+  inline[name="trackchanges"]:hover::before {
+    display: inline;
   }
 
   inline[name="trackchanges"][leos\:action="insert"] {
     text-decoration: underline;
+    color: #008000;
   }
 
   inline[name="trackchanges"][leos\:action="delete"] {
     text-decoration: line-through;
+    color: #FF0000;
   }
 
 }

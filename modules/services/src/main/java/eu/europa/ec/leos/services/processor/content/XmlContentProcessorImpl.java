@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -119,6 +120,21 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected XPathCatalog xPathCatalog;
     @Autowired
     protected UserService userService;
+
+    @Override
+    public byte[] anonymizeTrackChanges(byte[] xmlContent) {
+        Document document = createXercesDocument(xmlContent);
+        NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
+        for (int i = 0; i < elements.getLength(); i++) {
+            Node element = elements.item(i);
+            NamedNodeMap attributes = element.getAttributes();
+            Node uid = attributes.getNamedItem(LEOS_UID);
+            uid.setNodeValue(LEOS_ANONYMOUS.toLowerCase());
+            Node title = attributes.getNamedItem(LEOS_TITLE);
+            title.setNodeValue(LEOS_ANONYMOUS + " " + title.getTextContent().substring(title.getTextContent().indexOf(":")));
+        }
+        return nodeToByteArray(document);
+    }
 
     @Override
     public byte[] cleanSoftActions(byte[] xmlContent) {
