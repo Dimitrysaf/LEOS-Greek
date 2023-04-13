@@ -19,6 +19,7 @@
         cdkDrag
         cdkDropList
         matTreeNodePadding
+        matTreeNodeToggle
         (cdkDragStarted)="onDragStart($event)"
         [cdkDragData]="node"
         (cdkDropListDropped)="onDrop($event)"
@@ -96,6 +97,7 @@
         cdkDrag
         cdkDropList
         matTreeNodePadding
+        matTreeNodeToggle
         [attr.data-id]="node.id"
         [cdkDragData]="node"
         (cdkDragMoved)="dragMoved($event)"
@@ -471,6 +473,7 @@
               class="d-flex flex-row align-items-center justify-content-evenly"
             >
               <input
+                [disabled]="isIndentListRadioButtonGroupEnabled"
                 id="point_a_b"
                 name="point_a"
                 euiInputRadio
@@ -484,6 +487,7 @@
             </div>
             <div class="d-flex flex-row align-items-center">
               <input
+                [disabled]="isIndentListRadioButtonGroupEnabled"
                 name="point_a"
                 id="point_a_i"
                 euiInputRadio
@@ -497,6 +501,7 @@
             </div>
             <div class="d-flex flex-row align-items-center">
               <input
+                [disabled]="isIndentListRadioButtonGroupEnabled"
                 name="point_a"
                 id="point_a_n"
                 euiInputRadio

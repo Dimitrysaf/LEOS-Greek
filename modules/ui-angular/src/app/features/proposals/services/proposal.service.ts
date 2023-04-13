@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { GLOBAL_CONFIG_TOKEN, GlobalConfig, I18nService } from '@eui/core';
-import { Document } from '@leos/shared';
+import { Document, LeosMetadata } from '@leos/shared';
 import {
   BehaviorSubject,
   combineLatest,
@@ -217,7 +217,7 @@ export class ProposalService {
   createExplanatoryDocument(data: CreateExplanatoryDocument) {
     this.loadingService.setLoading(true);
     return this.http
-      .post<any>(
+      .post<LeosMetadata>(
         `${apiBaseUrl}/secured/proposal/createExplanatoryDocument`,
         data,
       )

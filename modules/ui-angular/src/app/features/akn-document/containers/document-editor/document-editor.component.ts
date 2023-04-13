@@ -376,9 +376,6 @@ export class DocumentEditorComponent
   private prepareTocForSave(node: TableOfContentItemVO[]) {
     for (const n of node) {
       n['childItemsView'] = [];
-      if (n.parentItem) {
-        n.parentItem = null;
-      }
       if (n.childItems && n.childItems.length > 0) {
         this.prepareTocForSave(n.childItems);
       }
