@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -110,8 +111,8 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> createExplanatoryDocument(@RequestBody CreateExplanatoryDocumentRequest request) {
         try {
-            apiService.createExplanatoryDocument(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
-            return new ResponseEntity<>(HttpStatus.OK);
+            ProposalMetadata metadata = apiService.createExplanatoryDocument(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
+            return new ResponseEntity<>(metadata, HttpStatus.OK);
         } catch (UnsupportedOperationException e) {
             LOG.error("Method not supported in current instance", e);
             return new ResponseEntity<>("Method not supported in the current instance of the application", HttpStatus.BAD_REQUEST);

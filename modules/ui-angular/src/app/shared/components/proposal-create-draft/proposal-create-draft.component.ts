@@ -156,9 +156,12 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
         .createExplanatoryDocument(this.getDataForCreateDraftProposal())
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (res) => {
+          next: async (res) => {
             this.proposalService.setPage(-1);
             this.closeDialog();
+            if (res.ref) {
+              await this.router.navigate([`collection/${res.ref}`]);
+            }
           },
           error: (err) => console.log(err),
         });
