@@ -52,6 +52,7 @@ define(function leosTablePluginModule(require) {
             editor.on('dialogShow', function(event) {
                 var dialog = event.data;
                 if (dialog.getName() === 'table' || dialog.getName() === 'tableProperties') {
+                    dialog.getContentElement('info', 'txtWidth').setValue('90%')
                     var items = ['cmbAlign', 'txtWidth', 'txtHeight', 'txtBorder', 'txtCellSpace', 'txtCellPad', 'txtSummary', 'txtCaption'];
                     items.forEach( function(item) {
                         dialog.getContentElement('info', item).getElement().hide();
