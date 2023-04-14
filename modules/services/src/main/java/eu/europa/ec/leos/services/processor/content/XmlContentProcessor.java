@@ -28,6 +28,8 @@ import java.util.Map;
 
 public interface XmlContentProcessor {
 
+    byte[] anonymizeTrackChanges(byte[] xmlContent);
+
     String getElementValue(byte[] xmlContent, String xPath, boolean namespaceEnabled);
 
     byte[] removeElement(byte[] xmlContent, String xPath, boolean namespaceEnabled);

@@ -128,6 +128,9 @@ public class XmlHelper {
     public static final String TLC_CONCEPT_WRP_ID = "_WRP";
     public static final String ENDING_PART = "~_WRP";
 
+    public static final String LEOS_ANONYMOUS = "Anonymous";
+    public static final String LEOS_UID = "leos:uid";
+    public static final String LEOS_TITLE = "leos:title";
     public static final String LEOS_ORIGIN_ATTR = "leos:origin";
     public static final String LEOS_INITIAL_NUM = "leos:initial-num";
     public static final String LEOS_DELETABLE_ATTR = "leos:deletable";

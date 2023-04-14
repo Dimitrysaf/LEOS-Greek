@@ -1433,6 +1433,7 @@ public class LegServiceImpl implements LegService {
                 proposalRefsMap.get(LeosCategory.BILL.name() + "_href"), Bill.class);
 
         byte[] xmlContent = bill.getContent().get().getSource().getBytes();
+        xmlContent = xmlContentProcessor.anonymizeTrackChanges(xmlContent);
         if(exportOptions.isComparisonMode()) {
             XmlDocument originalBill = documentContentService.getOriginalBill(bill);
             xmlContent = simpleCompareXmlContentsForClone(originalBill, bill).getBytes(UTF_8);
