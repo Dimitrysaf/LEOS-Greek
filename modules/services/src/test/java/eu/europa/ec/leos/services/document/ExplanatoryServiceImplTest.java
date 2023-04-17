@@ -119,7 +119,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 		List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
 		Content content = mock(Content.class);
 		return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), baseVersionId, true, Option.some(explanatoryMetadata));
+				Option.some(content), baseVersionId, true, Option.some(explanatoryMetadata), false);
 	}
 	
 	private Explanatory getMockedExplanatoryWithLiveDiffing() {
@@ -127,7 +127,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 		List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
 		Content content = mock(Content.class);
 		return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), null, true, Option.some(explanatoryMetadata));
+				Option.some(content), null, true, Option.some(explanatoryMetadata), false);
 	}
 	
 	private Explanatory getMockedExplanatoryWithoutLiveDiffing() {
@@ -135,7 +135,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 		List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
 		Content content = mock(Content.class);
 		return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), null, false, Option.some(explanatoryMetadata));
+				Option.some(content), null, false, Option.some(explanatoryMetadata), false);
 	}
 	
     private ExplanatoryMetadata getMockedMetadata() {

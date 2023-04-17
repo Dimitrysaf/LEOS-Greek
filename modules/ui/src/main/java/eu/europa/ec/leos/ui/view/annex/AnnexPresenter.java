@@ -1816,7 +1816,8 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 source.getContributionStatus(),
                 source.getClonedFrom(),
                 updatedContentOptionObj,
-                source.getMetadata()
+                source.getMetadata(),
+                source.isTrackChangesEnabled()
         );
     }
 

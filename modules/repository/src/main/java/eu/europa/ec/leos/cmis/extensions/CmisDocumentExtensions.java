@@ -153,7 +153,8 @@ public class CmisDocumentExtensions {
                 getClonedFrom(d),
                 getRevisionStatus(d),
                 getClonedMilestoneId(d),
-                getContributionStatus(d));
+                getContributionStatus(d),
+                isTrackChangesEnabled(d));
     }
 
     private static Explanatory toCouncilExplanatory(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -168,7 +169,8 @@ public class CmisDocumentExtensions {
                 contentOption(d, fetchContent),
                 getBaseRevisionId(d),
                 isLiveDiffingRequired(d),
-                getExplanatorydataOption(d));
+                getExplanatorydataOption(d),
+                isTrackChangesEnabled(d));
     }
 
     private static Memorandum toLeosMemorandum(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -183,7 +185,8 @@ public class CmisDocumentExtensions {
                 contentOption(d, fetchContent),
                 getContributionStatus(d),
                 getClonedFrom(d),
-                getMemorandumMetadataOption(d));
+                getMemorandumMetadataOption(d),
+                isTrackChangesEnabled(d));
     }
 
     private static Bill toLeosBill(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -199,7 +202,8 @@ public class CmisDocumentExtensions {
                 getContributionStatus(d),
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
-                getBillMetadataOption(d));
+                getBillMetadataOption(d),
+                isTrackChangesEnabled(d));
     }
 
     private static Annex toLeosAnnex(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -216,7 +220,8 @@ public class CmisDocumentExtensions {
                 getContributionStatus(d),
                 getClonedFrom(d),
                 contentOption(d, fetchContent),
-                getAnnexMetadataOption(d));
+                getAnnexMetadataOption(d),
+                isTrackChangesEnabled(d));
     }
 
     private static FinancialStatement toFinancialStatement(Document d, boolean fetchContent, Map<String, String> oldVersions) {
@@ -229,7 +234,9 @@ public class CmisDocumentExtensions {
                 getCollaborators(d),
                 getMilestoneComments(d),
                 contentOption(d, fetchContent),
-                getFinancialstatementdataOption(d), getBaseRevisionId(d));
+                getFinancialstatementdataOption(d),
+                getBaseRevisionId(d),
+                isTrackChangesEnabled(d));
     }
 
     private static MediaDocument toLeosMediaDocument(Document d, boolean fetchContent) {
@@ -453,5 +460,10 @@ public class CmisDocumentExtensions {
     private static boolean isLiveDiffingRequired(Document document) {
     	Boolean liveDiffingRequired = document.getPropertyValue(CmisProperties.LIVE_DIFFING_REQUIRED.getId());
     	return liveDiffingRequired != null ? liveDiffingRequired : false;
+    }
+
+    private static boolean isTrackChangesEnabled(Document document) {
+        Boolean trackChangesEnabled = document.getPropertyValue(CmisProperties.TRACK_CHANGES_ENABLED.getId());
+        return trackChangesEnabled != null ? trackChangesEnabled : false;
     }
 }

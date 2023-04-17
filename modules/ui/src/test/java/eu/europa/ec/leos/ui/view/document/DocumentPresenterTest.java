@@ -258,7 +258,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         final Bill document = new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                             documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                             docName, collaborators, Arrays.asList(""), "", "", "",
-                            Option.some(content), Option.some(billMetadata));
+                            Option.some(content), Option.some(billMetadata), false);
     
         String displayableContent = "document displayable content";
         List<TableOfContentItemVO> tableOfContentItemVoList = Collections.emptyList();
@@ -278,7 +278,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators, Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), false, "", "",
-                "", null, null);
+                "", null, null, false);
         
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(documentScreen.isCoverPageVisible()).thenReturn(true);
@@ -353,7 +353,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         final Bill document = new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                 documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                 docName, collaborators, Arrays.asList(""), "", "", "",
-                Option.some(content), Option.some(billMetadata));
+                Option.some(content), Option.some(billMetadata), false);
 
         String displayableContent = "document displayable content";
         List<TableOfContentItemVO> tableOfContentItemVoList = Collections.emptyList();
@@ -373,7 +373,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators, Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), true, "", "",
-                "", null, null);
+                "", null, null, false);
 
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(documentScreen.isCoverPageVisible()).thenReturn(true);
@@ -434,7 +434,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         return new Bill(docId, "Proposal", "login", Instant.now(), "login", Instant.now(),
                 documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                 docTitle, collaborators, Arrays.asList(""), "", "","",
-                Option.some(content), Option.some(billMetadata));
+                Option.some(content), Option.some(billMetadata), false);
     }
     
     @Test
@@ -586,7 +586,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators, Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), false, "", "",
-                "", null, null);
+                "", null, null, false);
 
 
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);

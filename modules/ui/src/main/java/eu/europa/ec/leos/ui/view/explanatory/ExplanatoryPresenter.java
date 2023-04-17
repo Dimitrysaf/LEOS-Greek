@@ -1472,8 +1472,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 updatedContentOptionObj,
                 source.getBaseRevisionId(),
                 source.isLiveDiffingRequired(),
-                source.getMetadata()
-        );
+                source.getMetadata(),
+                source.isTrackChangesEnabled());
     }
 
     @Subscribe

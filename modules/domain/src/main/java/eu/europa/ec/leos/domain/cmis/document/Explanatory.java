@@ -16,13 +16,14 @@ public final class Explanatory extends XmlDocument {
     private final Option<ExplanatoryMetadata> metadata;
 
     public Explanatory(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
-                      Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel,
-                      String versionComment, VersionType versionType, boolean isLatestVersion, String title,
-                      List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
-                      String baseRevisionId, boolean liveDiffingRequired, Option<ExplanatoryMetadata> metadata) {
+                       Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel,
+                       String versionComment, VersionType versionType, boolean isLatestVersion, String title,
+                       List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
+                       String baseRevisionId, boolean liveDiffingRequired, Option<ExplanatoryMetadata> metadata, boolean trackChangesEnabled) {
 
         super(LeosCategory.COUNCIL_EXPLANATORY, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators, milestoneComments, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
+                collaborators, milestoneComments, content, trackChangesEnabled);
         this.baseRevisionId = baseRevisionId;
         this.liveDiffingRequired = liveDiffingRequired;
         this.metadata = metadata;

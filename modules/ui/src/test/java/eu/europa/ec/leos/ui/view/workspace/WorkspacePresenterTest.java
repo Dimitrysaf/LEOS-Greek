@@ -97,7 +97,7 @@ public class WorkspacePresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators, Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), false, "", "",
-                "", null, null);
+                "", null, null, false);
         documents.add(leosProposal);
         when(workspaceService.findDocuments(eq(Proposal.class), eq(false), anyInt(), anyInt(), any()))
                 .thenReturn(documents.stream());

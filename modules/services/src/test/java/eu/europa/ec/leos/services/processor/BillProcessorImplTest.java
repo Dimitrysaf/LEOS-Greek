@@ -181,7 +181,7 @@ public class BillProcessorImplTest extends LeosTest {
         return new Bill(docId, "Legaltext", "login", Instant.now(), "login", Instant.now(),
                     "", "", "Version 1.0.0", "", VersionType.MAJOR,
                 true, "title", collaborators, Arrays.asList(""), "", "",
-                "", Option.some(content), Option.some(billMetadata));
+                "", Option.some(content), Option.some(billMetadata), false);
     }
     
     public byte[] getFileContent(String fileName) {

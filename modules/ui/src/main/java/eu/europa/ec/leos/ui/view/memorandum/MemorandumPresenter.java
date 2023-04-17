@@ -1215,8 +1215,8 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                 updatedContentOptionObj,
                 source.getContributionStatus(),
                 source.getClonedFrom(),
-                source.getMetadata()
-        );
+                source.getMetadata(),
+                source.isTrackChangesEnabled());
     }
 
     @Subscribe

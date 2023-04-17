@@ -152,6 +152,7 @@ import eu.europa.ec.leos.web.event.component.ShowVersionRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
+import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
@@ -993,6 +994,13 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
+    public void enableTrackChanges(EnableTrackChangesEvent event) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), event.isEnabled());
+        billService.updateBill(documentId, properties, false);
+    }
+
+    @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
         documentScreen.initLeosEditor(event.getDocument(), documentsMetadata);
@@ -1173,8 +1181,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
                 source.getContributionStatus(),
                 source.getClonedFrom(),
                 updatedContentOptionObj,
-                source.getMetadata()
-        );
+                source.getMetadata(),
+                source.isTrackChangesEnabled());
 
         return billUpdated;
     }
