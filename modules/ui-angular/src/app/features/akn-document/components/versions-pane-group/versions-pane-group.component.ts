@@ -68,6 +68,11 @@ export class VersionsPaneGroupComponent implements OnInit {
     }
   }
 
+  protected formatVersionNumber(version: Version): string {
+    const { major, intermediate, minor } = version.versionNumber;
+    return `${major}.${intermediate}.${minor}`;
+  }
+
   private setTitle() {
     if (this.isRecent) {
       this.translate
@@ -78,7 +83,7 @@ export class VersionsPaneGroupComponent implements OnInit {
     } else {
       this.translate
         .get('page.editor.versions.group-title', {
-          version: this.group.cmisVersionNumber,
+          version: this.formatVersionNumber(this.group),
           title: this.group.checkinCommentVO.title,
         })
         .subscribe((title: string) => {

@@ -546,8 +546,8 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
-  versionExploreMilestone(versionNumber: string) {
-    console.warn('stub:', 'versionExploreMilestone', versionNumber); // FIXME
+  versionExploreMilestone(version: Version) {
+    console.warn('stub:', 'versionExploreMilestone', version); // FIXME
   }
 
   versionRevert(versionNumber: string) {
