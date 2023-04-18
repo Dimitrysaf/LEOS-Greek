@@ -375,7 +375,7 @@ export class ProposalDetailsService {
     collaborator: CollaboratorRequest,
   ) {
     return this.http
-      .post<any>(`${apiBaseUrl}/secured/proposal/${proposalId}/collaborators`, {
+      .put<any>(`${apiBaseUrl}/secured/proposal/${proposalId}/collaborators`, {
         userId: collaborator.userId,
         roleName: collaborator.roleName,
         connectedDG: collaborator.connectedDG,
