@@ -1002,27 +1002,28 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       if (eventItem.tocItem.aknTag === 'DIVISION') {
         eventItem.style = 'type_1';
       }
+
+      switch (eventItem.tocItem.aknTag) {
+        case 'DIVISION': {
+          break;
+        }
+        case 'CROSS_HEADING': {
+          eventItem.tocItem.numberingType = 'NONE';
+          break;
+        }
+        case 'ARTICLE': {
+          eventItem.tocItemType = 'REGULAR';
+          eventItem.heading = this.tranlsateService.instant(
+            'toc.item.type.regular.article.heading',
+          );
+        }
+      }
     }
 
     //for both add or move
     updateDepthOfTocItems(this.toc);
     handleLevelMove(eventItem, targetElement);
     setBlockOrCrossHeading(this.toc, eventItem);
-    switch (eventItem.tocItem.aknTag) {
-      case 'DIVISION': {
-        break;
-      }
-      case 'CROSS_HEADING': {
-        eventItem.tocItem.numberingType = 'NONE';
-        break;
-      }
-      case 'ARTICLE': {
-        eventItem.tocItemType = 'REGULAR';
-        eventItem.heading = this.tranlsateService.instant(
-          'toc.item.type.regular.article.heading',
-        );
-      }
-    }
   }
 
   private updateUserInfo(item: TableOfContentItemVO) {
