@@ -32,6 +32,7 @@ public abstract class PostProcessingDocumentService {
         String documentReference = Strings.nullToEmpty(xmlContentProcessor.getElementValue(updatedDocContent, xPathCatalog.getXPathRef(), true));
         updatedDocContent = xmlContentProcessor.replaceElement(updatedDocContent, xPathCatalog.getXPathRef(), true, "<leos:ref></leos:ref>");
         updatedDocContent = xmlContentProcessor.replaceElement(updatedDocContent, xPathCatalog.getXPathRef(), true, "<leos:refOrigin>" + documentReference + "</leos:refOrigin>");
+        updatedDocContent = xmlContentProcessor.removeDuplicateIds(xmlContent,true);
         LOG.info("Moved value '{}' of the filed <leos:ref> to <leos:refOrigin>", documentReference);
         return updatedDocContent;
     }

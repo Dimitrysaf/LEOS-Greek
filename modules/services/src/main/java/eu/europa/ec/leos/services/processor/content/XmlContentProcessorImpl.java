@@ -57,9 +57,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -2258,5 +2260,50 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             mergeOnElement = new Element(contentId, CONTENT, contentXml);
         }
         return mergeOnElement;
+    }
+
+    @Override
+    public byte[] removeDuplicateIds(byte[] xmlContent, boolean namespaceEnabled) {
+        //overriding of the ID if there is a case
+        Document document = createXercesDocument(xmlContent, namespaceEnabled);
+        Set idsSet = new HashSet();
+        removeDuplicateIdsFromDocument(document.getDocumentElement(), IdGenerator.DEFAULT_PREFIX, idsSet);
+        idsSet.clear();
+        return nodeToByteArray(document);
+    }
+
+    private void removeDuplicateIdsFromDocument(Node node, String idPrefix, Set idsSet) {
+        String tagName = node.getNodeName();
+        if (skipNodeAndChildren(tagName)) {// skipping node processing along with children
+            return;
+        }
+
+        String idAttrValue = null;
+        if (!skipNodeOnly(tagName)) {// do not update id for this tag
+            idAttrValue = updateNodeWithIdIfDuplicate(node, idPrefix, idsSet);
+        }
+
+        idPrefix = determinePrefixForChildren(tagName, idAttrValue, idPrefix);
+        List<Node> children = getChildren(node);
+        for (int i = 0; i < children.size(); i++) {
+            removeDuplicateIdsFromDocument(children.get(i), idPrefix, idsSet);
+        }
+    }
+
+    private String updateNodeWithIdIfDuplicate(Node node, String idPrefix, Set idsSet) {
+        String idAttrValue = getAttributeValue(node, XMLID);
+        if (idAttrValue == null || idAttrValue.isEmpty() || idsSet.contains(idAttrValue)) {
+            for (int i = 0; i < 3 && idsSet.contains(idAttrValue) ; i++) {
+                //eliminate the risk for infinite loop.  :D
+                idAttrValue = IdGenerator.generateId(idPrefix, 7);
+            }
+            if(idsSet.contains(idAttrValue)){
+                LOG.error("After 3 loops, the id '{}' is the same", idAttrValue);
+                throw new IllegalStateException("Duplicate id attribute generated three times! Try again!");
+            }
+            XercesUtils.addAttribute(node, XMLID, idAttrValue);
+        }
+        idsSet.add(idAttrValue);
+        return idAttrValue;
     }
 }
