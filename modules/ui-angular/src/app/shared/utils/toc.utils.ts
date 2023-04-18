@@ -375,25 +375,13 @@ export const checkPositionAfterValidation = (
       return position;
     }
     case 'CHAPTER': {
-      if (['BODY', 'ARTICLE', 'TITLE'].includes(nodeDragged.tocItem.aknTag))
-        return position;
-      if (
-        ['CHAPTER', 'PART', '', 'LEVEL', 'PARAGRAPH'].includes(
-          nodeDragged.tocItem.aknTag,
-        )
-      )
+      if (['CHAPTER', 'PART', 'TITLE'].includes(nodeDragged.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
     case 'SECTION': {
       if (
-        ['BODY', 'PART', 'TITLE', 'CHAPTER'].includes(
-          nodeDragged.tocItem.aknTag,
-        )
-      )
-        return position;
-      if (
-        ['SECTION', 'ARTICLE', 'LEVEL', 'PARAGRAPH'].includes(
+        ['SECTION', 'PART', 'TITLE', 'CHAPTER'].includes(
           nodeDragged.tocItem.aknTag,
         )
       )
@@ -406,7 +394,7 @@ export const checkPositionAfterValidation = (
           nodeDragged.tocItem.aknTag,
         )
       )
-        return position;
+        return 'AFTER';
       return position;
     }
     case 'PARAGRAPH': {
@@ -414,7 +402,7 @@ export const checkPositionAfterValidation = (
       return position;
     }
     case 'SUBPARAGRAPH': {
-      if (['SUBPARAGRAPH', 'LEVEL'].includes(nodeDragged.tocItem.aknTag))
+      if (['SUBPARAGRAPH', 'POINT'].includes(nodeDragged.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
