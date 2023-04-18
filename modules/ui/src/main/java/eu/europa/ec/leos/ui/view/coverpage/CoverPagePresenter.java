@@ -1236,8 +1236,8 @@ class CoverPagePresenter extends AbstractLeosPresenter {
                 source.getClonedFrom(),
                 source.getRevisionStatus(),
                 source.getClonedMilestoneIds(),
-                source.getContributionStatus()
-        );
+                source.getContributionStatus(),
+                source.isTrackChangesEnabled());
     }
 
     @Subscribe

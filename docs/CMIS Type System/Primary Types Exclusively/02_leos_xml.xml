@@ -880,6 +880,21 @@
         <cmis:orderable>false</cmis:orderable>
         <cmis:defaultValue/>
     </cmis:propertyBooleanDefinition>
+    <cmis:propertyBooleanDefinition>
+        <cmis:id>leos:trackChangesEnabled</cmis:id>
+        <cmis:localName>leos:trackChangesEnabled</cmis:localName>
+        <cmis:displayName>LEOS Track Changes Enabled</cmis:displayName>
+        <cmis:queryName>leos:trackChangesEnabled</cmis:queryName>
+        <cmis:description>True if Track Changes are enabled for this document</cmis:description>
+        <cmis:propertyType>boolean</cmis:propertyType>
+        <cmis:cardinality>single</cmis:cardinality>
+        <cmis:updatability>readwrite</cmis:updatability>
+        <cmis:inherited>false</cmis:inherited>
+        <cmis:required>false</cmis:required>
+        <cmis:queryable>true</cmis:queryable>
+        <cmis:orderable>false</cmis:orderable>
+        <cmis:defaultValue>false</cmis:defaultValue>
+    </cmis:propertyBooleanDefinition>
     <cmis:versionable>true</cmis:versionable>
     <cmis:contentStreamAllowed>allowed</cmis:contentStreamAllowed>
 </cmis:type>

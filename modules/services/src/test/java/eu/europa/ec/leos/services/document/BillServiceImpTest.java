@@ -120,7 +120,7 @@ public class BillServiceImpTest {
         final BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023", "bill-id", "", "0.1.0", false);
         final Bill bill = new Bill("1", "Legaltext", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR, true, "title",
-                Collections.emptyList(), Arrays.asList(""), "", "", "", Option.some(content), Option.some(billMetadata));
+                Collections.emptyList(), Arrays.asList(""), "", "", "", Option.some(content), Option.some(billMetadata), false);
 
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);

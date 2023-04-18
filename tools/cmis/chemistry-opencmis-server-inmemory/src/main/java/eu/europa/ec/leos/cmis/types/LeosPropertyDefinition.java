@@ -35,7 +35,7 @@ class LeosPropertyDefinition {
 
     static final PropertyDefinition<String> LEOS_STATUS =
             PropertyCreationHelper.createStringDefinition("leos:status", "LEOS status", Updatability.READWRITE);
-    
+
     static final PropertyDefinition<String> LEOS_COLLABORATORS =
             PropertyCreationHelper.createStringMultiDefinition("leos:collaborators", "Document Collaborators", Updatability.READWRITE);
 
@@ -113,5 +113,8 @@ class LeosPropertyDefinition {
 
     static final PropertyDefinition<Boolean> LEOS_LIVE_DIFFING_REQUIRED =
             PropertyCreationHelper.createBooleanDefinition("leos:liveDiffingRequired", "Live Diffing Flag", Updatability.READWRITE);
+
+    static final PropertyDefinition<Boolean> LEOS_TRACK_CHANGES_ENABLED =
+            PropertyCreationHelper.createBooleanDefinition("leos:trackChangesEnabled", "LEOS Track Changes Enabled", Updatability.READWRITE);
 
 }

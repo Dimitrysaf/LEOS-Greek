@@ -119,7 +119,7 @@ public class AnnexServiceImplTest extends LeosTest {
         return new Annex(objectId, "ANNEX_COUNCIL", "test", Instant.now(), "test", Instant.now(),
                 "", "", "", "", VersionType.MINOR, false, "",
                 collaborators, Arrays.asList(""), baseVersionId, true, "", "", Option.some(content),
-                Option.some(annexMetadata));
+                Option.some(annexMetadata), false);
     }
 
     private Annex getMockedAnnexWithLiveDiffing() {
@@ -129,7 +129,7 @@ public class AnnexServiceImplTest extends LeosTest {
         return new Annex(objectId, "ANNEX_COUNCIL", "test", Instant.now(), "test", Instant.now(),
                 "", "", "", "", VersionType.MINOR, false, "",
                 collaborators, Arrays.asList(""), null, true, "", "", Option.some(content),
-                Option.some(annexMetadata));
+                Option.some(annexMetadata), false);
     }
 
     private Annex getMockedAnnexWithoutLiveDiffing() {
@@ -139,7 +139,7 @@ public class AnnexServiceImplTest extends LeosTest {
         return new Annex(objectId, "ANNEX_COUNCIL", "test", Instant.now(), "test", Instant.now(),
                 "", "", "", "", VersionType.MINOR, false, "",
                 collaborators, Arrays.asList(""), null, false, "", "", Option.some(content),
-                Option.some(annexMetadata));
+                Option.some(annexMetadata), false);
     }
 
     private AnnexMetadata getMockedMetadata() {

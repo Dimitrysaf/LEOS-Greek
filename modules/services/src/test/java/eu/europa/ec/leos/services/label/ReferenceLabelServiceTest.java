@@ -86,6 +86,6 @@ public class ReferenceLabelServiceTest extends LeosTest {
         return new Bill("1", "Legaltext", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR,
                 true, "title", null, Arrays.asList(""), "", "",
-                "", Option.some(content), Option.some(billMetadata));
+                "", Option.some(content), Option.some(billMetadata), false);
     }
 }

@@ -526,7 +526,7 @@ public class LegServiceImplTest {
 		ProposalMetadata proposalMetadata = new ProposalMetadata("", "REGULATION for EC", "", "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false);
 		Proposal leosProposal = new Proposal(proposalId, "Proposal", "login", Instant.now(), "login", Instant.now(), "", "", "", "", VersionType.MAJOR, true, "REGULATION for EC", collaborators,
 				Arrays.asList(""), "login", Instant.now(), Option.some(proposalContent), Option.some(proposalMetadata), true, "", "", "", null,
-										ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name());
+										ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false);
 		return leosProposal;
 	}
 
@@ -537,7 +537,7 @@ public class LegServiceImplTest {
 		ExplanatoryMetadata explanatoryMetadata = new ExplanatoryMetadata("", "REGULATION", "", "CE-001", "EN", "CE-001",
 				"explanatory_cl43ykqyd0006k485zxvf53na.xml", "Working Party cover page", "555", "0.1.0", false);
 		return new Explanatory("555", "explanatory_cl43ykqyd0006k485zxvf53na.xml", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), null, false, Option.some(explanatoryMetadata));
+				Option.some(content), null, false, Option.some(explanatoryMetadata), false);
 	}
 	
 	private Bill getMockedBill(List<Collaborator> collaborators) {
@@ -549,7 +549,7 @@ public class LegServiceImplTest {
 		return new Bill("555", "bill_ckn97778i000zwn56esq96qet.xml", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR,
             true, "title", collaborators, Arrays.asList(""), "", "",
-            "", Option.some(content), Option.some(billMetadata));
+            "", Option.some(content), Option.some(billMetadata), false);
 	}
 	
 	private Memorandum getMockedMemorandum(List<Collaborator> collaborators) {
@@ -560,7 +560,7 @@ public class LegServiceImplTest {
 				"memorandum_ckn9773is000ywn567lsopipc.xml", "", "0.1.0", false);
 		return new Memorandum("555", "memorandum_ckn9773is000ywn567lsopipc.xml", "login", Instant.now(), "login", Instant.now(), 
 				"", "", "Version 1.0.0", "", VersionType.MAJOR, true, "title", 
-				collaborators, Arrays.asList(""), Option.some(content), "", null, Option.some(metadata));
+				collaborators, Arrays.asList(""), Option.some(content), "", null, Option.some(metadata), false);
 	}
 	
 	private Annex getMockedAnnex(List<Collaborator> collaborators) {
@@ -572,7 +572,7 @@ public class LegServiceImplTest {
 		return new Annex("555", "annex_cl3yjnpcz0007k485t5p989mq.xml", "login", Instant.now(), "login", Instant.now(),
 				"0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",
-                Option.some(content), Option.some(annexMetadata));
+                Option.some(content), Option.some(annexMetadata), false);
 	}
 
 	private MessageHelper getMessageHelper() {

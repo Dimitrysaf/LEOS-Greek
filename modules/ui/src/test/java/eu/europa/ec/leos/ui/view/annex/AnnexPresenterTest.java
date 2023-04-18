@@ -247,7 +247,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", Collections.emptyList(), Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), false, "", "",
-                "", null, null);
+                "", null, null, false);
 
         when(annexScreen.isCoverPageVisible()).thenReturn(true);
         when(annexService.findAnnexByRef(docRef)).thenReturn(annex);
@@ -334,7 +334,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", Collections.emptyList(), Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), true, "", "",
-                "", null, null);
+                "", null, null, false);
 
         when(annexScreen.isCoverPageVisible()).thenReturn(true);
         when(annexService.findAnnexByRef(docRef)).thenReturn(annex);
@@ -396,7 +396,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         return new Annex(docId, "Annex", "login", Instant.now(), "login", Instant.now(),
                     documentVersion, "", documentVersion, "", VersionType.MINOR, true,
                     docTitle, Collections.emptyList(), Arrays.asList(""), docId+"0.1.0"+"Document Created", false, "", "",
-                    Option.some(content), Option.some(annexMetadata));
+                    Option.some(content), Option.some(annexMetadata), false);
     }
     
     @Test
@@ -449,7 +449,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
                 "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", Collections.emptyList(), Arrays.asList(""), "login", Instant.now(),
                 Option.some(content), Option.some(proposalMetadata), false, "", "",
-                "", null, null);
+                "", null, null, false);
 
         when(annexScreen.isCoverPageVisible()).thenReturn(true);
         when(annexService.findAnnexByRef(docRef)).thenReturn(annex);

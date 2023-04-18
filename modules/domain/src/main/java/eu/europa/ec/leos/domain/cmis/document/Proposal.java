@@ -28,9 +28,10 @@ public final class Proposal extends XmlDocument {
                     boolean isLatestVersion, String title, List<Collaborator> collaborators, List<String> milestoneComments,
                     String initialCreatedBy, Instant initialCreationInstant, Option<Content> content, Option<ProposalMetadata> metadata,
                     boolean clonedProposal, String originRef, String clonedFrom, String revisionStatus,
-                    List<String> clonedMilestoneIds, String contributionStatus) {
+                    List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled) {
         super(LeosCategory.PROPOSAL, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
-                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators, milestoneComments, content);
+                versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
+                collaborators, milestoneComments, content, trackChangesEnabled);
         this.initialCreatedBy = initialCreatedBy;
         this.initialCreationInstant = initialCreationInstant;
         this.metadata = metadata;
