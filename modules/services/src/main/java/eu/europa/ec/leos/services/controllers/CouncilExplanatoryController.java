@@ -197,7 +197,7 @@ public class CouncilExplanatoryController {
         }
 
     }
-
+    
     @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {

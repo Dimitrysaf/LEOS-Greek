@@ -3,9 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
-import { Observable, Subject, take, takeUntil } from 'rxjs';
-
-import { ProposalService } from '@/features/proposals/services/proposal.service';
+import { Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
@@ -16,12 +14,14 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 })
 export class ProposalViewComponent implements OnDestroy, OnInit {
   proposal: Document | null = null;
-  proposal$: Observable<Document>;
   proposalState: 'loading' | 'done' | 'error' = 'loading';
   proposalError: unknown = null;
   proposalErrorCode: number | null = null;
   proposalTitleEditablePart: string;
   proposalTitleNonEditablePart: string;
+
+  protected readonly homeUrl = document.baseURI;
+
   private destroy$ = new Subject<void>();
 
   constructor(

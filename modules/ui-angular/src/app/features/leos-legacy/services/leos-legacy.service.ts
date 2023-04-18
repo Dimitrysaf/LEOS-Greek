@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, lastValueFrom, Observable, take } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
-import { Require } from '@/features/leos-legacy/models/requirejs';
+import {
+  Require,
+  RequireConfig,
+} from '@/features/leos-legacy/models/requirejs';
 import { DomService } from '@/shared/services/dom.service';
+import { getCacheBusterArg } from '@/shared/utils/url';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +43,7 @@ export class LeosLegacyService {
     window.LEOS = window.LEOS || ({} as unknown as typeof window.LEOS);
 
     // default settings
-    const defaults = {
+    const defaults: RequireConfig = {
       // standard MIME type for JavaScript
       scriptType: 'application/javascript',
       // base URL to use for all modules/resources lookup
@@ -55,6 +59,7 @@ export class LeosLegacyService {
             process.env.NG_APP_ENV === 'production' ? undefined : 'debug',
         },
       },
+      urlArgs: (id: string, url: string) => getCacheBusterArg(url),
     };
 
     // expose settings through LEOS configuration

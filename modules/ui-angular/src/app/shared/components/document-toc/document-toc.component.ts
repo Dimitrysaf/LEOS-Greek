@@ -73,6 +73,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   @Input() isEdit: boolean;
   @Input() documentType: string;
   @Input() documentRef: string;
+  @Input() versionId: string;
   @Input() tocItems: TocItem[];
   @Output() reBuildTocItems: EventEmitter<boolean> = new EventEmitter();
   annexRef: string;
@@ -163,12 +164,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .subscribe((toc) => {
         this.setTree(toc);
       });
-    if (!this.tocItems) {
-      this.documentService
-        .getToc(this.documentRef)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((toc) => this.setTree(toc));
-    }
   }
 
   getChildren = (node: TableOfContentItemVO) => node.childItems;

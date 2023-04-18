@@ -1,20 +1,9 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Document } from '@leos/shared';
-import {
-  BehaviorSubject,
-  catchError,
-  map,
-  Observable,
-  of,
-  shareReplay,
-  tap,
-} from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import { Milestone } from '../models/milestone.model';
-import { ProposalDetailsService } from './proposal-details.service';
+import { Milestone, MilestoneViewItem } from '../models/milestone.model';
 
 @Injectable({
   providedIn: 'root',
@@ -45,5 +34,14 @@ export class ProposalMilestonesService {
     // return this.http.delete(
     //   `api/secured/proposals/${this.proposalId$}/milestones/${milestoneId}`
     // );
+  }
+
+  listMilestoneView(proposalRef: string, legFileName: string) {
+    return this.http.get<MilestoneViewItem[]>(
+      `${apiBaseUrl}/secured/list-milestones-view/${proposalRef}`,
+      {
+        params: { legFileName },
+      },
+    );
   }
 }

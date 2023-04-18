@@ -63,6 +63,10 @@ eui-icon-svg > svg > use {
   padding: 0;
 }
 
+.eui-page-column--right-column .eui-page-column__header-toggle .eui-icon {
+  transform: rotate(180deg);
+}
+
 /*
  * Misc
  */

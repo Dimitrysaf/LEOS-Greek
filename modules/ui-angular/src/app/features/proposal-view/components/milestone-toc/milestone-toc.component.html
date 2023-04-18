@@ -1,0 +1,44 @@
+<mat-tree id="tree" [dataSource]="dataSource" [treeControl]="treeControl">
+  <mat-nested-tree-node
+    [id]="'toc_' + node.href"
+    [attr.data-id]="node.href"
+    *matTreeNodeDef="let node"
+    matTreeNodePadding
+  >
+    <li class="node-li">
+      <div class="mat-tree-node" (click)="hanldeNodeSelect(node)">
+        <span class="label">{{ node.name }}</span>
+      </div>
+    </li>
+  </mat-nested-tree-node>
+  <mat-nested-tree-node
+    [id]="'toc_' + node.href"
+    *matTreeNodeDef="let node; when: hasChildren"
+    matTreeNodePadding
+    [attr.data-id]="node.href"
+  >
+    <li class="">
+      <div class="mat-tree-node mr-2" (click)="hanldeNodeSelect(node)">
+        <eui-icon
+          euiSizeM
+          matTreeNodeToggle
+          *ngIf="!treeControl.isExpanded(node)"
+          iconClass="eui-icon-angle-right"
+        ></eui-icon>
+        <eui-icon
+          matTreeNodeToggle
+          *ngIf="treeControl.isExpanded(node)"
+          iconClass="eui-icon eui-icon-angle-down"
+        ></eui-icon>
+        <span class="label-extended" (click)="hanldeNodeSelect(node)">{{
+          node.name
+        }}</span>
+      </div>
+      <ul class="">
+        <div *ngIf="treeControl.isExpanded(node)">
+          <ng-container matTreeNodeOutlet></ng-container>
+        </div>
+      </ul>
+    </li>
+  </mat-nested-tree-node>
+</mat-tree>

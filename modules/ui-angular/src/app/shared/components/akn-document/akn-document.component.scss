@@ -1,21 +1,40 @@
+@import 'node_modules/@eui/styles-base/src/styles/02-base/functions/utils';
+@import 'node_modules/@eui/styles/src/styles/02-base/mixins/eui-scrollbars';
+
+:host {
+  display: flex;
+  flex: 1 1 0; // take all available space but use scrollbars when necessary
+  overflow: auto;
+  width: 100%;
+  @include eui-scrollbars();
+}
+
 :host ::ng-deep {
-  .eui-page-column__header-right-content {
-    align-self: start;
+  $border: 1px solid black;
+
+  akomantoso {
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .eui-page-column--right-column .eui-page-column__header-toggle .eui-icon {
-    transform: rotate(180deg);
+  akomantoso > * {
+    padding: 1px;
   }
 
-  .scrollable-page-column {
-    overflow: scroll;
-    width: 35%;
-  }
+  akomantoso > * > {
+    * {
+      border-left: $border;
+      border-right: $border;
+    }
 
-  .eui-page-column__header-right-content {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    :first-child,
+    coverpage + * {
+      border-top: $border;
+    }
+
+    :last-child,
+    coverpage {
+      border-bottom: $border;
+    }
   }
 }

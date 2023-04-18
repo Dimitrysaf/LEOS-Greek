@@ -1,134 +1,63 @@
 <ng-container *appUserHasPermission="['CAN_CREATE_MILESTONE']">
   <div class="eui-u-flex eui-u-flex-justify-content-end">
     <button
+      class="eui-u-mb-m eui-u-mt-2xs"
       euiButton
       euiPrimary
-      (click)="openDialog()"
-      class="eui-u-mb-m eui-u-mt-2xs"
+      (click)="openAddMilestoneDialog()"
     >
       {{ 'global.actions.add' | translate }}
     </button>
   </div>
 </ng-container>
 
-<app-proposal-milestone-view
-  [proposal]="proposal"
-></app-proposal-milestone-view>
-
-<eui-dialog
-  #milestonesDialog
-  [title]="
-    this.tranlsateSerice.instant('page.collection.milestones.add-dialog.title')
-  "
-  (clickOutside)="onClickOutside()"
-  (close)="onClickOutside()"
->
-  <form [formGroup]="form" class="eui-u-ml-4xl">
-    <div
-      class="eui-u-flex eui-u-mb-m eui-u-flex-justify-content-between eui-u-flex-align-items-start"
-    >
-      <label
-        for="milestone_type"
-        class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
-        >{{ 'page.collection.milestones.table.type' | translate }}</label
-      >
-      <select
-        euiSelect
-        name="milestone_type"
-        aria-label="Milestone type"
-        formControlName="milestonesType"
-        class="milestones-select"
-      >
-        <option
-          value="{{ 'page.collection.milestones.type.1' | translate }}"
-          selected
-        >
-          {{ 'page.collection.milestones.type.1' | translate }}
-        </option>
-        <option value="{{ 'page.collection.milestones.type.2' | translate }}">
-          {{ 'page.collection.milestones.type.2' | translate }}
-        </option>
-        <option value="{{ 'page.collection.milestones.type.3' | translate }}">
-          {{ 'page.collection.milestones.type.3' | translate }}
-        </option>
-        <option value="other">
-          {{ 'page.collection.milestones.type.4' | translate }}
-        </option>
-      </select>
-    </div>
-    <div
-      class="eui-u-flex milestones-required eui-u-flex-justify-content-between eui-u-flex-align-items-start"
-    >
-      <!-- attr.data-required="{{!disabled}}" -->
-      <input
-        euiInputText
-        name="milestone_title"
-        class="milestones-title"
-        placeholder="Please type milestone title here"
-        formControlName="milestonesTitle"
-      />
-      <label
-        for="milestone_title"
-        class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
-        >{{
-          'page.collection.milestones.table.add-milestone-dialog.title'
-            | translate
-        }}</label
-      >
-    </div>
-  </form>
-  <eui-dialog-footer>
-    <div class="d-flex flex-row justify-content-end">
-      <button
-        type="button"
-        class="eui-u-mr-xs"
-        euiButton
-        euiSecondary
-        (click)="onDismiss()"
-      >
-        {{ 'global.actions.cancel' | translate }}
-      </button>
-      <button
-        type="button"
-        euiButton
-        euiPrimary
-        (click)="onAccept()"
-        [disabled]="isFormInValid()"
-      >
-        {{
-          'page.collection.milestones.table.add-milestone-dialog.create'
-            | translate
-        }}
-      </button>
-    </div>
-  </eui-dialog-footer>
-</eui-dialog>
 <table euiTable euiTableResponsive [rows]="dataSource">
   <ng-template euiTemplate="header">
     <tr>
       <th>{{ 'page.collection.milestones.table.title' | translate }}</th>
       <th>{{ 'page.collection.milestones.table.date' | translate }}</th>
       <th>{{ 'page.collection.milestones.table.status' | translate }}</th>
-      <th>{{ 'page.collection.milestones.table.actions' | translate }}</th>
+      <th style="width: 0">
+        {{ 'page.collection.milestones.table.actions' | translate }}
+      </th>
     </tr>
   </ng-template>
   <ng-template let-row euiTemplate="body">
     <tr>
-      <td data-col-label="Title">{{ row.title }}</td>
-      <td data-col-label="Date">{{ row.updatedDate | date }}</td>
-      <td data-col-label="Status" [class]="findStatusColor(row.status)">
+      <td
+        [attr.data-col-label]="
+          'page.collection.milestones.table.title' | translate
+        "
+      >
+        {{ row.title }}
+      </td>
+      <td
+        [attr.data-col-label]="
+          'page.collection.milestones.table.date' | translate
+        "
+      >
+        {{ row.updatedDate | date: 'dd/MM/yyyy hh:mm:ss' }}
+      </td>
+      <td
+        [attr.data-col-label]="
+          'page.collection.milestones.table.status' | translate
+        "
+      >
         {{ row.status }}
       </td>
-      <td>
+      <td
+        [attr.data-col-label]="
+          'page.collection.milestones.table.actions' | translate
+        "
+      >
         <eui-dropdown>
           <button euiButton euiBasicButton="true">
             <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
           </button>
           <eui-dropdown-content>
-            <!-- This can be a dynamic injected component -->
             <ul euiList>
               <li euiListItem>
-                <button euiListItem (click)="handleMilestoneView()">
+                <button euiListItem (click)="openMilestoneViewDialog(row)">
                   {{
                     'page.collection.milestones.actions.view-milestone'
                       | translate
@@ -149,3 +78,16 @@
     </tr>
   </ng-template>
 </table>
+
+<app-add-milestone-dialog
+  #addMilestoneDialog
+  (closed)="onAddMilestoneDialogClosed()"
+  *ngIf="addMilestoneDialogVisible"
+></app-add-milestone-dialog>
+
+<app-proposal-milestone-view
+  #milestoneViewDialog
+  [milestone]="milestoneViewData"
+  (closed)="onMilestoneViewDialogClosed()"
+  *ngIf="milestoneViewData"
+></app-proposal-milestone-view>

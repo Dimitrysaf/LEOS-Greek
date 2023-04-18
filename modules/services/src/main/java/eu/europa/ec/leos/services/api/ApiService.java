@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
+import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -88,4 +89,6 @@ public interface ApiService {
     void updateExplanatoryTitle(String proposalRef, String docId, String title);
 
     LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception;
+
+    List<MilestoneDocumentView> listMilestoneDocuments(String proposalRef, String legFileName) throws IOException;
 }

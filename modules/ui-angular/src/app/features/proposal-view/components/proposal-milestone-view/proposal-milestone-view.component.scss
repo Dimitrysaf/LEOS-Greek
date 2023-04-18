@@ -1,0 +1,54 @@
+.milestone-view-dialog__body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--eui-base-spacing-m) var(--eui-base-spacing-m) 0
+    var(--eui-base-spacing-m);
+}
+
+::ng-deep .milestone-view-dialog__body {
+  eui-tabs {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .eui-tabs {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .eui-tab-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .eui-tab-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    position: relative;
+  }
+
+  .eui-page-column__header-right-content {
+    align-self: start;
+  }
+
+  .scrollable-page-column {
+    overflow: scroll;
+    width: 35%;
+  }
+
+  .eui-page-column__header-right-content {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+::ng-deep .leos-guideline-canvas.leos-guideline-canvas--above-modals {
+  z-index: calc(var(--eui-base-z-index-cdk-overlay-container) + 1);
+}

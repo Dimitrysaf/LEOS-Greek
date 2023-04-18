@@ -433,17 +433,13 @@ export class DocumentEditorComponent
   }
 
   private loadStyleSheet() {
-    const category =
-      this.documentType === 'coverPage'
-        ? 'coverpage'
-        : this.documentType === 'council_explanatory'
-        ? 'explanatory'
-        : this.documentType;
+    const typeLC = this.documentType.toLowerCase();
+    const category = typeLC === 'council_explanatory' ? 'explanatory' : typeLC;
 
     this.config.config.subscribe((config) => {
       // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
       // FIXME: import stylesheets to ngui?
-      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css?cacheToken_${config.leosBuildTimestamp}`;
+      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css`;
       this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
     });
   }

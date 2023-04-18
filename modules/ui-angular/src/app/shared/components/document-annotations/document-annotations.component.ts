@@ -30,9 +30,12 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() proposalRef: string | null = null;
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
+  @Input() canvasClass?: string;
 
   private annotate: AnnotateManager;
   private mutationObserver?: MutationObserver;
+  private canvasMutationObserver?: MutationObserver;
+  private canvasEl?: HTMLCanvasElement;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -45,6 +48,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     void this.interceptAndEmbedAnnotatorFrame();
+    void this.interceptAndProcessAnnotatorCanvas();
     this.annotate = new AnnotateManager(
       this.leos,
       this.appConfig,
@@ -71,6 +75,9 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.annotate.destroy();
     this.mutationObserver?.disconnect();
+    this.canvasMutationObserver?.disconnect();
+    this.canvasEl?.remove();
+    this.canvasEl = null;
   }
 
   private interceptAndEmbedAnnotatorFrame() {
@@ -89,5 +96,30 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
 
     this.mutationObserver = new MutationObserver(callback);
     this.mutationObserver.observe(this.document.body, { childList: true });
+  }
+
+  private interceptAndProcessAnnotatorCanvas() {
+    const isAnnotatorCanvas = (n: Node): n is HTMLCanvasElement =>
+      n instanceof Element && n.id === 'leosCanvas';
+    const callback: MutationCallback = (mutationList, observer) => {
+      const canvasEl = mutationList
+        .filter((ml) => ml.type === 'childList')
+        .flatMap((ml) => Array.from(ml.addedNodes))
+        .find(isAnnotatorCanvas);
+      if (canvasEl) {
+        observer.disconnect();
+        this.canvasEl = canvasEl;
+        document.body.appendChild(canvasEl);
+        if (this.canvasClass) {
+          canvasEl.classList.add('leos-guideline-canvas--above-modals');
+        }
+      }
+    };
+
+    this.canvasMutationObserver = new MutationObserver(callback);
+    this.canvasMutationObserver.observe(this.document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
 }
