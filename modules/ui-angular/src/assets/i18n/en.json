@@ -105,6 +105,8 @@
   "page.collection.collaborators.dialog.form.name": "Name",
   "page.collection.collaborators.dialog.form.entity": "Entity",
   "page.collection.collaborators.dialog.form.role": "Role",
+  "page.collection.collaborators.table.delete-dialog.title": "Delete collaborator confirmation",
+  "page.collection.collaborators.table.delete-dialog.desc": "Are you sure you want to delete this collaborator?",
   "page.collection.exports.table.actions.edit": "Edit title",
   "page.collection.exports.table.dialog.edit-title.title": "Edit export title",
   "page.collection.exports.table.actions.re-export": "Re-export to eConsilium",
