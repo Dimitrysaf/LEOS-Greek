@@ -150,6 +150,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .select(getUserDetails)
       .pipe(take(1))
       .subscribe((state) => (this.user = state));
+
+    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
+      this.getChildren,
+    );
+    this.dataSource = new MatTreeNestedDataSource();
   }
 
   ngOnDestroy(): void {
@@ -178,11 +183,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       case 'RECITALS':
       case 'BODY':
       case 'PREFACE':
-        return capitalizeFirstLetter(node.tocItem.aknTag);
       case 'MAIN_BODY':
-        return 'Body';
       case 'CONCLUSIONS':
-        return 'Signature';
+        return this.tranlsateService.instant(
+          `toc.item.type.${node.tocItem.aknTag.toLowerCase()}`,
+        );
       //higher division numbering
       case 'ARTICLE':
       case 'CHAPTER':
