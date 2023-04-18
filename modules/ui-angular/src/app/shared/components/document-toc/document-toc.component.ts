@@ -183,8 +183,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         return 'Body';
       case 'CONCLUSIONS':
         return 'Signature';
+      //higher division numbering
       case 'ARTICLE':
-        return `Article ${node.number} - ${node.heading}`;
+      case 'CHAPTER':
+      case 'TITLE':
+      case 'PART':
+      case 'SECTION':
+        return `${capitalizeFirstLetter(node.tocItem.aknTag)} ${
+          node.number
+        } - ${node.heading}`;
       default:
         return truncate(
           [node.number, node.heading || node.content].filter(Boolean).join(' '),
