@@ -130,6 +130,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     private store: Store,
     @Inject(DOCUMENT) private document: Document,
   ) {
+    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
+      this.getChildren,
+    );
+    this.dataSource = new MatTreeNestedDataSource();
+
     this.documentService.tocItems$
       .pipe(takeUntil(this.destroy$))
       .subscribe((toc) => {
@@ -145,11 +150,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .select(getUserDetails)
       .pipe(take(1))
       .subscribe((state) => (this.user = state));
-
-    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
-      this.getChildren,
-    );
-    this.dataSource = new MatTreeNestedDataSource();
   }
 
   ngOnDestroy(): void {

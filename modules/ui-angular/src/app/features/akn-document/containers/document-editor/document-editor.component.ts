@@ -50,7 +50,7 @@ export class DocumentEditorComponent
   pageSubTitle: string;
   proposalRef: string;
   showStatusFilter: boolean;
-  xml: string[];
+  xml: string;
   isCollapseToc = false;
   versionForView: string;
   versionForViewHeaderTitle: string;
@@ -428,8 +428,7 @@ export class DocumentEditorComponent
       updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
       updatedOn: versionInfo.lastModifiedBy,
     });
-    this.xml = [];
-    this.xml.push(this.cleanupAndSerializeXML(xmlDoc));
+    this.xml = this.cleanupAndSerializeXML(xmlDoc);
   }
 
   private loadStyleSheet() {
@@ -452,7 +451,6 @@ export class DocumentEditorComponent
   }
 
   private setPageSubTitle({ version, updatedByFull, updatedOn }) {
-    updatedOn = formatDate(1664193765137, 'dd/mm/yyyy HH:MM', 'en-US');
     this.translate
       .get('page.editor.subtitle', { version, updatedByFull, updatedOn })
       .pipe(takeUntil(this.destroy$))
