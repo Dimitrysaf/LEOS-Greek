@@ -18,7 +18,9 @@ import { ProposalCreateFormComponent } from './components/proposal-create-form/p
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
+import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
 import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
+import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
 
 @NgModule({
   imports: [
@@ -44,6 +46,8 @@ import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
     HtmlToPlaintextPipe,
+    EscapeHtmlPipe,
+    UnescapeHtmlPipe,
   ],
   exports: [
     UxAllModule,
@@ -65,6 +69,8 @@ import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
     HtmlToPlaintextPipe,
+    EscapeHtmlPipe,
+    UnescapeHtmlPipe,
   ],
 })
 export class SharedModule {}

@@ -1,7 +1,6 @@
 package eu.europa.ec.leos.domain.vo;
 
 
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,10 +12,11 @@ public class MilestonesVO {
     private final String legDocumentName;
     private final String proposalRef;
     private final String createdDate;
+    private String createdBy;
     private Date updatedDate;
     private String status;
     private List<MilestonesVO> clonedMilestones;
-    private Boolean isClone ;
+    private Boolean isClone;
     private boolean isContributionChanged;
 
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -63,7 +63,17 @@ public class MilestonesVO {
         return proposalRef;
     }
 
-    public void setTitle(String title){this.title = title;}
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCreatedBy() {
+        return this.createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public List<MilestonesVO> getClonedMilestones() {
         return clonedMilestones;
@@ -108,7 +118,8 @@ public class MilestonesVO {
         return Objects.hash(title, status, createdDate, updatedDate, legDocumentName);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "MilestonesVO{" +
                 "title='" + title + '\'' +
                 ", status='" + status + '\'' +

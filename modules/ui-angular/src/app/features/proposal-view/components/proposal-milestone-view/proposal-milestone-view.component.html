@@ -1,32 +1,71 @@
 <eui-dialog
-  #milestoneView
-  title="Milestone View"
-  [height]="'100vh'"
-  [width]="'85vw'"
+  #dialog
+  [title]="'page.collection.milestone-view-dialog.title' | translate"
+  width="calc(100vw - 2rem)"
+  height="calc(100vh - 2rem - 50px - 70px)"
+  [hasAcceptButton]="false"
+  [dismissLabel]="'global.actions.close' | translate"
+  (dismiss)="close()"
+  (close)="close()"
+  [isClosedOnEscape]="false"
+  hasNoBodyPadding
 >
-  <eui-tabs>
-    <eui-tab *ngFor="let doc of getDocumentsForMilestoneView(); let i = index">
-      <ng-container>
-        <eui-tab-label>{{ getDocTitle(doc) }}</eui-tab-label>
-        <eui-page>
-          <eui-tab-content>
+  <div class="milestone-view-dialog__body">
+    <!-- Description -->
+    <div
+      class="eui-u-mb-xl"
+      [innerHTML]="
+        'page.collection.milestone-view-dialog.description'
+          | translate
+            : {
+                date: milestone.createdDate,
+                user: (milestone.createdBy | escapeHtml),
+                type: (milestone.title | escapeHtml)
+              }
+      "
+    ></div>
+
+    <!-- Tabs -->
+    <eui-tabs (tabSelect)="onTabSelected($event)">
+      <eui-tab *ngFor="let doc of documents; let tabIndex = index">
+        <eui-tab-label>
+          {{ doc.label }}
+          <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
+        </eui-tab-label>
+        <eui-tab-content *ngIf="activeTabIndex === tabIndex">
+          <eui-page>
             <eui-page-content>
               <eui-page-columns>
-                <eui-page-column isCollapsible interactiveScrollbars size="4xl"
-                  ><eui-page-column-body
-                    ><app-document-toc
-                      [documentType]="doc.documentType"
-                      [documentRef]="doc.metadata.internalRef"
-                    ></app-document-toc></eui-page-column-body
-                ></eui-page-column>
-                <eui-page-column interactiveScrollbars
-                  ><eui-page-column-body
-                    ><app-akn-document
-                      [docId]="doc.metadata.internalRef"
-                      [docCategory]="doc.documentType"
-                    ></app-akn-document></eui-page-column-body
-                ></eui-page-column>
-                <!-- <eui-page-column
+                <!-- TOC -->
+                <eui-page-column
+                  [label]="'page.editor.toc-column.label' | translate"
+                  isCollapsible
+                  interactiveScrollbars
+                  size="4xl"
+                >
+                  <eui-page-column-body>
+                    <app-milestone-toc [toc]="doc.tocData"></app-milestone-toc>
+                  </eui-page-column-body>
+                </eui-page-column>
+
+                <!-- Document -->
+                <eui-page-column
+                  class="eui-u-p-none eui-page-column--no-scrollbars"
+                  [interactiveScrollbars]="false"
+                >
+                  <eui-page-column-body
+                    class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
+                  >
+                    <app-akn-document
+                      [id]="containerId + '_' + doc.ref"
+                      [documentType]="doc.type"
+                      [xml]="doc.xml"
+                    ></app-akn-document>
+                  </eui-page-column-body>
+                </eui-page-column>
+
+                <!-- Annotations -->
+                <eui-page-column
                   class="eui-page-column--right-column"
                   [label]="'page.editor.annotations-column.label' | translate"
                   isCollapsible
@@ -35,15 +74,22 @@
                 >
                   <eui-page-column-body class="flex-grow-1">
                     <app-document-annotations
-                      [documentId]="doc.id"
+                      [documentId]="doc.ref"
+                      [containerId]="containerId + '_' + doc.ref"
+                      [connectedEntity]="connectedEntity"
+                      [proposalRef]="milestone.proposalRef"
+                      [permissions]="documentService.permissions$ | async"
+                      [showStatusFilter]="showStatusFilter"
+                      operationMode="READ_ONLY"
+                      canvasClass="leos-guideline-canvas--above-modals"
                     ></app-document-annotations>
                   </eui-page-column-body>
-                </eui-page-column> -->
+                </eui-page-column>
               </eui-page-columns>
             </eui-page-content>
-          </eui-tab-content>
-        </eui-page>
-      </ng-container></eui-tab
-    >
-  </eui-tabs>
+          </eui-page>
+        </eui-tab-content>
+      </eui-tab>
+    </eui-tabs>
+  </div>
 </eui-dialog>

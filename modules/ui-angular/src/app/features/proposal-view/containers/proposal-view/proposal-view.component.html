@@ -1,6 +1,11 @@
 <eui-breadcrumb>
-  <eui-breadcrumb-item link="/" label="Home"></eui-breadcrumb-item>
-  <eui-breadcrumb-item label="Proposal Viewer"></eui-breadcrumb-item>
+  <eui-breadcrumb-item
+    [link]="homeUrl"
+    [label]="'app.breadcrumb.home' | translate"
+  ></eui-breadcrumb-item>
+  <eui-breadcrumb-item
+    [label]="'page.collection.breadcrumb-title' | translate"
+  ></eui-breadcrumb-item>
 </eui-breadcrumb>
 
 <section [ngSwitch]="proposalState" class="eui-u-mh-m">

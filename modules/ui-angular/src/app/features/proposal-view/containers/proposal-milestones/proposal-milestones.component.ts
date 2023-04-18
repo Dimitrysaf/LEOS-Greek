@@ -1,17 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import {
-  EuiDialogComponent,
-  EuiDialogService,
-} from '@eui/components/eui-dialog';
-import { TranslateService } from '@ngx-translate/core';
-import { Subject, take, takeUntil } from 'rxjs';
+import { EuiDialogService } from '@eui/components/eui-dialog';
+import { Subject, takeUntil } from 'rxjs';
 
+import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
 import { Document } from '@/shared';
 
@@ -26,30 +17,23 @@ import { ProposalMilestonesService } from '../../services/proposal-milestones.se
 })
 export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
-  @ViewChild('milestonesDialog') milestonesDialog: EuiDialogComponent;
-  @ViewChild(ProposalMilestoneViewComponent)
-  viewMilestone: ProposalMilestoneViewComponent;
-  form: FormGroup;
+  @ViewChild('addMilestoneDialog')
+  addMilestoneDialog: AddMilestoneDialogComponent;
+  addMilestoneDialogVisible = false;
+  @ViewChild('milestoneViewDialog')
+  milestoneViewDialog: ProposalMilestoneViewComponent;
+  milestoneViewData: Milestone = null;
+  proposalRef: string;
   dataSource: Milestone[] = [];
   destroy$: Subject<any> = new Subject();
-
-  status = [
-    { value: 'File error', color: 'eui-u-color-danger-100' },
-    { value: 'Status 1', color: 'eui-u-color-success-100' },
-    { value: 'Status 2', color: 'eui-u-color-info-100' },
-  ];
 
   constructor(
     private euiDialogService: EuiDialogService,
     private proposalMilestonesService: ProposalMilestonesService,
-    private proposalDetailsService: ProposalDetailsService,
-    private fb: FormBuilder,
-    public tranlsateSerice: TranslateService,
+    protected proposalDetailsService: ProposalDetailsService,
   ) {}
 
   ngOnInit(): void {
-    this.buildForm();
-    this.handleChanges();
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -68,93 +52,26 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  getValue() {
-    return this.form && this.form.get('milestonesType').value;
-  }
-
-  findStatusColor(val: string) {
-    // return this.status.find((obj) => obj.value === val).color;
-  }
-
   deleteMilestone(id: string) {
     console.log(`Delete milestone  ${id}`);
     this.proposalMilestonesService.deleteMilestone(id);
   }
 
-  // Template sample
-  openDialog(): void {
-    this.milestonesDialog.openDialog();
+  openAddMilestoneDialog(): void {
+    this.addMilestoneDialogVisible = true;
+    setTimeout(() => this.addMilestoneDialog.open(), 0);
   }
 
-  onClickOutside(): void {
-    console.log('clickOutside from output');
-    this.milestonesDialog.closeDialog();
-    this.resetInitials();
+  onAddMilestoneDialogClosed() {
+    this.addMilestoneDialogVisible = false;
   }
 
-  resetInitials(): void {
-    this.form.patchValue({
-      milestonesType: 'For Interservice Consultation',
-      milestonesTitle: 'For Interservice Consultation',
-    });
-    this.form.clearValidators();
+  openMilestoneViewDialog(milestone: Milestone): void {
+    this.milestoneViewData = milestone;
+    setTimeout(() => this.milestoneViewDialog.open(), 0);
   }
 
-  onClose(): void {
-    console.log('close from output');
-    this.milestonesDialog.closeDialog();
-    this.resetInitials();
-  }
-
-  onAccept(): void {
-    this.milestonesDialog.closeDialog();
-    this.resetInitials();
-    this.proposalDetailsService.createMilestone(
-      this.proposalDetailsService.proposalRef,
-      this.form.get('milestonesTitle').value,
-    );
-  }
-
-  onDismiss(): void {
-    console.log('dismiss from output');
-    this.milestonesDialog.closeDialog();
-    this.resetInitials();
-  }
-
-  handleMilestoneView(): void {
-    this.viewMilestone.openDialog();
-  }
-
-  isFormInValid() {
-    return this.form.invalid;
-  }
-
-  private buildForm() {
-    this.form = this.fb.group({
-      milestonesType: new FormControl('For Interservice Consultation'),
-      milestonesTitle: new FormControl({
-        value: 'For Interservice Consultation',
-        disabled: true,
-      }),
-    });
-  }
-
-  private handleChanges() {
-    this.form
-      .get('milestonesType')
-      .valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((selectedValue) => {
-        const milestonesTitle = this.form.get('milestonesTitle');
-        if (selectedValue !== 'other') {
-          milestonesTitle.setValue(selectedValue);
-          milestonesTitle.disable();
-          milestonesTitle.clearValidators();
-        } else {
-          milestonesTitle.setValue('');
-          milestonesTitle.enable();
-          milestonesTitle.setValidators([Validators.required]);
-        }
-        milestonesTitle.updateValueAndValidity();
-      });
+  onMilestoneViewDialogClosed() {
+    this.milestoneViewData = null;
   }
 }

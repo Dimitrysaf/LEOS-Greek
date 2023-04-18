@@ -1,6 +1,8 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 
+import { getCacheBusterArg } from '@/shared/utils/url';
+
 import { createPromise, setDynamicStyle } from '../utils';
 
 @Injectable({
@@ -10,6 +12,7 @@ export class DomService {
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   setDynamicStyle(cssURL: string): () => void {
+    cssURL += getCacheBusterArg(cssURL);
     const existingStyle = this.document.querySelector(
       `link[href="${cssURL}"]`,
     ) as HTMLLinkElement | null;
@@ -29,6 +32,7 @@ export class DomService {
     preprocess?: (script: HTMLScriptElement) => void,
   ): Promise<void> {
     const { promise, resolve } = createPromise<void>();
+    src += getCacheBusterArg(src);
 
     if (this.document.querySelector(`script[src="${src}"]`)) {
       // already loaded

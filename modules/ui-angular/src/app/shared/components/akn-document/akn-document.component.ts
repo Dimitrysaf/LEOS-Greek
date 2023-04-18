@@ -1,6 +1,6 @@
-import { formatDate } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   Input,
@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentService } from '@/shared/services/document.service';
@@ -19,24 +20,18 @@ import { DomService } from '@/shared/services/dom.service';
   selector: 'app-akn-document',
   templateUrl: './akn-document.component.html',
   styleUrls: ['./akn-document.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
-  @Input() docId: string;
-  @Input() docCategory: string;
-  xml: string;
-
-  pageTitle: string;
-  pageSubTitle: string;
-
-  isTOCColumnCollapsed = true;
-  isAnnotationsColumnCollapsed = true;
-  isVersionsColumnCollapsed = true;
+  @Input() documentType: string;
+  @Input() xml: string;
+  @Input() containerId: string;
 
   id: string;
-  isEditMode = false;
   @ViewChild('xmlView', { static: false }) xmlView: ElementRef<HTMLElement>;
 
   private unloadStyleSheet?: () => void;
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     private documentService: DocumentService,
@@ -45,79 +40,45 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private translate: TranslateService,
     private config: AppConfigService,
-  ) {
-    console.log(this.xml);
-  }
+    private rootElementRef: ElementRef<HTMLElement>,
+  ) {}
 
   ngOnInit(): void {
-    this.docCategory = this.docCategory.toLowerCase();
     this.loadStyleSheet();
   }
 
   ngOnDestroy() {
     this.unloadStyleSheet?.();
+    this.destroy$.next(null);
+    this.destroy$.complete();
   }
 
   ngAfterViewInit(): void {
-    this.documentService
-      .getDocumentByRef(this.docId, this.docCategory)
-      .subscribe((xml) => this.loadDocument(xml.editableXml));
+    this.loadDocument(this.xml);
   }
 
   private loadDocument(xml: string) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/xml');
-    this.setPageTitle(xmlDoc);
-    this.setPageSubTitle({
-      version: '1.0.8',
-      updatedByFull: 'MICHOTTE Alexandra (DIGIT)',
-      updatedOn: 1664193765137,
-    });
-    const elem = this.xmlView.nativeElement;
-
-    let cleanXml = this.cleanupAndSerializeXML(xmlDoc);
-    cleanXml = cleanXml.replaceAll('xml:id', 'id');
-    elem.innerHTML = cleanXml;
+    const rootEl = this.rootElementRef.nativeElement;
+    rootEl.innerHTML = this.cleanupAndSerializeXML(xmlDoc);
   }
 
   private loadStyleSheet() {
-    const category = this.docCategory.toLowerCase();
+    const typeLC = this.documentType.toLowerCase();
+    const category = typeLC === 'council_explanatory' ? 'explanatory' : typeLC;
 
     this.config.config.subscribe((config) => {
       // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
       // FIXME: import stylesheets to ngui?
-      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css?cacheToken_${config.leosBuildTimestamp}`;
+      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css`;
       this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
     });
   }
 
   private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
-    if (this.docCategory !== 'coverpage') {
-      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
-    }
-    return new XMLSerializer()
-      .serializeToString(xmlDoc)
-      .replace(/<\?xml(-stylesheet)?.+\?>/g, '');
-  }
-
-  private setPageSubTitle({ version, updatedByFull, updatedOn }) {
-    updatedOn = formatDate(1664193765137, 'dd/mm/yyyy HH:MM', 'en-US');
-    this.translate
-      .get('page.editor.subtitle', { version, updatedByFull, updatedOn })
-      .subscribe((subTitle: string) => {
-        this.pageSubTitle = subTitle;
-      });
-  }
-
-  private setPageTitle(xmlDoc: XMLDocument) {
-    const getMeta = (name: string) =>
-      xmlDoc.querySelector(`doc > meta > proprietary > ${name}`)?.textContent;
-    this.pageTitle = [
-      getMeta('docStage'),
-      getMeta('docType'),
-      getMeta('docPurpose'),
-    ]
-      .filter(Boolean)
-      .join(' ');
+    return new XMLSerializer().serializeToString(
+      xmlDoc.querySelector('akomaNtoso'),
+    );
   }
 }

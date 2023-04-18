@@ -37,6 +37,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -52,6 +53,7 @@ import eu.europa.ec.leos.services.document.*;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
+import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -60,20 +62,20 @@ import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
-import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.ArchiveService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
+import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
@@ -84,9 +86,12 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -96,9 +101,24 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 @Service
 public class ApiServiceImpl implements ApiService {
+    private static final String DOC = "doc";
+    private static final String HTML = ".html";
+    private static final String TOC_JS = "_toc.js";
+    private static final String XML = ".xml";
+    private static final String PDF = ".pdf";
+    private static final String MAIN_DOCUMENT_FILE_NAME = "main";
+    private static final String COVER_PAGE_CONTENT_FILE_NAME = "coverPage";
+    private static final String COVER_PAGE_TAB_TITLE_KEY = "collection.block.caption.coverpage";
+    private static final String DOC_VERSION_START_TAG_REG = "<leos:docVersion\\b[^>]*>";
+    private static final String DOC_VERSION_END_TAG = "</leos:docVersion>";
+    private static final String DOC_NUMBER_START_TAG_REG = "<leos:annexIndex\\b[^>]*>";
+    private static final String DOC_NUMBER_END_TAG = "</leos:annexIndex>";
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
 
     private final TemplateService templateService;
@@ -128,7 +148,9 @@ public class ApiServiceImpl implements ApiService {
     private ExplanatoryService explanatoryService;
     private ExportPackageService exportPackageService;
     private NotificationService notificationService;
+    private LegService legService;
     private final UserHelper userHelper;
+    private LeosRepository leosRepository;
 
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
@@ -154,8 +176,8 @@ public class ApiServiceImpl implements ApiService {
                           PostProcessingDocumentService postProcessingDocumentService,
                           ValidationService validationService, Properties applicationProperties,
                           UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService,
-                          ExportPackageService exportPackageService,
-                          UserHelper userHelper) {
+                          ExportPackageService exportPackageService, LegService legService,
+                          UserHelper userHelper, LeosRepository leosRepository) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -181,6 +203,8 @@ public class ApiServiceImpl implements ApiService {
         this.userHelper = userHelper;
         this.explanatoryService = explanatoryService;
         this.exportPackageService = exportPackageService;
+        this.legService = legService;
+        this.leosRepository = leosRepository;
     }
 
     @Override
@@ -772,7 +796,7 @@ public class ApiServiceImpl implements ApiService {
                 Date.from(legDocument.getLastModificationInstant()),
                 legDocument.getStatus().name(),
                 legDocument.getName(), proposalRef);
-
+        milestonesVO.setCreatedBy(userHelper.convertToPresentation(legDocument.getInitialCreatedBy()));
         if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
             List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
             cloneProposalMetadataVOs.forEach(cpmVo -> {
@@ -880,4 +904,111 @@ public class ApiServiceImpl implements ApiService {
         }
         return null;
     }
+
+    @Override
+    public List<MilestoneDocumentView> listMilestoneDocuments(String proposalRef, String legFileName) throws IOException {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LegDocument legDocument = getLegDocument(legFileName, leosPackage);
+        File legFileTemp = File.createTempFile("milestone", ".leg");
+        Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
+        Map<String, Object> annexAddedMap = new HashMap<>();
+        Map<String, Object> annexDeletedMap = new HashMap<>();
+
+        String milestoneDir = MilestoneHelper.getMilestoneDir(legFileTemp);
+        Map<String, Object> jsFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, TOC_JS);
+        Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles);
+        Map<String, String> docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
+        Map<Integer, String> annexIndexesMap = versionAndAnnexNumberMap.get("annexIndexesMap");
+        Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
+        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
+
+        List<MilestoneDocumentView> listDocuments = new ArrayList<>();
+        HashMap<String, Boolean> annexesComparaison = new HashMap();
+        for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
+            String key = entry.getKey();
+            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
+            String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
+            String version = docVersionMap.get(contentFileName);
+            boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
+            boolean isCompared = false;
+            try {
+                byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+                String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
+                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage);
+                if (isCoverPage) {
+                    milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
+                } else {
+                    LeosCategory category = xmlContentProcessor.identifyCategory(key,
+                            xmlContent.getBytes(StandardCharsets.UTF_8));
+                    milestoneView.setLeosCategory(category);
+                    if (category.equals(LeosCategory.ANNEX)) {
+                        milestoneView.setOrder(annexKeyMap.get(contentFileName));
+                        annexesComparaison.put((entry.getKey()), isCompared);
+                    }
+                }
+                String tocFile = contentFileName + TOC_JS;
+
+                milestoneView.setTocData(this.buildTocTree((File) unzippedFiles.get(tocFile)));
+                listDocuments.add(milestoneView);
+            } catch (Exception e) {
+                LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
+            }
+        }
+        return listDocuments;
+    }
+
+    private static String readFileToString(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), "UTF-8");
+    }
+
+    private Map<String, Map> populateVersionAndAnnexNumberMap(Map<String, Object> files) {
+        Map<String, Map> docVersionAndAnnexNumberMap = new HashMap<>();
+        Map<String, String> docVersionMap = new HashMap<>();
+        Map<Integer, String> annexIndexesMap = new HashMap<>();
+        Map<String, Integer> annexKeyMap = new HashMap<>();
+        Map<String, Object> xmlFiles = MilestoneHelper.filterAndSortFiles(files, XML);
+        xmlFiles.forEach((key, value) -> {
+            try {
+                String xmlContent = readFileToString(((File) value));
+                Pattern pattern = Pattern.compile(DOC_VERSION_START_TAG_REG);
+                Matcher matcher = pattern.matcher(xmlContent);
+                String selectedKey = key.substring(0, key.indexOf(XML));
+                while (matcher.find()) {
+                    int endIndex = xmlContent.indexOf(DOC_VERSION_END_TAG);
+                    String docVersion = xmlContent.substring(matcher.end(), endIndex);
+                    docVersionMap.put(selectedKey, docVersion);
+                }
+                Pattern patternForAnnexIndex = Pattern.compile(DOC_NUMBER_START_TAG_REG);
+                Matcher matcherForAnnexIndex = patternForAnnexIndex.matcher(xmlContent);
+                if (matcherForAnnexIndex.find()) {
+                    int endAnnexIndex = xmlContent.indexOf(DOC_NUMBER_END_TAG);
+                    String annexIndex = xmlContent.substring(matcherForAnnexIndex.end(), endAnnexIndex);
+                    annexIndexesMap.put(new Integer(annexIndex), selectedKey);
+                    annexKeyMap.put(selectedKey, new Integer(annexIndex));
+                }
+            } catch (IOException e) {
+                LOG.error("Exception occurred while reading the .leg file " + e);
+            }
+        });
+        docVersionAndAnnexNumberMap.put("docVersionMap", docVersionMap);
+        docVersionAndAnnexNumberMap.put("annexIndexesMap", annexIndexesMap);
+        docVersionAndAnnexNumberMap.put("annexKeyMap", annexKeyMap);
+        return docVersionAndAnnexNumberMap;
+    }
+
+    private String buildTocTree(File file) {
+        String fileData = "";
+        try {
+            fileData = readFileToString(file);
+            fileData = fileData.substring(fileData.indexOf("["), fileData.length() - 1);
+            return fileData;
+        } catch (IOException e) {
+            LOG.error("Exception occurred while reading the file", e);
+        }
+        return fileData;
+    }
+
 }

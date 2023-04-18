@@ -91,7 +91,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
-import static eu.europa.ec.leos.model.annex.AnnexStructureType.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
 public class AnnexApiServiceImpl implements AnnexApiService {

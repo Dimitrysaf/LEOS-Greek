@@ -7,6 +7,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProposalLastUpdatedOnComponent {
-  @Input() date: number;
+  @Input() date: Date | string | number;
   @Input() name: string;
 }

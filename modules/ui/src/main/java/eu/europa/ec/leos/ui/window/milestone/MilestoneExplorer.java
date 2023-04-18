@@ -163,7 +163,7 @@ public class MilestoneExplorer extends AbstractWindow {
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
 
     public MilestoneExplorer(LegDocument legDocument, String milestoneTitle, String proposalRef, MessageHelper messageHelper, EventBus eventBus,
-            ConfigurationHelper cfgHelper, SecurityContext securityContext, UserHelper userHelper,
+                             ConfigurationHelper cfgHelper, SecurityContext securityContext, UserHelper userHelper,
                              XmlContentProcessor xmlContentProcessor, boolean showCoverPage) {
         super(messageHelper, eventBus);
         this.cfgHelper = cfgHelper;
@@ -307,7 +307,7 @@ public class MilestoneExplorer extends AbstractWindow {
         Label description = new Label(messageHelper.getMessage("milestone.explorer.window.description", dateFormat.format(legDocument.getInitialCreationInstant()),
                 user.getName(), milestoneTitle), ContentMode.HTML);
         titleLayout.addComponent(description);
-        if(isContributionMilestone) {
+        if (isContributionMilestone) {
             HorizontalLayout legendLayout = buildLegendLayout();
             legendLayout.setSpacing(true);
             legendLayout.setMargin(false);
@@ -315,7 +315,7 @@ public class MilestoneExplorer extends AbstractWindow {
         }
         titleLayout.setComponentAlignment(description, Alignment.TOP_LEFT);
         export = new Button(messageHelper.getMessage("collection.caption.menuitem.export"));
-        if(!pdfRenditions.isEmpty()) {
+        if (!pdfRenditions.isEmpty()) {
             titleLayout.addComponent(export);
             titleLayout.setComponentAlignment(export, Alignment.TOP_RIGHT);
         }
@@ -379,7 +379,7 @@ public class MilestoneExplorer extends AbstractWindow {
             case ANNEX:
                 return "Annex " + annexNumber + versionLabel;
             case COVERPAGE:
-                return  showCoverPage ? messageHelper.getMessage(COVER_PAGE_TAB_TITLE_KEY) + " " + versionLabel : "";
+                return showCoverPage ? messageHelper.getMessage(COVER_PAGE_TAB_TITLE_KEY) + " " + versionLabel : "";
             case STAT_FINANC_LEGIS:
                 return "Financial Statement" + versionLabel;
             default:
@@ -396,7 +396,7 @@ public class MilestoneExplorer extends AbstractWindow {
             String version = docVersionMap.get(contentFileName);
             boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
             // Skip the cover page tab if it should not be shown
-            if((isCoverPage && !showCoverPage)) {
+            if ((isCoverPage && !showCoverPage)) {
                 continue;
             }
             try {
@@ -404,7 +404,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
                 boolean isCompared = false;
-                if(isContributionMilestone) {
+                if (isContributionMilestone) {
                     Pattern pattern = Pattern.compile("class=\"leos-content-new\"|class=\"leos-content-removed\"",
                             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
                     Matcher matcher = pattern.matcher(xmlContent);
@@ -413,7 +413,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 if (isCoverPage) {
                     String tabName = getTabName(LeosCategory.COVERPAGE, 0, version);
                     TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName), null, 0);
-                    if(isCompared) {
+                    if (isCompared) {
                         toggleActionButtons(false);
                         tab.setStyleName(LEOS_DOC_MODIFIED);
                     }
@@ -424,7 +424,7 @@ public class MilestoneExplorer extends AbstractWindow {
                     if (!category.equals(LeosCategory.ANNEX) && !category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                         String tabName = getTabName(category, 0, version);
                         TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
-                        if(isCompared) {
+                        if (isCompared) {
                             tab.setStyleName(LEOS_DOC_MODIFIED);
                         }
                     } else {
@@ -446,15 +446,15 @@ public class MilestoneExplorer extends AbstractWindow {
             HorizontalSplitPanel tocSplitter = new HorizontalSplitPanel();
             String tabName = getTabName(LeosCategory.ANNEX, annexNumber, version);
             TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
-            if(annexAddedMap.containsKey(annexDocument)) {
+            if (annexAddedMap.containsKey(annexDocument)) {
                 tab.setStyleName(LEOS_ANNEX_ADDED);
             } else if (annexAddedMap.containsKey(annexDocument.concat(PROCESSED))) {
                 tab.setStyleName(LEOS_ANNEX_PROCESSED);
-            } else if(annexesComparaison.get(annexDocument + ".html")) {
+            } else if (annexesComparaison.get(annexDocument + ".html")) {
                 tab.setStyleName(LEOS_DOC_MODIFIED);
             }
         }
-        if(annexDeletedMap.size() > 0) {
+        if (annexDeletedMap.size() > 0) {
             for (Entry<String, Object> entry : annexDeletedMap.entrySet()) {
                 String xmlContent = getFileContent(entry);
                 String[] annexVersionAndNumber = getAnnexVersionAndNumber(xmlContent);
@@ -463,7 +463,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
                 tab.setId(entry.getKey());
                 tab.setStyleName(LEOS_ANNEX_REMOVED);
-                if(entry.getKey().indexOf(PROCESSED) != -1) {
+                if (entry.getKey().indexOf(PROCESSED) != -1) {
                     tab.setStyleName(LEOS_ANNEX_PROCESSED);
                 }
             }
@@ -482,7 +482,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
                 boolean isCompared = false;
-                if(isContributionMilestone) {
+                if (isContributionMilestone) {
                     Pattern pattern = Pattern.compile("class=\"leos-content-new\"|class=\"leos-content-removed\"",
                             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
                     Matcher matcher = pattern.matcher(xmlContent);
@@ -495,7 +495,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 if (category != null && category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                     String tabName = getTabName(category, 0, version);
                     TabSheet.Tab tab = tabsheet.addTab(tocSplitter, StringUtils.capitalize(tabName));
-                    if(isCompared) {
+                    if (isCompared) {
                         tab.setStyleName(LEOS_DOC_MODIFIED);
                     }
                 }
@@ -561,7 +561,7 @@ public class MilestoneExplorer extends AbstractWindow {
                 } catch (IOException e) {
                     throw new RuntimeException("Unexpected error occurred while reading content file", e);
                 }
-                if(selectedDocument.startsWith(STAT_FINANC_LEGIS)) {
+                if (selectedDocument.startsWith(STAT_FINANC_LEGIS)) {
                     String nsContent = XmlHelper.addDummyNamespace(content);
                     Document document = XercesUtils.createXercesDocument(nsContent.getBytes(UTF_8));
                     content = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
@@ -588,7 +588,7 @@ public class MilestoneExplorer extends AbstractWindow {
                         splitPanel.addStyleName(LEOS_CONTENT_ADDED);
                     } else if (annexAddedMap.containsKey(selectedDocument.concat(PROCESSED))) {
                         markAsProcessed();
-                    } else if(selectedTab.getStyleName() != null && selectedTab.getStyleName().equalsIgnoreCase(LEOS_DOC_MODIFIED)) {
+                    } else if (selectedTab.getStyleName() != null && selectedTab.getStyleName().equalsIgnoreCase(LEOS_DOC_MODIFIED)) {
                         toggleActionButtons(false);
                     } else {
                         hideActionButtonLayout();
@@ -613,7 +613,7 @@ public class MilestoneExplorer extends AbstractWindow {
                     selectedTabName = getTabName(LeosCategory.ANNEX, new Integer(annexVersionAndNumber[1]), annexVersionAndNumber[0]);
                     if (caption.equalsIgnoreCase(selectedTabName)) {
                         String fileName;
-                        if(processedIndex != -1) {
+                        if (processedIndex != -1) {
                             markAsProcessed();
                             fileName = selectedDocument.substring(0, processedIndex);
                         } else {
@@ -656,11 +656,11 @@ public class MilestoneExplorer extends AbstractWindow {
     private String injectClassAttribute(String content, String classAttr) {
         Document doc = XercesUtils.createXercesDocument(content.getBytes(StandardCharsets.UTF_8), true);
         Node prefaceNode = XercesUtils.getElementById(doc, PREFACE);
-        if(prefaceNode != null) {
+        if (prefaceNode != null) {
             XercesUtils.addAttribute(prefaceNode, CLASS_ATTR, classAttr);
         }
         Node bodyNode = XercesUtils.getElementById(doc, BODY);
-        if(bodyNode != null) {
+        if (bodyNode != null) {
             XercesUtils.addAttribute(bodyNode, CLASS_ATTR, classAttr);
         }
         return XercesUtils.nodeToString(doc);
@@ -680,12 +680,12 @@ public class MilestoneExplorer extends AbstractWindow {
     }
 
     private void handleAcceptAction() {
-        if(annexAddedMap != null && annexAddedMap.containsKey(selectedDocument)) {
+        if (annexAddedMap != null && annexAddedMap.containsKey(selectedDocument)) {
             eventBus.post(new ContributionAnnexAcceptEvent(selectedDocument,
-                    (File)annexAddedMap.get(selectedDocument), true));
-        } else if(annexDeletedMap != null && annexDeletedMap.containsKey(selectedDocument)) {
+                    (File) annexAddedMap.get(selectedDocument), true));
+        } else if (annexDeletedMap != null && annexDeletedMap.containsKey(selectedDocument)) {
             eventBus.post(new ContributionAnnexAcceptEvent(selectedDocument,
-                    (File)annexDeletedMap.get(selectedDocument), false));
+                    (File) annexDeletedMap.get(selectedDocument), false));
         }
     }
 
@@ -733,7 +733,7 @@ public class MilestoneExplorer extends AbstractWindow {
     private void addAnnotateExtension(HorizontalSplitPanel splitPanel) {
         VerticalLayout contentLayout = (VerticalLayout) splitPanel.getSecondComponent();
         LeosDisplayField docContent = (LeosDisplayField) contentLayout.getComponent(0);
-        annotateExtension = new AnnotateExtension<>(docContent, eventBus, cfgHelper, docContent.getId(), AnnotateExtension.OperationMode.READ_ONLY,true, false, proposalRef, null);
+        annotateExtension = new AnnotateExtension<>(docContent, eventBus, cfgHelper, docContent.getId(), AnnotateExtension.OperationMode.READ_ONLY, true, false, proposalRef, null);
     }
 
     private VerticalLayout buildTocLayout(File file) {
@@ -811,12 +811,13 @@ public class MilestoneExplorer extends AbstractWindow {
         FileResource downloadStreamResource = new FileResource(new File(""));
         fileDownloader = new FileDownloader(downloadStreamResource) {
             private static final long serialVersionUID = -4584979099145066535L;
+
             @Override
             public boolean handleConnectorRequest(VaadinRequest request, VaadinResponse response, String path) throws IOException {
                 boolean result = false;
                 try {
                     Entry<String, Object> entry = pdfRenditions.entrySet().iterator().next();
-                    prepareDownloadPackage((File)entry.getValue());
+                    prepareDownloadPackage((File) entry.getValue());
                     result = super.handleConnectorRequest(request, response, path);
                 } catch (Exception exception) {
                     LOG.error("Error occured in export to pdf", exception.getMessage());
@@ -837,8 +838,8 @@ public class MilestoneExplorer extends AbstractWindow {
                 eventBus.post(new NotificationEvent("menu.download.caption", "milestone.explorer.export.pdf", NotificationEvent.Type.TRAY));
                 LOG.trace("Successfully prepared milestone to export as pdf");
             } catch (Exception e) {
-              LOG.error("Error while exporting milestone as pdf {}", e.getMessage());
-              eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "milestone.explorer.export.error", e.getMessage()));
+                LOG.error("Error while exporting milestone as pdf {}", e.getMessage());
+                eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "milestone.explorer.export.error", e.getMessage()));
             }
         }
     }

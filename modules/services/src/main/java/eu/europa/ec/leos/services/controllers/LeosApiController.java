@@ -35,6 +35,8 @@ import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -557,6 +559,19 @@ public class LeosApiController {
         try {
             AppConfigResponse appConfigResponse = configService.getApplicationConfig();
             return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting application configuration - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/list-milestones-view/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getListMilestoneDocumentViews(@PathVariable("documentRef") String documentRef,
+                                                                @RequestParam("legFileName") String legFileName) {
+        try {
+            List<MilestoneDocumentView> milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
+            return new ResponseEntity<>(milestonesView, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);

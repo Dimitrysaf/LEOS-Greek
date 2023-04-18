@@ -1,0 +1,89 @@
+<eui-dialog
+  #dialog
+  [title]="'page.collection.milestones.add-dialog.title' | translate"
+  (clickOutside)="close()"
+  (close)="close()"
+>
+  <form [formGroup]="form" class="eui-u-ml-4xl">
+    <div
+      class="eui-u-flex eui-u-mb-m eui-u-flex-justify-content-between eui-u-flex-align-items-start"
+    >
+      <label
+        for="milestone_type"
+        class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
+        >{{ 'page.collection.milestones.table.type' | translate }}</label
+      >
+      <!-- TODO: translate aria-label -->
+      <select
+        euiSelect
+        id="milestone_type"
+        name="milestone_type"
+        aria-label="Milestone type"
+        formControlName="milestonesType"
+        class="milestones-select"
+      >
+        <option
+          [value]="'page.collection.milestones.type.1' | translate"
+          selected
+        >
+          {{ 'page.collection.milestones.type.1' | translate }}
+        </option>
+        <option [value]="'page.collection.milestones.type.2' | translate">
+          {{ 'page.collection.milestones.type.2' | translate }}
+        </option>
+        <option [value]="'page.collection.milestones.type.3' | translate">
+          {{ 'page.collection.milestones.type.3' | translate }}
+        </option>
+        <option value="other">
+          {{ 'page.collection.milestones.type.4' | translate }}
+        </option>
+      </select>
+    </div>
+    <div
+      class="eui-u-flex milestones-required eui-u-flex-justify-content-between eui-u-flex-align-items-start"
+    >
+      <!-- TODO: translate placeholder -->
+      <input
+        euiInputText
+        id="milestonesTitle"
+        name="milestonesTitle"
+        class="milestones-title"
+        placeholder="Please type milestone title here"
+        formControlName="milestonesTitle"
+      />
+      <label
+        for="milestonesTitle"
+        class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
+        >{{
+          'page.collection.milestones.table.add-milestone-dialog.title'
+            | translate
+        }}</label
+      >
+    </div>
+  </form>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end">
+      <button
+        type="button"
+        class="eui-u-mr-xs"
+        euiButton
+        euiSecondary
+        (click)="close()"
+      >
+        {{ 'global.actions.cancel' | translate }}
+      </button>
+      <button
+        type="button"
+        euiButton
+        euiPrimary
+        (click)="onAccept()"
+        [disabled]="form.invalid"
+      >
+        {{
+          'page.collection.milestones.table.add-milestone-dialog.create'
+            | translate
+        }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>
