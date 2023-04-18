@@ -327,6 +327,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     return tocItem.aknTag === 'BLOCK';
   }
 
+  showTypeField(tocItem: TocItem) {
+    return !['DIVISION'].includes(tocItem.aknTag);
+  }
+
   isItemHeadingVisible(tocItem: TocItem) {
     return (
       tocItem.itemHeading === 'MANDATORY' || tocItem.itemHeading === 'OPTIONAL'
