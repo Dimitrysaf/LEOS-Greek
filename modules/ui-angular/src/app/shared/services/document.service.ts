@@ -685,9 +685,9 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersionsComparison(versionArray: any, documentType: string) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    if (versionArray && versionArray.newVersion !== null) {
+  getDocumentVersionsComparison(versionArray?: any, documentType?: string) {
+    if (versionArray?.newVersion && versionArray?.oldVersion && documentType) {
+      documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
       return this.http.get<string>(
         `${apiBaseUrl}/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
         { responseType: 'text' as 'json' },
