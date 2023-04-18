@@ -115,6 +115,6 @@ class LeosPropertyDefinition {
             PropertyCreationHelper.createBooleanDefinition("leos:liveDiffingRequired", "Live Diffing Flag", Updatability.READWRITE);
 
     static final PropertyDefinition<Boolean> LEOS_TRACK_CHANGES_ENABLED =
-            PropertyCreationHelper.createBooleanDefinition("leos:trackChangesEnabled", "Track Changes Flag", Updatability.READWRITE);
+            PropertyCreationHelper.createBooleanDefinition("leos:trackChangesEnabled", "LEOS Track Changes Enabled", Updatability.READWRITE);
 
 }
