@@ -13,7 +13,7 @@
 
 .tree-container {
   max-height: 50vh;
-  overflow: scroll;
+  overflow: auto;
   @include eui-scrollbars();
 }
 
