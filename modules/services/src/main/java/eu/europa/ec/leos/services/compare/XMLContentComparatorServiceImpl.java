@@ -462,7 +462,9 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
                 newContentChildIndex++;
             } else {
                 // oldElement was deleted or moved so only display the removed element
-                appendRemovedElementContentIfRequired(context);
+                if (!isElementIndentedInOtherContext(context.getNewContentElements(), context.getOldElement())) {
+                    appendRemovedElementContentIfRequired(context);
+                }
                 oldContentChildIndex++;
                 intermediateContentChildIndex = incrementIntermediateIndexIfRequired(context, context.getOldElement(), intermediateContentChildIndex);
             }
