@@ -18,9 +18,7 @@
       <ng-container
         *ngFor="let a of recentChanges; trackByProperty: 'cmisVersionNumber'"
       >
-        <div class="version">
-          {{ a.cmisVersionNumber }}
-        </div>
+        <div class="version">{{ formatVersionNumber(a) }}</div>
         <div>{{ a.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
@@ -102,12 +100,10 @@
       <ng-container
         *ngFor="
           let version of group.subVersions;
-          trackByProperty: 'versionNumber'
+          trackByProperty: 'cmisVersionNumber'
         "
       >
-        <div class="version">
-          {{ version.cmisVersionNumber }}
-        </div>
+        <div class="version">{{ formatVersionNumber(version) }}</div>
         <div>{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
@@ -218,12 +214,10 @@
       <ng-container
         *ngFor="
           let version of group.subVersions;
-          trackByProperty: 'versionNumber'
+          trackByProperty: 'cmisVersionNumber'
         "
       >
-        <div class="version">
-          {{ version.cmisVersionNumber }}
-        </div>
+        <div class="version">{{ formatVersionNumber(version) }}</div>
         <div>{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown

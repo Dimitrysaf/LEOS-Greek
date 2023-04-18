@@ -28,7 +28,7 @@ import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 export class AnnexDocumentComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
-  @Input() xml: string[];
+  @Input() xml: string;
 
   destroy$: Subject<any> = new Subject();
 
@@ -51,7 +51,7 @@ export class AnnexDocumentComponent
     if ('xml' in changes && changes.xml.currentValue !== undefined) {
       const rootEl = this.rootElementRef.nativeElement;
       this.xml = changes.xml.currentValue;
-      rootEl.innerHTML = this.xml[0];
+      rootEl.innerHTML = this.xml;
     }
   }
 

@@ -546,8 +546,8 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
-  versionExploreMilestone(versionNumber: string) {
-    console.warn('stub:', 'versionExploreMilestone', versionNumber); // FIXME
+  versionExploreMilestone(version: Version) {
+    console.warn('stub:', 'versionExploreMilestone', version); // FIXME
   }
 
   versionRevert(versionNumber: string) {
@@ -685,9 +685,9 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersionsComparison(versionArray: any, documentType: string) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    if (versionArray && versionArray.newVersion !== null) {
+  getDocumentVersionsComparison(versionArray?: any, documentType?: string) {
+    if (versionArray?.newVersion && versionArray?.oldVersion && documentType) {
+      documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
       return this.http.get<string>(
         `${apiBaseUrl}/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
         { responseType: 'text' as 'json' },

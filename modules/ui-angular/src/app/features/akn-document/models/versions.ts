@@ -2,9 +2,13 @@ export type Version = {
   versionType: VersionType; // eg "MAJOR"
   documentId: string; // eg "192"
   cmisVersionNumber: string; // eg "2.0" - cmis:versionLabel
-  versionNumber: string; // eg "1.0.0" - leos:versionLabel
+  versionNumber: {
+    major: number;
+    intermediate: number;
+    minor: number;
+  };
 
-  updatedDate: number;
+  updatedDate: string; // eg "18/04/2023 14:49"
   username: string; // eg "jane"
   versionedReference: string; // eg "ANNEX-cla25fbhm0000le22avk9zlps-en_1.0.0"
   subVersions: Version[];

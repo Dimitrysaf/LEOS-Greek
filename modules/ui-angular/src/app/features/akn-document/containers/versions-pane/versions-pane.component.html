@@ -9,7 +9,7 @@
     class="eui-u-display-block eui-u-width-100"
     *ngFor="
       let group of doc.versions$ | async;
-      trackByProperty: 'versionNumber'
+      trackByProperty: 'cmisVersionNumber'
     "
     [group]="group"
   ></app-versions-pane-group>
