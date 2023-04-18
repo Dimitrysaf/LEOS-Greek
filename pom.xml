@@ -122,6 +122,7 @@
         <mockito.version>2.7.22</mockito.version>
         <mathjax.version>2.7.0</mathjax.version>
         <spring.version>5.3.19</spring.version>
+        <javax.websocket.version>1.1</javax.websocket.version>
         <spring-webmvc.version>5.3.19</spring-webmvc.version>
         <spring-security.version>4.2.20.RELEASE</spring-security.version>
         <spring-data.version>Codd-SR3</spring-data.version>
@@ -333,7 +334,7 @@
             <dependency>
                 <groupId>javax.websocket</groupId>
                 <artifactId>javax.websocket-api</artifactId>
-                <version>1.1</version>
+                <version>${javax.websocket.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
