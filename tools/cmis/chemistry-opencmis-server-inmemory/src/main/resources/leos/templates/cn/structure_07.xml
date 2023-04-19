@@ -111,8 +111,8 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>level:not([leos\:editable]):has(table) subparagraph[leos\:editable='true']</elementSelector>
-                    <profileName>inlineAknSubParagraph</profileName>
+                    <elementSelector>level:not([leos\:editable]) subparagraph[leos\:editable='true']</elementSelector>
+                    <profileName>inlineAknSubParagraphFinancialStatement</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
