@@ -94,6 +94,7 @@ export class DocumentService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
+  currentIndex: number;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -342,25 +343,22 @@ export class DocumentService implements OnDestroy {
   }
 
   searchNext() {
-    const currentIndex = this.searchResultIndexArray.indexOf(
-      this.focusedSearchResult,
-    );
     if (
-      currentIndex >= 0 &&
-      currentIndex < this.searchResultIndexArray.length - 1
+      this.currentIndex >= 0 &&
+      this.currentIndex < this.searchResultIndexArray.length - 1
     ) {
-      this.scrollToElement(this.searchResultIndexArray[currentIndex + 1]);
-    } else if (currentIndex === this.searchResultIndexArray.length - 1) {
+      this.scrollToElement(this.searchResultIndexArray[this.currentIndex + 1]);
+    } else if (this.currentIndex === this.searchResultIndexArray.length - 1) {
       this.scrollToElement(this.searchResultIndexArray[0]);
     }
   }
 
   searchPrevious() {
-    const currentIndex = this.searchResultIndexArray.indexOf(
-      this.focusedSearchResult,
-    );
-    if (currentIndex !== 0) {
-      this.scrollToElement(this.searchResultIndexArray[currentIndex - 1]);
+    // const currentIndex = this.searchResultIndexArray.indexOf(
+    //   this.focusedSearchResult,
+    // );
+    if (this.currentIndex !== 0) {
+      this.scrollToElement(this.searchResultIndexArray[this.currentIndex - 1]);
     }
   }
 
@@ -484,6 +482,11 @@ export class DocumentService implements OnDestroy {
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
+    if (values.searchText === '') {
+      this.currentSearchResults = [];
+      this.currentIndex = 0;
+      this.removeHighlights();
+    }
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
       this.searchParamsBS.next({ ...oldVal, ...values });
     });
@@ -749,6 +752,7 @@ export class DocumentService implements OnDestroy {
           this.currentSearchResults = results;
           this.highlightSearchResults(results);
           this.scrollToElement(this.searchResultIndexArray[0]);
+          this.currentIndex = 0;
         });
     }
   }
@@ -840,8 +844,12 @@ export class DocumentService implements OnDestroy {
 
   private scrollToElement(searchObj: any) {
     this.focusedSearchResult = searchObj;
+
     const targetElement = document.getElementById(searchObj.id);
     if (targetElement) {
+      this.currentIndex = this.searchResultIndexArray.indexOf(
+        this.focusedSearchResult,
+      );
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }

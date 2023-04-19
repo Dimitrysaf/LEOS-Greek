@@ -46,3 +46,15 @@
     padding-right: unset;
   }
 }
+
+.results-found {
+  background-color: lightgreen;
+}
+
+.results-not-found {
+  background-color: indianred;
+}
+
+.no-search {
+  background-color: inherit;
+}

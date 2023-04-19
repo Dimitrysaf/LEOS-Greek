@@ -51,6 +51,14 @@ export class DocumentSearchComponent implements OnDestroy {
     }
   }
 
+  isSearchTextEmpty(): boolean {
+    const currentSearchParams = this.getFormValues();
+    return (
+      currentSearchParams.searchText === '' ||
+      currentSearchParams.searchText.length === 1
+    );
+  }
+
   private getFormValues(): DocumentSearchParams {
     const { searchText, matchCase, completeWords } = this.form.getRawValue();
     return {
