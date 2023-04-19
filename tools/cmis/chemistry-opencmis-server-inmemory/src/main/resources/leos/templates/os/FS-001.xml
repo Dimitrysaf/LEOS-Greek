@@ -645,7 +645,7 @@
                             </tr>
                             <tr xml:id="_body__level_31__subparagraph_5_5__content__table__tr_3">
                                 <td style="border:1px solid black;text-align:center;" xml:id="_body__level_31__subparagraph_5_5__content__table__tr_3__td_1">
-                                    <p xml:id="_body__level_31__subparagraph_5_5__content__table__tr_3__td_1__p">[...]</p>
+                                    <p xml:id="_body__level_31__subparagraph_5_5__content__table__tr_3__td_1__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:left" xml:id="_body__level_31__subparagraph_5_5__content__table__tr_3__td_2_2">
                                     <p xml:id="_body__level_31__subparagraph_5_5__content__table__tr_3__td_2_2__p">[XX.YY.YY.YY]</p>
@@ -730,7 +730,7 @@
                             </tr>
                             <tr xml:id="_body__level_31__subparagraph_8__content__table__tr_3">
                                 <td style="border:1px solid black;text-align:center;" xml:id="_body__level_31__subparagraph_8__content__table__tr_3__td_1">
-                                    <p xml:id="_body__level_31__subparagraph_8__content__table__tr_3__td_1__p">[...]</p>
+                                    <p xml:id="_body__level_31__subparagraph_8__content__table__tr_3__td_1__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:left" xml:id="_body__level_31__subparagraph_8__content__table__tr_3__td_2_2">
                                     <p xml:id="_body__level_31__subparagraph_8__content__table__tr_3__td_2_2__p">[XX.YY.YY.YY]</p>
@@ -802,7 +802,7 @@
                                     <p xml:id="_body__level_321__subparagraph_4__content__table__tr__td_2_2__p">Number</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:left;width:63.1%" xml:id="_body__level_321__subparagraph_4__content__table__tr__td_3">
-                                    <p xml:id="_body__level_321__subparagraph_4__content__table__tr__td_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_4__content__table__tr__td_3__p"></p>
                                 </td>
                             </tr>
                         </table>
@@ -1505,26 +1505,26 @@
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_3_3__p">(4)</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_9_9">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;width: 50px;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_10">
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_10__p">
-                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_10__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_1__td_10__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -1536,26 +1536,26 @@
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_2_2__p">(5)</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_9">
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_9__p">
-                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_9__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_2_2__td_9__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -1568,26 +1568,26 @@
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_2_2__p">(6)</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_9">
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_9__p">
-                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_9__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_3_3__td_9__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -1611,26 +1611,26 @@
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_3_3__p">=4+ 6</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_9_9">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_10">
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_10__p">
-                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_10__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_4_4__td_10__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -1642,26 +1642,26 @@
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_2_2__p">=5+ 6</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_9">
                                     <p xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_9__p">
-                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_9__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_7_7__content__table__tr_5__td_9__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -1758,25 +1758,25 @@
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_1__p">• Human Resources</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_2_2">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_8">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_8__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4">
@@ -1784,25 +1784,25 @@
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_1__p">• Other administrative expenditure</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_2_2">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_8">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_8__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5">
@@ -1815,25 +1815,25 @@
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_2_2__p">Appropriations</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_9">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_9__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_9__p"></p>
                                 </td>
                             </tr>
                         </table>
@@ -1859,25 +1859,25 @@
                                     <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_2_2__p">(Total commitments = Total payments)</p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_5_5__p_1">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_5_5__p_1"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_6_6__p_1">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_6_6__p_1"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_9">
-                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_9__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_10_10__content__table__tr__td_9__p"></p>
                                 </td>
                             </tr>
                         </table>
@@ -1943,26 +1943,26 @@
                                     <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_2_2__p">Commitments</p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_8_8">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_9">
                                     <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_9__p">
-                                        <b xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_9__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_9__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -1971,26 +1971,26 @@
                                     <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_1__p">Payments</p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_2_2">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_3_3">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_4_4">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_5_5">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_6_6">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_7_7">
-                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid          black;text-align:right;" xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_8">
                                     <p xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_8__p">
-                                        <b xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_8__p__b">[...]</b>
+                                        <b xml:id="_body__level_321__subparagraph_12__content__table__tr_3__td_8__p__b"></b>
                                     </p>
                                 </td>
                             </tr>
@@ -2145,58 +2145,58 @@
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_1__p">- Output</p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_17_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_17_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_17_17__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_18_18">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_18_18__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_18_18__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_19">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_19__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_5_5__td_19__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6">
@@ -2204,58 +2204,58 @@
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_1__p">- Output</p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_17_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_17_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_17_17__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_18_18">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_18_18__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_18_18__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_19">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_19__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_6_6__td_19__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7">
@@ -2263,58 +2263,58 @@
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_1__p">- Output</p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_17_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_17_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_17_17__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_18_18">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_18_18__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_18_18__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_19">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_19__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_7_7__td_19__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8">
@@ -2322,52 +2322,52 @@
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_1__p">Subtotal for specific objective No 1</p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;border-bottom:solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_8_8__td_17__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_322__subparagraph_4__content__table__tr_9_9">
@@ -2383,58 +2383,58 @@
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_1__p">- Output</p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_17_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_17_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_17_17__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_18_18">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_18_18__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_18_18__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_19">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_19__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_10_10__td_19__p"></p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11">
@@ -2442,52 +2442,52 @@
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_1__p">Subtotal for specific objective No 2</p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_11_11__td_17__p"></p>
                                 </td>
                             </tr>
                             <tr style="border: solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12">
@@ -2497,52 +2497,52 @@
                                     </p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_2_2">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_2_2__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_2_2__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_3_3">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_3_3__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_3_3__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_4_4">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_4_4__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_4_4__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_5_5">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_5_5__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_5_5__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_6_6">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_6_6__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_6_6__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_7_7">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_7_7__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_7_7__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_8_8">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_8_8__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_8_8__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_9_9">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_9_9__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_9_9__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_10_10">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_10_10__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_10_10__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_11_11">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_11_11__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_11_11__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_12_12">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_12_12__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_12_12__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_13_13">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_13_13__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_13_13__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_14_14">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_14_14__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_14_14__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_15_15">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_15_15__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_15_15__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_16_16">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_16_16__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_16_16__p"></p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_17">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_17__p">[...]</p>
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_17__p"></p>
                                 </td>
                             </tr>
                         </table>
