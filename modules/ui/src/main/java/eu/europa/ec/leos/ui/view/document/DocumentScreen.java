@@ -46,7 +46,7 @@ interface DocumentScreen {
 
     void setDocumentVersionInfo(VersionInfoVO versionInfoVO);
 
-    void refreshContent(final String documentContent);
+    void refreshContent(final String documentContent, boolean trackChangesEnabled);
 
     void populateMarkedContent(String comparedContent, String comparedInfo, Bill original, Bill current);
 

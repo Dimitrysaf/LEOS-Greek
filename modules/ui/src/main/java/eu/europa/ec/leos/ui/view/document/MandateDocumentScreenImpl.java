@@ -121,7 +121,7 @@ public class MandateDocumentScreenImpl extends DocumentScreenImpl {
     }
 
     @Override
-    public void refreshContent(final String documentContent) {
+    public void refreshContent(final String documentContent, boolean trackChangesEnabled) {
         eventBus.post(new AddChangeDetailsMenuEvent());
         legalTextPaneComponent.populateContent(documentContent);
     }

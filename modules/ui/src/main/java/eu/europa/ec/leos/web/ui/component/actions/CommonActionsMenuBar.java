@@ -139,6 +139,7 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         if (trackChangesItem == null) {
             trackChangesItem = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.enable.trackchanges"),
                     new TrackChangesCommand(), changeDetails);
+            trackChangesItem.setChecked(event.isTrackChangesEnabled());
         }
     }
 

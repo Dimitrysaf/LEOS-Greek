@@ -672,7 +672,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         //load content from session if exists
         Bill billFromSession = getBillFromSession();
         if (billFromSession != null) {
-            documentScreen.refreshContent(getEditableXml(billFromSession));
+            documentScreen.refreshContent(getEditableXml(billFromSession), billFromSession.isTrackChangesEnabled());
         } else {
             eventBus.post(new RefreshDocumentEvent());
         }
@@ -883,7 +883,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel +
                 CMIS_PROPERTY_SPLITTER + versionComment);
         Bill updatedBill = billService.updateBill(documentId, properties, true);
-        documentScreen.refreshContent(getEditableXml(updatedBill));
+        documentScreen.refreshContent(getEditableXml(updatedBill), updatedBill.isTrackChangesEnabled());
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.info",
                 versionLabel));
     }
@@ -983,7 +983,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private Bill populateViewWithDocumentDetails(Bill bill, TocMode mode) {
         Validate.notNull(bill, "Bill document should not be null");
         documentScreen.setDocumentTitle(bill.getTitle());
-        documentScreen.refreshContent(getEditableXml(bill));
+        documentScreen.refreshContent(getEditableXml(bill), bill.isTrackChangesEnabled());
         documentScreen.setToc(getListOfTableOfContent(bill, mode));
         DocumentVO billVO = createLegalTextVO(bill);
         documentScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(bill.getVersionSeriesId()), id);
@@ -1111,7 +1111,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
         Bill billUpdated = copyIntoNew(billFromSession, updatedContent);
         httpSession.setAttribute("bill#" + getDocumentRef(), billUpdated);
-        documentScreen.refreshContent(getEditableXml(billUpdated));
+        documentScreen.refreshContent(getEditableXml(billUpdated), billFromSession.isTrackChangesEnabled());
         eventBus.post(new ReplaceAllMatchResponseEvent(true));
     }
 
@@ -1200,7 +1200,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
             Bill billUpdated = copyIntoNew(billFromSession, updatedContent);
             httpSession.setAttribute("bill#" + getDocumentRef(), billUpdated);
-            documentScreen.refreshContent(getEditableXml(billUpdated));
+            documentScreen.refreshContent(getEditableXml(billUpdated), billFromSession.isTrackChangesEnabled());
             documentScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), true);
         } else {
             documentScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), false);
