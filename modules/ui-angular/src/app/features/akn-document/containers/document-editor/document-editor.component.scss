@@ -19,6 +19,48 @@
   .eui-page-column__header-left-content {
     font-size: inherit;
   }
+
+  /* Migrated from modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_documentView.scss */
+
+  .bookmark-container {
+    $HEADER_BLUE: #0065a2;
+    $WHITE: #fff;
+
+    background: $HEADER_BLUE;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    bottom: 125px;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    height: 30px;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 0.4s ease-in, width 0.4s ease-out;
+    white-space: nowrap;
+    width: 0;
+
+    .bookmark-link {
+      align-items: center;
+      color: $WHITE;
+      display: none;
+      gap: 4px;
+    }
+
+    .bookmark-icon {
+      font-size: 20px;
+    }
+
+    &.displayed {
+      opacity: 1;
+      padding: 5px;
+      width: auto;
+
+      .bookmark-link {
+        display: flex;
+      }
+    }
+  }
 }
 
 .tree-drag-content {

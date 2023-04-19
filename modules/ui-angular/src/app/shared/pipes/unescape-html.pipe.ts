@@ -1,5 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+import { unescapeHtml } from '@/shared/utils/string.utils';
+
 @Pipe({
   name: 'unescapeHtml',
 })
@@ -11,11 +13,6 @@ export class UnescapeHtmlPipe implements PipeTransform {
     if (typeof value !== 'string') {
       throw new Error(`The input value to the pipe must be a string`);
     }
-    return value
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#039;/g, "'")
-      .replace(/&amp;/g, '&');
+    return unescapeHtml(value);
   }
 }

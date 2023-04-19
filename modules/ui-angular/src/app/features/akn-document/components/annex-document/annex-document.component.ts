@@ -1,5 +1,5 @@
-// eslint-disable-next-line simple-import-sort/imports
 import { DOCUMENT, formatDate } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,12 +12,12 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
-import { HttpClient } from '@angular/common/http';
-import { Subject, takeUntil } from 'rxjs';
-import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
+import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 
 @Component({
   selector: 'app-annex-document',
@@ -30,7 +30,8 @@ export class AnnexDocumentComponent
 {
   @Input() xml: string;
 
-  destroy$: Subject<any> = new Subject();
+  private bookmarkMutationObserver?: MutationObserver;
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     private ckeditorService: CKEditorService,
@@ -38,9 +39,11 @@ export class AnnexDocumentComponent
     private rootElementRef: ElementRef<HTMLElement>,
     private http: HttpClient,
     private coEditionWSService: CoEditionServiceWS,
+    private translate: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
+    this.bookmarkMutationObserver?.disconnect();
     this.destroy$.next('');
     this.destroy$.complete();
   }
@@ -56,6 +59,7 @@ export class AnnexDocumentComponent
   }
 
   ngAfterViewInit(): void {
+    this.interceptAndProcessBookmarkLink();
     this.ckeditorService.init();
 
     this.coEditionWSService
@@ -69,6 +73,7 @@ export class AnnexDocumentComponent
   generateTooltip(coEdits: CoEditionVO[]) {
     if (!coEdits) return;
     let target = '';
+    // FIXME: use translated message for target
     coEdits.forEach(
       (c) =>
         (target =
@@ -126,5 +131,40 @@ export class AnnexDocumentComponent
           });
         }
     }
+  }
+
+  /**
+   * Intercept the bookmark link element and replace the hardcoded text using
+   * the translation service and the icon with an eui-icon.
+   */
+  private interceptAndProcessBookmarkLink() {
+    const isBookmarkLinkElement = (n: Node): n is Element =>
+      n instanceof Element && n.classList.contains('bookmark-link');
+    const callback: MutationCallback = (mutationList, observer) => {
+      const bookmarkLinkEl = mutationList
+        .filter((ml) => ml.type === 'childList')
+        .flatMap((ml) => Array.from(ml.addedNodes))
+        .find(isBookmarkLinkElement);
+      if (bookmarkLinkEl) {
+        // set translated text
+        const bookmarkTextEl = bookmarkLinkEl.querySelector('.bookmark-text');
+        this.translate
+          .stream('page.editor.bookmark-text')
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((text: string) => {
+            bookmarkTextEl.textContent = text;
+          });
+        // set eui-icon
+        const bookmarkIconEl = bookmarkLinkEl.querySelector('.bookmark-icon');
+        bookmarkIconEl.textContent = '';
+        bookmarkIconEl.classList.add('eui-icon', 'eui-icon-edit');
+      }
+    };
+
+    this.bookmarkMutationObserver = new MutationObserver(callback);
+    this.bookmarkMutationObserver.observe(this.rootElementRef.nativeElement, {
+      childList: true,
+      subtree: true,
+    });
   }
 }
