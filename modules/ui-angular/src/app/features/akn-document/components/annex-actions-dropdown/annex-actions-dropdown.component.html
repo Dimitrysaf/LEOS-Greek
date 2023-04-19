@@ -129,7 +129,7 @@
         }}</label>
       </div>
       <div class="col-md-9 eui-inline-edit">
-        <input id="title" euiInputText formControlName="title" />
+        <input id="title" euiInputText formControlName="title" required />
       </div>
     </div>
 
@@ -141,7 +141,11 @@
         }}</label>
       </div>
       <div class="col-md-9 eui-inline-edit">
-        <input id="description" euiInputText formControlName="description" />
+        <textarea
+          id="description"
+          euiTextArea
+          formControlName="description"
+        ></textarea>
       </div>
     </div>
   </form>
