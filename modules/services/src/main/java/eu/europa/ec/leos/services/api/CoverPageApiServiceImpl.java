@@ -421,7 +421,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
                 LeosCategory.COVERPAGE,
                 proposalVO.getUpdatedBy(),
-                proposalVO.getUpdatedOn());
+                proposalVO.getUpdatedOn(), proposalVO.isTrackChangesEnabled());
         coverPageVO.getMetadata().setInternalRef(proposalRef);
         coverPageVO.setSource(documentContentService.getCoverPageContent(proposalVO.getSource()));
         return coverPageVO;

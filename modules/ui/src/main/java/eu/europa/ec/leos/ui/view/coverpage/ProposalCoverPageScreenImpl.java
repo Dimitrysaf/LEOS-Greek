@@ -201,7 +201,7 @@ class ProposalCoverPageScreenImpl extends CoverPageScreenImpl {
     @Override
     public void initLeosEditor(DocumentVO coverPage, List<LeosMetadata> documentsMetadata) {
         leosEditorExtension = new LeosEditorExtension<>(coverContent, eventBus, cfgHelper, structureContextProvider.get().getTocItems(),
-                null, null, documentsMetadata, coverPage.getMetadata().getInternalRef());
+                null, null, documentsMetadata, coverPage);
     }
 
     @Override

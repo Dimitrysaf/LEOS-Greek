@@ -41,6 +41,7 @@ public class DocumentVO {
     private boolean uploaded;
     private String versionSeriesId;
     private String ref;
+    private boolean trackChangesEnabled;
 
     private LeosCategory documentType;
     private ProcedureType procedureType;
@@ -72,12 +73,13 @@ public class DocumentVO {
         this.documentType = documentType;
     }
 
-    public DocumentVO(String documentId, String language, LeosCategory docType, String updatedBy, Date updatedOn) {
+    public DocumentVO(String documentId, String language, LeosCategory docType, String updatedBy, Date updatedOn, boolean trackChangesEnabled) {
         this.id = documentId;
         this.language = language;
         this.documentType = docType;
         this.updatedBy = updatedBy;
         this.updatedOn = updatedOn;
+        this.trackChangesEnabled = trackChangesEnabled;
     }
 
     private void populateMetadataValues(XmlDocument xmlDocument) {
@@ -313,6 +315,14 @@ public class DocumentVO {
 
     public void addCollaborator(String userLogin, String authority, String userEntity) {
         this.collaborators.add(new Collaborator(userLogin, authority, userEntity));
+    }
+
+    public boolean isTrackChangesEnabled() {
+        return trackChangesEnabled;
+    }
+
+    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
+        this.trackChangesEnabled = trackChangesEnabled;
     }
 
     public List<Collaborator> getCollaborators() {

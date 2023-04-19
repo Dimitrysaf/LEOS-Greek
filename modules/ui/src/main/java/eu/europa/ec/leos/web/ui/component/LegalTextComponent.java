@@ -463,7 +463,7 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
         List<AlternateConfig> alternateConfigs = structureContextProvider.get().getAlternateConfigs();
         leosEditorExtension = new LeosEditorExtension<>(docContent, eventBus, cfgHelper, tocItems,
-                numberingConfigs, alternateConfigs, documentsMetadata, bill.getMetadata().getInternalRef());
+                numberingConfigs, alternateConfigs, documentsMetadata, bill);
     }
 
     public void displayDocumentUpdatedByCoEditorWarning() {

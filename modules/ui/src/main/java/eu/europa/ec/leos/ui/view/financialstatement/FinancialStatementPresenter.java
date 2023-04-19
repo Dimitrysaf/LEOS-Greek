@@ -786,7 +786,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
                         LeosCategory.STAT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
-                        Date.from(financialStatement.getLastModificationInstant()));
+                        Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
 
         if (financialStatement.getMetadata().isDefined()) {
             FinancialStatementMetadata financialStatementMetadata = financialStatement.getMetadata().get();

@@ -686,7 +686,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 explanatory.getMetadata().exists(e -> e.getLanguage() != null) ? explanatory.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.COUNCIL_EXPLANATORY,
                 explanatory.getLastModifiedBy(),
-                Date.from(explanatory.getLastModificationInstant()));
+                Date.from(explanatory.getLastModificationInstant()), explanatory.isTrackChangesEnabled());
 
         if (explanatory.getMetadata().isDefined()) {
             ExplanatoryMetadata metadata = explanatory.getMetadata().get();
@@ -702,7 +702,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 memorandum.getMetadata().exists(m -> m.getLanguage() != null) ? memorandum.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.MEMORANDUM,
                 memorandum.getLastModifiedBy(),
-                Date.from(memorandum.getLastModificationInstant()));
+                Date.from(memorandum.getLastModificationInstant()), memorandum.isTrackChangesEnabled());
     }
 
     // FIXME refine
@@ -711,7 +711,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 bill.getMetadata().exists(m -> m.getLanguage() != null) ? bill.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.BILL,
                 bill.getLastModifiedBy(),
-                Date.from(bill.getLastModificationInstant()));
+                Date.from(bill.getLastModificationInstant()), bill.isTrackChangesEnabled());
     }
 
     // FIXME refine
@@ -721,7 +721,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         annex.getMetadata().exists(m -> m.getLanguage() != null) ? annex.getMetadata().get().getLanguage() : "EN",
                         LeosCategory.ANNEX,
                         annex.getLastModifiedBy(),
-                        Date.from(annex.getLastModificationInstant()));
+                        Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
 
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();
@@ -740,7 +740,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
                         LeosCategory.STAT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
-                        Date.from(financialStatement.getLastModificationInstant()));
+                        Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
 
         if (financialStatement.getMetadata().isDefined()) {
             FinancialStatementMetadata metadata = financialStatement.getMetadata().get();
@@ -755,7 +755,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
                 LeosCategory.COVERPAGE,
                 proposalVO.getUpdatedBy(),
-                proposalVO.getUpdatedOn());
+                proposalVO.getUpdatedOn(), proposalVO.isTrackChangesEnabled());
         coverPageVO.getMetadata().setInternalRef(proposalRef);
         coverPageVO.setSource(documentContentService.getCoverPageContent(proposalVO.getSource()));
         return coverPageVO;

@@ -1616,7 +1616,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                         annex.getMetadata().exists(m -> m.getLanguage() != null) ? annex.getMetadata().get().getLanguage() : "EN",
                         LeosCategory.ANNEX,
                         annex.getLastModifiedBy(),
-                        Date.from(annex.getLastModificationInstant()));
+                        Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
 
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();

@@ -266,7 +266,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
         User user = ModelHelper.buildUser(45L, "login", "name", entities);
 
-        DocumentVO billVO = new DocumentVO(docId,"EN", LeosCategory.BILL, "login",  Date.from(Instant.now()));
+        DocumentVO billVO = new DocumentVO(docId,"EN", LeosCategory.BILL, "login",  Date.from(Instant.now()), document.isTrackChangesEnabled());
         billVO.addCollaborators(collaborators);
         List<LeosPermission> permissions = Collections.emptyList();
         List<CoEditionVO> coEditionVos = Collections.emptyList();
@@ -361,7 +361,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
         User user = ModelHelper.buildUser(45L, "login", "name", entities);
 
-        DocumentVO billVO = new DocumentVO(docId,"EN", LeosCategory.BILL, "login",  Date.from(Instant.now()));
+        DocumentVO billVO = new DocumentVO(docId,"EN", LeosCategory.BILL, "login",  Date.from(Instant.now()), document.isTrackChangesEnabled());
         billVO.addCollaborators(collaborators);
         List<LeosPermission> permissions = Collections.emptyList();
         List<CoEditionVO> coEditionVos = Collections.emptyList();
@@ -574,7 +574,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
         User user = ModelHelper.buildUser(45L, "login", "name", entities);
-        DocumentVO billVO = new DocumentVO(docId,"EN", LeosCategory.BILL, "login",  Date.from(now));
+        DocumentVO billVO = new DocumentVO(docId,"EN", LeosCategory.BILL, "login",  Date.from(now), document.isTrackChangesEnabled());
         billVO.addCollaborators(collaborators);
         List<LeosPermission> permissions = Collections.emptyList();
         List<CoEditionVO> coEditionVos = Collections.emptyList();

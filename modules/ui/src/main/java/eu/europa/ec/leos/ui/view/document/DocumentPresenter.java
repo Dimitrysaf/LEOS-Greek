@@ -1819,7 +1819,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
                 bill.getMetadata().exists(m -> m.getLanguage() != null) ? bill.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.BILL,
                 bill.getLastModifiedBy(),
-                Date.from(bill.getLastModificationInstant()));
+                Date.from(bill.getLastModificationInstant()),
+                bill.isTrackChangesEnabled());
         if (bill.getMetadata().isDefined()) {
             BillMetadata metadata = bill.getMetadata().get();
             billVO.getMetadata().setInternalRef(metadata.getRef());

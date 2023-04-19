@@ -226,7 +226,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
                 "EN", docTemplate, "annex-id", 1, "Annex 1", docTitle, "", "0.0.1", false, null);
         Instant now = Instant.now();
         Annex annex = getMockedAnnex(content, documentVersion, annexMetadata);
-        DocumentVO annexVO = new DocumentVO(docId,"EN", LeosCategory.ANNEX, "login",  Date.from(now));
+        DocumentVO annexVO = new DocumentVO(docId,"EN", LeosCategory.ANNEX, "login",  Date.from(now), annex.isTrackChangesEnabled());
         annexVO.setDocNumber(1);
         annexVO.setTitle(docTitle);
         annexVO.addCollaborators(Collections.emptyList());
@@ -314,7 +314,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
                 "EN", docTemplate, "annex-id", 1, "Annex 1", docTitle, "", "0.0.1", false, null);
         Instant now = Instant.now();
         Annex annex = getMockedAnnex(content, documentVersion, annexMetadata);
-        DocumentVO annexVO = new DocumentVO(docId,"EN", LeosCategory.ANNEX, "login",  Date.from(now));
+        DocumentVO annexVO = new DocumentVO(docId,"EN", LeosCategory.ANNEX, "login",  Date.from(now), annex.isTrackChangesEnabled());
         annexVO.setDocNumber(1);
         annexVO.setTitle(docTitle);
         annexVO.addCollaborators(Collections.emptyList());
@@ -429,7 +429,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         Instant now = Instant.now();
         AnnexMetadata annexMetadata = new AnnexMetadata("", "REGULATION", "", "AN-000.xml", "EN", docTemplate, "annex-id", 1, "Annex 1", docTitle, "", "0.0.1", false, null);
         Annex annex = getMockedAnnex(content, documentVersion, annexMetadata);
-        DocumentVO annexVO = new DocumentVO(docId,"EN", LeosCategory.ANNEX, "login",  Date.from(now));
+        DocumentVO annexVO = new DocumentVO(docId,"EN", LeosCategory.ANNEX, "login",  Date.from(now), annex.isTrackChangesEnabled());
         annexVO.setDocNumber(1);
         annexVO.setTitle(docTitle);
         String displayableContent = "document displayable content";

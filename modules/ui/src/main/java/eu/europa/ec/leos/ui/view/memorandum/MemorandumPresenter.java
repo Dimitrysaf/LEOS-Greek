@@ -1113,7 +1113,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                 memorandum.getMetadata().exists(m -> m.getLanguage() != null) ? memorandum.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.MEMORANDUM,
                 memorandum.getLastModifiedBy(),
-                Date.from(memorandum.getLastModificationInstant()));
+                Date.from(memorandum.getLastModificationInstant()), memorandum.isTrackChangesEnabled());
         if (memorandum.getMetadata().isDefined()) {
             MemorandumMetadata metadata = memorandum.getMetadata().get();
             memorandumVO.getMetadata().setInternalRef(metadata.getRef());

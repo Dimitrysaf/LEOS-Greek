@@ -212,7 +212,7 @@ class ProposalMemorandumScreenImpl extends MemorandumScreenImpl {
     @Override
     public void initLeosEditor(DocumentVO memorandum, List<LeosMetadata> documentsMetadata) {
         leosEditorExtension = new LeosEditorExtension<>(memorandumContent, eventBus, cfgHelper, structureContextProvider.get().getTocItems(),
-                null, null, documentsMetadata, memorandum.getMetadata().getInternalRef());
+                null, null, documentsMetadata, memorandum);
     }
 
     @Override

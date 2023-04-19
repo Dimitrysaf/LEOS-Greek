@@ -381,7 +381,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     public void initLeosEditor(DocumentVO documentVO, List<LeosMetadata> documentsMetadata) {
         leosEditorExtension = new LeosEditorExtension<>(financialStatementContent, eventBus, cfgHelper,
                 structureContextProvider.get().getTocItems(), structureContextProvider.get().getNumberingConfigs(),
-                null, documentsMetadata, documentVO.getMetadata().getInternalRef());
+                null, documentsMetadata, documentVO);
     }
 
     @PostConstruct
