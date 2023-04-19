@@ -32,6 +32,8 @@ define(function trackChangesExtensionModule(require) {
     function _connectorUnregistrationListener() {
         var connector = this;
         log.debug("Unregistering track changes extension...");
+        $("head #xmlTcStyle").remove();
+        $("head #editorTcStyle").remove();
     }
 
     function _connectorStateChangeListener() {

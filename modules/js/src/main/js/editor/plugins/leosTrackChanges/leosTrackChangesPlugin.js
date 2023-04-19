@@ -91,8 +91,8 @@ define(function leosTrackChangesPluginModule(require) {
                                 keyCodeLock = true;
 
                                 // Prevent between 2 deletes
-                                var pTcElement = core.searchTrackChangeElementCheckingParent(editor,core.DELETE_ACTION);
-                                var parentTcElement = (pTcElement && (pTcElement[1] === core.PARENT || pTcElement[1] === core.CURRENT));
+                                var pTcElement = core.searchTrackChangeElementCheckingParent(editor, core.DELETE_ACTION);
+                                var parentTcElement = (pTcElement && (pTcElement[1] === core.PARENT || pTcElement[1] === core.CURRENT || pTcElement[1] === core.CARET_START));
                                 var nextTcElement = core.searchNextTrackChangeElement(editor, core.DELETE_ACTION, deleteKey);
                                 var previousTcElement = core.searchPreviousTrackChangeElement(editor, core.DELETE_ACTION, deleteKey);
                                 betweenFix = null;
@@ -592,69 +592,45 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         addTrackChangesNested: function(editor, item) {
-            if(item)
-            {
-                if(item.$.nodeType === CKEDITOR.NODE_ELEMENT && item.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT && item.getAttribute(this.ACTION_ATTR) === this.INSERT_ACTION)
-                {
-                    //Span Insert element!
-                    if(item.getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor))
-                    {
-                        // If not own insert. make Delete tag
+            if (this.isTrackChangeElement(item, this.INSERT_ACTION)) {
+                // Span insert element!
+                if (item.getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
+                    // If not own insert, build delete tag
+                    item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.$.innerHTML, true);
+                } else {
+                    // Empty the item but prevent crash. if its own delete
+                    item = null;
+                }
+            } else if (this.isTrackChangeElement(item, this.DELETE_ACTION)) {
+                // Span delete element! - Maintain, no actions needed
+                // Nothing yet... Prevent reaching else.
+            } else if ((item != null) && (item.$.nodeType === CKEDITOR.NODE_TEXT)) {
+                if (this.isTrackChangeElement(item.getParent(), this.INSERT_ACTION)) {
+                    if (item.getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
+                        // If not own insert, build delete tag
                         item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.$.innerHTML, true);
+                    } else {
+                        // Empty the item but prevent crash. if its own delete
+                        item = null;
                     }
-                    else
-                    {
-                        //Empty The item but prevent crash. if is own delete
+                } else {
+                    // Normal flow - Make delete element
+                    if (editor.getSelection().getStartElement().getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
+                        item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.getText(),true);
+                    } else {
                         item = null;
                     }
                 }
-                else if(item.$.nodeType === CKEDITOR.NODE_ELEMENT && item.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT && item.getAttribute(this.ACTION_ATTR) === this.DELETE_ACTION )
-                {
-                    //Span Delete element! - Maintain. no actions needed
-                    //Nothing yet.. Prevent reaching Else.
-
+            } else if (item != null) {
+                //Normal objects, walk recursive
+                var elementGeneratedHTML = "";
+                var tempArray = this.toArray(item.getChildren());
+                for (var e = 0; tempArray.length > e; e++) {
+                    var tempItem = this.addTrackChangesNested(editor, tempArray[e]);
+                    elementGeneratedHTML += (tempItem != null ? tempItem.$.outerHTML : "");
                 }
-                else if(item.$.nodeType === CKEDITOR.NODE_TEXT)
-                {
-
-                    if(item.getParent() != null && item.getParent().$.nodeType === CKEDITOR.NODE_ELEMENT && item.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT && item.getParent().getAttribute(this.ACTION_ATTR) === this.INSERT_ACTION)
-                    {//IE8 only fix.
-                        //Span Insert element!
-                        if(item.getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor))
-                        {
-                            // If not own insert. make Delete tag
-                            item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.$.innerHTML, true);
-                        }
-                        else
-                        {
-                            //Empty The item but prevent crash. if is own delete
-                            item = null;
-                        }
-                    }
-                    else
-                    {
-                        //Normal Flow - Make Delete element
-                        if(editor.getSelection().getStartElement().getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
-                            item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.getText(), true);
-                        } else {
-                            item = null;
-                        }
-                    }
-                }
-                else
-                {
-                    //Normal objects, walk recursive
-                    var elementGeneratedHTML = "";
-                    var tempArray = this.toArray(item.getChildren());
-                    for(var e = 0; tempArray.length > e; e++)
-                    {
-                        var tempItem = this.addTrackChangesNested(editor, tempArray[e]);
-                        elementGeneratedHTML += (tempItem != null? tempItem.$.outerHTML : "");
-                    }
-
-                    if(editor.getSelection().getStartElement().getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
-                        item.$.innerHTML = elementGeneratedHTML;
-                    }
+                if (editor.getSelection().getStartElement().getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
+                    item.$.innerHTML = elementGeneratedHTML;
                 }
             }
             return item;
@@ -716,7 +692,7 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         isEmpty: function(element) {
-            return element && !CKEDITOR.tools.trim(element.getText());
+            return ((element != null) && !CKEDITOR.tools.trim(element.getText()));
         },
 
         isTrackChangeElement: function(element, action) {
