@@ -246,6 +246,7 @@
   "page.editor.action-toolbar.document-updated": "Document may have been updated. Please refresh for latest content",
   "page.editor.co-edition-update.co-edition-started": "starting editing the document",
   "page.editor.co-edition-update.co-edition-stopped": "stopped editing the document",
+  "page.editor.bookmark-text": "Go back to text under edition",
   "toc.item.type.preface": "Preface",
   "toc.item.type.preamble": "Preamble",
   "toc.item.type.recital": "Recital",

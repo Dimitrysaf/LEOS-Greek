@@ -207,6 +207,7 @@
   "page.editor.toc.unsaved-changes-dialog.body": "Souhaitez-vous enregistrer ces modifications avant de fermer ?",
   "page.editor.toc.unsaved-changes-dialog.close": "Fermer sans sauvegarder",
   "page.editor.toc.unsaved-changes-dialog.save": "Enregistrer et fermer",
+  "page.editor.bookmark-text": "[FR]Go back to text under edition",
   "toc.item.type.preface": "Préface",
   "toc.item.type.preamble": "Préambule",
   "toc.item.type.recital": "Considérant",
