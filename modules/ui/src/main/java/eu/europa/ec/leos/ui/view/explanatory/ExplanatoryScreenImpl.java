@@ -463,7 +463,7 @@ abstract class ExplanatoryScreenImpl extends VerticalLayout implements Explanato
     public void initLeosEditor(DocumentVO explanatory, List<LeosMetadata> documentsMetadata) {
         leosEditorExtension = new LeosEditorExtension<>(explanatoryContent, eventBus, cfgHelper, structureContextProvider.get().getTocItems(),
                 structureContextProvider.get().getNumberingConfigs(), null,
-                documentsMetadata, explanatory.getMetadata().getInternalRef());
+                documentsMetadata, explanatory);
     }
 
     @Override

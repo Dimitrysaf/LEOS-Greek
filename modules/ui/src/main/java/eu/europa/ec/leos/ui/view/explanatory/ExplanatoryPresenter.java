@@ -1279,7 +1279,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                         explanatory.getMetadata().exists(m -> m.getLanguage() != null) ? explanatory.getMetadata().get().getLanguage() : "EN",
                         LeosCategory.COUNCIL_EXPLANATORY,
                         explanatory.getLastModifiedBy(),
-                        Date.from(explanatory.getLastModificationInstant()));
+                        Date.from(explanatory.getLastModificationInstant()), explanatory.isTrackChangesEnabled());
 
         if (explanatory.getMetadata().isDefined()) {
             ExplanatoryMetadata metadata = explanatory.getMetadata().get();

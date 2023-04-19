@@ -460,7 +460,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     public void initLeosEditor(DocumentVO annex, List<LeosMetadata> documentsMetadata) {
         leosEditorExtension = new LeosEditorExtension<>(annexContent, eventBus, cfgHelper,
                 structureContextProvider.get().getTocItems(), structureContextProvider.get().getNumberingConfigs(),
-                null, documentsMetadata, annex.getMetadata().getInternalRef());
+                null, documentsMetadata, annex);
     }
 
     @Override

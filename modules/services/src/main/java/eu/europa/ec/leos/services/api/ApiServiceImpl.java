@@ -77,7 +77,6 @@ import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -611,7 +610,7 @@ public class ApiServiceImpl implements ApiService {
                 explanatory.getMetadata().exists(e -> e.getLanguage() != null) ? explanatory.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.COUNCIL_EXPLANATORY,
                 explanatory.getLastModifiedBy(),
-                Date.from(explanatory.getLastModificationInstant()));
+                Date.from(explanatory.getLastModificationInstant()), explanatory.isTrackChangesEnabled());
 
         if (explanatory.getMetadata().isDefined()) {
             ExplanatoryMetadata metadata = explanatory.getMetadata().get();
@@ -627,7 +626,7 @@ public class ApiServiceImpl implements ApiService {
                 memorandum.getMetadata().exists(m -> m.getLanguage() != null) ? memorandum.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.MEMORANDUM,
                 memorandum.getLastModifiedBy(),
-                Date.from(memorandum.getLastModificationInstant()));
+                Date.from(memorandum.getLastModificationInstant()), memorandum.isTrackChangesEnabled());
     }
 
     // FIXME refine
@@ -636,7 +635,7 @@ public class ApiServiceImpl implements ApiService {
                 bill.getMetadata().exists(m -> m.getLanguage() != null) ? bill.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.BILL,
                 bill.getLastModifiedBy(),
-                Date.from(bill.getLastModificationInstant()));
+                Date.from(bill.getLastModificationInstant()), bill.isTrackChangesEnabled());
     }
 
     // FIXME refine
@@ -646,7 +645,7 @@ public class ApiServiceImpl implements ApiService {
                         annex.getMetadata().exists(m -> m.getLanguage() != null) ? annex.getMetadata().get().getLanguage() : "EN",
                         LeosCategory.ANNEX,
                         annex.getLastModifiedBy(),
-                        Date.from(annex.getLastModificationInstant()));
+                        Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
 
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();
@@ -664,7 +663,7 @@ public class ApiServiceImpl implements ApiService {
                 proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
                 LeosCategory.COVERPAGE,
                 proposalVO.getUpdatedBy(),
-                proposalVO.getUpdatedOn());
+                proposalVO.getUpdatedOn(), proposalVO.isTrackChangesEnabled());
         coverPageVO.getMetadata().setInternalRef(proposalRef);
         coverPageVO.setSource(documentContentService.getCoverPageContent(proposalVO.getSource()));
         return coverPageVO;

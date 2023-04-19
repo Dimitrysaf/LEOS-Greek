@@ -1128,7 +1128,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
                 proposal.getMetadata().exists(m -> m.getLanguage() != null) ? proposal.getMetadata().get().getLanguage() : "EN",
                 LeosCategory.PROPOSAL,
                 proposal.getLastModifiedBy(),
-                Date.from(proposal.getLastModificationInstant()));
+                Date.from(proposal.getLastModificationInstant()), proposal.isTrackChangesEnabled());
         if (proposal.getMetadata().isDefined()) {
             ProposalMetadata metadata = proposal.getMetadata().get();
             proposalVO.getMetadata().setInternalRef(metadata.getRef());

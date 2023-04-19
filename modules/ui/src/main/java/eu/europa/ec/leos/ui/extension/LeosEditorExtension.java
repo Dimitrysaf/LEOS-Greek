@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.TocItemType;
@@ -41,9 +42,7 @@ import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.Level;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.NumberingType;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
@@ -77,7 +76,7 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
 
     public LeosEditorExtension(T target, EventBus eventBus, ConfigurationHelper cfgHelper, List<TocItem> tocItemList, 
             List<NumberingConfig> numberingConfigs, List<AlternateConfig> alternateConfigs, List<LeosMetadata> documents,
-            String documentRef) {
+            DocumentVO documentVO) {
         super();
         this.eventBus = eventBus;
 
@@ -92,8 +91,8 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         getState().articleTypesConfigJsonArray = toJsonString(getArticleTypesAttributes(tocItemList));
         getState().alternateConfigsJsonArray = toJsonString(alternateConfigs);
         getState().documentsMetadataJsonArray = toJsonString(documents);
-        getState().documentRef = documentRef;
-        getState().isTrackChangesEnabled = false;
+        getState().documentRef = documentVO.getMetadata().getInternalRef();
+        getState().isTrackChangesEnabled = documentVO.isTrackChangesEnabled();
 
         registerServerSideAPI();
         extend(target);
