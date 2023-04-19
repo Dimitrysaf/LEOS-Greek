@@ -125,7 +125,22 @@ export class ProposalCreateTemplateSelectorComponent
             .filter((child) => !child.hidden)
             .map((child) => this.catalogItemToUxLink(child))
         : [];
-    return new UxLink({ id, label, iconClass, disabled, children });
+    const isEmptyCategory = type === 'CATEGORY' && !children.length;
+    return new UxLink({
+      id,
+      label,
+      iconClass,
+      disabled,
+      children,
+      ...(isEmptyCategory
+        ? {
+            // add a dummy child to force the toggle button to be displayed
+            // then hide it using css, while keeping the indentation
+            children: [new UxLink({ disabled: true, visible: false })],
+            tooltipLabel: 'empty-category',
+          }
+        : {}),
+    });
   }
 
   private setInitialState() {
