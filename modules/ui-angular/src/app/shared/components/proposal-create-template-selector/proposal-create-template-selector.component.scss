@@ -1,4 +1,13 @@
 :host ::ng-deep {
+  .ux-tree__node--disabled {
+    opacity: 0.5;
+  }
+
+  .ux-tree__node[title='empty-category'] .ux-tree__node-toggle-icon {
+    // hide empty category toggle icon, while keeping indentation
+    visibility: hidden;
+  }
+
   .ux-tree--hidelines li.ux-tree__node--expandable::before {
     // fix hidelines for all nodes
     display: none;
