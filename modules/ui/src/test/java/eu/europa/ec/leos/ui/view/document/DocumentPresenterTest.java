@@ -312,7 +312,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
         verify(billService).getAllVersions(any(), any());
 
-        verify(documentScreen).refreshContent(displayableContent);
+        verify(documentScreen).refreshContent(displayableContent, false);
         verify(documentScreen).setDocumentTitle(docName);
         verify(documentScreen).setDocumentVersionInfo(any());
         verify(documentScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
@@ -408,7 +408,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
         verify(billService).getAllVersions(any(), any());
 
-        verify(documentScreen).refreshContent(displayableContent);
+        verify(documentScreen).refreshContent(displayableContent, false);
         verify(documentScreen).setDocumentTitle(docName);
         verify(documentScreen).setDocumentVersionInfo(any());
         verify(documentScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
@@ -612,7 +612,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
         verify(documentContentService).isCoverPageExists(any());
 
-        verify(documentScreen).refreshContent(displayableContent);
+        verify(documentScreen).refreshContent(displayableContent, false);
         verify(documentScreen).setDocumentTitle(docName);
         verify(documentScreen).setDocumentVersionInfo(any());
         verify(documentScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
