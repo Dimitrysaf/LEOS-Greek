@@ -117,6 +117,8 @@
   "page.collection.actions-dropdown.label": "Actions",
   "page.collection.actions-dropdown.share": "Share",
   "page.collection.actions-dropdown.donwload": "Download",
+  "page.collection.actions-dropdown.export.pdf": "Export as PDF",
+  "page.collection.actions-dropdown.export.lw": "Export as Legiswrite",
   "page.collection.actions-dropdown.export": "Export",
   "page.collection.internal-reference": "Internal Reference",
   "page.collection.confidentiality-level": "Confidentiality Level",

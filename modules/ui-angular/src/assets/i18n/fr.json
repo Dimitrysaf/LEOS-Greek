@@ -273,5 +273,7 @@
   "toc.edit.window.item.paragraph-numbering": "Paragraph numbering",
   "version.view.header": "v{{ version }} - dernière modification par {{ updatedByFull }} le {{ updatedOn }}",
   "version.compare.header.default": "Sélectionnez 2 versions à comparer",
-  "version.compare.header": "Comparaison des versions {{ oldVersion }} et {{ newVersion }}"
+  "version.compare.header": "Comparaison des versions {{ oldVersion }} et {{ newVersion }}",
+  "page.collection.actions-dropdown.export.pdf": "Export as PDF [FR]",
+  "page.collection.actions-dropdown.export.lw": "Export as Legiswrite [FR]"
 }
