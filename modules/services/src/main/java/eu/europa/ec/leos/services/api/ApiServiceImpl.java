@@ -895,6 +895,8 @@ public class ApiServiceImpl implements ApiService {
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
                 cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+                final String versionComment = messageHelper.getMessage("milestone.versionComment");
+                createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
                 LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComment);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new milestone ", e);
