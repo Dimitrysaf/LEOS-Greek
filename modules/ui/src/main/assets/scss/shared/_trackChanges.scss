@@ -41,14 +41,25 @@
     display: inline;
   }
 
-  inline[name="trackchanges"][leos\:action="insert"] {
-    text-decoration: underline;
-    color: #008000;
-  }
-
-  inline[name="trackchanges"][leos\:action="delete"] {
-    text-decoration: line-through;
-    color: #FF0000;
+  inline[name="trackchanges"] {
+    &[leos\:action="insert"] {
+      text-decoration: underline;
+      &[leos\:uid="anonymous"] {
+        color: #008000;
+        &:hover {
+          background-color: hsl(120, 100%, 35%);
+        }
+      }
+    }
+    &[leos\:action="delete"] {
+      text-decoration: line-through;
+      &[leos\:uid="anonymous"] {
+        color: #FF0000;
+        &:hover {
+          background-color: hsl(0, 100%, 90%);
+        }
+      }
+    }
   }
 
 }
@@ -56,12 +67,13 @@
 //------------------------------- Editor Styles -----------------------------//
 %editorTrackChanges {
 
-  span[data-akn-name="trackchanges"][data-akn-action="insert"] {
-    text-decoration: underline;
-  }
-
-  span[data-akn-name="trackchanges"][data-akn-action="delete"] {
-    text-decoration: line-through;
+  span[data-akn-name="trackchanges"] {
+    &[data-akn-action="insert"] {
+      text-decoration: underline;
+    }
+    &[data-akn-action="delete"] {
+      text-decoration: line-through;
+    }
   }
 
 }

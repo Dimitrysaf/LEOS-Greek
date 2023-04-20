@@ -62,6 +62,7 @@ public class ProposalMilestoneServiceImpl extends AbstractMilestoneService {
             ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF, true);
             exportOptions.setWithSuggestions(false);
             exportOptions.setWithAnonymization(true);
+            exportOptions.setWithTrackChangesAnonymization(false);
             return legService.createLegPackageForClone(proposalId, exportOptions);
         }
         ExportLW exportOptions = new ExportLW(ExportOptions.Output.WORD, false, ComparisonType.NONE);

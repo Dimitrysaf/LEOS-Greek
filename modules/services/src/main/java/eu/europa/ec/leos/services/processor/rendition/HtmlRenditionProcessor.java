@@ -7,6 +7,7 @@ import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +33,8 @@ public class HtmlRenditionProcessor {
         this.freemarkerConfiguration = freemarkerConfiguration;
     }
 
-    public String processTemplate(RenderedDocument document) {
-        return processTocTemplate(document, null);
+    public String processTemplate(RenderedDocument document, String trackchangesCss) {
+        return processTocTemplate(document, null, trackchangesCss);
     }
 
     public String processCoverPage(RenderedDocument document) {
@@ -49,7 +50,7 @@ public class HtmlRenditionProcessor {
         }
     }
     
-    public String processTocTemplate(RenderedDocument document, String tocFile) {
+    public String processTocTemplate(RenderedDocument document, String tocFile, String trackchangesCss) {
         try{
             final Template template = getTemplate(renditionTemplate);
             final NodeModel nodeModel = XmlNodeModelHandler.parseXmlStream(document.getContent());
@@ -57,6 +58,7 @@ public class HtmlRenditionProcessor {
             root.put("xml_data", nodeModel);
             root.put("toc_file", tocFile);
             root.put("styleSheetName", document.getStyleSheetName());
+            root.put("trackchanges_css", trackchangesCss);
 
             return process(template, root);
         } catch (Exception exception) {
