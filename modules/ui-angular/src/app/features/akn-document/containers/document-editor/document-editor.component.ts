@@ -199,6 +199,8 @@ export class DocumentEditorComponent
     //remove every session related actions from the user and clean the document relaod if it is present
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeSession();
+    this.closeVersionView();
+    this.closeVersionComparisonView();
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
