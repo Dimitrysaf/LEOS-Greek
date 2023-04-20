@@ -354,9 +354,6 @@ export class DocumentService implements OnDestroy {
   }
 
   searchPrevious() {
-    // const currentIndex = this.searchResultIndexArray.indexOf(
-    //   this.focusedSearchResult,
-    // );
     if (this.currentIndex !== 0) {
       this.scrollToElement(this.searchResultIndexArray[this.currentIndex - 1]);
     }
