@@ -200,6 +200,8 @@
   "page.editor.search.saveAndClose-button.label": "Save and close",
   "page.editor.search.search-input.label": "Search",
   "page.editor.search.wholeWords.label": "Whole Words",
+  "page.editor.search.results.separator": "of",
+  "page.editor.search.results.not.found": "Not Found",
   "page.editor.subtitle": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}",
   "page.editor.versions.actions.view": "View this version",
   "page.editor.versions.actions.revert": "Revert to this version",
