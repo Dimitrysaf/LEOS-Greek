@@ -260,9 +260,9 @@ public class LegServiceImplTest {
 		when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
-        when(htmlRenditionProcessor.processTemplate(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
         
 		// Expected
         String hrefExpected = "memorandum_ckn9773is000ywn567lsopipc.xml";
@@ -324,9 +324,9 @@ public class LegServiceImplTest {
         when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
-        when(htmlRenditionProcessor.processTemplate(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
         
 		// Expected
         String hrefExpected = "explanatory_cl43ykqyd0006k485zxvf53na.xml";
@@ -390,9 +390,9 @@ public class LegServiceImplTest {
 		when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
-        when(htmlRenditionProcessor.processTemplate(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
 
         // Expected
         String hrefExpected = "bill_ckn97778i000zwn56esq96qet.xml";
@@ -458,9 +458,9 @@ public class LegServiceImplTest {
 		when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
-        when(htmlRenditionProcessor.processTemplate(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
 		
         // Expected
         String hrefExpected = "annex_cl3yjnpcz0007k485t5p989mq.xml";
@@ -498,9 +498,9 @@ public class LegServiceImplTest {
         when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
-        when(htmlRenditionProcessor.processTemplate(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processCoverPage(any())).thenReturn(StringUtils.EMPTY);
         
 		// Expected

@@ -17,6 +17,8 @@ define(function leosUtilsModule(require) {
 
     // load module dependencies
     require("dateFormat");
+    var log = require("logger");
+    //var $ = require("jquery");
     var CKEDITOR = require("promise!ckEditor");
     var REGEX_ORIGIN = new RegExp("[leos:|data-](\\w-?)*origin");
     
@@ -195,6 +197,44 @@ define(function leosUtilsModule(require) {
         }
     }
 
+    function _updateTrackChangesStyles(currentUser, proposalRef) {
+        log.debug("Track changes _updateTrackChangesStyles invoked...");
+        var xmlTcSelector = "akomantoso inline[name='trackchanges']";
+        var editorTcSelector = "akomantoso span[data-akn-name='trackchanges']";
+
+        var usersUid = [currentUser.login];
+        $(xmlTcSelector).each(function() {
+            // Retrieve user and add it to users array if not exists
+            var userUid = $(this).attr("leos:uid");
+            if ($.inArray(userUid, usersUid) === -1) {
+                usersUid.push(userUid);
+            }
+        });
+
+        // Create styles for users
+        var xmlTcStyle = "";
+        var editorTcStyle = "";
+        for (var i = 0; usersUid.length > i; i++) {
+            var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
+            xmlTcStyle += xmlTcSelector + "[leos\\:uid='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
+            xmlTcStyle += xmlTcSelector + "[leos\\:uid='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
+            editorTcStyle += editorTcSelector + "[data-akn-uid='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
+            editorTcStyle += editorTcSelector + "[data-akn-uid='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
+        }
+
+        $("head #xmlTcStyle").remove();
+        $("head").prepend("<style id='xmlTcStyle'>" + xmlTcStyle + "</style>");
+
+        $("head #editorTcStyle").remove();
+        $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
+    }
+
+    function _generateColors(str) {
+        for (var i = 0, hashCode = 0; i < str.length; hashCode = str.charCodeAt(i++) + ((hashCode << 5) - hashCode));
+        var hue = Math.abs(hashCode) % 360;
+        return ["hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"];
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -206,6 +246,7 @@ define(function leosUtilsModule(require) {
         getElementTagName : _getElementTagName,
         getParentWrapper : _getParentWrapper,
         toIsoString : _toIsoString,
+        updateTrackChangesStyles: _updateTrackChangesStyles,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE
     };
 });

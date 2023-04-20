@@ -26,9 +26,9 @@
 
 <html>
 <head>
+    ${trackchanges_css}
     <meta charset="UTF-8"/>
     <link href="css/${styleSheetName}" rel="stylesheet" type="text/css" />
-
     <#if toc_file?has_content>
         <link href="css/jqtree.css" rel="stylesheet" type="text/css"/>
         <link href="css/leos-toc-rendition.css" rel="stylesheet" type="text/css"/>

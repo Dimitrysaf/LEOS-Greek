@@ -24,6 +24,7 @@ public abstract class ExportOptions {
     protected String printStyle;
     protected boolean withSuggestions = true;
     protected boolean withAnonymization = false;
+    protected boolean withTrackChangesAnonymization = false;
 
     public boolean isWithCoverPage() {
         return withCoverPage;
@@ -166,6 +167,14 @@ public abstract class ExportOptions {
 
     public boolean isWithAnonymization() {
         return withAnonymization;
+    }
+
+    public void setWithTrackChangesAnonymization(boolean withTrackChangesAnonymization) {
+        this.withTrackChangesAnonymization = withTrackChangesAnonymization;
+    }
+
+    public boolean isWithTrackChangesAnonymization() {
+        return withTrackChangesAnonymization;
     }
 
     public void setWithSuggestions(boolean withSuggestions) {

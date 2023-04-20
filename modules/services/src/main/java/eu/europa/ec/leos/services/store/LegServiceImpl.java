@@ -76,6 +76,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
@@ -96,6 +100,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
@@ -110,8 +115,12 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.c
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMapWithoutCoverpageEEARelevance;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMapWithoutPreface;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ANONYMOUS;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -1251,11 +1260,16 @@ public class LegServiceImpl implements LegService {
     }
 
     private void addHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent, String styleSheetName, String tocJson) {
+        this.addHtmlRendition(contentToZip, xmlDocumentName, xmlContent, styleSheetName, tocJson, "");
+    }
+
+    private void addHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent, String styleSheetName, String tocJson, String proposalRef) {
         RenderedDocument htmlDocument = new RenderedDocument();
         htmlDocument.setContent(new ByteArrayInputStream(xmlContent));
         htmlDocument.setStyleSheetName(styleSheetName);
         String htmlName = HTML_RENDITION + xmlDocumentName.replaceAll(".xml", ".html");
-        contentToZip.put(htmlName, htmlRenditionProcessor.processTemplate(htmlDocument).getBytes(UTF_8));
+        String trackChangesCss = this.createTrackChangesCss(xmlContent, proposalRef);
+        contentToZip.put(htmlName, htmlRenditionProcessor.processTemplate(htmlDocument, trackChangesCss).getBytes(UTF_8));
 
         // Build toc_docName.js file
         RenderedDocument tocHtmlDocument = new RenderedDocument();
@@ -1271,7 +1285,42 @@ public class LegServiceImpl implements LegService {
         tocHtmlDocument.setStyleSheetName(styleSheetName);
         String tocHtmlFile = HTML_RENDITION + xmlDocumentName;
         tocHtmlFile = tocHtmlFile.substring(0, tocHtmlFile.indexOf(".xml")) + "_toc" + ".html";
-        contentToZip.put(tocHtmlFile, htmlRenditionProcessor.processTocTemplate(tocHtmlDocument, tocJsName).getBytes(UTF_8));
+        contentToZip.put(tocHtmlFile, htmlRenditionProcessor.processTocTemplate(tocHtmlDocument, tocJsName, trackChangesCss).getBytes(UTF_8));
+    }
+
+    private String createTrackChangesCss(byte[] xmlContent, String proposalRef) {
+
+        LOG.debug("Track changes _updateTrackChangesStyles invoked...");
+
+        Document document = createXercesDocument(xmlContent);
+        NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
+        List<String> usersId = new ArrayList();
+        for (int i = 0; i < elements.getLength(); i++) {
+            Node element = elements.item(i);
+            String userId = element.getAttributes().getNamedItem("leos:uid").getNodeValue();
+            if (userId != null && !usersId.contains(userId)) {
+                usersId.add(userId);
+            }
+        }
+
+        String trackChangesCss = "<style id=\"xmlTcStyle\">\n";
+        for (int i = 0; i < usersId.size(); i++) {
+            String userId = usersId.get(i);
+            String userIdColor[] = this.generateColors(userId + proposalRef);
+            trackChangesCss += "akomantoso inline[name='trackchanges'][leos\\:uid='" + userId + "'] { color: " + userIdColor[0] + "; }\n";
+            trackChangesCss += "akomantoso inline[name='trackchanges'][leos\\:uid='" + userId + "']:hover { background-color: " + userIdColor[1] + "; }\n";
+        }
+        trackChangesCss += "</style>";
+
+        return trackChangesCss;
+
+    }
+
+    private String[] generateColors(String valueToHash) {
+        int hashCode, i;
+        for (i = 0, hashCode = 0; i < valueToHash.length(); hashCode = valueToHash.charAt(i++) + ((hashCode << 5) - hashCode));
+        int hue = Math.abs(hashCode) % 360;
+        return new String[]{"hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"};
     }
 
     /**
@@ -1433,7 +1482,9 @@ public class LegServiceImpl implements LegService {
                 proposalRefsMap.get(LeosCategory.BILL.name() + "_href"), Bill.class);
 
         byte[] xmlContent = bill.getContent().get().getSource().getBytes();
-        xmlContent = xmlContentProcessor.anonymizeTrackChanges(xmlContent);
+        if (exportOptions.isWithTrackChangesAnonymization()) {
+            xmlContent = xmlContentProcessor.anonymizeTrackChanges(xmlContent);
+        }
         if(exportOptions.isComparisonMode()) {
             XmlDocument originalBill = documentContentService.getOriginalBill(bill);
             xmlContent = simpleCompareXmlContentsForClone(originalBill, bill).getBytes(UTF_8);
@@ -1515,7 +1566,7 @@ public class LegServiceImpl implements LegService {
         structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
         final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
 
-        addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson);
+        addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
 
         final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, xmlContent);
         exportBillResource.setExportOptions(exportOptions);
