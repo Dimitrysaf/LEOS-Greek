@@ -13,15 +13,18 @@
             </button>
           </li>
         </ng-container>
-        <li
-          euiListItem
-          (click)="handleExport()"
-          *appShowOnInstance="['ec', 'os']"
-        >
-          <button euiListItem>
-            {{ 'page.collection.actions-dropdown.export' | translate }}
-          </button>
-        </li>
+        <ng-container *appShowOnInstance="['ec', 'os']">
+          <li euiListItem (click)="handleExportAsPDF()">
+            <button euiListItem>
+              {{ 'page.collection.actions-dropdown.export.pdf' | translate }}
+            </button>
+          </li>
+          <li euiListItem (click)="handleExportAsLW()" *ngIf="canExportLW">
+            <button euiListItem>
+              {{ 'page.collection.actions-dropdown.export.lw' | translate }}
+            </button>
+          </li>
+        </ng-container>
         <li euiListItem (click)="handleShare()">
           <a euiListItem target="_blank" [href]="getStringifiedMailTo()">{{
             'page.collection.actions-dropdown.share' | translate

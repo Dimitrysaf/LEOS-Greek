@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -23,19 +24,36 @@ export class ProposalActionsDropdownComponent {
   breakStr = '%0D%0A';
   @ViewChild('proposalDeleteConf')
   proposalDeleteConf: ConfirmDeleteDialogComponent;
+  canExportLW = false;
 
   constructor(
     private proposalDetailsService: ProposalDetailsService,
     private sanitizer: DomSanitizer,
     private router: Router,
-  ) {}
+    private config: AppConfigService,
+  ) {
+    this.config.config.subscribe((conf) => {
+      if (conf.user.roles.length) {
+        console.log(conf);
+        conf.permissions.map((perm) => {
+          if (perm === 'CAN_EXPORT_LW') {
+            this.canExportLW = true;
+          }
+        });
+      }
+    });
+  }
 
   handleDownload() {
     this.proposalDetailsService.donwloadProposal();
   }
 
-  handleExport() {
+  handleExportAsPDF() {
     this.proposalDetailsService.exportProposal('PDF');
+  }
+
+  handleExportAsLW() {
+    this.proposalDetailsService.exportProposal('WORD');
   }
 
   handleShare() {
