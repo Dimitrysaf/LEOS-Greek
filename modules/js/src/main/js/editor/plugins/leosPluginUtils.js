@@ -41,6 +41,7 @@ define(function leosPluginUtilsModule(require) {
     var ORDER_LIST_ELEMENT = "ol";
     var HTML_POINT = "li";
     var HTML_SUB_POINT = "p";
+    var SPAN = "span";
     var MAX_LEVEL_DEPTH = 7;
     var MAX_LIST_LEVEL = 5;
     var MAX_LEVEL_LIST_DEPTH = 4;
@@ -90,6 +91,7 @@ define(function leosPluginUtilsModule(require) {
 
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~_ART_DEF";
+    var SPAN_ATTRIBUTES = ['tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label'];
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -608,6 +610,32 @@ define(function leosPluginUtilsModule(require) {
                 }
             }
         }
+    }
+
+    function _manageSpanInSubparagraphs(event) {
+        var subparagraphs = event.editor.element.find('p');
+        if(subparagraphs && subparagraphs.count() > 0) {
+            for (var i = 0; i < subparagraphs.count(); i++) {
+                var subparagraph = subparagraphs.getItem(i);
+                if (subparagraph.getChildren().count() > 0) {
+                    for(var j = 0; j < subparagraph.getChildren().count(); j++) {
+                        var child = subparagraph.getChildren().getItem(j);
+                        if(_getElementName(child) === SPAN  && !hasAtLeastOneAttributeFromList(child)) {
+                            _moveElementChildrenFromSpan(child, subparagraph);
+                            child.remove();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function hasAtLeastOneAttributeFromList(child){
+        var attributes = child.getAttributes();
+        var atLeastOneAttributeFound = SPAN_ATTRIBUTES.some(function(attrb) {
+            return !!attributes[attrb] ;
+        });
+        return atLeastOneAttributeFound;
     }
 
     // Check crossheadings:
@@ -1334,6 +1362,23 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
+    function _moveElementChildrenFromSpan(source, target) {
+        if ( !source || !target )
+            return;
+        var $ = source.$;
+        var targetHtml = target.$;
+        var i = $.childNodes.length - 1;
+
+        while ( i > -1 ) {
+            var child = $.childNodes[i];
+            if (!!$.nextSibling) {
+                targetHtml.insertBefore($.removeChild(child), $.nextSibling);
+            } else {
+               targetHtml.appendChild($.removeChild(child));
+            }
+            i--;
+        }
+    }
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1388,6 +1433,7 @@ define(function leosPluginUtilsModule(require) {
         manageSiblingLists: _manageSiblingLists,
         manageSubparagraphs: _manageSubparagraphs,
         manageListIntro: _manageListIntro,
+        manageSpanInSubparagraphs: _manageSpanInSubparagraphs,
         isFirstLevelListSubparagraph: _isFirstLevelListSubparagraph,
         manageCrossheadings: _manageCrossheadings,
         keepCursorPosition: _keepCursorPosition,

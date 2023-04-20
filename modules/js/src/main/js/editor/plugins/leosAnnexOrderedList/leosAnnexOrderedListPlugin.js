@@ -49,6 +49,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             editor.on("change", resetDataAknNameForOrderedList, null, null, 0);
             editor.on("change", resetNumbering, null, null, 1);
             editor.on("change", _startObservingAllLists);
+            editor.on("change", leosPluginUtils.manageSpanInSubparagraphs);
             editor.on("receiveData", _startObservingAllLists);
             editor.on('afterCommandExec', _restoreListStructure, null, null, 100);
             leosKeyHandler.on({
@@ -87,9 +88,12 @@ define(function leosAnnexOrderedListPluginModule(require) {
             && leosPluginUtils.getElementName(selectedElement.getParent()) === leosPluginUtils.HTML_POINT
             && _getAscendantPoint(selectedElement.getParent())) {
             context.event.cancel();
-        } else if(selectedElement.getAscendant('li') && selectedElement.getAscendant('li').getAttribute(leosPluginUtils.DATA_AKN_NUM)){
+        } else if((selectedElement.getAscendant('li') && !!selectedElement.getAscendant('li').getAttribute(leosPluginUtils.DATA_AKN_NUM))
+                || (leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_POINT && !!selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM))){
             var dataAknNumAttr = selectedElement.getAscendant('li').getAttribute(leosPluginUtils.DATA_AKN_NUM);
-            if(!!dataAknNumAttr && CHECKBOXES.includes(dataAknNumAttr)){
+            if((!!dataAknNumAttr && CHECKBOXES.includes(dataAknNumAttr))
+                || (!!selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM) &&
+                    CHECKBOXES.includes(selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM)))){
                  context.event.cancel();
                  context.event.editor.fire( 'key', { keyCode: SHIFT_ENTER} );
             }
@@ -122,7 +126,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
             }
         }
     }
-    
+
     /**
      * Add an Observer to all ordered lists (OL) present in the editor, considering as a separate list even the nested ones.
      */
