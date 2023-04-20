@@ -167,6 +167,8 @@
   "page.editor.search.saveAndClose-button.label": "Sauver et fermer",
   "page.editor.search.search-input.label": "Rechercher",
   "page.editor.search.wholeWords.label": "Mots complet",
+  "page.editor.search.results.separator": "of [FR]",
+  "page.editor.search.results.not.found": "Not Found [FR]",
   "page.editor.subtitle": "v{{ version }} - dernière édition par {{ updatedByFull }} le {{ updatedOn }}",
   "page.editor.versions.actions.view": "Afficher cette version",
   "page.editor.versions.actions.revert": "Revenir à cette version",
