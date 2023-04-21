@@ -391,7 +391,7 @@ export class DocumentEditorComponent
   }
 
   handleClose() {
-    this.documentService.closeEditor();
+    this.cdkEditor.closeElementEditor();
     //wait for the API where we get all the metadata for each document
     this.router.navigate([`/collection/${this.proposalRef}`]);
   }

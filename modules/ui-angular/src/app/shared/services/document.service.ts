@@ -264,9 +264,9 @@ export class DocumentService implements OnDestroy {
     this.setAnnotationMode = null;
   }
 
-  closeEditor() {
-    console.warn('stub:', 'closeEditor'); // FIXME
-  }
+  // closeEditor() {
+  //   console.warn('stub:', 'closeEditor'); // FIXME
+  // }
 
   createNote() {
     console.warn('stub:', 'createNote'); // FIXME
@@ -339,6 +339,7 @@ export class DocumentService implements OnDestroy {
   reloadDocument() {
     this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentId(this.documentIdBS.value);
+    this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
   }
 
   saveVersion(requestBody: any) {
