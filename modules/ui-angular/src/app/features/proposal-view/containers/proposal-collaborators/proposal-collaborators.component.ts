@@ -20,11 +20,11 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   userInputForm: FormGroup;
   isEditRole = false;
   editUserId = null;
-  destory$: Subject<any> = new Subject();
+  destroy$: Subject<any> = new Subject();
   entity: string;
   selectedRole: string;
 
-  @ViewChild('collaboratos') collaboratorsTable: EuiTableComponent;
+  @ViewChild('collaborators') collaboratorsTable: EuiTableComponent;
   @ViewChild('confirmCollabDelete') confirmComp: ConfirmDeleteDialogComponent;
   collaboratorToDelete: Collaborator = null;
   constructor(
@@ -36,15 +36,15 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     });
 
     this.detailsService.collaborators$
-      .pipe(takeUntil(this.destory$))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((coll) => {
         this.dataSource = coll;
       });
   }
 
   ngOnDestroy(): void {
-    this.destory$.next(null);
-    this.destory$.complete();
+    this.destroy$.next(null);
+    this.destroy$.complete();
   }
 
   ngOnInit(): void {}

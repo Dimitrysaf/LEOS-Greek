@@ -17,5 +17,5 @@ export interface User {
 export interface UserEntity {
   id: string;
   name: string;
-  organisationName: string;
+  organizationName: string;
 }

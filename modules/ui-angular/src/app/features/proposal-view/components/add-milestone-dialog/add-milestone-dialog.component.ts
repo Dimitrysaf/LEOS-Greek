@@ -61,7 +61,6 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
 
   onAccept(): void {
     this.proposalDetailsService.createMilestone(
-      this.proposalDetailsService.proposalRef,
       this.form.get('milestonesTitle').value,
     );
     this.close();

@@ -39,10 +39,9 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   }
 
   handleTitleChange(data: ExportPackageVO) {
-    const proposalRef = this.proposalDetailsService.proposalRef;
     data.comments[0] = this.titleToEdit;
     this.proposalDetailsService
-      .updateExportDocument(proposalRef, data.id, data.comments)
+      .updateExportDocument(data.id, data.comments)
       .pipe(debounceTime(DEBOUNCE_TIME), takeUntil(this.destroy$))
       .subscribe((res) => {
         this.exportDocuments = res;
@@ -62,9 +61,8 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   }
 
   handleNotifyExport(id: string) {
-    const ref = this.proposalDetailsService.proposalRef;
     this.proposalDetailsService
-      .notifyExport(ref, id)
+      .notifyExport(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         console.log(res);
@@ -72,9 +70,8 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   }
 
   handlePreviewExport(id: string) {
-    const ref = this.proposalDetailsService.proposalRef;
     this.proposalDetailsService
-      .deleteExportDocument(ref, id)
+      .deleteExportDocument(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.downloadFile(res);
@@ -96,9 +93,8 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   }
 
   private deleteExport(id: string) {
-    const ref = this.proposalDetailsService.proposalRef;
     this.proposalDetailsService
-      .deleteExportDocument(ref, id)
+      .deleteExportDocument(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.exportDocuments = res;

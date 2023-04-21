@@ -5,8 +5,9 @@
 </ng-container>
 
 <eui-dialog
-  #addCollaboratosModal
+  #addCollaboratorsModal
   [title]="'page.collection.collaborators.dialog.header' | translate"
+  isDraggable
   isClosedOnClickOutside
   [isHandleCloseOnDismiss]="true"
   [isHandleCloseOnEscape]="true"
@@ -16,6 +17,7 @@
   (escape)="closeDialog()"
   (close)="closeDialog()"
 >
+  <!-- Body -->
   <div euiInputGroup class="row justify-content-center">
     <div class="col-md-3">
       <label euiLabel for="quantity">
@@ -28,8 +30,8 @@
         euiInputText
         id="quantity"
         name="quantity"
-        min="0"
-        max="20"
+        [min]="MIN_QUANTITY_USER"
+        [max]="MAX_QUANTITY_USER"
         [(ngModel)]="quantity"
         (ngModelChange)="handleQuantityChange($event)"
         [isInvalid]="isQuantityValid"
@@ -42,8 +44,12 @@
   </div>
   <div [formGroup]="collaboratorsForm">
     <div formArrayName="collaborators">
-      <div *ngFor="let item of collaboratorsFormList.controls; let i = index">
-        <div [formGroupName]="i" class="row eui-u-p-xs align-items-center">
+      <div
+        *ngFor="let item of collaboratorsFormList.controls; let i = index"
+        class="eui-u-p-xs"
+        [ngClass]="{ 'eui-u-bg-color-danger-5': item.errors }"
+      >
+        <div [formGroupName]="i" class="row align-items-center">
           <div class="col-md-4">
             <label euiLabel for="item">{{
               'page.collection.collaborators.dialog.form.name' | translate
@@ -74,6 +80,7 @@
             }}</label>
             <select
               euiSelect
+              id="role"
               name="role"
               formControlName="role"
               (change)="handleRoleSelect($event, i)"
@@ -100,9 +107,25 @@
             ></span>
           </div>
         </div>
+        <div class="row" *ngIf="item.errors">
+          <div class="col-12">
+            <eui-feedback-message
+              euiDanger
+              translate="page.collection.collaborators.dialog.form.errors.duplicate-user"
+            ></eui-feedback-message>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <eui-alert class="eui-u-mt-l eui-u-mh-xs" euiDanger *ngIf="addUsersError">
+    {{
+      'page.collection.collaborators.dialog.form.errors.api-failure' | translate
+    }}
+  </eui-alert>
+
+  <!-- Footer -->
   <eui-dialog-footer>
     <div class="d-flex flex-row justify-content-end">
       <button
@@ -112,7 +135,7 @@
         euiSecondary
         (click)="closeDialog()"
       >
-        Cancel
+        {{ 'global.actions.cancel' | translate }}
       </button>
       <button
         [disabled]="!isFormValid"

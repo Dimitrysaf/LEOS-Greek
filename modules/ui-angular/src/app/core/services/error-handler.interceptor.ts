@@ -75,7 +75,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           severity: 'danger',
           summary: title,
           detail: message,
-          life: 4000,
+          sticky: true,
         });
       });
   }
