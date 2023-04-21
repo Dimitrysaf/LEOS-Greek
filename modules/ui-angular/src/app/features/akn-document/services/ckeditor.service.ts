@@ -195,7 +195,7 @@ export class CKEditorService implements OnDestroy {
         );
       });
     },
-    closeElement: () => {},
+    // closeElement: () => {},
     addResizeListener: <T extends Element>(
       element: T,
       callbackFunction: ResizeListener<T>,
@@ -221,6 +221,7 @@ export class CKEditorService implements OnDestroy {
     releaseElement: () => {
       const documentRef = this.documentRefBS.value;
       this.documentService.setDocumentId(documentRef);
+      this.documentService.reloadDocument();
       this.coEditionService.removeElementCoEditInfo(
         documentRef,
         this.elementUnderEdit,
@@ -570,6 +571,10 @@ export class CKEditorService implements OnDestroy {
         this.connector.enableUserGuidance(true);
       }
     });
+  }
+
+  closeElementEditor() {
+    this.connector.closeElement();
   }
 
   private getResizeObserver() {

@@ -65,7 +65,7 @@ export class AnnexDocumentComponent
       changes.reloadTrigger.currentValue !== 0
     ) {
       const rootEl = this.rootElementRef.nativeElement;
-      rootEl.innerHTML = this.currentXml;
+      rootEl.innerHTML = this.xml;
     }
   }
 
