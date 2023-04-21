@@ -70,14 +70,6 @@ public class WorkspaceOptions {
             String id = filter.getType();
 
             List<String> values = new ArrayList<>(Arrays.asList(filter.getValue()));
-            // FIXME For the release query filters for explanatory are added manually
-            if (id.equalsIgnoreCase(FilterType.procedureType.name())) {
-                values.add("COUNCIL_INTERNAL_DOCUMENT");
-            } else if (id.equalsIgnoreCase(FilterType.docType.name())) {
-                values.add("draft");
-            } else if (id.equalsIgnoreCase(FilterType.template.name())) {
-                values.add("CN-001");
-            }
             if(id.equalsIgnoreCase(FilterType.role.name())) {
                 List<String> appRoles = authorityMap.getAllRoles().stream()
                         .filter(Role::isApplicationRole)
