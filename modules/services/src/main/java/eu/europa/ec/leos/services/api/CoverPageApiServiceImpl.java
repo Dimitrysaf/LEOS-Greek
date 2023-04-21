@@ -341,14 +341,14 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
-        Proposal annex = this.proposalService.findProposalByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        this.setStructureContext(proposal.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         List<TocItem> tocItems = this.structureContext.get().getTocItems();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(proposal.getId());
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef()
+                getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
         );
     }
 

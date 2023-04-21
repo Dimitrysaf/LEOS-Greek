@@ -370,10 +370,11 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         List<TocItem> tocItems = this.structureContext.get().getTocItems();
         List<NumberingConfig> numberConfigs = this.structureContext.get().getNumberingConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(explanatory.getId());
+        Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef()
+                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
         );
     }
 

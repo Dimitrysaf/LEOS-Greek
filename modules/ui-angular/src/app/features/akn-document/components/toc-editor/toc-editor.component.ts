@@ -1,0 +1,532 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import { UserDetails } from '@eui/base';
+import { TranslateService } from '@ngx-translate/core';
+import { cloneDeep } from 'lodash';
+import { Subject } from 'rxjs';
+
+import {
+  DocumentConfig,
+  NumberingConfig,
+  NumberingType,
+} from '@/shared/models';
+import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
+import {
+  convertArticle,
+  findNodeById,
+  getItemIndentLevel,
+  getNumberingConfig,
+  getTocItemByNumberingType,
+} from '@/shared/utils/toc.utils';
+
+const NUMBERED = 'Numbered';
+const UNNUMBERED = 'Unnumbered';
+const INDENT = 'INDENT';
+const POINT = 'POINT';
+const LIST = 'LIST';
+const BULLET_NUM = 'BULLET_NUM';
+const MAIN_BODY = 'MAIN_BODY';
+const TYPING_TIME = 500;
+
+@Component({
+  selector: 'app-toc-editor',
+  templateUrl: './toc-editor.component.html',
+  styleUrls: ['./toc-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TocEditorComponent implements OnInit, OnChanges {
+  @Input() documentType: string;
+  @Input() toc: TableOfContentItemVO[];
+  @Input() tocItems: TocItem[];
+  @Input() selectedNode: TableOfContentItemVO;
+  @Input() documentConfig: DocumentConfig;
+
+  @Output() handleTocRemove = new EventEmitter<TableOfContentItemVO>();
+  @Output() handleNodeChangesEvent = new EventEmitter<any>();
+
+  //toc related
+  selectedNodeToMove: TableOfContentItemVO = null;
+  isToCDraft: boolean;
+  messageFromValidation: string;
+  isDropValid: boolean;
+
+  indentListRadioButtonGroupItemsToEnable: NumberingType[] = ['POINT_NUM'];
+  isIndentListRadioButtonGroupEnabled: boolean;
+  //division related
+  active_division_style = 'style_1';
+  active_point_style = '';
+  active_block_style = '';
+  active_paragraph_style = '';
+
+  //article type
+  previousHeading: string;
+  previousType: string;
+  restored: boolean;
+
+  //environment var
+  environment = process.env.NG_APP_LEOS_INSTANCE;
+
+  //ng values for the selected node edit
+  heading: string;
+  number: string;
+  type: string;
+  tocType: string;
+  possibleDivisionType: any[];
+
+  destroy$: Subject<any> = new Subject();
+  private typingTimer;
+
+  constructor(private translateService: TranslateService) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('selectedNode' in changes) {
+      this.hanldeNodeSelect(changes.selectedNode.currentValue);
+    }
+  }
+
+  ngOnInit(): void {}
+
+  onTocRemove(node: TableOfContentItemVO) {
+    this.handleTocRemove.emit(node);
+  }
+
+  isArticle(tocItem: TocItem) {
+    return tocItem.aknTag.toLowerCase() === 'article';
+  }
+
+  isDivision(tocItem: TocItem) {
+    return tocItem.aknTag.toLowerCase() === 'division';
+  }
+
+  isDivionStyleChecked(target: string) {
+    return this.selectedNode.style === target;
+  }
+
+  isDivisionStyleEnabled(target: string) {
+    return this.possibleDivisionType.indexOf(target) !== -1;
+  }
+
+  isIndentList(tocItem: TocItem) {
+    return ['POINT', 'INDENT'].includes(tocItem.aknTag);
+  }
+
+  isCrossFading(tocItem: TocItem) {
+    return tocItem.aknTag === 'BLOCK';
+  }
+
+  showTypeField(tocItem: TocItem) {
+    return !['DIVISION'].includes(tocItem.aknTag);
+  }
+
+  isItemHeadingVisible(tocItem: TocItem) {
+    return (
+      tocItem.itemHeading === 'MANDATORY' || tocItem.itemHeading === 'OPTIONAL'
+    );
+  }
+  isItemHeadingEditable(tocItem: TocItem) {
+    return tocItem.aknTag === 'DIVISION'
+      ? false
+      : this.isItemHeadingVisible(tocItem);
+  }
+
+  isItemNumberEditable(tocItem: TocItem) {
+    return tocItem.numberEditable;
+  }
+
+  isItemNumberVisible(tocItem: TocItem) {
+    return (
+      tocItem.itemNumber === 'MANDATORY' || tocItem.itemNumber === 'OPTIONAL'
+    );
+  }
+
+  showNumParagraphToggle(item: TableOfContentItemVO) {
+    const env = process.env.NG_APP_LEOS_INSTANCE;
+    return (
+      item.originAttr &&
+      item.originAttr === 'ec' &&
+      item.tocItem.aknTag === 'ARTICLE' &&
+      item.childItems.length > 0 &&
+      !(item.softActionAttr === 'DELETE' || item.softActionAttr === 'MOVE')
+    );
+  }
+
+  hanldeNodeSelect(node: TableOfContentItemVO) {
+    this.selectedNode = node;
+    this.heading = node.heading;
+    this.type = this.getDisplayableTocItem(node.tocItem);
+    this.number = node.number;
+    this.tocType = node.tocItemType?.toLowerCase();
+
+    //enable identListRadioButton
+    if (
+      this.indentListRadioButtonGroupItemsToEnable != null &&
+      ['annex', 'bill'].includes(this.documentType)
+    ) {
+      this.isIndentListRadioButtonGroupEnabled =
+        this.indentListRadioButtonGroupItemsToEnable.includes(
+          node.tocItem.numberingType,
+        );
+    }
+
+    if (this.isDivision(node.tocItem)) {
+      this.active_division_style = node.style;
+      this.possibleDivisionType = this.getDivisionTypesToEnable(
+        this.getPreviousDivisionType(node),
+      );
+    }
+    if (this.isIndentList(node.tocItem)) {
+      this.active_point_style = node.tocItem.numberingType;
+    }
+    if (this.isCrossFading(node.tocItem)) {
+      this.active_block_style = node.tocItem.numberingType;
+    }
+    if (this.showNumParagraphToggle(node)) {
+      this.active_paragraph_style =
+        node.childItems?.[0]?.number?.length > 0
+          ? NUMBERED
+          : UNNUMBERED ?? UNNUMBERED;
+    }
+  }
+
+  handleHeadingChange(value: string) {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(() => {
+      this.previousHeading = this.heading;
+      const newTree = cloneDeep(this.toc);
+      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+      newSelectedNode.heading = value;
+      if (this.environment === 'ec') {
+        newSelectedNode.originHeadingAttr = 'DELETE';
+        newSelectedNode.originHeadingAttr = 'ec';
+      }
+      this.handleNodeChanges(newTree, newSelectedNode);
+    }, TYPING_TIME);
+  }
+
+  handleNumberChange(number: string) {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(() => {
+      const newTree = cloneDeep(this.toc);
+      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+      newSelectedNode.isAutoNumOverwritten = true;
+      newSelectedNode.number = number;
+      this.handleNodeChanges(newTree, newSelectedNode);
+    }, TYPING_TIME);
+  }
+
+  handleParagraphToggle(event) {
+    const { value } = event.target;
+    if (
+      this.selectedNode.childItems &&
+      this.selectedNode.childItems.length > 0
+    ) {
+      const newTree = cloneDeep(this.toc);
+      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+      //no  need to check if children exists the flow requires it
+      const firstChild = newSelectedNode.childItems.at(0);
+      let flag = false;
+      for (const itemVo of newSelectedNode.childItems) {
+        if (itemVo.numSoftActionAttr && itemVo.numSoftActionAttr !== 'DELETE') {
+          flag = true;
+          break;
+        }
+      }
+      if (value === NUMBERED) {
+        if (!firstChild.number || flag) {
+          newSelectedNode.numberingToggled = true;
+          for (const n of newSelectedNode.childItems) {
+            n.number = '#';
+          }
+          this.handleNodeChanges(newTree, newSelectedNode);
+        }
+      } else if (value === UNNUMBERED) {
+        if (firstChild.number && !flag) {
+          newSelectedNode.numberingToggled = false;
+          for (const n of newSelectedNode.childItems) {
+            n.number = null;
+          }
+          this.handleNodeChanges(newTree, newSelectedNode);
+        }
+      }
+    }
+  }
+
+  handleListRadioButton(event) {
+    const { value } = event.target;
+    const oldValue = this.selectedNode.tocItem.numberingType;
+    this.active_block_style = value;
+
+    const newTree = cloneDeep(this.toc);
+    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    const numberConfig = getNumberingConfig(
+      this.documentConfig.numberingConfig,
+      value,
+    );
+    const newTocItem = getTocItemByNumberingType(
+      this.tocItems,
+      value,
+      newSelectedNode.tocItem.aknTag,
+    );
+    newSelectedNode.tocItem = newTocItem;
+    newSelectedNode.number = numberConfig.sequence;
+    this.handleNodeChanges(newTree, newSelectedNode);
+  }
+
+  handleIndentListRadioButtonGroupChange(event) {
+    const { value } = event.target;
+    const oldValue = this.selectedNode.tocItem.numberingType;
+    this.active_point_style = value;
+    const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT);
+    const newTree = cloneDeep(this.toc);
+    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    const parentNode = findNodeById(newTree, newSelectedNode.parentItem);
+    this.propagateListType(
+      newTree,
+      this.findRootList(newTree, newSelectedNode),
+      newTocItem,
+    );
+    this.handleNodeChanges(newTree, newSelectedNode);
+  }
+
+  handleDivisionChange(event: any) {
+    const newTree = cloneDeep(this.toc);
+    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    const { value } = event.target;
+    newSelectedNode.style = value;
+    this.active_division_style = value;
+    this.handleNodeChanges(newTree, newSelectedNode);
+  }
+
+  handleListRadioButtonGroupChange(event: string) {
+    const numberingConfig = getNumberingConfig(
+      this.documentConfig.numberingConfig,
+      event as NumberingType,
+    );
+    const newTree = cloneDeep(this.toc);
+    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    newSelectedNode.tocItem = getTocItemByNumberingType(
+      this.tocItems,
+      event as NumberingType,
+      newSelectedNode.tocItem.aknTag,
+    );
+    newSelectedNode.number = numberingConfig.sequence;
+    this.handleNodeChanges(newTree, newSelectedNode);
+  }
+
+  handleTypeChange(event: string) {
+    const oldHeading = this.heading;
+    const oldValue = this.selectedNode.tocItemType;
+    this.tocType = event;
+    const newTree = cloneDeep(this.toc);
+    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    newSelectedNode.tocItemType = event.toUpperCase();
+
+    convertArticle(
+      this.tocItems,
+      newSelectedNode,
+      oldValue.toUpperCase(),
+      event.toUpperCase(),
+    );
+
+    if (
+      this.previousType &&
+      this.previousType.toLowerCase() === event.toLowerCase()
+    ) {
+      newSelectedNode.isAffected = false;
+      if (oldHeading !== '') {
+        this.heading = this.previousHeading;
+        newSelectedNode.heading = this.heading;
+      } else {
+        this.heading = this.translateService.instant(
+          'toc.item.type.' + newSelectedNode.tocItemType + '.article.heading',
+        );
+        newSelectedNode.heading = this.heading;
+      }
+    } else {
+      newSelectedNode.isAffected = false;
+      this.heading = this.translateService.instant(
+        'toc.item.type.' +
+          newSelectedNode.tocItemType.toLowerCase() +
+          '.article.heading',
+      );
+      newSelectedNode.heading = this.heading;
+    }
+
+    //save the old value
+    this.previousType = oldValue;
+    this.previousHeading = oldHeading;
+    this.handleNodeChanges(newTree, newSelectedNode);
+  }
+
+  handleNodeChanges(
+    newTree: TableOfContentItemVO[],
+    newSelectedNode?: TableOfContentItemVO,
+  ) {
+    this.handleNodeChangesEvent.emit({ newTree, newSelectedNode });
+  }
+
+  private getSoftUserAttribute(user: UserDetails) {
+    return `${user.firstName} (${user['getDefaultEntity'] ?? ''})`;
+  }
+
+  private getNewNumberingFromListTocItem(
+    list: TableOfContentItemVO[],
+    tocItem: TocItem,
+    numberingConfigs: NumberingConfig[],
+  ) {
+    let sequence = '#';
+    const config = getNumberingConfig(numberingConfigs, tocItem.numberingType);
+    if (list && list.length > 0 && config && !config.numbered) {
+      const firstChild = list.at(0);
+      if (config && (!config.levels || config.levels.levels.length === 0)) {
+        sequence = config.prefix + config.sequence + config.suffix;
+      } else if (config && config.levels && config.levels.levels.length > 0) {
+        const level = 0;
+        getItemIndentLevel(
+          this.toc,
+          findNodeById(this.toc, firstChild.parentItem),
+          level,
+          [POINT, INDENT],
+        );
+        if (level >= 0 && level < config.levels.levels.length) {
+          const numberingLevel = config.levels.levels.at(level);
+          const numberingConfigLevel = getNumberingConfig(
+            numberingConfigs,
+            numberingLevel.numberingType,
+          );
+          if (numberingConfigLevel)
+            sequence =
+              numberingConfigLevel.prefix +
+              numberingConfigLevel.sequence +
+              numberingConfigLevel.suffix;
+        }
+      }
+    }
+    return sequence;
+  }
+
+  private findChildLists(item: TableOfContentItemVO) {
+    let childLists: TableOfContentItemVO[] = [];
+    const childItems = item.childItems.filter((n) =>
+      ['POINT', 'INDENT'].includes(n.tocItem.aknTag),
+    );
+    if (childItems && childItems.length > 0) {
+      childLists = [...childItems];
+    } else {
+      for (const child of item.childItems) {
+        if (child.tocItem.aknTag === 'LIST') {
+          const filtered = item.childItems.filter((n) =>
+            ['POINT', 'INDENT'].includes(n.tocItem.aknTag),
+          );
+          filtered.forEach((n) => childLists.push(n));
+        }
+      }
+    }
+    return childLists;
+  }
+
+  private findRootList(
+    root: TableOfContentItemVO[],
+    item: TableOfContentItemVO,
+  ) {
+    let tmpItem = item;
+    let parentItem = findNodeById(root, item.parentItem);
+    while (
+      parentItem &&
+      (parentItem.tocItem.aknTag === LIST ||
+        parentItem.tocItem.aknTag === POINT ||
+        parentItem.tocItem.aknTag === INDENT)
+    ) {
+      tmpItem = parentItem;
+      parentItem = findNodeById(root, parentItem.parentItem);
+    }
+    if (tmpItem.tocItem.aknTag !== LIST)
+      tmpItem = findNodeById(root, tmpItem.parentItem);
+    return tmpItem.childItems.filter((n) =>
+      [POINT, INDENT].includes(n.tocItem.aknTag),
+    );
+  }
+
+  private getDivisionTypesToEnable(previousDivisionType) {
+    const possibleDivisions = [];
+    while (previousDivisionType >= 0) {
+      possibleDivisions.push('type_' + previousDivisionType);
+      previousDivisionType--;
+    }
+    if (possibleDivisions.length <= 0) {
+      possibleDivisions.push('type_1');
+    }
+    return possibleDivisions;
+  }
+
+  private propagateListType(
+    root: TableOfContentItemVO[],
+    list: TableOfContentItemVO[],
+    newTocItem: TocItem,
+  ) {
+    const newNumberingValue = this.getNewNumberingFromListTocItem(
+      list,
+      newTocItem,
+      this.documentConfig.numberingConfig,
+    );
+    for (const n of list) {
+      if (n.tocItem.aknTag === POINT || n.tocItem.aknTag === INDENT) {
+        n.tocItem = newTocItem;
+        n.number = newNumberingValue;
+
+        this.propagateListType(root, this.findChildLists(n), newTocItem);
+      }
+    }
+  }
+
+  private getDisplayableTocItem(tocItem: TocItem): string {
+    if (tocItem.numberingType === BULLET_NUM) {
+      return this.translateService.instant('toc.item.type.bullet');
+    }
+    if (tocItem.aknTag === MAIN_BODY) {
+      return this.translateService.instant('toc.item.type.mainbody');
+    }
+    return this.translateService.instant(
+      'toc.item.type.' + tocItem.aknTag.toLowerCase(),
+    );
+  }
+
+  private getNumberToggleValue(item: TableOfContentItemVO) {
+    let toggleValue;
+    const firstChild = item.childItems.at(0);
+    if (firstChild.number?.length > 0 && item.numSoftActionAttr !== 'DELETE') {
+      toggleValue = NUMBERED;
+    }
+    toggleValue = UNNUMBERED;
+    return toggleValue;
+  }
+
+  private getPreviousDivisionType(node: TableOfContentItemVO) {
+    const parentNode = findNodeById(this.toc, node.parentItem);
+    const divisionNodes = parentNode.childItems.filter(
+      (n) => n.tocItem.aknTag === 'DIVISION',
+    );
+    const index = divisionNodes.indexOf(node);
+    if (index > 0) {
+      const previousDivision = divisionNodes.at(index - 1);
+      const previousDivisionStyle = previousDivision.style;
+      return (
+        parseInt(
+          previousDivisionStyle.substring(
+            previousDivisionStyle.indexOf('_') + 1,
+          ),
+          10,
+        ) + 1
+      );
+    }
+    return -1;
+  }
+}

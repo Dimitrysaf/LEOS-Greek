@@ -1,29 +1,22 @@
-<eui-page *ngIf="xml">
-  <eui-page-breadcrumb>
+<eui-page *ngIf="xml" euiNoContentPadding>
+  <eui-page-breadcrumb euiNoContentPadding class="p-0">
     <eui-breadcrumb>
       <eui-breadcrumb-item link="/" label="Home"></eui-breadcrumb-item>
       <eui-breadcrumb-item label="Annex"></eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
-
-  <eui-page-header class="eui-u-mb-l" [label]="pageTitle">
+  <eui-page-header class="" [label]="pageTitle">
     <eui-page-header-action-items>
       <app-annex-actions-dropdown></app-annex-actions-dropdown>
-
       <button
+        class="mt-1"
         euiButton
+        euiSizeS
         euiPrimary
         translate="global.actions.close"
         (click)="handleClose()"
       ></button>
     </eui-page-header-action-items>
-
-    <eui-page-header-body class="eui-u-flex app-u-gap-m eui-u-mt-s">
-      <span class="flex-grow-1 eui-u-font-xl">{{ pageSubTitle }}</span>
-      <app-actions-toolbar
-        class="eui-u-flex app-u-gap-m app-u-flex-basis-0"
-      ></app-actions-toolbar>
-    </eui-page-header-body>
   </eui-page-header>
 
   <eui-page-content>
@@ -33,77 +26,55 @@
         [label]="'page.editor.toc-column.label' | translate"
         isCollapsible
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
-        interactiveScrollbars
         (collapsed)="onToggleTOCColumnCollapsed()"
         class="scrollable-page-column"
       >
-        <eui-page-column-header-body>
-          <span
-            *ngIf="!isEditMode"
-            [euiTooltip]="getTooltipForToggleTree()"
-            class="eui-icon eui-icon-sitemap"
-            (click)="expandAll()"
-          ></span>
-          <button
-            euiButton
-            euiBasicButton
-            euiSizeS
-            class="eui-u-mr-s"
-            (click)="handleEdit()"
-            *ngIf="!isEditMode"
-          >
-            {{ 'page.editor.toc.toc-column.actions.title' | translate }}
-            <span class="eui-icon eui-icon-edit"></span>
-          </button>
-          <div
-            class="d-flex flex-row justify-content-around align-items-center mt-10"
-            *ngIf="isEditMode"
-          >
-            <span
+        <eui-page-column-header-right-content>
+          <div class="d-flex flex-row align-items-center">
+            <!-- Expand all -->
+            <button
+              euiButton
+              euiBasicButton
+              euiSizeS
+              class=""
+              *ngIf="!isEditMode"
               [euiTooltip]="getTooltipForToggleTree()"
-              class="eui-icon eui-icon-sitemap"
               (click)="expandAll()"
-            ></span>
+            >
+              <span class="eui-icon eui-icon-sitemap"></span>
+            </button>
+            <!-- Co edition Indicator -->
+            <div class="">
+              <app-co-edition-info [isToc]="true"></app-co-edition-info>
+            </div>
+            <!-- Edit mode -->
             <button
               euiButton
               euiBasicButton
-              class="eui-u-ml-s"
-              [disabled]="disableUndoButton()"
-              (click)="handleUndo()"
+              euiSizeS
+              class=""
+              (click)="handleEdit()"
+              *ngIf="!isEditMode"
             >
-              {{ 'page.editor.toc.toc-column.actions.undo' | translate }}
-              <span class="eui-icon eui-icon-undo"></span>
+              <span class="eui-icon eui-icon-edit"></span>
             </button>
-            <button
-              euiButton
-              euiBasicButton
-              class="eui-u-mr-s"
-              [disabled]="disableSaveButton()"
-              (click)="handleSave()"
+            <!-- Actions menu-->
+            <app-toc-actions-buttons
+              [isEditMode]="isEditMode"
+              [isUndoDisabled]="disableUndoButton()"
+              [isSaveDisabled]="disableSaveButton()"
+              [isCollapseToc]="isCollapseToc"
+              [isAnnotationsColumnCollapsed]="isAnnotationsColumnCollapsed"
+              [isVersionsColumnCollapsed]="isVersionsColumnCollapsed"
+              (handleExpandAll)="expandAll()"
+              (handleUndo)="handleUndo()"
+              (handleSave)="handleSave()"
+              (handleCancel)="handleCancel()"
+              (handleSaveAndClose)="handleSaveAndClose()"
             >
-              {{ 'global.actions.save' | translate }}
-            </button>
-            <button
-              euiButton
-              euiBasicButton
-              class="eui-u-mr-s"
-              [disabled]="disableSaveButton()"
-              (click)="handleSaveAndClose()"
-            >
-              {{ 'global.actions.save-close' | translate }}
-            </button>
-            <button
-              euiButton
-              euiBasicButton
-              class="eui-u-mr-s"
-              (click)="handleCancel()"
-            >
-              {{ 'global.actions.cancel' | translate }}
-              <span class="eui-icon eui-icon-times"></span>
-            </button>
+            </app-toc-actions-buttons>
           </div>
-          <app-co-edition-info [isToc]="true"></app-co-edition-info>
-        </eui-page-column-header-body>
+        </eui-page-column-header-right-content>
         <eui-page-column-body>
           <app-document-toc
             [tocItems]="tocItems"
@@ -120,20 +91,32 @@
         class="eui-u-p-none eui-page-column--no-scrollbars"
         [interactiveScrollbars]="false"
       >
-        <eui-page-column-header-body
-          *ngIf="documentService.searchPaneOpen$ | async"
-        >
-          <eui-card class="eui-u-font-size-m eui-u-mb-l" euiNoShadow>
-            <eui-card-content class="eui-u-overflow-auto">
-              <app-document-search></app-document-search>
-            </eui-card-content>
-          </eui-card>
-        </eui-page-column-header-body>
-
         <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1 leos-editing-pane"
         >
+          <!-- Search & Refresh -->
+          <div class="eui-u-flex eui-u-flex-row justify-content-between w-100">
+            <div class=""></div>
+            <h4 class="eui-u-font-size-s">{{ pageSubTitle }}</h4>
+            <app-actions-toolbar
+              [ngClass]="{ 'disabled-class': isEditMode }"
+              class="eui-u-flex app-u-gap-s app-u-flex-basis-0 mt-1"
+            ></app-actions-toolbar>
+          </div>
+          <!-- Search panel -->
+          <eui-card
+            class="eui-u-font-size-s"
+            euiNoShadow
+            [ngClass]="{ 'disabled-class': isEditMode }"
+            *ngIf="documentService.searchPaneOpen$ | async"
+          >
+            <eui-card-content class="eui-u-overflow-auto">
+              <app-document-search></app-document-search>
+            </eui-card-content>
+          </eui-card>
+
+          <!-- Drag elements -->
           <div class="tree-drag-content" *ngIf="isEditMode && tocItems.length">
             <h3 class="">{{ 'page.editor.drag-items.title' | translate }}</h3>
             <ul
@@ -160,6 +143,7 @@
               </li>
             </ul>
           </div>
+          <!-- Document with editor -->
           <app-annex-document
             [id]="containerId"
             [xml]="xml"

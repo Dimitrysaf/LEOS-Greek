@@ -1,22 +1,20 @@
-<div class="">
-  <!-- indicator for toc next to the edit button-->
-  <div
-    class=""
-    *ngIf="isToc && coEditiionForToc && coEditiionForToc.length > 0"
-  >
-    <span
-      class="eui-icon eui-icon-person"
-      [euiTooltip]="generateTooltip(coEditiionForToc)"
-    ></span>
-  </div>
-  <!-- -->
-  <div
-    class=""
-    *ngIf="!isToc && documentCoEditions && documentCoEditions.length > 0"
-  >
-    <span
-      class="eui-icon eui-icon-person"
-      [euiTooltip]="generateTooltip(documentCoEditions)"
-    ></span>
-  </div>
+<!-- indicator for toc next to the edit button-->
+<div
+  class="w-100 align-self-center"
+  *ngIf="isToc && coEditiionForToc && coEditiionForToc.length > 0"
+>
+  <span
+    class="eui-icon eui-icon-person eui-u-font-size-m"
+    [euiTooltip]="generateTooltip(coEditiionForToc)"
+  ></span>
+</div>
+<!-- -->
+<div
+  class=""
+  *ngIf="!isToc && documentCoEditions && documentCoEditions.length > 0"
+>
+  <span
+    class="eui-icon eui-icon-person"
+    [euiTooltip]="generateTooltip(documentCoEditions)"
+  ></span>
 </div>

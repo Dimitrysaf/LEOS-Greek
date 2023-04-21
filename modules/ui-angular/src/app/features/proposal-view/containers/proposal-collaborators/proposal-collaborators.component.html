@@ -103,6 +103,7 @@
                     class="eui-u-p-s"
                     euiDanger
                     (click)="handleConfirmDeletion(row)"
+                    *ngIf="dataSource.length > 1"
                   >
                     {{ 'global.actions.delete' | translate }}
                   </button>

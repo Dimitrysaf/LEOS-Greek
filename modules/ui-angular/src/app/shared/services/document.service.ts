@@ -25,6 +25,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 import {
+  AnnotateOperationMode,
   Collaborator,
   DocumentConfig,
   LeosAppConfig,
@@ -95,6 +96,8 @@ export class DocumentService implements OnDestroy {
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   currentIndex: number;
+
+  setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
   private documentCategoryBS = new BehaviorSubject(null);
   private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
@@ -255,6 +258,7 @@ export class DocumentService implements OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.getAnnotations = null;
+    this.setAnnotationMode = null;
   }
 
   closeEditor() {
@@ -726,6 +730,12 @@ export class DocumentService implements OnDestroy {
 
   setAnnotationGetter(getAnnotations: () => Promise<string>) {
     this.getAnnotations = getAnnotations;
+  }
+
+  setAnnotationsReadOnlySetter(
+    setAnnotationsReadOnly: (mode: AnnotateOperationMode) => void,
+  ) {
+    this.setAnnotationMode = setAnnotationsReadOnly;
   }
 
   private getDocumentConfig(documentRef: string, documentType: string) {

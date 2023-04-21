@@ -12,7 +12,6 @@ import { CoEditionDetectedDialogComponent } from './components/co-edition-detect
 import { CoEditionInfoComponent } from './components/co-edition-info/co-edition-info.component';
 import { ConfirmDeleteDialogComponent } from './components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
-import { DocumentTocComponent } from './components/document-toc/document-toc.component';
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
@@ -33,7 +32,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     MatTreeModule,
   ],
   declarations: [
-    DocumentTocComponent,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
     ProposalCreateDraftComponent,
@@ -57,7 +55,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     FormsModule,
     DragDropModule,
     MatTreeModule,
-    DocumentTocComponent,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,

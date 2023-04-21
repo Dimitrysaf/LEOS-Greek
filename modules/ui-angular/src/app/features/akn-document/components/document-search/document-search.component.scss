@@ -1,15 +1,15 @@
 :host {
   align-items: center;
-  column-gap: var(--eui-base-spacing-l);
+  column-gap: var(--eui-base-spacing-s);
   display: grid;
   grid-template-areas:
     'search-label  search-input  search-controls'
     'replace-label replace-input replace-controls';
-  grid-template-columns: min-content 500px auto;
+  grid-template-columns: min-content 300px auto;
 }
 
 :host(.isReplace) {
-  row-gap: var(--eui-base-spacing-m);
+  row-gap: var(--eui-base-spacing-s);
 }
 
 .search-label {

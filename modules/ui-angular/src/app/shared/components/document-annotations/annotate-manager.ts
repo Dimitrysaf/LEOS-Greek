@@ -13,6 +13,7 @@ import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.s
 import {
   AnnotateConnectorState,
   AnnotateExtension,
+  AnnotateOperationMode,
   Permission,
 } from '@/shared/models';
 import { AnnotateService } from '@/shared/services/annotate.service';
@@ -101,6 +102,13 @@ export class AnnotateManager {
   refresh() {
     if (this.connector) {
       this.connector.getState().dirtyTimestamp += 1;
+    }
+  }
+
+  /** Sets the annotations mode. */
+  setAnnotationMode(mode: AnnotateOperationMode) {
+    if (this.connector) {
+      this.connector.getState().operationMode = mode as AnnotateOperationMode;
     }
   }
 
