@@ -98,6 +98,7 @@
   "page.collection.collaborators.table.td-actions": "Actions",
   "page.collection.collaborators.table.header.search-placeholder": "Search a user by name",
   "page.collection.collaborators.table.actions.edit-role": "Edit Role",
+  "page.collection.collaborators.table.actions.more.tooltip": "More options",
   "page.collection.collaborators.dialog.header": "Add users",
   "page.collection.collaborators.dialog.quantity": "Quantity",
   "page.collection.collaborators.dialog.max-quantity": "Max quantity is : ",

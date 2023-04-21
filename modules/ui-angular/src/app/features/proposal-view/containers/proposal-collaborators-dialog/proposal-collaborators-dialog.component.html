@@ -1,8 +1,6 @@
-<ng-container *appUserHasPermission="['CAN_ADD_REMOVE_COLLABORATOR']">
-  <button class="eui-u-mb-s" euiButton euiPrimary (click)="openDialog()">
-    {{ 'global.actions.add' | translate }}
-  </button>
-</ng-container>
+<button class="eui-u-mb-s" euiButton euiPrimary (click)="openDialog()">
+  {{ 'global.actions.add' | translate }}
+</button>
 
 <eui-dialog
   #addCollaboratorsModal
