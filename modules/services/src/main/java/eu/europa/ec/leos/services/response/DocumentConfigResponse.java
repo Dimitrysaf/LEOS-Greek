@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.response;
 
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.Level;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DocumentConfigResponse {
-
+    private ProposalMetadata proposalMetadata;
     private List<LeosMetadata> documentsMetadata;
     private List<NumberingConfig> numberingConfig;
     private List<AlternateConfig> alternateConfigs;
@@ -23,7 +24,7 @@ public class DocumentConfigResponse {
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
                                   List<AlternateConfig> alternateConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
-                                  Map<String, Attribute> articleTypesConfig, String internalRef) {
+                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -31,6 +32,7 @@ public class DocumentConfigResponse {
         this.articleTypesConfig = articleTypesConfig;
         this.alternateConfigs = alternateConfigs;
         this.internalRef = internalRef;
+        this.proposalMetadata = proposalMetadata;
     }
 
     public List<LeosMetadata> getDocumentsMetadata() {
@@ -79,5 +81,21 @@ public class DocumentConfigResponse {
 
     public void setInternalRef(String internalRef) {
         this.internalRef = internalRef;
+    }
+
+    public List<AlternateConfig> getAlternateConfigs() {
+        return alternateConfigs;
+    }
+
+    public void setAlternateConfigs(List<AlternateConfig> alternateConfigs) {
+        this.alternateConfigs = alternateConfigs;
+    }
+
+    public ProposalMetadata getProposalMetadata() {
+        return proposalMetadata;
+    }
+
+    public void setProposalMetadata(ProposalMetadata proposalMetadata) {
+        this.proposalMetadata = proposalMetadata;
     }
 }

@@ -42,8 +42,14 @@
       </div>
     </div>
   </div>
-  <div class="search-controls eui-u-flex app-u-gap-m">
-    <button euiButton euiIconButton euiSecondary (click)="doc.searchNext()">
+  <div class="search-controls eui-u-flex app-u-gap-xs">
+    <button
+      euiSizeS
+      euiButton
+      euiIconButton
+      euiSecondary
+      (click)="doc.searchNext()"
+    >
       <span
         euiIcon
         iconClass="eui-icon eui-icon-angle-down"
@@ -52,7 +58,13 @@
       ></span>
     </button>
 
-    <button euiButton euiIconButton euiSecondary (click)="doc.searchPrevious()">
+    <button
+      euiSizeS
+      euiButton
+      euiIconButton
+      euiSecondary
+      (click)="doc.searchPrevious()"
+    >
       <span
         euiIcon
         iconClass="eui-icon eui-icon-angle-up"
@@ -79,7 +91,13 @@
       />
     </div>
 
-    <button euiButton euiIconButton euiSecondary (click)="toggleReplace()">
+    <button
+      euiSizeS
+      euiButton
+      euiIconButton
+      euiSecondary
+      (click)="toggleReplace()"
+    >
       <span
         euiIcon
         iconClass="eui-icon eui-icon-swap-horizontal"
@@ -90,7 +108,7 @@
       ></span>
     </button>
 
-    <button euiButton euiOutline euiPrimary>
+    <button euiSizeS euiButton euiOutline euiPrimary>
       <span
         euiLabel
         translate="global.actions.cancel"
@@ -123,26 +141,45 @@
         </div>
       </div>
     </div>
-    <div class="replace-controls eui-u-flex app-u-gap-m">
-      <button euiButton euiOutline euiPrimary (click)="doc.searchReplace()">
+    <div class="replace-controls eui-u-flex app-u-gap-xs">
+      <button
+        euiSizeS
+        euiButton
+        euiOutline
+        euiPrimary
+        (click)="doc.searchReplace()"
+      >
         <span
           euiLabel
           translate="page.editor.search.replace-button.label"
         ></span>
       </button>
 
-      <button euiButton euiOutline euiPrimary (click)="doc.searchReplaceAll()">
+      <button
+        euiSizeS
+        euiButton
+        euiOutline
+        euiPrimary
+        (click)="doc.searchReplaceAll()"
+      >
         <span
           euiLabel
           translate="page.editor.search.replaceAll-button.label"
         ></span>
       </button>
 
-      <button euiButton euiOutline euiSecondary (click)="doc.searchSave()">
+      <button
+        euiSizeS
+        euiButton
+        euiOutline
+        euiSecondary
+        (click)="doc.searchSave()"
+      >
         <span euiLabel translate="global.actions.save"></span>
       </button>
 
       <button
+        euiSizeS
         euiButton
         euiOutline
         euiSecondary

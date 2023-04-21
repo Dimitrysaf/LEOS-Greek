@@ -327,10 +327,11 @@ public class BillApiServiceImpl implements BillApiService {
         List<NumberingConfig> numberConfigs = this.structureContext.get().getNumberingConfigs();
         List<AlternateConfig> alternateConfigs = this.structureContext.get().getAlternateConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getId());
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, alternateConfigs, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef()
+                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
         );
     }
 

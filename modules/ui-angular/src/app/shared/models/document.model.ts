@@ -81,6 +81,7 @@ export interface DocumentConfig {
   listNumberConfigJsonArray: any;
   numberingConfig: NumberingConfig[];
   tocItems: TocItem[];
+  proposalMetadata: LeosMetadata;
 }
 
 export interface ArticleType {

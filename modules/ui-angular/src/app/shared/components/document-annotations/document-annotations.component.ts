@@ -70,6 +70,11 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     this.documentService.documentView$.subscribe((view) => {
       this.annotate.refresh();
     });
+    this.documentService.setAnnotationsReadOnlySetter(
+      (mode: AnnotateOperationMode) => {
+        this.annotate.setAnnotationMode(mode);
+      },
+    );
   }
 
   ngOnDestroy() {

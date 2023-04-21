@@ -1,0 +1,235 @@
+<div class="toc-container h-100 flex flex-column justify-content-between">
+  <div id="treeContainer" class="tree-container" cdkScrollable>
+    <mat-tree
+      id="tree"
+      cdkDropList
+      #tree="cdkDropList"
+      [dataSource]="dataSource"
+      [treeControl]="treeControl"
+      (cdkDropListDropped)="onDrop($event)"
+      [cdkDropListSortingDisabled]="true"
+      [cdkDropListDisabled]="!isEditMode()"
+    >
+      <mat-nested-tree-node
+        cdkScrollable
+        [hidden]="!node.tocItem.display"
+        (cdkDragMoved)="dragMoved($event)"
+        [attr.data-id]="node.id"
+        *matTreeNodeDef="let node"
+        cdkDrag
+        cdkDropList
+        matTreeNodePadding
+        [cdkDragData]="node"
+        (cdkDropListDropped)="onDrop($event)"
+        [cdkDropListSortingDisabled]="true"
+        [cdkDropListDisabled]="!isEditMode()"
+      >
+        <li class="node-li">
+          <div class="mat-tree-node">
+            <span class="label" (click)="hanldeNodeSelect(node)">{{
+              getLabel(node)
+            }}</span>
+            <eui-dropdown *ngIf="isEditMode()">
+              <button
+                euiSizeS
+                euiButton
+                euiRounded
+                euiIconButton
+                euiBasicButton
+                euiSecondary
+                [euiTooltip]="
+                  tranlsateService.instant(
+                    'page.editor.toc.tree-node.more-options'
+                  )
+                "
+                [attr.aria-label]="
+                  tranlsateService.instant(
+                    'page.editor.toc.tree-node.more-options'
+                  )
+                "
+              >
+                <span
+                  euiIcon
+                  euiSize2XS
+                  iconClass="eui-icon eui-icon-more-vertical"
+                ></span>
+              </button>
+              <eui-dropdown-content>
+                <div euiList>
+                  <button
+                    euiListItem
+                    (click)="handleMove(node)"
+                    *ngIf="!isNodeSelectedToMove()"
+                  >
+                    {{ 'page.editor.toc.move-actions.move' | translate }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handlePlaceAt(node, 'BEFORE')"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{
+                      'page.editor.toc.move-actions.place-before' | translate
+                    }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handlePlaceAt(node, 'AS_CHILDREN')"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{ 'page.editor.toc.move-actions.place-child' | translate }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handlePlaceAt(node, 'AFTER')"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{ 'page.editor.toc.move-actions.place-after' | translate }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handleCancelMove()"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{ 'global.actions.cancel' | translate }}
+                  </button>
+                </div>
+              </eui-dropdown-content>
+            </eui-dropdown>
+          </div>
+        </li>
+      </mat-nested-tree-node>
+      <mat-nested-tree-node
+        cdkScrollable
+        [hidden]="!node.tocItem.display"
+        *matTreeNodeDef="let node; when: hasChildren"
+        cdkDrag
+        cdkDropList
+        matTreeNodePadding
+        [attr.data-id]="node.id"
+        [cdkDragData]="node"
+        (cdkDragMoved)="dragMoved($event)"
+        (cdkDropListDropped)="onDrop($event)"
+        [cdkDropListSortingDisabled]="true"
+        [cdkDropListDisabled]="!isEditMode()"
+      >
+        <li class="">
+          <div class="mat-tree-node">
+            <eui-icon
+              euiSizeS
+              *ngIf="!treeControl.isExpanded(node)"
+              iconClass="eui-icon-angle-right"
+              (click)="nodeExpanded(node)"
+            ></eui-icon>
+            <eui-icon
+              euiSizeS
+              *ngIf="treeControl.isExpanded(node)"
+              iconClass="eui-icon eui-icon-angle-down"
+              (click)="nodeCollapsed(node)"
+            ></eui-icon>
+            <span class="label-extended" (click)="hanldeNodeSelect(node)">{{
+              getLabel(node)
+            }}</span>
+            <eui-dropdown *ngIf="isEditMode()">
+              <button
+                euiButton
+                euiRounded
+                euiIconButton
+                euiBasicButton
+                euiSecondary
+                [euiTooltip]="
+                  tranlsateService.instant(
+                    'page.editor.toc.tree-node.more-options'
+                  )
+                "
+                [attr.aria-label]="
+                  tranlsateService.instant(
+                    'page.editor.toc.tree-node.more-options'
+                  )
+                "
+              >
+                <span
+                  euiIcon
+                  iconClass="eui-icon eui-icon-more-vertical"
+                ></span>
+              </button>
+              <eui-dropdown-content>
+                <div euiList>
+                  <button
+                    euiListItem
+                    (click)="handleMove(node)"
+                    *ngIf="!isNodeSelectedToMove()"
+                  >
+                    {{ 'page.editor.toc.move-actions.move' | translate }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handlePlaceAt(node, 'BEFORE')"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{
+                      'page.editor.toc.move-actions.place-before' | translate
+                    }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handlePlaceAt(node, 'AS_CHILDREN')"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{ 'page.editor.toc.move-actions.place-child' | translate }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handlePlaceAt(node, 'AFTER')"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{ 'page.editor.toc.move-actions.place-after' | translate }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="handleCancelMove()"
+                    *ngIf="isNodeSelectedToMove()"
+                  >
+                    {{ 'global.actions.cancel' | translate }}
+                  </button>
+                </div>
+              </eui-dropdown-content>
+            </eui-dropdown>
+          </div>
+          <ul class="">
+            <div *ngIf="treeControl.isExpanded(node)">
+              <ng-container matTreeNodeOutlet></ng-container>
+            </div>
+          </ul>
+        </li>
+      </mat-nested-tree-node>
+    </mat-tree>
+  </div>
+  <!-- validation message -->
+  <div class="d-flex flex-column p-2 eui-u-font-s">
+    <span
+      euiLabel
+      [euiDanger]="!isDropValid"
+      [euiSuccess]="isDropValid"
+      euiSizeL
+      class="text-wrap"
+      [innerHTML]="messageFromValidation"
+    >
+    </span>
+  </div>
+  <!-- selected element show -->
+  <div
+    class="d-flex flex-column eui-u-font-s"
+    *ngIf="isEditMode() && isNodeSelected()"
+  >
+    <app-toc-editor
+      [documentType]="documentType"
+      [toc]="toc"
+      [tocItems]="tocItems"
+      [selectedNode]="selectedNode"
+      [documentConfig]="documentConfig"
+      (handleTocRemove)="hanldeTocRemove()"
+      (handleNodeChangesEvent)="handleNodeChanges($event)"
+    ></app-toc-editor>
+  </div>
+</div>

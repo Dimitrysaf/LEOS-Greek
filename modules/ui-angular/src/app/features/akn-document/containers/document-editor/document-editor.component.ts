@@ -20,9 +20,9 @@ import { combineLatest, filter, Subject, take, takeUntil } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
+import { DocumentConfig, Metadata } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
-import { DocumentTocComponent } from '@/shared/components/document-toc/document-toc.component';
-import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
@@ -56,6 +56,7 @@ export class DocumentEditorComponent
   versionForViewHeaderTitle: string;
   versionsComparisonForView: string;
   versionsComparisonForViewHeaderTitle: string;
+  documentConfig: DocumentConfig;
 
   isVersionForViewOpen = false;
   isTOCColumnCollapsed = true;
@@ -173,6 +174,13 @@ export class DocumentEditorComponent
           );
         }
       });
+
+    this.documentService.documentConfig$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.documentConfig = config;
+        this.setPageTitle();
+      });
   }
 
   ngAfterViewInit(): void {
@@ -207,10 +215,13 @@ export class DocumentEditorComponent
   }
 
   disableUndoButton() {
-    return this.documentTocComponent.treeHistory.length === 0;
+    if (this.documentTocComponent)
+      return this.documentTocComponent.treeHistory.length === 0;
+    return false;
   }
   disableSaveButton() {
-    return !this.documentTocComponent.isToCDraft;
+    if (this.documentTocComponent) return !this.documentTocComponent.isToCDraft;
+    return false;
   }
 
   hanldeListItemDragged(event, isAdd) {
@@ -251,15 +262,20 @@ export class DocumentEditorComponent
           component: CoEditionDetectedDialogComponent,
         },
         accept: () => {
-          this.isEditMode = true;
-          this.coEditionWSService.sendTocInlineEdit(this.documentRef);
+          this.editInlineToC();
         },
         dismiss: () => (this.isEditMode = false),
       });
     } else {
-      this.coEditionWSService.sendTocInlineEdit(this.documentRef);
-      this.isEditMode = true;
+      this.editInlineToC();
     }
+  }
+
+  editInlineToC() {
+    this.isEditMode = true;
+    this.documentService.setAnnotationMode('READ_ONLY');
+    this.coEditionWSService.sendTocInlineEdit(this.documentRef);
+    this.disableDocument();
   }
 
   handleUndo() {
@@ -268,6 +284,7 @@ export class DocumentEditorComponent
       this.documentService.setToc(oldToc);
     }
   }
+
   handleSave() {
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
@@ -284,6 +301,7 @@ export class DocumentEditorComponent
         error: (err) => {},
       });
   }
+
   handleCancel() {
     //TODO : implement cancel
 
@@ -293,15 +311,8 @@ export class DocumentEditorComponent
       //reset toc state
       this.documentTocComponent.isToCDraft = false;
     } else {
-      this.isEditMode = false;
-      this.coEditionWSService.removeTocInlineEdit(this.documentRef);
+      this.closeInlineToCEdit();
     }
-  }
-
-  handleClose() {
-    this.documentService.closeEditor();
-    //wait for the API where we get all the metadata for each document
-    this.router.navigate([`/collection/${this.proposalRef}`]);
   }
 
   getTocItemDisplayTitle(item: TocItem) {
@@ -324,25 +335,14 @@ export class DocumentEditorComponent
   hanldeUnSaveDialogClose(save: boolean) {
     if (save) {
       this.handleSave();
-      this.unSavedDialog.closeDialog();
-    } else {
-      this.unSavedDialog.closeDialog();
-      if (this.documentTocComponent.treeHistory.length > 0) {
-        this.documentService.setToc(this.documentTocComponent.treeHistory[0]);
-      }
-      this.documentTocComponent.treeHistory = [];
     }
-    this.documentTocComponent.messageFromValidation = null;
-    this.documentTocComponent.isDropValid = null;
-    this.isEditMode = false;
+    this.unSavedDialog.closeDialog();
+    this.closeInlineToCEdit();
   }
 
   handleSaveAndClose() {
     this.handleSave();
-    this.documentTocComponent.treeHistory = [];
-    this.documentTocComponent.messageFromValidation = null;
-    this.documentTocComponent.isDropValid = null;
-    this.isEditMode = false;
+    this.closeInlineToCEdit();
   }
 
   expandAll() {
@@ -353,6 +353,7 @@ export class DocumentEditorComponent
     }
     this.documentTocComponent.expandAll();
   }
+
   getTooltipForToggleTree() {
     if (this.isCollapseToc) {
       return this.translate.instant(
@@ -371,6 +372,38 @@ export class DocumentEditorComponent
   closeVersionComparisonView() {
     this.documentService.toggleCompareMode(false);
   }
+
+  handleClose() {
+    this.documentService.closeEditor();
+    //wait for the API where we get all the metadata for each document
+    this.router.navigate([`/collection/${this.proposalRef}`]);
+  }
+
+  private disableDocument() {
+    const xml = this.document.getElementById(`${this.documentRef}`);
+    xml.style.opacity = '0.3';
+    xml.style.pointerEvents = 'none';
+    xml.style.userSelect = 'none';
+  }
+
+  private enableDocument() {
+    const xml = this.document.getElementById(`${this.documentRef}`);
+    xml.style.opacity = '1';
+    xml.style.pointerEvents = 'all';
+    xml.style.userSelect = 'all';
+  }
+
+  private closeInlineToCEdit() {
+    this.enableDocument();
+    this.documentTocComponent.messageFromValidation = null;
+    this.documentTocComponent.isDropValid = null;
+    this.isEditMode = false;
+    this.documentTocComponent.resetTreeState();
+    this.documentTocComponent.handleTocStylingOnInlineEdit();
+    this.coEditionWSService.removeTocInlineEdit(this.documentRef);
+    this.documentService.setAnnotationMode('NORMAL');
+  }
+
   private get tocStructure() {
     return this.documentTocComponent.treeControl.dataNodes;
   }
@@ -424,13 +457,16 @@ export class DocumentEditorComponent
   private loadDocument(editableXml: string, versionInfo: VersionInfoVO) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(editableXml, 'text/xml');
-    this.setPageTitle(xmlDoc);
+
     this.setPageSubTitle({
       version: versionInfo.documentVersion,
       updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
       updatedOn: versionInfo.lastModifiedBy,
     });
     this.xml = this.cleanupAndSerializeXML(xmlDoc);
+    setTimeout(() => {
+      if (this.isEditMode) this.disableDocument();
+    });
   }
 
   private loadStyleSheet() {
@@ -461,13 +497,11 @@ export class DocumentEditorComponent
       });
   }
 
-  private setPageTitle(xmlDoc: XMLDocument) {
-    const getMeta = (name: string) =>
-      xmlDoc.querySelector(`doc > meta > proprietary > ${name}`)?.textContent;
+  private setPageTitle() {
     this.pageTitle = [
-      getMeta('docStage'),
-      getMeta('docType'),
-      getMeta('docPurpose'),
+      this.documentConfig.proposalMetadata.stage,
+      this.documentConfig.proposalMetadata.type,
+      this.documentConfig.proposalMetadata.purpose,
     ]
       .filter(Boolean)
       .join(' ');
