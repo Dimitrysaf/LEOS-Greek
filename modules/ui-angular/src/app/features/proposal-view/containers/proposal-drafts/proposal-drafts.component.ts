@@ -161,10 +161,7 @@ export class ProposalDraftsComponent
 
   handleExplanatoryDelete() {
     this.proposalDetailsService
-      .deleteExplanatory(
-        this.proposalRef,
-        this.explToDelete.metadata.internalRef,
-      )
+      .deleteExplanatory(this.explToDelete.metadata.internalRef)
       .subscribe((res) => {
         this.explanatories = this.explanatories.filter(
           (d) => d.id !== this.explToDelete.id,

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
@@ -22,6 +22,7 @@ import {
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
+import { IS_ERROR_INTERCEPTION_ENABLED } from '@/core/services/error-handler.interceptor';
 import {
   CreateDraftBody,
   CreateDraftResponse,
@@ -33,24 +34,23 @@ import { Milestone } from '../models/milestone.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService {
-  userAutocompleteData$: Observable<any[]>;
+  collaborators$: Observable<Collaborator[]>;
+  userAutocompleteData$: Observable<User[]>;
   proposalDetails$: Observable<Document>;
   userInputFieldChange$: Observable<string>;
-  addCollaborator$: Observable<Collaborator>;
+  milestones$: Observable<Milestone[]>;
   exportedDocuments$: Observable<ExportPackageVO[]>;
-  error$: Observable<string>;
 
-  private errorBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
-  private userInputFieldChangeBS = new BehaviorSubject<string>(null);
+  private userInputFieldChangeBS = new BehaviorSubject('');
   private proposalRefBS = new BehaviorSubject<string>(null);
   private milestonesBS = new BehaviorSubject<Milestone[]>([]);
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
-    switchMap((ref) => this.getProposalDetails(ref)),
+    switchMap(() => this.getProposalDetails()),
   );
 
   private userAutocompleteDataResponse$ = this.userInputFieldChangeBS.pipe(
-    filter((name) => name !== null && name.length > 2),
+    filter((name) => name.length > 2),
     switchMap((name) => this.searchUsers(name)),
   );
 
@@ -64,32 +64,21 @@ export class ProposalDetailsService {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
 
     this.proposalDetails$ = this.proposalDetailsResponse$.pipe(
-      tap((res) => this.getAllCollaborators(this.proposalRef)),
+      tap((res) => this.fetchCollaborators()),
       tap((res) => this.loadingService.setLoading(false)),
-      tap((res) => this.getProposalMilestones(this.proposalRef)),
+      tap((res) => this.loadProposalMilestones()),
     );
 
-    this.userAutocompleteData$ = this.userAutocompleteDataResponse$.pipe(
-      map((users: any) => users),
-    );
+    this.userAutocompleteData$ = this.userAutocompleteDataResponse$;
 
     this.exportedDocuments$ = this.proposalRefBS.pipe(
-      switchMap((ref) => this.getAllExportDocuments(ref)),
+      switchMap(() => this.getAllExportDocuments()),
     );
-  }
-
-  get collaborators$() {
-    return this.collaboratorsBS.asObservable();
-  }
-
-  get milestones$() {
-    return this.milestonesBS.asObservable();
+    this.collaborators$ = this.collaboratorsBS.asObservable();
+    this.milestones$ = this.milestonesBS.asObservable();
   }
 
   setUserAutocompleteInputChange(name: string) {
-    if (name === null) {
-      this.userInputFieldChangeBS.next('');
-    }
     this.userInputFieldChangeBS.next(name);
   }
 
@@ -228,33 +217,41 @@ export class ProposalDetailsService {
       });
   }
 
-  addCallaborators(collaboratorsToAdd: CollaboratorsBulkRequest) {
-    const proposalId = this.proposalRefBS.getValue();
-    if (collaboratorsToAdd === null) {
-      return;
-    }
-    this.addCollaborators(proposalId, collaboratorsToAdd);
+  addCollaborators(
+    collaborators: CollaboratorRequest[],
+    options?: { skipError400Interception: boolean },
+  ) {
+    return this.http
+      .post<null>(
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/bulkCollaborators`,
+        { collaborators },
+        {
+          context: options?.skipError400Interception
+            ? new HttpContext().set(
+                IS_ERROR_INTERCEPTION_ENABLED,
+                (err) => err.status !== 400,
+              )
+            : undefined,
+        },
+      )
+      .pipe(tap(() => this.fetchCollaborators()));
   }
 
   setCollaboratorsRole(collaboratorToUpdate: CollaboratorRequest) {
-    const proposalId = this.proposalRefBS.getValue();
-    this.updateCollaboratorRole(proposalId, collaboratorToUpdate);
+    this.updateCollaboratorRole(collaboratorToUpdate);
   }
 
   deleteCollaborator(req: CollaboratorRequest) {
-    const proposalId = this.proposalRefBS.getValue();
-    this.deleteProposalCollaborators(req)
-      .pipe()
-      .subscribe(() => {
-        this.getAllCollaborators(proposalId);
-      });
+    this.deleteProposalCollaborators(req).subscribe(() =>
+      this.fetchCollaborators(),
+    );
   }
 
-  getProposalMilestones(documentRef: string) {
+  loadProposalMilestones() {
     this.loadingService.setLoading(true);
     return this.http
       .get<Milestone[]>(
-        `${apiBaseUrl}/secured/proposals/${documentRef}/milestones`,
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/milestones`,
       )
       .subscribe((miles) => {
         this.milestonesBS.next(miles);
@@ -262,14 +259,14 @@ export class ProposalDetailsService {
       });
   }
 
-  createMilestone(documentRef: string, milestoneComment: string) {
+  createMilestone(milestoneComment: string) {
     this.loadingService.setLoading(true);
     return this.http
       .post(
-        `${apiBaseUrl}/secured/proposals/${documentRef}/milestones`,
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/milestones`,
         milestoneComment,
       )
-      .subscribe((val) => this.getProposalMilestones(documentRef));
+      .subscribe(() => this.loadProposalMilestones());
   }
 
   updateExplanatoryTitle(docId: string, title: string) {
@@ -286,9 +283,9 @@ export class ProposalDetailsService {
       });
   }
 
-  deleteExplanatory(proposalRef: string, explanatoryRef: string) {
+  deleteExplanatory(explanatoryRef: string) {
     return this.http.delete<any>(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}/deleteExplanatory/${explanatoryRef}`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/deleteExplanatory/${explanatoryRef}`,
     );
   }
 
@@ -302,53 +299,42 @@ export class ProposalDetailsService {
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
-  deleteExportDocument(proposalRef: string, exportId: string) {
+  deleteExportDocument(exportId: string) {
     return this.http.delete<ExportPackageVO[]>(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}/deleteExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/deleteExport/${exportId}`,
     );
   }
 
-  previewExport(proposalRef: string, exportId: string) {
+  previewExport(exportId: string) {
     return this.http.get(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}/previewExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/previewExport/${exportId}`,
     );
   }
 
-  notifyExport(proposalRef: string, exportId: string) {
+  notifyExport(exportId: string) {
     return this.http.get(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}/notiftExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/notifyExport/${exportId}`,
     );
   }
 
-  getAllExportDocuments(proposalRef: string) {
+  getAllExportDocuments() {
     return this.http.get<ExportPackageVO[]>(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}/getExports`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/getExports`,
     );
   }
 
-  updateExportDocument(
-    proposalRef: string,
-    exportId: string,
-    comments: string[],
-  ) {
+  updateExportDocument(exportId: string, comments: string[]) {
     return this.http.put<ExportPackageVO[]>(
-      `${apiBaseUrl}/secured/proposal/${proposalRef}/updateExport/${exportId}`,
+      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/updateExport/${exportId}`,
       comments,
     );
   }
 
-  private getProposalDetails(proposalRef: string): Observable<Document> {
-    this.loadingService.setLoading(true);
-    return this.http.get<Document>(
-      `${apiBaseUrl}/secured/proposals/${proposalRef}`,
-    );
-  }
-
-  private getAllCollaborators(prposalRef: string) {
+  fetchCollaborators() {
     this.loadingService.setLoading(true);
     return this.http
       .get<Collaborator[]>(
-        `${apiBaseUrl}/secured/proposal/${[prposalRef]}/collaborators`,
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/collaborators`,
       )
       .subscribe((col) => {
         this.loadingService.setLoading(false);
@@ -356,33 +342,24 @@ export class ProposalDetailsService {
       });
   }
 
-  private addCollaborators(
-    proposalId: string,
-    collaboratorsBulkReq: CollaboratorsBulkRequest,
-  ) {
-    return this.http
-      .post<any>(
-        `${apiBaseUrl}/secured/proposal/${proposalId}/bulkCollaborators`,
-        {
-          collaborators: collaboratorsBulkReq.collaborators,
-        },
-      )
-      .subscribe(() => this.getAllCollaborators(this.proposalRef));
+  private getProposalDetails(): Observable<Document> {
+    this.loadingService.setLoading(true);
+    return this.http.get<Document>(
+      `${apiBaseUrl}/secured/proposals/${this.proposalRef}`,
+    );
   }
 
-  private updateCollaboratorRole(
-    proposalId: string,
-    collaborator: CollaboratorRequest,
-  ) {
+  private updateCollaboratorRole(collaborator: CollaboratorRequest) {
     return this.http
-      .put<any>(`${apiBaseUrl}/secured/proposal/${proposalId}/collaborators`, {
-        userId: collaborator.userId,
-        roleName: collaborator.roleName,
-        connectedDG: collaborator.connectedDG,
-      })
-      .subscribe((col) => {
-        this.getAllCollaborators(this.proposalRef);
-      });
+      .put<any>(
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/collaborators`,
+        {
+          userId: collaborator.userId,
+          roleName: collaborator.roleName,
+          connectedDG: collaborator.connectedDG,
+        },
+      )
+      .subscribe(() => this.fetchCollaborators());
   }
 
   private deleteProposalCollaborators(
