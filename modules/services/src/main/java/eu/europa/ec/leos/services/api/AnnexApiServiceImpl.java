@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
@@ -65,6 +66,7 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -124,6 +126,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     ExportService exportService;
     @Autowired
     UserHelper userHelper;
+    @Autowired
+    LegService legService;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
     @Autowired
@@ -211,6 +215,12 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         List<VersionVO> versions = this.annexService.getAllVersions(annex.getId(), documentRef);
         for (VersionVO versionVO : versions) {
+            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
+                versionVO.setLegFileName(legDocument.getName());
+                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            }
             int count = this.annexService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
             versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.annexService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
         }

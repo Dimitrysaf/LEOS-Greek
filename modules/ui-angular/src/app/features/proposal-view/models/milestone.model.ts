@@ -1,6 +1,6 @@
 export interface Milestone {
-  clone: boolean;
-  clonedMilestone: boolean;
+  clone?: boolean;
+  clonedMilestones?: Milestone[];
   contributionChanged: boolean;
   createdBy: string;
   createdDate: string;

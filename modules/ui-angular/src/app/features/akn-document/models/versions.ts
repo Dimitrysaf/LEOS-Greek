@@ -14,6 +14,9 @@ export type Version = {
   subVersions: Version[];
   checkinCommentVO: CheckinComment;
   mostRecentVersion: boolean;
+
+  createdBy: string;
+  legFileName: string; // to be used for the milestone explorer view
 };
 
 export type VersionType = 'MAJOR' | 'INTERMEDIATE' | 'MINOR';

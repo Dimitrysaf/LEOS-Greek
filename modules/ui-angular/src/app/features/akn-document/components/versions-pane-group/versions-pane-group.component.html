@@ -1,3 +1,4 @@
+<!-- Recent Changes -->
 <eui-card
   class="version-panes"
   euiNoShadow
@@ -35,6 +36,7 @@
   </eui-card-content>
 </eui-card>
 
+<!-- Major Version -->
 <eui-card
   class="version-panes"
   euiNoShadow
@@ -152,6 +154,7 @@
   </eui-card-content>
 </eui-card>
 
+<!-- Milestone Version -->
 <eui-card
   class="version-panes"
   euiNoShadow
@@ -191,6 +194,8 @@
       <app-version-actions-dropdown
         *ngIf="(docService.compareModeEnabled$ | async) === false"
         [version]="group"
+        [isMilestone]="isMilestone"
+        (exploreMilestone)="exploreMilestone.emit($event)"
       ></app-version-actions-dropdown>
       <input
         id="select-{{ group.documentId }}"

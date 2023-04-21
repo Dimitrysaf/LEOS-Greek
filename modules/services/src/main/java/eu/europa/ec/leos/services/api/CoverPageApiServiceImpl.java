@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
@@ -54,6 +55,7 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -108,6 +110,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     ExportService exportService;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
+    @Autowired
+    LegService legService;
+
     private Provider<CloneContext> cloneContext;
     private Provider<BillContextService> context;
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
@@ -194,6 +199,12 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         List<VersionVO> versions = this.proposalService.getAllVersions(proposal.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             Integer count = this.proposalService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
+            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
+                versionVO.setLegFileName(legDocument.getName());
+                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            }
             versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.proposalService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
         }
         return versions;

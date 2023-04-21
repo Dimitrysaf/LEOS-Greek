@@ -7,6 +7,7 @@ import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
@@ -47,11 +48,13 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -108,6 +111,10 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     TemplateConfigurationService templateConfigurationService;
     @Autowired
     ProposalService proposalService;
+    @Autowired
+    LegService legService;
+    @Autowired
+    UserHelper userHelper;
 
     private Provider<StructureContext> structureContext;
     private Provider<BillContextService> context;
@@ -194,6 +201,12 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         List<VersionVO> versions = this.explanatoryService.getAllVersions(explanatory.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             int count = this.explanatoryService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
+            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(explanatory.getId());
+                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
+                versionVO.setLegFileName(legDocument.getName());
+                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            }
             versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.explanatoryService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
         }
         return versions;

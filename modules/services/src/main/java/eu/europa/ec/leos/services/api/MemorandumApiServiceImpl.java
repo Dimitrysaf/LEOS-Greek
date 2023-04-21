@@ -19,6 +19,7 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -52,6 +53,7 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -106,6 +108,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     ExportService exportService;
     @Autowired
     UserHelper userHelper;
+    @Autowired
+    LegService legService;
+
     private Provider<BillContextService> context;
 
     private Provider<StructureContext> structureContext;
@@ -178,6 +183,12 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         List<VersionVO> versions = this.memorandumService.getAllVersions(memorandum.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             Integer count = this.memorandumService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
+            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
+                LeosPackage leosPackage = packageService.findPackageByDocumentId(memorandum.getId());
+                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
+                versionVO.setLegFileName(legDocument.getName());
+                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            }
             versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.memorandumService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
         }
         return versions;

@@ -1,4 +1,4 @@
-import { DOCUMENT, formatDate } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -16,13 +16,18 @@ import {
 import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash';
-import { combineLatest, filter, Subject, take, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
+import { Version } from '@/features/akn-document/models';
 import { DocumentConfig, Metadata } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import {
+  MilestoneDescriptor,
+  ProposalMilestoneViewComponent,
+} from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
@@ -75,6 +80,10 @@ export class DocumentEditorComponent
   });
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
+
+  @ViewChild('milestoneViewDialog')
+  protected milestoneViewDialog: ProposalMilestoneViewComponent;
+  protected milestoneViewData: MilestoneDescriptor = null;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -387,6 +396,21 @@ export class DocumentEditorComponent
     this.router.navigate([`/collection/${this.proposalRef}`]);
   }
 
+  protected exploreMilestone(version: Version) {
+    this.milestoneViewData = {
+      createdBy: version.createdBy,
+      createdDate: version.updatedDate,
+      legDocumentName: version.legFileName,
+      proposalRef: this.proposalRef,
+      title: version.checkinCommentVO.title,
+    };
+    setTimeout(() => this.milestoneViewDialog.open(), 0);
+  }
+
+  protected onMilestoneViewDialogClosed() {
+    this.milestoneViewData = null;
+  }
+
   private disableDocument() {
     const xml = this.document.getElementById(`${this.documentRef}`);
     xml.style.opacity = '0.3';
@@ -469,7 +493,7 @@ export class DocumentEditorComponent
     this.setPageSubTitle({
       version: versionInfo.documentVersion,
       updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
-      updatedOn: versionInfo.lastModifiedBy,
+      updatedOn: versionInfo.lastModificationInstant,
     });
     this.xml = this.cleanupAndSerializeXML(xmlDoc);
     setTimeout(() => {

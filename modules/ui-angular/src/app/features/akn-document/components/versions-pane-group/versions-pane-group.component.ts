@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -15,6 +15,7 @@ export class VersionsPaneGroupComponent implements OnInit {
   @Input() group: Version;
   @Input() recentChanges: Version[];
   @Input() isRecent: boolean;
+  @Output() exploreMilestone = new EventEmitter<Version>();
 
   isMilestone: boolean;
   isCreation: boolean;

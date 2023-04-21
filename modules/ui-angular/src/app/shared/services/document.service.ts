@@ -553,10 +553,6 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
-  versionExploreMilestone(version: Version) {
-    console.warn('stub:', 'versionExploreMilestone', version); // FIXME
-  }
-
   versionRevert(versionNumber: string) {
     const documentCategory = this.documentCategoryBS.value;
     const documentRef = this.documentIdBS.value;
@@ -571,6 +567,27 @@ export class DocumentService implements OnDestroy {
 
   versionView(versionNumber: string) {
     this.versionIdBS.next(versionNumber);
+  }
+
+  versionExport(version: Version) {
+    const documentType = this.documentType;
+    const documentRef = this.documentIdBS.value;
+    const versionId = version.documentId;
+    const { major, intermediate, minor } = version.versionNumber;
+    const versionNumber = `${major}.${intermediate}.${minor}`;
+
+    this.http
+      .get(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/download-xml-version`,
+        {
+          params: { versionId },
+          responseType: 'blob',
+        },
+      )
+      .subscribe((blob) => {
+        const filename = `${documentRef}_v${versionNumber}.xml`;
+        this.downloadBlob(blob, filename);
+      });
   }
 
   getToc(
@@ -875,6 +892,7 @@ export class DocumentService implements OnDestroy {
     }
 
     if (params.author !== '') {
+      // TODO: this should be reimplemented the angular way
       this.document.querySelectorAll('.version-panes').forEach((element) => {
         this.handleNode(element, params.author);
       });
@@ -918,6 +936,7 @@ export class DocumentService implements OnDestroy {
     }
   }
 
+  /** The document type for use in `/secured/{documentType}` API endpoints. */
   get documentType() {
     return this.documentCategoryBS.value === 'coverpage'
       ? 'coverPage'
