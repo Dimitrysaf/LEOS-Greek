@@ -24,6 +24,7 @@ import { apiBaseUrl } from 'src/config';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import { DocumentConfig } from '@/shared/models';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
@@ -589,8 +590,10 @@ export class CKEditorService implements OnDestroy {
       filter((x) => x !== null),
       combineLatestWith(this.documentService.documentCategory$),
       mergeMap(([documentRef, documentType]) =>
-        this.http.get<any>(
-          `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
+        this.http.get<DocumentConfig>(
+          `${apiBaseUrl}/secured/${
+            documentType === 'coverpage' ? 'coverPage' : documentType
+          }/${documentRef}/document-config`,
         ),
       ),
     );
