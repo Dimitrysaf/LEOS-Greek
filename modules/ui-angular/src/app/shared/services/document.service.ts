@@ -729,8 +729,10 @@ export class DocumentService implements OnDestroy {
   }
 
   private getDocumentConfig(documentRef: string, documentType: string) {
+    let category = this.documentCategoryBS.value;
+    category = category === 'coverpage' ? 'coverPage' : category;
     return this.http.get<DocumentConfig>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
+      `${apiBaseUrl}/secured/${category}/${documentRef}/document-config`,
     );
   }
 
@@ -905,6 +907,7 @@ export class DocumentService implements OnDestroy {
   }
 
   private getCollaborators(proposalRef: string) {
+    if (!proposalRef) return;
     return this.http.get<Collaborator[]>(
       `${apiBaseUrl}/secured/proposal/${proposalRef}/collaborators`,
     );
