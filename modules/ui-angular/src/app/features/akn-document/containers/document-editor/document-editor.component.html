@@ -251,6 +251,7 @@
             [proposalRef]="proposalRef"
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
+            *ngIf="!milestoneViewData"
           ></app-document-annotations>
         </eui-page-column-body>
       </eui-page-column>
@@ -378,9 +379,18 @@
           </div>
         </eui-page-column-header-body>
         <eui-page-column-body>
-          <app-versions-pane></app-versions-pane>
+          <app-versions-pane
+            (exploreMilestone)="exploreMilestone($event)"
+          ></app-versions-pane>
         </eui-page-column-body>
       </eui-page-column>
     </eui-page-columns>
   </eui-page-content>
 </eui-page>
+
+<app-proposal-milestone-view
+  #milestoneViewDialog
+  [milestone]="milestoneViewData"
+  (closed)="onMilestoneViewDialogClosed()"
+  *ngIf="milestoneViewData"
+></app-proposal-milestone-view>

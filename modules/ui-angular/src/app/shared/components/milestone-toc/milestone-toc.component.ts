@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 
-import { MilestoneTocItem } from '../../models/milestone-toc-item.model';
+import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
 
 @Component({
   selector: 'app-milestone-toc',

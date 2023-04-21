@@ -12,16 +12,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
-import { DocumentServiceAnnotationsStub } from '@/features/proposal-view/components/proposal-milestone-view/document-service-annotations-stub';
 import {
   Milestone,
   MilestoneViewItem,
 } from '@/features/proposal-view/models/milestone.model';
-import { ProposalMilestonesService } from '@/features/proposal-view/services/proposal-milestones.service';
+import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
+import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
-
-import { MilestoneTocItem } from '../../models/milestone-toc-item.model';
+import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
 
 type MilestoneDocument = {
   ref: string;
@@ -31,6 +30,11 @@ type MilestoneDocument = {
   label: string;
   tocData: MilestoneTocItem[];
 };
+
+export type MilestoneDescriptor = Pick<
+  Milestone,
+  'createdBy' | 'createdDate' | 'legDocumentName' | 'proposalRef' | 'title'
+>;
 
 @Component({
   selector: 'app-proposal-milestone-view',
@@ -42,7 +46,7 @@ type MilestoneDocument = {
   ],
 })
 export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
-  @Input() milestone: Milestone;
+  @Input() milestone: MilestoneDescriptor;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
   documents: MilestoneDocument[] = [];
@@ -93,6 +97,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   private loadDocuments() {
+    const hiddenCategories = [
+      'STAT_FINANC_LEGIS', // out of scope for now
+      ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec' ? ['COVERPAGE'] : []),
+    ];
     this.milestonesService
       .listMilestoneView(
         this.milestone.proposalRef,
@@ -100,11 +108,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       )
       .subscribe((items) => {
         this.documents = items
-          .filter(
-            (x) =>
-              x.leosCategory !== 'STAT_FINANC_LEGIS' && // out of scope for now
-              x.leosCategory !== 'COVERPAGE',
-          )
+          .filter((x) => !hiddenCategories.includes(x.leosCategory))
           .sort(this.tabOrderComparator)
           .map((x) => this.viewToDoc(x));
         this.setActiveTab(0);
@@ -133,16 +137,18 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     const getSortOrder = (item: MilestoneViewItem) => {
       const sortOrder = (o: number) => o * 1000 + (item.order ?? 0);
       switch (item.leosCategory) {
-        case 'MEMORANDUM':
+        case 'COVERPAGE':
           return sortOrder(1);
-        case 'COUNCIL_EXPLANATORY':
+        case 'MEMORANDUM':
           return sortOrder(2);
-        case 'BILL':
+        case 'COUNCIL_EXPLANATORY':
           return sortOrder(3);
-        case 'STAT_FINANC_LEGIS':
+        case 'BILL':
           return sortOrder(4);
-        case 'ANNEX':
+        case 'STAT_FINANC_LEGIS':
           return sortOrder(5);
+        case 'ANNEX':
+          return sortOrder(6);
         default:
           return sortOrder(9);
       }
@@ -152,8 +158,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   private setActiveTab(index: number) {
     const doc = this.documents[index];
-    this.documentService.setDocumentId(doc.ref);
-    this.documentService.setDocumentCategory(doc.type);
+    if (doc) {
+      this.documentService.setDocumentId(doc.ref);
+      this.documentService.setDocumentCategory(doc.type);
+    }
     this.activeTabIndex = index;
   }
 }

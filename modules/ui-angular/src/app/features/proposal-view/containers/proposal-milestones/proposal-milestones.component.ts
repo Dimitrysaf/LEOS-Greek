@@ -1,14 +1,14 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { EuiDialogService } from '@eui/components/eui-dialog';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
+import { Milestone } from '@/features/proposal-view/models/milestone.model';
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
 import { Document } from '@/shared';
-
-import { ProposalMilestoneViewComponent } from '../../components/proposal-milestone-view/proposal-milestone-view.component';
-import { Milestone } from '../../models/milestone.model';
-import { ProposalMilestonesService } from '../../services/proposal-milestones.service';
+import {
+  MilestoneDescriptor,
+  ProposalMilestoneViewComponent,
+} from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 
 @Component({
   selector: 'app-proposal-milestones',
@@ -22,16 +22,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   addMilestoneDialogVisible = false;
   @ViewChild('milestoneViewDialog')
   milestoneViewDialog: ProposalMilestoneViewComponent;
-  milestoneViewData: Milestone = null;
+  milestoneViewData: MilestoneDescriptor = null;
   proposalRef: string;
   dataSource: Milestone[] = [];
   destroy$: Subject<any> = new Subject();
 
-  constructor(
-    private euiDialogService: EuiDialogService,
-    private proposalMilestonesService: ProposalMilestonesService,
-    protected proposalDetailsService: ProposalDetailsService,
-  ) {}
+  constructor(protected proposalDetailsService: ProposalDetailsService) {}
 
   ngOnInit(): void {
     this.proposalDetailsService.milestones$
@@ -52,11 +48,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  deleteMilestone(id: string) {
-    console.log(`Delete milestone  ${id}`);
-    this.proposalMilestonesService.deleteMilestone(id);
-  }
-
   openAddMilestoneDialog(): void {
     this.addMilestoneDialogVisible = true;
     setTimeout(() => this.addMilestoneDialog.open(), 0);
@@ -66,7 +57,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.addMilestoneDialogVisible = false;
   }
 
-  openMilestoneViewDialog(milestone: Milestone): void {
+  openMilestoneViewDialog(milestone: MilestoneDescriptor): void {
     this.milestoneViewData = milestone;
     setTimeout(() => this.milestoneViewDialog.open(), 0);
   }

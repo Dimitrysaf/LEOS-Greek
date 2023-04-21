@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class VersionVO {
-    
+
     private VersionType versionType;
     private String documentId;
     private String cmisVersionNumber;
@@ -24,48 +24,52 @@ public class VersionVO {
     private List<VersionVO> subVersions = new ArrayList<>();
     private CheckinCommentVO checkinCommentVO;
     private boolean mostRecentVersion;
-    
+    //milestone related
+    private String legFileName;
+    private String createdBy;
+
     private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+
     public VersionType getVersionType() {
         return versionType;
     }
-    
+
     public void setVersionType(VersionType versionType) {
         this.versionType = versionType;
     }
-    
+
     public void setCmisVersionNumber(String cmisVersionNumber) {
         this.cmisVersionNumber = cmisVersionNumber;
     }
-    
+
     public String getCmisVersionNumber() {
         return cmisVersionNumber;
     }
-    
+
     public VersionNumber getVersionNumber() {
         return versionNumber;
     }
-    
+
     public void setVersionNumber(VersionNumber versionNumber) {
         this.versionNumber = versionNumber;
     }
-    
+
     public String getUpdatedDate() {
         return updatedDate;
     }
-    
+
     public void setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
     }
-    
+
     public void setUpdatedDate(Instant updatedDate) {
         this.updatedDate = dateFormatter.format(updatedDate);
     }
-    
+
     public String getUsername() {
         return username;
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -81,27 +85,27 @@ public class VersionVO {
     public List<VersionVO> getSubVersions() {
         return subVersions;
     }
-    
+
     public void setSubVersions(List<VersionVO> subVersions) {
         this.subVersions = subVersions;
     }
-    
+
     public CheckinCommentVO getCheckinCommentVO() {
         return checkinCommentVO;
     }
-    
+
     public void setCheckinCommentVO(CheckinCommentVO checkinCommentVO) {
         this.checkinCommentVO = checkinCommentVO;
     }
-    
+
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
-    
+
     public String getDocumentId() {
         return documentId;
     }
-    
+
     public boolean isMostRecentVersion() {
         return mostRecentVersion;
     }
@@ -109,18 +113,34 @@ public class VersionVO {
     public void setMostRecentVersion(boolean mostRecentVersion) {
         this.mostRecentVersion = mostRecentVersion;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(versionType, documentId, cmisVersionNumber, versionNumber, updatedDate, username);
     }
-    
+
+    public String getLegFileName() {
+        return legFileName;
+    }
+
+    public void setLegFileName(String legFileName) {
+        this.legFileName = legFileName;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        
+
         final VersionVO other = (VersionVO) obj;
         return Objects.equals(this.versionType, other.versionType) &&
                 Objects.equals(this.documentId, other.documentId) &&
@@ -129,7 +149,7 @@ public class VersionVO {
                 Objects.equals(this.updatedDate, other.updatedDate) &&
                 Objects.equals(this.username, other.username);
     }
-    
+
     @Override
     public String toString() {
         return "[versionType: " + versionType
@@ -145,11 +165,13 @@ public class VersionVO {
 
     public static class VersionNumber implements Comparable<VersionNumber> {
         private final int[] versions;
+
         public VersionNumber(String versionNumber) {
             versions = Stream.of(versionNumber.split("[.]")).mapToInt(Integer::parseInt).toArray();
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return Arrays.stream(versions).mapToObj(String::valueOf).collect(Collectors.joining("."));
         }
 
@@ -173,7 +195,8 @@ public class VersionVO {
             return getPosition(2);
         }
 
-        @Override public int compareTo(VersionNumber versionNumber) {
+        @Override
+        public int compareTo(VersionNumber versionNumber) {
             for (int i = 0; i < Math.min(versions.length, versionNumber.versions.length); i++) {
                 int res = Integer.compare(versions[i], versionNumber.versions[i]);
                 if (res != 0) {
@@ -183,14 +206,16 @@ public class VersionVO {
             return Integer.signum(Integer.compare(versions.length, versionNumber.versions.length));
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             VersionNumber that = (VersionNumber) o;
             return Arrays.equals(versions, that.versions);
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return Arrays.hashCode(versions);
         }
     }

@@ -46,9 +46,9 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     protected final MessageHelper messageHelper;
 
     protected DocumentApiServiceImpl(DocumentContentService documentContentService, PackageService packageService,
-            ProposalService proposalService, ExportService exportService,
-            ExportPackageService exportPackageService, NotificationService notificationService,
-            SecurityContext securityContext, MessageHelper messageHelper) {
+                                     ProposalService proposalService, ExportService exportService,
+                                     ExportPackageService exportPackageService, NotificationService notificationService,
+                                     SecurityContext securityContext, MessageHelper messageHelper) {
         this.documentContentService = documentContentService;
         this.packageService = packageService;
         this.proposalService = proposalService;

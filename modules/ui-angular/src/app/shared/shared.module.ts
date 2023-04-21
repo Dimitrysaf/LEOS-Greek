@@ -12,9 +12,11 @@ import { CoEditionDetectedDialogComponent } from './components/co-edition-detect
 import { CoEditionInfoComponent } from './components/co-edition-info/co-edition-info.component';
 import { ConfirmDeleteDialogComponent } from './components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
+import { MilestoneTocComponent } from './components/milestone-toc/milestone-toc.component';
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
+import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
@@ -34,7 +36,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
   declarations: [
     AknDocumentComponent,
     DocumentAnnotationsComponent,
-    ProposalCreateDraftComponent,
     ShowOnInstanceDirective,
     UserHasPermissionDirective,
     ProposalCreateDraftComponent,
@@ -43,6 +44,8 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmDeleteDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
+    MilestoneTocComponent,
+    ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
@@ -65,6 +68,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmDeleteDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
+    ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
     UnescapeHtmlPipe,

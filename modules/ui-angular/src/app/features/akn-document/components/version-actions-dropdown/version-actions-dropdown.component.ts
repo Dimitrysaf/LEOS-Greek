@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { consumeEvent } from '@eui/core';
 
 import { Version } from '@/features/akn-document/models/versions';
@@ -11,6 +19,8 @@ import { DocumentService } from '@/shared/services/document.service';
 })
 export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() version: Version;
+  @Input() isMilestone?: boolean;
+  @Output() exploreMilestone = new EventEmitter<Version>();
   disabled: boolean;
 
   private removeEventListener?: () => void;
