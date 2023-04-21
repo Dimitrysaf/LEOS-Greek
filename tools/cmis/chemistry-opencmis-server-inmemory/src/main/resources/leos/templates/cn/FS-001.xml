@@ -785,10 +785,15 @@
                         </content>
                     </indent>
                 </list>
+                <subparagraph leos:editable="false" xml:id="_body__level_321__subparagraph_4_4a">
+                    <content xml:id="_body__level_321__subparagraph_4_4a__content_a">
+                        <p style="text-align: right;padding-right: 12%;" xml:id="_body__level_321__subparagraph_4_4a__content_content__p_2">EUR million (to three decimal places)</p>
+                    </content>
+                </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" xml:id="_body__level_321__subparagraph_4">
                     <content xml:id="_body__level_321__subparagraph_4__content">
                         <!-- rotated table (landscape) -->
-                        <table style="border-collapse:collapse;width:72%;margin-left:0%;" xml:id="_body__level_321__subparagraph_4__content__table">
+                        <table style="border-collapse:collapse;width:90%;margin-left:0%;" xml:id="_body__level_321__subparagraph_4__content__table">
                             <tr xml:id="_body__level_321__subparagraph_4__content__table__tr">
                                 <td style="background-color:#D3D3D3;border:1px solid black;text-align:center;" xml:id="_body__level_321__subparagraph_4__content__table__tr__td_1">
                                     <p xml:id="_body__level_321__subparagraph_4__content__table__tr__td_1__p">
