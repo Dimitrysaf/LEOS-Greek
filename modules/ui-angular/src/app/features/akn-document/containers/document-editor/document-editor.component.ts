@@ -62,6 +62,7 @@ export class DocumentEditorComponent
   isTOCColumnCollapsed = true;
   isAnnotationsColumnCollapsed = false;
   isVersionsColumnCollapsed = true;
+  reloadTrigger: number;
 
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
@@ -97,6 +98,12 @@ export class DocumentEditorComponent
       .subscribe(() => {
         const values = this.getFormValues();
         this.documentService.setVersionSearchParams(values);
+      });
+
+    this.documentService.reloadTrigger$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((trigger) => {
+        this.reloadTrigger = trigger;
       });
   }
 
@@ -207,6 +214,7 @@ export class DocumentEditorComponent
     //remove every session related actions from the user and clean the document relaod if it is present
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeSession();
+    this.reloadTrigger = 0;
     this.closeVersionView();
     this.closeVersionComparisonView();
     this.destroy$.next(null);

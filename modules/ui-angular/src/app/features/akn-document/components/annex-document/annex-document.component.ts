@@ -29,6 +29,8 @@ export class AnnexDocumentComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
   @Input() xml: string;
+  @Input() reloadTrigger: number;
+  currentXml: string;
 
   private bookmarkMutationObserver?: MutationObserver;
   private destroy$: Subject<any> = new Subject();
@@ -48,13 +50,22 @@ export class AnnexDocumentComponent
     this.destroy$.complete();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.currentXml = this.xml;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('xml' in changes && changes.xml.currentValue !== undefined) {
       const rootEl = this.rootElementRef.nativeElement;
       this.xml = changes.xml.currentValue;
       rootEl.innerHTML = this.xml;
+    }
+    if (
+      'reloadTrigger' in changes &&
+      changes.reloadTrigger.currentValue !== 0
+    ) {
+      const rootEl = this.rootElementRef.nativeElement;
+      rootEl.innerHTML = this.currentXml;
     }
   }
 

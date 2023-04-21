@@ -95,8 +95,9 @@ export class DocumentService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
-  currentIndex: number;
+  reloadTrigger$: Observable<number>;
 
+  currentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
   private documentCategoryBS = new BehaviorSubject(null);
@@ -127,6 +128,7 @@ export class DocumentService implements OnDestroy {
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
   private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
+  private reloadTriggerBS = new BehaviorSubject<number>(0);
 
   private updatedContentToSaveAfterReplace: string = null;
   private getAnnotations?: () => Promise<string>;
@@ -252,6 +254,7 @@ export class DocumentService implements OnDestroy {
 
     this.navigationPaneCollapse$ = this.navigationPaneCollapseBS.asObservable();
     this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
+    this.reloadTrigger$ = this.reloadTriggerBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -450,6 +453,11 @@ export class DocumentService implements OnDestroy {
     this.toggleSearchPane(false);
   }
 
+  searchCancelAndClose() {
+    this.toggleSearchPane(false);
+    this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
+  }
+
   seeNavigation() {
     this.navigationPaneCollapseBS.next(!this.navigationPaneCollapseBS.value);
   }
@@ -468,11 +476,6 @@ export class DocumentService implements OnDestroy {
       return of(null);
     }
   }
-
-  // setDocumentView(view: DocumentViewResponse) {
-  //   console.log('elemState in setDocumentView:', view);
-  //   this.documentViewBS.next(view);
-  // }
 
   setDocumentId(id: string) {
     this.documentIdBS.next(id);
