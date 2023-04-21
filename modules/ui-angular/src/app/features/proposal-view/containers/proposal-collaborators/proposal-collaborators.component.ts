@@ -29,7 +29,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
   collaboratorToDelete: Collaborator = null;
   constructor(
     private fb: FormBuilder,
-    private detailsService: ProposalDetailsService,
+    protected detailsService: ProposalDetailsService,
   ) {
     this.userInputForm = this.fb.group({
       searchTerm: [''],

@@ -12,7 +12,12 @@
         ></eui-table-filter>
       </div>
     </div>
-    <app-proposal-collaborators-dialog></app-proposal-collaborators-dialog>
+    <app-proposal-collaborators-dialog
+      *ngIf="
+        this.detailsService.hasPermissions(['CAN_ADD_REMOVE_COLLABORATOR'])
+          | async
+      "
+    ></app-proposal-collaborators-dialog>
   </div>
   <table
     #collaborators
@@ -69,45 +74,51 @@
           </ng-template>
         </td>
         <td>
-          <eui-dropdown>
+          <eui-dropdown
+            [euiDisabled]="
+              (this.detailsService.hasPermissions([
+                'CAN_ADD_REMOVE_COLLABORATOR'
+              ]) | async) === false
+            "
+          >
             <button
               euiButton
               euiRounded
               euiIconButton
               euiBasicButton
               euiSecondary
-              euiTooltip="More options"
-              [attr.aria-label]="'More options'"
+              [euiTooltip]="
+                'page.collection.collaborators.table.actions.more.tooltip'
+                  | translate
+              "
+              [attr.aria-label]="
+                'page.collection.collaborators.table.actions.more.tooltip'
+                  | translate
+              "
             >
               <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
             </button>
             <eui-dropdown-content>
               <div euiList>
-                <ng-container *appUserHasPermission="['CAN_UPDATE']">
-                  <button
-                    euiListItem
-                    class="eui-u-p-s"
-                    (click)="editCollaborator(row.login, row.entity, row.role)"
-                  >
-                    {{
-                      'page.collection.collaborators.table.actions.edit-role'
-                        | translate
-                    }}
-                  </button>
-                </ng-container>
-                <ng-container
-                  *appUserHasPermission="['CAN_ADD_REMOVE_COLLABORATOR']"
+                <button
+                  euiListItem
+                  class="eui-u-p-s"
+                  (click)="editCollaborator(row.login, row.entity, row.role)"
                 >
-                  <button
-                    euiListItem
-                    class="eui-u-p-s"
-                    euiDanger
-                    (click)="handleConfirmDeletion(row)"
-                    *ngIf="dataSource.length > 1"
-                  >
-                    {{ 'global.actions.delete' | translate }}
-                  </button>
-                </ng-container>
+                  {{
+                    'page.collection.collaborators.table.actions.edit-role'
+                      | translate
+                  }}
+                </button>
+                <button
+                  euiListItem
+                  class="eui-u-p-s"
+                  euiDanger
+                  (click)="handleConfirmDeletion(row)"
+                  *ngIf="dataSource.length > 1"
+                >
+                  {{ 'global.actions.delete' | translate }}
+                </button>
               </div>
             </eui-dropdown-content>
           </eui-dropdown>

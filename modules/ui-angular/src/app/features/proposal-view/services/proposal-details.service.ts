@@ -1,27 +1,31 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 import {
   Collaborator,
   CollaboratorRequest,
-  CollaboratorsBulkRequest,
   Document,
+  LeosAppConfig,
+  Permission,
   User,
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
+  combineLatestWith,
   filter,
   finalize,
-  forkJoin,
   map,
   Observable,
+  Subject,
   switchMap,
+  takeUntil,
   tap,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { IS_ERROR_INTERCEPTION_ENABLED } from '@/core/services/error-handler.interceptor';
 import {
   CreateDraftBody,
@@ -33,13 +37,14 @@ import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
 
 @Injectable({ providedIn: 'root' })
-export class ProposalDetailsService {
+export class ProposalDetailsService implements OnDestroy {
   collaborators$: Observable<Collaborator[]>;
   userAutocompleteData$: Observable<User[]>;
   proposalDetails$: Observable<Document>;
   userInputFieldChange$: Observable<string>;
   milestones$: Observable<Milestone[]>;
   exportedDocuments$: Observable<ExportPackageVO[]>;
+  permissions$: Observable<Permission[]>;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -48,13 +53,16 @@ export class ProposalDetailsService {
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
     switchMap(() => this.getProposalDetails()),
   );
+  private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
   private userAutocompleteDataResponse$ = this.userInputFieldChangeBS.pipe(
     filter((name) => name.length > 2),
     switchMap((name) => this.searchUsers(name)),
   );
+  private destroy$ = new Subject<void>();
 
   constructor(
+    private appConfig: AppConfigService,
     private http: HttpClient,
     private router: Router,
     private loadingService: LoadingService,
@@ -76,6 +84,19 @@ export class ProposalDetailsService {
     );
     this.collaborators$ = this.collaboratorsBS.asObservable();
     this.milestones$ = this.milestonesBS.asObservable();
+
+    this.permissions$ = this.permissionsBS.asObservable();
+    this.collaborators$
+      .pipe(takeUntil(this.destroy$), combineLatestWith(this.appConfig.config))
+      .subscribe(([collaborators, config]) => {
+        const permissions = this.resolvePermissions(collaborators, config);
+        this.permissionsBS.next(permissions);
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   setUserAutocompleteInputChange(name: string) {
@@ -342,6 +363,16 @@ export class ProposalDetailsService {
       });
   }
 
+  hasPermissions(required: Permission[], any = false) {
+    return this.permissions$.pipe(
+      map((permissions) =>
+        any
+          ? required.some((p) => permissions.includes(p))
+          : !required.some((p) => !permissions.includes(p)),
+      ),
+    );
+  }
+
   private getProposalDetails(): Observable<Document> {
     this.loadingService.setLoading(true);
     return this.http.get<Document>(
@@ -389,5 +420,17 @@ export class ProposalDetailsService {
     });
     const url = window.URL.createObjectURL(blob);
     window.open(url);
+  }
+
+  private resolvePermissions(
+    collaborators: Collaborator[],
+    config: LeosAppConfig,
+  ) {
+    const docRoles = collaborators
+      .filter((c) => c.login === config.user.login)
+      .map((c) => c.role);
+    const roles = [...config.user.roles, ...docRoles];
+    const permissions = roles.flatMap((r) => config.permissionMap[r]);
+    return [...new Set(permissions)];
   }
 }
