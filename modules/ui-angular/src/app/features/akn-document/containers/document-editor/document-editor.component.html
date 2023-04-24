@@ -394,3 +394,18 @@
   (closed)="onMilestoneViewDialogClosed()"
   *ngIf="milestoneViewData"
 ></app-proposal-milestone-view>
+<eui-dialog
+  #openEditorDialog
+  [title]="'page.editor.open.editor.dialog.title' | translate"
+  [acceptLabel]="'global.actions.confirm' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelClose()"
+  (close)="onCancelClose()"
+  (accept)="onConfirmClose()"
+  (dismiss)="onCancelClose()"
+>
+  <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
+</eui-dialog>
