@@ -49,7 +49,7 @@ mat-nested-tree-node {
   display: flex;
   flex-direction: row;
   max-width: 100%;
-  min-height: 28px !important;
+  min-height: 24px !important;
 }
 
 .eui-dropdown {
@@ -116,4 +116,8 @@ li ul {
   border-top: 1px solid var(--eui-base-color-danger);
   max-width: fit-content;
   transition: all 1s;
+}
+
+.invalid-node {
+  color: var(--eui-base-color-danger);
 }

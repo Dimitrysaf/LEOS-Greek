@@ -44,6 +44,7 @@ export class TableOfContentItemVO {
   isAutoNumOverwritten = false;
   moved: boolean;
   isAffected: boolean;
+  expanded: boolean;
 }
 
 export type AknTag =

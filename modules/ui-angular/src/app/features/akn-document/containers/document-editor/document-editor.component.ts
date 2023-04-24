@@ -35,6 +35,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
+import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
 
@@ -238,7 +239,12 @@ export class DocumentEditorComponent
     return false;
   }
   disableSaveButton() {
-    if (this.documentTocComponent) return !this.documentTocComponent.isToCDraft;
+    if (this.documentTocComponent)
+      return (
+        this.documentTocComponent.invalidNodes?.size > 0 ||
+        !this.documentTocComponent.isToCDraft
+      );
+
     return false;
   }
 
@@ -291,6 +297,8 @@ export class DocumentEditorComponent
 
   editInlineToC() {
     this.isEditMode = true;
+    //set the styling for the toc
+    this.documentTocComponent.handleTocStylingOnInlineEdit(true);
     this.documentService.setAnnotationMode('READ_ONLY');
     this.coEditionWSService.sendTocInlineEdit(this.documentRef);
     this.disableDocument();
@@ -299,7 +307,14 @@ export class DocumentEditorComponent
   handleUndo() {
     const oldToc = this.documentTocComponent.treeHistory.pop();
     if (oldToc.length > 0) {
-      this.documentService.setToc(oldToc);
+      this.documentTocComponent.setTree(oldToc);
+      if (this.documentTocComponent.isNodeSelected()) {
+        const newSelectedNode = findNodeById(
+          oldToc,
+          this.documentTocComponent.selectedNode.id,
+        );
+        this.documentTocComponent.hanldeNodeSelect(newSelectedNode);
+      }
     }
   }
 
@@ -314,7 +329,6 @@ export class DocumentEditorComponent
           this.documentTocComponent.isToCDraft = false;
           this.documentTocComponent.treeHistory = [];
           this.documentService.setDocumentId(this.documentRef);
-          // this.documentTocComponent.setTree(res);
         },
         error: (err) => {},
       });
@@ -447,7 +461,8 @@ export class DocumentEditorComponent
     this.documentTocComponent.isDropValid = null;
     this.isEditMode = false;
     this.documentTocComponent.resetTreeState();
-    this.documentTocComponent.handleTocStylingOnInlineEdit();
+    this.documentTocComponent.handleTocStylingOnInlineEdit(false);
+    this.documentTocComponent.clearHilightInvalidNodes();
     this.coEditionWSService.removeTocInlineEdit(this.documentRef);
     this.documentService.setAnnotationMode('NORMAL');
   }

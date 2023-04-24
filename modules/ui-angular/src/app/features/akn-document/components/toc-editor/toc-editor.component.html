@@ -77,7 +77,7 @@
         </div>
       </div>
       <!-- Number + Type -->
-      <div class="d-flex flex-wrap">
+      <div class="d-flex">
         <!-- Type -->
         <div
           *ngIf="showTypeField(this.selectedNode.tocItem)"
@@ -97,7 +97,8 @@
         </div>
         <!-- Number-->
         <div
-          style="margin-left: 5px"
+          class="input-wrap"
+          style="margin-left: 3px"
           [hidden]="!isItemNumberVisible(this.selectedNode.tocItem)"
         >
           <label class="font-weight-bold toc-editor-label" euiLabel for="">{{
@@ -107,25 +108,44 @@
             euiInputText
             class="toc-editor-input"
             type="text"
+            [placeholder]="numberConfig.description"
+            [required]="isItemNumberMandatory(this.selectedNode.tocItem)"
+            [pattern]="numberConfig.regex"
             [disabled]="!isItemNumberEditable(this.selectedNode.tocItem)"
             [(ngModel)]="number"
+            [isInvalid]="invalidNodes.has(this.selectedNode)"
             (ngModelChange)="handleNumberChange($event)"
           />
+          <span *ngIf="invalidNumberMsg" style="top: -35%" class="error-msg">{{
+            invalidNumberMsg
+          }}</span>
         </div>
       </div>
       <!-- Heading-->
-      <div class="" [hidden]="!isItemHeadingVisible(this.selectedNode.tocItem)">
-        <label euiLabel class="toc-editor-label font-weight-bold" for="">{{
-          'page.editor.toc.selected-element.heading' | translate
-        }}</label>
+      <div
+        class="input-wrap"
+        [hidden]="!isItemHeadingVisible(this.selectedNode.tocItem)"
+      >
+        <label
+          euiLabel
+          class="toc-editor-label font-weight-bold"
+          for="heading"
+          >{{ 'page.editor.toc.selected-element.heading' | translate }}</label
+        >
         <input
+          name="heading"
+          id="heading"
           euiInputText
           class="toc-editor-input"
           type="text"
+          [required]="isHeadingItemMandatory(this.selectedNode)"
           [(ngModel)]="heading"
           [disabled]="!isItemHeadingEditable(this.selectedNode.tocItem)"
           (ngModelChange)="handleHeadingChange($event)"
         />
+        <span *ngIf="invalidHeadingMsg" style="top: 0%" class="error-msg">{{
+          invalidHeadingMsg
+        }}</span>
       </div>
       <!-- Article Change Type-->
       <div

@@ -7,7 +7,9 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChildren,
 } from '@angular/core';
+import { Form, FormBuilder } from '@angular/forms';
 import { UserDetails } from '@eui/base';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash';
@@ -23,6 +25,7 @@ import {
   convertArticle,
   findNodeById,
   getItemIndentLevel,
+  getNumberingByName,
   getNumberingConfig,
   getTocItemByNumberingType,
 } from '@/shared/utils/toc.utils';
@@ -51,12 +54,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   @Output() handleTocRemove = new EventEmitter<TableOfContentItemVO>();
   @Output() handleNodeChangesEvent = new EventEmitter<any>();
+  @Output() handleInvalidNodes = new EventEmitter<Set<TableOfContentItemVO>>();
 
-  //toc related
-  selectedNodeToMove: TableOfContentItemVO = null;
-  isToCDraft: boolean;
-  messageFromValidation: string;
-  isDropValid: boolean;
+  isTocEditionInvalid: boolean;
 
   indentListRadioButtonGroupItemsToEnable: NumberingType[] = ['POINT_NUM'];
   isIndentListRadioButtonGroupEnabled: boolean;
@@ -77,14 +77,26 @@ export class TocEditorComponent implements OnInit, OnChanges {
   //ng values for the selected node edit
   heading: string;
   number: string;
+  numberConfig: NumberingConfig;
   type: string;
   tocType: string;
   possibleDivisionType: any[];
 
+  invalidHeadingMsg: string;
+  invalidNumberMsg: string;
+  invalidCrossMsg: string;
+
+  invalidNodes: Set<TableOfContentItemVO> = new Set();
+
+  editorForm: Form;
+
   destroy$: Subject<any> = new Subject();
   private typingTimer;
 
-  constructor(private translateService: TranslateService) {}
+  constructor(
+    private translateService: TranslateService,
+    private fb: FormBuilder,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('selectedNode' in changes) {
@@ -137,6 +149,10 @@ export class TocEditorComponent implements OnInit, OnChanges {
       : this.isItemHeadingVisible(tocItem);
   }
 
+  isHeadingItemMandatory(node: TableOfContentItemVO) {
+    return node.tocItem.itemHeading === 'MANDATORY';
+  }
+
   isItemNumberEditable(tocItem: TocItem) {
     return tocItem.numberEditable;
   }
@@ -145,6 +161,35 @@ export class TocEditorComponent implements OnInit, OnChanges {
     return (
       tocItem.itemNumber === 'MANDATORY' || tocItem.itemNumber === 'OPTIONAL'
     );
+  }
+
+  isItemNumberMandatory(tocItem: TocItem) {
+    return tocItem.itemNumber === 'MANDATORY';
+  }
+
+  getTocItemMessageValidationError(
+    node: TableOfContentItemVO,
+    fieldName: string,
+  ) {
+    const config = getNumberingByName(
+      this.documentConfig.numberingConfig,
+      node.tocItem.numberingType,
+    );
+
+    switch (fieldName) {
+      case 'heading':
+        return this.translateService.instant(
+          'toc.edit.window.item.selected.heading.error.message',
+        );
+      case 'number':
+        if (node.number.length === 0)
+          return this.translateService.instant(
+            'toc.edit.window.item.selected.number.error.message',
+          );
+        return this.translateService.instant(config.msgValidationError);
+      case 'cross':
+        return '';
+    }
   }
 
   showNumParagraphToggle(item: TableOfContentItemVO) {
@@ -159,12 +204,18 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   hanldeNodeSelect(node: TableOfContentItemVO) {
+    this.invalidHeadingMsg = null;
+    this.invalidNumberMsg = null;
+    this.invalidCrossMsg = null;
     this.selectedNode = node;
     this.heading = node.heading;
     this.type = this.getDisplayableTocItem(node.tocItem);
     this.number = node.number;
+    this.numberConfig = getNumberingByName(
+      this.documentConfig.numberingConfig,
+      node.tocItem.numberingType,
+    );
     this.tocType = node.tocItemType?.toLowerCase();
-
     //enable identListRadioButton
     if (
       this.indentListRadioButtonGroupItemsToEnable != null &&
@@ -198,42 +249,96 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   handleHeadingChange(value: string) {
     clearTimeout(this.typingTimer);
+    const newTree = cloneDeep(this.toc);
     this.typingTimer = setTimeout(() => {
-      this.previousHeading = this.heading;
-      const newTree = cloneDeep(this.toc);
-      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
-      newSelectedNode.heading = value;
-      if (this.environment === 'ec') {
-        newSelectedNode.originHeadingAttr = 'DELETE';
-        newSelectedNode.originHeadingAttr = 'ec';
+      if (
+        this.selectedNode.tocItem.itemHeading === 'OPTIONAL' ||
+        (this.selectedNode.tocItem.itemHeading === 'MANDATORY' && value)
+      ) {
+        //save snapshot of previous tree
+        this.handleNodeChanges(newTree, true);
+        //remove previous invalid node
+        this.removeInvalidNode();
+        this.invalidHeadingMsg = null;
+        this.previousHeading = this.heading;
+        this.selectedNode.heading = value;
+        if (this.environment === 'ec') {
+          this.selectedNode.originHeadingAttr = 'DELETE';
+          this.selectedNode.originHeadingAttr = 'ec';
+        }
+        this.invalidNodes.delete(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+      } else {
+        this.selectedNode.heading = value;
+        this.invalidHeadingMsg = this.getTocItemMessageValidationError(
+          this.selectedNode,
+          'heading',
+        );
+        this.invalidNodes.add(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
       }
-      this.handleNodeChanges(newTree, newSelectedNode);
+      //set new tree
+      let newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+      newSelectedNode = this.selectedNode;
+      this.handleNodeChanges(newTree);
     }, TYPING_TIME);
+  }
+
+  removeInvalidNode() {
+    for (const node of this.invalidNodes) {
+      if (node.id === this.selectedNode.id) {
+        this.invalidNodes.delete(node);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+        return;
+      }
+    }
   }
 
   handleNumberChange(number: string) {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
       const newTree = cloneDeep(this.toc);
-      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
-      newSelectedNode.isAutoNumOverwritten = true;
-      newSelectedNode.number = number;
-      this.handleNodeChanges(newTree, newSelectedNode);
+      let newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+      const numberRegex = this.numberConfig.regex;
+      if (number && numberRegex.match(number)) {
+        //clear invalid
+        this.removeInvalidNode();
+        //save snapshot of old tree
+        this.handleNodeChanges(newTree, true);
+        this.invalidNumberMsg = null;
+        this.selectedNode.isAutoNumOverwritten = true;
+        this.selectedNode.number = number;
+        this.invalidNodes.delete(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+      } else {
+        this.invalidNumberMsg = this.getTocItemMessageValidationError(
+          this.selectedNode,
+          'number',
+        );
+        this.selectedNode.number = number;
+        this.invalidNodes.add(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+      }
+      //handle node changes
+      newSelectedNode = this.selectedNode;
+      this.handleNodeChanges(newTree);
     }, TYPING_TIME);
   }
 
   handleParagraphToggle(event) {
+    const newTree = cloneDeep(this.toc);
     const { value } = event.target;
+    //save snapshot of old tree
+    this.handleNodeChanges(newTree, true);
     if (
       this.selectedNode.childItems &&
       this.selectedNode.childItems.length > 0
     ) {
-      const newTree = cloneDeep(this.toc);
-      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+      // const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
       //no  need to check if children exists the flow requires it
-      const firstChild = newSelectedNode.childItems.at(0);
+      const firstChild = this.selectedNode.childItems.at(0);
       let flag = false;
-      for (const itemVo of newSelectedNode.childItems) {
+      for (const itemVo of this.selectedNode.childItems) {
         if (itemVo.numSoftActionAttr && itemVo.numSoftActionAttr !== 'DELETE') {
           flag = true;
           break;
@@ -241,19 +346,19 @@ export class TocEditorComponent implements OnInit, OnChanges {
       }
       if (value === NUMBERED) {
         if (!firstChild.number || flag) {
-          newSelectedNode.numberingToggled = true;
-          for (const n of newSelectedNode.childItems) {
+          this.selectedNode.numberingToggled = true;
+          for (const n of this.selectedNode.childItems) {
             n.number = '#';
           }
-          this.handleNodeChanges(newTree, newSelectedNode);
+          this.handleNodeChanges(newTree);
         }
       } else if (value === UNNUMBERED) {
         if (firstChild.number && !flag) {
-          newSelectedNode.numberingToggled = false;
-          for (const n of newSelectedNode.childItems) {
+          this.selectedNode.numberingToggled = false;
+          for (const n of this.selectedNode.childItems) {
             n.number = null;
           }
-          this.handleNodeChanges(newTree, newSelectedNode);
+          this.handleNodeChanges(newTree);
         }
       }
     }
@@ -265,7 +370,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
     this.active_block_style = value;
 
     const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    //save snapshot of old tree
+    this.handleNodeChanges(newTree, true);
+    // const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
     const numberConfig = getNumberingConfig(
       this.documentConfig.numberingConfig,
       value,
@@ -273,36 +380,40 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const newTocItem = getTocItemByNumberingType(
       this.tocItems,
       value,
-      newSelectedNode.tocItem.aknTag,
+      this.selectedNode.tocItem.aknTag,
     );
-    newSelectedNode.tocItem = newTocItem;
-    newSelectedNode.number = numberConfig.sequence;
-    this.handleNodeChanges(newTree, newSelectedNode);
+    this.selectedNode.tocItem = newTocItem;
+    this.selectedNode.number = numberConfig.sequence;
+    this.handleNodeChanges(newTree);
   }
 
   handleIndentListRadioButtonGroupChange(event) {
     const { value } = event.target;
     const oldValue = this.selectedNode.tocItem.numberingType;
     this.active_point_style = value;
-    const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT);
     const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
-    const parentNode = findNodeById(newTree, newSelectedNode.parentItem);
+    //save snapshot of old tree
+    this.handleNodeChanges(newTree, true);
+    const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT);
+    // const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    const parentNode = findNodeById(newTree, this.selectedNode.parentItem);
     this.propagateListType(
       newTree,
-      this.findRootList(newTree, newSelectedNode),
+      this.findRootList(newTree, this.selectedNode),
       newTocItem,
     );
-    this.handleNodeChanges(newTree, newSelectedNode);
+    this.handleNodeChanges(newTree);
   }
 
   handleDivisionChange(event: any) {
     const newTree = cloneDeep(this.toc);
+    //save snapshot of old tree
+    this.handleNodeChanges(newTree, true);
     const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
     const { value } = event.target;
-    newSelectedNode.style = value;
+    this.selectedNode.style = value;
     this.active_division_style = value;
-    this.handleNodeChanges(newTree, newSelectedNode);
+    this.handleNodeChanges(newTree);
   }
 
   handleListRadioButtonGroupChange(event: string) {
@@ -311,14 +422,16 @@ export class TocEditorComponent implements OnInit, OnChanges {
       event as NumberingType,
     );
     const newTree = cloneDeep(this.toc);
+    //save snapshot of old tree
+    this.handleNodeChanges(newTree, true);
     const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
-    newSelectedNode.tocItem = getTocItemByNumberingType(
+    this.selectedNode.tocItem = getTocItemByNumberingType(
       this.tocItems,
       event as NumberingType,
-      newSelectedNode.tocItem.aknTag,
+      this.selectedNode.tocItem.aknTag,
     );
-    newSelectedNode.number = numberingConfig.sequence;
-    this.handleNodeChanges(newTree, newSelectedNode);
+    this.selectedNode.number = numberingConfig.sequence;
+    this.handleNodeChanges(newTree);
   }
 
   handleTypeChange(event: string) {
@@ -326,12 +439,14 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const oldValue = this.selectedNode.tocItemType;
     this.tocType = event;
     const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
-    newSelectedNode.tocItemType = event.toUpperCase();
+    //save snapshot of old tree
+    this.handleNodeChanges(newTree, true);
+
+    this.selectedNode.tocItemType = event.toUpperCase();
 
     convertArticle(
       this.tocItems,
-      newSelectedNode,
+      this.selectedNode,
       oldValue.toUpperCase(),
       event.toUpperCase(),
     );
@@ -340,37 +455,35 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.previousType &&
       this.previousType.toLowerCase() === event.toLowerCase()
     ) {
-      newSelectedNode.isAffected = false;
+      this.selectedNode.isAffected = false;
       if (oldHeading !== '') {
         this.heading = this.previousHeading;
-        newSelectedNode.heading = this.heading;
+        this.selectedNode.heading = this.heading;
       } else {
         this.heading = this.translateService.instant(
-          'toc.item.type.' + newSelectedNode.tocItemType + '.article.heading',
+          'toc.item.type.' + this.selectedNode.tocItemType + '.article.heading',
         );
-        newSelectedNode.heading = this.heading;
+        this.selectedNode.heading = this.heading;
       }
     } else {
-      newSelectedNode.isAffected = false;
+      this.selectedNode.isAffected = false;
       this.heading = this.translateService.instant(
         'toc.item.type.' +
-          newSelectedNode.tocItemType.toLowerCase() +
+          this.selectedNode.tocItemType.toLowerCase() +
           '.article.heading',
       );
-      newSelectedNode.heading = this.heading;
+      this.selectedNode.heading = this.heading;
     }
 
     //save the old value
     this.previousType = oldValue;
     this.previousHeading = oldHeading;
-    this.handleNodeChanges(newTree, newSelectedNode);
+    this.handleNodeChanges(newTree);
   }
 
-  handleNodeChanges(
-    newTree: TableOfContentItemVO[],
-    newSelectedNode?: TableOfContentItemVO,
-  ) {
-    this.handleNodeChangesEvent.emit({ newTree, newSelectedNode });
+  //save snapshot is introduced to reduce the number of re-renderings for the tree
+  handleNodeChanges(newTree: TableOfContentItemVO[], saveSnapshot?: boolean) {
+    this.handleNodeChangesEvent.emit({ newTree, saveSnapshot });
   }
 
   private getSoftUserAttribute(user: UserDetails) {

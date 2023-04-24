@@ -1,13 +1,9 @@
-import {
-  CdkDragDrop,
-  CdkDragEnter,
-  CdkDragMove,
-  CdkDragStart,
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT } from '@angular/common';
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Inject,
   Input,
@@ -45,6 +41,7 @@ import {
 
 const MAX_LABEL_TREE_LENGTH = 50;
 
+const TIME_TO_CLEAR_INVALID = 10000;
 @Component({
   selector: 'app-document-toc',
   templateUrl: './document-toc.component.html',
@@ -69,11 +66,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   messageFromValidation: string;
   isDropValid: boolean;
   dragAction: DragAction;
-  expandedNodes = new Set<TableOfContentItemVO>();
+  expandedNodes: string[] = [];
+  invalidNodes: Set<TableOfContentItemVO>;
+  //used for scrolling back after re-renders
+  scrollPosition = 0;
 
   //environment var
   environment = process.env.NG_APP_LEOS_INSTANCE;
 
+  //keep track of changes done on tree, used mainly from undo
   treeHistory: Array<TableOfContentItemVO[]> = [];
 
   treeControl: NestedTreeControl<TableOfContentItemVO>;
@@ -85,6 +86,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   constructor(
     private documentService: DocumentService,
     public tranlsateService: TranslateService,
+    public elementRef: ElementRef,
     private store: Store,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -92,13 +94,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.getChildren,
     );
     this.dataSource = new MatTreeNestedDataSource();
-
-    this.documentService.tocItems$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((toc) => {
-        // this.saveExpanded();
-        this.setTree(toc ?? []);
-      });
 
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
@@ -126,6 +121,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((toc) => {
         this.setTree(toc);
+        //expand the default nodes if the expanded state is empty
+        setTimeout(() => {
+          if (this.expandedNodes.length > 0) {
+            this.expandNodesFromHistory(this.treeControl.dataNodes);
+          } else
+            for (const nodes of this.treeControl.dataNodes)
+              this.defaultExpanded(nodes);
+        });
       });
   }
 
@@ -152,9 +155,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       case 'TITLE':
       case 'PART':
       case 'SECTION':
-        return `${capitalizeFirstLetter(node.tocItem.aknTag)} ${
-          node.number
-        } - ${node.heading}`;
+        return `${capitalizeFirstLetter(node.tocItem.aknTag)} ${node.number} ${
+          node.heading ? '- ' + node.heading : ''
+        }`;
       default:
         return truncate(
           [node.number, node.heading || node.content].filter(Boolean).join(' '),
@@ -166,13 +169,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   isEditMode() {
     return this.isEdit;
   }
+
   handleNodeChanges(event) {
-    this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(event.newTree);
-    if (event.newSelectedNode)
-      setTimeout(() => {
-        this.hanldeNodeSelect(event.newSelectedNode);
-      });
+    if (event.saveSnapshot) {
+      this.treeHistory.push(event.newTree);
+      return;
+    }
+    this.isToCDraft = true;
+    this.hilightInvalidNodes();
   }
 
   handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
@@ -255,25 +259,65 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (this.selectedNodeToMove && this.selectedNodeToMove.tocItem.deletable) {
       this.removeNode(newTree, this.selectedNodeToMove);
       this.treeHistory.push(this.treeControl.dataNodes);
-      this.documentService.setToc(newTree);
+      this.setTree(newTree);
       this.selectedNodeToMove = null;
     }
     if (this.selectedNode && this.selectedNode.tocItem.deletable) {
       this.removeNode(newTree, this.selectedNode);
       this.treeHistory.push(this.treeControl.dataNodes);
-      this.documentService.setToc(newTree);
+      this.setTree(newTree);
       this.selectedNode = null;
     }
   }
+
+  handleInvalidNodes(event: Set<TableOfContentItemVO>) {
+    this.invalidNodes = event;
+    //show invalid message
+    if (event.size > 0) {
+      this.messageFromValidation = this.tranlsateService.instant(
+        'page.editor.toc.invalid-node.save-error',
+      );
+      setTimeout(() => {
+        this.clearValidationMessage();
+      }, TIME_TO_CLEAR_INVALID);
+      //clear any invalid node that was removed
+      setTimeout(() => {
+        //TODO:
+        this.hilightInvalidNodes();
+      });
+    } else {
+      this.clearValidationMessage();
+    }
+  }
+
+  hilightInvalidNodes() {
+    this.document
+      .querySelectorAll('.invalid-node')
+      .forEach((el) => el.classList.remove('invalid-node'));
+    for (const node of this.invalidNodes || []) {
+      //hilight invalid nodes
+      const element = document.querySelector(`[data-id=${node.id}]`);
+      if (element)
+        element.children[0].children[0].classList.add('invalid-node');
+    }
+  }
+
+  clearHilightInvalidNodes() {
+    this.document
+      .querySelectorAll('.invalid-node')
+      .forEach((el) => el.classList.remove('invalid-node'));
+  }
+
   handleCancelMove() {
     this.selectedNodeToMove = null;
   }
 
   hanldeNodeSelect(node: TableOfContentItemVO) {
     this.selectedNode = node;
-    this.scrollToElement(node);
+    //if a node is already selected and the mode is edit select and apply the needed styling
+    if (this.isEdit) this.handleTocStylingOnInlineEdit(true);
+    this.scrollToDocumentElement(node);
     this.hilightSelectedNode(node);
-    this.handleTocStylingOnInlineEdit();
   }
 
   //a node can be dropped from two sources
@@ -313,7 +357,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   dragMoved(event: CdkDragMove, isAdd: boolean = false) {
     this.clearDragInfo();
-
+    this.selectedNode = null;
+    this.handleTocStylingOnInlineEdit(this.isEditMode());
     let el = this.document.elementFromPoint(
       event.pointerPosition.x,
       event.pointerPosition.y,
@@ -358,44 +403,57 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   nodeExpanded(node: TableOfContentItemVO) {
     this.treeControl.expand(node);
-    this.expandedNodes.add(node);
+    node.expanded = true;
+    //wait for the node to render and then show if invalid
+    setTimeout(() => {
+      this.hilightInvalidNodes();
+    });
   }
 
   nodeCollapsed(node: TableOfContentItemVO) {
     this.treeControl.collapse(node);
-    this.expandedNodes.delete(node);
+    node.expanded = false;
+    this.expandedNodes = this.expandedNodes.filter((n) => n !== node.id);
   }
 
   setTree(toc: TableOfContentItemVO[]) {
     this.toc = toc;
     this.dataSource.data = toc;
     this.treeControl.dataNodes = this.dataSource.data;
+    this.checkForDraft();
+
+    setTimeout(() => {
+      if (this.selectedNode) this.hanldeNodeSelect(this.selectedNode);
+      this.hilightInvalidNodes();
+    });
+
+    this.restoreExpanded(toc);
+  }
+
+  checkForDraft() {
     if (this.treeHistory && this.treeHistory.length === 0)
       this.isToCDraft = false;
     if (this.treeHistory && this.treeHistory.length > 0) {
       this.isToCDraft = true;
     }
-    if (this.selectedNode) {
-      const newSelectedNode = this.findNodeById(toc, this.selectedNode.id);
-      this.hanldeNodeSelect(newSelectedNode);
-    }
-
-    //expand the default nodes if the expanded state is empty
-    if (toc && this.expandedNodes && this.expandedNodes.size === 0) {
-      for (const nodes of toc) this.defaultExpanded(nodes);
-    } else this.restoreExpanded();
   }
 
   resetTreeState() {
+    if (this.treeHistory.length > 0) {
+      const beforeEditTree = this.treeHistory.shift();
+      this.setTree(beforeEditTree);
+    }
+    this.clearSelectedNode();
     this.isDropValid = false;
     this.selectedNodeToMove = null;
     this.treeHistory = [];
     this.isToCDraft = false;
+    this.invalidNodes?.clear();
   }
 
   saveExpanded(node: TableOfContentItemVO) {
     if (this.treeControl.isExpanded(node)) {
-      this.expandedNodes.add(node);
+      this.expandedNodes.push(node.id);
       const children = this.treeControl.getChildren(node);
       children.forEach((child) => {
         this.saveExpanded(child);
@@ -403,16 +461,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleTocStylingOnInlineEdit() {
+  handleTocStylingOnInlineEdit(isEditMode: boolean) {
     const treeContainer = this.document.getElementById('treeContainer');
-    if (this.selectedNode) {
-      treeContainer.style.maxHeight = '50vh';
+    if (isEditMode) {
+      if (this.selectedNode) treeContainer.style.maxHeight = '50vh';
+      if (this.selectedNode) {
+        const element = document.querySelector(
+          `[data-id="${this.selectedNode.id}"]`,
+        );
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
     } else {
       treeContainer.style.maxHeight = 'unset';
     }
-    //grab selected node and scroll to it
-    const element = document.querySelector(`[data-id=${this.selectedNode.id}]`);
-    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   private populateValidationMessage(response: NodeValidationResponse) {
@@ -430,10 +493,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .querySelectorAll('.selected-node')
       .forEach((el) => el.classList.remove('selected-node'));
     const element = document.querySelector(`[data-id="${node.id}"]`);
-    if (element) element.children[0].children[0].classList.add('selected-node');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.children[0].children[0].classList.add('selected-node');
+    }
   }
 
-  private clearHilightedNode() {
+  private clearSelectedNode() {
+    this.selectedNode = null;
     this.document
       .querySelectorAll('.selected-node')
       .forEach((el) => el.classList.remove('selected-node'));
@@ -472,7 +539,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           this.populateValidationMessage(response);
           setTimeout(() => {
             this.clearValidationMessage();
-          }, 10000);
+          }, TIME_TO_CLEAR_INVALID);
           if (response.result.success) {
             // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
             // so the resutl.success will now mean that it can be dropped as a sibling
@@ -507,13 +574,13 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
               }
               //if source was the tocitems rebuild to change the uuid
               if (isAdd) {
-                // this.dragItems = this.tocItemToTOC(this.tocItems);
                 this.reBuildTocItems.emit(true);
               }
               this.isToCDraft = true;
-              this.hanldeNodeSelect(nodeDragged);
               this.selectedNodeToMove = null;
+              this.hanldeNodeSelect(nodeDragged);
             } catch (e) {
+              console.log(e);
               this.clearDragInfo(true);
               return;
             }
@@ -528,7 +595,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private cancelDrop() {
-    this.restoreExpanded();
+    this.restoreExpanded(this.treeControl.dataNodes);
     this.clearDragInfo();
   }
 
@@ -551,7 +618,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
     setTimeout(() => {
       this.clearInvalidDrop();
-    }, 3000);
+    }, TIME_TO_CLEAR_INVALID);
   }
 
   private clearDragInfo(dropped = false) {
@@ -584,7 +651,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       );
   }
 
-  private scrollToElement(node: TableOfContentItemVO) {
+  private scrollToDocumentElement(node: TableOfContentItemVO) {
     const targetElement = document.getElementById(node.id);
     if (targetElement) {
       targetElement.style.backgroundColor = 'cornsilk';
@@ -627,7 +694,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     parentNode.childItems.splice(targetIndex + 1, 0, eventItem);
     //set the new tree
     this.treeHistory.push(this.treeControl.dataNodes);
-    this.documentService.setToc(newTree);
+    this.setTree(newTree);
   }
 
   private insertBefore(
@@ -654,7 +721,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       parentNode.childItems.splice(targetIndex, 0, eventItem);
     }
     this.treeHistory.push(this.treeControl.dataNodes);
-    this.documentService.setToc(newTree);
+    this.setTree(newTree);
   }
 
   private insertChild(
@@ -676,14 +743,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     eventItem.parentItem = parentToBeNode.id;
     parentToBeNode.childItems.push(eventItem);
     this.treeHistory.push(this.treeControl.dataNodes);
-    this.documentService.setToc(newTree);
+    this.setTree(newTree);
   }
 
-  private restoreExpanded() {
-    this.expandedNodes.forEach((node) => {
-      this.findNodeById(this.treeControl.dataNodes, node.id);
-      this.treeControl.expand(node);
-    });
+  private restoreExpanded(root: TableOfContentItemVO[]) {
+    for (const node of root) {
+      if (node.expanded) this.treeControl.expand(node);
+      this.restoreExpanded(node.childItems);
+    }
   }
 
   private findNodeById(
@@ -705,12 +772,27 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private defaultExpanded(node: TableOfContentItemVO) {
-    if (node.tocItem.expandedByDefault) {
+    if (node.tocItem.expandedByDefault && node.childItems) {
       this.treeControl.expand(node);
-      // this.expandedNodes.add(node);
+      this.expandedNodes.push(node.id);
+      node.expanded = true;
     }
     if (node.childItems) {
       for (const n of node.childItems) this.defaultExpanded(n);
+    }
+  }
+
+  //used for restoring nodes after save
+  private expandNodesFromHistory(root: TableOfContentItemVO[]) {
+    for (const node of root) {
+      if (this.expandedNodes.includes(node.id)) {
+        this.treeControl.expand(node);
+        node.expanded = true;
+      } else {
+        this.treeControl.collapse(node);
+        node.expanded = false;
+      }
+      this.expandNodesFromHistory(node.childItems);
     }
   }
 
