@@ -80,6 +80,7 @@ export class DocumentEditorComponent
   });
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
+  @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
 
   @ViewChild('milestoneViewDialog')
   protected milestoneViewDialog: ProposalMilestoneViewComponent;
@@ -391,6 +392,21 @@ export class DocumentEditorComponent
   }
 
   handleClose() {
+    if (this.document.querySelectorAll('.cke').length > 0) {
+      this.openEditorDialog.openDialog();
+    } else {
+      this.cdkEditor.closeElementEditor();
+      //wait for the API where we get all the metadata for each document
+      this.router.navigate([`/collection/${this.proposalRef}`]);
+    }
+  }
+
+  onCancelClose() {
+    this.openEditorDialog.closeDialog();
+  }
+
+  onConfirmClose() {
+    this.openEditorDialog.closeDialog();
     this.cdkEditor.closeElementEditor();
     //wait for the API where we get all the metadata for each document
     this.router.navigate([`/collection/${this.proposalRef}`]);
