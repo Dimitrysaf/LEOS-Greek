@@ -13,42 +13,30 @@
         class="eui-u-font-m eui-u-font-bold eui-u-mb-none"
         >{{ 'page.collection.milestones.table.type' | translate }}</label
       >
-      <!-- TODO: translate aria-label -->
       <select
         euiSelect
         id="milestone_type"
         name="milestone_type"
-        aria-label="Milestone type"
         formControlName="milestonesType"
         class="milestones-select"
       >
-        <option
-          [value]="'page.collection.milestones.type.1' | translate"
-          selected
-        >
-          {{ 'page.collection.milestones.type.1' | translate }}
-        </option>
-        <option [value]="'page.collection.milestones.type.2' | translate">
-          {{ 'page.collection.milestones.type.2' | translate }}
-        </option>
-        <option [value]="'page.collection.milestones.type.3' | translate">
-          {{ 'page.collection.milestones.type.3' | translate }}
-        </option>
-        <option value="other">
-          {{ 'page.collection.milestones.type.4' | translate }}
+        <option *ngFor="let type of types" [value]="type.value">
+          {{ type.label | translate }}
         </option>
       </select>
     </div>
     <div
       class="eui-u-flex milestones-required eui-u-flex-justify-content-between eui-u-flex-align-items-start"
     >
-      <!-- TODO: translate placeholder -->
       <input
         euiInputText
         id="milestonesTitle"
         name="milestonesTitle"
         class="milestones-title"
-        placeholder="Please type milestone title here"
+        [placeholder]="
+          'page.collection.milestones.table.add-milestone-dialog.title.placeholder'
+            | translate
+        "
         formControlName="milestonesTitle"
       />
       <label

@@ -18,6 +18,13 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
 
+type TypeOption = {
+  label: string;
+  value: string;
+};
+
+const OTHER_VALUE = 'other';
+
 @Component({
   selector: 'app-add-milestone-dialog',
   templateUrl: './add-milestone-dialog.component.html',
@@ -27,10 +34,9 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
   form: FormGroup;
+  types = this.getTypeOptions();
 
-  private defaultMilestoneType = this.translateService.instant(
-    'page.collection.milestones.type.1',
-  );
+  private defaultType = this.types[0];
   private destroy$: Subject<any> = new Subject();
 
   constructor(
@@ -68,20 +74,50 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
 
   resetInitials(): void {
     this.form.patchValue({
-      milestonesType: this.defaultMilestoneType,
-      milestonesTitle: this.defaultMilestoneType,
+      milestonesType: this.defaultType.value,
+      milestonesTitle: this.defaultType.label,
     });
     this.form.clearValidators();
   }
 
   private buildForm() {
     this.form = this.fb.group({
-      milestonesType: new FormControl(this.defaultMilestoneType),
+      milestonesType: new FormControl(this.defaultType.value),
       milestonesTitle: new FormControl({
-        value: this.defaultMilestoneType,
+        value: this.defaultType.label,
         disabled: true,
       }),
     });
+  }
+
+  private getTypeOptions() {
+    const option = (key: string, value: string): TypeOption => ({
+      label: this.translateService.instant(key),
+      value,
+    });
+
+    if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+      return [
+        option(
+          'page.collection.milestones.type.mandate1',
+          'Meeting of the Council',
+        ),
+        option('page.collection.milestones.type.other', OTHER_VALUE),
+      ];
+    } else {
+      return [
+        option(
+          'page.collection.milestones.type.proposal1',
+          'For Interservice Consultation',
+        ),
+        option('page.collection.milestones.type.proposal2', 'For Decision'),
+        option(
+          'page.collection.milestones.type.proposal3',
+          'Revision after Interservice Consultation',
+        ),
+        option('page.collection.milestones.type.other', OTHER_VALUE),
+      ];
+    }
   }
 
   private handleChanges() {
@@ -90,14 +126,15 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
       .valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((selectedValue) => {
         const milestonesTitle = this.form.get('milestonesTitle');
-        if (selectedValue !== 'other') {
-          milestonesTitle.setValue(selectedValue);
-          milestonesTitle.disable();
-          milestonesTitle.clearValidators();
-        } else {
+        if (selectedValue === OTHER_VALUE) {
           milestonesTitle.setValue('');
           milestonesTitle.enable();
           milestonesTitle.setValidators([Validators.required]);
+        } else {
+          const option = this.types.find((o) => o.value === selectedValue);
+          milestonesTitle.setValue(option.label);
+          milestonesTitle.disable();
+          milestonesTitle.clearValidators();
         }
         milestonesTitle.updateValueAndValidity();
       });
