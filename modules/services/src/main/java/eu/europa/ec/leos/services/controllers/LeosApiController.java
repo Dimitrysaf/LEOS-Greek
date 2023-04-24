@@ -35,7 +35,6 @@ import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
-import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -138,13 +137,13 @@ public class LeosApiController {
         final String grantType = request.getHeader(GRANT_TYPE);
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
-            return validateAndGenerateAccessToken(token);
+            return validateAndGenerateAccessToken(token, response);
         } else {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("Authorization")) {
-                        return validateAndGenerateAccessToken(cookie.getValue());
+                        return validateAndGenerateAccessToken(cookie.getValue(), response);
                     } else {
                         LOG.warn("Authorization failed! Wrong Headers: No authorization cookie found");
                     }
@@ -156,7 +155,7 @@ public class LeosApiController {
         return new ResponseEntity<>("Wrong Headers!", HttpStatus.FORBIDDEN);
     }
 
-    private ResponseEntity<Object> validateAndGenerateAccessToken(String token) {
+    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, HttpServletResponse response) {
         AuthClient authClient = tokenService.validateClientByJwtToken(token);
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
@@ -167,6 +166,9 @@ public class LeosApiController {
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // set 403 status code
+            response.setHeader("Set-Cookie", "Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
+            response.setHeader("Set-Cookie", "JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
             return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
         }
     }
