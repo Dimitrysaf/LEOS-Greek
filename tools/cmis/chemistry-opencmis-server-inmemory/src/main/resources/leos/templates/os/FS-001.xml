@@ -2916,7 +2916,7 @@
                     <content xml:id="_body__level_3231__subparagraph_5_5__content">
                         <table style="text-align:center;border-collapse:collapse;margin-left:0%;" xml:id="_body__level_3231__subparagraph_5_5__content__table">
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_1">
-                                <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_1__td_1">
+                                <td colspan="2" style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_1__td_1">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_1__td_1__p"> </p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_1__td_2_2">
@@ -2946,14 +2946,14 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_2_2">
-                                <td colspan="8" style="border: solid windowtext 1.0pt;text-align:left;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_2_2__td">
+                                <td colspan="9" style="border: solid windowtext 1.0pt;text-align:left;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_2_2__td">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_2_2__td__p">
                                         <b xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_2_2__td__p__b">• Establishment plan posts (officials and temporary staff)</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_3_3">
-                                <td style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_3_3__td_1">
+                                <td colspan="2" style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_3_3__td_1">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_3_3__td_1__p">20 01 02 01 (Headquarters and Commission’s Representation Offices)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_3_3__td_2_2">
@@ -2979,7 +2979,7 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_4_4">
-                                <td style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_4_4__td_1">
+                                <td colspan="2" style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_4_4__td_1">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_4_4__td_1__p">20 01 02 03 (Delegations)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_4_4__td_2_2">
@@ -3005,7 +3005,7 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_5_5">
-                                <td style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_5_5__td_1">
+                                <td colspan="2" style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_5_5__td_1">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_5_5__td_1__p">01 01 01 01  (Indirect research)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_5_5__td_2_2">
@@ -3031,7 +3031,7 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_6_6">
-                                <td style="border: solid windowtext 1.0pt; border-top:none;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_6_6__td_1">
+                                <td colspan="2" style="border: solid windowtext 1.0pt; border-top:none;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_6_6__td_1">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_6_6__td_1__p"> 01 01 01 11 (Direct research)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_6_6__td_2_2">
@@ -3057,7 +3057,7 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_7_7">
-                                <td style="border: solid windowtext 1.0pt; border-top: none;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_7_7__td_1">
+                                <td colspan="2" style="border: solid windowtext 1.0pt; border-top: none;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_7_7__td_1">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_7_7__td_1__p">Other budget lines (specify)</p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_7_7__td_2_2">
@@ -3083,7 +3083,7 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_8_8">
-                                <td colspan="8" style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_8_8__td">
+                                <td colspan="9" style="border: solid windowtext 1.0pt;text-align:left" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_8_8__td">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_8_8__td__p_1">
                                         <b xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_8_8__td__p_1__b">• External staff (in Full Time Equivalent unit: FTE)
                                             <authorialNote marker="14" placement="bottom" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_8_8__td__p_1__b__authorialnote">
@@ -3116,6 +3116,9 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_9_9__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_9_9__td_7__p"/>
                                 </td>
+                                <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_9_9__td_8">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_9_9__td_8__p"/>
+                                </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_10_10">
                                 <td colspan="2" style="border: solid windowtext 1.0pt; border-top: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_10_10__td_1">
@@ -3138,6 +3141,9 @@
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_10_10__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_10_10__td_7__p"/>
+                                </td>
+                                <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_10_10__td_9">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_10_10__td_9__p"/>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_11_11">
@@ -3177,6 +3183,9 @@
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_11_11__td_8">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_11_11__td_8__p"/>
                                 </td>
+                                <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_11_11__td_9">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_11_11__td_9__p"/>
+                                </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_12_12">
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_12_12__td_1">
@@ -3199,6 +3208,9 @@
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_12_12__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_12_12__td_7__p"/>
+                                </td>
+                                <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_12_12__td_8">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_12_12__td_8__p"/>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_13_13">
@@ -3223,6 +3235,9 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_13_13__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_13_13__td_7__p"> </p>
                                 </td>
+                                <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_13_13__td_8">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_13_13__td_8__p"> </p>
+                                </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_14_14">
                                 <td colspan="2" style="border: solid windowtext 1.0pt; border-top: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_14_14__td_1">
@@ -3246,6 +3261,9 @@
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_14_14__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_14_14__td_7__p"> </p>
                                 </td>
+                                <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_14_14__td_8">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_14_14__td_8__p"> </p>
+                                </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_15_15">
                                 <td colspan="2" style="border: solid windowtext 1.0pt; border-top: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_15_15__td_1">
@@ -3268,6 +3286,9 @@
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_15_15__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_15_15__td_7__p"> </p>
+                                </td>
+                                <td style="border: solid windowtext 1.0pt; border-left: none; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_15_15__td_8">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_15_15__td_8__p"> </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16">
@@ -3304,6 +3325,11 @@
                                 <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16__td_7">
                                     <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16__td_7__p">
                                         <b xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16__td_7__p__b"> </b>
+                                    </p>
+                                </td>
+                                <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; " xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16__td_8">
+                                    <p xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16__td_8__p">
+                                        <b xml:id="_body__level_3231__subparagraph_5_5__content__table__tr_16__td_8__p__b"> </b>
                                     </p>
                                 </td>
                             </tr>
