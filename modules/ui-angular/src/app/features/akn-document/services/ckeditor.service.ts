@@ -379,43 +379,6 @@ export class CKEditorService implements OnDestroy {
       ),
     );
 
-    const actionHandler$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['js/editor/core/actionHandler'], (actionHandler) => {
-              subscriber.next(actionHandler);
-            });
-          }),
-      ),
-    );
-
-    const toolbarPositionAdapter$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['js/editor/core/toolbarPositionAdapter'], (
-              toolbarPositionAdapter,
-            ) => {
-              subscriber.next(toolbarPositionAdapter);
-            });
-          }),
-      ),
-    );
-
-    const inlineLeosEditor$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require([
-              'js/editor/plugins/leosInlineEditor/leosInlineEditorPlugin',
-            ], (inlineLeosEditor) => {
-              subscriber.next(inlineLeosEditor);
-            });
-          }),
-      ),
-    );
-
     const userGuidanceExtension$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -444,10 +407,7 @@ export class CKEditorService implements OnDestroy {
       leosEditorExtension$,
       softActionsExtension$,
       changeDetailsExtension$,
-      actionHandler$,
-      toolbarPositionAdapter$,
       userGuidanceExtension$,
-      this.elementEditor$,
     ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(
@@ -457,20 +417,14 @@ export class CKEditorService implements OnDestroy {
           leosEditor,
           softActions,
           changeDetails,
-          actionHandler,
-          toolbarPositionAdapter,
           userGuidanceExtension,
-          elementEditor,
         ]: any[]) => {
           actionManager.init(this.connector);
           refTolink.init(this.connector);
           leosEditor.init(this.connector);
           softActions.init(this.connector);
           changeDetails.init(this.connector);
-          actionHandler.setup(this.connector);
-          toolbarPositionAdapter.setup(this.connector);
           userGuidanceExtension.init(this.connector);
-          elementEditor.setup(this.connector);
         },
       );
   }
