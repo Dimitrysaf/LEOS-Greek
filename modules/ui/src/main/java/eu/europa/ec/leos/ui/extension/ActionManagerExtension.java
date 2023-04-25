@@ -60,7 +60,7 @@ public class ActionManagerExtension<T extends AbstractComponent> extends LeosJav
     @Subscribe
     public void cancelActionElement(CancelActionElementRequestEvent event) {
     	LOG.trace("Cancel action element...");
-        callFunction("enableActions", event.getElementId());
+        callFunction("cancelActionElement", event.getElementId());
     }
 
     private String toJsonString(Object o) {

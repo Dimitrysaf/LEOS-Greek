@@ -335,7 +335,6 @@ define(function actionManagerExtensionModule(require) {
                 var id = setInterval(function() {
                     if (!connector.semaphoreInitEditorOngoing) {
                         CKEDITOR.fire("editorInitOngoing");
-                        connector.semaphoreInitEditorOngoing = true;
                         if (connector.editorChannel) {
                             connector.editorChannel.publish(topic, data);
                         }
@@ -367,6 +366,11 @@ define(function actionManagerExtensionModule(require) {
         return false;
     }
 
+    function _cancelActionElement(elementId) {
+        CKEDITOR.fire("editorInitEnds");
+        _enableActions(elementId);
+    }
+
     // handle connector unregistration from server-side
     function _connectorUnregistrationListener() {
         log.debug("Unregistering Action Manager extension...");
@@ -381,7 +385,7 @@ define(function actionManagerExtensionModule(require) {
     function _setupEditorChannel(connector) {
         // retrieve editor channel
         connector.editorChannel = postal.channel(EDITOR_CHANNEL_CFG.name);
-        connector.enableActions = _enableActions;
+        connector.cancelActionElement = _cancelActionElement;
     }
 
     function _teardownEditorChannel(connector) {
