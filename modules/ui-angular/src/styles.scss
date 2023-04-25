@@ -71,12 +71,6 @@ eui-icon-svg > svg > use {
   padding: var(--eui-base-spacing-2xs) var(--eui-base-spacing-s);
 }
 
-.asdf {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
 /*
  * Misc
  */
@@ -95,6 +89,13 @@ eui-icon-svg > svg > use {
   justify-content: center;
   max-height: 22px;
   padding: 0.3rem;
+}
+
+.app-dialog-footer-content {
+  display: flex;
+  flex-direction: row;
+  gap: var(--eui-base-spacing-m);
+  justify-content: flex-end;
 }
 
 .search-result {
