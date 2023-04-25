@@ -86,6 +86,7 @@ import eu.europa.ec.leos.ui.extension.UserGuidanceExtension;
 import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
+import eu.europa.ec.leos.ui.window.milestone.MilestoneExplorer;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.OptionsType;
@@ -202,6 +203,9 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Value("${leos.searchAndReplace.enabled}")
     private boolean searchAndReplaceEnabled;
+
+    @Value("${leos.coverpage.separated}")
+    private boolean coverPageSeparated;
 
     @Autowired
     FinancialStatementScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
@@ -564,7 +568,11 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void showMilestoneExplorer(LegDocument legDocument, String milestoneTitle, String proposalRef) {
-
+        MilestoneExplorer milestoneExplorer = new MilestoneExplorer(legDocument, milestoneTitle, proposalRef, messageHelper, eventBus, cfgHelper,
+                securityContext, userHelper, xmlContentProcessor, coverPageSeparated);
+        UI.getCurrent().addWindow(milestoneExplorer);
+        milestoneExplorer.center();
+        milestoneExplorer.focus();
     }
 
     @Override

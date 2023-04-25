@@ -19,15 +19,18 @@ import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
 import eu.europa.ec.leos.cmis.domain.ContentImpl;
 import eu.europa.ec.leos.cmis.domain.SourceImpl;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
 import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
+import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -76,8 +79,11 @@ import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
 import eu.europa.ec.leos.ui.event.DownloadActualVersionRequestEvent;
 import eu.europa.ec.leos.ui.event.DownloadXmlVersionRequestEvent;
+import eu.europa.ec.leos.ui.event.FetchMilestoneByVersionedReferenceEvent;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
+import eu.europa.ec.leos.ui.event.metadata.SearchMetadataRequest;
+import eu.europa.ec.leos.ui.event.metadata.SearchMetadataResponse;
 import eu.europa.ec.leos.ui.event.revision.OpenRevisionDocumentEvent;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataRequest;
 import eu.europa.ec.leos.ui.event.metadata.DocumentMetadataResponse;
@@ -91,6 +97,7 @@ import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.ui.view.CommonDelegate;
+import eu.europa.ec.leos.ui.window.milestone.MilestoneExplorer;
 import eu.europa.ec.leos.web.event.component.CompareRequestEvent;
 import eu.europa.ec.leos.web.event.component.CleanComparedContentEvent;
 import eu.europa.ec.leos.web.event.component.RestoreVersionRequestEvent;
@@ -99,6 +106,7 @@ import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.component.ResetRevisionComponentEvent;
 import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
+import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
@@ -130,6 +138,7 @@ import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.EditElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceRequest;
 import eu.europa.ec.leos.web.event.view.document.InsertElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.RefreshElementEvent;
 import eu.europa.ec.leos.web.event.view.document.SaveElementRequestEvent;
@@ -222,6 +231,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private final CommonDelegate<FinancialStatement> commonDelegate;
 
     private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private boolean milestoneExplorerOpened = false;
+    private InstanceTypeResolver instanceTypeResolver;
     private String documentRef;
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -247,7 +258,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                                           LegService legService, ProposalService proposalService, SearchService searchService,
                                           ExportPackageService exportPackageService, NotificationService notificationService,
                                           CloneContext cloneContext, AttachmentProcessor attachmentProcessor,
-                                          AnnotateService annotateService, CommonDelegate<FinancialStatement> commonDelegate, TemplateConfigurationService templateConfigurationService) {
+                                          AnnotateService annotateService, CommonDelegate<FinancialStatement> commonDelegate, TemplateConfigurationService templateConfigurationService, InstanceTypeResolver instanceTypeResolver) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.financialStatementScreen = financialStatementScreen;
         this.financialStatementProcessor = financialStatementProcessor;
@@ -280,6 +291,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         this.commonDelegate = commonDelegate;
         this.openElementEditors = new ArrayList<>();
         this.templateConfigurationService = templateConfigurationService;
+        this.instanceTypeResolver = instanceTypeResolver;
     }
 
     @Override
@@ -311,6 +323,35 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
     private boolean isHasOpenElementEditors() {
         return this.openElementEditors.size() > 0;
+    }
+
+    @Subscribe
+    public void fetchMilestoneByVersionedReference(FetchMilestoneByVersionedReferenceEvent event) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        LegDocument legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
+        milestoneExplorerOpened = true;
+        financialStatementScreen.showMilestoneExplorer(legDocument, String.join(",", legDocument.getMilestoneComments()), proposalRef);
+    }
+
+    @Subscribe
+    public void fetchSearchMetadata(SearchMetadataRequest event){
+        if (!milestoneExplorerOpened) {
+            List<AnnotateMetadata> metadataList = new ArrayList<>();
+            if (instanceTypeResolver.getInstanceType().equals(InstanceType.COMMISSION.toString()) || instanceTypeResolver.getInstanceType().equals(InstanceType.COUNCIL.toString())) {
+                AnnotateMetadata metadata = new AnnotateMetadata();
+                List<String> statusList = new ArrayList<String>();
+                statusList.add(AnnotationStatus.ALL.name());
+                metadata.setStatus(statusList);
+                metadataList.add(metadata);
+            }
+            eventBus.post(new SearchMetadataResponse(metadataList));
+        }
+    }
+
+    @Subscribe
+    public void afterClosedWindow(WindowClosedEvent<MilestoneExplorer> windowClosedEvent) {
+        milestoneExplorerOpened = false;
+        eventBus.post(new NavigationRequestEvent(Target.STAT_FINANC_LEGIS, getDocumentRef()));
     }
 
     @Subscribe

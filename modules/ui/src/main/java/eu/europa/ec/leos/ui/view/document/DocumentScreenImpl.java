@@ -525,7 +525,7 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
     public void showMilestoneExplorer(LegDocument legDocument, String milestoneTitle, String proposalRef) {
         legalTextPaneComponent.removeAnnotateExtension();
         MilestoneExplorer milestoneExplorer = new MilestoneExplorer(legDocument, milestoneTitle, proposalRef, messageHelper, eventBus, cfgHelper,
-                securityContext, userHelper, xmlContentProcessor, isCoverPageVisible());
+                securityContext, userHelper, xmlContentProcessor, coverPageSeparated);
         UI.getCurrent().addWindow(milestoneExplorer);
         milestoneExplorer.center();
         milestoneExplorer.focus();

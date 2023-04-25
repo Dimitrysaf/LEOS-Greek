@@ -216,6 +216,9 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     @Value("${leos.searchAndReplace.enabled}")
     private boolean searchAndReplaceEnabled;
 
+    @Value("${leos.coverpage.separated}")
+    boolean coverPageSeparated;
+
     @Autowired
     LeosPermissionAuthorityMapHelper authorityMapHelper;
 
@@ -727,7 +730,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     @Override
     public void showMilestoneExplorer(LegDocument legDocument, String milestoneTitle, String proposalRef) {
         MilestoneExplorer milestoneExplorer = new MilestoneExplorer(legDocument, milestoneTitle, proposalRef, messageHelper, eventBus, cfgHelper,
-                securityContext, userHelper, xmlContentProcessor, isCoverPageVisible());
+                securityContext, userHelper, xmlContentProcessor, coverPageSeparated);
         UI.getCurrent().addWindow(milestoneExplorer);
         milestoneExplorer.center();
         milestoneExplorer.focus();
