@@ -494,7 +494,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .forEach((el) => el.classList.remove('selected-node'));
     const element = document.querySelector(`[data-id="${node.id}"]`);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       element.children[0].children[0].classList.add('selected-node');
     }
   }
