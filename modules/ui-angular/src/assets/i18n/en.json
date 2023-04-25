@@ -17,6 +17,7 @@
   "eui.my-profile-informations": "My profile information",
   "eui.you-are-logged-in-as": "You are logged in as",
   "eui.sign-out": "Sign out",
+  "page.workspace.breadcrumb-title": "Repository Browser",
   "page.workspace.filter.procedures": "Procedures",
   "page.workspace.filter.acts": "Acts",
   "page.workspace.filter.templates": "Templates",

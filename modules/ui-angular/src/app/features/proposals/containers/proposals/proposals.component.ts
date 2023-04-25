@@ -13,6 +13,8 @@ import {
 import { ProcedureType } from '@leos/shared';
 import { combineLatest, distinctUntilChanged, map, take } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
+
 import { ProposalsFiltersComponent } from '../../components';
 import {
   DEFAULT_LIMIT,
@@ -44,16 +46,23 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
   proposals$ = this.proposalService.proposals$;
   totalResults$ = this.proposalService.totalResults$;
   sortOrder = DEFAULT_SORT_ORDER;
+  canCreateDraft = false;
+  canCreateMandate = false;
+  canCreateProposal = false;
+  canUpload = false;
 
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
+
+  protected readonly homeUrl = document.baseURI;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private proposalService: ProposalService,
     private cdr: ChangeDetectorRef,
+    private appConfig: AppConfigService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -88,6 +97,7 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
       .subscribe((params) => {
         this.setQueryParams(params);
       });
+    this.setPermissions();
   }
 
   onToggleTOCColumnCollapsed() {
@@ -176,5 +186,16 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
     }
 
     return queryParams;
+  }
+
+  private setPermissions() {
+    this.appConfig.config.subscribe((config) => {
+      const CN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+      const CAN_UPLOAD = config.permissions.includes('CAN_UPLOAD');
+      this.canCreateDraft = CN && CAN_UPLOAD;
+      this.canCreateMandate = CN;
+      this.canCreateProposal = !CN;
+      this.canUpload = !CN && CAN_UPLOAD;
+    });
   }
 }
