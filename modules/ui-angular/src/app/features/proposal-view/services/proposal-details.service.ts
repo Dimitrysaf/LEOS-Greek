@@ -11,6 +11,7 @@ import {
   User,
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
+import { parse as parseContentDisposition } from 'content-disposition-attachment';
 import {
   BehaviorSubject,
   combineLatestWith,
@@ -32,6 +33,7 @@ import {
   CreateDraftResponse,
 } from '@/features/proposals/models';
 import { LoadingService } from '@/shared/services/loading.service';
+import { downloadBlob } from '@/shared/utils';
 
 import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
@@ -192,23 +194,15 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  donwloadProposal() {
+  downloadProposal() {
+    this.loadingService.setLoading(true);
     this.http
       .get(`${apiBaseUrl}/secured/proposals/${this.proposalRef}/download`, {
         responseType: 'blob',
       })
-      .pipe(
-        tap(() => this.loadingService.setLoading(true)),
-        map((res) => {
-          this.downloadFile(
-            res,
-            'application/zip',
-            `Proposal_${this.proposalRef}`,
-          );
-        }),
-      )
-      .subscribe(() => {
-        this.loadingService.setLoading(false);
+      .subscribe({
+        next: (blob) => downloadBlob(blob, `Proposal_${this.proposalRef}.zip`),
+        complete: () => this.loadingService.setLoading(false),
       });
   }
 
@@ -327,9 +321,21 @@ export class ProposalDetailsService implements OnDestroy {
   }
 
   previewExport(exportId: string) {
-    return this.http.get(
-      `${apiBaseUrl}/secured/proposal/${this.proposalRef}/previewExport/${exportId}`,
-    );
+    return this.http
+      .get(
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/previewExport/${exportId}`,
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
+      )
+      .subscribe((resp) => {
+        const cd = parseContentDisposition(
+          resp.headers.get('Content-Disposition'),
+        );
+        const filename = cd.attachment ? cd.filename : 'Preview.docx';
+        downloadBlob(resp.body, filename);
+      });
   }
 
   notifyExport(exportId: string) {
@@ -412,14 +418,6 @@ export class ProposalDetailsService implements OnDestroy {
     return this.http.get<User[]>(`${apiBaseUrl}/secured/proposal/searchUser`, {
       params: { searchKey: name },
     });
-  }
-
-  private downloadFile(data: any, type: string, filename: string) {
-    const blob = new Blob([data], {
-      type: 'application/zip',
-    });
-    const url = window.URL.createObjectURL(blob);
-    window.open(url);
   }
 
   private resolvePermissions(

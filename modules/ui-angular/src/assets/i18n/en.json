@@ -191,6 +191,8 @@
   "page.editor.annotations-column.label": "Annotations & document notes",
   "page.editor.create-note-button.tooltip": "New Document Note",
   "page.editor.export-email-sent": "You will receive an email shortly with the file at <em>{{userEmail}}</em>",
+  "page.editor.export-econsilium-success": "The file has been exported. You can find it in the <em>Proposal Viewer</em> page, under the <em>Exports</em> tab.",
+  "page.editor.export-econsilium-error": "Export to eConsilium failed. Please try again later.",
   "page.editor.highlights-button.tooltip-enable": "Show Highlights",
   "page.editor.highlights-button.tooltip-disable": "Hide Highlights",
   "page.editor.guidelines-button.tooltip-enable": "Show Guide Lines",

@@ -45,7 +45,7 @@ export class ProposalActionsDropdownComponent {
   }
 
   handleDownload() {
-    this.proposalDetailsService.donwloadProposal();
+    this.proposalDetailsService.downloadProposal();
   }
 
   handleExportAsPDF() {
