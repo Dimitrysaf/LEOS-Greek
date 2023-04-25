@@ -1437,7 +1437,7 @@
                                 </td>
                                 <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_10_10">
                                     <p style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;" xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_10_10__p">
-                                        <b xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_10_10__p__b"></b>
+                                        <b xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_10_10__p__b"> </b>
                                     </p>
                                 </td>
                                 <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="_body__level_321__subparagraph_5_5__content__table_2__tr_4_4__td_11">
@@ -2580,7 +2580,7 @@
                 </list>
                 <subparagraph style="text-align: right;padding-right:20%;" xml:id="_body__level_323__subparagraph_4">
                     <content xml:id="_body__level_323__subparagraph_4__content">
-                        <p xml:id="_body__level_323__subparagraph_4__content__p">Commitment appropriations in EUR million (to three decimal places)</p>
+                        <p xml:id="_body__level_323__subparagraph_4__content__p">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" xml:id="_body__level_323__subparagraph_5">
@@ -2658,7 +2658,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_6_6__p"> </p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_7__p"> </p>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_4_4">
@@ -2681,7 +2683,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_4_4__td_6_6__p"> </p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_4_4__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_4_4__td_7__p"> </p>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_4_4__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_4_4__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr style="height: 29.25pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_5_5">
@@ -2704,7 +2708,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_5_5__td_6_6__p"> </p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_5_5__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_5_5__td_7__p"> </p>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_5_5__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_5_5__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr style="height: 29.25pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6">
@@ -2732,7 +2738,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_6_6__p"> </p>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt; " xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_7__p"> </p>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7">
@@ -2766,7 +2774,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_6_6__p"/>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_7__p"/>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_8_8">
@@ -2789,7 +2799,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_8_8__td_6_6__p"/>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_8_8__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_8_8__td_7__p"/>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_8_8__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_8_8__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_9_9">
@@ -2815,7 +2827,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_9_9__td_6_6__p"/>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_9_9__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_9_9__td_7__p"/>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_9_9__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_9_9__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_10_10">
@@ -2845,7 +2859,9 @@
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_10_10__td_6_6__p"/>
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_10_10__td_7">
-                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_10_10__td_7__p"/>
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_10_10__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_10_10__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_11_11">
@@ -2873,6 +2889,11 @@
                                 </td>
                                 <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_12__td_6">
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_12__td_6__p"> </p>
+                                </td>
+                                <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_12__td_7">
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_12__td_7__p">
+                                        <b xml:id="_body__level_323__subparagraph_5__content__table__tr_12__td_7__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                         </table>
@@ -3674,7 +3695,7 @@
                 </subparagraph>
                 <subparagraph leos:editable="true" xml:id="_body__level_33__subparagraph_7_7">
                     <content xml:id="_body__level_33__subparagraph_7_7__content">
-                        <p xml:id="_body__level_33__subparagraph_7_7__content__p"></p>
+                        <p xml:id="_body__level_33__subparagraph_7_7__content__p">[...]</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="false" xml:id="_body__level_33__subparagraph_8_8">
@@ -3684,7 +3705,7 @@
                 </subparagraph>
                 <subparagraph leos:editable="true" xml:id="_body__level_33__subparagraph_9">
                     <content xml:id="_body__level_33__subparagraph_9__content">
-                        <p xml:id="_body__level_33__subparagraph_9__content__p"></p>
+                        <p xml:id="_body__level_33__subparagraph_9__content__p">[...]</p>
                     </content>
                 </subparagraph>
             </level>
