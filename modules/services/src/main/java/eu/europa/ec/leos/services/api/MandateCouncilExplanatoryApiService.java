@@ -149,8 +149,15 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
-        byte[] newXmlContent = elementProcessor.updateElement(explanatory, elementName, elementId, elementFragment, false);
-        explanatory = explanatoryService.updateExplanatory(explanatory, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
+        byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName, elementFragment);
+
+        final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
+        final String description = messageHelper.getMessage("operation.checkin.minor");
+        final String updatedLabel = generateLabel(elementId, explanatory);
+        final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
+                new CheckinElement(ActionType.UPDATED, elementId, elementName, updatedLabel));
+        final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
         return this.documentViewService.getDocumentView(explanatory);
     }
 
