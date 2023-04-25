@@ -12,6 +12,7 @@ import { DownloadEconsiliumModalComponent } from '@/features/akn-document/compon
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 @Component({
   selector: 'app-annex-actions-dropdown',
@@ -58,14 +59,10 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.createForm = this.fb.group({
-      title: new FormControl(
-        { value: '', disabled: false },
-        { validators: Validators.required },
-      ),
-      description: new FormControl(
-        { value: '', disabled: false },
-        { validators: Validators.required },
-      ),
+      title: new FormControl('', {
+        validators: [Validators.required, noWhitespaceValidator],
+      }),
+      description: new FormControl(''),
     });
     this.doc.permissions$.subscribe((permissions) => {
       this.importerVisible =
