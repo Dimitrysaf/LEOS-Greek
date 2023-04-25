@@ -12,6 +12,7 @@ import { from, Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
 import { createPromise } from '@/shared/utils';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import {
   CatalogItem,
@@ -72,7 +73,9 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
         ),
         documentLanguage: new FormControl({ value: '', disabled: true }),
         confidentialityLevel: new FormControl({ value: '', disabled: true }),
-        docPurpose: new FormControl('', { validators: Validators.required }),
+        docPurpose: new FormControl('', {
+          validators: [Validators.required, noWhitespaceValidator],
+        }),
         templateId: new FormControl(
           { value: '', disabled: true },
           { validators: Validators.required },
@@ -217,7 +220,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
       this.createForm.getRawValue();
     return {
       templateId,
-      docPurpose,
+      docPurpose: docPurpose.trim(),
       eeaRelevance,
     };
   }

@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { debounce, debounceTime, filter, Subject, takeUntil, tap } from 'rxjs';
 
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import {
   CatalogItem,
@@ -68,7 +69,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
       ),
       documentLanguage: new FormControl({ value: '', disabled: true }),
       confidentialityLevel: new FormControl({ value: '', disabled: true }),
-      docPurpose: new FormControl('', { validators: Validators.required }),
+      docPurpose: new FormControl('', {
+        validators: [Validators.required, noWhitespaceValidator],
+      }),
       templateId: new FormControl(
         { value: '', disabled: true },
         { validators: Validators.required },
@@ -157,7 +160,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
       }
       if (e.type === HttpEventType.Response) {
         if (e.ok) {
-          const docPurpose = this.uploadForm.get('docPurpose').value;
+          const docPurpose = this.uploadForm.get('docPurpose').value.trim();
           const eeaRelevance = this.uploadForm.get('eeaRelevance').value;
           const requestData: UpdateProposalMetadataModel = {
             docPurpose,
