@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.export.ExportPackageVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -180,10 +181,14 @@ public class ProposalApiController {
     public ResponseEntity<Object> previewExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
             byte[] result = apiService.downloadExportPackage(proposalRef, exportId);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            final String jobFileName = "Proposal_" + exportId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+            // create the HttpHeaders object and set the Content-Type header
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Disposition", "attachment; filename="+jobFileName);
+            return new ResponseEntity<>(result, headers, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Unexpected error occurred while updating export ", e);
-            return new ResponseEntity<>("Error occurred while updating export: " + e.getMessage(),
+            LOG.error("Unexpected error occurred while previewing export ", e);
+            return new ResponseEntity<>("Error occurred while previewing export: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
