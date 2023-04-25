@@ -31,7 +31,6 @@
             }}</span>
             <eui-dropdown *ngIf="isEditMode()">
               <button
-                euiSizeS
                 euiButton
                 euiRounded
                 euiIconButton
@@ -47,10 +46,11 @@
                     'page.editor.toc.tree-node.more-options'
                   )
                 "
+                euiSizeS
               >
                 <span
                   euiIcon
-                  euiSize2XS
+                  euiSizeS
                   iconClass="eui-icon eui-icon-more-vertical"
                 ></span>
               </button>
@@ -58,6 +58,7 @@
                 <div euiList>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handleMove(node)"
                     *ngIf="!isNodeSelectedToMove()"
                   >
@@ -65,6 +66,7 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handlePlaceAt(node, 'BEFORE')"
                     *ngIf="isNodeSelectedToMove()"
                   >
@@ -74,6 +76,7 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handlePlaceAt(node, 'AS_CHILDREN')"
                     *ngIf="isNodeSelectedToMove()"
                   >
@@ -81,12 +84,14 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handlePlaceAt(node, 'AFTER')"
                     *ngIf="isNodeSelectedToMove()"
                   >
                     {{ 'page.editor.toc.move-actions.place-after' | translate }}
                   </button>
                   <button
+                    euiSizeS
                     euiListItem
                     (click)="handleCancelMove()"
                     *ngIf="isNodeSelectedToMove()"
@@ -137,18 +142,10 @@
                 euiIconButton
                 euiBasicButton
                 euiSecondary
-                [euiTooltip]="
-                  tranlsateService.instant(
-                    'page.editor.toc.tree-node.more-options'
-                  )
-                "
-                [attr.aria-label]="
-                  tranlsateService.instant(
-                    'page.editor.toc.tree-node.more-options'
-                  )
-                "
+                euiSizeS
               >
                 <span
+                  euiSizeS
                   euiIcon
                   iconClass="eui-icon eui-icon-more-vertical"
                 ></span>
@@ -157,6 +154,7 @@
                 <div euiList>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handleMove(node)"
                     *ngIf="!isNodeSelectedToMove()"
                   >
@@ -164,6 +162,7 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handlePlaceAt(node, 'BEFORE')"
                     *ngIf="isNodeSelectedToMove()"
                   >
@@ -173,6 +172,7 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handlePlaceAt(node, 'AS_CHILDREN')"
                     *ngIf="isNodeSelectedToMove()"
                   >
@@ -180,6 +180,7 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handlePlaceAt(node, 'AFTER')"
                     *ngIf="isNodeSelectedToMove()"
                   >
@@ -187,6 +188,7 @@
                   </button>
                   <button
                     euiListItem
+                    euiSizeS
                     (click)="handleCancelMove()"
                     *ngIf="isNodeSelectedToMove()"
                   >
@@ -230,6 +232,7 @@
       [documentConfig]="documentConfig"
       (handleTocRemove)="hanldeTocRemove()"
       (handleNodeChangesEvent)="handleNodeChanges($event)"
+      (handleInvalidNodes)="handleInvalidNodes($event)"
     ></app-toc-editor>
   </div>
 </div>

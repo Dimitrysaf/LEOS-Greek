@@ -80,7 +80,6 @@ export class DocumentService implements OnDestroy {
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
   toc$: Observable<TableOfContentItemVO[]>;
-  tocItems$: Observable<any[]>;
   recentChanges$: Observable<Version[]>;
   documentConfig$: Observable<DocumentConfig>;
   versionId$: Observable<string | null>;
@@ -150,7 +149,6 @@ export class DocumentService implements OnDestroy {
     const documentCategoryNotNull$ = this.documentCategory$.pipe(
       filter(Boolean),
     );
-    this.tocItems$ = this.tocItemBS.asObservable();
 
     this.documentView$ = documentRefNotNull$.pipe(
       combineLatestWith(documentCategoryNotNull$),
@@ -663,10 +661,6 @@ export class DocumentService implements OnDestroy {
         documentType: documentType.toUpperCase(),
       },
     );
-  }
-
-  setToc(toc: TableOfContentItemVO[]) {
-    this.tocItemBS.next(toc);
   }
 
   get documentRef() {

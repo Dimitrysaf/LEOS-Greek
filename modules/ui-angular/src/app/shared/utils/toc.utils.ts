@@ -353,10 +353,8 @@ export const checkPositionAfterValidation = (
   nodeDragged: TableOfContentItemVO,
   position: string,
 ) => {
-  //TODO add cn rules
   switch (nodeTarget.tocItem.aknTag) {
     case 'CITATION': {
-      if (['CITATIONS'].includes(nodeDragged.tocItem.aknTag)) return position;
       if (['CITATION'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       return position;
     }
@@ -662,3 +660,8 @@ const setItemLevel = (
       }
   }
 };
+
+export const getNumberingByName = (
+  numberingConfigs: NumberingConfig[],
+  numType: NumberingType,
+) => numberingConfigs.find((config) => config.type === numType);

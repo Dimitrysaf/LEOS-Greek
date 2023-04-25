@@ -16,3 +16,22 @@
   border-color: #cccc;
   font-size: var(--eui-base-font-size-m);
 }
+
+.input-wrap {
+  position: relative;
+}
+
+.error-msg {
+  background-color: var(--eui-base-color-danger);
+  color: var(--eui-base-color-white);
+  font-size: 8px;
+  overflow: visible;
+  position: absolute;
+  right: 0%;
+  visibility: hidden; /* Hide error message by default */
+  z-index: 999;
+}
+
+.input-wrap:hover .error-msg {
+  visibility: visible; /* Show error message on hover of input wrap */
+}
