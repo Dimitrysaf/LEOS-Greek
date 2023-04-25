@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 
 import { ProposalCreateTemplateSelectorComponent } from '@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { createPromise } from '@/shared/utils';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import {
   CatalogItem,
@@ -60,7 +61,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       ),
       documentLanguage: new FormControl({ value: '', disabled: true }),
       confidentialityLevel: new FormControl({ value: '', disabled: true }),
-      docPurpose: new FormControl('', { validators: Validators.required }),
+      docPurpose: new FormControl('', {
+        validators: [Validators.required, noWhitespaceValidator],
+      }),
       templateId: new FormControl(
         { value: '', disabled: true },
         { validators: Validators.required },
@@ -175,7 +178,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   private getDataForCreate(): CreateProposalBody {
     const { templateId, templateName, langCode, docPurpose, eeaRelevance } =
       this.createForm.getRawValue();
-    return { templateId, templateName, langCode, docPurpose, eeaRelevance };
+    return {
+      templateId,
+      templateName,
+      langCode,
+      docPurpose: docPurpose.trim(),
+      eeaRelevance,
+    };
   }
 
   private resetInitials() {
