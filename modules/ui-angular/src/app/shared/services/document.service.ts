@@ -18,7 +18,6 @@ import {
   switchMap,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -32,6 +31,7 @@ import {
   Permission,
 } from '@/shared';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
+import { downloadBlob } from '@/shared/utils';
 
 import { apiBaseUrl } from '../../../config';
 import { DocumentViewResponse } from '../models/document-view-response.model';
@@ -315,18 +315,32 @@ export class DocumentService implements OnDestroy {
     const annotations =
       (options.isWithAnnotations && (await this.getAnnotations())) || '';
     this.http
-      .post(
+      .post<string>(
         `${apiBaseUrl}/secured/document/export-to-econsilium/${documentType}/${documentRef}`,
         {
           ...options,
           annotations,
         } as DownloadEConsiliumParams,
-        {
-          observe: 'response',
-          responseType: 'blob',
-        },
       )
-      .subscribe((resp) => this.handleDownloadResponse(resp));
+      .subscribe({
+        next: () => {
+          this.appShell.growl({
+            severity: 'success',
+            detail: this.translate.instant(
+              'page.editor.export-econsilium-success',
+            ),
+          });
+        },
+        error: () => {
+          this.appShell.growl({
+            severity: 'danger',
+            detail: this.translate.instant(
+              'page.editor.export-econsilium-error',
+            ),
+            sticky: true,
+          });
+        },
+      });
   }
 
   getDocumentByRef(ref: string, category: string) {
@@ -587,7 +601,7 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe((blob) => {
         const filename = `${documentRef}_v${versionNumber}.xml`;
-        this.downloadBlob(blob, filename);
+        downloadBlob(blob, filename, this.document);
       });
   }
 
@@ -972,7 +986,7 @@ export class DocumentService implements OnDestroy {
         resp.headers.get('Content-Disposition'),
       );
       const filename = cd.attachment ? cd.filename : 'export';
-      this.downloadBlob(blob, filename);
+      downloadBlob(blob, filename, this.document);
     }
   }
 
@@ -988,24 +1002,5 @@ export class DocumentService implements OnDestroy {
           });
         });
     });
-  }
-
-  private downloadBlob(blob: Blob, filename: string) {
-    const data = window.URL.createObjectURL(blob);
-
-    const link = this.document.createElement('a');
-    link.href = data;
-    link.download = filename;
-    document.body.appendChild(link);
-
-    link.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-      }),
-    );
-
-    this.document.body.removeChild(link);
   }
 }

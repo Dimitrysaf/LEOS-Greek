@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { debounce, debounceTime, Subject, take, takeUntil } from 'rxjs';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
 
 import { Document } from '@/shared';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -70,12 +70,7 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   }
 
   handlePreviewExport(id: string) {
-    this.proposalDetailsService
-      .deleteExportDocument(id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
-        this.downloadFile(res);
-      });
+    this.proposalDetailsService.previewExport(id);
   }
 
   hanldeConfirmationDelete() {
@@ -99,13 +94,5 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
       .subscribe((res) => {
         this.exportDocuments = res;
       });
-  }
-
-  private downloadFile(data: any) {
-    const blob = new Blob([data], {
-      type: 'application/docx',
-    });
-    const url = window.URL.createObjectURL(blob);
-    window.open(url);
   }
 }
