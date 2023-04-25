@@ -77,9 +77,6 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
     protected ContributionsTab<Annex> contributionsTab;
     private CloneContext cloneContext;
 
-    @Value("${leos.coverpage.separated}")
-    private boolean coverPageSeparated;
-
     @Autowired
     ProposalAnnexScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
                             ConfigurationHelper cfgHelper, TocEditor numberEditor, InstanceTypeResolver instanceTypeResolver,
