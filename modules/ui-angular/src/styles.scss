@@ -67,6 +67,16 @@ eui-icon-svg > svg > use {
   transform: rotate(180deg);
 }
 
+.eui-breadcrumb--compact .eui-breadcrumb__items {
+  padding: var(--eui-base-spacing-2xs) var(--eui-base-spacing-s);
+}
+
+.asdf {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 /*
  * Misc
  */
