@@ -15,15 +15,18 @@
     </eui-card-header-body>
   </eui-card-header>
   <eui-card-content *ngIf="isRecent && recentChanges.length">
-    <div class="subversions" *ngIf="recentChanges.length > 0">
+    <div class="subversions">
       <ng-container
-        *ngFor="let a of recentChanges; trackByProperty: 'cmisVersionNumber'"
+        *ngFor="
+          let version of recentChanges;
+          trackByProperty: 'cmisVersionNumber'
+        "
       >
-        <div class="version">{{ formatVersionNumber(a) }}</div>
-        <div>{{ a.checkinCommentVO.title }}</div>
+        <div class="version">{{ formatVersionNumber(version) }}</div>
+        <div class="title">{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
-            [version]="a"
+            [version]="version"
           ></app-version-actions-dropdown>
         </div>
       </ng-container>
@@ -106,7 +109,7 @@
         "
       >
         <div class="version">{{ formatVersionNumber(version) }}</div>
-        <div>{{ version.checkinCommentVO.title }}</div>
+        <div class="title">{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
             [version]="version"
@@ -223,7 +226,7 @@
         "
       >
         <div class="version">{{ formatVersionNumber(version) }}</div>
-        <div>{{ version.checkinCommentVO.title }}</div>
+        <div class="title">{{ version.checkinCommentVO.title }}</div>
         <div>
           <app-version-actions-dropdown
             [version]="version"
