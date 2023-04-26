@@ -1,4 +1,4 @@
-<div class="toc-container h-100 flex flex-column justify-content-between">
+<div class="toc-container">
   <div id="treeContainer" class="tree-container" cdkScrollable>
     <mat-tree
       id="tree"
@@ -8,7 +8,7 @@
       [treeControl]="treeControl"
       (cdkDropListDropped)="onDrop($event)"
       [cdkDropListSortingDisabled]="true"
-      [cdkDropListDisabled]="!isEditMode()"
+      [cdkDropListDisabled]="!isEdit"
     >
       <mat-nested-tree-node
         cdkScrollable
@@ -22,87 +22,26 @@
         [cdkDragData]="node"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="!isEditMode()"
+        [cdkDropListDisabled]="!isEdit || !node.tocItem.draggable"
       >
+        <div class="drop-placeholder"></div>
         <li class="node-li">
           <div class="mat-tree-node">
             <span class="label" (click)="hanldeNodeSelect(node)">{{
-              getLabel(node)
+              node.label
             }}</span>
-            <eui-dropdown *ngIf="isEditMode()">
-              <button
-                euiButton
-                euiRounded
-                euiIconButton
-                euiBasicButton
-                euiSecondary
-                [euiTooltip]="
-                  tranlsateService.instant(
-                    'page.editor.toc.tree-node.more-options'
-                  )
-                "
-                [attr.aria-label]="
-                  tranlsateService.instant(
-                    'page.editor.toc.tree-node.more-options'
-                  )
-                "
-                euiSizeS
-              >
-                <span
-                  euiIcon
-                  euiSizeS
-                  iconClass="eui-icon eui-icon-more-vertical"
-                ></span>
-              </button>
-              <eui-dropdown-content>
-                <div euiList>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handleMove(node)"
-                    *ngIf="!isNodeSelectedToMove()"
-                  >
-                    {{ 'page.editor.toc.move-actions.move' | translate }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handlePlaceAt(node, 'BEFORE')"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{
-                      'page.editor.toc.move-actions.place-before' | translate
-                    }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handlePlaceAt(node, 'AS_CHILDREN')"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{ 'page.editor.toc.move-actions.place-child' | translate }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handlePlaceAt(node, 'AFTER')"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{ 'page.editor.toc.move-actions.place-after' | translate }}
-                  </button>
-                  <button
-                    euiSizeS
-                    euiListItem
-                    (click)="handleCancelMove()"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{ 'global.actions.cancel' | translate }}
-                  </button>
-                </div>
-              </eui-dropdown-content>
-            </eui-dropdown>
+            <app-node-toc-actions
+              [isEditMode]="isEdit"
+              [isNodeSelectedToMove]="selectedNodeToMove !== null"
+              [node]="node"
+              (handleMove)="handleMove(node)"
+              (handlePlaceAt)="handlePlaceAt(node, $event)"
+              (handleCancelMove)="handleCancelMove()"
+            >
+            </app-node-toc-actions>
           </div>
         </li>
+        <div class="drop-placeholder"></div>
       </mat-nested-tree-node>
       <mat-nested-tree-node
         cdkScrollable
@@ -116,8 +55,9 @@
         (cdkDragMoved)="dragMoved($event)"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="!isEditMode()"
+        [cdkDropListDisabled]="!isEdit"
       >
+        <div class="drop-placeholder"></div>
         <li class="">
           <div class="mat-tree-node">
             <eui-icon
@@ -133,70 +73,17 @@
               (click)="nodeCollapsed(node)"
             ></eui-icon>
             <span class="label-extended" (click)="hanldeNodeSelect(node)">{{
-              getLabel(node)
+              node.label
             }}</span>
-            <eui-dropdown *ngIf="isEditMode()">
-              <button
-                euiButton
-                euiRounded
-                euiIconButton
-                euiBasicButton
-                euiSecondary
-                euiSizeS
-              >
-                <span
-                  euiSizeS
-                  euiIcon
-                  iconClass="eui-icon eui-icon-more-vertical"
-                ></span>
-              </button>
-              <eui-dropdown-content>
-                <div euiList>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handleMove(node)"
-                    *ngIf="!isNodeSelectedToMove()"
-                  >
-                    {{ 'page.editor.toc.move-actions.move' | translate }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handlePlaceAt(node, 'BEFORE')"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{
-                      'page.editor.toc.move-actions.place-before' | translate
-                    }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handlePlaceAt(node, 'AS_CHILDREN')"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{ 'page.editor.toc.move-actions.place-child' | translate }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handlePlaceAt(node, 'AFTER')"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{ 'page.editor.toc.move-actions.place-after' | translate }}
-                  </button>
-                  <button
-                    euiListItem
-                    euiSizeS
-                    (click)="handleCancelMove()"
-                    *ngIf="isNodeSelectedToMove()"
-                  >
-                    {{ 'global.actions.cancel' | translate }}
-                  </button>
-                </div>
-              </eui-dropdown-content>
-            </eui-dropdown>
+            <app-node-toc-actions
+              [isEditMode]="isEdit"
+              [isNodeSelectedToMove]="selectedNodeToMove !== null"
+              [node]="node"
+              (handleMove)="handleMove(node)"
+              (handlePlaceAt)="handlePlaceAt(node, $event)"
+              (handleCancelMove)="handleCancelMove()"
+            >
+            </app-node-toc-actions>
           </div>
           <ul class="">
             <div *ngIf="treeControl.isExpanded(node)">
@@ -204,11 +91,13 @@
             </div>
           </ul>
         </li>
+        <div class="drop-placeholder"></div>
       </mat-nested-tree-node>
     </mat-tree>
   </div>
+
   <!-- validation message -->
-  <div class="d-flex flex-column p-2 eui-u-font-s">
+  <div class="d-flex flex-column p-2 eui-u-font-s" *ngIf="isEdit">
     <span
       euiLabel
       [euiDanger]="!isDropValid"
@@ -220,13 +109,10 @@
     </span>
   </div>
   <!-- selected element show -->
-  <div
-    class="d-flex flex-column eui-u-font-s"
-    *ngIf="isEditMode() && isNodeSelected()"
-  >
+  <div class="d-flex flex-column eui-u-font-s" *ngIf="isEdit && selectedNode">
     <app-toc-editor
       [documentType]="documentType"
-      [toc]="toc"
+      [toc]="this.treeControl.dataNodes"
       [tocItems]="tocItems"
       [selectedNode]="selectedNode"
       [documentConfig]="documentConfig"

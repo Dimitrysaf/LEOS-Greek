@@ -7,7 +7,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChildren,
+  ViewChild,
 } from '@angular/core';
 import { Form, FormBuilder } from '@angular/forms';
 import { UserDetails } from '@eui/base';
@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   DocumentConfig,
   NumberingConfig,
@@ -55,6 +56,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
   @Output() handleTocRemove = new EventEmitter<TableOfContentItemVO>();
   @Output() handleNodeChangesEvent = new EventEmitter<any>();
   @Output() handleInvalidNodes = new EventEmitter<Set<TableOfContentItemVO>>();
+
+  @ViewChild('deleteTocConfirmation')
+  deleteDialog: ConfirmDeleteDialogComponent;
 
   isTocEditionInvalid: boolean;
 
@@ -105,6 +109,10 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {}
+
+  onTocDeleteWithChildren() {
+    this.deleteDialog.deleteDialog.openDialog();
+  }
 
   onTocRemove(node: TableOfContentItemVO) {
     this.handleTocRemove.emit(node);

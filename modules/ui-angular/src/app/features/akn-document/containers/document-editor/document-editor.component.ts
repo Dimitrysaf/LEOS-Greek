@@ -313,7 +313,8 @@ export class DocumentEditorComponent
           oldToc,
           this.documentTocComponent.selectedNode.id,
         );
-        this.documentTocComponent.hanldeNodeSelect(newSelectedNode);
+        if (newSelectedNode)
+          this.documentTocComponent.hanldeNodeSelect(newSelectedNode);
       }
     }
   }

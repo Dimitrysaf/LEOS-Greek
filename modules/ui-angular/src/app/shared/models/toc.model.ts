@@ -45,6 +45,7 @@ export class TableOfContentItemVO {
   moved: boolean;
   isAffected: boolean;
   expanded: boolean;
+  label?: string;
 }
 
 export type AknTag =

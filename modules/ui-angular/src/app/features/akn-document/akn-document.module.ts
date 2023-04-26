@@ -12,6 +12,7 @@ import { AnnexActionsDropdownComponent } from './components/annex-actions-dropdo
 import { AnnexDocumentComponent } from './components/annex-document/annex-document.component';
 import { DocumentSearchComponent } from './components/document-search/document-search.component';
 import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
+import { NodeTocActionsComponent } from './components/node-toc-actions/node-toc-actions.component';
 import { TocActionsButtonsComponent } from './components/toc-actions-buttons/toc-actions-buttons.component';
 import { TocEditorComponent } from './components/toc-editor/toc-editor.component';
 import { VersionActionsDropdownComponent } from './components/version-actions-dropdown/version-actions-dropdown.component';
@@ -35,6 +36,7 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     TocActionsButtonsComponent,
     TocEditorComponent,
     DocumentTocComponent,
+    NodeTocActionsComponent,
   ],
   imports: [
     SharedModule,

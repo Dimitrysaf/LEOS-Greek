@@ -351,6 +351,24 @@
       </div>
       <!-- Delete -->
       <button
+        *ngIf="
+          this.selectedNode.childItems &&
+          this.selectedNode.childItems.length > 0
+        "
+        euiButton
+        euiSize2XS
+        euiDanger
+        class="align-self-end mt-1"
+        (click)="onTocDeleteWithChildren()"
+        [disabled]="!selectedNode.tocItem.deletable"
+      >
+        {{ 'global.actions.delete' | translate }}
+      </button>
+      <button
+        *ngIf="
+          this.selectedNode.childItems &&
+          this.selectedNode.childItems.length === 0
+        "
         euiButton
         euiSize2XS
         euiDanger
@@ -363,3 +381,12 @@
     </div>
   </eui-card-content>
 </eui-card>
+
+<app-confirm-delete-dialog
+  #deleteTocConfirmation
+  [title]="'toc.edit.window.item.selecdted.delete-dialog.title' | translate"
+  [description]="
+    'toc.edit.window.item.selecdted.delete-dialog.desc' | translate
+  "
+  (confirmDeletion)="onTocRemove(this.selectedNode)"
+></app-confirm-delete-dialog>

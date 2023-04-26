@@ -27,7 +27,6 @@
         isCollapsible
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
         (collapsed)="onToggleTOCColumnCollapsed()"
-        class="scrollable-page-column"
       >
         <eui-page-column-header-right-content>
           <div class="d-flex flex-row align-items-center">
@@ -128,6 +127,7 @@
               cdkDropListConnectedTo="tree"
               [cdkDropListSortingDisabled]="true"
               [cdkDropListDisabled]="false"
+              cdkDragBoundary=".tree"
             >
               <li
                 euiListItem
@@ -139,7 +139,14 @@
                 *ngFor="let item of dragItems"
               >
                 <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
-                <div *cdkDragPlaceholder></div>
+                <div
+                  *cdkDragPlaceholder
+                  euiListItem
+                  euiPrimary
+                  class="drag-preview"
+                >
+                  <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                </div>
               </li>
             </ul>
           </div>

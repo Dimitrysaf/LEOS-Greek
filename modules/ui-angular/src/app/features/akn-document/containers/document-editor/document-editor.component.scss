@@ -7,6 +7,14 @@
     padding: 0.2rem;
   }
 
+  .eui-page-column__header {
+    padding: 0px;
+  }
+
+  .eui-page-column__body:first {
+    overflow-y: hidden;
+  }
+
   .eui-page-column__header-right-content {
     align-self: start;
   }
@@ -40,6 +48,10 @@
 
   .eui-common-header__label-text {
     font-size: var(--eui-base-font-size-l);
+  }
+
+  eui-page-column-body {
+    flex-grow: 1;
   }
 
   /* Migrated from modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_documentView.scss */
@@ -105,7 +117,8 @@
   }
 
   li,
-  .toc-item {
+  .toc-item,
+  .drag-preview {
     border: solid var(--eui-base-color-primary);
     border-radius: 1rem;
     border-width: 2px;

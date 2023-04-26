@@ -60,13 +60,7 @@
   <eui-card class="eui-u-mt-s eui-u-mb-l">
     <eui-card-header>
       <eui-card-header-title>
-        <a
-          [routerLink]="['/explanatory', proposalRef]"
-          (click)="$event.preventDefault()"
-          ><strong>{{
-            'page.collection.drafts.explanatory' | translate
-          }}</strong></a
-        >
+        <strong>{{ 'page.collection.drafts.explanatory' | translate }}</strong>
       </eui-card-header-title>
       <eui-card-header-right-content>
         <button euiButton euiPrimary (click)="handleCreateDraft()">
