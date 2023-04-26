@@ -8,10 +8,14 @@
   }
 
   .eui-page-column__header {
-    padding: 0px;
+    padding: 0;
   }
 
-  .eui-page-column__body:first {
+  .eui-page-column:first-of-type {
+    max-width: fit-content !important;
+  }
+
+  .eui-page-column__body:first-of-type {
     overflow-y: hidden;
   }
 

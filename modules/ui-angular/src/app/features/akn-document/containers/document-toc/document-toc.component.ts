@@ -2,6 +2,7 @@ import { CdkDragDrop, CdkDragEnter, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -88,6 +89,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     private documentService: DocumentService,
     public tranlsateService: TranslateService,
     public elementRef: ElementRef,
+    private cdRef: ChangeDetectorRef,
     private store: Store,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -175,6 +177,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.treeHistory.push(event.newTree);
       return;
     }
+    this.setTree(event.newTree);
     this.isToCDraft = true;
     this.hilightInvalidNodes();
   }

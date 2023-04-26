@@ -1,9 +1,9 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { UxAppShellService } from '@eui/core';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { Permission } from '@/shared';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -15,6 +15,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 })
 export class ProposalActionsDropdownComponent {
   @Input() proposalId: string;
+  @Input() permissions: Permission[];
   loading = false;
 
   mailtoHeader = 'mailto:?';
