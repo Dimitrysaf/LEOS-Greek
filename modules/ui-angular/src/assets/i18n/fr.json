@@ -303,6 +303,8 @@
   "toc.edit.window.item.selected.heading.error.message": "[FR] Heading is mandatory",
   "toc.edit.window.item.selected.content.empty.message": "[FR] Content is mandatory",
   "toc.edit.window.item.selected.content.error.message": "[FR] Content is not valid",
+  "toc.edit.window.item.selecdted.delete-dialog.title": "[FR] Delete item confirmation",
+  "toc.edit.window.item.selecdted.delete-dialog.desc": "[FR] Selected item contains sub-items and all of them will be deleted.<br> Are you sure you want to continue?",
   "version.view.header": "v{{ version }} - dernière modification par {{ updatedByFull }} le {{ updatedOn }}",
   "version.compare.header.default": "Sélectionnez 2 versions à comparer",
   "version.compare.header": "Comparaison des versions {{ oldVersion }} et {{ newVersion }}",

@@ -1,4 +1,4 @@
-import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnter, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT } from '@angular/common';
 import {
@@ -27,7 +27,6 @@ import {
   addOrMoveItem,
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
-  findNodeById,
   handleLevelMove,
   setBlockOrCrossHeading,
   setNumber,
@@ -59,7 +58,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   user: UserDetails;
 
   //toc related
-  toc: TableOfContentItemVO[];
   selectedNode: TableOfContentItemVO = null;
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
@@ -68,8 +66,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   dragAction: DragAction;
   expandedNodes: string[] = [];
   invalidNodes: Set<TableOfContentItemVO>;
-  //used for scrolling back after re-renders
-  scrollPosition = 0;
+
+  //related to drag and drop ui actions
+  prevElem: HTMLElement;
+  prevAction: string;
+  dragTimer: any;
 
   //environment var
   environment = process.env.NG_APP_LEOS_INSTANCE;
@@ -155,19 +156,18 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       case 'TITLE':
       case 'PART':
       case 'SECTION':
-        return `${capitalizeFirstLetter(node.tocItem.aknTag)} ${node.number} ${
-          node.heading ? '- ' + node.heading : ''
-        }`;
+        return truncate(
+          `${capitalizeFirstLetter(node.tocItem.aknTag)} ${node.number} ${
+            node.heading ? '- ' + node.heading : ''
+          }`,
+          { length: MAX_LABEL_TREE_LENGTH },
+        );
       default:
         return truncate(
           [node.number, node.heading || node.content].filter(Boolean).join(' '),
           { length: MAX_LABEL_TREE_LENGTH },
         );
     }
-  }
-
-  isEditMode() {
-    return this.isEdit;
   }
 
   handleNodeChanges(event) {
@@ -298,7 +298,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       //hilight invalid nodes
       const element = document.querySelector(`[data-id=${node.id}]`);
       if (element)
-        element.children[0].children[0].classList.add('invalid-node');
+        element.children[1].children[0].classList.add('invalid-node');
     }
   }
 
@@ -314,10 +314,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   hanldeNodeSelect(node: TableOfContentItemVO) {
     this.selectedNode = node;
-    //if a node is already selected and the mode is edit select and apply the needed styling
-    if (this.isEdit) this.handleTocStylingOnInlineEdit(true);
-    this.scrollToDocumentElement(node);
-    this.hilightSelectedNode(node);
+    // this.hilightSelectedNode(node);
+    setTimeout(() => {
+      this.handleTocStylingOnInlineEdit(this.isEdit);
+      this.scrollToDocumentElement(node);
+    });
   }
 
   //a node can be dropped from two sources
@@ -356,49 +357,55 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   dragMoved(event: CdkDragMove, isAdd: boolean = false) {
-    this.clearDragInfo();
-    this.selectedNode = null;
-    this.handleTocStylingOnInlineEdit(this.isEditMode());
-    let el = this.document.elementFromPoint(
-      event.pointerPosition.x,
-      event.pointerPosition.y,
-    );
+    //introduce a small debounce , when the toc gets to large we have performance issues
+    //drag moved runs on every drag and drop move , this means a lot ...
+    clearTimeout(this.dragTimer);
+    this.dragTimer = setTimeout(() => {
+      this.clearDragInfo();
+      this.selectedNode = null;
+      let el = this.document.elementFromPoint(
+        event.pointerPosition.x,
+        event.pointerPosition.y,
+      );
 
-    el = this.getToMatNodeFromChild(el);
-    if (el) {
-      const targetId = el.getAttribute('data-id');
-      const level = parseInt(el.getAttribute('aria-level'), 10);
+      const node = this.getToMatNodeFromChild(el);
+      if (node) {
+        const targetId = node.getAttribute('data-id');
+        const level = parseInt(node.getAttribute('aria-level'), 10);
 
-      if (!el || !level) {
-        this.dragAction = null;
-        return;
+        if (!node || !level) {
+          this.dragAction = null;
+          return;
+        }
+        el = node.children[1].children[0];
+
+        const targetRect = el.getBoundingClientRect();
+        const oneThird = targetRect.height / 3;
+        if (event.pointerPosition.y - targetRect.top < oneThird) {
+          this.dragAction = {
+            action: 'BEFORE',
+            targetId,
+            level,
+            isAdd,
+          };
+        } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
+          this.dragAction = {
+            action: 'AFTER',
+            targetId,
+            level,
+            isAdd,
+          };
+        } else {
+          this.dragAction = {
+            action: 'AS_CHILDREN',
+            targetId,
+            level,
+            isAdd,
+          };
+        }
+        this.showNodeInsertion(node);
       }
-      const targetRect = el.getBoundingClientRect();
-      const oneThird = targetRect.height / 3;
-      if (event.pointerPosition.y - targetRect.top < oneThird) {
-        this.dragAction = {
-          action: 'BEFORE',
-          targetId,
-          level,
-          isAdd,
-        };
-      } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
-        this.dragAction = {
-          action: 'AFTER',
-          targetId,
-          level,
-          isAdd,
-        };
-      } else {
-        this.dragAction = {
-          action: 'AS_CHILDREN',
-          targetId,
-          level,
-          isAdd,
-        };
-      }
-      this.showNodeInsertion();
-    }
+    }, 5);
   }
 
   nodeExpanded(node: TableOfContentItemVO) {
@@ -417,9 +424,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   setTree(toc: TableOfContentItemVO[]) {
-    this.toc = toc;
+    this.prepareTreeForDisplay(toc);
     this.dataSource.data = toc;
     this.treeControl.dataNodes = this.dataSource.data;
+
     this.checkForDraft();
 
     setTimeout(() => {
@@ -462,20 +470,27 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   handleTocStylingOnInlineEdit(isEditMode: boolean) {
-    const treeContainer = this.document.getElementById('treeContainer');
-    if (isEditMode) {
-      if (this.selectedNode) treeContainer.style.maxHeight = '50vh';
-      if (this.selectedNode) {
-        const element = document.querySelector(
-          `[data-id="${this.selectedNode.id}"]`,
-        );
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    } else {
-      treeContainer.style.maxHeight = 'unset';
+    setTimeout(() => {
+      this.hilightSelectedNode(this.selectedNode);
+    });
+  }
+
+  private hilightSelectedNode(node: TableOfContentItemVO) {
+    this.document
+      .querySelectorAll('.selected-node')
+      .forEach((el) => el.classList.remove('selected-node'));
+    const element = document.querySelector(`[data-id="${node.id}"]`);
+    if (element) {
+      element.children[1].children[0].classList.add('selected-node');
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+  }
+
+  private clearSelectedNode() {
+    this.selectedNode = null;
+    this.document
+      .querySelectorAll('.selected-node')
+      .forEach((el) => el.classList.remove('selected-node'));
   }
 
   private populateValidationMessage(response: NodeValidationResponse) {
@@ -488,29 +503,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.messageFromValidation = null;
   }
 
-  private hilightSelectedNode(node: TableOfContentItemVO) {
-    this.document
-      .querySelectorAll('.selected-node')
-      .forEach((el) => el.classList.remove('selected-node'));
-    const element = document.querySelector(`[data-id="${node.id}"]`);
-    if (element) {
-      // element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      element.children[0].children[0].classList.add('selected-node');
-    }
-  }
-
-  private clearSelectedNode() {
-    this.selectedNode = null;
-    this.document
-      .querySelectorAll('.selected-node')
-      .forEach((el) => el.classList.remove('selected-node'));
-  }
-
   private getToMatNodeFromChild(el: Element) {
     if (el.classList.contains('mat-nested-tree-node')) return el;
     if (el.parentElement) {
       const parentEl = this.getToMatNodeFromChild(el.parentElement);
       if (parentEl) return parentEl;
+    }
+  }
+
+  private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
+    for (const n of root || []) {
+      if (n) {
+        //get label to display
+        n.label = this.getLabel(n);
+      }
+      if (n.childItems) this.prepareTreeForDisplay(n.childItems);
     }
   }
 
@@ -599,26 +606,49 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.clearDragInfo();
   }
 
-  private showNodeInsertion(invalid = false) {
-    if (!this.dragAction) {
+  private showNodeInsertion(node: HTMLElement, invalid = false) {
+    //if the action isn't defined or the action and element are the same as the previous move don't render anything
+    if (
+      !this.dragAction ||
+      (this.dragAction.action !== 'AS_CHILDREN' &&
+        node === this.prevElem &&
+        this.dragAction.action === this.prevAction)
+    ) {
       return;
     }
-    const node = this.document.querySelector(
-      `[data-id="${this.dragAction.targetId}"]`,
-    );
-    // wrap the label not the tree
-    const labelContainer = node;
-    labelContainer.classList.add(
-      `drop-${this.dragAction.action.toLocaleLowerCase()}`,
-    );
-    if (invalid) {
-      labelContainer.classList.add(
-        `drop-${this.dragAction.action.toLocaleLowerCase()}-invalid`,
-      );
+
+    //clean previous placeholders
+    this.cleanPlaceholders();
+
+    if (this.dragAction.action !== 'AS_CHILDREN') {
+      switch (this.dragAction.action) {
+        case 'AFTER':
+          (node.children[2] as HTMLElement).style.height = '24px';
+          (node.children[2] as HTMLElement).style.display = 'block';
+          break;
+        case 'BEFORE':
+          (node.children[0] as HTMLElement).style.height = '24px';
+          (node.children[0] as HTMLElement).style.display = 'block';
+          break;
+      }
     }
-    setTimeout(() => {
-      this.clearInvalidDrop();
-    }, TIME_TO_CLEAR_INVALID);
+    if (this.dragAction.action === 'AS_CHILDREN') {
+      // wrap the label not the tree
+      const labelContainer = node.getElementsByTagName('li')[0];
+      labelContainer.classList.add(
+        `drop-${this.dragAction.action.toLocaleLowerCase()}`,
+      );
+      if (invalid) {
+        labelContainer.classList.add(
+          `drop-${this.dragAction.action.toLocaleLowerCase()}-invalid`,
+        );
+      }
+      setTimeout(() => {
+        this.clearInvalidDrop();
+      }, TIME_TO_CLEAR_INVALID);
+    }
+    this.prevElem = node;
+    this.prevAction = this.dragAction.action;
   }
 
   private clearDragInfo(dropped = false) {
@@ -637,7 +667,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .forEach((element) => element.classList.remove('drop-as_children'));
   }
 
+  private cleanPlaceholders() {
+    this.document.querySelectorAll('.drop-placeholder').forEach((element) => {
+      (element as HTMLElement).style.height = '0px';
+      (element as HTMLElement).style.display = 'none';
+    });
+  }
+
   private clearInvalidDrop() {
+    this.cleanPlaceholders();
     this.document
       .querySelectorAll('.drop-before-invalid')
       .forEach((element) => element.classList.remove('drop-before-invalid'));
@@ -656,9 +694,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (targetElement) {
       targetElement.style.backgroundColor = 'cornsilk';
       setTimeout(() => {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      setTimeout(() => {
         targetElement.style.background = '';
-      }, 500);
-      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2000);
     }
   }
 
@@ -735,10 +775,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (!isAdd) this.removeNode(newTree, eventItem);
     //get node to insert to as child
     const parentToBeNode = this.findNodeById(newTree, target.id);
-    if (!parentToBeNode.tocItem.childrenAllowed) {
-      this.showNodeInsertion(true);
-      return;
-    }
     //set the selected / dragged  node to have the same id as the node droped/moved at
     eventItem.parentItem = parentToBeNode.id;
     parentToBeNode.childItems.push(eventItem);
@@ -830,11 +866,18 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     targetElement: TableOfContentItemVO,
     position: string,
   ) {
-    addOrMoveItem(isAdd, eventItem, targetElement, this.toc, null, position);
+    addOrMoveItem(
+      isAdd,
+      eventItem,
+      targetElement,
+      this.treeControl.dataNodes,
+      null,
+      position,
+    );
     if (isAdd) {
       eventItem.indentOriginIndentLevel = -1;
 
-      setNumber(this.toc, eventItem, targetElement);
+      setNumber(this.treeControl.dataNodes, eventItem, targetElement);
       this.moveOriginAttribute(eventItem, targetElement);
       if (eventItem.tocItem.addSoftAttr) {
         eventItem.softActionAttr = 'ADD';
@@ -862,8 +905,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
 
     //for both add or move
-    updateDepthOfTocItems(this.toc);
+    updateDepthOfTocItems(this.treeControl.dataNodes);
     handleLevelMove(eventItem, targetElement);
-    setBlockOrCrossHeading(this.toc, eventItem);
+    setBlockOrCrossHeading(this.treeControl.dataNodes, eventItem);
   }
 }

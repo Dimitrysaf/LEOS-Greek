@@ -1,9 +1,9 @@
 <eui-dialog #deleteDialog>
   <eui-dialog-header>
-    <h3>{{ title }}</h3>
+    <h3 [innerHTML]="title"></h3>
   </eui-dialog-header>
   <div class="d-flex flex-column">
-    <p>{{ description }}</p>
+    <p [innerHTML]="description"></p>
   </div>
   <eui-dialog-footer>
     <div class="app-dialog-footer-content">

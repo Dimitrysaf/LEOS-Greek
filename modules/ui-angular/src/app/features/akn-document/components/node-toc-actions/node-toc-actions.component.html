@@ -1,0 +1,58 @@
+<eui-dropdown
+  *ngIf="isEditMode && node.tocItem.draggable && !node.tocItem.root"
+>
+  <button
+    euiButton
+    euiRounded
+    euiIconButton
+    euiBasicButton
+    euiSecondary
+    euiSizeS
+  >
+    <span euiSizeS euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+  </button>
+  <eui-dropdown-content>
+    <div euiList>
+      <button
+        euiListItem
+        euiSizeS
+        (click)="onMove()"
+        *ngIf="!isNodeSelectedToMove"
+      >
+        {{ 'page.editor.toc.move-actions.move' | translate }}
+      </button>
+      <button
+        euiListItem
+        euiSizeS
+        (click)="onPlaceAt('BEFORE')"
+        *ngIf="isNodeSelectedToMove"
+      >
+        {{ 'page.editor.toc.move-actions.place-before' | translate }}
+      </button>
+      <button
+        euiListItem
+        euiSizeS
+        (click)="onPlaceAt('AS_CHILDREN')"
+        *ngIf="isNodeSelectedToMove"
+      >
+        {{ 'page.editor.toc.move-actions.place-child' | translate }}
+      </button>
+      <button
+        euiListItem
+        euiSizeS
+        (click)="onPlaceAt('AFTER')"
+        *ngIf="isNodeSelectedToMove"
+      >
+        {{ 'page.editor.toc.move-actions.place-after' | translate }}
+      </button>
+      <button
+        euiListItem
+        euiSizeS
+        (click)="onCancelMove()"
+        *ngIf="isNodeSelectedToMove"
+      >
+        {{ 'global.actions.cancel' | translate }}
+      </button>
+    </div>
+  </eui-dropdown-content>
+</eui-dropdown>
