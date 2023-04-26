@@ -114,41 +114,61 @@
   #createVersionDialog
   [title]="'page.editor.actions-dropdown.save-version.modal' | translate"
   [width]="'25vw'"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
   [hasCloseButton]="false"
   (close)="closeVersionModal()"
-  (accept)="onSaveVersion()"
-  (dismiss)="closeVersionModal()"
 >
+  <!-- Body -->
   <form [formGroup]="createForm">
-    <div class="row eui-u-mt-m">
-      <div class="col-md-3">
-        <label euiLabel for="title">{{
-          'page.editor.actions-dropdown.save-version.modal.title' | translate
-        }}</label>
-      </div>
-      <div class="col-md-9 eui-inline-edit">
-        <input id="title" euiInputText formControlName="title" required />
-      </div>
+    <div euiInputGroup>
+      <label euiLabel euiRequired for="title">{{
+        'page.editor.actions-dropdown.save-version.modal.title.label'
+          | translate
+      }}</label>
+      <input
+        id="title"
+        euiInputText
+        formControlName="title"
+        [placeholder]="
+          'page.editor.actions-dropdown.save-version.modal.title.placeholder'
+            | translate
+        "
+      />
     </div>
 
-    <div class="row eui-u-mt-m">
-      <div class="col-md-3">
-        <label euiLabel for="description">{{
-          'page.editor.actions-dropdown.save-version.modal.description'
+    <div euiInputGroup>
+      <label euiLabel for="description">{{
+        'page.editor.actions-dropdown.save-version.modal.description.label'
+          | translate
+      }}</label>
+      <textarea
+        id="description"
+        euiTextArea
+        formControlName="description"
+        [placeholder]="
+          'page.editor.actions-dropdown.save-version.modal.description.placeholder'
             | translate
-        }}</label>
-      </div>
-      <div class="col-md-9 eui-inline-edit">
-        <textarea
-          id="description"
-          euiTextArea
-          formControlName="description"
-        ></textarea>
-      </div>
+        "
+        rows="4"
+      ></textarea>
     </div>
   </form>
+
+  <!-- Footer -->
+  <eui-dialog-footer>
+    <div class="app-dialog-footer-content">
+      <button euiButton euiSecondary (click)="closeVersionModal()">
+        {{ 'global.actions.cancel' | translate }}
+      </button>
+      <button
+        euiButton
+        euiPrimary
+        (click)="onSaveVersion()"
+        [disabled]="createForm.invalid"
+      >
+        {{ 'global.actions.save' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
 </eui-dialog>
 
 <app-download-econsilium-modal #eConsiliumModal></app-download-econsilium-modal>

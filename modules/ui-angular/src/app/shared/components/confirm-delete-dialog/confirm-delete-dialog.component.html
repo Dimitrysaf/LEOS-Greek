@@ -5,12 +5,12 @@
   <div class="d-flex flex-column">
     <p>{{ description }}</p>
   </div>
-  <eui-dialog-footer class="">
-    <div class="dialog-footer-content">
-      <button euiButton euiSecondary class="mr-3" (click)="handleCancel()">
+  <eui-dialog-footer>
+    <div class="app-dialog-footer-content">
+      <button euiButton euiSecondary (click)="handleCancel()">
         {{ 'global.actions.cancel' | translate }}
       </button>
-      <button euiButton euiDanger class="ml-2" (click)="handleConfirm()">
+      <button euiButton euiDanger (click)="handleConfirm()">
         {{ 'global.actions.delete' | translate }}
       </button>
     </div>
