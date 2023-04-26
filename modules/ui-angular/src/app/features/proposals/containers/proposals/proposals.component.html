@@ -98,7 +98,6 @@
               <eui-paginator
                 #paginatorComponent
                 class="eui-u-pv-2xs"
-                [pageSizeOptions]="[1, 2, 40]"
                 [pageSize]="limit$ | async"
                 [length]="totalResults$ | async"
                 (pageChange)="handlePagerChange($event)"
