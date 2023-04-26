@@ -1,12 +1,5 @@
-import { DOCUMENT, formatDate } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { formatDate } from '@angular/common';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
@@ -48,8 +41,8 @@ export class CoEditionInfoComponent implements OnInit, OnDestroy {
         (target =
           target +
           `${c.userName} editing since ${formatDate(
-            c.editionTime,
-            'dd/mm/yyyy HH:MM',
+            new Date(c.editionTime),
+            'dd/MM/yyyy hh:mm',
             'en-US',
           )} \n `),
     );
