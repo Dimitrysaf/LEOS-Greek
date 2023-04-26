@@ -318,7 +318,7 @@
                 'page.collection.drafts.annex.table.tr.title' | translate
               "
             >
-              <div class="d-flex flex-row">
+              <div class="d-flex flex-row eui-u-flex-align-items-center">
                 <app-co-edition-info
                   *ngIf="coEditionMap"
                   [documentCoEditions]="
@@ -326,27 +326,31 @@
                   "
                 ></app-co-edition-info>
                 <a
-                  *ngIf="row.title"
                   [routerLink]="['/annex', row.metadata.internalRef]"
                   (click)="$event.preventDefault()"
-                  ><strong>{{ row.title }}</strong></a
+                  ><strong>{{
+                    row.title
+                      ? row.title
+                      : ('page.collection.drafts.annex.table.tr.no-title'
+                        | translate)
+                  }}</strong></a
                 >
+                <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                  <button
+                    *ngIf="!row.title"
+                    euiButton
+                    euiBasicButton
+                    euiPrimary
+                    class="eui-u-mr-s"
+                    (click)="handleAnnexEditTitle(row)"
+                  >
+                    {{
+                      'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
+                        | translate
+                    }}
+                  </button>
+                </ng-container>
               </div>
-              <ng-container *appUserHasPermission="['CAN_UPDATE']">
-                <button
-                  *ngIf="!row.title"
-                  euiButton
-                  euiBasicButton
-                  euiPrimary
-                  class="eui-u-mr-s"
-                  (click)="handleAnnexEditTitle(row)"
-                >
-                  {{
-                    'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
-                      | translate
-                  }}
-                </button>
-              </ng-container>
             </td>
             <td
               [attr.data-col-label]="
