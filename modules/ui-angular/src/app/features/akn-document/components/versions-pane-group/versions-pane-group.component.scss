@@ -1,13 +1,18 @@
 .subversions {
   align-items: center;
   display: grid;
-  grid-template-columns: min-content auto min-content;
+  grid-template-columns: min-content minmax(0, auto) min-content;
   max-height: 100px;
 }
 
 .subversions > .version {
   justify-self: end;
-  margin-right: 0.25em; // ~ a single space character
+  margin-right: 0.25em; // ~= a single space character
+}
+
+.subversions > .title {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .eui-card-header__title-container-title,
