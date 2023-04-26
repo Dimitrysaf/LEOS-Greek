@@ -183,7 +183,7 @@
                 </button>
                 <eui-dropdown-content>
                   <div euiList>
-                    <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                    <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
                       <button
                         class="eui-u-p-s"
                         euiListItem
@@ -259,7 +259,7 @@
             {{ 'page.collection.drafts.annex.no-annex' | translate }}
           </div>
         </div>
-        <ng-container *appUserHasPermission="['CAN_UPDATE']">
+        <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
           <button
             class="eui-u-ml-l"
             euiButton
@@ -269,7 +269,7 @@
             {{ 'global.actions.add' | translate }}
           </button>
         </ng-container>
-        <ng-container *appUserHasPermission="['CAN_UPDATE']">
+        <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
           <button
             class="eui-u-ml-l"
             euiButton
@@ -335,7 +335,7 @@
                         | translate)
                   }}</strong></a
                 >
-                <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
                   <button
                     *ngIf="!row.title"
                     euiButton
@@ -397,7 +397,7 @@
                   </button>
                   <eui-dropdown-content>
                     <div euiList>
-                      <ng-container *appUserHasPermission="['CAN_UPDATE']">
+                      <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
                         <button
                           class="eui-u-p-s"
                           euiListItem
@@ -405,7 +405,7 @@
                           (click)="handleAnnexEditTitle(row)"
                         ></button>
                       </ng-container>
-                      <ng-container *appUserHasPermission="['CAN_DELETE']">
+                      <ng-container *ngIf="permissions.includes('CAN_DELETE')">
                         <button
                           class="eui-u-p-s"
                           euiListItem

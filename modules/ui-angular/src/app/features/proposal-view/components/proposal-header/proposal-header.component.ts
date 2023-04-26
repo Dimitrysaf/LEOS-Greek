@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -13,14 +14,13 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import {
-  EuiDialogComponent,
-  EuiDialogService,
-} from '@eui/components/eui-dialog';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { Subject, takeUntil } from 'rxjs';
 
+import { Permission } from '@/shared';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
+
+import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({
   selector: 'app-proposal-header',
@@ -28,7 +28,7 @@ import { noWhitespaceValidator } from '@/shared/utils/validators';
   styleUrls: ['./proposal-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProposalHeaderComponent implements OnInit {
+export class ProposalHeaderComponent implements OnInit, OnDestroy {
   @Input() nonEditablePartOfTitle: string;
   @Input() editableTitle: string;
   @Output() saveTitle: EventEmitter<string> = new EventEmitter();
@@ -36,7 +36,19 @@ export class ProposalHeaderComponent implements OnInit {
 
   title: string;
   createForm: FormGroup;
-  constructor(private fb: FormBuilder) {}
+  permissions: Permission[];
+
+  private destroy$: Subject<void> = new Subject();
+
+  constructor(
+    private fb: FormBuilder,
+    private proposalDetailsService: ProposalDetailsService,
+  ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
     this.title = this.editableTitle;
@@ -45,6 +57,9 @@ export class ProposalHeaderComponent implements OnInit {
         validators: [Validators.required, noWhitespaceValidator],
       }),
     });
+    this.proposalDetailsService.permissions$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((perms) => (this.permissions = perms));
   }
 
   handleEdit() {

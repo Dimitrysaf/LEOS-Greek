@@ -7,8 +7,8 @@
     flex-direction: column;
     font-size: 10px !important;
     height: 100%;
-    overflow: auto;
     height: 80vh;
+    overflow: auto;
   }
 
   @include eui-scrollbars();
@@ -22,11 +22,11 @@
     border-radius: 2rem;
     box-shadow: 0 0 0 rgb(0 0 0 / 20%), 0 0 4px rgb(0 0 0 / 20%),
       0 0 6px rgb(0 0 0 / 20%), 0 0 8px rgb(0 0 0 / 20%);
-    height: 0px;
+    display: none;
+    height: 0;
     margin: 0;
     opacity: 0.3;
     padding: 0;
-    display: none;
   }
 
   .cdk-drag-placeholder {
@@ -36,6 +36,7 @@
 
 .tree-container {
   @include eui-scrollbars();
+
   flex-grow: 7;
   overflow: auto;
 }

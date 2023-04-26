@@ -1,4 +1,4 @@
-<ng-container *appUserHasPermission="['CAN_CREATE_MILESTONE']">
+<ng-container *ngIf="permissions.includes('CAN_CREATE_MILESTONE')">
   <div class="eui-u-flex eui-u-flex-justify-content-end">
     <button
       class="eui-u-mb-m eui-u-mt-2xs"

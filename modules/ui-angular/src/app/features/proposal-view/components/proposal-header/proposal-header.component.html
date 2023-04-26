@@ -4,7 +4,7 @@
       {{ nonEditablePartOfTitle }} {{ editableTitle }}
     </h1>
 
-    <ng-container *appUserHasPermission="['CAN_UPDATE']">
+    <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
       <button
         euiButton
         euiSizeS
@@ -58,6 +58,7 @@
     </eui-dialog>
 
     <app-proposal-actions-dropdown
+      [permissions]="permissions"
       class="eui-u-ml-s"
     ></app-proposal-actions-dropdown>
   </header>

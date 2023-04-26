@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
 import { Milestone } from '@/features/proposal-view/models/milestone.model';
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
-import { Document } from '@/shared';
+import { Document, Permission } from '@/shared';
 import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
@@ -25,6 +25,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   milestoneViewData: MilestoneDescriptor = null;
   proposalRef: string;
   dataSource: Milestone[] = [];
+  permissions: Permission[];
+
   destroy$: Subject<any> = new Subject();
 
   constructor(protected proposalDetailsService: ProposalDetailsService) {}
@@ -41,6 +43,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           console.log('Error => ', error);
         },
       });
+
+    this.proposalDetailsService.permissions$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((perms) => (this.permissions = perms));
   }
 
   ngOnDestroy(): void {

@@ -6,7 +6,7 @@
     </button>
     <eui-dropdown-content>
       <ul euiList>
-        <ng-container *appUserHasPermission="['CAN_DOWNLOAD_PROPOSAL']">
+        <ng-container *ngIf="permissions?.includes('CAN_DOWNLOAD_PROPOSAL')">
           <li euiListItem (click)="handleDownload()">
             <button euiListItem>
               {{ 'page.collection.actions-dropdown.donwload' | translate }}
@@ -30,7 +30,7 @@
             'page.collection.actions-dropdown.share' | translate
           }}</a>
         </li>
-        <ng-container *appUserHasPermission="['CAN_DELETE']">
+        <ng-container *ngIf="permissions.includes('CAN_DELETE')">
           <li euiListItem (click)="handleConfirmationDelete()">
             <button euiListItem euiDanger>
               {{ 'global.actions.delete' | translate }}

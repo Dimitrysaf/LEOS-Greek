@@ -4,13 +4,15 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { Document, DocumentType } from '@leos/shared';
+import { Document, DocumentType, Permission } from '@leos/shared';
+import { Subject, takeUntil } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
@@ -25,7 +27,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
   styleUrls: ['./proposal-drafts.component.scss'],
 })
 export class ProposalDraftsComponent
-  implements OnInit, OnChanges, AfterViewInit
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Input() proposal: Document;
   coverpage: Document | null = null;
@@ -37,6 +39,7 @@ export class ProposalDraftsComponent
   explToDelete: Document = null;
   proposalRef: string;
   coEditionMap: Record<string, CoEditionVO[]> = null;
+  permissions: Permission[];
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -55,11 +58,18 @@ export class ProposalDraftsComponent
   title: string;
   activeAnnexId: string;
 
+  private destroy$: Subject<void> = new Subject();
+
   constructor(
     private proposalDetailsService: ProposalDetailsService,
     private route: ActivatedRoute,
     private coEditionService: CoEditionServiceWS,
   ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngAfterViewInit(): void {
     this.coEditionService.allCoEditionInfo.pipe().subscribe((c) => {
@@ -80,6 +90,12 @@ export class ProposalDraftsComponent
     });
     this.populateView();
     this.coEditionService.joinDocumentChannel();
+    this.proposalDetailsService.permissions$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((perms) => {
+        console.log(perms);
+        this.permissions = perms;
+      });
   }
 
   handleAnnexAdd() {
