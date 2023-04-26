@@ -9,7 +9,7 @@
 
 <eui-dialog
   #createWizardDialog
-  [title]="'page.workspace.create-title' | translate"
+  [title]="'page.workspace.create-title.draft' | translate"
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
   (close)="onClose()"
@@ -29,13 +29,18 @@
           #templateSelector
           (selectTemplate)="handleSelectTemplate($event)"
           (selectLanguage)="handleSelectLanguage($event)"
+          translationKey="draft"
         ></app-proposal-create-template-selector>
       </uxWizardStepContent>
     </ux-wizard-step>
-    <ux-wizard-step label="Document metadata" [isCompleted]="createForm.valid">
+    <ux-wizard-step
+      label="{{ 'page.workspace.create-form.draft.label' | translate }}"
+      [isCompleted]="createForm.valid"
+    >
       <uxWizardStepContent>
         <app-proposal-create-form
           [createForm]="createForm"
+          translationKey="draft"
         ></app-proposal-create-form>
       </uxWizardStepContent>
     </ux-wizard-step>
@@ -62,7 +67,7 @@
       >
         <span class="eui-icon eui-icon-chevron-left"></span>
         <span euiLabel>
-          {{ 'page.workspace.create-form.previous' | translate }}
+          {{ 'global.actions.previous' | translate }}
         </span>
       </button>
       <button
@@ -74,7 +79,7 @@
         [hidden]="showCreateHideNext()"
       >
         <span euiLabel>
-          {{ 'page.workspace.create-form.next' | translate }}
+          {{ 'global.actions.next' | translate }}
         </span>
         <span class="eui-icon eui-icon-chevron-right"></span>
       </button>
@@ -85,7 +90,7 @@
         euiPrimary
         (click)="onCreate()"
       >
-        {{ 'page.workspace.create-form.create' | translate }}
+        {{ 'global.actions.create' | translate }}
       </button>
     </div>
   </eui-dialog-footer>

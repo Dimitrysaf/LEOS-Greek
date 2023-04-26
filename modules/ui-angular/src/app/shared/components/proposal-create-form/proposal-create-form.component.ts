@@ -14,6 +14,7 @@ import { FormGroup } from '@angular/forms';
 })
 export class ProposalCreateFormComponent implements OnInit {
   @Input() createForm: FormGroup;
+  @Input() translationKey: 'document' | 'draft' = 'document';
 
   constructor() {}
 
