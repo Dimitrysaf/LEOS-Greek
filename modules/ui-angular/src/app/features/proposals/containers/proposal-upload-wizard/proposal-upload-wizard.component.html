@@ -15,11 +15,10 @@
 <eui-dialog
   #uploadWizard
   [title]="
-    this.tranlsateService.instant(
-      enviromentService.isCouncil()
-        ? 'page.workspace.upload-cn.title'
-        : 'page.workspace.upload.title'
-    )
+    (enviromentService.isCouncil()
+      ? 'page.workspace.upload-cn.title'
+      : 'page.workspace.upload.title'
+    ) | translate
   "
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
@@ -31,11 +30,17 @@
     [isNavigationAllowed]="isNavigationAllowed"
   >
     <ux-wizard-step
-      label="Upload a legislative document"
+      [label]="
+        (enviromentService.isCouncil()
+          ? 'page.workspace.upload-cn.label'
+          : 'page.workspace.upload.label'
+        ) | translate
+      "
       [isCompleted]="step1Complete"
     >
       <uxWizardStepContent>
         <form [formGroup]="uploadForm" enctype="multipart/form-data">
+          <span>{{ 'page.workspace.upload-cn.button.label' | translate }}</span>
           <eui-file-upload
             #uploadFile
             formControlName="legFile"
@@ -46,7 +51,7 @@
             [hasResetButton]="false"
           ></eui-file-upload>
         </form>
-        <div class="d-flxe flxe-column">
+        <div>
           <button
             euiButton
             euiSecondary
@@ -54,7 +59,7 @@
             *ngIf="showResetButton()"
             class="my-3"
           >
-            Reset
+            {{ 'global.actions.reset' | translate }}
           </button>
         </div>
         <eui-card *ngIf="errorsVO">
@@ -75,10 +80,21 @@
         </eui-card>
       </uxWizardStepContent>
     </ux-wizard-step>
-    <ux-wizard-step label="Document metadata" [isCompleted]="uploadForm.valid">
+    <ux-wizard-step
+      [label]="
+        (enviromentService.isCouncil()
+          ? 'page.workspace.create-form.draft.label'
+          : 'page.workspace.create-form.document.label'
+        ) | translate
+      "
+      [isCompleted]="uploadForm.valid"
+    >
       <uxWizardStepContent
         ><app-proposal-create-form
           [createForm]="uploadForm"
+          [translationKey]="
+            (enviromentService.isCouncil() ? 'draft' : 'document') | translate
+          "
         ></app-proposal-create-form
       ></uxWizardStepContent>
     </ux-wizard-step>
@@ -96,7 +112,7 @@
       >
         <span class="eui-icon eui-icon-chevron-left"></span>
         <span euiLabel>
-          {{ 'page.workspace.create-form.previous' | translate }}
+          {{ 'global.actions.previous' | translate }}
         </span>
       </button>
       <button
@@ -107,7 +123,7 @@
         [hidden]="showCreateHideNext()"
       >
         <span euiLabel>
-          {{ 'page.workspace.create-form.next' | translate }}
+          {{ 'global.actions.next' | translate }}
         </span>
         <span class="eui-icon eui-icon-chevron-right"></span>
       </button>
@@ -118,7 +134,7 @@
         euiPrimary
         (click)="onCreate()"
       >
-        {{ 'page.workspace.create-form.create' | translate }}
+        {{ 'global.actions.create' | translate }}
       </button>
     </div>
   </eui-dialog-footer>

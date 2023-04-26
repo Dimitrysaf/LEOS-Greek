@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -30,6 +31,7 @@ const iconClassTemplate = 'eui-icon eui-icon-file';
 export class ProposalCreateTemplateSelectorComponent
   implements OnInit, OnDestroy
 {
+  @Input() translationKey: 'document' | 'draft' = 'document';
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
   @ViewChild('treeComponent') treeComponent: UxTreeComponent;
