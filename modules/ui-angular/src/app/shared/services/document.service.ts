@@ -262,10 +262,6 @@ export class DocumentService implements OnDestroy {
     this.setAnnotationMode = null;
   }
 
-  // closeEditor() {
-  //   console.warn('stub:', 'closeEditor'); // FIXME
-  // }
-
   createNote() {
     console.warn('stub:', 'createNote'); // FIXME
   }
@@ -820,54 +816,58 @@ export class DocumentService implements OnDestroy {
 
   private highlightSearchResults(resultArray: any[]) {
     this.removeHighlights();
-    let multipleInstances = false;
+    const rangeArray = [];
+    const wrapperIdArray = [];
     for (const [index, res] of resultArray.entries()) {
-      if (multipleInstances) {
-        multipleInstances = false;
-        continue;
-      }
       const element = document.getElementById(
         `${res.matchedElements[0].elementId}`,
       );
       if (element) {
-        const elementText = element.childNodes[0];
-        if (elementText) {
-          const range = document.createRange();
-          range.setStart(elementText, res.matchedElements[0].matchStartIndex);
-          range.setEnd(elementText, res.matchedElements[0].matchEndIndex);
+        let elementTextLength = 0;
+        let previousElementTextLength = 0;
+        let foundSearchText = false;
+        element.childNodes.forEach((i, j) => {
+          previousElementTextLength = elementTextLength;
+          if (i.nodeType !== 3) {
+            //nodeType=3 represents a text node
+            const currentTextLength = this.getNodeTextOnlyLength(i);
+            elementTextLength += currentTextLength;
+          } else {
+            elementTextLength += i.textContent.length;
+          }
 
           if (
-            resultArray[index + 1] &&
-            resultArray[index + 1].matchedElements[0].elementId ===
-              res.matchedElements[0].elementId
+            elementTextLength - res.matchedElements[0].matchStartIndex > -1 &&
+            elementTextLength - res.matchedElements[0].matchEndIndex > -1 &&
+            !foundSearchText
           ) {
-            const nextOccurrence = resultArray[index + 1];
-            const range2 = document.createRange();
-            range2.setStart(elementText, nextOccurrence.matchStartIndex);
-            range2.setEnd(elementText, nextOccurrence.matchEndIndex);
-            const wrapper2 = document.createElement('span');
-            const wrapperId2 = 'result-' + (index + 1);
-            wrapper2.id = wrapperId2;
+            const range = document.createRange();
+            const start =
+              res.matchedElements[0].matchStartIndex -
+              previousElementTextLength;
+            range.setStart(i, start);
+            const end =
+              res.matchedElements[0].matchEndIndex - previousElementTextLength;
+            range.setEnd(i, end);
+            rangeArray.push(range);
+            wrapperIdArray.push('result-' + index + '-' + j);
             this.searchResultIndexArray.push({
-              id: wrapper2.id,
-              resultArrayIndex: index + 1,
+              id: 'result-' + index + '-' + j,
+              resultArrayIndex: index,
             });
-            wrapper2.classList.add('search-result');
-            range2.surroundContents(wrapper2);
-            multipleInstances = true;
+            foundSearchText = true;
           }
-          const wrapper = document.createElement('span');
-          const wrapperId = 'result-' + index;
-          wrapper.id = wrapperId;
-          this.searchResultIndexArray.push({
-            id: wrapper.id,
-            resultArrayIndex: index,
-          });
-          wrapper.classList.add('search-result');
-          range.surroundContents(wrapper);
-        }
+        });
       }
     }
+
+    rangeArray.forEach((item, i) => {
+      const wrapper = document.createElement('span');
+      wrapper.id = wrapperIdArray[i];
+
+      wrapper.classList.add('search-result');
+      item.surroundContents(wrapper);
+    });
   }
 
   private removeHighlights() {
@@ -996,5 +996,21 @@ export class DocumentService implements OnDestroy {
           });
         });
     });
+  }
+
+  private getNodeTextOnlyLength(node: Node) {
+    if (node.nodeType === 3) {
+      //nodeType 3 represents a text node
+      return node.textContent.length;
+    } else if (node.nodeName === 'AUTHORIALNOTE') {
+      //if it is a super/subscript dont return any length
+      return 0;
+    } else {
+      if (node.childNodes.length === 1) {
+        return this.getNodeTextOnlyLength(node.childNodes[0]);
+      } else if (node.childNodes.length > 1) {
+        node.childNodes.forEach((n, i) => this.getNodeTextOnlyLength(n));
+      }
+    }
   }
 }
