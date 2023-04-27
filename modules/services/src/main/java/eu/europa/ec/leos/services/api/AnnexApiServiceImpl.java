@@ -36,6 +36,7 @@ import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.AnnexContextService;
@@ -51,6 +52,7 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -88,6 +90,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -130,6 +133,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     LegService legService;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
+    @Autowired
+    LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
@@ -230,8 +235,9 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        return this.structureContext.get().getTocItems();
+        StructureContext context = this.structureContext.get();
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        return context.getTocItems();
     }
 
     @Override
@@ -257,8 +263,9 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        AnnexStructureType structureType = getStructureType();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        AnnexStructureType structureType = getStructureType(structureContext1);
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.annexService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
     }
@@ -312,7 +319,9 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                     || NUM.equalsIgnoreCase(elementTagName)) {
                 levelItemVO = annexProcessor.getLevelItemVO(annex, elementId, elementTagName);
             }
-            return new EditElementResponse(elementId, elementTagName, element, levelItemVO);
+            String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+            User user = securityContext.getUser();
+            return new EditElementResponse(user, permissions, elementId, elementTagName, element, levelItemVO);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);
@@ -411,9 +420,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        List<TocItem> tocItems = this.structureContext.get().getTocItems();
-        List<NumberingConfig> numberConfigs = this.structureContext.get().getNumberingConfigs();
+        StructureContext context = structureContext.get();
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        List<TocItem> tocItems = context.getTocItems();
+        List<NumberingConfig> numberConfigs = context.getNumberingConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
 
@@ -426,13 +436,14 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public DocumentViewResponse changeAnnexStructureType(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        AnnexStructureType currAnnexStructureType = getStructureType();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        AnnexStructureType currAnnexStructureType = getStructureType(structureContext1);
         AnnexStructureType newAnnexStructureType = (currAnnexStructureType.equals(AnnexStructureType.LEVEL))
                 ? AnnexStructureType.ARTICLE
                 : AnnexStructureType.LEVEL;
         String template = applicationProperties.getProperty("leos.annex." + newAnnexStructureType.getType() + ".template");
-        this.setStructureContext(template);
+        structureContext1.useDocumentTemplate(template);
         AnnexContextService service = annexContext.get();
         service.useTemplate(template);
         service.useAnnexId(annex.getId());
@@ -447,10 +458,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         Annex annex = this.annexService.findAnnexByRef(documentRef);
+        StructureContext context = structureContext.get();
 
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
 
-        AnnexStructureType structureType = getStructureType();
+        AnnexStructureType structureType = getStructureType(context);
         final byte[] newXmlContent = annexProcessor.renumberDocument(annex, structureType);
 
         final String title = messageHelper.getMessage("operation.element.document_renumbered");
@@ -470,6 +482,26 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         return templateConfigurationService.getTemplateConfiguration(annex.getMetadata().get().getDocTemplate(), "guidance");
     }
 
+    @Override
+    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        StructureContext context = structureContext.get();
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+
+        List<String> elementAncestorsIds = null;
+        if (elementIds != null && elementIds.size() > 0) {
+            try {
+                elementAncestorsIds = annexService.getAncestorsIdsForElementId(annex, elementIds);
+            } catch (Exception e) {
+                LOG.warn("Could not get ancestors Ids", e);
+            }
+        }
+        // we are combining two operations (get toc + get selected element ancestors)
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex.getId(), TocMode.SIMPLIFIED_CLEAN);
+        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
+    }
+
+
     protected void populateCloneProposalMetadata(Proposal proposal) {
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
@@ -483,8 +515,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         return content.getSource().getBytes();
     }
 
-    private AnnexStructureType getStructureType() {
-        List<TocItem> tocItems = structureContext.get().getTocItems().stream().
+    private AnnexStructureType getStructureType(StructureContext context) {
+        List<TocItem> tocItems = context.getTocItems().stream().
                 filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(AnnexStructureType.LEVEL.getType()) ||
                         tocItem.getAknTag().value().equalsIgnoreCase(ARTICLE.getType()))).collect(Collectors.toList());
         return AnnexStructureType.valueOf(tocItems.get(0).getAknTag().value().toUpperCase());

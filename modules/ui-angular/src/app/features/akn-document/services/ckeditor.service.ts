@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { clone, cloneDeep } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatest,
@@ -24,32 +25,17 @@ import { apiBaseUrl } from 'src/config';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
-import { DocumentConfig } from '@/shared/models';
+import { DocumentConfig, LeosAppConfig, LeosConfig } from '@/shared/models';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
+import { EditElementResponse } from '../models/ckeditor';
 import { TocItem } from '../models/toc.model';
 
 // FIXME: mockdata
 // TODO This must be fetch from a backend Api. Keep in mind that aktTag must always be lowercase
 
-const params = {
-  elementId: '_body_level_1',
-  elementType: 'level',
-  elementFragment: `<level leos:depth="1" xml:id="_body_level_1">
-                <num xml:id="_body_level_1_num">1.</num>
-                <content xml:id="_body_level_1_content">
-                    <p id="_body_level_1_content_p">Text...</p>
-                </content>
-            </level>`,
-  docType: 'annex',
-  instanceType: 'OS',
-  alternatives: '',
-  levelItemVo:
-    '{"id":"_body_level_1","levelNum":"1.","levelDepth":1,"origin":null,"children":[{"id":"_body_level_1_1","levelNum":"1.1.","levelDepth":2,"origin":null,"children":[]}]}',
-  isClonedProposal: false,
-};
 type ResizeListener<T extends Element = Element> = (event: {
   element: T;
 }) => void;
@@ -82,7 +68,6 @@ export class CKEditorService implements OnDestroy {
     getState: () => ({
       ...this.leosStateBS.value,
       instanceType: process.env.NG_APP_LEOS_INSTANCE,
-      alternateConfigsJsonArray: JSON.stringify('[]'),
     }),
     editElementAction: (data: {
       action: string;
@@ -116,23 +101,23 @@ export class CKEditorService implements OnDestroy {
               .pipe(distinctUntilChanged())
               .subscribe((response) => {
                 //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
-                const { alternatives, isClonedProposal } = params;
-
-                const res = JSON.parse(response);
+                this.connector.getState(false).user = response.user;
+                this.connector.getState(false).permissions =
+                  response.permissions;
 
                 this.connector.editElement(
-                  res.elementId,
-                  res.elementTagName,
-                  res.element,
+                  response.elementId,
+                  response.elementTagName,
+                  response.element,
                   documentType,
                   process.env.NG_APP_LEOS_INSTANCE,
-                  alternatives,
-                  JSON.stringify(res.levelItem),
-                  isClonedProposal,
+                  response.alternatives,
+                  JSON.stringify(response.levelItem),
+                  false,
                 );
                 this.coEditionService.joinElementCoEditInfo(
                   documentRef,
-                  res.elementId,
+                  response.elementId,
                 );
               });
           },
@@ -150,23 +135,20 @@ export class CKEditorService implements OnDestroy {
           .pipe(distinctUntilChanged())
           .subscribe((response) => {
             //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
-            const { alternatives, isClonedProposal } = params;
-
-            const res = JSON.parse(response);
 
             this.connector.editElement(
-              res.elementId,
-              res.elementTagName,
-              res.element,
+              response.elementId,
+              response.elementTagName,
+              response.element,
               documentType,
               process.env.NG_APP_LEOS_INSTANCE,
-              alternatives,
-              JSON.stringify(res.levelItem),
-              isClonedProposal,
+              response.alternatives,
+              JSON.stringify(response.levelItem),
+              false,
             );
             this.coEditionService.joinElementCoEditInfo(
               documentRef,
-              res.elementId,
+              response.elementId,
             );
           });
       }
@@ -473,9 +455,8 @@ export class CKEditorService implements OnDestroy {
     elementId: string,
     documentType: string,
   ) {
-    return this.http.get(
+    return this.http.get<EditElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
-      { responseType: 'text' },
     );
   }
 
@@ -548,7 +529,7 @@ export class CKEditorService implements OnDestroy {
       takeUntil(this.destroy$),
       filter((x) => x !== null),
       combineLatestWith(this.documentService.documentCategory$),
-      mergeMap(([documentRef, documentType]) =>
+      switchMap(([documentRef, documentType]) =>
         this.http.get<DocumentConfig>(
           `${apiBaseUrl}/secured/${
             documentType === 'coverpage' ? 'coverPage' : documentType
@@ -559,14 +540,17 @@ export class CKEditorService implements OnDestroy {
   }
 
   private renameConfigKeysForEditor(config: any) {
+    const oldConfig: LeosConfig & DocumentConfig = cloneDeep(config);
+    const tocItems = cloneDeep(oldConfig.tocItems);
+    tocItems.forEach((i) => (i.aknTag = i.aknTag.toLowerCase() as any));
     //toc-items
     Object.defineProperty(
       config,
       'tocItemsJsonArray',
       Object.getOwnPropertyDescriptor(config, 'tocItems'),
     );
-    const tocArray = config.tocItems;
-    config.tocItemsJsonArray = JSON.stringify(tocArray);
+
+    config.tocItemsJsonArray = JSON.stringify(tocItems);
     delete config['tocItems'];
 
     //numberingConfigsJsonArray
@@ -575,14 +559,16 @@ export class CKEditorService implements OnDestroy {
       'numberingConfigsJsonArray',
       Object.getOwnPropertyDescriptor(config, 'numberingConfig'),
     );
-    const numConfigArray = config.numberingConfig;
-    config.numberingConfigsJsonArray = JSON.stringify(numConfigArray);
+    config.numberingConfigsJsonArray = JSON.stringify(
+      oldConfig.numberingConfig,
+    );
     delete config['numberingConfig'];
 
-    //listNumberConfigJsonArray
-    const tmplistNumberConfigJsonArray = config.listNumberConfigJsonArray;
     config.listNumberConfigJsonArray = JSON.stringify(
-      tmplistNumberConfigJsonArray,
+      oldConfig.listNumberConfigJsonArray,
+    );
+    config.alternateConfigsJsonArray = JSON.stringify(
+      oldConfig.alternateConfigs,
     );
 
     //articleTypesConfig
@@ -591,8 +577,9 @@ export class CKEditorService implements OnDestroy {
       'articleTypesConfigJsonArray',
       Object.getOwnPropertyDescriptor(config, 'articleTypesConfig'),
     );
-    const articleTypesConfigObj = config.articleTypesConfig;
-    config.articleTypesConfigJsonArray = JSON.stringify(articleTypesConfigObj);
+    config.articleTypesConfigJsonArray = JSON.stringify(
+      oldConfig.articleTypesConfig,
+    );
     delete config['articleTypesConfig'];
 
     //documentsMetadata
@@ -601,9 +588,8 @@ export class CKEditorService implements OnDestroy {
       'documentsMetadataJsonArray',
       Object.getOwnPropertyDescriptor(config, 'documentsMetadata'),
     );
-    const documentsMetadataJsonArrayVal = config.documentsMetadata;
     config.documentsMetadataJsonArray = JSON.stringify(
-      documentsMetadataJsonArrayVal,
+      oldConfig.documentsMetadata,
     );
     delete config['documentsMetadata'];
 
@@ -614,27 +600,27 @@ export class CKEditorService implements OnDestroy {
       'isImplicitSaveEnabled',
       Object.getOwnPropertyDescriptor(config, 'implicitSaveAndClose'),
     );
-    const implicitSaveAndCloseVal = config.implicitSaveAndClose;
-    config.isImplicitSaveEnabled = JSON.stringify(implicitSaveAndCloseVal);
+    config.isImplicitSaveEnabled = JSON.stringify(
+      oldConfig.implicitSaveAndClose,
+    );
     delete config['implicitSaveAndClose'];
-
-    //spellCheckerEnabled
 
     Object.defineProperty(
       config,
       'isSpellCheckerEnabled',
       Object.getOwnPropertyDescriptor(config, 'spellCheckerEnabled'),
     );
-    const spellCheckerEnabledVal = config.spellCheckerEnabled;
-    config.isSpellCheckerEnabled = JSON.stringify(spellCheckerEnabledVal);
+    config.isSpellCheckerEnabled = JSON.stringify(
+      oldConfig.spellCheckerEnabled,
+    );
     delete config['spellCheckerEnabled'];
 
-    if (!config.spellCheckerServiceUrl) {
+    if (!oldConfig.spellCheckerServiceUrl) {
       config.spellCheckerServiceUrl =
         'https://webgate.acceptance.ec.testa.eu/qas/spellcheck';
     }
 
-    if (!config.spellCheckerSourceUrl) {
+    if (!oldConfig.spellCheckerSourceUrl) {
       config.spellCheckerSourceUrl =
         'https://webgate.acceptance.ec.testa.eu/qas/static/wscbundle/wscbundle.js';
     }

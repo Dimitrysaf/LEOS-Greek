@@ -17,10 +17,15 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
+
+import java.util.List;
 
 public interface AnnexApiService extends BaseDocumentService<Annex> {
 
     public DocumentViewResponse changeAnnexStructureType(String documentRef);
 
     public DocumentViewResponse renumberAnnex(String annexRef);
+
+    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds);
 }

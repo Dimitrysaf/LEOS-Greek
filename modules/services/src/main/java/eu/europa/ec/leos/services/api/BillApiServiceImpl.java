@@ -37,6 +37,7 @@ import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
@@ -52,6 +53,7 @@ import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.ImportElementException;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -96,6 +98,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BillApiServiceImpl implements BillApiService {
@@ -139,6 +142,8 @@ public class BillApiServiceImpl implements BillApiService {
     TransformationService transformationService;
     @Autowired
     LegService legService;
+    @Autowired
+    LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
 
     private Provider<CloneContext> cloneContext;
     protected Provider<BillContextService> contex;
@@ -218,14 +223,15 @@ public class BillApiServiceImpl implements BillApiService {
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         String jsonAlternatives = "";
         try {
-            String element = this.elementProcessor.getElement(bill, elementTagName, elementId);
+            String element = elementProcessor.getElement(bill, elementTagName, elementId);
             String alternateAttrVal = elementProcessor.getElementAttributeValueByNameAndId(bill, LEOS_ALTERNATIVE_ATTR, elementTagName, elementId);
             if (alternateAttrVal != null && alternateAttrVal.equalsIgnoreCase("true")) {
                 jsonAlternatives = templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "alternatives");
             }
 
-
-            return new EditElementResponse(
+            String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+            User user = securityContext.getUser();
+            return new EditElementResponse(user, permissions,
                     elementId, elementTagName, element, jsonAlternatives);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
@@ -326,10 +332,11 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
-        List<TocItem> tocItems = this.structureContext.get().getTocItems();
-        List<NumberingConfig> numberConfigs = this.structureContext.get().getNumberingConfigs();
-        List<AlternateConfig> alternateConfigs = this.structureContext.get().getAlternateConfigs();
+        StructureContext structure = structureContext.get();
+        structure.useDocumentTemplate(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        List<TocItem> tocItems = structure.getTocItems();
+        List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
+        List<AlternateConfig> alternateConfigs = structure.getAlternateConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
 
@@ -380,6 +387,24 @@ public class BillApiServiceImpl implements BillApiService {
         } else {
             throw new ImportElementException("Search returned with no result! Please modify the search parameters");
         }
+    }
+
+    @Override
+    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
+        Bill bill = billService.findBillByRef(documentRef);
+        List<String> elementAncestorsIds = null;
+        StructureContext context = structureContext.get();
+        context.useDocumentTemplate(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        if (elementIds != null && elementIds.size() > 0) {
+            try {
+                elementAncestorsIds = billService.getAncestorsIdsForElementId(bill, elementIds);
+            } catch (Exception e) {
+                LOG.warn("Could not get ancestors Ids", e);
+            }
+        }
+        // we are combining two operations (get toc + get selected element ancestors)
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(bill.getId(), TocMode.SIMPLIFIED_CLEAN);
+        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
     }
 
     @Override
@@ -542,8 +567,9 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
-        this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
-        return this.structureContext.get().getTocItems();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        return structureContext1.getTocItems();
     }
 
     private String getImportXml(String content) {

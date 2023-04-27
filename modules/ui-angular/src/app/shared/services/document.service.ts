@@ -179,7 +179,7 @@ export class DocumentService implements OnDestroy {
 
     this.documentConfig$ = documentRefNotNull$.pipe(
       combineLatestWith(documentCategoryNotNull$),
-      mergeMap(([ref, category]) => this.getDocumentConfig(ref, category)),
+      switchMap(([ref, category]) => this.getDocumentConfig(ref, category)),
     );
 
     this.recentChanges$ = documentRefNotNull$.pipe(

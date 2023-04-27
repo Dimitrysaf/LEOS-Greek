@@ -32,6 +32,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
@@ -112,6 +113,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     TemplateConfigurationService templateConfigurationService;
     @Autowired
     LegService legService;
+    @Autowired
+    LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
 
     private Provider<CloneContext> cloneContext;
     private Provider<BillContextService> context;
@@ -213,8 +216,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        this.setStructureContext(proposal.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        return this.structureContext.get().getTocItems();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(proposal.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        return structureContext1.getTocItems();
     }
 
     @Override
@@ -265,7 +269,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         String element = this.elementProcessor.getElement(proposal, elementTagName, elementId);
         String jsonAlternatives = "";
-        return new EditElementResponse(
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        User user = securityContext.getUser();
+        return new EditElementResponse(user, permissions,
                 elementId, elementTagName, element, jsonAlternatives);
     }
 
@@ -353,8 +359,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        this.setStructureContext(proposal.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
-        List<TocItem> tocItems = this.structureContext.get().getTocItems();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(proposal.getMetadata().getOrError(() -> "Proposal metadata is required!").getDocTemplate());
+        List<TocItem> tocItems = structureContext1.getTocItems();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(proposal.getId());
 
         return new DocumentConfigResponse(

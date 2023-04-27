@@ -30,6 +30,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
@@ -110,6 +111,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     UserHelper userHelper;
     @Autowired
     LegService legService;
+    @Autowired
+    LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
 
     private Provider<BillContextService> context;
 
@@ -197,8 +200,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
-        return this.structureContext.get().getTocItems();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        return structureContext1.getTocItems();
     }
 
     @Override
@@ -245,9 +249,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Memorandum bill = this.memorandumService.findMemorandumByRef(documentRef);
         String jsonAlternatives = "";
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        User user = securityContext.getUser();
         try {
             String element = this.elementProcessor.getElement(bill, elementTagName, elementId);
-            return new EditElementResponse(
+            return new EditElementResponse(user, permissions,
                     elementId, elementTagName, element, jsonAlternatives);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
@@ -342,8 +348,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
-        List<TocItem> tocItems = this.structureContext.get().getTocItems();
+        StructureContext context1 = structureContext.get();
+        context1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
+        List<TocItem> tocItems = context1.getTocItems();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
 

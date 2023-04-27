@@ -411,8 +411,9 @@ export class DocumentEditorComponent
       this.openEditorDialog.openDialog();
     } else {
       this.cdkEditor.closeElementEditor();
-      //wait for the API where we get all the metadata for each document
-      this.router.navigate([`/collection/${this.proposalRef}`]);
+
+      const proposalRef = this.documentConfig.proposalMetadata.ref;
+      this.router.navigate([`/collection/${proposalRef}`]);
     }
   }
 
