@@ -25,6 +25,7 @@ import {
   Observable,
   of,
   Subject,
+  take,
   takeUntil,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -116,6 +117,12 @@ export class DocumentEditorComponent
     public breadcrumbService: EuiBreadcrumbService,
     @Inject(DOCUMENT) private document: Document,
   ) {
+    combineLatest([this.route.params, this.route.data])
+      .pipe(take(1))
+      .subscribe(([params, data]) => {
+        this.documentRef = params.id;
+        this.documentType = data.category;
+      });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -140,8 +147,6 @@ export class DocumentEditorComponent
           config.user.connectedEntity ?? config.user.defaultEntity
         ).name;
         this.showStatusFilter = config.annotateAuthority === 'LEOS';
-        this.documentRef = params.id;
-        this.documentType = data.category;
         this.documentService.setDocumentCategory(this.documentType);
         this.documentService.setDocumentId(this.documentRef);
         this.documentService.setDocumentCategory(this.documentType);
@@ -612,13 +617,21 @@ export class DocumentEditorComponent
 
   private manageBreadCrumbsDocumentScreen() {
     this.breadcrumbService.setBreadcrumb([
-      { id: 'home', label: 'Home', link: `/workspace` },
+      {
+        id: 'home',
+        label: this.tranlsateService.instant('global.breadcrumb.proposals'),
+        link: `/workspace`,
+      },
       {
         id: 'proposal_view',
-        label: 'Proposal View',
+        label: this.tranlsateService.instant('global.breadcrumb.proposal_view'),
         link: `/collection/${this.documentConfig.proposalMetadata.ref}`,
       },
-      { id: 'document_view', label: 'Document View', link: null },
+      {
+        id: 'document_view',
+        label: capitalizeFirstLetter(this.documentType),
+        link: null,
+      },
     ]);
   }
 }

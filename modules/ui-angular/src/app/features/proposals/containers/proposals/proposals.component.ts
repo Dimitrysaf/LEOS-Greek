@@ -12,6 +12,7 @@ import {
 } from '@eui/components/eui-paginator';
 import { EuiBreadcrumbService } from '@eui/components/layout';
 import { ProcedureType } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, distinctUntilChanged, map, take } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -65,6 +66,7 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private appConfig: AppConfigService,
     public breadcrumbService: EuiBreadcrumbService,
+    public translateService: TranslateService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -204,7 +206,11 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
 
   private manageBreadCrumbsRepository() {
     this.breadcrumbService.setBreadcrumb([
-      { id: 'home', label: 'Home', link: null },
+      {
+        id: 'home',
+        label: this.translateService.instant('global.breadcrumb.proposals'),
+        link: null,
+      },
     ]);
   }
 }

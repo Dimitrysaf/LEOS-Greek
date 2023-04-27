@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EuiBreadcrumbService } from '@eui/components/layout';
 import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -29,6 +30,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     public asService: UxAppShellService,
     private route: ActivatedRoute,
     private proposalDetailsService: ProposalDetailsService,
+    private translateService: TranslateService,
     public breadcrumbService: EuiBreadcrumbService,
   ) {}
 
@@ -113,10 +115,14 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
 
   private manageBreadCrumbsProposalView() {
     this.breadcrumbService.setBreadcrumb([
-      { id: 'home', label: 'Home', link: `/workspace` },
+      {
+        id: 'home',
+        label: this.translateService.instant('global.breadcrumb.proposals'),
+        link: `/workspace`,
+      },
       {
         id: 'proposal_view',
-        label: 'Proposal View',
+        label: this.translateService.instant('global.breadcrumb.proposal_view'),
         link: null,
       },
     ]);
