@@ -13,9 +13,6 @@
  */
 package eu.europa.ec.digit.leos.pilot.controller;
 
-import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
