@@ -13,6 +13,7 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
+import { BreadCrumbItem, EuiBreadcrumbService } from '@eui/components/layout';
 import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
@@ -24,6 +25,7 @@ import {
   Observable,
   of,
   Subject,
+  take,
   takeUntil,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -56,6 +58,7 @@ import { CKEditorService } from '../../services/ckeditor.service';
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit
 {
+  breadCrumbs: BreadCrumbItem[];
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
@@ -111,8 +114,15 @@ export class DocumentEditorComponent
     private coEditionWSService: CoEditionServiceWS,
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
+    public breadcrumbService: EuiBreadcrumbService,
     @Inject(DOCUMENT) private document: Document,
   ) {
+    combineLatest([this.route.params, this.route.data])
+      .pipe(take(1))
+      .subscribe(([params, data]) => {
+        this.documentRef = params.id;
+        this.documentType = data.category;
+      });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -137,15 +147,12 @@ export class DocumentEditorComponent
           config.user.connectedEntity ?? config.user.defaultEntity
         ).name;
         this.showStatusFilter = config.annotateAuthority === 'LEOS';
-        this.documentRef = params.id;
-        this.documentType = data.category;
         this.documentService.setDocumentCategory(this.documentType);
         this.documentService.setDocumentId(this.documentRef);
         this.documentService.setDocumentCategory(this.documentType);
         this.cdkEditor.setDocumentRef(this.documentRef);
         this.cdkEditor.setDocumentType(this.documentType);
       });
-
     this.loadStyleSheet();
 
     this.documentService.documentView$
@@ -202,6 +209,7 @@ export class DocumentEditorComponent
       .subscribe((config) => {
         this.documentConfig = config;
         this.setPageTitle();
+        this.manageBreadCrumbsDocumentScreen();
       });
   }
 
@@ -605,5 +613,25 @@ export class DocumentEditorComponent
   private formatVersionNumber(version: Version): string {
     const { major, intermediate, minor } = version.versionNumber;
     return `${major}.${intermediate}.${minor}`;
+  }
+
+  private manageBreadCrumbsDocumentScreen() {
+    this.breadcrumbService.setBreadcrumb([
+      {
+        id: 'home',
+        label: this.tranlsateService.instant('global.breadcrumb.proposals'),
+        link: `/workspace`,
+      },
+      {
+        id: 'proposal_view',
+        label: this.tranlsateService.instant('global.breadcrumb.proposal_view'),
+        link: `/collection/${this.documentConfig.proposalMetadata.ref}`,
+      },
+      {
+        id: 'document_view',
+        label: capitalizeFirstLetter(this.documentType),
+        link: null,
+      },
+    ]);
   }
 }

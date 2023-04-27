@@ -1,8 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EuiBreadcrumbService } from '@eui/components/layout';
 import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -28,9 +30,12 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     public asService: UxAppShellService,
     private route: ActivatedRoute,
     private proposalDetailsService: ProposalDetailsService,
+    private translateService: TranslateService,
+    public breadcrumbService: EuiBreadcrumbService,
   ) {}
 
   ngOnInit(): void {
+    this.manageBreadCrumbsProposalView();
     this.route.params
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ proposalId }) => {
@@ -106,5 +111,20 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     this.proposalErrorCode =
       error instanceof HttpErrorResponse ? error.status : null;
     this.asService.isBlockDocumentActive = false;
+  }
+
+  private manageBreadCrumbsProposalView() {
+    this.breadcrumbService.setBreadcrumb([
+      {
+        id: 'home',
+        label: this.translateService.instant('global.breadcrumb.proposals'),
+        link: `/workspace`,
+      },
+      {
+        id: 'proposal_view',
+        label: this.translateService.instant('global.breadcrumb.proposal_view'),
+        link: null,
+      },
+    ]);
   }
 }

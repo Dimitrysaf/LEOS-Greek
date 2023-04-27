@@ -1,13 +1,13 @@
 <eui-page>
-  <eui-page-breadcrumb>
-    <eui-breadcrumb class="eui-breadcrumb--compact">
+  <eui-page-breadcrumb euiNoContentPadding class="p-0">
+    <eui-breadcrumb>
       <eui-breadcrumb-item
-        [link]="homeUrl"
-        [label]="'app.breadcrumb.home' | translate"
-      ></eui-breadcrumb-item>
-      <eui-breadcrumb-item
-        [label]="'page.workspace.breadcrumb-title' | translate"
-      ></eui-breadcrumb-item>
+        *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
+        [id]="item.id"
+        [link]="item.link"
+        [label]="item.label"
+      >
+      </eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
 

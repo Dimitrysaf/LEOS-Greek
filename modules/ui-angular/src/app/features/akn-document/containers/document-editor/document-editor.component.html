@@ -1,8 +1,13 @@
 <eui-page *ngIf="xml" euiNoContentPadding>
   <eui-page-breadcrumb euiNoContentPadding class="p-0">
     <eui-breadcrumb>
-      <eui-breadcrumb-item link="/" label="Home"></eui-breadcrumb-item>
-      <eui-breadcrumb-item label="Annex"></eui-breadcrumb-item>
+      <eui-breadcrumb-item
+        *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
+        [id]="item.id"
+        [link]="item.link"
+        [label]="item.label"
+      >
+      </eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
   <eui-page-header class="" [label]="pageTitle">
