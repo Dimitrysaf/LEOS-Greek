@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EuiBreadcrumbService } from '@eui/components/layout';
 import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
 import { Subject, takeUntil } from 'rxjs';
@@ -28,9 +29,11 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     public asService: UxAppShellService,
     private route: ActivatedRoute,
     private proposalDetailsService: ProposalDetailsService,
+    public breadcrumbService: EuiBreadcrumbService,
   ) {}
 
   ngOnInit(): void {
+    this.manageBreadCrumbsProposalView();
     this.route.params
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ proposalId }) => {
@@ -106,5 +109,16 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     this.proposalErrorCode =
       error instanceof HttpErrorResponse ? error.status : null;
     this.asService.isBlockDocumentActive = false;
+  }
+
+  private manageBreadCrumbsProposalView() {
+    this.breadcrumbService.setBreadcrumb([
+      { id: 'home', label: 'Home', link: `/workspace` },
+      {
+        id: 'proposal_view',
+        label: 'Proposal View',
+        link: null,
+      },
+    ]);
   }
 }

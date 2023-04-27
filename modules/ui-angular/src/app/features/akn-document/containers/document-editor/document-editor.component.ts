@@ -13,6 +13,7 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
+import { BreadCrumbItem, EuiBreadcrumbService } from '@eui/components/layout';
 import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
@@ -56,6 +57,7 @@ import { CKEditorService } from '../../services/ckeditor.service';
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit
 {
+  breadCrumbs: BreadCrumbItem[];
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
@@ -111,6 +113,7 @@ export class DocumentEditorComponent
     private coEditionWSService: CoEditionServiceWS,
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
+    public breadcrumbService: EuiBreadcrumbService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.versionSearchForm.valueChanges
@@ -145,7 +148,6 @@ export class DocumentEditorComponent
         this.cdkEditor.setDocumentRef(this.documentRef);
         this.cdkEditor.setDocumentType(this.documentType);
       });
-
     this.loadStyleSheet();
 
     this.documentService.documentView$
@@ -202,6 +204,7 @@ export class DocumentEditorComponent
       .subscribe((config) => {
         this.documentConfig = config;
         this.setPageTitle();
+        this.manageBreadCrumbsDocumentScreen();
       });
   }
 
@@ -605,5 +608,17 @@ export class DocumentEditorComponent
   private formatVersionNumber(version: Version): string {
     const { major, intermediate, minor } = version.versionNumber;
     return `${major}.${intermediate}.${minor}`;
+  }
+
+  private manageBreadCrumbsDocumentScreen() {
+    this.breadcrumbService.setBreadcrumb([
+      { id: 'home', label: 'Home', link: `/workspace` },
+      {
+        id: 'proposal_view',
+        label: 'Proposal View',
+        link: `/collection/${this.documentConfig.proposalMetadata.ref}`,
+      },
+      { id: 'document_view', label: 'Document View', link: null },
+    ]);
   }
 }

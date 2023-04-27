@@ -1,12 +1,14 @@
-<eui-breadcrumb>
-  <eui-breadcrumb-item
-    [link]="homeUrl"
-    [label]="'app.breadcrumb.home' | translate"
-  ></eui-breadcrumb-item>
-  <eui-breadcrumb-item
-    [label]="'page.collection.breadcrumb-title' | translate"
-  ></eui-breadcrumb-item>
-</eui-breadcrumb>
+<eui-page-breadcrumb euiNoContentPadding class="p-0">
+  <eui-breadcrumb>
+    <eui-breadcrumb-item
+      *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
+      [id]="item.id"
+      [link]="item.link"
+      [label]="item.label"
+    >
+    </eui-breadcrumb-item>
+  </eui-breadcrumb>
+</eui-page-breadcrumb>
 
 <section [ngSwitch]="proposalState" class="eui-u-mh-m">
   <ng-container *ngSwitchCase="'done'">
