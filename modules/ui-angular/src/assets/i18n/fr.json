@@ -155,7 +155,7 @@
   "page.collection.drafts.annex.table.tr.last-updated-on": "Dernière mise à jour par",
   "page.collection.drafts.annex.table.tr.actions": "Actions",
   "page.collection.drafts.annex.table.tr.actions.dropdown.edit-title": "Modifier le titre",
-  "page.collection.drafts.annex.table.tr.no-title": "[FR] -No Title-",
+  "page.collection.drafts.annex.table.tr.no-title": "[FR] Annex",
   "page.collection.drafts.annex.delete-dialog.title": "Annex deletion confirm",
   "page.collection.drafts.annex.delete-dialog.desc": "Are you sure that you want to delete the annex?",
   "page.collection.drafts.annex.no-annex": "There is no annex to this document",

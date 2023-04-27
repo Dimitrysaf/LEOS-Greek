@@ -178,7 +178,7 @@
   "page.collection.drafts.annex.table.tr.actions.tooltip": "Annex Actions",
   "page.collection.drafts.annex.table.tr.actions": "Actions",
   "page.collection.drafts.annex.table.tr.actions.dropdown.edit-title": "Edit title",
-  "page.collection.drafts.annex.table.tr.no-title": "-No Title-",
+  "page.collection.drafts.annex.table.tr.no-title": "Annex",
   "page.collection.drafts.annex.delete-dialog.title": "Annex deletion confirm",
   "page.collection.drafts.annex.delete-dialog.desc": "Are you sure that you want to delete the annex?",
   "page.collection.drafts.annex.no-annex": "There is no annex to this document",
