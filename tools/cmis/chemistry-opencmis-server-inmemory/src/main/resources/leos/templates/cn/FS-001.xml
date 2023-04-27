@@ -76,7 +76,7 @@
             <level leos:depth="2" xml:id="_body__level_13" leos:editable="false" leos:deletable="false">
                 <num xml:id="_body__level_13__num">1.3.</num>
                 <heading xml:id="_body__level_13__heading" leos:editable="false">
-                    <b xml:id="_body__level_13__heading__b">The proposal/initiative relates to</b>
+                    <b xml:id="_body__level_13__heading__b">The proposal/initiative relates to:</b>
                 </heading>
                 <list leos:editable="false" class="~CHECK" xml:id="_body__level_13__list">
                     <indent xml:id="_body__level_13__list__indent_1">
@@ -101,7 +101,7 @@
                             <p xml:id="_body__level_13__list__indent_2_2__content__p">
                                 <b xml:id="_body__level_13__list__indent_2_2__content__p__b">a new action following a pilot project/preparatory action
                                     <authorialNote marker="1" placement="bottom" xml:id="_body__level_13__list__indent_2_2__content__p__b__authorialnote">
-                                        <p xml:id="_body__level_13__list__indent_2_2__content__p__b__authorialnote__p">As referred to in Article 58(2)(a) or (b)of the Regulation.</p>
+                                        <p xml:id="_body__level_13__list__indent_2_2__content__p__b__authorialnote__p">As referred to in Article 58(2)(a) or (b) of the Financial Regulation.</p>
                                     </authorialNote>
                                 </b>
                             </p>
@@ -220,7 +220,7 @@
             <level leos:depth="3" xml:id="_body__level_152" leos:editable="true" leos:deletable="false">
                 <num xml:id="_body__level_152__num">1.5.2.</num>
                 <heading xml:id="_body__level_152__heading" leos:editable="false">
-                    <i xml:id="_body__level_152__heading__i" leos:editable="false">Added value of Union involvement (it may result from different factors, e.g. coordination gains, legal certainty, greater effectiveness or complementarities). For the purposes of this point 'added value of Union involvement' is the value resulting from Union intervention which is additional to the value that would have been otherwise created by Member States alone.</i>
+                    <i xml:id="_body__level_152__heading__i" leos:editable="false">Added value of Union involvement (it may result from different factors, e.g. coordination gains, legal certainty, greater effectiveness or complementarities). For the purposes of this point 'added value of Union involvement' is the value resulting from Union intervention, which is additional to the value that would have been otherwise created by Member States alone.</i>
                 </heading>
                 <subparagraph xml:id="_body__level_152__subparagraph_3">
                     <content xml:id="_body__level_152__subparagraph_3__content">
@@ -322,22 +322,15 @@
                         </subparagraph>
                         <list class="~CHECK" xml:id="_body__level_16__list__indent_2__list" leos:editable="false">
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_1">
-                                <num xml:id="_body__level_16__list__indent_2__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_2__list__indent_1__num__inline">&#x2610;</inline>
-                                </num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_1__content">
                                     <p xml:id="_body__level_16__list__indent_2__list__indent_1__content__p">Implementation with a start-up period from
                                         <inline name="date" period="yy" xml:id="_body__level_16__list__indent_2__list__indent_1__content__p__inline_1">YYYY</inline>
                                         to
-                                        <inline name="date" period="yy" xml:id="_body__level_16__list__indent_2__list__indent_1__content__p__inline_2">YYYY</inline>
-                                        ,
+                                        <inline name="date" period="yy" xml:id="_body__level_16__list__indent_2__list__indent_1__content__p__inline_2">YYYY</inline>,
                                     </p>
                                 </content>
                             </indent>
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_2">
-                                <num xml:id="_body__level_16__list__indent_2__list__indent_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_2__list__indent_2__num__inline">&#x2610;</inline>
-                                </num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_2__content">
                                     <p xml:id="_body__level_16__list__indent_2__list__indent_2__content__p">followed by full-scale operation.</p>
                                 </content>
@@ -438,7 +431,7 @@
                                     <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_4_4__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_4_4__content">
-                                    <p xml:id="_body__level_17__list__indent_3__list__indent_4_4__content__p">bodies referred to in Articles 70 and 71 of the Financial Regulation</p>
+                                    <p xml:id="_body__level_17__list__indent_3__list__indent_4_4__content__p">bodies referred to in Articles 70 and 71 of the Financial Regulation;</p>
                                 </content>
                             </indent>
                             <indent leos:editable="false" xml:id="_body__level_17__list__indent_3__list__indent_5_5">
@@ -1760,7 +1753,7 @@
                                 <td colspan = "3" style="width: 130pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;border:1px solid black;text-align:center;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1__td_7_7">
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1__td_7_7__p">Enter as many years as necessary to show the duration of the impact (see point 1.6)</p>
                                 </td>
-                                <td style="width: 88.85pt; border:1px solid black;text-align:center;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1__td_9">
+                                <td style="width: 88.85pt; border: solid black;text-align:center;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1__td_9">
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1__td_9__p">
                                         <b xml:id="_body__level_321__subparagraph_9_9__content__table__tr_1__td_9__p__b">TOTAL</b>
                                     </p>
@@ -1799,8 +1792,10 @@
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_8">
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_8__p"></p>
                                 </td>
-                                <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_9">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_9__p"></p>
+                                <td style="border:solid black;text-align:right; border-bottom: 1px solid;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_9">
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_9__p">
+                                        <b xml:id="_body__level_321__subparagraph_9_9__content__table__tr_3_3__td_9__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4">
@@ -1828,8 +1823,10 @@
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_8">
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_8__p"></p>
                                 </td>
-                                <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_9">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_9__p"></p>
+                                <td style="border: solid black;text-align:right; border-top: 1px solid; border-bottom: 1px solid;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_9">
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_9__p">
+                                        <b xml:id="_body__level_321__subparagraph_9_9__content__table__tr_4_4__td_9__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5">
@@ -1862,8 +1859,10 @@
                                 <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_9">
                                     <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_9__p"></p>
                                 </td>
-                                <td style="border:1px solid black;text-align:right;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_10">
-                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_10__p"></p>
+                                <td style="border:solid black;text-align:right;border-top: 1px solid;" xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_10">
+                                    <p xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_10__p">
+                                        <b xml:id="_body__level_321__subparagraph_9_9__content__table__tr_5__td_10__p__b"> </b>
+                                    </p>
                                 </td>
                             </tr>
                         </table>
@@ -1959,7 +1958,7 @@
                                 </td>
                             </tr>
                             <tr xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2">
-                                <td rowspan="2" style="border:1px solid          black;text-align:center;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_1">
+                                <td rowspan="2" style="border:1px solid black; background-color:#D3D3D3; text-align:center;" xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_1">
                                     <p xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_1__p">
                                         <b xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_1__p__b">TOTAL appropriations
                                             <br xml:id="_body__level_321__subparagraph_12__content__table__tr_2_2__td_1__p__b__br"/>
@@ -2531,7 +2530,7 @@
                             <tr style="border: solid;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12">
                                 <td colspan="3" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_1">
                                     <p xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_1__p">
-                                        <b xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_1__p__b">TOTAL COST</b>
+                                        <b xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_1__p__b">TOTALS</b>
                                     </p>
                                 </td>
                                 <td style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_12__td_2_2">
@@ -3491,6 +3490,11 @@
                 <heading leos:editable="false" xml:id="_body__level_325__heading">
                     <i xml:id="_body__level_325__heading__i">Third-party contributions</i>
                 </heading>
+                <subparagraph leos:editable="false" xml:id="_body__level_325__subparagraph">
+                    <content xml:id="_body__level_325__subparagraph__content">
+                        <p leos:editable="false" xml:id="_body__level_325__subparagraph__content__p">The proposal/initiative:</p>
+                    </content>
+                </subparagraph>
                 <list leos:editable="false" class="~CHECK" xml:id="_body__level_325__list">
                     <indent xml:id="_body__level_325__list__indent_1">
                         <num xml:id="_body__level_325__list__indent_1__num">
