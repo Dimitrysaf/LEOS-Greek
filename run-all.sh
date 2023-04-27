@@ -17,3 +17,4 @@
 ./run-cmis-repository.sh
 ./run-leos.sh
 ./run-akn4euutil.sh
+./run-editlight.sh

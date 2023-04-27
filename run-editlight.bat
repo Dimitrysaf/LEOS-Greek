@@ -1,5 +1,5 @@
 @REM
-@REM Copyright 2017 European Commission
+@REM Copyright 2021 European Commission
 @REM
 @REM Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
 @REM You may not use this work except in compliance with the Licence.
@@ -13,15 +13,17 @@
 @REM
 
 @echo off
+TITLE Edit Light Tool
+echo "---------------------Edit Light-----------------------------------------------"
 
-CALL "cmd /c start run-user-repository.bat"
-CALL "cmd /c start run-cmis-repository.bat"
-CALL "cmd /c start run-leos.bat"
-CALL "cmd /c start run-akn4euutil.bat"
-CALL "cmd /c start run-editlight.bat"
+cd ./tools/editlight
 
-echo "--------------------------------------------------------------------------"
-echo "---BOTH COMMAND WINDOWS NEED TO STAY OPEN FOR LEOS TO FUNCTION-----------"
-echo "---IT MIGHT TAKE FEW MINUTES TO DOWNLOAD DEPENDENCIES AND TO BE READY-----"
-echo "---USE CTRL+C TO STOP INDIVIDUAL COMPONENT--------------------------------"
-echo "--------------------------------------------------------------------------"
+echo "---------------------Edit Light COMPILING...----------------------------------"
+call mvn clean install
+echo "---------------------Edit Light COMPILED.-------------------------------------"
+
+cd ./web
+
+echo "---------------------Edit Light STARTING...-----------------------------------"
+call mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
+echo "---------------------Edit Light STOPPED....-----------------------------------"
