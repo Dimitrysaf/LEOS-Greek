@@ -1,10 +1,12 @@
 package eu.europa.ec.leos.services.processor.node;
 
+import static eu.europa.ec.leos.services.util.TestUtils.removeXmlNSLeosAttribute;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,8 +87,9 @@ public class XmlNodeProcessorImplTest extends LeosTest {
         byte[] returnedElement = metaDataProcessor.setValuesInXml(xmlContent, keyValue, CONFIGURATIONS);
 
         // Then
-        String result = new String(returnedElement);
-        String expected = new String(xmlContentExpected);
+        byte[] returnedXmlWithoutNS = removeXmlNSLeosAttribute(new String(returnedElement)).getBytes(UTF_8);
+        String result = new String(returnedXmlWithoutNS);
+        String expected = new String(xmlContentExpected, StandardCharsets.UTF_8);
         result = squeezeXmlAndRemoveAllNS(result);
         expected = squeezeXmlAndRemoveAllNS(expected);
         assertEquals(expected, result);
@@ -108,7 +111,8 @@ public class XmlNodeProcessorImplTest extends LeosTest {
         byte[] returnedElement = metaDataProcessor.setValuesInXml(xmlContent, keyValue, CONFIGURATIONS);
 
         // Then
-        Map<String, String> resultMap = metaDataProcessor.getValuesFromXml(returnedElement, new String[]{"language",
+        byte[] returnedXmlWithoutNS = removeXmlNSLeosAttribute(new String(returnedElement)).getBytes(UTF_8);
+        Map<String, String> resultMap = metaDataProcessor.getValuesFromXml(returnedXmlWithoutNS, new String[]{"language",
                 "docStage", "docPurpose", "eeaRelevance"}, CONFIGURATIONS);//Using a shortcut to validate test
         assertThat(resultMap.get("language"), is("EN"));
         assertThat(resultMap.get("docStage"), is("NEW Stage"));
@@ -161,7 +165,8 @@ public class XmlNodeProcessorImplTest extends LeosTest {
         expected = squeezeXmlAndRemoveAllNS(expected);
         assertEquals(expected, result);
 
-        Map<String, String> resultMap = metaDataProcessor.getValuesFromXml(returnedElement, new String[]{"language", "docStage", "docPurpose"}, CONFIGURATIONS);
+        byte[] returnedXmlWithoutNS = removeXmlNSLeosAttribute(new String(returnedElement)).getBytes();
+        Map<String, String> resultMap = metaDataProcessor.getValuesFromXml(returnedXmlWithoutNS, new String[]{"language", "docStage", "docPurpose"}, CONFIGURATIONS);
         assertThat(resultMap.get("language"), is("EN"));
         assertThat(resultMap.get("docStage"), is("NEW Stage"));
     }
@@ -225,9 +230,8 @@ public class XmlNodeProcessorImplTest extends LeosTest {
         byte[] returnedElement = metaDataProcessor.setValuesInXml(xmlContent, keyValue, CONFIGURATIONS);
 
         // Then
-        // TODO how to access to the record created?
-//        Map<String, String> resultMap = metaDataProcessor.getValuesFromXml(returnedElement, new String[]{"council_explanatory"}, CONFIGURATIONS);
-//        assertThat(resultMap.get("council_explanatory"), is("newValueCouncilExplanatory"));
+        //Map<String, String> resultMap = metaDataProcessor.getValuesFromXml(returnedElement, new String[]{"council_explanatory"}, CONFIGURATIONS);
+        //assertThat(resultMap.get("council_explanatory"), is("newValueCouncilExplanatory"));
 
         String result = new String(returnedElement);
         String expected = new String(xmlContentExpected);

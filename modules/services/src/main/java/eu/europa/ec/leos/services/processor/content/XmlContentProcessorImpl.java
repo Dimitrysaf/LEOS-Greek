@@ -93,8 +93,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.is;
 import static eu.europa.ec.leos.services.support.XercesUtils.isFirstSubParagraph;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToStringSimple;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.removeXmlNSAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.util.Objects.isNull;
@@ -1281,13 +1281,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Map<String, String> attrs = XercesUtils.getAttributes(node);
         String tagName = node.getNodeName();
         String attrVal = attrs.get(LEOS_EDITABLE_ATTR);
-        
+
         if (attrVal != null) {
         	return attrVal.equalsIgnoreCase("false") ? EditableAttributeValue.FALSE : EditableAttributeValue.TRUE;
         } else if (isExcludedNode(tagName)) {
             return EditableAttributeValue.FALSE;
         }
-        
+
         return EditableAttributeValue.UNDEFINED;
     }
 
@@ -1298,7 +1298,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Element element = null;
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
-            String nodeString = nodeToStringSimple(node);
+            String nodeString = nodeToString(node);
+            nodeString = removeXmlNSAttributes(nodeString);
             element = new Element(idAttributeValue, node.getNodeName(), nodeString);
         }
         return element;

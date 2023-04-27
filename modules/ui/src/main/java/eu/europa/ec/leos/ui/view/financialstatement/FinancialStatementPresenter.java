@@ -510,7 +510,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         }
         String editableXml = documentContentService.toEditableContent(financialStatement,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()), securityContext, coverPageContent);
-        return StringEscapeUtils.unescapeXml(editableXml);
+        return editableXml;
     }
 
     @Subscribe

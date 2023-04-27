@@ -703,7 +703,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private String getEditableXml(Explanatory document) {
         String editableXml = documentContentService.toEditableContent(document,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()), securityContext, new byte[0]);
-        return StringEscapeUtils.unescapeXml(editableXml);
+        return editableXml;
     }
 
     private byte[] getContent(Explanatory explanatory) {

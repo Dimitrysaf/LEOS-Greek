@@ -73,9 +73,7 @@ public class LeosTextComparatorImpl implements TextComparator {
             if (listOfBrokenInternalReferences != null) {
                 result = internalReferenceProcessor.addOriginalBrokenAttributeInInternalReferences(listOfBrokenInternalReferences, result);
             }
-
-            result = parseXml(result);
-
+            //result = parseXml(result);
         } catch (Exception e) {
             LOG.error("Failure during text comparison. Exception thrown from text diffing library ", e);
             result = messageHelper.getMessage("leos.version.compare.error.message");
@@ -152,7 +150,7 @@ public class LeosTextComparatorImpl implements TextComparator {
         List<Node> contentNodes = root.childNodes();
         for (Node node : contentNodes) {
             if (node.getClass().isAssignableFrom(TextNode.class)) {
-                Collections.addAll(listAllElements, splitTextInWords(((TextNode) node).getWholeText()));
+                Collections.addAll(listAllElements, splitTextInWords(node.outerHtml()));
             } else if (node.getClass().isAssignableFrom(Element.class)) {
                 Element nodeEl = (Element) node;
                 if (TAGS_NOT_TO_SPLIT_LIST.contains(node.nodeName().toLowerCase())) {

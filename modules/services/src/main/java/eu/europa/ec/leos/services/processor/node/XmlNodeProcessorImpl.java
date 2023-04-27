@@ -2,14 +2,14 @@ package eu.europa.ec.leos.services.processor.node;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfig.Attribute;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.getDocEEATagList;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
-import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 
 @Service
 public class XmlNodeProcessorImpl implements XmlNodeProcessor {
@@ -68,7 +67,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                 continue;
             }
 
-            String value = parseXml(entry.getValue());
+            String value = entry.getValue();
             // EEA Relevance: Transform boolean to default EEA Relevance message (for now, before accepting custom message)
             if (getDocEEATagList().contains(key)) {
                 value = Boolean.parseBoolean(value) ?
@@ -122,7 +121,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             // Create the node
             createAndUpdateNode(document, xPath, Arrays.asList(), value);
         }
-        return XercesUtils.nodeToByteArraySimple(document);
+        return XercesUtils.nodeToByteArray(document);
     }
 
     private void updateNode(Node node, String value) {

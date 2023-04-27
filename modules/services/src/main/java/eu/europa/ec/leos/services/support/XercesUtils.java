@@ -1,5 +1,44 @@
 package eu.europa.ec.leos.services.support;
 
+import eu.europa.ec.leos.model.action.SoftActionType;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.jaxen.dom.DOMXPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.xml.SimpleNamespaceContext;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
@@ -32,50 +71,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
 import static eu.europa.ec.leos.services.support.XmlHelper.findString;
 import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
 import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
-
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.jaxen.dom.DOMXPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.xml.SimpleNamespaceContext;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import eu.europa.ec.leos.model.action.SoftActionType;
 
 public class XercesUtils {
 
@@ -281,7 +278,8 @@ public class XercesUtils {
     }
 
     public static String getContentNodeAsXmlFragment(Node node) {
-        String xmlContent = nodeToStringSimple(node);
+        String xmlContent = nodeToString(node);
+        xmlContent = removeXmlNSAttributes(xmlContent);
         return XmlHelper.removeEnclosingTags(xmlContent);
     }
 
@@ -307,13 +305,13 @@ public class XercesUtils {
         }
         return sb.toString();
     }
-    
+
     public static byte[] sanitize(byte[] content) {
     	Document doc = createXercesDocument(content);
     	sanitize(doc.getDocumentElement());
     	return nodeToByteArray(doc);
     }
-    
+
     public static void sanitize(Node node) {
     	if (node.getNodeType() == Node.TEXT_NODE) {
     		node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
@@ -341,7 +339,7 @@ public class XercesUtils {
                 sb.append(CLOSE_END_TAG);// sb: <tagName atr="attrVal"/>
             }
         } else if (node.getNodeType() == Node.TEXT_NODE) {
-            sb.append(parseXml(node.getTextContent()));
+            sb.append(node.getTextContent());
         }
 
         NodeList nodeList = node.getChildNodes();
@@ -1071,7 +1069,7 @@ public class XercesUtils {
         }
         return null;
     }
-    
+
     private static String getSoftActionPrefix(String id) {
         if (id != null) {
             return SOFT_ACTIONS_PREFIXES.stream()
@@ -1225,6 +1223,20 @@ public class XercesUtils {
     	}
     }
 
+    public static String removeXmlNSAttributes(String input) {
+        if(!StringUtils.isEmpty(input)) {
+            Document document = createXercesDocument(input.getBytes(UTF_8), true);
+            Node node = document.getFirstChild();
+            Map<String, String> attrMap = getAttributes(node);
+            attrMap.keySet().forEach(attrName -> {
+                if (attrName != null && attrName.startsWith("xmlns")) {
+                    removeAttribute(node, attrName);
+                }
+            });
+            return nodeToString(node);
+        }
+        return "";
+    }
     public static Node getNodeContainingAttributeValue(Node node, String attrName, String attrValue) {
         if (hasAttributeValue(attrName, attrValue, node)) {
             return node;
@@ -1247,7 +1259,7 @@ public class XercesUtils {
         }
         return false;
     }
-    
+
     private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
     	NodeList children = node.getChildNodes();
     	for (int i = 0; i < children.getLength(); i++) {

@@ -204,7 +204,6 @@ import eu.europa.ec.leos.web.ui.navigation.Target;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -936,7 +935,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
         String editableXml = documentContentService.toEditableContent(document,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()), securityContext, coverPageContent);
-        return StringEscapeUtils.unescapeXml(editableXml);
+        return editableXml;
     }
 
     private String getImportXml(String content) {

@@ -105,4 +105,8 @@ public class TestUtils {
     public static String dummyDate(String input) {
         return input.replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"");
     }
+
+    public static String removeXmlNSLeosAttribute(String input) {
+        return input.replaceAll("xmlns:leos=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\"", "");
+    }
 }

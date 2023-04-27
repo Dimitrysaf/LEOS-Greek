@@ -468,7 +468,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         String editableXml = documentContentService.toEditableContent(proposal,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()), securityContext, coverPageContent);
         editableXml = XmlHelper.removeSelfClosingElements(editableXml);
-        return StringEscapeUtils.unescapeXml(editableXml);
+        return editableXml;
     }
 
     @Subscribe
