@@ -6,8 +6,11 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { consumeEvent } from '@eui/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { Version } from '@/features/akn-document/models/versions';
 import { DocumentService } from '@/shared/services/document.service';
@@ -21,13 +24,17 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() version: Version;
   @Input() isMilestone?: boolean;
   @Output() exploreMilestone = new EventEmitter<Version>();
+  @ViewChild('versionRevertDialog') versionRevertDialog: EuiDialogComponent;
   disabled: boolean;
+  versionModalText: string;
+  versionToRevert = '';
 
   private removeEventListener?: () => void;
 
   constructor(
     public doc: DocumentService,
     private elementRef: ElementRef<HTMLElement>,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +44,29 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.removeEventListener?.();
+  }
+
+  onVersionRevert(version: string, versionNumber: string) {
+    this.translate
+      .get('page.editor.versions.restore.modal-text-version', { versionNumber })
+      .subscribe((res) => {
+        this.versionModalText = res;
+      });
+    this.versionToRevert = version;
+    this.versionRevertDialog.openDialog();
+  }
+
+  onAccept() {
+    this.versionRevertDialog.closeDialog();
+    this.doc.versionRevert(this.versionToRevert);
+    this.versionToRevert = '';
+    this.versionModalText = '';
+  }
+
+  onCancel() {
+    this.versionRevertDialog.closeDialog();
+    this.versionToRevert = '';
+    this.versionModalText = '';
   }
 
   /**
