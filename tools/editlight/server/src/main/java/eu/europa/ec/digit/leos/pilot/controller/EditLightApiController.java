@@ -28,11 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin(origins = "*")
 public class EditLightApiController {
 
-    private final LeosDocumentService leosDocumentService;
-
-    public EditLightApiController(LeosDocumentService leosDocumentService) {
-        this.leosDocumentService = leosDocumentService;
-    }
+    public EditLightApiController() {}
     
     @RequestMapping("/test")
     public String test() { return "Test RESTful service"; }
