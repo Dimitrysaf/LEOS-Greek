@@ -20,6 +20,7 @@ import { VersionsPaneGroupComponent } from './components/versions-pane-group/ver
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { DocumentTocComponent } from './containers/document-toc/document-toc.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
+import { SaveVersionDialogComponent } from './components/save-version-dialog/save-version-dialog.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     TocEditorComponent,
     DocumentTocComponent,
     NodeTocActionsComponent,
+    SaveVersionDialogComponent,
   ],
   imports: [
     SharedModule,
