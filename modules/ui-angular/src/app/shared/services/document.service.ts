@@ -878,9 +878,21 @@ export class DocumentService implements OnDestroy {
       el.replaceWith(...el.childNodes);
       p.normalize();
     });
+    this.document.querySelectorAll('.focused-search-result').forEach((el) => {
+      const p = el.parentNode;
+      el.replaceWith(...el.childNodes);
+      p.normalize();
+    });
   }
 
   private scrollToElement(searchObj: any) {
+    if (this.focusedSearchResult !== null) {
+      const currentElement = document.getElementById(
+        this.focusedSearchResult.id,
+      );
+      currentElement.classList.remove('focused-search-result');
+      currentElement.classList.add('search-result');
+    }
     this.focusedSearchResult = searchObj;
 
     const targetElement = document.getElementById(searchObj.id);
@@ -888,6 +900,8 @@ export class DocumentService implements OnDestroy {
       this.currentIndex = this.searchResultIndexArray.indexOf(
         this.focusedSearchResult,
       );
+      targetElement.classList.remove('search-result');
+      targetElement.classList.add('focused-search-result');
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }

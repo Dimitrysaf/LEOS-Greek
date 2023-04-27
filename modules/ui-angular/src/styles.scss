@@ -99,7 +99,11 @@ eui-icon-svg > svg > use {
 }
 
 .search-result {
-  background-color: green !important;
+  background-color: green;
+}
+
+.focused-search-result {
+  background-color: deepskyblue !important;
 }
 
 .version-search-found {
