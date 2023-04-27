@@ -204,7 +204,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         Integer recentCount = this.explanatoryService.findRecentMinorVersionsCount(explanatory.getId(), documentRef);
         List<Explanatory> explanatories = this.explanatoryService.findRecentMinorVersions(explanatory.getId(), documentRef, 0, recentCount);
-        List<VersionVO> recentChanges = VersionsUtil.buildVersionVO(explanatories, messageHelper);
+        List<VersionVO> recentChanges = VersionsUtil.buildVersionResponse(explanatories, messageHelper, userHelper);
         return recentChanges;
     }
 
@@ -218,9 +218,9 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(explanatory.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
-                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
             }
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.explanatoryService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
+            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.explanatoryService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
     }

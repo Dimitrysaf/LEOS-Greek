@@ -210,7 +210,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
         List<Annex> annexes = this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
-        List<VersionVO> recentChanges = VersionsUtil.buildVersionVO(annexes, messageHelper);
+        List<VersionVO> recentChanges = VersionsUtil.buildVersionResponse(annexes, messageHelper, userHelper);
         return recentChanges;
 
     }
@@ -224,10 +224,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
-                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
             }
+            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
             int count = this.annexService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.annexService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
+            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.annexService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
     }

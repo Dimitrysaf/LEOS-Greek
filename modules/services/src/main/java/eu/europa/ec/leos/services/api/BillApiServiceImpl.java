@@ -78,6 +78,7 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
@@ -123,7 +124,7 @@ public class BillApiServiceImpl implements BillApiService {
     ComparisonDelegateAPI<Bill> comparisonDelegate;
 
     @Autowired
-    UserHelperAPI userHelper;
+    UserHelper userHelper;
     @Autowired
     UserService userService;
     @Autowired
@@ -543,7 +544,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         Integer recentCount = this.billService.findRecentMinorVersionsCount(bill.getId(), documentRef);
         List<Bill> bills = this.billService.findRecentMinorVersions(bill.getId(), documentRef, 0, recentCount);
-        return VersionsUtil.buildVersionVO(bills, messageHelper);
+        return VersionsUtil.buildVersionResponse(bills, messageHelper, userHelper);
     }
 
     @Override
@@ -557,9 +558,9 @@ public class BillApiServiceImpl implements BillApiService {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(bill.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
-                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
             }
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.billService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
+            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.billService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
     }

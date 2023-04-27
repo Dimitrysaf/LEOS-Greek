@@ -83,7 +83,7 @@ export class DocumentService implements OnDestroy {
   recentChanges$: Observable<Version[]>;
   documentConfig$: Observable<DocumentConfig>;
   versionId$: Observable<string | null>;
-  versionCompareIds$: Observable<any | null>;
+  versionCompareIds$: Observable<Version[]>;
   searchResultIndexArray: any[];
   focusedSearchResult: any | null;
   currentSearchResults: Array<SearchMatchVO>;
@@ -114,7 +114,7 @@ export class DocumentService implements OnDestroy {
   });
   private versionSearchOpenBS = new BehaviorSubject(false);
   private versionIdBS = new BehaviorSubject<string | null>(null);
-  private versionCompareIdsBS = new BehaviorSubject<any | null>(null);
+  private versionCompareIdsBS = new BehaviorSubject<Version[]>([]);
   private versionSearchParamsBS = new BehaviorSubject({
     type: 'all',
     author: '',
@@ -221,11 +221,10 @@ export class DocumentService implements OnDestroy {
     );
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
-      skip(1),
       takeUntil(this.destroy$),
-      combineLatestWith(this.documentCategory$),
-      mergeMap(([versionCompareIds, category]) =>
-        this.getDocumentVersionsComparison(versionCompareIds, category),
+      combineLatestWith(documentCategoryNotNull$),
+      mergeMap(([versions, category]) =>
+        this.getDocumentVersionsComparison(versions, category),
       ),
     );
 
@@ -515,11 +514,11 @@ export class DocumentService implements OnDestroy {
     });
   }
 
-  setVersionIdsForCompare(versionIdsToCompare: any) {
-    this.versionCompareIdsBS.next(versionIdsToCompare);
+  setVersionCompareIds(versions: Version[]) {
+    this.versionCompareIdsBS.next(versions);
   }
 
-  getVersionsIdsArray() {
+  getVersionCompareIds() {
     return this.versionCompareIdsBS.value;
   }
 
@@ -534,7 +533,7 @@ export class DocumentService implements OnDestroy {
   toggleCompareMode(enabled?: boolean) {
     this.toggleSubject(this.compareModeEnabledBS, enabled);
     this.compareModeEnabledBS.pipe(take(1)).subscribe((e) => {
-      if (!e) this.setVersionIdsForCompare([]);
+      if (!e) this.setVersionCompareIds([]);
     });
   }
 
@@ -714,11 +713,12 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersionsComparison(versionArray?: any, documentType?: string) {
-    if (versionArray?.newVersion && versionArray?.oldVersion && documentType) {
+  getDocumentVersionsComparison(versions: Version[], documentType: string) {
+    const [newVersion, oldVersion] = versions;
+    if (newVersion && oldVersion) {
       documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
       return this.http.get<string>(
-        `${apiBaseUrl}/secured/${documentType}/${versionArray.newVersion}/compare/${versionArray.oldVersion}`,
+        `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
         { responseType: 'text' as 'json' },
       );
     } else {

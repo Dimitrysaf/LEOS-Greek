@@ -15,14 +15,23 @@ import {
 } from '@eui/components/eui-dialog';
 import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { cloneDeep } from 'lodash-es';
+import {
+  combineLatest,
+  combineLatestWith,
+  map,
+  merge,
+  Observable,
+  of,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
-import { DocumentConfig, Metadata } from '@/shared';
+import { DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import {
   MilestoneDescriptor,
@@ -61,7 +70,7 @@ export class DocumentEditorComponent
   versionForView: string;
   versionForViewHeaderTitle: string;
   versionsComparisonForView: string;
-  versionsComparisonForViewHeaderTitle: string;
+  versionsComparisonForViewHeaderTitle$: Observable<string>;
   documentConfig: DocumentConfig;
 
   isVersionForViewOpen = false;
@@ -135,7 +144,6 @@ export class DocumentEditorComponent
         this.documentService.setDocumentCategory(this.documentType);
         this.cdkEditor.setDocumentRef(this.documentRef);
         this.cdkEditor.setDocumentType(this.documentType);
-        this.setVersionComparisonViewHeader(null, null);
       });
 
     this.loadStyleSheet();
@@ -182,16 +190,12 @@ export class DocumentEditorComponent
         }
       });
 
-    this.documentService.versionCompareIds$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((idArray) => {
-        if (idArray && idArray.newVersion !== null) {
-          this.setVersionComparisonViewHeader(
-            idArray.oldVersion,
-            idArray.newVersion,
-          );
-        }
-      });
+    this.versionsComparisonForViewHeaderTitle$ =
+      this.documentService.versionCompareIds$.pipe(
+        takeUntil(this.destroy$),
+        combineLatestWith(merge(of(null), this.translate.onLangChange)),
+        map(([versions]) => this.getVersionComparisonViewHeaderTitle(versions)),
+      );
 
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
@@ -581,18 +585,13 @@ export class DocumentEditorComponent
       });
   }
 
-  private setVersionComparisonViewHeader(oldVersion, newVersion) {
-    this.translate
-      .get(
-        oldVersion && newVersion
-          ? 'version.compare.header'
-          : 'version.compare.header.default',
-        { oldVersion, newVersion },
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((header: string) => {
-        this.versionsComparisonForViewHeaderTitle = header;
-      });
+  private getVersionComparisonViewHeaderTitle(versions: Version[]) {
+    return versions.length === 2
+      ? this.translate.instant('version.compare.header', {
+          oldVersion: this.formatVersionNumber(versions[0]),
+          newVersion: this.formatVersionNumber(versions[1]),
+        })
+      : this.translate.instant('version.compare.header.default');
   }
 
   private getFormValues(): VersionSearchParams {
@@ -601,5 +600,10 @@ export class DocumentEditorComponent
       type: type ?? 'all',
       author: author ?? '',
     };
+  }
+
+  private formatVersionNumber(version: Version): string {
+    const { major, intermediate, minor } = version.versionNumber;
+    return `${major}.${intermediate}.${minor}`;
   }
 }

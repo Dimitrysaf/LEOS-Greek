@@ -189,7 +189,7 @@
         *ngIf="documentService.compareModeEnabled$ | async"
       >
         <eui-page-column-header-left-content class="font-inherit-header">{{
-          versionsComparisonForViewHeaderTitle
+          versionsComparisonForViewHeaderTitle$ | async
         }}</eui-page-column-header-left-content>
         <eui-page-column-header-right-content>
           <eui-icon
