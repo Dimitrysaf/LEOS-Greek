@@ -40,6 +40,4 @@ class EditLightApplicationTests {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private MockService mockService;
 }
