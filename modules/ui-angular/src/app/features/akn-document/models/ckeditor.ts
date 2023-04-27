@@ -1,5 +1,5 @@
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
-import { LeosMetadata, Permission, Role } from '@/shared';
+import { LeosMetadata, LevelItemVO, Permission, Role } from '@/shared';
 
 export type CkeditorConnectorState = LeosJavaScriptExtensionState & {
   instanceType: string;
@@ -169,3 +169,13 @@ export type AlternateConfig = {
 export type ListNumberConfig = {
   REGULAR: Level[];
 };
+
+export interface EditElementResponse {
+  elementId: string;
+  elementTagName: string;
+  element: string;
+  levelItem: LevelItemVO;
+  user: any;
+  permissions: string[];
+  alternatives: string;
+}

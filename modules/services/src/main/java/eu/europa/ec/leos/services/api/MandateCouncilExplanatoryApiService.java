@@ -23,7 +23,9 @@ import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
@@ -35,6 +37,7 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -73,6 +76,7 @@ import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -115,6 +119,8 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     LegService legService;
     @Autowired
     UserHelper userHelper;
+    @Autowired
+    LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
 
     private Provider<StructureContext> structureContext;
     private Provider<BillContextService> context;
@@ -229,8 +235,9 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
-        return this.structureContext.get().getTocItems();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        return structureContext1.getTocItems();
     }
 
     @Override
@@ -249,8 +256,9 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     @Override
     public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
-        ExplanatoryStructureType structureType = getStructureType();
+        StructureContext structureContext1 = structureContext.get();
+        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        ExplanatoryStructureType structureType = getStructureType(structureContext1);
         Explanatory updatedAnnex = explanatoryService.saveTableOfContent(explanatory, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.explanatoryService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
     }
@@ -298,9 +306,12 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Explanatory bill = this.explanatoryService.findExplanatoryByRef(documentRef);
         String jsonAlternatives = "";
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        User user = securityContext.getUser();
+
         try {
             String element = this.elementProcessor.getElement(bill, elementTagName, elementId);
-            return new EditElementResponse(
+            return new EditElementResponse(user, permissions,
                     elementId, elementTagName, element, jsonAlternatives);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
@@ -386,9 +397,11 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
-        List<TocItem> tocItems = this.structureContext.get().getTocItems();
-        List<NumberingConfig> numberConfigs = this.structureContext.get().getNumberingConfigs();
+        StructureContext structureContext1 = structureContext.get();
+
+        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        List<TocItem> tocItems = structureContext1.getTocItems();
+        List<NumberingConfig> numberConfigs = structureContext1.getNumberingConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(explanatory.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
 
@@ -409,8 +422,8 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }
 
-    private ExplanatoryStructureType getStructureType() {
-        List<TocItem> tocItems = structureContext.get().getTocItems().stream().
+    private ExplanatoryStructureType getStructureType(StructureContext context) {
+        List<TocItem> tocItems = context.getTocItems().stream().
                 filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(AnnexStructureType.LEVEL.getType()) ||
                         tocItem.getAknTag().value().equalsIgnoreCase(ARTICLE.getType()))).collect(Collectors.toList());
         return ExplanatoryStructureType.valueOf(tocItems.get(0).getAknTag().value().toUpperCase());
@@ -455,5 +468,23 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
             LOG.error("Unexpected error occurred while using ExportService", e);
         }
         return null;
+    }
+
+    @Override
+    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
+        Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
+        List<String> elementAncestorsIds = null;
+        StructureContext context = structureContext.get();
+        context.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        if (elementIds != null && elementIds.size() > 0) {
+            try {
+                elementAncestorsIds = explanatoryService.getAncestorsIdsForElementId(explanatory, elementIds);
+            } catch (Exception e) {
+                LOG.warn("Could not get ancestors Ids", e);
+            }
+        }
+        // we are combining two operations (get toc + get selected element ancestors)
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory.getId(), TocMode.SIMPLIFIED_CLEAN);
+        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
     }
 }

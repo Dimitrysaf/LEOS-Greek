@@ -5,4 +5,5 @@ export interface DragAction {
   action: DROP_ACTION;
   level: number;
   isAdd: boolean;
+  isSameNode?: boolean;
 }

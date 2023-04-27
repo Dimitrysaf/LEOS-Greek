@@ -82,6 +82,20 @@ export interface DocumentConfig {
   numberingConfig: NumberingConfig[];
   tocItems: TocItem[];
   proposalMetadata: LeosMetadata;
+  alternateConfigs: AlternateConfig;
+  levelItemVO: LevelItemVO;
+}
+
+export interface LevelItemVO {
+  id: string;
+  levelNum: string;
+  number: string;
+  origin: string;
+}
+
+export interface AlternateConfig {
+  profile: string;
+  type: string;
 }
 
 export interface ArticleType {

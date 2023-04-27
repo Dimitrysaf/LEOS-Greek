@@ -30,7 +30,12 @@
   }
 
   .cdk-drag-placeholder {
-    display: none;
+    opacity: 1;
+    pointer-events: initial;
+    -webkit-tap-highlight-color: initial;
+    touch-action: initial;
+    -webkit-user-drag: initial;
+    user-select: initial;
   }
 }
 

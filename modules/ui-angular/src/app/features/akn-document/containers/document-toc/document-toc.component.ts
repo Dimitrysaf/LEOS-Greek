@@ -359,7 +359,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     );
   }
 
-  dragMoved(event: CdkDragMove, isAdd: boolean = false) {
+  dragMoved(event: CdkDragMove<TableOfContentItemVO>, isAdd: boolean = false) {
     //introduce a small debounce , when the toc gets to large we have performance issues
     //drag moved runs on every drag and drop move , this means a lot ...
     clearTimeout(this.dragTimer);
@@ -482,10 +482,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.document
       .querySelectorAll('.selected-node')
       .forEach((el) => el.classList.remove('selected-node'));
-    const element = document.querySelector(`[data-id="${node.id}"]`);
-    if (element) {
-      element.children[1].children[0].classList.add('selected-node');
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (node) {
+      const element = document.querySelector(`[data-id="${node.id}"]`);
+      if (element) {
+        element.children[1].children[0].classList.add('selected-node');
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }
 
@@ -796,7 +798,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     root: TableOfContentItemVO[],
     id: string,
   ): TableOfContentItemVO | null {
-    for (const node of root) {
+    for (const node of root || []) {
       if (node.id === id) {
         return node;
       }
