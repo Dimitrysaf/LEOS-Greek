@@ -35,7 +35,7 @@
   "page.workspace.filter.filters.roles.contributor": "Contributor",
   "page.workspace.filter.reset": "Reset",
   "page.workspace.filter.search": "Search by title",
-  "page.workspace.create-selector.document.title": "Select the document type, language and name",
+  "page.workspace.create-selector.document.title": "Select the document type and language",
   "page.workspace.create-selector.draft.title": "Select the draft type, language and name",
   "page.workspace.proposal-item.contribution-status": "Contribution status",
   "page.workspace.proposal-item.ready-status": "Ready to merge",
