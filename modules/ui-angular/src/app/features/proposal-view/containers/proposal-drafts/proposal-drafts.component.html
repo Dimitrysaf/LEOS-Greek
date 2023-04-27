@@ -335,21 +335,6 @@
                         | translate)
                   }}</strong></a
                 >
-                <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
-                  <button
-                    *ngIf="!row.title"
-                    euiButton
-                    euiBasicButton
-                    euiPrimary
-                    class="eui-u-mr-s"
-                    (click)="handleAnnexEditTitle(row)"
-                  >
-                    {{
-                      'page.collection.drafts.annex.table.tr.actions.dropdown.edit-title'
-                        | translate
-                    }}
-                  </button>
-                </ng-container>
               </div>
             </td>
             <td
