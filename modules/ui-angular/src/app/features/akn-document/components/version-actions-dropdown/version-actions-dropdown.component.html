@@ -23,7 +23,7 @@
       <button
         euiListItem
         translate="page.editor.versions.actions.revert"
-        (click)="doc.versionRevert(version.documentId)"
+        (click)="onVersionRevert(version.documentId, version.cmisVersionNumber)"
       ></button>
       <button
         euiListItem
@@ -39,3 +39,20 @@
     </div>
   </eui-dropdown-content>
 </eui-dropdown>
+<eui-dialog
+  #versionRevertDialog
+  [title]="'page.editor.versions.restore.modal-title' | translate"
+  [acceptLabel]="'page.editor.versions.restore.modal-button' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancel()"
+  (close)="onCancel()"
+  (accept)="onAccept()"
+  (dismiss)="onCancel()"
+>
+  <p>{{ versionModalText }}</p>
+  <p>{{ 'page.editor.versions.restore.modal-text' | translate }}</p>
+</eui-dialog>
