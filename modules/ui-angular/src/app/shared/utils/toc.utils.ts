@@ -154,7 +154,8 @@ export const getItemIndentLevel = (
   tags: string[],
 ) => {
   if (parent && tags.includes(parent.tocItem.aknTag)) startingDepth++;
-  if (parent.parentItem) {
+  //this is required because Java maps the parentItem = node.id , so this causes infinite loop
+  if (parent.parentItem && !parent.tocItem.root) {
     const nextParent = findNodeById(tree, parent.parentItem);
     getItemIndentLevel(tree, nextParent, startingDepth, tags);
   }
@@ -164,20 +165,20 @@ export const findNodeById = (
   root: TableOfContentItemVO[],
   id: string,
 ): TableOfContentItemVO | null => {
-  for (const node of root) {
-    if (node.id === id) {
+  const stack: TableOfContentItemVO[] = [...root];
+
+  while (stack.length) {
+    const node = stack.pop();
+    if (node?.id === id) {
       return node;
     }
-    if (node.childItems) {
-      const found = findNodeById(node.childItems, id);
-      if (found) {
-        return found;
-      }
+    if (node?.childItems) {
+      stack.push(...node.childItems);
     }
   }
-  return null;
-};
 
+  return undefined;
+};
 export const checkPositionAfterValidationExplanatory = (
   nodeTarget: TableOfContentItemVO,
   nodeDragged: TableOfContentItemVO,

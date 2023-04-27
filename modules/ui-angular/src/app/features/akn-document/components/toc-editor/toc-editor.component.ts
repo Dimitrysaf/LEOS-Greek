@@ -257,39 +257,37 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   handleHeadingChange(value: string) {
     clearTimeout(this.typingTimer);
-    const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
     this.typingTimer = setTimeout(() => {
       if (
         this.selectedNode.tocItem.itemHeading === 'OPTIONAL' ||
         (this.selectedNode.tocItem.itemHeading === 'MANDATORY' && value)
       ) {
         //save snapshot of previous tree
-        this.handleNodeChanges(newTree, true);
+        this.handleNodeChanges(this.toc, true);
         //remove previous invalid node
 
         //set new tree
         this.removeInvalidNode();
         this.invalidHeadingMsg = null;
         this.previousHeading = this.heading;
-        newSelectedNode.heading = value;
+        this.selectedNode.heading = value;
         if (this.environment === 'ec') {
-          newSelectedNode.originHeadingAttr = 'DELETE';
-          newSelectedNode.originHeadingAttr = 'ec';
+          this.selectedNode.originHeadingAttr = 'DELETE';
+          this.selectedNode.originHeadingAttr = 'ec';
         }
         this.invalidNodes.delete(this.selectedNode);
         this.handleInvalidNodes.emit(this.invalidNodes);
       } else {
-        newSelectedNode.heading = value;
+        this.selectedNode.heading = value;
         this.invalidHeadingMsg = this.getTocItemMessageValidationError(
-          newSelectedNode,
+          this.selectedNode,
           'heading',
         );
-        this.invalidNodes.add(newSelectedNode);
+        this.invalidNodes.add(this.selectedNode);
         this.handleInvalidNodes.emit(this.invalidNodes);
       }
 
-      this.handleNodeChanges(newTree);
+      this.handleNodeChanges(this.toc);
     }, TYPING_TIME);
   }
 
@@ -306,17 +304,15 @@ export class TocEditorComponent implements OnInit, OnChanges {
   handleNumberChange(number: string) {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
-      const newTree = cloneDeep(this.toc);
-      const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
       const numberRegex = this.numberConfig.regex;
       if (number && numberRegex.match(number)) {
         //clear invalid
         this.removeInvalidNode();
         //save snapshot of old tree
-        this.handleNodeChanges(newTree, true);
+        this.handleNodeChanges(this.toc, true);
         this.invalidNumberMsg = null;
-        newSelectedNode.isAutoNumOverwritten = true;
-        newSelectedNode.number = number;
+        this.selectedNode.isAutoNumOverwritten = true;
+        this.selectedNode.number = number;
         this.invalidNodes.delete(this.selectedNode);
         this.handleInvalidNodes.emit(this.invalidNodes);
       } else {
@@ -324,25 +320,23 @@ export class TocEditorComponent implements OnInit, OnChanges {
           this.selectedNode,
           'number',
         );
-        newSelectedNode.number = number;
+        this.selectedNode.number = number;
         this.invalidNodes.add(this.selectedNode);
         this.handleInvalidNodes.emit(this.invalidNodes);
       }
-      this.handleNodeChanges(newTree);
+      this.handleNodeChanges(this.toc);
     }, TYPING_TIME);
   }
 
   handleParagraphToggle(event) {
-    const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    const newSelectedNode = findNodeById(this.toc, this.selectedNode.id);
     const { value } = event.target;
     //save snapshot of old tree
-    this.handleNodeChanges(newTree, true);
+    this.handleNodeChanges(this.toc, true);
     if (
       this.selectedNode.childItems &&
       this.selectedNode.childItems.length > 0
     ) {
-      // const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
       //no  need to check if children exists the flow requires it
       const firstChild = this.selectedNode.childItems.at(0);
       let flag = false;
@@ -358,7 +352,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
           for (const n of newSelectedNode.childItems) {
             n.number = '#';
           }
-          this.handleNodeChanges(newTree);
+          this.handleNodeChanges(this.toc);
         }
       } else if (value === UNNUMBERED) {
         if (firstChild.number && !flag) {
@@ -366,7 +360,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
           for (const n of newSelectedNode.childItems) {
             n.number = null;
           }
-          this.handleNodeChanges(newTree);
+          this.handleNodeChanges(this.toc);
         }
       }
     }
@@ -376,11 +370,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const { value } = event.target;
     const oldValue = this.selectedNode.tocItem.numberingType;
     this.active_block_style = value;
-
-    const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
     //save snapshot of old tree
-    this.handleNodeChanges(newTree, true);
+    this.handleNodeChanges(this.toc, true);
     const numberConfig = getNumberingConfig(
       this.documentConfig.numberingConfig,
       value,
@@ -390,38 +381,35 @@ export class TocEditorComponent implements OnInit, OnChanges {
       value,
       this.selectedNode.tocItem.aknTag,
     );
-    newSelectedNode.tocItem = newTocItem;
-    newSelectedNode.number = numberConfig.sequence;
-    this.handleNodeChanges(newTree);
+    this.selectedNode.tocItem = newTocItem;
+    this.selectedNode.number = numberConfig.sequence;
+    this.handleNodeChanges(this.toc);
   }
 
   handleIndentListRadioButtonGroupChange(event) {
     const { value } = event.target;
     const oldValue = this.selectedNode.tocItem.numberingType;
     this.active_point_style = value;
-    const newTree = cloneDeep(this.toc);
 
     //save snapshot of old tree
-    this.handleNodeChanges(newTree, true);
+    this.handleNodeChanges(this.toc, true);
     const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT);
-    const parentNode = findNodeById(newTree, this.selectedNode.parentItem);
+    const parentNode = findNodeById(this.toc, this.selectedNode.parentItem);
     this.propagateListType(
-      newTree,
-      this.findRootList(newTree, this.selectedNode),
+      this.toc,
+      this.findRootList(this.toc, this.selectedNode),
       newTocItem,
     );
-    this.handleNodeChanges(newTree);
+    this.handleNodeChanges(this.toc);
   }
 
   handleDivisionChange(event: any) {
-    const newTree = cloneDeep(this.toc);
     //save snapshot of old tree
-    this.handleNodeChanges(newTree, true);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
+    this.handleNodeChanges(this.toc, true);
     const { value } = event.target;
     this.selectedNode.style = value;
     this.active_division_style = value;
-    this.handleNodeChanges(newTree);
+    this.handleNodeChanges(this.toc);
   }
 
   handleListRadioButtonGroupChange(event: string) {
@@ -429,35 +417,31 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.documentConfig.numberingConfig,
       event as NumberingType,
     );
-    const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
 
     //save snapshot of old tree
-    this.handleNodeChanges(newTree, true);
+    this.handleNodeChanges(this.toc, true);
     this.selectedNode.tocItem = getTocItemByNumberingType(
       this.tocItems,
       event as NumberingType,
       this.selectedNode.tocItem.aknTag,
     );
-    newSelectedNode.number = numberingConfig.sequence;
-    this.handleNodeChanges(newTree);
+    this.selectedNode.number = numberingConfig.sequence;
+    this.handleNodeChanges(this.toc);
   }
 
   handleTypeChange(event: string) {
     const oldHeading = this.heading;
     const oldValue = this.selectedNode.tocItemType;
     this.tocType = event;
-    const newTree = cloneDeep(this.toc);
-    const newSelectedNode = findNodeById(newTree, this.selectedNode.id);
 
     //save snapshot of old tree
-    this.handleNodeChanges(newTree, true);
+    this.handleNodeChanges(this.toc, true);
 
-    newSelectedNode.tocItemType = event.toUpperCase();
+    this.selectedNode.tocItemType = event.toUpperCase();
 
     convertArticle(
       this.tocItems,
-      newSelectedNode,
+      this.selectedNode,
       oldValue.toUpperCase(),
       event.toUpperCase(),
     );
@@ -466,32 +450,32 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.previousType &&
       this.previousType.toLowerCase() === event.toLowerCase()
     ) {
-      newSelectedNode.isAffected = false;
+      this.selectedNode.isAffected = false;
       if (oldHeading !== '') {
         this.heading = this.previousHeading;
-        newSelectedNode.heading = this.heading;
+        this.selectedNode.heading = this.heading;
       } else {
         this.heading = this.translateService.instant(
           'toc.item.type.' +
-            newSelectedNode.tocItemType.toLowerCase() +
+            this.selectedNode.tocItemType.toLowerCase() +
             '.article.heading',
         );
-        newSelectedNode.heading = this.heading;
+        this.selectedNode.heading = this.heading;
       }
     } else {
-      newSelectedNode.isAffected = false;
+      this.selectedNode.isAffected = false;
       this.heading = this.translateService.instant(
         'toc.item.type.' +
-          newSelectedNode.tocItemType.toLowerCase() +
+          this.selectedNode.tocItemType.toLowerCase() +
           '.article.heading',
       );
-      newSelectedNode.heading = this.heading;
+      this.selectedNode.heading = this.heading;
     }
 
     //save the old value
     this.previousType = oldValue;
     this.previousHeading = oldHeading;
-    this.handleNodeChanges(newTree);
+    this.handleNodeChanges(this.toc);
   }
 
   //save snapshot is introduced to reduce the number of re-renderings for the tree

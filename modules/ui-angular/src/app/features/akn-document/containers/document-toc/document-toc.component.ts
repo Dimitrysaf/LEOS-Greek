@@ -486,7 +486,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       const element = document.querySelector(`[data-id="${node.id}"]`);
       if (element) {
         element.children[1].children[0].classList.add('selected-node');
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
       }
     }
   }
@@ -590,7 +592,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
               }
               this.isToCDraft = true;
               this.selectedNodeToMove = null;
-              this.hanldeNodeSelect(nodeDragged);
+              setTimeout(() => {
+                this.hanldeNodeSelect(nodeDragged);
+              });
             } catch (e) {
               console.log(e);
               this.clearDragInfo(true);
@@ -798,18 +802,19 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     root: TableOfContentItemVO[],
     id: string,
   ): TableOfContentItemVO | null {
-    for (const node of root || []) {
-      if (node.id === id) {
+    const stack: TableOfContentItemVO[] = [...root];
+
+    while (stack.length) {
+      const node = stack.pop();
+      if (node?.id === id) {
         return node;
       }
-      if (node.childItems) {
-        const found = this.findNodeById(node.childItems, id);
-        if (found) {
-          return found;
-        }
+      if (node?.childItems) {
+        stack.push(...node.childItems);
       }
     }
-    return null;
+
+    return undefined;
   }
 
   private defaultExpanded(node: TableOfContentItemVO) {
