@@ -40,10 +40,10 @@
 }
 
 .tree-container {
-  @include eui-scrollbars();
-
   flex-grow: 7;
   overflow: auto;
+
+  @include eui-scrollbars();
 }
 
 .selected-node {
