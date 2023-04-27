@@ -15,9 +15,9 @@
                     <FRBRdate date="2016-07-20" name="" xml:id="FRBRExpression__FRBRdate_1"/>
                     <FRBRauthor href="" xml:id="FRBRExpression__FRBRauthor_1"/>
                     <FRBRlanguage language="EN" xml:id="FRBRExpression__FRBRlanguage_1"/>
-                	<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                		<akn4eu:akn4euVersion value="4.0.0.0"/>
-                	</preservation>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.0.0.0"/>
+                    </preservation>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value="" xml:id="FRBRManifestation__FRBRthis"/>
@@ -59,8 +59,11 @@
                 </p>
             </longTitle>
             <container name="mainDocLanguage" xml:id="_coverpage__container_3">
-				<p xml:id="_coverpage__container_3__p"><inline name="language" refersTo="~FRBRlanguage" xml:id="_coverpage__container_3__p_inline">EN</inline></p>
-			</container>
+                <p xml:id="_coverpage__container_3__p">
+                    <inline name="language" refersTo="~FRBRlanguage" xml:id="_coverpage__container_3__p_inline">EN
+                    </inline>
+                </p>
+            </container>
         </coverPage>
         <preface xml:id="preface">
             <longTitle xml:id="preface__longTitle_1">

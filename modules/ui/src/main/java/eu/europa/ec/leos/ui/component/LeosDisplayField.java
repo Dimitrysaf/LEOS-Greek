@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.ui.component;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
@@ -39,6 +38,6 @@ public class LeosDisplayField extends CustomField<String> {
 
     @Override
     public String getValue() {
-        return StringEscapeUtils.escapeHtml4(content.getValue());
+        return content.getValue();
     }
 }

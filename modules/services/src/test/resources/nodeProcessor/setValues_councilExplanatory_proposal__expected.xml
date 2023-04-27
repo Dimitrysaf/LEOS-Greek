@@ -8,16 +8,21 @@
 
         <collectionBody xml:id="body">
             <component refersTo="#memorandum" xml:id="body_cmp_1">
-                <documentRef href="memorandum_cksyaotr60002s8283zfnj2vt.xml" showAs="EXPLANATORY MEMORANDUM" xml:id="body_cmp_1__dref_1"/>
+                <documentRef href="memorandum_cksyaotr60002s8283zfnj2vt.xml" showAs="EXPLANATORY MEMORANDUM"
+                             xml:id="body_cmp_1__dref_1"/>
             </component>
             <component refersTo="#bill" xml:id="body_cmp_2">
-                <documentRef href="bill_cksyaouxb0003s828sqpul5di.xml" showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" xml:id="body_cmp_1__dref_2"/>
+                <documentRef href="bill_cksyaouxb0003s828sqpul5di.xml"
+                             showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL"
+                             xml:id="body_cmp_1__dref_2"/>
             </component>
             <component refersTo="#council_explanatory" xml:id="akn_brDLRi">
-                <documentRef href="explanatory_cksyaovm00004s828ljloqpfx.xml" showAs="COUNCIL EXPLANATORY" xml:id="akn_owcK0Q"/>
+                <documentRef href="explanatory_cksyaovm00004s828ljloqpfx.xml" showAs="COUNCIL EXPLANATORY"
+                             xml:id="akn_owcK0Q"/>
             </component>
             <component refersTo="#council_explanatory" xml:id="akn_OSsJLx">
-                <documentRef href="explanatory_cksyaow720005s8282cyznybt.xml" showAs="COUNCIL EXPLANATORY" xml:id="akn_gTBp7T"/>
+                <documentRef href="explanatory_cksyaow720005s8282cyznybt.xml" showAs="COUNCIL EXPLANATORY"
+                             xml:id="akn_gTBp7T"/>
             </component>
             <component refersTo="#council_explanatory">
                 <documentRef href="newValueCouncilExplanatory" showAs="COUNCIL EXPLANATORY"/>
