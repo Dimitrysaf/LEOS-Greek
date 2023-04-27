@@ -7,6 +7,7 @@ import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
+import eu.europa.ec.leos.services.user.UserHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +16,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VersionsUtil {
-    
+
     public static String buildLabel(CheckinCommentVO checkinComment, MessageHelper messageHelper) {
         final String label;
         final CheckinElement checkinElement = checkinComment.getCheckinElement();
-        
+
         if (checkinElement == null) {
             //major save
             label = checkinComment.getTitle();
@@ -30,19 +31,19 @@ public class VersionsUtil {
             // structural change
             label = buildLabelForStructuralSave(checkinElement.getChildElements(), messageHelper);
         }
-        
+
         return label;
     }
-    
+
     public static String buildLabelForStructuralSave(Set<CheckinElement> items, MessageHelper messageHelper) {
         final StringBuilder label = new StringBuilder();
-        
+
         // Group the items by ActionType. The map will be like:
         //{INSERTED - [(article, ""), (article, ""), (article, ""), (citation, "")]}
         //{UPDATED -  [(article, "Article 3")]}
         //{DELETED -  [(article, "Article 4"), (recital, "second recital")]}
         Map<ActionType, List<CheckinElement>> groupByAction = items.stream().collect(Collectors.groupingBy(CheckinElement::getActionType));
-        
+
         //Build a map of type (ActionType, String), example:  (we skip INSERTED since we do not have still nor id not label for new elements.)
         //(UPDATED -  "Article 3"
         //(DELETED -  "Article 4, second recital"
@@ -61,13 +62,13 @@ public class VersionsUtil {
                             String str = labels.toString().trim();
                             return str.substring(0, str.length() - 1);
                         }));
-        
+
         // Attach labels to the global label
         groupByActionStringified.forEach((actionType, str) -> {
             label.append(messageHelper.getMessage("operation.element." + actionType.name().toLowerCase(), str))
                     .append("; ");
         });
-        
+
         // For inserted elements we group by TagName in order to build the string as:
         // "3 articles inserted, 1 citation inserted" for the following items:
         // {INSERTED - [(article, ""), (article, ""), (article, ""), (citation, "")]}
@@ -81,15 +82,15 @@ public class VersionsUtil {
                         .append("; ");
             });
         }
-        
+
         String str = label.toString().trim();
         if (!str.isEmpty() && str.charAt(str.length() - 1) == ';') {
             str = str.substring(0, str.length() - 1);
         }
-        
+
         return str;
     }
-    
+
     public static <D extends XmlDocument> List<VersionVO> buildVersionVO(List<D> versions, MessageHelper messageHelper) {
         List<VersionVO> allVersions = new ArrayList<>();
         versions.forEach(doc -> {
@@ -115,6 +116,37 @@ public class VersionsUtil {
             versionVO.setUsername(doc.getLastModifiedBy());
             versionVO.setCheckinCommentVO(checkinCommentVO);
             versionVO.setVersionedReference(doc.getVersionedReference());
+            allVersions.add(versionVO);
+        });
+        return allVersions;
+    }
+
+    public static <D extends XmlDocument> List<VersionVO> buildVersionResponse(List<D> versions, MessageHelper messageHelper, UserHelper userHelper) {
+        List<VersionVO> allVersions = new ArrayList<>();
+        versions.forEach(doc -> {
+            final String checkinCommentJson;
+            if (doc.getMilestoneComments().size() > 0) {
+                // Only the first comment is related to the document changes. All other comments, if presents,
+                // means that the same document, without being changed, is included in other milestones.
+                // Example: Create a Milestone 1. Enter inside Annex, make a change, and then create another Milestone 2.
+                // In doc VersionCards is shown only the first Milestone1 and in milestoneComments of the doc are present both comments.
+                // We need to show only Milestone 1 comment.
+                checkinCommentJson = doc.getMilestoneComments().get(0);
+            } else {
+                checkinCommentJson = doc.getVersionComment() != null ? doc.getVersionComment() : messageHelper.getMessage("popup.label.contribution.nocomment");
+            }
+            final CheckinCommentVO checkinCommentVO = CheckinCommentUtil.getJavaObjectFromJson(checkinCommentJson);
+
+            VersionVO versionVO = new VersionVO();
+            versionVO.setVersionType(doc.getVersionType());
+            versionVO.setDocumentId(doc.getId());
+            versionVO.setVersionNumber(new VersionVO.VersionNumber(doc.getVersionLabel() != null ? doc.getVersionLabel() : "0.1.0"));
+            versionVO.setCmisVersionNumber(doc.getCmisVersionLabel());
+            versionVO.setUpdatedDate(doc.getLastModificationInstant());
+            versionVO.setUsername(doc.getLastModifiedBy());
+            versionVO.setCheckinCommentVO(checkinCommentVO);
+            versionVO.setVersionedReference(doc.getVersionedReference());
+            versionVO.setCreatedBy(userHelper.convertToPresentation(doc.getLastModifiedBy()));
             allVersions.add(versionVO);
         });
         return allVersions;

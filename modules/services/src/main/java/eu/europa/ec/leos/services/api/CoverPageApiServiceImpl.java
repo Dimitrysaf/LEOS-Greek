@@ -61,6 +61,7 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -93,7 +94,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Autowired
     SecurityContext securityContext;
     @Autowired
-    UserHelperAPI userHelper;
+    UserHelper userHelper;
     @Autowired
     ComparisonDelegateAPI<Proposal> comparisonDelegate;
     @Autowired
@@ -203,9 +204,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
-                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
             }
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.proposalService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
+            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.proposalService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
     }

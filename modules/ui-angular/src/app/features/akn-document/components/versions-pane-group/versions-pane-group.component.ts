@@ -1,7 +1,15 @@
-import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { orderBy } from 'lodash-es';
+import { Observable, of } from 'rxjs';
 
 import { Version } from '@/features/akn-document/models/versions';
 import { DocumentService } from '@/shared/services/document.service';
@@ -11,18 +19,24 @@ import { DocumentService } from '@/shared/services/document.service';
   templateUrl: './versions-pane-group.component.html',
   styleUrls: ['./versions-pane-group.component.scss'],
 })
-export class VersionsPaneGroupComponent implements OnInit {
-  @Input() group: Version;
-  @Input() recentChanges: Version[];
-  @Input() isRecent: boolean;
+export class VersionsPaneGroupComponent implements OnInit, OnChanges {
+  @Input() majorVersion?: Version;
+  @Input() subVersions: Version[];
   @Output() exploreMilestone = new EventEmitter<Version>();
 
-  isMilestone: boolean;
-  isCreation: boolean;
-  title: string;
-  subtitle: string;
-  description: string;
-  showModifications = false;
+  protected isRecent = false;
+  protected isMilestone = false;
+  protected isCreation = false;
+  protected title: Observable<string>;
+  protected subtitle: Observable<string>;
+  protected description: string;
+  protected showMore = false;
+  protected showMoreLabel: string;
+  protected hasMore = false;
+  protected versions: Version[] = [];
+  protected isFilteredOut = false;
+
+  private filter = 'all';
 
   constructor(
     private translate: TranslateService,
@@ -30,43 +44,45 @@ export class VersionsPaneGroupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.group) {
-      const { versionType, cmisVersionNumber, checkinCommentVO } = this.group;
-      this.isMilestone = versionType === 'MAJOR';
-      this.isCreation =
-        versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
-      this.description = checkinCommentVO.description;
-    }
-
-    this.setTitle();
-    this.setSubtitle();
+    this.docService.versionFilter$.subscribe((filter) =>
+      this.applyFilter(filter),
+    );
+    this.toggleShowMore(false);
+    this.translate.onTranslationChange.subscribe(() => this.updateState());
   }
 
-  onSelectVersion(event) {
-    if (event.target.checked) {
-      const idParts = event.target.id.split('-');
-      const currentIdsArray = this.docService.getVersionsIdsArray();
-      if (!currentIdsArray || currentIdsArray.newVersion !== null) {
-        this.docService.setVersionIdsForCompare({
-          oldVersion: idParts[1],
-          newVersion: null,
-        });
-      } else if (currentIdsArray && currentIdsArray.oldVersion !== null) {
-        const oldV =
-          currentIdsArray.oldVersion < idParts[1]
-            ? currentIdsArray.oldVersion
-            : idParts[1];
-        const newV =
-          currentIdsArray.oldVersion < idParts[1]
-            ? idParts[1]
-            : currentIdsArray.oldVersion;
-
-        this.docService.setVersionIdsForCompare({
-          oldVersion: oldV,
-          newVersion: newV,
-        });
-      }
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes.majorVersion?.previousValue !==
+        changes.majorVersion?.currentValue ||
+      changes.subVersions?.previousValue !== changes.subVersions?.currentValue
+    ) {
+      this.updateState();
+      this.applyFilter();
     }
+  }
+
+  protected onSelectVersion(version: Version, inputChangeEvent: Event) {
+    const checked = (inputChangeEvent.target as HTMLInputElement).checked;
+    const currentVersions = this.docService.getVersionCompareIds();
+    let newVersions: Version[];
+    if (!checked) {
+      newVersions = currentVersions.filter((v) => v !== version);
+    } else if (currentVersions.length === 0) {
+      newVersions = [version];
+    } else {
+      const sorted = this.sortVersions(...currentVersions);
+      const minVersion = this.sortVersions(sorted.at(0), version)[0];
+      const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
+      newVersions = [minVersion, maxVersion];
+    }
+
+    this.docService.setVersionCompareIds(newVersions);
+  }
+
+  protected isCompareCheckboxDisabled(version: Version): boolean {
+    const currentVersions = this.docService.getVersionCompareIds();
+    return currentVersions.length === 2 && !currentVersions.includes(version);
   }
 
   protected formatVersionNumber(version: Version): string {
@@ -74,75 +90,81 @@ export class VersionsPaneGroupComponent implements OnInit {
     return `${major}.${intermediate}.${minor}`;
   }
 
-  private setTitle() {
-    if (this.isRecent) {
-      this.translate
-        .get('page.editor.versions.group-recents-title')
-        .subscribe((title: string) => {
-          this.title = title;
-        });
-    } else {
-      this.translate
-        .get('page.editor.versions.group-title', {
-          version: this.formatVersionNumber(this.group),
-          title: this.group.checkinCommentVO.title,
-        })
-        .subscribe((title: string) => {
-          this.title = title;
-        });
-    }
+  protected toggleShowMore(expanded = !this.showMore) {
+    this.showMore = expanded;
+    this.updateState();
   }
 
-  private setSubtitle() {
-    const subtitle$ = this.isRecent
-      ? this.getRecentsSubtitle()
-      : this.getGroupSubtitle();
-    subtitle$.subscribe((subtitle: string) => {
-      this.subtitle = subtitle;
-    });
-  }
-
-  private getGroupSubtitle() {
-    const [dateString, timeSting] = this.group.updatedDate
-      .toString()
-      .split(' ');
-    const [day, month, year] = dateString.split('/');
-    const [hours, minutes] = timeSting.split(':');
-    const dateToBeFormatted = new Date(
-      +year,
-      +month - 1,
-      +day,
-      +hours,
-      +minutes,
-    );
-    const date = formatDate(dateToBeFormatted, 'dd/mm/yyyy HH:MM', 'en-US');
-    const user = this.group.username;
-
-    return of(`${date} ${user}`);
-  }
-
-  private getRecentsSubtitle() {
-    if (this.group?.subVersions.length) {
-      const [dateString, timeSting] = this.group.subVersions[0].updatedDate
-        .toString()
-        .split(' ');
-      const [day, month, year] = dateString.split('/');
-      const [hours, minutes] = timeSting.split(':');
-      const dateToBeFormatted = new Date(
-        +year,
-        +month - 1,
-        +day,
-        +hours,
-        +minutes,
+  private updateState() {
+    if (this.majorVersion) {
+      const { versionType, cmisVersionNumber, checkinCommentVO } =
+        this.majorVersion;
+      this.isMilestone = versionType === 'MAJOR';
+      this.isCreation =
+        versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
+      this.description = checkinCommentVO.description;
+      this.showMoreLabel = this.translate.instant(
+        this.showMore
+          ? 'page.editor.versions.modifications-hide'
+          : 'page.editor.versions.modifications-show',
       );
-      const date = formatDate(dateToBeFormatted, 'dd/mm/yyyy HH:MM', 'en-US');
+      this.versions = this.showMore ? this.subVersions : [];
+      this.hasMore = this.subVersions.length > 0;
+    } else {
+      this.isRecent = true;
+      this.showMoreLabel = this.translate.instant(
+        this.showMore
+          ? 'page.editor.versions.show-less'
+          : 'page.editor.versions.show-more',
+      );
+      this.versions = this.showMore
+        ? this.subVersions
+        : [this.subVersions[0]].filter(Boolean);
+      this.hasMore = this.subVersions.length > 1;
+    }
+
+    this.title = this.getTitle();
+    this.subtitle = this.getSubtitle();
+  }
+
+  private applyFilter(filter = this.filter) {
+    const filters = ['all'];
+    if (!this.isRecent) {
+      filters.push(this.isMilestone ? 'milestone' : 'save');
+    }
+    this.isFilteredOut = !filters.includes(filter);
+  }
+
+  private getTitle() {
+    return this.isRecent
+      ? this.translate.get('page.editor.versions.group-recents-title')
+      : this.translate.get('page.editor.versions.group-title', {
+          version: this.formatVersionNumber(this.majorVersion),
+          title: this.majorVersion.checkinCommentVO.title,
+        });
+  }
+
+  private getSubtitle() {
+    if (!this.isRecent) {
+      return of(
+        `${this.majorVersion.updatedDate} ${this.majorVersion.createdBy}`,
+      );
+    } else if (this.subVersions.length) {
       return this.translate.get('page.editor.versions.group-recents-subtitle', {
-        date,
+        date: this.subVersions[0].updatedDate,
       });
     } else {
       return this.translate.get(
         'page.editor.versions.group-recents-subtitle-empty',
       );
     }
+  }
+
+  private sortVersions(...versions: Version[]): Version[] {
+    return orderBy(versions, [
+      (v) => v.versionNumber.major,
+      (v) => v.versionNumber.intermediate,
+      (v) => v.versionNumber.minor,
+    ]);
   }
 }

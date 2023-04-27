@@ -249,6 +249,8 @@
   "page.editor.versions.group-recents-subtitle-empty": "No changes after last version",
   "page.editor.versions.modifications-hide": "Hide modifications",
   "page.editor.versions.modifications-show": "Show modifications",
+  "page.editor.versions.show-less": "Show less",
+  "page.editor.versions.show-more": "Show more",
   "page.editor.versions.search-button.tooltip-enable": "Show search bar",
   "page.editor.versions.search-button.tooltip-disable": "Hide search bar",
   "page.editor.toc-column.label": "Table of Content",

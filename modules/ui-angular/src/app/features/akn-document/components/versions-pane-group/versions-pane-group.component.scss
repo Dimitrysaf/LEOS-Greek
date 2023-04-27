@@ -1,18 +1,39 @@
 .subversions {
-  align-items: center;
-  display: grid;
-  grid-template-columns: min-content minmax(0, auto) min-content;
   max-height: 100px;
 }
 
-.subversions > .version {
-  justify-self: end;
-  margin-right: 0.25em; // ~= a single space character
+.subversion {
+  align-items: center;
+  display: flex;
+  gap: var(--eui-base-spacing-xs);
+
+  &:hover {
+    background: rgb(0 0 0 / 5%);
+  }
 }
 
-.subversions > .title {
+.subversion > .title {
+  flex-grow: 1;
+  flex-shrink: 1;
   overflow-x: hidden;
   text-overflow: ellipsis;
+}
+
+.eui-input-checkbox--button-sizing {
+  // eui-button--size-s height & width
+  $euiButtonSSize: calc(2 * var(--eui-base-spacing-m));
+  // eui-input-checkbox height & width
+  $euiCheckboxSize: calc(
+    var(--eui-base-spacing-m) + var(--eui-base-spacing-2xs)
+  );
+
+  display: inline-block;
+  margin: calc(($euiButtonSSize - $euiCheckboxSize) / 2);
+  position: relative !important;
+
+  &::before {
+    margin: 0 !important;
+  }
 }
 
 .eui-card-header__title-container-title,

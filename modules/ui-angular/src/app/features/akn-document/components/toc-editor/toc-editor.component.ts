@@ -12,7 +12,7 @@ import {
 import { Form, FormBuilder } from '@angular/forms';
 import { UserDetails } from '@eui/base';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { Subject } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';

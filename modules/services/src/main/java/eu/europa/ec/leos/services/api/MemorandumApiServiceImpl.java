@@ -173,7 +173,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         Integer recentCount = this.memorandumService.findRecentMinorVersionsCount(memorandum.getId(), documentRef);
         List<Memorandum> memorandums = this.memorandumService.findRecentMinorVersions(memorandum.getId(), documentRef, 0, recentCount);
-        return VersionsUtil.buildVersionVO(memorandums, messageHelper);
+        return VersionsUtil.buildVersionResponse(memorandums, messageHelper, userHelper);
 
     }
 
@@ -187,9 +187,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(memorandum.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
-                versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
             }
-            versionVO.setSubVersions(VersionsUtil.buildVersionVO(this.memorandumService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper));
+            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
+            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.memorandumService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
     }
