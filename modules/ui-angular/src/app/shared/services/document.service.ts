@@ -63,9 +63,7 @@ export type DownloadEConsiliumOptions = Omit<
   'annotations'
 >;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class DocumentService implements OnDestroy {
   // documentCategory$: Observable<string | null>;
   compareModeEnabled$: Observable<boolean>;

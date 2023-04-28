@@ -40,9 +40,7 @@ type ResizeListener<T extends Element = Element> = (event: {
   element: T;
 }) => void;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class CKEditorService implements OnDestroy {
   private annexRefBS = new BehaviorSubject<string>(null);
   private documentRefBS = new BehaviorSubject<string>(null);

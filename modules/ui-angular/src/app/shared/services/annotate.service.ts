@@ -11,7 +11,7 @@ import {
 } from '../models';
 import { DocumentService } from './document.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class AnnotateService {
   constructor(
     private httpClient: HttpClient,
