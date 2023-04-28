@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.XmlDocument;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 
 import java.util.List;
 import java.util.Set;
@@ -23,13 +23,12 @@ public interface PackageService {
     eu.europa.ec.leos.repository.model.Package createPackage(final String name, final String repository, final Boolean isCloned, final String clonedPackageName
             , final String userId);
 
-    void deletePackage(final String packageId);
+    void deletePackage(final String packageId) throws RepositoryException;
 
-    List<XmlDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories, final boolean descendants) throws RepositoryException;
+    List<LeosDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
+                                                  final boolean descendants) throws RepositoryException;
 
-    List<XmlDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories, final boolean allVersion);
+    List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories, final boolean allVersion);
 
     Integer getDocumentCountByPackageName(final String packageName, Set<String> categories);
-
-
 }

@@ -11,12 +11,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
-import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
-import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

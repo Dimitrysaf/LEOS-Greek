@@ -11,13 +11,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.XmlDocument;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
-import eu.europa.ec.leos.repository.services.PackageService;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class PackageTests {
+public class PackageServiceTests {
 
-    private static Logger LOG = LoggerFactory.getLogger(PackageTests.class);
+    private static Logger LOG = LoggerFactory.getLogger(PackageServiceTests.class);
 
     @Autowired
     private PackageService packageService;
@@ -52,7 +51,7 @@ public class PackageTests {
 
     @Test
     @Transactional
-    public void test_createAndDeletePackage() {
+    public void test_createAndDeletePackage() throws RepositoryException {
         eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
         Optional<Package> pkgO = packageRepository.findPackageByName(REPO_ID, "test");
         assertTrue(pkgO.isPresent());
@@ -68,7 +67,7 @@ public class PackageTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageId() {
-        List<XmlDocument> docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "BILL"), false);
+        List<LeosDocument> docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "BILL"), false);
         assertEquals(2, docs.size());
         docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "ANNEX"), false);
         assertEquals(2, docs.size());
@@ -77,7 +76,9 @@ public class PackageTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageName() throws RepositoryException {
-        List<XmlDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "package_ckk8202vl0000n070oin84afg", Sets.set("PROPOSAL", "BILL"), false);
+        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "package_ckk8202vl0000n070oin84afg",
+                Sets.set(
+                "PROPOSAL", "BILL"), false);
         assertEquals(2, docs.size());
         docs = packageService.findDocumentsByPackageName(REPO_ID, "package_ckk8202vl0000n070oin84afg", Sets.set("PROPOSAL", "ANNEX"), false);
         assertEquals(2, docs.size());

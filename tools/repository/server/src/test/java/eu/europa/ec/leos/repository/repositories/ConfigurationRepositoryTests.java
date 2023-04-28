@@ -1,7 +1,6 @@
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.ConfigurationV;
-import eu.europa.ec.leos.repository.repositories.ConfigurationVRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
