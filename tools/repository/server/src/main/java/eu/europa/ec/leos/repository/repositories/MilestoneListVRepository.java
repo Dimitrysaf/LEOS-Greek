@@ -13,8 +13,9 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.ConfigurationV;
+import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ConfigurationVRepository extends JpaRepository<ConfigurationV, Long> {
+
+public interface MilestoneListVRepository extends JpaRepository<DocumentMilestoneList, Long> {
 }

@@ -1,65 +1,61 @@
 package eu.europa.ec.leos.repository.controllers;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.util.stream.Stream;
+import java.util.List;
 
-import eu.europa.ec.leos.repository.entities.Document;
-import eu.europa.ec.leos.repository.entities.PackageV;
-import eu.europa.ec.leos.repository.repositories.DocumentRepository;
-import eu.europa.ec.leos.repository.repositories.PackageVRepository;
+import eu.europa.ec.leos.repository.entities.DocumentV;
+import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
+import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
+@Tag(name = "Document API", description = "Document API")
 public class DocumentController {
     @Autowired
-    PackageVRepository packageRepository;
+    PackageRepository packageRepository;
 
     @Autowired
-    DocumentRepository documentRepository;
+    DocumentVRepository documentRepository;
 
     ObjectMapper mapper = new ObjectMapper();
 
-    @PostMapping(path="/package/documents/{name}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> getDocumentsFromPackageName(@PathVariable String name)
+    @GetMapping(path="/document/versions/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get all documents' versions by document id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the versions", content = { @Content(mediaType = "application/json", schema =
+            @Schema(implementation = DocumentV[].class)) }),
+            @ApiResponse(responseCode = "404", description = "No versions found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<String> getAllVersionsByDocumentId(@PathVariable String documentId)
     {
         try {
-            PackageV p = packageRepository.findPackageByName(name);
-            Stream<Document> docs = Stream.of();
-            if (p != null) {
-                docs = documentRepository.findDocumentsFromPackageId(p.getPackageId());
+            List<DocumentV> docs = documentRepository.findAllVersionsByDocumentId(BigDecimal.valueOf(Long.valueOf(documentId)));
+            if (docs.isEmpty()) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            } else {
+                mapper.findAndRegisterModules();
+                String jsonString = mapper.writeValueAsString(docs);
+                return new ResponseEntity<>(jsonString, HttpStatus.OK);
             }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            mapper.writeValue(baos, docs);
-            byte[] bs = baos.toByteArray();
-            return new ResponseEntity<>(new String(bs), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-    }
-
-    @PostMapping(path="/package/id/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> getPackageFromId(@PathVariable("id") String id)
-    {
-        try {
-            PackageV p = packageRepository.findPackageById(new BigDecimal(id));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            mapper.writeValue(baos, p);
-            byte[] bs = baos.toByteArray();
-            return new ResponseEntity<>(new String(bs), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

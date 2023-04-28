@@ -28,10 +28,10 @@ import javax.persistence.Table;
 @Table(name = "MILESTONE_V")
 @NamedQueries({
     @NamedQuery(name = "MilestoneV.findAll", query = "SELECT m FROM MilestoneV m"),
+    @NamedQuery(name = "MilestoneV.findByUniqueId", query = "SELECT m FROM MilestoneV m WHERE m.uniqueId = :uniqueId"),
     @NamedQuery(name = "MilestoneV.findByDocumentId", query = "SELECT m FROM MilestoneV m WHERE m.documentId = :documentId"),
     @NamedQuery(name = "MilestoneV.findByPackageId", query = "SELECT m FROM MilestoneV m WHERE m.packageId = :packageId"),
     @NamedQuery(name = "MilestoneV.findByDocObjectId", query = "SELECT m FROM MilestoneV m WHERE m.docObjectId = :docObjectId"),
-    @NamedQuery(name = "MilestoneV.findByDocTypeId", query = "SELECT m FROM MilestoneV m WHERE m.docTypeId = :docTypeId"),
     @NamedQuery(name = "MilestoneV.findByCategoryId", query = "SELECT m FROM MilestoneV m WHERE m.categoryId = :categoryId"),
     @NamedQuery(name = "MilestoneV.findByName", query = "SELECT m FROM MilestoneV m WHERE m.name = :name"),
     @NamedQuery(name = "MilestoneV.findByClonedFrom", query = "SELECT m FROM MilestoneV m WHERE m.clonedFrom = :clonedFrom"),
@@ -46,7 +46,6 @@ import javax.persistence.Table;
     @NamedQuery(name = "MilestoneV.findByDocTemplate", query = "SELECT m FROM MilestoneV m WHERE m.docTemplate = :docTemplate"),
     @NamedQuery(name = "MilestoneV.findByLanguage", query = "SELECT m FROM MilestoneV m WHERE m.language = :language"),
     @NamedQuery(name = "MilestoneV.findByDocStage", query = "SELECT m FROM MilestoneV m WHERE m.docStage = :docStage"),
-    @NamedQuery(name = "MilestoneV.findByIsPrivateWorkingCopy", query = "SELECT m FROM MilestoneV m WHERE m.isPrivateWorkingCopy = :isPrivateWorkingCopy"),
     @NamedQuery(name = "MilestoneV.findByDocAuditCBy", query = "SELECT m FROM MilestoneV m WHERE m.docAuditCBy = :docAuditCBy"),
     @NamedQuery(name = "MilestoneV.findByDocAuditCDate", query = "SELECT m FROM MilestoneV m WHERE m.docAuditCDate = :docAuditCDate"),
     @NamedQuery(name = "MilestoneV.findByDocAuditLastMDate", query = "SELECT m FROM MilestoneV m WHERE m.docAuditLastMDate = :docAuditLastMDate"),
@@ -64,14 +63,14 @@ public class MilestoneV implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @Column(name = "UNIQUE_ID")
+    private String uniqueId;
     @Column(name = "DOCUMENT_ID", updatable = false)
     private BigDecimal documentId;
     @Column(name = "PACKAGE_ID", updatable = false)
     private BigDecimal packageId;
     @Column(name = "DOC_OBJECT_ID", updatable = false)
     private BigDecimal docObjectId;
-    @Column(name = "DOC_TYPE_ID", updatable = false)
-    private BigDecimal docTypeId;
     @Column(name = "CATEGORY_ID", updatable = false)
     private BigDecimal categoryId;
     @Column(name = "NAME", updatable = false)
@@ -100,8 +99,6 @@ public class MilestoneV implements Serializable {
     private String language;
     @Column(name = "DOC_STAGE", updatable = false)
     private String docStage;
-    @Column(name = "IS_PRIVATE_WORKING_COPY", updatable = false)
-    private BigDecimal isPrivateWorkingCopy;
     @Column(name = "DOC_AUDIT_C_BY", updatable = false)
     private String docAuditCBy;
     @Column(name = "DOC_AUDIT_C_DATE", updatable = false)
@@ -110,7 +107,6 @@ public class MilestoneV implements Serializable {
     private LocalDateTime docAuditLastMDate;
     @Column(name = "DOC_AUDIT_LAST_M_BY", updatable = false)
     private String docAuditLastMBy;
-    @Id
     @Column(name = "MILESTONE_ID", updatable = false)
     private BigDecimal milestoneId;
     @Column(name = "JOB_DATE", updatable = false)
@@ -121,7 +117,7 @@ public class MilestoneV implements Serializable {
     private String milestoneComments;
     @Lob
     @Column(name = "CONTENT", updatable = false)
-    private Serializable content;
+    private byte[] content;
     @Column(name = "STATUS", updatable = false)
     private String status;
     @Column(name = "AUDIT_C_BY", updatable = false)
@@ -158,14 +154,6 @@ public class MilestoneV implements Serializable {
 
     public void setDocObjectId(BigDecimal docObjectId) {
         this.docObjectId = docObjectId;
-    }
-
-    public BigDecimal getDocTypeId() {
-        return docTypeId;
-    }
-
-    public void setDocTypeId(BigDecimal docTypeId) {
-        this.docTypeId = docTypeId;
     }
 
     public BigDecimal getCategoryId() {
@@ -280,14 +268,6 @@ public class MilestoneV implements Serializable {
         this.docStage = docStage;
     }
 
-    public BigDecimal getIsPrivateWorkingCopy() {
-        return isPrivateWorkingCopy;
-    }
-
-    public void setIsPrivateWorkingCopy(BigDecimal isPrivateWorkingCopy) {
-        this.isPrivateWorkingCopy = isPrivateWorkingCopy;
-    }
-
     public String getDocAuditCBy() {
         return docAuditCBy;
     }
@@ -352,11 +332,11 @@ public class MilestoneV implements Serializable {
         this.milestoneComments = milestoneComments;
     }
 
-    public Serializable getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Serializable content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

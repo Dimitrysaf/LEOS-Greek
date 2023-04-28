@@ -53,7 +53,7 @@ public class ConfigContent implements Serializable {
     private BigDecimal id;
     @Lob
     @Column(name = "CONTENT")
-    private Serializable content;
+    private byte[] content;
     @Column(name = "CONTENT_STREAM_MIME_TYPE")
     private String contentStreamMimeType;
     @Column(name = "CONTENT_STREAM_FILENAME")
@@ -81,11 +81,11 @@ public class ConfigContent implements Serializable {
         this.id = id;
     }
 
-    public Serializable getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Serializable content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

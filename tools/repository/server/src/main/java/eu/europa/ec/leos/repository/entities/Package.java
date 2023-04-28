@@ -45,7 +45,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Package.findByAuditLastMDate", query = "SELECT p FROM Package p WHERE p.auditLastMDate = :auditLastMDate"),
     @NamedQuery(name = "Package.findByOriginalId", query = "SELECT p FROM Package p WHERE p.originalId = :originalId"),
     @NamedQuery(name = "Package.findByIsCloned", query = "SELECT p FROM Package p WHERE p.isCloned = :isCloned"),
-    @NamedQuery(name = "Package.findByClonedPackageName", query = "SELECT p FROM Package p WHERE p.clonedPackageName = :clonedPackageName")})
+    @NamedQuery(name = "Package.findByClonedPackageName", query = "SELECT p FROM Package p WHERE p.clonedPackageName = :clonedPackageName"),
+    @NamedQuery(name = "Package.findByUserId", query = "SELECT p FROM Package p WHERE p.userId = :userId"),
+    @NamedQuery(name = "Package.findByRole", query = "SELECT p FROM Package p WHERE p.role = :role"),
+    @NamedQuery(name = "Package.findByOrganization", query = "SELECT p FROM Package p WHERE p.organization = :organization")})
 public class Package implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -75,6 +78,12 @@ public class Package implements Serializable {
     private Short isCloned;
     @Column(name = "CLONED_PACKAGE_NAME")
     private String clonedPackageName;
+    @Column(name = "USER_ID")
+    private String userId;
+    @Column(name = "ROLE")
+    private String role;
+    @Column(name = "ORGANIZATION")
+    private String organization;
     @OneToMany(mappedBy = "clonedPackageId")
     private Collection<Package> packageCollection;
     @JoinColumn(name = "CLONED_PACKAGE_ID", referencedColumnName = "ID")
@@ -202,6 +211,30 @@ public class Package implements Serializable {
 
     public void setClonedPackageId(Package clonedPackageId) {
         this.clonedPackageId = clonedPackageId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     @XmlTransient

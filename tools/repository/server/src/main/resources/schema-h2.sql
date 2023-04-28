@@ -3,7 +3,7 @@
 --------------------------------------------------------
 
 CREATE TABLE CONFIG
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      NAME VARCHAR2(100),
      OBJECT_ID NUMBER(22,0),
      AUDIT_C_BY VARCHAR2(30),
@@ -12,21 +12,21 @@ CREATE TABLE CONFIG
      AUDIT_LAST_M_DATE TIMESTAMP (6),
      ORIGINAL_ID NUMBER(22,0),
      REPOSITORY_ID NUMBER(22,0),
-     LANGUAGE VARCHAR2(10)
+     LANGUAGE VARCHAR2(10),
+     CATEGORY_ID NUMBER(22,0)
 ) ;
 --------------------------------------------------------
 --  DDL for Table CONFIG_CATEGORIES
 --------------------------------------------------------
 
 CREATE TABLE CONFIG_CATEGORIES
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      CATEGORY_CODE VARCHAR2(30),
      CATEGORY_DESC VARCHAR2(100),
      AUDIT_C_BY VARCHAR2(30),
      AUDIT_C_DATE TIMESTAMP (6),
      AUDIT_LAST_M_BY VARCHAR2(30),
-     AUDIT_LAST_M_DATE TIMESTAMP (6),
-     CATEGORY_TYPE VARCHAR2(40)
+     AUDIT_LAST_M_DATE TIMESTAMP (6)
 ) ;
 --------------------------------------------------------
 --  DDL for Table CONFIG_CONTENT
@@ -34,7 +34,7 @@ CREATE TABLE CONFIG_CATEGORIES
 
 CREATE TABLE CONFIG_CONTENT
 (	VERSION_ID NUMBER(22,0),
-     CONTENT BLOB,
+     CONTENT CLOB,
      CONTENT_STREAM_MIME_TYPE VARCHAR2(4000),
      CONTENT_STREAM_FILENAME VARCHAR2(4000),
      CONTENT_STREAM_ID VARCHAR2(4000),
@@ -43,16 +43,15 @@ CREATE TABLE CONFIG_CONTENT
      AUDIT_C_DATE TIMESTAMP (9),
      AUDIT_LAST_M_DATE TIMESTAMP (9),
      AUDIT_LAST_M_BY VARCHAR2(4000),
-     ID NUMBER(22,0) NOT NULL AUTO_INCREMENT
+     ID NUMBER(22,0)
 ) ;
 --------------------------------------------------------
 --  DDL for Table CONFIG_VERSION
 --------------------------------------------------------
 
 CREATE TABLE CONFIG_VERSION
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      CONFIG_ID NUMBER(22,0),
-     CONFIG_TYPE NUMBER(22,0),
      VERSION_LABEL VARCHAR2(100),
      VERSION_SERIES_ID VARCHAR2(400),
      VERSION_TYPE VARCHAR2(100),
@@ -74,14 +73,13 @@ CREATE TABLE DOCUMENT
 (	ID NUMBER(22,0),
      OBJECT_ID NUMBER(22,0),
      PACKAGE_ID NUMBER(22,0),
-     DOC_TYPE_ID NUMBER(22,0),
      CATEGORY_ID NUMBER(22,0),
      NAME VARCHAR2(400),
-     CLONED_FROM NUMBER(22,0),
+     CLONED_FROM VARCHAR2(400),
      COLLABORATORS VARCHAR2(400),
      REVISION_STATUS VARCHAR2(30),
      CONTRIBUTION_STATUS VARCHAR2(30),
-     ORIGINAL_REF NUMBER(22,0),
+     ORIGINAL_REF VARCHAR2(400),
      BASE_REVISION_ID NUMBER(22,0),
      LIVE_DIFFING_REQUIRED NUMBER(1,0),
      REF VARCHAR2(400),
@@ -89,7 +87,6 @@ CREATE TABLE DOCUMENT
      DOC_TEMPLATE VARCHAR2(400),
      LANGUAGE VARCHAR2(10),
      DOC_STAGE VARCHAR2(400),
-     IS_PRIVATE_WORKING_COPY NUMBER(1,0),
      AUDIT_C_BY VARCHAR2(30),
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSTIMESTAMP,
      AUDIT_LAST_M_DATE TIMESTAMP (6),
@@ -100,7 +97,7 @@ CREATE TABLE DOCUMENT
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_CATEGORIES
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER,
      CATEGORY_CODE VARCHAR2(30),
      CATEGORY_DESC VARCHAR2(100),
      AUDIT_C_BY VARCHAR2(30),
@@ -108,16 +105,15 @@ CREATE TABLE DOCUMENT_CATEGORIES
      AUDIT_LAST_M_BY VARCHAR2(30),
      AUDIT_LAST_M_DATE TIMESTAMP (6)
 ) ;
-
 --------------------------------------------------------
 --  DDL for Table DOCUMENT_CONTENT
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_CONTENT
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      VERSION_ID NUMBER(22,0),
      CATEGORY_CODE VARCHAR2(100),
-     CONTENT BLOB,
+     CONTENT TEXT ,
      ACT_TYPE VARCHAR2(100),
      DOC_PURPOSE VARCHAR2(400),
      DOC_TYPE VARCHAR2(400),
@@ -134,12 +130,12 @@ CREATE TABLE DOCUMENT_CONTENT
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_MILESTONE
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      DOCUMENT_ID NUMBER(22,0),
      JOB_DATE DATE,
      CLONED_MILESTONE_ID NUMBER(22,0),
      MILESTONE_COMMENTS VARCHAR2(4000),
-     CONTENT BLOB,
+     CONTENT CLOB,
      STATUS VARCHAR2(30),
      AUDIT_C_BY VARCHAR2(30),
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSDATE,
@@ -154,7 +150,7 @@ CREATE TABLE DOCUMENT_MILESTONE
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_MILESTONE_COMMENTS
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      MILESTONE_ID NUMBER(22,0),
      COMMENTS VARCHAR2(4000),
      AUDIT_C_BY VARCHAR2(30),
@@ -167,7 +163,7 @@ CREATE TABLE DOCUMENT_MILESTONE_COMMENTS
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_MILESTONE_LIST
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      MILESTONE_ID NUMBER(22,0),
      CONTAINED_DOCUMENTS VARCHAR2(4000),
      AUDIT_C_BY VARCHAR2(30),
@@ -180,7 +176,7 @@ CREATE TABLE DOCUMENT_MILESTONE_LIST
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_PROPERTIES
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      PROPERTY_NAME VARCHAR2(30),
      DOC_CATEGORY_ID NUMBER(22,0),
      AUDIT_C_BY VARCHAR2(30),
@@ -193,7 +189,7 @@ CREATE TABLE DOCUMENT_PROPERTIES
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_PROPERTY_VALUES
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      DOCUMENT_ID NUMBER(22,0),
      PROPERTY_ID NUMBER(22,0),
      PROPERTY_VALUE VARCHAR2(4000),
@@ -208,7 +204,7 @@ CREATE TABLE DOCUMENT_PROPERTY_VALUES
 --------------------------------------------------------
 
 CREATE TABLE DOCUMENT_VERSION
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      VERSION_LABEL VARCHAR2(100),
      VERSION_SERIES_ID VARCHAR2(400),
      VERSION_TYPE VARCHAR2(100),
@@ -228,7 +224,7 @@ CREATE TABLE DOCUMENT_VERSION
 --------------------------------------------------------
 
 CREATE TABLE PACKAGE
-(	ID NUMBER(22,0) NOT NULL AUTO_INCREMENT,
+(	ID NUMBER(22,0),
      OBJECT_ID NUMBER(22,0),
      NAME VARCHAR2(400),
      REPOSITORY_ID NUMBER(22,0),
@@ -239,7 +235,10 @@ CREATE TABLE PACKAGE
      ORIGINAL_ID NUMBER(22,0),
      IS_CLONED NUMBER(1,0) DEFAULT 0,
      CLONED_PACKAGE_NAME VARCHAR2(100),
-     CLONED_PACKAGE_ID NUMBER(22,0)
+     CLONED_PACKAGE_ID NUMBER(22,0),
+     USER_ID VARCHAR2(40),
+     ROLE VARCHAR2(40),
+     ORGANIZATION VARCHAR2(40)
 ) ;
 --------------------------------------------------------
 --  DDL for Table PERMISSION
@@ -274,15 +273,16 @@ CREATE TABLE REPOSITORY
 --  DDL for View CONFIGURATION_V
 --------------------------------------------------------
 
-CREATE VIEW CONFIGURATION_V (ID, NAME, OBJECT_ID, CONFIG_ID, CONFIG_TYPE, CATEGORY_CODE, CATEGORY_DESC, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, IS_LATEST_MAJOR_VERSION, IS_LATEST_VERSION, IS_MAJOR_VERSION, IS_VERSION_SERIES_CHECKED_OUT, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE, IS_IMMUTABLE, CONTENT, CONTENT_STREAM_MIME_TYPE, CONTENT_STREAM_FILENAME, CONTENT_STREAM_ID, CONTENT_STREAM_LENGTH) AS
-SELECT conf.ID, CONF.NAME, CONF.OBJECT_ID,
-       ver.config_id,ver.config_type,cat.category_code, cat.category_desc, ver.version_label,ver.version_series_id,ver.version_type,ver.is_latest_major_version,ver.is_latest_version,ver.is_major_version,ver.is_version_series_checked_out,ver.audit_c_by,ver.audit_c_date,ver.audit_last_m_by,ver.audit_last_m_date,ver.is_immutable
+CREATE VIEW CONFIGURATION_V (UNIQUE_ID, ID, NAME, OBJECT_ID, CATEGORY_ID, CATEGORY_CODE, CATEGORY_DESC, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, IS_LATEST_MAJOR_VERSION, IS_LATEST_VERSION, IS_MAJOR_VERSION, IS_VERSION_SERIES_CHECKED_OUT, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE, IS_IMMUTABLE, CONTENT, CONTENT_STREAM_MIME_TYPE, CONTENT_STREAM_FILENAME, CONTENT_STREAM_ID, CONTENT_STREAM_LENGTH) AS
+SELECT conf.id||'_'||ver.id||'_'||con.id||'_'||cat.id unique_id,
+       conf.ID, CONF.NAME, CONF.OBJECT_ID,
+       conf.category_id,cat.category_code, cat.category_desc, ver.version_label,ver.version_series_id,ver.version_type,ver.is_latest_major_version,ver.is_latest_version,ver.is_major_version,ver.is_version_series_checked_out,ver.audit_c_by,ver.audit_c_date,ver.audit_last_m_by,ver.audit_last_m_date,ver.is_immutable
         , con.content,con.content_stream_mime_type,con.content_stream_filename,con.content_stream_id,con.content_stream_length
 FROM config conf, config_version ver, config_content con, config_categories cat
 WHERE
         conf.id = ver.config_id
   and ver.id = con.version_id
-  and ver.config_type = cat.id
+  and conf.category_id = cat.id
 ;
 --------------------------------------------------------
 --  DDL for View DOCUMENT_CATEGORIES_V
@@ -295,8 +295,9 @@ SELECT ID,CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AU
 --  DDL for View DOCUMENT_PROPERTIES_V
 --------------------------------------------------------
 
-CREATE VIEW DOCUMENT_PROPERTIES_V (ID, OBJECT_ID, PACKAGE_ID, DOC_TYPE_ID, CATEGORY_ID, CATEGORY_CODE, CATEGORY_DESC, NAME, VERSION_ID, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, PROP_ID, PROPERTY_NAME, PROP_VALUE_ID, PROPERTY_VALUE, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE) AS
-SELECT doc.id,doc.object_id,doc.package_id,doc.doc_type_id,doc.category_id,cat.category_code,cat.category_desc,doc.name
+CREATE VIEW DOCUMENT_PROPERTIES_V (UNIQUE_ID, ID, OBJECT_ID, PACKAGE_ID, CATEGORY_ID, CATEGORY_CODE, CATEGORY_DESC, NAME, VERSION_ID, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, PROP_ID, PROPERTY_NAME, PROP_VALUE_ID, PROPERTY_VALUE, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE) AS
+SELECT doc.id||'_'||cat.id||'_'||docver.id||'_'||pro.id||'_'||proval.id unique_id
+     ,doc.id,doc.object_id,doc.package_id,doc.category_id,cat.category_code,cat.category_desc,doc.name
      , proval.version_id, docver.version_label,docver.version_series_id,docver.version_type
      , pro.id prop_id,pro.property_name
      , proval.id prop_value_id,proval.property_value,proval.audit_c_by,proval.audit_c_date,proval.audit_last_m_by,proval.audit_last_m_date
@@ -312,10 +313,12 @@ WHERE doc.category_id = cat.id
 --  DDL for View DOCUMENT_V
 --------------------------------------------------------
 
-CREATE VIEW DOCUMENT_V (DOCUMENT_ID, DOC_OBJECT_ID, DOC_TYPE_ID, CATEGORY_ID, CATEGORY_CODE, CATEGORY_DESC, NAME, CLONED_FROM, COLLABORATORS, REVISION_STATUS, CONTRIBUTION_STATUS, ORIGINAL_REF, BASE_REVISION_ID, LIVE_DIFFING_REQUIRED, REF, PROCEDURE_TYPE, DOC_TEMPLATE, LANGUAGE, DOC_STAGE, IS_PRIVATE_WORKING_COPY, DOC_AUDIT_C_BY, DOC_AUDIT_C_DATE, DOC_AUDIT_LAST_M_DATE, DOC_AUDIT_LAST_M_BY, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, IS_LATEST_MAJOR_VERSION, IS_LATEST_VERSION, IS_MAJOR_VERSION, IS_VERSION_SERIES_CHECKED_OUT, CONTENT, ACT_TYPE, DOC_PURPOSE, DOC_TYPE, EEA_RELEVANCE, TEMPLATE, TITLE) AS
-SELECT doc.id document_id,doc.object_id doc_object_id,doc.doc_type_id,doc.category_id
+CREATE VIEW DOCUMENT_V (UNIQUE_ID, DOCUMENT_ID, PACKAGE_ID, DOC_OBJECT_ID, CATEGORY_ID, CATEGORY_CODE, CATEGORY_DESC, NAME, CLONED_FROM, REVISION_STATUS,
+    CONTRIBUTION_STATUS, ORIGINAL_REF, BASE_REVISION_ID, LIVE_DIFFING_REQUIRED, REF, PROCEDURE_TYPE, DOC_TEMPLATE, LANGUAGE, DOC_STAGE, DOC_AUDIT_C_BY, DOC_AUDIT_C_DATE, DOC_AUDIT_LAST_M_DATE, DOC_AUDIT_LAST_M_BY, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, IS_LATEST_MAJOR_VERSION, IS_LATEST_VERSION, IS_MAJOR_VERSION, IS_VERSION_SERIES_CHECKED_OUT, CONTENT, ACT_TYPE, DOC_PURPOSE, DOC_TYPE, EEA_RELEVANCE, TEMPLATE, TITLE) AS
+SELECT doc.id||'_'||docver.id||'_'||docxml.id||'_'||doccat.id unique_id
+     , doc.id document_id, doc.package_id package_id,doc.object_id doc_object_id,doc.category_id
      , doccat.category_code, doccat.category_desc
-     , doc.name,doc.cloned_from,doc.collaborators,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+     , doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.content, docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title
 FROM document doc, document_version docver, document_content docxml, document_categories_v doccat
@@ -327,45 +330,215 @@ WHERE doc.id = docver.document_id
 --  DDL for View MILESTONE_V
 --------------------------------------------------------
 
-CREATE VIEW MILESTONE_V (DOCUMENT_ID, PACKAGE_ID, DOC_OBJECT_ID, DOC_TYPE_ID, CATEGORY_ID, NAME, CLONED_FROM, COLLABORATORS, REVISION_STATUS, CONTRIBUTION_STATUS, ORIGINAL_REF, BASE_REVISION_ID, LIVE_DIFFING_REQUIRED, REF, PROCEDURE_TYPE, DOC_TEMPLATE, LANGUAGE, DOC_STAGE, IS_PRIVATE_WORKING_COPY, DOC_AUDIT_C_BY, DOC_AUDIT_C_DATE, DOC_AUDIT_LAST_M_DATE, DOC_AUDIT_LAST_M_BY, MILESTONE_ID, JOB_DATE, CLONED_MILESTONE_ID, MILESTONE_COMMENTS, CONTENT, STATUS, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) AS
-SELECT doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.doc_type_id,doc.category_id,doc.name,doc.cloned_from,doc.collaborators,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+CREATE VIEW MILESTONE_V (UNIQUE_ID, DOCUMENT_ID, PACKAGE_ID, DOC_OBJECT_ID, CATEGORY_ID, NAME, CLONED_FROM, COLLABORATORS, REVISION_STATUS, CONTRIBUTION_STATUS, ORIGINAL_REF, BASE_REVISION_ID, LIVE_DIFFING_REQUIRED, REF, PROCEDURE_TYPE, DOC_TEMPLATE, LANGUAGE, DOC_STAGE, DOC_AUDIT_C_BY, DOC_AUDIT_C_DATE, DOC_AUDIT_LAST_M_DATE, DOC_AUDIT_LAST_M_BY, MILESTONE_ID, JOB_DATE, CLONED_MILESTONE_ID, MILESTONE_COMMENTS, CONTENT, STATUS, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) AS
+SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.collaborators,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
      , docmil.id milestone_id, docmil.job_date, docmil.cloned_milestone_id, docmil.milestone_comments, docmil.content, docmil.status, docmil.audit_c_by, docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
 FROM document doc, document_milestone docmil
 WHERE doc.id = docmil.document_id
 ;
 --------------------------------------------------------
---  DDL for View MILESTONE_LIST_V
---------------------------------------------------------
-
-CREATE VIEW MILESTONE_LIST_V (PACKAGE_ID, DOCUMENT_ID, MILESTONE_ID, CONTAINED_DOCUMENTS, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) AS
-SELECT milv.package_id, milv.document_id, milv.milestone_id
-     , millis.contained_documents, millis.audit_c_by, millis.audit_c_date, millis.audit_last_m_date, millis.audit_last_m_by
-FROM milestone_v milv, document_milestone_list millis
-WHERE milv.milestone_id = millis.milestone_id
-;
---------------------------------------------------------
 --  DDL for View MILESTONE_COMMENTS_V
 --------------------------------------------------------
 
-CREATE VIEW MILESTONE_COMMENTS_V (PACKAGE_ID, DOCUMENT_ID, MILESTONE_ID, COMMENTS, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) AS
-SELECT milv.package_id, milv.document_id, milv.milestone_id
+CREATE VIEW MILESTONE_COMMENTS_V (UNIQUE_ID, PACKAGE_ID, DOCUMENT_ID, MILESTONE_ID, COMMENTS, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) AS
+SELECT milv.milestone_id||'_'||milcom.id unique_id
+     , milv.package_id, milv.document_id, milv.milestone_id
      , milcom.comments, milcom.audit_c_by, milcom.audit_c_date, milcom.audit_last_m_date, milcom.audit_last_m_by
 FROM milestone_v milv, document_milestone_comments milcom
 WHERE milv.milestone_id = milcom.milestone_id
 ;
 --------------------------------------------------------
+--  DDL for View MILESTONE_LIST_V
+--------------------------------------------------------
+
+CREATE VIEW MILESTONE_LIST_V (UNIQUE_ID, PACKAGE_ID, DOCUMENT_ID, MILESTONE_ID, CONTAINED_DOCUMENTS, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY) AS
+SELECT milv.milestone_id||'_'||millis.id unique_id
+     , milv.package_id, milv.document_id, milv.milestone_id
+     , millis.contained_documents, millis.audit_c_by, millis.audit_c_date, millis.audit_last_m_date, millis.audit_last_m_by
+FROM milestone_v milv, document_milestone_list millis
+WHERE milv.milestone_id = millis.milestone_id
+;
+--------------------------------------------------------
 --  DDL for View PACKAGE_V
 --------------------------------------------------------
 
-CREATE VIEW PACKAGE_V (PACKAGE_ID, PKG_OBJECT_ID, PACKAGE_NAME, REPOSITORY_ID, AUDIT_C_DATE, AUDIT_C_BY, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY, DOCUMENT_ID, DOC_OBJECT_ID, DOC_TYPE_ID, CATEGORY_ID, NAME, CLONED_FROM, COLLABORATORS, REVISION_STATUS, CONTRIBUTION_STATUS, ORIGINAL_REF, BASE_REVISION_ID, LIVE_DIFFING_REQUIRED, REF, PROCEDURE_TYPE, DOC_TEMPLATE, LANGUAGE, DOC_STAGE, IS_PRIVATE_WORKING_COPY, DOC_AUDIT_C_BY, DOC_AUDIT_C_DATE, DOC_AUDIT_LAST_M_DATE, DOC_AUDIT_LAST_M_BY, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, IS_LATEST_MAJOR_VERSION, IS_LATEST_VERSION, IS_MAJOR_VERSION, IS_VERSION_SERIES_CHECKED_OUT, CONTENT, ACT_TYPE, DOC_PURPOSE, DOC_TYPE, EEA_RELEVANCE, TEMPLATE, TITLE) AS
-SELECT pkg.id package_id, pkg.object_id pkg_object_id, pkg.name package_name, pkg.repository_id, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date, pkg.audit_last_m_by
-     , doc.id document_id,doc.object_id doc_object_id,doc.doc_type_id,doc.category_id,doc.name,doc.cloned_from,doc.collaborators,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+CREATE VIEW PACKAGE_V (UNIQUE_ID, PACKAGE_ID, PKG_OBJECT_ID, PACKAGE_NAME, REPOSITORY_ID, AUDIT_C_DATE, AUDIT_C_BY, AUDIT_LAST_M_DATE, AUDIT_LAST_M_BY, USER_ID, ROLE, ORGANIZATION, DOCUMENT_ID, DOC_OBJECT_ID, CATEGORY_ID, NAME, CLONED_FROM, COLLABORATORS, REVISION_STATUS, CONTRIBUTION_STATUS, ORIGINAL_REF, BASE_REVISION_ID, LIVE_DIFFING_REQUIRED, REF, PROCEDURE_TYPE, DOC_TEMPLATE, LANGUAGE, DOC_STAGE, DOC_AUDIT_C_BY, DOC_AUDIT_C_DATE, DOC_AUDIT_LAST_M_DATE, DOC_AUDIT_LAST_M_BY, VERSION_LABEL, VERSION_SERIES_ID, VERSION_TYPE, IS_LATEST_MAJOR_VERSION, IS_LATEST_VERSION, IS_MAJOR_VERSION, IS_VERSION_SERIES_CHECKED_OUT, CONTENT, ACT_TYPE, DOC_PURPOSE, DOC_TYPE, EEA_RELEVANCE, TEMPLATE, TITLE) AS
+SELECT  pkg.id||'_'||doc.id||'_'||docver.id||'_'||docxml.id unique_id, pkg.id package_id, pkg.object_id pkg_object_id, pkg.name package_name, pkg.repository_id, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date, pkg.audit_last_m_by, pkg.user_id, pkg.role, pkg.organization
+     , doc.id document_id,doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.collaborators,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.content, docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title
 FROM package pkg, document doc, document_version docver, document_content docxml
 WHERE pkg.id = doc.package_id
   and doc.id = docver.document_id
   AND docver.id = docxml.version_id
+;
+--------------------------------------------------------
+--  DDL for Index CONFIGURATION_CATEGORIES_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX CONFIGURATION_CATEGORIES_PK ON CONFIG_CATEGORIES (ID)
+;
+--------------------------------------------------------
+--  DDL for Index CONFIGURATION_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX CONFIGURATION_PK ON CONFIG (ID)
+;
+--------------------------------------------------------
+--  DDL for Index CONFIG_VERSIONS_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX CONFIG_VERSIONS_PK ON CONFIG_VERSION (ID)
+;
+--------------------------------------------------------
+--  DDL for Index CONTENT_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX CONTENT_PK ON CONFIG_CONTENT (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_CATEGORIES_CHK_UQ
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_CATEGORIES_CHK_UQ ON DOCUMENT_CATEGORIES (CATEGORY_CODE)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_CATEGORIES_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_CATEGORIES_PK ON DOCUMENT_CATEGORIES (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_METADATA_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_METADATA_PK ON DOCUMENT (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_MILESTONE_COMMENTS_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_MILESTONE_COMMENTS_PK ON DOCUMENT_MILESTONE_COMMENTS (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_MILESTONE_LIST_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_MILESTONE_LIST_PK ON DOCUMENT_MILESTONE_LIST (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_MILESTONE_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_MILESTONE_PK ON DOCUMENT_MILESTONE (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_PROPERTIES_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_PROPERTIES_PK ON DOCUMENT_PROPERTIES (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_PROPERTY_VALUES_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_PROPERTY_VALUES_PK ON DOCUMENT_PROPERTY_VALUES (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_VERSIONS_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_VERSIONS_PK ON DOCUMENT_VERSION (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOCUMENT_XML_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX DOCUMENT_XML_PK ON DOCUMENT_CONTENT (ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_MILESTONE_CLO_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_MILESTONE_CLO_IDX ON DOCUMENT_MILESTONE (CLONED_MILESTONE_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_MILESTONE_DOC_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_MILESTONE_DOC_IDX ON DOCUMENT_MILESTONE (DOCUMENT_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_MIL_COMMENTS_MIL_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_MIL_COMMENTS_MIL_IDX ON DOCUMENT_MILESTONE_COMMENTS (MILESTONE_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_MIL_LIST_MIL_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_MIL_LIST_MIL_IDX ON DOCUMENT_MILESTONE_LIST (MILESTONE_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_PROVAL_DOC_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_PROVAL_DOC_IDX ON DOCUMENT_PROPERTY_VALUES (DOCUMENT_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_PROVAL_PRO_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_PROVAL_PRO_IDX ON DOCUMENT_PROPERTY_VALUES (PROPERTY_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_PRO_CAT_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_PRO_CAT_IDX ON DOCUMENT_PROPERTIES (DOC_CATEGORY_ID)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_VERSIONS_LAV_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_VERSIONS_LAV_IDX ON DOCUMENT_VERSION (IS_LATEST_VERSION)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_VERSIONS_LMV_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_VERSIONS_LMV_IDX ON DOCUMENT_VERSION (IS_LATEST_MAJOR_VERSION)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_VERSIONS_MAV_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_VERSIONS_MAV_IDX ON DOCUMENT_VERSION (IS_MAJOR_VERSION)
+;
+--------------------------------------------------------
+--  DDL for Index DOC_VERSIONS_VCO_IDX
+--------------------------------------------------------
+
+CREATE INDEX DOC_VERSIONS_VCO_IDX ON DOCUMENT_VERSION (IS_VERSION_SERIES_CHECKED_OUT)
+;
+--------------------------------------------------------
+--  DDL for Index PERMISSION_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX PERMISSION_PK ON PERMISSION (ID)
+;
+--------------------------------------------------------
+--  DDL for Index PROPOSAL_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX PROPOSAL_PK ON PACKAGE (ID)
+;
+--------------------------------------------------------
+--  DDL for Index REPOSITORY_PK
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX REPOSITORY_PK ON REPOSITORY (ID)
 ;
 --------------------------------------------------------
 --  Constraints for Table CONFIG
@@ -391,6 +564,7 @@ ALTER TABLE CONFIG_CATEGORIES ADD CONSTRAINT CONFIGURATION_CATEGORIES_PK PRIMARY
 --  Constraints for Table CONFIG_CONTENT
 --------------------------------------------------------
 
+ALTER TABLE CONFIG_CONTENT MODIFY (ID NOT NULL ENABLE);
 ALTER TABLE CONFIG_CONTENT MODIFY (VERSION_ID NOT NULL ENABLE);
 ALTER TABLE CONFIG_CONTENT ADD CONSTRAINT CONTENT_PK PRIMARY KEY (ID);
 --------------------------------------------------------
@@ -413,14 +587,8 @@ ALTER TABLE CONFIG_VERSION ADD CONSTRAINT CONFIG_VERSIONS_PK PRIMARY KEY (ID);
 
 ALTER TABLE DOCUMENT MODIFY (ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT MODIFY (PACKAGE_ID NOT NULL ENABLE);
-ALTER TABLE DOCUMENT MODIFY (DOC_TYPE_ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT MODIFY (CATEGORY_ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT MODIFY (NAME NOT NULL ENABLE);
-ALTER TABLE DOCUMENT MODIFY (COLLABORATORS NOT NULL ENABLE);
-ALTER TABLE DOCUMENT MODIFY (REF NOT NULL ENABLE);
-ALTER TABLE DOCUMENT MODIFY (DOC_TEMPLATE NOT NULL ENABLE);
-ALTER TABLE DOCUMENT MODIFY (LANGUAGE NOT NULL ENABLE);
-ALTER TABLE DOCUMENT MODIFY (DOC_STAGE NOT NULL ENABLE);
 ALTER TABLE DOCUMENT MODIFY (AUDIT_C_BY NOT NULL ENABLE);
 ALTER TABLE DOCUMENT MODIFY (AUDIT_C_DATE NOT NULL ENABLE);
 ALTER TABLE DOCUMENT ADD CONSTRAINT DOCUMENT_METADATA_PK PRIMARY KEY (ID);
@@ -439,10 +607,7 @@ ALTER TABLE DOCUMENT_CATEGORIES ADD CONSTRAINT DOCUMENT_CATEGORIES_CHK_UQ UNIQUE
 --  Constraints for Table DOCUMENT_CONTENT
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_CONTENT MODIFY (DOC_PURPOSE NOT NULL ENABLE);
-ALTER TABLE DOCUMENT_CONTENT MODIFY (DOC_TYPE NOT NULL ENABLE);
-ALTER TABLE DOCUMENT_CONTENT MODIFY (TEMPLATE NOT NULL ENABLE);
-ALTER TABLE DOCUMENT_CONTENT MODIFY (TITLE NOT NULL ENABLE);
+ALTER TABLE DOCUMENT_CONTENT MODIFY (ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_CONTENT MODIFY (AUDIT_C_BY NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_CONTENT MODIFY (AUDIT_C_DATE NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_CONTENT MODIFY (CONTENT NOT NULL ENABLE);
@@ -453,7 +618,6 @@ ALTER TABLE DOCUMENT_CONTENT MODIFY (VERSION_ID NOT NULL ENABLE);
 --  Constraints for Table DOCUMENT_MILESTONE
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_MILESTONE MODIFY (MILESTONE_ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE MODIFY (ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE MODIFY (DOCUMENT_ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE MODIFY (JOB_DATE NOT NULL ENABLE);
@@ -474,9 +638,9 @@ ALTER TABLE DOCUMENT_MILESTONE_COMMENTS ADD CONSTRAINT DOCUMENT_MILESTONE_COMMEN
 --  Constraints for Table DOCUMENT_MILESTONE_LIST
 --------------------------------------------------------
 
+ALTER TABLE DOCUMENT_MILESTONE_LIST MODIFY (ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE_LIST MODIFY (AUDIT_C_DATE NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE_LIST ADD CONSTRAINT DOCUMENT_MILESTONE_LIST_PK PRIMARY KEY (ID);
-ALTER TABLE DOCUMENT_MILESTONE_LIST MODIFY (ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE_LIST MODIFY (MILESTONE_ID NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE_LIST MODIFY (CONTAINED_DOCUMENTS NOT NULL ENABLE);
 ALTER TABLE DOCUMENT_MILESTONE_LIST MODIFY (AUDIT_C_BY NOT NULL ENABLE);
@@ -548,66 +712,59 @@ ALTER TABLE REPOSITORY ADD CONSTRAINT REPOSITORY_PK PRIMARY KEY (ID);
 --  Ref Constraints for Table CONFIG_CONTENT
 --------------------------------------------------------
 
-ALTER TABLE CONFIG_CONTENT ADD FOREIGN KEY (VERSION_ID)
-    REFERENCES CONFIG_VERSION(ID);
-
---------------------------------------------------------
---  Ref Constraints for Table CONFIG_VERSION
---------------------------------------------------------
-
-ALTER TABLE CONFIG_VERSION ADD FOREIGN KEY (CONFIG_TYPE)
-    REFERENCES CONFIG_CATEGORIES(ID);
+ALTER TABLE CONFIG_CONTENT ADD CONSTRAINT CONFIGURATION_CONTENT_FK FOREIGN KEY (VERSION_ID)
+    REFERENCES CONFIG_VERSION (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table DOCUMENT
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT ADD FOREIGN KEY (PACKAGE_ID)
-    REFERENCES PACKAGE(ID);
-ALTER TABLE DOCUMENT ADD FOREIGN KEY (CATEGORY_ID)
-    REFERENCES DOCUMENT_CATEGORIES(ID);
+ALTER TABLE DOCUMENT ADD CONSTRAINT DOCUMENT_METADATA_FK FOREIGN KEY (PACKAGE_ID)
+    REFERENCES PACKAGE (ID);
+ALTER TABLE DOCUMENT ADD CONSTRAINT DOCUMENT_METADATA_FK3 FOREIGN KEY (CATEGORY_ID)
+    REFERENCES DOCUMENT_CATEGORIES (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table DOCUMENT_CONTENT
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_CONTENT ADD FOREIGN KEY (VERSION_ID)
-    REFERENCES DOCUMENT_VERSION(ID);
-ALTER TABLE DOCUMENT_CONTENT ADD FOREIGN KEY (CATEGORY_CODE)
-    REFERENCES DOCUMENT_CATEGORIES(CATEGORY_CODE);
+ALTER TABLE DOCUMENT_CONTENT ADD CONSTRAINT DOCUMENT_CONTENT_FK FOREIGN KEY (VERSION_ID)
+    REFERENCES DOCUMENT_VERSION (ID);
+ALTER TABLE DOCUMENT_CONTENT ADD CONSTRAINT DOCUMENT_CONTENT_CAT_FK FOREIGN KEY (CATEGORY_CODE)
+    REFERENCES DOCUMENT_CATEGORIES (CATEGORY_CODE);
 --------------------------------------------------------
 --  Ref Constraints for Table DOCUMENT_MILESTONE_COMMENTS
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_MILESTONE_COMMENTS ADD FOREIGN KEY (MILESTONE_ID)
-    REFERENCES DOCUMENT_MILESTONE(ID);
+ALTER TABLE DOCUMENT_MILESTONE_COMMENTS ADD CONSTRAINT DOCUMENT_MILESTONE_COMMENTS_FK FOREIGN KEY (MILESTONE_ID)
+    REFERENCES DOCUMENT_MILESTONE (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table DOCUMENT_MILESTONE_LIST
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_MILESTONE_LIST ADD FOREIGN KEY (MILESTONE_ID)
-    REFERENCES DOCUMENT_MILESTONE(ID);
+ALTER TABLE DOCUMENT_MILESTONE_LIST ADD CONSTRAINT DOCUMENT_MILESTONE_LIST_FK FOREIGN KEY (MILESTONE_ID)
+    REFERENCES DOCUMENT_MILESTONE (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table DOCUMENT_PROPERTIES
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_PROPERTIES ADD FOREIGN KEY (DOC_CATEGORY_ID)
-    REFERENCES DOCUMENT_CATEGORIES(ID);
+ALTER TABLE DOCUMENT_PROPERTIES ADD CONSTRAINT DOCUMENT_PROPERTIES_FK2 FOREIGN KEY (DOC_CATEGORY_ID)
+    REFERENCES DOCUMENT_CATEGORIES (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table DOCUMENT_PROPERTY_VALUES
 --------------------------------------------------------
 
-ALTER TABLE DOCUMENT_PROPERTY_VALUES ADD FOREIGN KEY (VERSION_ID)
-    REFERENCES CONFIG_VERSION(ID);
-ALTER TABLE DOCUMENT_PROPERTY_VALUES ADD FOREIGN KEY (PROPERTY_ID)
-    REFERENCES DOCUMENT_PROPERTIES(ID);
+ALTER TABLE DOCUMENT_PROPERTY_VALUES ADD CONSTRAINT DOC_PROPERTY_VAL_FK FOREIGN KEY (VERSION_ID)
+    REFERENCES CONFIG_VERSION (ID);
+ALTER TABLE DOCUMENT_PROPERTY_VALUES ADD CONSTRAINT DOCUMENT_PROPERTY_VALUES_FK2 FOREIGN KEY (PROPERTY_ID)
+    REFERENCES DOCUMENT_PROPERTIES (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table PACKAGE
 --------------------------------------------------------
 
-ALTER TABLE PACKAGE ADD FOREIGN KEY (CLONED_PACKAGE_ID)
-    REFERENCES PACKAGE(ID);
+ALTER TABLE PACKAGE ADD CONSTRAINT PROPOSAL_CLONED_FK FOREIGN KEY (CLONED_PACKAGE_ID)
+    REFERENCES PACKAGE (ID);
 --------------------------------------------------------
 --  Ref Constraints for Table PERMISSION
 --------------------------------------------------------
 
-ALTER TABLE PERMISSION ADD FOREIGN KEY (REPOSITORY_ID)
-    REFERENCES REPOSITORY(ID);
+ALTER TABLE PERMISSION ADD CONSTRAINT PERMISSION_FK FOREIGN KEY (REPOSITORY_ID)
+    REFERENCES REPOSITORY (ID);

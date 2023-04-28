@@ -14,13 +14,12 @@
 package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.Document;
+import eu.europa.ec.leos.repository.entities.Package;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
-import java.util.stream.Stream;
+import java.util.List;
 
-public interface DocumentRepository extends JpaRepository<Document, Long> {
-    @Query(value = "SELECT * FROM DOCUMENT d WHERE d.PACKAGE_ID = ?1", nativeQuery = true)
-    Stream<Document> findDocumentsFromPackageId(BigDecimal packageId);
+public interface DocumentRepository extends JpaRepository<Document, BigDecimal> {
+    List<Document> findAllDocumentsByPackageId(Package packageId);
 }

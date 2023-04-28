@@ -38,7 +38,8 @@ import javax.persistence.Table;
         @NamedQuery(name = "Config.findByAuditLastMDate", query = "SELECT c FROM Config c WHERE c.auditLastMDate = :auditLastMDate"),
         @NamedQuery(name = "Config.findByOriginalId", query = "SELECT c FROM Config c WHERE c.originalId = :originalId"),
         @NamedQuery(name = "Config.findByRepositoryId", query = "SELECT c FROM Config c WHERE c.repositoryId = :repositoryId"),
-        @NamedQuery(name = "Config.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language")})
+        @NamedQuery(name = "Config.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language"),
+        @NamedQuery(name = "Config.findByCategoryId", query = "SELECT c FROM Config c WHERE c.categoryId = :categoryId")})
 public class Config implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,6 +67,8 @@ public class Config implements Serializable {
     private BigDecimal repositoryId;
     @Column(name = "LANGUAGE")
     private String language;
+    @Column(name = "CATEGORY_ID", precision = 22, scale = 0)
+    private BigDecimal categoryId;
 
     public Config() {
     }
@@ -144,6 +147,14 @@ public class Config implements Serializable {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public BigDecimal getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(BigDecimal categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override

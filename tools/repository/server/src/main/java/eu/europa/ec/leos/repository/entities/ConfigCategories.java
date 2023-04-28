@@ -16,15 +16,12 @@ package eu.europa.ec.leos.repository.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "CONFIG_CATEGORIES")
@@ -36,8 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ConfigCategories.findByAuditCBy", query = "SELECT c FROM ConfigCategories c WHERE c.auditCBy = :auditCBy"),
     @NamedQuery(name = "ConfigCategories.findByAuditCDate", query = "SELECT c FROM ConfigCategories c WHERE c.auditCDate = :auditCDate"),
     @NamedQuery(name = "ConfigCategories.findByAuditLastMBy", query = "SELECT c FROM ConfigCategories c WHERE c.auditLastMBy = :auditLastMBy"),
-    @NamedQuery(name = "ConfigCategories.findByAuditLastMDate", query = "SELECT c FROM ConfigCategories c WHERE c.auditLastMDate = :auditLastMDate"),
-    @NamedQuery(name = "ConfigCategories.findByCategoryType", query = "SELECT c FROM ConfigCategories c WHERE c.categoryType = :categoryType")})
+    @NamedQuery(name = "ConfigCategories.findByAuditLastMDate", query = "SELECT c FROM ConfigCategories c WHERE c.auditLastMDate = :auditLastMDate")})
 public class ConfigCategories implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,10 +52,6 @@ public class ConfigCategories implements Serializable {
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
-    @Column(name = "CATEGORY_TYPE", length = 40)
-    private String categoryType;
-    @OneToMany(mappedBy = "configType")
-    private Collection<ConfigVersion> configVersionCollection;
 
     public ConfigCategories() {
     }
@@ -130,23 +122,6 @@ public class ConfigCategories implements Serializable {
 
     public void setAuditLastMDate(LocalDateTime auditLastMDate) {
         this.auditLastMDate = auditLastMDate;
-    }
-
-    public String getCategoryType() {
-        return categoryType;
-    }
-
-    public void setCategoryType(String categoryType) {
-        this.categoryType = categoryType;
-    }
-
-    @XmlTransient
-    public Collection<ConfigVersion> getConfigVersionCollection() {
-        return configVersionCollection;
-    }
-
-    public void setConfigVersionCollection(Collection<ConfigVersion> configVersionCollection) {
-        this.configVersionCollection = configVersionCollection;
     }
 
     @Override
