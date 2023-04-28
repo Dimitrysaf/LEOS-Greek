@@ -23,6 +23,8 @@ import {
 import { apiBaseUrl } from 'src/config';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
+import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { DocumentConfig, LeosConfig } from '@/shared/models';
@@ -47,6 +49,7 @@ export class CKEditorService implements OnDestroy {
   elementEditor$: Observable<any>;
 
   private elementUnderEdit = null;
+  private actionManagerConnector?: ActionManagerConnector;
 
   connector: any = {
     getParentId: () => 123,
@@ -110,6 +113,7 @@ export class CKEditorService implements OnDestroy {
           },
           dismiss: () => {
             this.connector.releaseElement();
+            // TODO: should probably also call this.actionManagerConnector?.cancelActionElement(elementId);
           },
         });
       } else {
@@ -267,6 +271,10 @@ export class CKEditorService implements OnDestroy {
 
   private destroy$ = new Subject<void>();
   private leosStateBS = new BehaviorSubject<any | null>(null);
+  private leosState$ = this.leosStateBS.pipe(
+    takeUntil(this.destroy$),
+    filter(Boolean),
+  );
 
   constructor(
     private leosLegacyService: LeosLegacyService,
@@ -294,20 +302,16 @@ export class CKEditorService implements OnDestroy {
   }
 
   init() {
-    this.leosLegacyService.require$.pipe(take(1)).subscribe((require) => {
-      require(['js/leosModulesBootstrap']);
-    });
+    // TODO: this should not be hardcoded
+    const rootElement = this.domDocument.getElementById('docContainer');
 
-    const actionManagerExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/actionManagerExtension'], (actionManager) => {
-              subscriber.next(actionManager);
-            });
-          }),
-      ),
-    );
+    combineLatest([this.leosLegacyService.require$, this.leosState$])
+      .pipe(take(1))
+      .subscribe(([require, leosState]) => {
+        require(['js/leosModulesBootstrap']);
+        this.initActionManager(require, leosState, rootElement);
+      });
+
     const refToLinkExtension$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -375,7 +379,6 @@ export class CKEditorService implements OnDestroy {
     );
 
     combineLatest([
-      actionManagerExtension$,
       refToLinkExtension$,
       leosEditorExtension$,
       softActionsExtension$,
@@ -385,14 +388,12 @@ export class CKEditorService implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         ([
-          actionManager,
           refTolink,
           leosEditor,
           softActions,
           changeDetails,
           userGuidanceExtension,
         ]: any[]) => {
-          actionManager.init(this.connector);
           refTolink.init(this.connector);
           leosEditor.init(this.connector);
           softActions.init(this.connector);
@@ -400,6 +401,24 @@ export class CKEditorService implements OnDestroy {
           userGuidanceExtension.init(this.connector);
         },
       );
+  }
+
+  private initActionManager(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.actionManagerConnector = new ActionManagerConnector(
+      {
+        instanceType: process.env.NG_APP_LEOS_INSTANCE,
+        tocItemsJsonArray: leosState.tocItemsJsonArray,
+      },
+      { rootElement },
+    );
+
+    require(['extension/actionManagerExtension'], (actionManager) => {
+      actionManager.init(this.actionManagerConnector);
+    });
   }
 
   // called from this.connector.saveElement
