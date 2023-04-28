@@ -27,6 +27,7 @@ import javax.persistence.Table;
 @Table(name = "DOCUMENT_PROPERTIES_V")
 @NamedQueries({
     @NamedQuery(name = "DocumentPropertiesV.findAll", query = "SELECT d FROM DocumentPropertiesV d"),
+    @NamedQuery(name = "DocumentPropertiesV.findByUniqueId", query = "SELECT d FROM DocumentPropertiesV d WHERE d.uniqueId = :uniqueId"),
     @NamedQuery(name = "DocumentPropertiesV.findById", query = "SELECT d FROM DocumentPropertiesV d WHERE d.id = :id"),
     @NamedQuery(name = "DocumentPropertiesV.findByObjectId", query = "SELECT d FROM DocumentPropertiesV d WHERE d.objectId = :objectId"),
     @NamedQuery(name = "DocumentPropertiesV.findByPackageId", query = "SELECT d FROM DocumentPropertiesV d WHERE d.packageId = :packageId"),
@@ -51,6 +52,8 @@ public class DocumentPropertiesV implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @Column(name = "UNIQUE_ID", updatable = false, precision = 22, scale = 0)
+    private String uniqueId;
     @Column(name = "ID", updatable = false, precision = 22, scale = 0)
     private BigDecimal id;
     @Column(name = "OBJECT_ID", updatable = false, precision = 22, scale = 0)
@@ -93,6 +96,14 @@ public class DocumentPropertiesV implements Serializable {
     private LocalDateTime auditLastMDate;
 
     public DocumentPropertiesV() {
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public BigDecimal getId() {

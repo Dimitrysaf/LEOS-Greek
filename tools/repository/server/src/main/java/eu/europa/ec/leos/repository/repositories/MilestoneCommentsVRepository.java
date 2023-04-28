@@ -13,16 +13,9 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.PackageV;
+import eu.europa.ec.leos.repository.entities.DocumentMilestoneComments;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import java.math.BigDecimal;
 
-public interface PackageVRepository extends JpaRepository<PackageV, BigDecimal> {
-    @Query(value = "SELECT * FROM PACKAGE_V p WHERE p.name = ?1", nativeQuery = true)
-    PackageV findPackageByName(String name);
-
-    @Query(value = "SELECT * FROM PACKAGE_V p WHERE p.id = ?1", nativeQuery = true)
-    PackageV findPackageById(BigDecimal id);
+public interface MilestoneCommentsVRepository extends JpaRepository<DocumentMilestoneComments, Long> {
 }

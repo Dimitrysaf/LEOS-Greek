@@ -26,7 +26,6 @@ import javax.persistence.Table;
         @NamedQuery(name = "Document.findAll", query = "SELECT d FROM Document d"),
         @NamedQuery(name = "Document.findById", query = "SELECT d FROM Document d WHERE d.id = :id"),
         @NamedQuery(name = "Document.findByObjectId", query = "SELECT d FROM Document d WHERE d.objectId = :objectId"),
-        @NamedQuery(name = "Document.findByDocTypeId", query = "SELECT d FROM Document d WHERE d.docTypeId = :docTypeId"),
         @NamedQuery(name = "Document.findByName", query = "SELECT d FROM Document d WHERE d.name = :name"),
         @NamedQuery(name = "Document.findByClonedFrom", query = "SELECT d FROM Document d WHERE d.clonedFrom = :clonedFrom"),
         @NamedQuery(name = "Document.findByCollaborators", query = "SELECT d FROM Document d WHERE d.collaborators = :collaborators"),
@@ -56,8 +55,6 @@ public class Document implements Serializable {
     private BigDecimal id;
     @Column(name = "OBJECT_ID", precision = 22, scale = 0)
     private BigDecimal objectId;
-    @Column(name = "DOC_TYPE_ID", nullable = false, precision = 22, scale = 0)
-    private BigDecimal docTypeId;
     @Column(name = "NAME", nullable = false, length = 400)
     private String name;
     @Column(name = "CLONED_FROM", precision = 22, scale = 0)
@@ -96,9 +93,6 @@ public class Document implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "AUDIT_LAST_M_BY", length = 30)
     private String auditLastMBy;
-    @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DocumentCategories categoryId;
     @JoinColumn(name = "PACKAGE_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Package packageId;
@@ -110,10 +104,9 @@ public class Document implements Serializable {
         this.id = id;
     }
 
-    public Document(BigDecimal id, BigDecimal docTypeId, String name, String collaborators, String ref, String docTemplate, String language, String docStage,
+    public Document(BigDecimal id, String name, String collaborators, String ref, String docTemplate, String language, String docStage,
                     String auditCBy, LocalDateTime auditCDate) {
         this.id = id;
-        this.docTypeId = docTypeId;
         this.name = name;
         this.collaborators = collaborators;
         this.ref = ref;
@@ -138,14 +131,6 @@ public class Document implements Serializable {
 
     public void setObjectId(BigDecimal objectId) {
         this.objectId = objectId;
-    }
-
-    public BigDecimal getDocTypeId() {
-        return docTypeId;
-    }
-
-    public void setDocTypeId(BigDecimal docTypeId) {
-        this.docTypeId = docTypeId;
     }
 
     public String getName() {
@@ -290,14 +275,6 @@ public class Document implements Serializable {
 
     public void setAuditLastMBy(String auditLastMBy) {
         this.auditLastMBy = auditLastMBy;
-    }
-
-    public DocumentCategories getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(DocumentCategories categoryId) {
-        this.categoryId = categoryId;
     }
 
     public Package getPackageId() {

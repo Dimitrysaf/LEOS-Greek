@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "ConfigVersion.findAll", query = "SELECT c FROM ConfigVersion c"),
     @NamedQuery(name = "ConfigVersion.findById", query = "SELECT c FROM ConfigVersion c WHERE c.id = :id"),
-    @NamedQuery(name = "ConfigVersion.findByConfigId", query = "SELECT c FROM ConfigVersion c WHERE c.configId = :configId"),
     @NamedQuery(name = "ConfigVersion.findByVersionLabel", query = "SELECT c FROM ConfigVersion c WHERE c.versionLabel = :versionLabel"),
     @NamedQuery(name = "ConfigVersion.findByVersionSeriesId", query = "SELECT c FROM ConfigVersion c WHERE c.versionSeriesId = :versionSeriesId"),
     @NamedQuery(name = "ConfigVersion.findByVersionType", query = "SELECT c FROM ConfigVersion c WHERE c.versionType = :versionType"),
@@ -87,9 +86,6 @@ public class ConfigVersion implements Serializable {
     private Boolean isImmutable;
     @OneToMany(mappedBy = "versionId")
     private Collection<DocumentPropertyValues> documentPropertyValuesCollection;
-    @JoinColumn(name = "CONFIG_TYPE", referencedColumnName = "ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ConfigCategories configType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "versionId")
     private Collection<ConfigContent> configContentCollection;
 
@@ -223,14 +219,6 @@ public class ConfigVersion implements Serializable {
 
     public void setDocumentPropertyValuesCollection(Collection<DocumentPropertyValues> documentPropertyValuesCollection) {
         this.documentPropertyValuesCollection = documentPropertyValuesCollection;
-    }
-
-    public ConfigCategories getConfigType() {
-        return configType;
-    }
-
-    public void setConfigType(ConfigCategories configType) {
-        this.configType = configType;
     }
 
     @XmlTransient

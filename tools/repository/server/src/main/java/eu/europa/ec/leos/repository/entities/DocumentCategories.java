@@ -63,8 +63,6 @@ public class DocumentCategories implements Serializable {
     private String auditLastMBy;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "docCategoryId")
     private Collection<DocumentProperties> documentPropertiesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoryId")
-    private Collection<Document> documentMetadataCollection;
 
     public DocumentCategories() {
     }
@@ -144,15 +142,6 @@ public class DocumentCategories implements Serializable {
 
     public void setDocumentPropertiesCollection(Collection<DocumentProperties> documentPropertiesCollection) {
         this.documentPropertiesCollection = documentPropertiesCollection;
-    }
-
-    @XmlTransient
-    public Collection<Document> getDocumentMetadataCollection() {
-        return documentMetadataCollection;
-    }
-
-    public void setDocumentMetadataCollection(Collection<Document> documentMetadataCollection) {
-        this.documentMetadataCollection = documentMetadataCollection;
     }
 
     @Override

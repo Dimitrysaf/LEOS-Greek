@@ -19,23 +19,26 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "DOCUMENT_V")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DocumentV.findAll", query = "SELECT d FROM DocumentV d"),
+    @NamedQuery(name = "DocumentV.findByUniqueId", query = "SELECT d FROM DocumentV d WHERE d.uniqueId = :uniqueId"),
     @NamedQuery(name = "DocumentV.findByDocumentId", query = "SELECT d FROM DocumentV d WHERE d.documentId = :documentId"),
+    @NamedQuery(name = "DocumentV.findByPackageId", query = "SELECT d FROM DocumentV d WHERE d.packageId = :packageId"),
     @NamedQuery(name = "DocumentV.findByDocObjectId", query = "SELECT d FROM DocumentV d WHERE d.docObjectId = :docObjectId"),
-    @NamedQuery(name = "DocumentV.findByDocTypeId", query = "SELECT d FROM DocumentV d WHERE d.docTypeId = :docTypeId"),
     @NamedQuery(name = "DocumentV.findByCategoryId", query = "SELECT d FROM DocumentV d WHERE d.categoryId = :categoryId"),
     @NamedQuery(name = "DocumentV.findByCategoryCode", query = "SELECT d FROM DocumentV d WHERE d.categoryCode = :categoryCode"),
     @NamedQuery(name = "DocumentV.findByCategoryDesc", query = "SELECT d FROM DocumentV d WHERE d.categoryDesc = :categoryDesc"),
     @NamedQuery(name = "DocumentV.findByName", query = "SELECT d FROM DocumentV d WHERE d.name = :name"),
     @NamedQuery(name = "DocumentV.findByClonedFrom", query = "SELECT d FROM DocumentV d WHERE d.clonedFrom = :clonedFrom"),
-    @NamedQuery(name = "DocumentV.findByCollaborators", query = "SELECT d FROM DocumentV d WHERE d.collaborators = :collaborators"),
     @NamedQuery(name = "DocumentV.findByRevisionStatus", query = "SELECT d FROM DocumentV d WHERE d.revisionStatus = :revisionStatus"),
     @NamedQuery(name = "DocumentV.findByContributionStatus", query = "SELECT d FROM DocumentV d WHERE d.contributionStatus = :contributionStatus"),
     @NamedQuery(name = "DocumentV.findByOriginalRef", query = "SELECT d FROM DocumentV d WHERE d.originalRef = :originalRef"),
@@ -46,7 +49,6 @@ import javax.persistence.Table;
     @NamedQuery(name = "DocumentV.findByDocTemplate", query = "SELECT d FROM DocumentV d WHERE d.docTemplate = :docTemplate"),
     @NamedQuery(name = "DocumentV.findByLanguage", query = "SELECT d FROM DocumentV d WHERE d.language = :language"),
     @NamedQuery(name = "DocumentV.findByDocStage", query = "SELECT d FROM DocumentV d WHERE d.docStage = :docStage"),
-    @NamedQuery(name = "DocumentV.findByIsPrivateWorkingCopy", query = "SELECT d FROM DocumentV d WHERE d.isPrivateWorkingCopy = :isPrivateWorkingCopy"),
     @NamedQuery(name = "DocumentV.findByDocAuditCBy", query = "SELECT d FROM DocumentV d WHERE d.docAuditCBy = :docAuditCBy"),
     @NamedQuery(name = "DocumentV.findByDocAuditCDate", query = "SELECT d FROM DocumentV d WHERE d.docAuditCDate = :docAuditCDate"),
     @NamedQuery(name = "DocumentV.findByDocAuditLastMDate", query = "SELECT d FROM DocumentV d WHERE d.docAuditLastMDate = :docAuditLastMDate"),
@@ -69,12 +71,14 @@ public class DocumentV implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @Column(name = "UNIQUE_ID", updatable = false)
+    private String uniqueId;
     @Column(name = "DOCUMENT_ID", updatable = false)
     private BigDecimal documentId;
+    @Column(name = "PACKAGE_ID", updatable = false)
+    private BigDecimal packageId;
     @Column(name = "DOC_OBJECT_ID", updatable = false)
     private BigDecimal docObjectId;
-    @Column(name = "DOC_TYPE_ID", updatable = false)
-    private BigDecimal docTypeId;
     @Column(name = "CATEGORY_ID", updatable = false)
     private BigDecimal categoryId;
     @Column(name = "CATEGORY_CODE", updatable = false)
@@ -85,8 +89,6 @@ public class DocumentV implements Serializable {
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
     private BigDecimal clonedFrom;
-    @Column(name = "COLLABORATORS", updatable = false)
-    private String collaborators;
     @Column(name = "REVISION_STATUS", updatable = false)
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", updatable = false)
@@ -107,8 +109,6 @@ public class DocumentV implements Serializable {
     private String language;
     @Column(name = "DOC_STAGE", updatable = false)
     private String docStage;
-    @Column(name = "IS_PRIVATE_WORKING_COPY", updatable = false)
-    private Boolean isPrivateWorkingCopy;
     @Column(name = "DOC_AUDIT_C_BY", updatable = false)
     private String docAuditCBy;
     @Column(name = "DOC_AUDIT_C_DATE", updatable = false)
@@ -131,8 +131,9 @@ public class DocumentV implements Serializable {
     private Boolean isMajorVersion;
     @Column(name = "IS_VERSION_SERIES_CHECKED_OUT", updatable = false)
     private Boolean isVersionSeriesCheckedOut;
+    @Lob
     @Column(name = "CONTENT", updatable = false)
-    private Serializable content;
+    private byte[] content;
     @Column(name = "ACT_TYPE", updatable = false)
     private String actType;
     @Column(name = "DOC_PURPOSE", updatable = false)
@@ -149,6 +150,14 @@ public class DocumentV implements Serializable {
     public DocumentV() {
     }
 
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
     public BigDecimal getDocumentId() {
         return documentId;
     }
@@ -157,20 +166,20 @@ public class DocumentV implements Serializable {
         this.documentId = documentId;
     }
 
+    public BigDecimal getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(BigDecimal packageId) {
+        this.packageId = packageId;
+    }
+
     public BigDecimal getDocObjectId() {
         return docObjectId;
     }
 
     public void setDocObjectId(BigDecimal docObjectId) {
         this.docObjectId = docObjectId;
-    }
-
-    public BigDecimal getDocTypeId() {
-        return docTypeId;
-    }
-
-    public void setDocTypeId(BigDecimal docTypeId) {
-        this.docTypeId = docTypeId;
     }
 
     public BigDecimal getCategoryId() {
@@ -211,14 +220,6 @@ public class DocumentV implements Serializable {
 
     public void setClonedFrom(BigDecimal clonedFrom) {
         this.clonedFrom = clonedFrom;
-    }
-
-    public String getCollaborators() {
-        return collaborators;
-    }
-
-    public void setCollaborators(String collaborators) {
-        this.collaborators = collaborators;
     }
 
     public String getRevisionStatus() {
@@ -299,14 +300,6 @@ public class DocumentV implements Serializable {
 
     public void setDocStage(String docStage) {
         this.docStage = docStage;
-    }
-
-    public Boolean isPrivateWorkingCopy() {
-        return isPrivateWorkingCopy;
-    }
-
-    public void setIsPrivateWorkingCopy(Boolean isPrivateWorkingCopy) {
-        this.isPrivateWorkingCopy = isPrivateWorkingCopy;
     }
 
     public String getDocAuditCBy() {
@@ -397,11 +390,11 @@ public class DocumentV implements Serializable {
         this.isVersionSeriesCheckedOut = isVersionSeriesCheckedOut;
     }
 
-    public Serializable getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Serializable content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

@@ -15,10 +15,10 @@ package eu.europa.ec.leos.repository;
 
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.entities.PackageV;
+import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.repositories.DocumentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
-import eu.europa.ec.leos.repository.repositories.PackageVRepository;
+import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -30,10 +30,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.stream.Stream;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,7 +43,7 @@ public class ApplicationTests {
     private static Logger LOG = LoggerFactory.getLogger(ApplicationTests.class);
 
     @Autowired
-    private PackageVRepository packageRepository;
+    private PackageRepository packageRepository;
     @Autowired
     private DocumentRepository documentRepository;
     @Autowired
@@ -52,21 +52,40 @@ public class ApplicationTests {
     @Test
     @Transactional(readOnly = true)
     public void test_findPackageByName() {
-        PackageV p = packageRepository.findPackageByName("doe");
-        assertNull(p);
+        Package pkg = packageRepository.findPackageByName("templates");
+        assertNotNull(pkg);
     }
 
     @Test
     @Transactional(readOnly = true)
-    public void test_findDocumentsByPackageId() {
-        Stream<Document> docs = documentRepository.findDocumentsFromPackageId(new BigDecimal(1));
-        assertEquals(docs.count(), 0);
+    public void test_findDocumentsByPackageName() {
+        Package pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
+        assertNotNull(pkg);
+        List<Document> docs = documentRepository.findAllDocumentsByPackageId(pkg);
+        assertEquals(docs.size(), 5);
     }
 
     @Test
     @Transactional(readOnly = true)
     public void test_findAllVersionsOfDocument() {
-        Stream<DocumentV> docs = documentVRepository.findAllVersionsFromDocumentId(new BigDecimal(1));
-        assertEquals(docs.count(), 0);
+        List<DocumentV> docs = documentVRepository.findAllVersionsByDocumentId(new BigDecimal(1));
+        assertEquals(docs.size(), 1);
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_findProposalByDocumentId() {
+        List<DocumentV> docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "PROPOSAL");
+        assertEquals(docs.size(), 1);
+        docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "BILL");
+        assertEquals(docs.size(), 1);
+        docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "ANNEX");
+        assertEquals(docs.size(), 1);
+        docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "MEMORANDUM");
+        assertEquals(docs.size(), 1);
+        Package pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
+        assertNotNull(pkg);
+        docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.getId(), "MEMORANDUM");
+        assertEquals(docs.size(), 1);
     }
 }

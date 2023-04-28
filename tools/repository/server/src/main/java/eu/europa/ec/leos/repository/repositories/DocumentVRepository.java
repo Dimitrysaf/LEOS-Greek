@@ -18,10 +18,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
-import java.util.stream.Stream;
+import java.util.List;
 
 public interface DocumentVRepository extends JpaRepository<DocumentV, BigDecimal> {
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.DOCUMENT_ID = ?1", nativeQuery = true)
-    Stream<DocumentV> findAllVersionsFromDocumentId(BigDecimal documentId);
+    List<DocumentV> findAllVersionsByDocumentId(BigDecimal documentId);
+
+    List<DocumentV> findAllVersionsByPackageIdAndCategoryCode(BigDecimal packageId, String categoryCode);
+
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.CATEGORY_CODE = ?2 AND d.IS_LATEST_VERSION = 1", nativeQuery = true)
+    List<DocumentV> findDocumentsByPackageIdAndCategory(BigDecimal packageId, String categoryCode);
+
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.IS_LATEST_VERSION = 1", nativeQuery = true)
+    List<DocumentV> findDocumentsByPackageId(BigDecimal packageId);
 }

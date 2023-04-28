@@ -67,7 +67,7 @@ public class DocumentMilestone implements Serializable {
     private String milestoneComments;
     @Lob
     @Column(name = "CONTENT")
-    private Serializable content;
+    private byte[] content;
     @Column(name = "STATUS", nullable = false, length = 30)
     private String status;
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
@@ -140,11 +140,11 @@ public class DocumentMilestone implements Serializable {
         this.milestoneComments = milestoneComments;
     }
 
-    public Serializable getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Serializable content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

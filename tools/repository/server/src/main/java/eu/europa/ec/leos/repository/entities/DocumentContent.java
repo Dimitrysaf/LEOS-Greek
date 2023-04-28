@@ -23,6 +23,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -33,18 +34,12 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "DocumentContent.findAll", query = "SELECT d FROM DocumentContent d"),
     @NamedQuery(name = "DocumentContent.findById", query = "SELECT d FROM DocumentContent d WHERE d.id = :id"),
+    @NamedQuery(name = "DocumentContent.findByCategoryCode", query = "SELECT d FROM DocumentContent d WHERE d.categoryCode = :categoryCode"),
     @NamedQuery(name = "DocumentContent.findByContent", query = "SELECT d FROM DocumentContent d WHERE d.content = :content"),
     @NamedQuery(name = "DocumentContent.findByActType", query = "SELECT d FROM DocumentContent d WHERE d.actType = :actType"),
-    @NamedQuery(name = "DocumentContent.findByCollaborators", query = "SELECT d FROM DocumentContent d WHERE d.collaborators = :collaborators"),
     @NamedQuery(name = "DocumentContent.findByDocPurpose", query = "SELECT d FROM DocumentContent d WHERE d.docPurpose = :docPurpose"),
-    @NamedQuery(name = "DocumentContent.findByDocStage", query = "SELECT d FROM DocumentContent d WHERE d.docStage = :docStage"),
-    @NamedQuery(name = "DocumentContent.findByDocTemplate", query = "SELECT d FROM DocumentContent d WHERE d.docTemplate = :docTemplate"),
     @NamedQuery(name = "DocumentContent.findByDocType", query = "SELECT d FROM DocumentContent d WHERE d.docType = :docType"),
     @NamedQuery(name = "DocumentContent.findByEeaRelevance", query = "SELECT d FROM DocumentContent d WHERE d.eeaRelevance = :eeaRelevance"),
-    @NamedQuery(name = "DocumentContent.findByLanguage", query = "SELECT d FROM DocumentContent d WHERE d.language = :language"),
-    @NamedQuery(name = "DocumentContent.findByProcedureType", query = "SELECT d FROM DocumentContent d WHERE d.procedureType = :procedureType"),
-    @NamedQuery(name = "DocumentContent.findByRef", query = "SELECT d FROM DocumentContent d WHERE d.ref = :ref"),
-    @NamedQuery(name = "DocumentContent.findByRefDoc", query = "SELECT d FROM DocumentContent d WHERE d.refDoc = :refDoc"),
     @NamedQuery(name = "DocumentContent.findByTemplate", query = "SELECT d FROM DocumentContent d WHERE d.template = :template"),
     @NamedQuery(name = "DocumentContent.findByTitle", query = "SELECT d FROM DocumentContent d WHERE d.title = :title"),
     @NamedQuery(name = "DocumentContent.findByAuditCBy", query = "SELECT d FROM DocumentContent d WHERE d.auditCBy = :auditCBy"),
@@ -60,30 +55,19 @@ public class DocumentContent implements Serializable {
             strategy = GenerationType.IDENTITY
     )
     private BigDecimal id;
+    @Column(name = "CATEGORY_CODE")
+    private String categoryCode;
+    @Lob
     @Column(name = "CONTENT", nullable = false)
-    private Serializable content;
+    private byte[] content;
     @Column(name = "ACT_TYPE", length = 100)
     private String actType;
-    @Column(name = "COLLABORATORS", nullable = false, length = 400)
-    private String collaborators;
     @Column(name = "DOC_PURPOSE", nullable = false, length = 400)
     private String docPurpose;
-    @Column(name = "DOC_STAGE", nullable = false, length = 400)
-    private String docStage;
-    @Column(name = "DOC_TEMPLATE", nullable = false, length = 400)
-    private String docTemplate;
     @Column(name = "DOC_TYPE", nullable = false, length = 400)
     private String docType;
     @Column(name = "EEA_RELEVANCE")
     private Boolean eeaRelevance;
-    @Column(name = "LANGUAGE", nullable = false, length = 10)
-    private String language;
-    @Column(name = "PROCEDURE_TYPE")
-    private String procedureType;
-    @Column(name = "REF", nullable = false, length = 400)
-    private String ref;
-    @Column(name = "REF_DOC")
-    private String refDoc;
     @Column(name = "TEMPLATE", nullable = false, length = 400)
     private String template;
     @Column(name = "TITLE", nullable = false, length = 400)
@@ -107,21 +91,16 @@ public class DocumentContent implements Serializable {
         this.id = id;
     }
 
-    public DocumentContent(BigDecimal id, Serializable content, String collaborators, String docPurpose, String docStage, String docTemplate, String docType,
-                           String language, String ref, String template, String title, String createdBy, LocalDateTime creationDate) {
+    public DocumentContent(BigDecimal id, byte[] content, String docPurpose, String docType,
+                           String template, String title, String auditCBy, LocalDateTime auditCDate) {
         this.id = id;
         this.content = content;
-        this.collaborators = collaborators;
         this.docPurpose = docPurpose;
-        this.docStage = docStage;
-        this.docTemplate = docTemplate;
         this.docType = docType;
-        this.language = language;
-        this.ref = ref;
         this.template = template;
         this.title = title;
-        this.auditCBy = createdBy;
-        this.auditCDate = creationDate;
+        this.auditCBy = auditCBy;
+        this.auditCDate = auditCDate;
     }
 
     public BigDecimal getId() {
@@ -132,11 +111,11 @@ public class DocumentContent implements Serializable {
         this.id = id;
     }
 
-    public Serializable getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Serializable content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 
@@ -148,36 +127,12 @@ public class DocumentContent implements Serializable {
         this.actType = actType;
     }
 
-    public String getCollaborators() {
-        return collaborators;
-    }
-
-    public void setCollaborators(String collaborators) {
-        this.collaborators = collaborators;
-    }
-
     public String getDocPurpose() {
         return docPurpose;
     }
 
     public void setDocPurpose(String docPurpose) {
         this.docPurpose = docPurpose;
-    }
-
-    public String getDocStage() {
-        return docStage;
-    }
-
-    public void setDocStage(String docStage) {
-        this.docStage = docStage;
-    }
-
-    public String getDocTemplate() {
-        return docTemplate;
-    }
-
-    public void setDocTemplate(String docTemplate) {
-        this.docTemplate = docTemplate;
     }
 
     public String getDocType() {
@@ -194,38 +149,6 @@ public class DocumentContent implements Serializable {
 
     public void setEeaRelevance(Boolean eeaRelevance) {
         this.eeaRelevance = eeaRelevance;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getProcedureType() {
-        return procedureType;
-    }
-
-    public void setProcedureType(String procedureType) {
-        this.procedureType = procedureType;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    public String getRefDoc() {
-        return refDoc;
-    }
-
-    public void setRefDoc(String refDoc) {
-        this.refDoc = refDoc;
     }
 
     public String getTemplate() {
@@ -248,16 +171,16 @@ public class DocumentContent implements Serializable {
         return auditCBy;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.auditCBy = createdBy;
+    public void setCreatedBy(String auditCBy) {
+        this.auditCBy = auditCBy;
     }
 
     public LocalDateTime getCreationDate() {
         return auditCDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.auditCDate = creationDate;
+    public void setCreationDate(LocalDateTime auditCDate) {
+        this.auditCDate = auditCDate;
     }
 
     public LocalDateTime getLastModificationDate() {
