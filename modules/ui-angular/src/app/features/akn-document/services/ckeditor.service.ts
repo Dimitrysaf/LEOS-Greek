@@ -55,6 +55,7 @@ export class CKEditorService implements OnDestroy {
       ...this.leosStateBS.value,
       instanceType: process.env.NG_APP_LEOS_INSTANCE,
     }),
+    // leosEditorExtension > actionHandler
     editElementAction: (data: {
       action: string;
       elementId: string;
@@ -139,6 +140,8 @@ export class CKEditorService implements OnDestroy {
           });
       }
     },
+    // leosEditorExtension > elementEditor
+    // checkboxesExtension (FinancialStatement screen)
     saveElement: (elemData: {
       elementId: string;
       elementType: string;
@@ -186,6 +189,7 @@ export class CKEditorService implements OnDestroy {
         }
       }
     },
+    // leosEditorExtension > elementEditor
     releaseElement: () => {
       const documentRef = this.documentRefBS.value;
       this.coEditionService.removeElementCoEditInfo(
@@ -198,6 +202,7 @@ export class CKEditorService implements OnDestroy {
         this.documentService.resetDocument();
       }
     },
+    // leosEditorExtension > actionHandler
     deleteElementAction: (elementData: {
       action: string;
       elementId: string;
@@ -217,6 +222,7 @@ export class CKEditorService implements OnDestroy {
         );
       });
     },
+    // leosEditorExtension > actionHandler
     insertElementAction: (elementData: {
       action: string;
       elementId: string;
@@ -241,6 +247,7 @@ export class CKEditorService implements OnDestroy {
           this.documentService.getToc(documentRef);
         });
     },
+    // leosEditorExtension > elementEditor
     mergeElement: (elementData: {
       elementId: string;
       elementType: string;
@@ -395,6 +402,7 @@ export class CKEditorService implements OnDestroy {
       );
   }
 
+  // called from this.connector.saveElement
   saveDocumentElement(
     documentRef: string,
     elementId: string,
@@ -417,14 +425,17 @@ export class CKEditorService implements OnDestroy {
       );
   }
 
+  // called from document-editor.component
   setDocumentRef(documentRef: string) {
     this.documentRefBS.next(documentRef);
   }
 
+  // called from document-editor.component
   setDocumentType(documentType: string) {
     this.documentTypeBS.next(documentType);
   }
 
+  // called from this.connector.editElementAction > dialog accept
   getDocumentElement(
     documentRef: string,
     elementName: string,
@@ -436,6 +447,7 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
+  // called from this.connector.deleteElementAction
   deleteDocumentElement(
     documentRef: string,
     elementName: string,
@@ -447,6 +459,7 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
+  // called from this.connector.insertElementAction
   insertDocumentElement(
     documentRef: string,
     elementName: string,
@@ -460,6 +473,7 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
+  // called from this.connector.mergeElement
   mergeDocumentElement(
     documentRef: string,
     documentType: string,
@@ -473,6 +487,7 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
+  // called from annex-actions-dropdown.component.html
   toogleUserGuidance() {
     this.documentService.seeUserGuidance().subscribe((userGuidance) => {
       if (!userGuidance) {
@@ -484,10 +499,12 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
+  // called from document-editor.component
   closeElementEditor() {
     this.connector.closeElement();
   }
 
+  // called from this.connector.addResizeListener (implemented in abstract-java-script-component.ts)
   private getResizeObserver() {
     if (!this.resizeObserver) {
       const fireResizeListeners = (el: Element) =>
@@ -500,6 +517,7 @@ export class CKEditorService implements OnDestroy {
     return this.resizeObserver;
   }
 
+  // called from constructor
   private getConnectorExtraConfig() {
     return this.documentService.documentRefAndCategory$.pipe(
       takeUntil(this.destroy$),
@@ -514,6 +532,7 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
+  // called from constructor
   private renameConfigKeysForEditor(config: any) {
     const oldConfig: LeosConfig & DocumentConfig = cloneDeep(config);
     const tocItems = cloneDeep(oldConfig.tocItems);
