@@ -3652,18 +3652,23 @@
                                 <num xml:id="_body__level_33__list__indent_2__list__indent_2_2__num">
                                     <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_2_2__num__inline">&#x2610;</inline>
                                 </num>
-                                <content xml:id="_body__level_33__list__indent_2__list__indent_2_2__content">
-                                    <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2__content__p">on other revenue</p>
-                                </content>
+                                <list leos:editable="false" class="~CHECK" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list">
+                                    <subparagraph leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph">
+                                        <content xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph_content">
+                                            <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph_content_p">on other revenue</p>
+                                        </content>
+                                    </subparagraph>
+                                    <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3">
+                                        <num xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_num">
+                                            <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_num_inline">&#x2610;</inline>
+                                        </num>
+                                        <content xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_content">
+                                            <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_content_p">please indicate, if the revenue is assigned to expenditure lines</p>
+                                        </content>
+                                    </indent>
+                                </list>
                             </indent>
-                            <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3">
-                                <num xml:id="_body__level_33__list__indent_2__list__indent_3__num">
-                                    <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__num__inline">&#x2610;</inline>
-                                </num>
-                                <content xml:id="_body__level_33__list__indent_2__list__indent_3__content">
-                                    <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3__content__p">please indicate, if the revenue is assigned to expenditure lines</p>
-                                </content>
-                            </indent>
+
                         </list>
                     </indent>
                 </list>
