@@ -1,18 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Subject } from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import { Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
-import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 @Component({
   selector: 'app-annex-actions-dropdown',
@@ -20,23 +14,16 @@ import { noWhitespaceValidator } from '@/shared/utils/validators';
   styleUrls: ['./annex-actions-dropdown.component.scss'],
 })
 export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
-  createForm: FormGroup;
-  isExportVersion = process.env.NG_APP_LEOS_INSTANCE !== 'cn';
-  downloadVersionVisible =
-    this.doc.documentType !== 'memorandum' &&
-    this.doc.documentType !== 'council_explanatory';
-  downloadVersionWithAnnotationsVisible =
-    this.doc.documentType !== 'memorandum';
-  // TODO: CN || proposal.isCloned() - see `setDownloadCleanVersionVisible`
-  downloadCleanVersionVisible =
-    process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
-    this.doc.documentType !== 'memorandum';
-  // TODO see `setShowCleanVersionVisible`
-  showCleanVersionVisible = false;
-  downloadEConsiliumVisible =
-    process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
-    this.doc.documentType !== 'memorandum';
-  importerVisible = false;
+  saveVersionVisible = false;
+  exportVersionVisible = false;
+  exportVersionWithAnnotationsVisible = false;
+  exportCleanVersionVisible = false;
+  exportEConsiliumVisible = false;
+  importVisible = false;
+  toggleUserGuidanceVisible = false;
+  seeNavigationPanelVisible = false;
+  changeDocumentStructureVisible = false;
+  renumberDocumentVisible = false;
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
   @ViewChild('eConsiliumModal')
@@ -47,7 +34,6 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject();
 
   constructor(
-    private fb: FormBuilder,
     public doc: DocumentService,
     public ckEditorService: CKEditorService,
   ) {}
@@ -58,45 +44,38 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.createForm = this.fb.group({
-      title: new FormControl('', {
-        validators: [Validators.required, noWhitespaceValidator],
-      }),
-      description: new FormControl(''),
-    });
-    this.doc.permissions$.subscribe((permissions) => {
-      this.importerVisible =
-        this.doc.documentType === 'bill' && permissions.includes('CAN_UPDATE');
-    });
+    this.doc.permissions$.subscribe((perms) => this.setMenuState(perms));
   }
 
-  openVersionModal() {
-    this.createVersionDialog.openDialog();
-  }
+  setMenuState(permissions: Permission[]) {
+    const isClonedProposal = false; // TODO: proposal.isCloned() when implemented
 
-  closeVersionModal() {
-    this.createVersionDialog.closeDialog();
-  }
+    const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+    const isAnnex = this.doc.documentType === 'annex';
+    const isMandateAnnex = isCN && isAnnex;
+    const isDocument = this.doc.documentType === 'bill';
+    const isMandateDocument = isCN && isDocument;
+    const isExplanatory = this.doc.documentType === 'council_explanatory';
+    const isMandateExplanatory = isCN && isExplanatory;
+    const isMemorandum = this.doc.documentType === 'memorandum';
+    const isMandateMemorandum = isCN && isMemorandum;
+    const CAN_UPDATE = permissions.includes('CAN_UPDATE');
+    const CAN_RENUMBER = permissions.includes('CAN_RENUMBER');
+    const CAN_WORK_WITH_EXPORT_PACKAGE = permissions.includes(
+      'CAN_WORK_WITH_EXPORT_PACKAGE',
+    );
 
-  onSaveVersion() {
-    if (this.createForm.valid) {
-      const requestBody = this.populateDataForVersionSave();
-      this.doc.saveVersion(requestBody).subscribe((response) => {
-        this.doc.reloadDocument();
-        this.closeVersionModal();
-      });
-    }
-  }
-
-  private populateDataForVersionSave() {
-    //TODO when version Type is defined refactor this.
-    const { title, description } = this.createForm.getRawValue();
-    return {
-      checkinComment: JSON.stringify({
-        title,
-        description,
-      }),
-      versionType: 'INTERMEDIATE',
-    };
+    this.saveVersionVisible = !isMandateMemorandum && CAN_UPDATE;
+    this.exportVersionVisible = !isMandateExplanatory && !isMandateMemorandum;
+    this.exportVersionWithAnnotationsVisible = !isMandateMemorandum;
+    this.exportCleanVersionVisible = isCN || isClonedProposal;
+    this.exportEConsiliumVisible =
+      isCN && !isMandateMemorandum && CAN_WORK_WITH_EXPORT_PACKAGE;
+    this.importVisible = isDocument && CAN_UPDATE;
+    this.toggleUserGuidanceVisible = true;
+    this.seeNavigationPanelVisible = true;
+    this.changeDocumentStructureVisible = isAnnex && CAN_UPDATE;
+    this.renumberDocumentVisible =
+      (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
   }
 }

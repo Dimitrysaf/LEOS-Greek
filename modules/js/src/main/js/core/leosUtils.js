@@ -69,18 +69,22 @@ define(function leosUtilsModule(require) {
                         elementsToBeChecked.push(HEADING_TAG);
                     }
                 }
-                if (elementsToBeChecked.includes(el.tagName) && !$.trim(el.innerText)) {
-                    if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
-                            && (el.parentElement.tagName === TABLE_CELL_TAG || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
-                        return false;
-                    } else if (el.children.length > 0 && _containsOnlyChildrenOf(el, childElementsToBeChecked)
-                            && ((el.previousElementSibling && el.previousElementSibling.tagName !== TABLE_TAG)
-                                || !el.previousElementSibling)) {
+                if (elementsToBeChecked.includes(el.tagName)) {
+                    if(!$.trim(el.innerText)) {
+                        if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
+                                && (el.parentElement.tagName === TABLE_CELL_TAG || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
+                            return false;
+                        } else if (el.children.length > 0 && _containsOnlyChildrenOf(el, childElementsToBeChecked)
+                                && (el.previousElementSibling && el.previousElementSibling.tagName === TABLE_TAG)) {
+                            return false;
+                        } else if (el.children.length > 0 && el.children[0].tagName === HEADING_TAG) {
+                            return el.children[0].innerText.trim().length === 0;
+                        } else {
+                            return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
+                        }
+                    }
+                    if(el.childNodes[0].nodeName === LINE_BREAK_TAG) {
                         return true;
-                    } else if (el.children.length > 0 && el.children[0].tagName === HEADING_TAG) {
-                        return el.children[0].innerText.trim().length === 0;
-                    } else {
-                        return el.children.length === 0;
                     }
                 }
                 return false;
