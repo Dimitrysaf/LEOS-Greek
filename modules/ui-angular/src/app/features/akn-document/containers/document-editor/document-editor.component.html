@@ -161,6 +161,7 @@
             [id]="containerId"
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
+            [readonly]="false"
             class="leos-doc-content"
             [ngClass]="{ 'toc-edit-mode': isEditMode }"
           ></app-annex-document>
@@ -331,7 +332,7 @@
                   : 'page.editor.versions.compare-button.tooltip-enable'
                 ) | translate
               "
-              (click)="documentService.toggleCompareMode()"
+              (click)="toggleVersionComparisonView()"
             >
               <eui-icon-svg icon="documents"></eui-icon-svg>
             </button>

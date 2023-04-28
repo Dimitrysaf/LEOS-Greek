@@ -177,7 +177,7 @@ export class DocumentEditorComponent
         if (versionView !== null) {
           this.versionForView = this.cleanupAndSerializeXML(
             versionView.editableXml,
-            `marked-${this.documentRef}`,
+            `doubleCompare-${this.documentRef}`,
           );
           this.setVersionForViewHeader(versionView.versionInfoVO);
           this.isVersionForViewOpen = true;
@@ -186,9 +186,12 @@ export class DocumentEditorComponent
 
     this.documentService.versionCompareView$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((versionCompareView) => {
-        if (versionCompareView !== null) {
-          this.versionsComparisonForView = versionCompareView;
+      .subscribe((versionCompareXML) => {
+        if (versionCompareXML) {
+          this.versionsComparisonForView = this.cleanupAndSerializeXML(
+            versionCompareXML,
+            `marked-${this.documentRef}`,
+          );
         }
       });
 
@@ -308,7 +311,6 @@ export class DocumentEditorComponent
     this.documentTocComponent.handleTocStylingOnInlineEdit(true);
     this.documentService.setAnnotationMode('READ_ONLY');
     this.coEditionWSService.sendTocInlineEdit(this.documentRef);
-    this.disableDocument();
   }
 
   handleUndo() {
@@ -409,6 +411,11 @@ export class DocumentEditorComponent
     this.isVersionForViewOpen = false;
   }
 
+  toggleVersionComparisonView() {
+    this.closeVersionView();
+    this.documentService.toggleCompareMode();
+  }
+
   closeVersionComparisonView() {
     this.documentService.toggleCompareMode(false);
   }
@@ -450,22 +457,7 @@ export class DocumentEditorComponent
     this.milestoneViewData = null;
   }
 
-  private disableDocument() {
-    const xml = this.document.getElementById(`${this.documentRef}`);
-    xml.style.opacity = '0.3';
-    xml.style.pointerEvents = 'none';
-    xml.style.userSelect = 'none';
-  }
-
-  private enableDocument() {
-    const xml = this.document.getElementById(`${this.documentRef}`);
-    xml.style.opacity = '1';
-    xml.style.pointerEvents = 'all';
-    xml.style.userSelect = 'all';
-  }
-
   private closeInlineToCEdit() {
-    this.enableDocument();
     this.documentTocComponent.messageFromValidation = null;
     this.documentTocComponent.isDropValid = null;
     this.isEditMode = false;
