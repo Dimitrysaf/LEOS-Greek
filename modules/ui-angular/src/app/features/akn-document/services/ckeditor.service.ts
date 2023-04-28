@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { clone, cloneDeep } from 'lodash-es';
+import { clone, cloneDeep, setWith } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatest,
@@ -53,6 +53,7 @@ export class CKEditorService implements OnDestroy {
     isEdited: false,
     isSaved: false,
   });
+  private isElementSaved = false;
   resizeListeners = new Map<Element, Set<ResizeListener>>();
   elementEditor$: Observable<any>;
   xml$ = this.xmlBS.asObservable();
@@ -169,6 +170,7 @@ export class CKEditorService implements OnDestroy {
         elemData.isSplit,
         documentType,
       ).subscribe((response) => {
+        this.isElementSaved = true;
         this.coEditionService.sendUpdateDocumentEvent(documentRef);
         this.connector.refreshElement(
           elemData.elementId,
@@ -177,7 +179,6 @@ export class CKEditorService implements OnDestroy {
         );
       });
     },
-    // closeElement: () => {},
     addResizeListener: <T extends Element>(
       element: T,
       callbackFunction: ResizeListener<T>,
@@ -202,12 +203,15 @@ export class CKEditorService implements OnDestroy {
     },
     releaseElement: () => {
       const documentRef = this.documentRefBS.value;
-      this.documentService.setDocumentId(documentRef);
-      this.documentService.reloadDocument();
       this.coEditionService.removeElementCoEditInfo(
         documentRef,
         this.elementUnderEdit,
       );
+      if (this.isElementSaved) {
+        this.documentService.reloadDocument();
+      } else {
+        this.documentService.resetDocument();
+      }
     },
     deleteElementAction: (elementData: {
       action: string;
@@ -222,7 +226,10 @@ export class CKEditorService implements OnDestroy {
         elementData.elementId,
         documentType,
       ).subscribe((response) => {
-        this.documentService.setDocumentId(documentRef);
+        this.documentService.setDocumentRefAndCategory(
+          documentRef,
+          documentType,
+        );
       });
     },
     insertElementAction: (elementData: {
@@ -242,7 +249,10 @@ export class CKEditorService implements OnDestroy {
       )
         .pipe(distinctUntilChanged())
         .subscribe((response) => {
-          this.documentService.setDocumentId(documentRef);
+          this.documentService.setDocumentRefAndCategory(
+            documentRef,
+            documentType,
+          );
           this.documentService.getToc(documentRef);
         });
     },
@@ -525,15 +535,14 @@ export class CKEditorService implements OnDestroy {
   }
 
   private getConnectorExtraConfig() {
-    return this.documentService.documentId$.pipe(
+    return this.documentService.documentRefAndCategory$.pipe(
       takeUntil(this.destroy$),
       filter((x) => x !== null),
-      combineLatestWith(this.documentService.documentCategory$),
-      switchMap(([documentRef, documentType]) =>
+      switchMap((options) =>
         this.http.get<DocumentConfig>(
           `${apiBaseUrl}/secured/${
-            documentType === 'coverpage' ? 'coverPage' : documentType
-          }/${documentRef}/document-config`,
+            options.category === 'coverpage' ? 'coverPage' : options.category
+          }/${options.ref}/document-config`,
         ),
       ),
     );

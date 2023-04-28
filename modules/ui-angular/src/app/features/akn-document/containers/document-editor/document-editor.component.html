@@ -100,19 +100,20 @@
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1 leos-editing-pane"
         >
           <!-- Search & Refresh -->
-          <div class="eui-u-flex eui-u-flex-row justify-content-between w-100">
-            <div class=""></div>
-            <h4 class="eui-u-font-size-s">{{ pageSubTitle }}</h4>
+          <div class="eui-u-flex eui-u-flex-row">
+            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
+              {{ pageSubTitle }}
+            </h4>
             <app-actions-toolbar
-              [ngClass]="{ 'disabled-class': isEditMode }"
-              class="eui-u-flex app-u-gap-s app-u-flex-basis-0 mt-1"
+              class="eui-u-flex app-u-flex-basis-0"
+              [disabled]="isEditMode"
             ></app-actions-toolbar>
           </div>
           <!-- Search panel -->
           <eui-card
             class="eui-u-font-size-s"
             euiNoShadow
-            [ngClass]="{ 'disabled-class': isEditMode }"
+            [ngClass]="{ 'toc-edit-mode': isEditMode }"
             *ngIf="documentService.searchPaneOpen$ | async"
           >
             <eui-card-content class="eui-u-overflow-auto">
@@ -161,25 +162,42 @@
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
             class="leos-doc-content"
+            [ngClass]="{ 'toc-edit-mode': isEditMode }"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
 
       <!-- compare: a -->
-      <eui-page-column interactiveScrollbars *ngIf="isVersionForViewOpen">
-        <eui-page-column-header-left-content class="font-inherit-header">{{
-          versionForViewHeaderTitle
-        }}</eui-page-column-header-left-content>
-        <eui-page-column-header-right-content>
-          <eui-icon
-            euiSizeS
-            iconClass="eui-icon-close-m"
-            (click)="closeVersionView()"
-          ></eui-icon>
-        </eui-page-column-header-right-content>
+      <eui-page-column
+        class="eui-u-p-none"
+        interactiveScrollbars
+        *ngIf="isVersionForViewOpen"
+      >
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
+          <div class="eui-u-flex eui-u-flex-row">
+            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
+              {{ versionForViewHeaderTitle }}
+            </h4>
+            <button
+              euiButton
+              euiIconButton
+              euiBasicButton
+              euiRounded
+              euiSizeS
+              [title]="
+                'page.editor.close-compare-view-button.tooltip' | translate
+              "
+              [attr.aria-label]="
+                'page.editor.close-compare-view-button.tooltip' | translate
+              "
+              (click)="closeVersionView()"
+            >
+              <span class="eui-icon eui-icon-close-m"></span>
+            </button>
+          </div>
+
           <app-annex-document
             id="versionContainer"
             [xml]="versionForView"
@@ -190,22 +208,35 @@
 
       <!-- compare: b -->
       <eui-page-column
+        class="eui-u-p-none"
         interactiveScrollbars
         *ngIf="documentService.compareModeEnabled$ | async"
       >
-        <eui-page-column-header-left-content class="font-inherit-header">{{
-          versionsComparisonForViewHeaderTitle$ | async
-        }}</eui-page-column-header-left-content>
-        <eui-page-column-header-right-content>
-          <eui-icon
-            euiSizeS
-            iconClass="eui-icon-close-m"
-            (click)="closeVersionComparisonView()"
-          ></eui-icon>
-        </eui-page-column-header-right-content>
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
+          <div class="eui-u-flex eui-u-flex-row">
+            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
+              {{ versionsComparisonForViewHeaderTitle$ | async }}
+            </h4>
+            <button
+              euiButton
+              euiIconButton
+              euiBasicButton
+              euiRounded
+              euiSizeS
+              [title]="
+                'page.editor.close-compare-view-button.tooltip' | translate
+              "
+              [attr.aria-label]="
+                'page.editor.close-compare-view-button.tooltip' | translate
+              "
+              (click)="closeVersionComparisonView()"
+            >
+              <span class="eui-icon eui-icon-close-m"></span>
+            </button>
+          </div>
+
           <app-annex-document
             id="versionComparisonContainer"
             [xml]="versionsComparisonForView"

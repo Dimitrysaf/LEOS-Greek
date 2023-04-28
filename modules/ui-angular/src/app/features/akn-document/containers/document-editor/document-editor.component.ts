@@ -13,7 +13,7 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
-import { BreadCrumbItem, EuiBreadcrumbService } from '@eui/components/layout';
+import { EuiBreadcrumbService } from '@eui/components/layout';
 import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
@@ -58,7 +58,6 @@ import { CKEditorService } from '../../services/ckeditor.service';
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit
 {
-  breadCrumbs: BreadCrumbItem[];
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
@@ -147,9 +146,10 @@ export class DocumentEditorComponent
           config.user.connectedEntity ?? config.user.defaultEntity
         ).name;
         this.showStatusFilter = config.annotateAuthority === 'LEOS';
-        this.documentService.setDocumentCategory(this.documentType);
-        this.documentService.setDocumentId(this.documentRef);
-        this.documentService.setDocumentCategory(this.documentType);
+        this.documentService.setDocumentRefAndCategory(
+          this.documentRef,
+          this.documentType,
+        );
         this.cdkEditor.setDocumentRef(this.documentRef);
         this.cdkEditor.setDocumentType(this.documentType);
       });
@@ -158,7 +158,8 @@ export class DocumentEditorComponent
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
-        this.loadDocument(documentView.editableXml, documentView.versionInfoVO);
+        this.loadDocument(documentView.editableXml);
+        this.setPageSubTitle(documentView.versionInfoVO);
         this.proposalRef = documentView.proposalRef;
       });
 
@@ -174,17 +175,11 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((versionView) => {
         if (versionView !== null) {
-          const pars = new DOMParser();
-          const versionXMl = pars.parseFromString(
+          this.versionForView = this.cleanupAndSerializeXML(
             versionView.editableXml,
-            'text/xml',
+            `marked-${this.documentRef}`,
           );
-          this.versionForView = this.cleanupAndSerializeXML(versionXMl);
-          this.setVersionForViewHeader({
-            version: versionView.versionInfoVO.documentVersion,
-            updatedByFull: `${versionView.versionInfoVO.lastModifiedBy} (${versionView.versionInfoVO.entity})`,
-            updatedOn: versionView.versionInfoVO.lastModificationInstant,
-          });
+          this.setVersionForViewHeader(versionView.versionInfoVO);
           this.isVersionForViewOpen = true;
         }
       });
@@ -341,7 +336,7 @@ export class DocumentEditorComponent
         next: (res) => {
           this.documentTocComponent.isToCDraft = false;
           this.documentTocComponent.treeHistory = [];
-          this.documentService.setDocumentId(this.documentRef);
+          this.documentService.reloadDocument();
         },
         error: (err) => {},
       });
@@ -531,19 +526,8 @@ export class DocumentEditorComponent
     return dragItems;
   }
 
-  private loadDocument(editableXml: string, versionInfo: VersionInfoVO) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(editableXml, 'text/xml');
-
-    this.setPageSubTitle({
-      version: versionInfo.documentVersion,
-      updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
-      updatedOn: versionInfo.lastModificationInstant,
-    });
-    this.xml = this.cleanupAndSerializeXML(xmlDoc);
-    setTimeout(() => {
-      if (this.isEditMode) this.disableDocument();
-    });
+  private loadDocument(xml: string) {
+    this.xml = this.cleanupAndSerializeXML(xml);
   }
 
   private loadStyleSheet() {
@@ -558,17 +542,25 @@ export class DocumentEditorComponent
     });
   }
 
-  private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
-    xmlDoc.querySelector('akomaNtoso').id = this.documentRef;
+  private cleanupAndSerializeXML(xml: string, akomantosoId?: string) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xml, 'text/html');
+    if (akomantosoId) {
+      xmlDoc.querySelector('akomantoso').id = akomantosoId;
+    }
     return new XMLSerializer()
       .serializeToString(xmlDoc)
       .replace(/<\?xml(-stylesheet)?.+\?>/g, '');
   }
 
-  private setPageSubTitle({ version, updatedByFull, updatedOn }) {
+  private setPageSubTitle(versionInfo: VersionInfoVO) {
     this.translate
-      .get('page.editor.subtitle', { version, updatedByFull, updatedOn })
-      .pipe(takeUntil(this.destroy$))
+      .get('page.editor.subtitle', {
+        version: versionInfo.documentVersion,
+        updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
+        updatedOn: versionInfo.lastModificationInstant,
+      })
+      .pipe(takeUntil(this.destroy$), take(1))
       .subscribe((subTitle: string) => {
         this.pageSubTitle = subTitle;
       });
@@ -584,10 +576,14 @@ export class DocumentEditorComponent
       .join(' ');
   }
 
-  private setVersionForViewHeader({ version, updatedByFull, updatedOn }) {
+  private setVersionForViewHeader(versionInfo: VersionInfoVO) {
     this.translate
-      .get('version.view.header', { version, updatedByFull, updatedOn })
-      .pipe(takeUntil(this.destroy$))
+      .get('version.view.header', {
+        version: versionInfo.documentVersion,
+        updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
+        updatedOn: versionInfo.lastModificationInstant,
+      })
+      .pipe(takeUntil(this.destroy$), take(1))
       .subscribe((header: string) => {
         this.versionForViewHeaderTitle = header;
       });

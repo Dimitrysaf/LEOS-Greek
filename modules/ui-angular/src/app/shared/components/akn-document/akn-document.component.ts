@@ -58,10 +58,8 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   }
 
   private loadDocument(xml: string) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'text/xml');
     const rootEl = this.rootElementRef.nativeElement;
-    rootEl.innerHTML = this.cleanupAndSerializeXML(xmlDoc);
+    rootEl.innerHTML = this.cleanupAndSerializeXML(xml);
   }
 
   private loadStyleSheet() {
@@ -76,9 +74,11 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
     });
   }
 
-  private cleanupAndSerializeXML(xmlDoc: XMLDocument) {
+  private cleanupAndSerializeXML(xml: string) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xml, 'text/html');
     return new XMLSerializer().serializeToString(
-      xmlDoc.querySelector('akomaNtoso'),
+      xmlDoc.querySelector('akomantoso'),
     );
   }
 }

@@ -35,7 +35,7 @@ export class SaveVersionDialogComponent implements OnInit {
     if (this.form.valid) {
       const requestBody = this.getNewVersionData();
       this.doc.saveVersion(requestBody).subscribe(() => {
-        this.doc.setDocumentId(this.doc.documentRef);
+        this.doc.reloadDocument();
         this.close();
       });
     }

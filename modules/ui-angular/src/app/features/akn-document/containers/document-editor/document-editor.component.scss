@@ -137,8 +137,8 @@
   width: 26%;
 }
 
-.disabled-class {
-  background-color: #ccc;
+.toc-edit-mode,
+.toc-edit-mode akomastoso {
   cursor: default;
   opacity: 0.3;
   pointer-events: none;
