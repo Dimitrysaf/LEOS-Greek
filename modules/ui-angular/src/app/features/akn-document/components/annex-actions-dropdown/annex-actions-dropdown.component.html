@@ -10,57 +10,59 @@
     </button>
     <eui-dropdown-content>
       <ul euiList class="eui-list--with-line-separators">
-        <li euiListItem (click)="createVersionDialog.open()">
+        <!-- Save this version -->
+        <li
+          euiListItem
+          (click)="createVersionDialog.open()"
+          *ngIf="saveVersionVisible"
+        >
           <button
             euiListItem
             translate="page.editor.actions-dropdown.save-version"
           ></button>
         </li>
-        <li euiListItem (click)="doc.download()" *ngIf="downloadVersionVisible">
+        <!-- Export this version -->
+        <li euiListItem (click)="doc.download()" *ngIf="exportVersionVisible">
           <button euiListItem>
-            {{
-              (isExportVersion
-                ? 'page.editor.actions-dropdown.export'
-                : 'page.editor.actions-dropdown.download'
-              ) | translate
-            }}
+            {{ 'page.editor.actions-dropdown.export' | translate }}
           </button>
         </li>
+        <!-- Export this version with annotations -->
         <li
           euiListItem
           (click)="doc.download(true)"
-          *ngIf="downloadVersionWithAnnotationsVisible"
+          *ngIf="exportVersionWithAnnotationsVisible"
         >
           <button euiListItem>
             {{
-              (isExportVersion
-                ? 'page.editor.actions-dropdown.export-with-annotations'
-                : 'page.editor.actions-dropdown.download-with-annotations'
-              ) | translate
+              'page.editor.actions-dropdown.export-with-annotations' | translate
             }}
           </button>
         </li>
+        <!-- Export clean version -->
         <li
           euiListItem
           (click)="doc.downloadCleanVersion()"
-          *ngIf="downloadCleanVersionVisible"
+          *ngIf="exportCleanVersionVisible"
         >
           <button
             euiListItem
-            translate="page.editor.actions-dropdown.download-clean-version"
+            translate="page.editor.actions-dropdown.export-clean-version"
           ></button>
         </li>
+        <!-- Export to eConsilium -->
         <li
           euiListItem
           (click)="eConsiliumModal.open()"
-          *ngIf="downloadEConsiliumVisible"
+          *ngIf="exportEConsiliumVisible"
         >
           <button
             euiListItem
-            translate="page.editor.actions-dropdown.download-econsilium"
+            translate="page.editor.actions-dropdown.export-econsilium"
           ></button>
         </li>
-        <ng-container *ngIf="importerVisible">
+        <!-- Import from the Office Journal -->
+        <ng-container *ngIf="importVisible">
           <li euiListItem (click)="importDialog.open()">
             <button
               euiListItem
@@ -68,7 +70,12 @@
             ></button>
           </li>
         </ng-container>
-        <li euiListItem (click)="ckEditorService.toogleUserGuidance()">
+        <!-- See/Hide user guidance -->
+        <li
+          euiListItem
+          (click)="ckEditorService.toogleUserGuidance()"
+          *ngIf="toggleUserGuidanceVisible"
+        >
           <button euiListItem>
             {{
               (doc.userGuidanceVisible$ | async) === false
@@ -78,27 +85,34 @@
             }}
           </button>
         </li>
-        <li euiListItem (click)="doc.seeNavigation()">
+        <!-- See navigation panel -->
+        <li
+          euiListItem
+          (click)="doc.seeNavigation()"
+          *ngIf="seeNavigationPanelVisible"
+        >
           <button
             euiListItem
             translate="page.editor.actions-dropdown.see-navigation"
             [disabled]="(doc.navigationPaneCollapse$ | async) === false"
           ></button>
         </li>
+        <!-- Renumber Document -->
         <li
           euiListItem
           (click)="doc.renumberDocument()"
-          *ngIf="doc.documentType !== 'council_explanatory'"
+          *ngIf="renumberDocumentVisible"
         >
           <button
             euiListItem
             translate="page.editor.actions-dropdown.apply-continuous-numbering"
           ></button>
         </li>
+        <!-- Change Annex Structure -->
         <li
           euiListItem
           (click)="doc.switchDocumentStructure()"
-          *ngIf="doc.documentType === 'annex'"
+          *ngIf="changeDocumentStructureVisible"
         >
           <button
             euiListItem
