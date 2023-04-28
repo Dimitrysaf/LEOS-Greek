@@ -535,7 +535,7 @@ export class CKEditorService implements OnDestroy {
   private getConnectorExtraConfig() {
     return this.documentService.documentRefAndCategory$.pipe(
       takeUntil(this.destroy$),
-      filter((x) => x !== null),
+      filter((x) => Boolean(x?.ref && x?.category)),
       switchMap((options) =>
         this.http.get<DocumentConfig>(
           `${apiBaseUrl}/secured/${

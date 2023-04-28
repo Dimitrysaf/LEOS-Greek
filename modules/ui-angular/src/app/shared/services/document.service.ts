@@ -63,6 +63,8 @@ export type DownloadEConsiliumOptions = Omit<
   'annotations'
 >;
 
+export type DocumentRefAndCategory = { ref: string; category: string };
+
 @Injectable()
 export class DocumentService implements OnDestroy {
   // documentCategory$: Observable<string | null>;
@@ -91,7 +93,7 @@ export class DocumentService implements OnDestroy {
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
-  documentRefAndCategory$: Observable<any | null>;
+  documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
 
   currentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
@@ -119,7 +121,8 @@ export class DocumentService implements OnDestroy {
   private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
-  private documentRefAndCategoryBS = new BehaviorSubject<any | null>(null);
+  private documentRefAndCategoryBS =
+    new BehaviorSubject<DocumentRefAndCategory | null>(null);
 
   private updatedContentToSaveAfterReplace: string = null;
   private getAnnotations?: () => Promise<string>;
