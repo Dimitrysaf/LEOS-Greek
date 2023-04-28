@@ -323,6 +323,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     // this.hilightSelectedNode(node);
     setTimeout(() => {
       this.handleTocStylingOnInlineEdit(this.isEdit);
+    });
+    setTimeout(() => {
       this.scrollToDocumentElement(node);
     });
   }
@@ -706,11 +708,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (targetElement) {
       targetElement.style.backgroundColor = 'cornsilk';
       setTimeout(() => {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-      setTimeout(() => {
         targetElement.style.background = '';
-      }, 2000);
+      }, 1000);
+      setTimeout(() => {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
   }
 
