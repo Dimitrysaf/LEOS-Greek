@@ -4,6 +4,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
+import { isEqual } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatestWith,
@@ -71,7 +72,7 @@ export class DocumentService implements OnDestroy {
   // documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
   versionView$: Observable<DocumentViewResponse | null>;
-  versionCompareView$: Observable<string | null>;
+  versionCompareView$: Observable<string>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
@@ -223,9 +224,21 @@ export class DocumentService implements OnDestroy {
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
       takeUntil(this.destroy$),
+      distinctUntilChanged((a, b) =>
+        isEqual(
+          a.map((x) => x.documentId),
+          b.map((x) => x.documentId),
+        ),
+      ),
       combineLatestWith(this.documentRefAndCategory$),
-      mergeMap(([versionCompareIds, option]) =>
-        this.getDocumentVersionsComparison(versionCompareIds, option.category),
+      mergeMap(([[oldVersion, newVersion], option]) =>
+        oldVersion && newVersion
+          ? this.getDocumentVersionsComparison(
+              option.category,
+              newVersion.documentId,
+              oldVersion.documentId,
+            )
+          : of(''),
       ),
     );
 
@@ -695,17 +708,18 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersionsComparison(versions: Version[], documentType: string) {
-    const [newVersion, oldVersion] = versions;
-    if (newVersion && oldVersion) {
-      documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-      return this.http.get<string>(
-        `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
-        { responseType: 'text' as 'json' },
-      );
-    } else {
-      return of('');
-    }
+  getDocumentVersionsComparison(
+    documentType: string,
+    newVersionId: string,
+    oldVersionId: string,
+  ) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    console.debug('getDocumentVersionsComparison old', oldVersionId); // DEBUG
+    console.debug('getDocumentVersionsComparison new', newVersionId); // DEBUG
+    return this.http.get<string>(
+      `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
+      { responseType: 'text' as 'json' },
+    );
   }
 
   renumberDocument() {

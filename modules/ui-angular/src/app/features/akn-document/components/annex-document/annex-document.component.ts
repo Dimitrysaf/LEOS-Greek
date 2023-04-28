@@ -30,6 +30,7 @@ export class AnnexDocumentComponent
 {
   @Input() xml: string;
   @Input() reloadTrigger: number;
+  @Input() readonly = true;
   currentXml: string;
 
   private bookmarkMutationObserver?: MutationObserver;
@@ -70,15 +71,17 @@ export class AnnexDocumentComponent
   }
 
   ngAfterViewInit(): void {
-    this.interceptAndProcessBookmarkLink();
-    this.ckeditorService.init();
+    if (!this.readonly) {
+      this.interceptAndProcessBookmarkLink();
+      this.ckeditorService.init();
 
-    this.coEditionWSService
-      .getDocCoEditionInfo()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((coEdits) => {
-        this.showElementsBeingEdited(coEdits);
-      });
+      this.coEditionWSService
+        .getDocCoEditionInfo()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((coEdits) => {
+          this.showElementsBeingEdited(coEdits);
+        });
+    }
   }
 
   generateTooltip(coEdits: CoEditionVO[]) {
@@ -97,8 +100,6 @@ export class AnnexDocumentComponent
     );
     return target;
   }
-
-  formatDate(date: Date) {}
 
   private showElementsBeingEdited(coEdits: Record<string, CoEditionVO[]>) {
     const userCoEditionElements = this.document.querySelectorAll(

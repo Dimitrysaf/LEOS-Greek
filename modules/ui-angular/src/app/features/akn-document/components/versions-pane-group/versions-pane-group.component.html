@@ -28,6 +28,7 @@
         id="select-{{ majorVersion.documentId }}"
         class="eui-input-checkbox--button-sizing"
         euiInputCheckBox
+        [checked]="isCompareCheckboxChecked(majorVersion)"
         [disabled]="isCompareCheckboxDisabled(majorVersion)"
         (change)="onSelectVersion(majorVersion, $event)"
         *ngIf="!isRecent && (docService.compareModeEnabled$ | async)"
@@ -57,6 +58,7 @@
             id="select-{{ version.documentId }}"
             class="eui-input-checkbox--button-sizing"
             euiInputCheckBox
+            [checked]="isCompareCheckboxChecked(version)"
             [disabled]="isCompareCheckboxDisabled(version)"
             (change)="onSelectVersion(version, $event)"
             *ngIf="docService.compareModeEnabled$ | async"

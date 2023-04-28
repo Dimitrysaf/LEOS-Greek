@@ -67,7 +67,9 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     const currentVersions = this.docService.getVersionCompareIds();
     let newVersions: Version[];
     if (!checked) {
-      newVersions = currentVersions.filter((v) => v !== version);
+      newVersions = currentVersions.filter(
+        (v) => v.documentId !== version.documentId,
+      );
     } else if (currentVersions.length === 0) {
       newVersions = [version];
     } else {
@@ -80,9 +82,17 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     this.docService.setVersionCompareIds(newVersions);
   }
 
+  protected isCompareCheckboxChecked(version: Version): boolean {
+    const currentVersions = this.docService.getVersionCompareIds();
+    return currentVersions.some((v) => v.documentId === version.documentId);
+  }
+
   protected isCompareCheckboxDisabled(version: Version): boolean {
     const currentVersions = this.docService.getVersionCompareIds();
-    return currentVersions.length === 2 && !currentVersions.includes(version);
+    return (
+      currentVersions.length === 2 &&
+      !currentVersions.some((v) => v.documentId === version.documentId)
+    );
   }
 
   protected formatVersionNumber(version: Version): string {
