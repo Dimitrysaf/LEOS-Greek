@@ -15,11 +15,12 @@
 package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.eventbus.EventBus;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -383,6 +384,20 @@ public class LeosApiController {
             LOG.error("Error Occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
             return new ResponseEntity<>("An error occurred during proposal cloning.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/secured/revisionDone", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateClonedProposalRevisionStatus(@RequestParam("cloneProposalId") String cloneProposalId,
+                                                                     @RequestParam("legFileName") String legFileName) {
+        Result<?> result;
+        try {
+            result = createCollectionService.updateOriginalProposalAfterRevisionDone(cloneProposalId, legFileName);
+        } catch (Exception ex) {
+            LOG.error("Error Occurred while getting revision done status: " + ex.getMessage(), ex);
+            return new ResponseEntity<>("Error Occurred while getting revision done status", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(result.get(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/secured/export/{proposalRef}/{exportPackageId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

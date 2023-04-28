@@ -14,7 +14,9 @@
 package eu.europa.ec.leos.cmis.search;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -32,6 +34,8 @@ import java.util.stream.StreamSupport;
 class SearchStrategyDiscoveryServices extends SearchStrategyImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchStrategyDiscoveryServices.class);
+
+    private final static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
     
     SearchStrategyDiscoveryServices(Session cmisSession) {
         super(cmisSession);
@@ -47,9 +51,9 @@ class SearchStrategyDiscoveryServices extends SearchStrategyImpl {
 
         String whereClause;
         if (descendants) {
-            whereClause = CmisProperties.DOCUMENT_CATEGORY.getId() + " IN (" + categoryStr + ") AND IN_TREE('" + folder.getId() + "')";
+            whereClause = repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY) + " IN (" + categoryStr + ") AND IN_TREE('" + folder.getId() + "')";
         } else {
-            whereClause = CmisProperties.DOCUMENT_CATEGORY.getId() + " IN (" + categoryStr + ") AND IN_FOLDER('" + folder.getId() + "')";
+            whereClause = repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY) + " IN (" + categoryStr + ") AND IN_FOLDER('" + folder.getId() + "')";
         }
         logger.trace("Querying CMIS objects... [primaryType=" + primaryType + ", where=" + whereClause + "]");
 

@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.leos.repository.document;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;

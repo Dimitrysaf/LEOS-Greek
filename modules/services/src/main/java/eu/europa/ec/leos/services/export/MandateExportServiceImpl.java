@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.export;
 
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.DocuWriteService;

@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.store;
 
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;

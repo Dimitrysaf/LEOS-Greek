@@ -15,7 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.security.LeosPermission;
 
 import java.util.List;

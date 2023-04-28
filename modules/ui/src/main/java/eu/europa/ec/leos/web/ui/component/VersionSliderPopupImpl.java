@@ -16,7 +16,7 @@ package eu.europa.ec.leos.web.ui.component;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.ui.component.RangeSliderComponent;
 import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;

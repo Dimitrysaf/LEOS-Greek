@@ -17,24 +17,23 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.Content.Source;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.Content.Source;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -53,6 +52,8 @@ import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
@@ -279,6 +280,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     protected final AttachmentProcessor attachmentProcessor;
     private final ConfigurationHelper cfgHelper;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -311,7 +313,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
                       ProposalService proposalService, ContributionService contributionService, SearchService searchService, ExportPackageService exportPackageService,
                       NotificationService notificationService, CloneContext cloneContext, InstanceTypeResolver instanceTypeResolver, XmlContentProcessor xmlContentProcessor,
                       NumberService numberService, MergeContributionHelper mergeContributionHelper, AttachmentProcessor attachmentProcessor,
-                      ConfigurationHelper cfgHelper, AnnotateService annotateService) {
+                      ConfigurationHelper cfgHelper, AnnotateService annotateService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
 
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.contributionService = contributionService;
@@ -350,6 +352,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         this.mergeContributionHelper = mergeContributionHelper;
         this.annotateService = annotateService;
         this.openElementEditors = new ArrayList<>();
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     private byte[] getContent(Bill bill) {
@@ -879,7 +882,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         String versionLabel = event.getVersionLabel();
         String versionComment = event.getBaseVersionTitle();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel +
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel +
                 CMIS_PROPERTY_SPLITTER + versionComment);
         Bill updatedBill = billService.updateBill(documentId, properties, true);
         documentScreen.refreshContent(getEditableXml(updatedBill), updatedBill.isTrackChangesEnabled());
@@ -995,7 +998,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     @Subscribe
     public void enableTrackChanges(EnableTrackChangesEvent event) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), event.isEnabled());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
         billService.updateBill(documentId, properties, false);
     }
 
@@ -1305,7 +1308,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         final Bill revision = billService.findBill(event.getContributionVO().getDocumentId(), false);
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), contributionStatus);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
         Bill updatedBill = billService.updateBill(revision.getId(), properties, false);
         if (updatedBill != null) {
             documentScreen.disableMergePane();
@@ -1321,7 +1324,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
         documentScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         billService.updateBill(revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Bill.class);
         documentScreen.populateContributions(allContributions);

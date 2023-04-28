@@ -13,17 +13,18 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -50,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.ANNEX;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.ANNEX;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 
@@ -74,6 +75,7 @@ public class BillContextService {
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final MessageHelper messageHelper;
     private final CollectionUrlBuilder urlBuilder;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private XPathCatalog xPathCatalog;
 
     private final Provider<AnnexContextService> annexContextProvider;
@@ -107,7 +109,7 @@ public class BillContextService {
                        XmlNodeProcessor xmlNodeProcessor,
                        XmlNodeConfigProcessor xmlNodeConfigProcessor,
                        MessageHelper messageHelper, CollectionUrlBuilder urlBuilder,
-                       Provider<AnnexContextService> annexContextProvider, XPathCatalog xPathCatalog) {
+                       Provider<AnnexContextService> annexContextProvider, XPathCatalog xPathCatalog, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         this.billService = billService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -121,6 +123,7 @@ public class BillContextService {
         this.annexContextProvider = annexContextProvider;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xPathCatalog = xPathCatalog;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -268,8 +271,8 @@ public class BillContextService {
         bill = billService.updateBill(bill, updatedBytes, updateRefsComment);
         if (cloneProposal) {
             Map<String, Object> billProperties = new HashMap<>();
-            billProperties.put(CmisProperties.CLONED_FROM.getId(), billDocument.getId());
-            billProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            billProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), billDocument.getId());
+            billProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             billService.updateBill(bill.getId(), billProperties, true);
         }
         for (Annex annex : annexes) {

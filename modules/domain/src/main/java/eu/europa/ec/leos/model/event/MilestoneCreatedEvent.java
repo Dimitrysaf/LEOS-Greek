@@ -14,7 +14,7 @@
 
 package eu.europa.ec.leos.model.event;
 
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 
 public class MilestoneCreatedEvent {
 

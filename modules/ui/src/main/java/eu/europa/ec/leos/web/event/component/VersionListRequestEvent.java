@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.web.event.component;
 
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 public class VersionListRequestEvent<T extends XmlDocument> {
 

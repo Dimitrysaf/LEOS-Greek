@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.ui.view.workspace;
 
 import com.google.common.base.Function;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;

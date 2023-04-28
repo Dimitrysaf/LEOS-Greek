@@ -2,7 +2,9 @@ package eu.europa.ec.leos.cmis.support;
 
 import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Map;
 import static java.util.Collections.emptyList;
 
 public final class RepositoryUtil {
+
+    private static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
     
     private RepositoryUtil() {
     }
@@ -24,7 +28,7 @@ public final class RepositoryUtil {
     
     public static Map<String, List<String>> updateMilestoneCommentsProperties(List<String> milestoneComments) {
         Map<String, List<String>> result = new HashMap<>();
-        result.put(CmisProperties.MILESTONE_COMMENTS.getId(), milestoneComments);
+        result.put(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS), milestoneComments);
         return result;
     }
 }

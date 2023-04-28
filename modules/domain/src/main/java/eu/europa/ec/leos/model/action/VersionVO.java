@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.model.action;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 
 import java.time.Instant;
 import java.time.ZoneId;

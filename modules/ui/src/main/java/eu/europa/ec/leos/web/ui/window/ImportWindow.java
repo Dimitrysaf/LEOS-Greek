@@ -22,7 +22,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.ui.extension.ImportElementExtension;
 import eu.europa.ec.leos.web.event.view.document.*;

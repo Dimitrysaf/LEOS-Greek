@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.processor;
 
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface FinancialStatementProcessor {

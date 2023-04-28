@@ -1,9 +1,9 @@
 package eu.europa.ec.leos.services.store;
 
 import cool.graph.cuid.Cuid;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

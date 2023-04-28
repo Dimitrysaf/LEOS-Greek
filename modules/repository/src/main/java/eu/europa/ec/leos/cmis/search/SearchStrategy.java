@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.cmis.search;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;

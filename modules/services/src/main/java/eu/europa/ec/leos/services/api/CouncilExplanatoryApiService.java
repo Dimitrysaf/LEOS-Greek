@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 
 import java.util.List;

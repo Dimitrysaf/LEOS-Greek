@@ -13,16 +13,18 @@
  */
 package eu.europa.ec.leos.cmis.extensions;
 
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.*;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import io.atlassian.fugue.Option;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -44,6 +46,8 @@ import static eu.europa.ec.leos.cmis.extensions.CmisMetadataExtensions.*;
 public class CmisDocumentExtensions {
 
     private static final Logger logger = LoggerFactory.getLogger(CmisDocumentExtensions.class);
+
+    private static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
     
     @SuppressWarnings("unchecked")
     public static <T extends LeosDocument> T toLeosDocument(Document document, Class<? extends T> type, boolean fetchContent, Map<String, String> oldVersions) {
@@ -298,7 +302,7 @@ public class CmisDocumentExtensions {
 
     private static LeosCategory getCategory(Document document) {
         // FIXME add check for leos:document primary type???
-        String cmisCategory = document.getPropertyValue(CmisProperties.DOCUMENT_CATEGORY.getId());
+        String cmisCategory = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY));
         return LeosCategory.valueOf(cmisCategory);
     }
 
@@ -327,7 +331,7 @@ public class CmisDocumentExtensions {
 
     static List<Collaborator> getCollaborators(Document document) {
 
-        Property<String> collaboratorsProperty = document.getProperty(CmisProperties.COLLABORATORS.getId());
+        Property<String> collaboratorsProperty = document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS));
         List<String> collaboratorsPropertyValues = collaboratorsProperty.getValues();
 
         List<Collaborator> collaborators = new ArrayList<>();
@@ -352,43 +356,43 @@ public class CmisDocumentExtensions {
 
     // FIXME maybe move title property to metadata or remove it entirely
     private static String getTitle(Document document) { // FIXME add check for leos:xml primary type
-        return document.getPropertyValue(CmisProperties.DOCUMENT_TITLE.getId());
+        return document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }
 
     private static List<String> getMilestoneComments(Document document) {
-        Property<String> milestoneComments = document.getProperty(CmisProperties.MILESTONE_COMMENTS.getId());
+        Property<String> milestoneComments = document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS));
         return milestoneComments.getValues();
     }
 
     private static String getJobId(Document document) {
-        return document.getPropertyValue(CmisProperties.JOB_ID.getId());
+        return document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_ID));
     }
 
     private static Instant getJobDate(Document document) {
-        GregorianCalendar jobDate = document.getPropertyValue(CmisProperties.JOB_DATE.getId());
+        GregorianCalendar jobDate = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE));
         return jobDate != null ? jobDate.toInstant() : Instant.MIN;
     }
 
     private static LeosLegStatus getStatus(Document document) {
-        return LeosLegStatus.valueOf(document.getPropertyValue(CmisProperties.STATUS.getId()));
+        return LeosLegStatus.valueOf(document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS)));
     }
 
     private static LeosExportStatus getExportStatus(Document document) {
-        return LeosExportStatus.valueOf(document.getPropertyValue(CmisProperties.STATUS.getId()));
+        return LeosExportStatus.valueOf(document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS)));
     }
 
     static String getInitialCreatedBy(Document document) {
-        String initialCreatedBy = document.getPropertyValue(CmisProperties.INITIAL_CREATED_BY.getId());
+        String initialCreatedBy = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY));
         return initialCreatedBy != null ? initialCreatedBy : document.getCreatedBy();
     }
 
     static Instant getInitialCreationInstant(Document document) {
-        GregorianCalendar initialCreationDate = document.getPropertyValue(CmisProperties.INITIAL_CREATION_DATE.getId());
+        GregorianCalendar initialCreationDate = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE));
         return initialCreationDate != null ? initialCreationDate.toInstant() : getCreationInstant(document);
     }
 
     public static String getLeosVersionLabel(Document document, Map<String, String>  oldVersions) {
-        String versionLabel = document.getPropertyValue(CmisProperties.VERSION_LABEL.getId());
+        String versionLabel = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL));
         if (StringUtils.isEmpty(versionLabel)) {
             versionLabel = oldVersions.get(document.getId());
         }
@@ -396,17 +400,17 @@ public class CmisDocumentExtensions {
     }
 
     private static String getLeosVersionLabel(Document document) {
-        return document.getPropertyValue(CmisProperties.VERSION_LABEL.getId());
+        return document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL));
     }
 
     private static VersionType getVersionType(Document document) {
-        BigInteger versionType = document.getPropertyValue(CmisProperties.VERSION_TYPE.getId());
+        BigInteger versionType = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_TYPE));
         if (versionType != null) {
             return VersionType.fromValue(versionType.intValueExact());
         } else if (!document.isMajorVersion()) { // For compatibility with documents with no populated leos:versionType property
             return VersionType.MINOR;
-        } else if ((document.getProperty(CmisProperties.MILESTONE_COMMENTS.getId()) != null) &&
-                (!document.getProperty(CmisProperties.MILESTONE_COMMENTS.getId()).getValues().isEmpty())) {
+        } else if ((document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)) != null) &&
+                (!document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)).getValues().isEmpty())) {
             return VersionType.MAJOR;
         } else {
             return VersionType.INTERMEDIATE;
@@ -414,56 +418,56 @@ public class CmisDocumentExtensions {
     }
 
     private static List<String> getContainedDocuments(Document document) {
-        Property<String> containedDocuments = document.getProperty(CmisProperties.CONTAINED_DOCUMENTS.getId());
+        Property<String> containedDocuments = document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS));
         return containedDocuments.getValues();
     }
 
     private static boolean isClonedProposal(Document document) {
-        Boolean clonedProposal = document.getPropertyValue(CmisProperties.CLONED_PROPOSAL.getId());
+        Boolean clonedProposal = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL));
         return clonedProposal != null ? clonedProposal : false;
     }
 
     private static String getOriginRef(Document document) {
-        String originRef = document.getPropertyValue(CmisProperties.ORIGIN_REF.getId());
+        String originRef = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF));
         return originRef != null ? originRef : "";
     }
 
     private static String getClonedFrom(Document document) {
-        String clonedFrom = document.getPropertyValue(CmisProperties.CLONED_FROM.getId());
+        String clonedFrom = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM));
         return clonedFrom != null ? clonedFrom : "";
     }
 
     private static String getRevisionStatus(Document document) {
-        String revisionStatus = document.getPropertyValue(CmisProperties.REVISION_STATUS.getId());
+        String revisionStatus = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS));
         return revisionStatus != null ? revisionStatus : "";
     }
 
     private static String getContributionStatus(Document document) {
-        String contributionStatus = document.getPropertyValue(CmisProperties.CONTRIBUTION_STATUS.getId());
+        String contributionStatus = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS));
         return contributionStatus != null ? contributionStatus : "";
     }
 
     private static List<String> getComments(Document document) {
-        Property<String> comments = document.getProperty(CmisProperties.COMMENTS.getId());
+        Property<String> comments = document.getProperty(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS));
         return comments.getValues();
     }
 
     private static List<String> getClonedMilestoneId(Document document) {
-        List<String> clonedMilestoneId = document.getPropertyValue(CmisProperties.CLONED_MILESTONE_ID.getId());
+        List<String> clonedMilestoneId = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID));
         return clonedMilestoneId != null ? clonedMilestoneId : new ArrayList<>();
     }
 
     private static String getBaseRevisionId(Document document) {
-        return document.getPropertyValue(CmisProperties.BASE_REVISION_ID.getId());
+        return document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID));
     }
     
     private static boolean isLiveDiffingRequired(Document document) {
-    	Boolean liveDiffingRequired = document.getPropertyValue(CmisProperties.LIVE_DIFFING_REQUIRED.getId());
+    	Boolean liveDiffingRequired = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED));
     	return liveDiffingRequired != null ? liveDiffingRequired : false;
     }
 
     private static boolean isTrackChangesEnabled(Document document) {
-        Boolean trackChangesEnabled = document.getPropertyValue(CmisProperties.TRACK_CHANGES_ENABLED.getId());
+        Boolean trackChangesEnabled = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED));
         return trackChangesEnabled != null ? trackChangesEnabled : false;
     }
 }

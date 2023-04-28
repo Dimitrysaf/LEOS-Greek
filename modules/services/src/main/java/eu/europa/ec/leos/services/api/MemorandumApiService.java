@@ -14,7 +14,7 @@
 
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
 
 public interface MemorandumApiService extends BaseDocumentService<Memorandum> {
 }

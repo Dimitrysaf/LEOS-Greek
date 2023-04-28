@@ -1,27 +1,29 @@
 package eu.europa.ec.leos.cmis.extensions;
 
 import com.google.common.collect.ImmutableList;
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.ConfigDocument;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.MediaDocument;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.MediaDocument;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import io.atlassian.fugue.Option;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -75,6 +77,7 @@ public class CmisDocumentExtensionsTest {
     private final static String DOC_INITIAL_CREATED_BY = "DOCUMENT_INITIAL_CREATED_BY_";
     private final static Instant DOC_INITIAL_CREATION_INSTANT = LocalDateTime.of(2019, 5, 28, 23, 40).toInstant(ZoneOffset.UTC);
     private final static Option<Content> DOC_CONTENT = Option.option(new ContentImpl("testFile", "mime type", 23, new SourceImpl(new ByteArrayInputStream(new byte[]{0, 1, 2}))));
+    private final static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 
     @Test
     public void test_getCollaborators_MapIsCorrect() {
@@ -82,7 +85,7 @@ public class CmisDocumentExtensionsTest {
         Property<Object> property = mock(Property.class);
         when(property.getValues()).thenReturn(Arrays.asList("testUser1::OWNER::SG", "testUser2::OWNER::SJ", "testUser3::CONTRIBUTOR::AGRI"));
         Document cmisDocument = mock(Document.class);
-        when(cmisDocument.getProperty(eq(CmisProperties.COLLABORATORS.getId()))).thenReturn(property);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS)))).thenReturn(property);
 
         //make call
         List<Collaborator> resultUsers = CmisDocumentExtensions.getCollaborators(cmisDocument);
@@ -108,7 +111,7 @@ public class CmisDocumentExtensionsTest {
         Property<Object> property = mock(Property.class);
         when(property.getValues()).thenReturn(Arrays.asList("testUser1::OWNER", "testUser2::INCORRECT"));
         Document cmisDocument = mock(Document.class);
-        when(cmisDocument.getProperty(eq(CmisProperties.COLLABORATORS.getId()))).thenReturn(property);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS)))).thenReturn(property);
 
         //make call
         List<Collaborator> resultUsers = CmisDocumentExtensions.getCollaborators(cmisDocument);
@@ -124,7 +127,7 @@ public class CmisDocumentExtensionsTest {
         Property<Object> property = mock(Property.class);
         when(property.getValues()).thenReturn(Arrays.asList("testUser1::OWNER::SG", "XYZ"));
         Document cmisDocument = mock(Document.class);
-        when(cmisDocument.getProperty(eq(CmisProperties.COLLABORATORS.getId()))).thenReturn(property);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS)))).thenReturn(property);
 
         //make call
         List<Collaborator> resultUsers = CmisDocumentExtensions.getCollaborators(cmisDocument);
@@ -141,8 +144,8 @@ public class CmisDocumentExtensionsTest {
         //setup
         Document cmisDocument = setupLeosDocument(LeosCategory.PROPOSAL);
         addXmlDocumentProperties(cmisDocument);
-        when(cmisDocument.getPropertyValue(CmisProperties.INITIAL_CREATED_BY.getId())).thenReturn(DOC_INITIAL_CREATED_BY);
-        when(cmisDocument.getPropertyValue(CmisProperties.INITIAL_CREATION_DATE.getId())).thenReturn(GregorianCalendar.from(DOC_INITIAL_CREATION_INSTANT.atZone(ZoneId.of("UTC"))));
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY))).thenReturn(DOC_INITIAL_CREATED_BY);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE))).thenReturn(GregorianCalendar.from(DOC_INITIAL_CREATION_INSTANT.atZone(ZoneId.of("UTC"))));
 
         Option<ProposalMetadata> proposalMetadata = Option.none();
         mockStatic(CmisMetadataExtensions.class);
@@ -306,20 +309,20 @@ public class CmisDocumentExtensionsTest {
         //setup
         Document cmisDocument = setupLeosDocument(LeosCategory.LEG);
         String jobId = "DOCUMENT_JOB_ID";
-        when(cmisDocument.getPropertyValue(CmisProperties.JOB_ID.getId())).thenReturn(jobId);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_ID))).thenReturn(jobId);
 
         Instant jobDate = LocalDateTime.of(2019, 05, 28, 23, 30).toInstant(ZoneOffset.UTC);
-        when(cmisDocument.getPropertyValue(CmisProperties.JOB_DATE.getId())).thenReturn(GregorianCalendar.from(jobDate.atZone(ZoneId.of("UTC"))));
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE))).thenReturn(GregorianCalendar.from(jobDate.atZone(ZoneId.of("UTC"))));
 
-        when(cmisDocument.getPropertyValue(CmisProperties.STATUS.getId())).thenReturn(LeosLegStatus.IN_CONSULTATION.name());
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS))).thenReturn(LeosLegStatus.IN_CONSULTATION.name());
 
         Property milestoneProperty = mock(Property.class);
         when(milestoneProperty.getValues()).thenReturn(DOC_MILESTONE_COMMENTS);
-        when(cmisDocument.getProperty(eq(CmisProperties.MILESTONE_COMMENTS.getId()))).thenReturn(milestoneProperty);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)))).thenReturn(milestoneProperty);
 
         Property containedDocuments = mock(Property.class);
         when(containedDocuments.getValues()).thenReturn(DOC_CONTAINED_DOCUMENTS);
-        when(cmisDocument.getProperty(eq(CmisProperties.CONTAINED_DOCUMENTS.getId()))).thenReturn(containedDocuments);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS)))).thenReturn(containedDocuments);
 
         //make call
         LegDocument legDocument = CmisDocumentExtensions.toLeosDocument(cmisDocument, LegDocument.class, true, Collections.emptyMap());
@@ -380,7 +383,7 @@ public class CmisDocumentExtensionsTest {
     public void test_getInitialCreatedBy_IfInitialCreatedBy_Provided() {
         //setup
         Document cmisDocument = mock(Document.class);
-        when(cmisDocument.getPropertyValue(CmisProperties.INITIAL_CREATED_BY.getId())).thenReturn(DOC_INITIAL_CREATED_BY);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY))).thenReturn(DOC_INITIAL_CREATED_BY);
         when(cmisDocument.getCreatedBy()).thenReturn(DOC_CREATED_BY);
 
         //make call
@@ -393,7 +396,7 @@ public class CmisDocumentExtensionsTest {
     public void test_getInitialCreatedBy_IfInitialCreatedBy_Null() {
         //setup
         Document cmisDocument = mock(Document.class);
-        when(cmisDocument.getPropertyValue(CmisProperties.INITIAL_CREATED_BY.getId())).thenReturn(null);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY))).thenReturn(null);
         when(cmisDocument.getCreatedBy()).thenReturn(DOC_CREATED_BY);
 
         //make call
@@ -430,7 +433,7 @@ public class CmisDocumentExtensionsTest {
     private Document setupLeosDocument(LeosCategory leosCategory) {
         Document cmisDocument = mock(Document.class);
 
-        when(cmisDocument.getPropertyValue(CmisProperties.DOCUMENT_CATEGORY.getId())).thenReturn(leosCategory.name());
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY))).thenReturn(leosCategory.name());
 
         when(cmisDocument.getId()).thenReturn(DOC_ID);
         when(cmisDocument.getName()).thenReturn(DOC_NAME);
@@ -439,9 +442,9 @@ public class CmisDocumentExtensionsTest {
         when(cmisDocument.getLastModifiedBy()).thenReturn(DOC_LAST_MODIFIED_BY);
         when(cmisDocument.getLastModificationDate()).thenReturn(GregorianCalendar.from(DOC_LAST_MODIFICATION_INSTANT.atZone(ZoneId.of("UTC"))));
         when(cmisDocument.getVersionSeriesId()).thenReturn(DOC_VERSION_SERIES_ID);
-        when(cmisDocument.getPropertyValue(CmisProperties.VERSION_LABEL.getId())).thenReturn(DOC_VERSION_LABEL);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL))).thenReturn(DOC_VERSION_LABEL);
         when(cmisDocument.getCheckinComment()).thenReturn(DOC_VERSION_COMMENT);
-        when(cmisDocument.getPropertyValue(CmisProperties.VERSION_TYPE.getId())).thenReturn(null);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_TYPE))).thenReturn(null);
         when(cmisDocument.isLatestVersion()).thenReturn(DOC_IS_LATEST_VERSION);
 
         ContentStream contentStream = mock(ContentStream.class);
@@ -455,15 +458,15 @@ public class CmisDocumentExtensionsTest {
     }
 
     private void addXmlDocumentProperties(Document cmisDocument) {
-        when(cmisDocument.getPropertyValue(CmisProperties.DOCUMENT_TITLE.getId())).thenReturn(DOC_TITLE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE))).thenReturn(DOC_TITLE);
 
         Property collaboratorProperty = mock(Property.class);
         when(collaboratorProperty.getValues()).thenReturn(singletonList("LOGIN::ROLE::ENTITY"));
-        when(cmisDocument.getProperty(eq(CmisProperties.COLLABORATORS.getId()))).thenReturn(collaboratorProperty);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS)))).thenReturn(collaboratorProperty);
 
         Property milestoneProperty = mock(Property.class);
         when(milestoneProperty.getValues()).thenReturn(DOC_MILESTONE_COMMENTS);
-        when(cmisDocument.getProperty(eq(CmisProperties.MILESTONE_COMMENTS.getId()))).thenReturn(milestoneProperty);
+        when(cmisDocument.getProperty(eq(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)))).thenReturn(milestoneProperty);
     }
 
 }

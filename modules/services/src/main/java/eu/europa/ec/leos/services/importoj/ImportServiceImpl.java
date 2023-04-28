@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.services.importoj;
 
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.ExternalDocumentProvider;
 import eu.europa.ec.leos.model.xml.Element;

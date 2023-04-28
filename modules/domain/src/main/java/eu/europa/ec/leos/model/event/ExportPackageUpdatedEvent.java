@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.model.event;
 
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 
 public class ExportPackageUpdatedEvent {
 

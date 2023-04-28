@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.template;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

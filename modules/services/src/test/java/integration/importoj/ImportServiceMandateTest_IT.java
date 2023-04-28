@@ -13,7 +13,7 @@
  */
 package integration.importoj;
 
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.integration.ExternalDocumentProvider;
 import eu.europa.ec.leos.services.importoj.ConversionHelper;
 import eu.europa.ec.leos.services.importoj.ImportServiceImpl;

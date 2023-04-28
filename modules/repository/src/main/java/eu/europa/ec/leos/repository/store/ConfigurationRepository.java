@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.repository.store;
 
-import eu.europa.ec.leos.domain.cmis.document.ConfigDocument;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 /**
  * Configuration Repository interface.

@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.services.validation.chains;
 
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.services.validation.handlers.ChildrenValidator;

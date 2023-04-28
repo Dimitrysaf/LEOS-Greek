@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.processor.node;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.springframework.stereotype.Service;
 

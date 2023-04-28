@@ -14,8 +14,8 @@
 package eu.europa.ec.leos.services.document;
 
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.security.LeosPermission;
 
 import java.io.InputStream;
