@@ -2,6 +2,8 @@
   "global.breadcrumb.proposals": "Home",
   "global.breadcrumb.proposal_view": "Proposal View",
   "global.breadcrumb.document": "Document",
+  "global.breadcrumb.memorandum": "Explanatory Memorandum",
+  "global.breadcrumb.bill": "Legal Act",
   "global.actions.add": "Add",
   "global.actions.cancel": "Cancel",
   "global.actions.close": "Close",

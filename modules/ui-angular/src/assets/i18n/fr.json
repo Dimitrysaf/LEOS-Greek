@@ -2,6 +2,8 @@
   "global.breadcrumb.proposals": "[FR] Home",
   "global.breadcrumb.proposal_view": "[FR] Proposal View",
   "global.breadcrumb.document": "[FR] Document",
+  "global.breadcrumb.memorandum": "[FR] Explanatory Memorandum",
+  "global.breadcrumb.bill": "[FR] Legal Act",
   "global.actions.add": "Ajouter",
   "global.actions.cancel": "Annuler",
   "global.actions.close": "Fermer",
