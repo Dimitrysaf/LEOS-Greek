@@ -187,6 +187,7 @@
   "page.editor.annotations-button.tooltip-enable": "Activer les  annotations' popup",
   "page.editor.annotations-button.tooltip-disable": "Desactiver les annotations' popup",
   "page.editor.annotations-column.label": "Annotations & notes de document",
+  "page.editor.close-compare-view-button.tooltip": "[FR]Close compare view",
   "page.editor.create-note-button.tooltip": "Nouvelle note de document",
   "page.editor.export-email-sent": "[FR]You will receive an email shortly with the file at <em>{{userEmail}}</em>",
   "page.editor.export-econsilium-success": "[FR]The document has been exported. You can find it in the <em>Proposal Viewer</em> page, under the <em>Exports</em> tab.",

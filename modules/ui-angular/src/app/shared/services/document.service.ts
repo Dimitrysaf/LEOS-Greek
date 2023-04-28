@@ -66,15 +66,12 @@ export type DownloadEConsiliumOptions = Omit<
   providedIn: 'root',
 })
 export class DocumentService implements OnDestroy {
-  documentCategory$: Observable<string | null>;
-  annotationsEnabled$: Observable<boolean>;
+  // documentCategory$: Observable<string | null>;
   compareModeEnabled$: Observable<boolean>;
-  documentId$: Observable<string | null>;
+  // documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
   versionView$: Observable<DocumentViewResponse | null>;
   versionCompareView$: Observable<string | null>;
-  guidelinesEnabled$: Observable<boolean>;
-  highlightsEnabled$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
@@ -89,23 +86,20 @@ export class DocumentService implements OnDestroy {
   currentSearchResults: Array<SearchMatchVO>;
   versionSearchParams$: Observable<VersionSearchParams>;
   versionFilter$: Observable<string>;
-  documentReplaceView$: Observable<DocumentViewResponse | null>;
+  // documentReplaceView$: Observable<DocumentViewResponse | null>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
+  documentRefAndCategory$: Observable<any | null>;
 
   currentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
-  private documentCategoryBS = new BehaviorSubject(null);
-  private tocItemBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
-  private annotationsEnabledBS = new BehaviorSubject(true);
+  // private documentCategoryBS = new BehaviorSubject(null);
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
-  private guidelinesEnabledBS = new BehaviorSubject(true);
-  private highlightsEnabledBS = new BehaviorSubject(true);
   private searchPaneOpenBS = new BehaviorSubject(false);
   private searchParamsBS = new BehaviorSubject({
     searchText: '',
@@ -121,13 +115,12 @@ export class DocumentService implements OnDestroy {
   });
   private versionFilterBS = new BehaviorSubject<string>('All');
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
-  private documentReplaceVieBS =
-    new BehaviorSubject<DocumentViewResponse | null>(null);
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
   private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
+  private documentRefAndCategoryBS = new BehaviorSubject<any | null>(null);
 
   private updatedContentToSaveAfterReplace: string = null;
   private getAnnotations?: () => Promise<string>;
@@ -143,23 +136,27 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
   ) {
-    this.documentId$ = this.documentIdBS.asObservable();
-    const documentRefNotNull$ = this.documentId$.pipe(filter(Boolean));
-    this.documentCategory$ = this.documentCategoryBS.asObservable();
-    const documentCategoryNotNull$ = this.documentCategory$.pipe(
-      filter(Boolean),
-    );
+    this.documentRefAndCategory$ = this.documentRefAndCategoryBS.asObservable();
 
-    this.documentView$ = documentRefNotNull$.pipe(
-      combineLatestWith(documentCategoryNotNull$),
-      switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
+    // this.documentId$ = this.documentIdBS.asObservable();
+    // const documentRefNotNull$ = this.documentId$.pipe(filter(Boolean));
+    // this.documentCategory$ = this.documentCategoryBS.asObservable();
+    // const documentCategoryNotNull$ = this.documentCategory$.pipe(
+    //   filter(Boolean),
+    // );
+    //
+    // this.documentView$ = documentRefNotNull$.pipe(
+    //   combineLatestWith(documentCategoryNotNull$),
+    //   switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
+    // );
+
+    this.documentView$ = this.documentRefAndCategory$.pipe(
+      filter(Boolean),
+      switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
     );
     // this.documentView$ = this.documentReplaceView$.pipe();
 
-    this.annotationsEnabled$ = this.annotationsEnabledBS.asObservable();
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
-    this.guidelinesEnabled$ = this.guidelinesEnabledBS.asObservable();
-    this.highlightsEnabled$ = this.highlightsEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
@@ -170,26 +167,30 @@ export class DocumentService implements OnDestroy {
     this.versionSearchParams$ = this.versionSearchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
-    this.versions$ = documentRefNotNull$.pipe(
-      combineLatestWith(documentCategoryNotNull$),
-      mergeMap(([ref, category]) =>
-        this.getDocumentVersionsData(category, ref),
+    this.versions$ = this.documentRefAndCategory$.pipe(
+      filter(Boolean),
+      switchMap((option) =>
+        this.getDocumentVersionsData(option.category, option.ref),
       ),
     );
 
-    this.documentConfig$ = documentRefNotNull$.pipe(
-      combineLatestWith(documentCategoryNotNull$),
-      switchMap(([ref, category]) => this.getDocumentConfig(ref, category)),
-    );
-
-    this.recentChanges$ = documentRefNotNull$.pipe(
-      combineLatestWith(documentCategoryNotNull$),
-      mergeMap(([ref, category]) =>
-        this.getDocumentRecentChangesData(category, ref),
+    this.documentConfig$ = this.documentRefAndCategory$.pipe(
+      filter(Boolean),
+      switchMap((option) =>
+        this.getDocumentConfig(option.ref, option.category),
       ),
     );
 
-    this.toc$ = documentRefNotNull$.pipe(switchMap((ref) => this.getToc(ref)));
+    this.recentChanges$ = this.documentRefAndCategory$.pipe(
+      filter(Boolean),
+      switchMap((option) =>
+        this.getDocumentRecentChangesData(option.category, option.ref),
+      ),
+    );
+
+    this.toc$ = this.documentRefAndCategory$.pipe(
+      switchMap((option) => this.getToc(option.ref)),
+    );
 
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
@@ -214,17 +215,17 @@ export class DocumentService implements OnDestroy {
     this.versionView$ = this.versionId$.pipe(
       takeUntil(this.destroy$),
       skip(1),
-      combineLatestWith(this.documentCategory$),
-      mergeMap(([versionId, category]) =>
-        this.getDocumentVersion(category, versionId),
+      combineLatestWith(this.documentRefAndCategory$),
+      mergeMap(([versionId, option]) =>
+        this.getDocumentVersion(option.category, versionId),
       ),
     );
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
       takeUntil(this.destroy$),
-      combineLatestWith(documentCategoryNotNull$),
-      mergeMap(([versions, category]) =>
-        this.getDocumentVersionsComparison(versions, category),
+      combineLatestWith(this.documentRefAndCategory$),
+      mergeMap(([versionCompareIds, option]) =>
+        this.getDocumentVersionsComparison(versionCompareIds, option.category),
       ),
     );
 
@@ -261,13 +262,9 @@ export class DocumentService implements OnDestroy {
     this.setAnnotationMode = null;
   }
 
-  createNote() {
-    console.warn('stub:', 'createNote'); // FIXME
-  }
-
   async download(withAnnotations = false) {
     const documentType = this.documentType.toUpperCase();
-    const documentRef = this.documentIdBS.value;
+    const documentRef = this.documentRef;
 
     const annotations =
       (withAnnotations && (await this.getAnnotations())) || '';
@@ -288,7 +285,7 @@ export class DocumentService implements OnDestroy {
 
   downloadCleanVersion() {
     const documentType = this.documentType;
-    const documentRef = this.documentIdBS.value;
+    const documentRef = this.documentRef;
 
     this.http
       .get(
@@ -303,7 +300,7 @@ export class DocumentService implements OnDestroy {
 
   async downloadEConsilium(options: DownloadEConsiliumOptions) {
     const documentType = this.documentType.toUpperCase();
-    const documentRef = this.documentIdBS.value;
+    const documentRef = this.documentRef;
 
     const annotations =
       (options.isWithAnnotations && (await this.getAnnotations())) || '';
@@ -338,14 +335,17 @@ export class DocumentService implements OnDestroy {
 
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
-    return this.http
-      .get<DocumentViewResponse>(`${apiBaseUrl}/secured/${category}/${ref}`)
-      .pipe(take(1));
+    return this.http.get<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${category}/${ref}`,
+    );
   }
 
   reloadDocument() {
     this.coEditionService.setShouldReloadAfterUpdate();
-    this.setDocumentId(this.documentIdBS.value);
+    this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+  }
+
+  resetDocument() {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
   }
 
@@ -435,12 +435,12 @@ export class DocumentService implements OnDestroy {
 
   searchSave() {
     this.removeHighlights();
-    const updatedContent =
-      this.document.getElementById('docContainer').childNodes[0];
-
-    const xmlSerializer = new XMLSerializer();
-    let xmlContent = xmlSerializer.serializeToString(updatedContent);
-    xmlContent = xmlContent.replaceAll('id', 'xml:id');
+    // const updatedContent =
+    //   this.document.getElementById('docContainer').childNodes[0];
+    //
+    // const xmlSerializer = new XMLSerializer();
+    // let xmlContent = xmlSerializer.serializeToString(updatedContent);
+    // xmlContent = xmlContent.replaceAll('id', 'xml:id');
     const documentRef = this.documentIdBS.value;
 
     this.http
@@ -452,7 +452,7 @@ export class DocumentService implements OnDestroy {
         },
       )
       .subscribe((updateResult) => {
-        this.setDocumentId(this.documentRef);
+        this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
 
@@ -463,7 +463,7 @@ export class DocumentService implements OnDestroy {
 
   searchCancelAndClose() {
     this.toggleSearchPane(false);
-    this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
+    this.resetDocument();
   }
 
   seeNavigation() {
@@ -474,9 +474,9 @@ export class DocumentService implements OnDestroy {
     this.userGuidanceVisibleBS.next(!this.userGuidanceVisibleBS.value);
 
     if (this.userGuidanceVisibleBS.value) {
-      let documentType = this.documentCategoryBS.value;
-      documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-      const documentRef = this.documentIdBS.value;
+      const documentType =
+        this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+      const documentRef = this.documentRef;
       return this.http.get<string | null>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
       );
@@ -485,12 +485,8 @@ export class DocumentService implements OnDestroy {
     }
   }
 
-  setDocumentId(id: string) {
-    this.documentIdBS.next(id);
-  }
-
-  setDocumentCategory(category: string) {
-    this.documentCategoryBS.next(category);
+  setDocumentRefAndCategory(ref: string, category: string) {
+    this.documentRefAndCategoryBS.next({ ref, category });
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
@@ -526,23 +522,11 @@ export class DocumentService implements OnDestroy {
     this.versionFilterBS.next(filterValue);
   }
 
-  toggleAnnotations(enabled?: boolean) {
-    this.toggleSubject(this.annotationsEnabledBS, enabled);
-  }
-
   toggleCompareMode(enabled?: boolean) {
     this.toggleSubject(this.compareModeEnabledBS, enabled);
     this.compareModeEnabledBS.pipe(take(1)).subscribe((e) => {
       if (!e) this.setVersionCompareIds([]);
     });
-  }
-
-  toggleGuidelines(enabled?: boolean) {
-    this.toggleSubject(this.guidelinesEnabledBS, enabled);
-  }
-
-  toggleHighlights(enabled?: boolean) {
-    this.toggleSubject(this.highlightsEnabledBS, enabled);
   }
 
   toggleSearchPane(open?: boolean) {
@@ -554,7 +538,7 @@ export class DocumentService implements OnDestroy {
     this.focusedSearchResult = null;
     this.setSearchParams({ searchText: '' });
     this.toggleSubject(this.searchPaneOpenBS, open);
-    this.setDocumentId(this.documentIdBS.value);
+    this.setDocumentRefAndCategory(this.documentRef, this.documentType);
   }
 
   toggleVersionsSearchPane(open?: boolean) {
@@ -562,14 +546,12 @@ export class DocumentService implements OnDestroy {
   }
 
   versionRevert(versionNumber: string) {
-    const documentCategory = this.documentCategoryBS.value;
-    const documentRef = this.documentIdBS.value;
     this.http
       .get(
-        `${apiBaseUrl}/secured/${documentCategory}/${documentRef}/restore/${versionNumber}`,
+        `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/restore/${versionNumber}`,
       )
       .subscribe((r) => {
-        this.setDocumentId(documentRef);
+        this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
 
@@ -579,7 +561,7 @@ export class DocumentService implements OnDestroy {
 
   versionExport(version: Version) {
     const documentType = this.documentType;
-    const documentRef = this.documentIdBS.value;
+    const documentRef = this.documentRef;
     const versionId = version.documentId;
     const { major, intermediate, minor } = version.versionNumber;
     const versionNumber = `${major}.${intermediate}.${minor}`;
@@ -604,8 +586,8 @@ export class DocumentService implements OnDestroy {
       ? 'NOT_SIMPLIFIED'
       : 'SIMPLIFIED',
   ) {
-    let category = this.documentCategoryBS.value;
-    category = category === 'coverpage' ? 'coverPage' : category;
+    const category =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
 
     return this.http.get<TableOfContentItemVO[]>(
       `${apiBaseUrl}/secured/${category}/${annexRef}/getToc`,
@@ -621,8 +603,8 @@ export class DocumentService implements OnDestroy {
       ? 'NOT_SIMPLIFIED'
       : 'SIMPLIFIED',
   ) {
-    let category = this.documentCategoryBS.value;
-    category = category === 'coverpage' ? 'coverPage' : category;
+    const category =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     return this.http.get<TocItem[]>(
       `${apiBaseUrl}/secured/${category}/${annexRef}/getTocItems`,
       {
@@ -632,8 +614,8 @@ export class DocumentService implements OnDestroy {
   }
 
   saveToc(documentRef: string, toc: TableOfContentItemVO[]) {
-    let category = this.documentCategoryBS.value;
-    category = category === 'coverpage' ? 'coverPage' : category;
+    const category =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     this.loadingService.setLoading(true);
     return this.http
       .post<TableOfContentItemVO[]>(
@@ -673,7 +655,7 @@ export class DocumentService implements OnDestroy {
   }
 
   get documentRef() {
-    return this.documentIdBS.value;
+    return this.documentRefAndCategoryBS.value.ref;
   }
 
   getDocumentVersionsData(documentType: string, documentRef: string) {
@@ -727,29 +709,29 @@ export class DocumentService implements OnDestroy {
   }
 
   renumberDocument() {
-    let documentType = this.documentCategoryBS.value;
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    const documentRef = this.documentIdBS.value;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const documentRef = this.documentRef;
     this.http
       .put<DocumentViewResponse>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/renumber-document`,
         {},
       )
       .subscribe((response) => {
-        this.documentIdBS.next(documentRef);
+        this.setDocumentRefAndCategory(documentRef, documentType);
       });
   }
 
   switchDocumentStructure() {
-    let documentType = this.documentCategoryBS.value;
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    const documentRef = this.documentIdBS.value;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const documentRef = this.documentRef;
     this.http
       .get<DocumentViewResponse>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
       )
       .subscribe((response) => {
-        this.documentIdBS.next(documentRef);
+        this.setDocumentRefAndCategory(documentRef, documentType);
       });
   }
 
@@ -764,20 +746,18 @@ export class DocumentService implements OnDestroy {
   }
 
   private getDocumentConfig(documentRef: string, documentType: string) {
-    let category = this.documentCategoryBS.value;
-    category = category === 'coverpage' ? 'coverPage' : category;
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<DocumentConfig>(
-      `${apiBaseUrl}/secured/${category}/${documentRef}/document-config`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
     );
   }
 
   private doSearch(parameters: DocumentSearchParams) {
     if (parameters.searchText !== '') {
-      const documentRef = this.documentIdBS.value;
       this.currentSearchResults = [];
       this.http
         .get<SearchMatchVO[]>(
-          `${apiBaseUrl}/secured/${this.documentType}/${documentRef}/search-text`,
+          `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/search-text`,
           {
             params: parameters,
           },
@@ -961,9 +941,9 @@ export class DocumentService implements OnDestroy {
 
   /** The document type for use in `/secured/{documentType}` API endpoints. */
   get documentType() {
-    return this.documentCategoryBS.value === 'coverpage'
+    return this.documentRefAndCategoryBS.value.category === 'coverpage'
       ? 'coverPage'
-      : this.documentCategoryBS.value;
+      : this.documentRefAndCategoryBS.value.category;
   }
 
   private getCollaborators(proposalRef: string) {

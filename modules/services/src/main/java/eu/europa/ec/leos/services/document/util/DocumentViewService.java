@@ -100,9 +100,8 @@ public class DocumentViewService<T extends XmlDocument> {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
             coverPageContent = documentContentService.getCoverPageContent(xmlContent);
         }
-        String editableXml = documentContentService.toEditableContent(document,
+        return documentContentService.toEditableContent(document,
                 "", securityContext, coverPageContent);
-        return StringEscapeUtils.unescapeXml(editableXml);
     }
 
 

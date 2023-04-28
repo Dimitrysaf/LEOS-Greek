@@ -8,9 +8,8 @@ describe('SaveVersionDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SaveVersionDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [SaveVersionDialogComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SaveVersionDialogComponent);
     component = fixture.componentInstance;

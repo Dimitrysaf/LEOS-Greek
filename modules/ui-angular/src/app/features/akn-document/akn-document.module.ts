@@ -13,6 +13,7 @@ import { AnnexDocumentComponent } from './components/annex-document/annex-docume
 import { DocumentSearchComponent } from './components/document-search/document-search.component';
 import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { NodeTocActionsComponent } from './components/node-toc-actions/node-toc-actions.component';
+import { SaveVersionDialogComponent } from './components/save-version-dialog/save-version-dialog.component';
 import { TocActionsButtonsComponent } from './components/toc-actions-buttons/toc-actions-buttons.component';
 import { TocEditorComponent } from './components/toc-editor/toc-editor.component';
 import { VersionActionsDropdownComponent } from './components/version-actions-dropdown/version-actions-dropdown.component';
@@ -20,7 +21,6 @@ import { VersionsPaneGroupComponent } from './components/versions-pane-group/ver
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { DocumentTocComponent } from './containers/document-toc/document-toc.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
-import { SaveVersionDialogComponent } from './components/save-version-dialog/save-version-dialog.component';
 
 @NgModule({
   declarations: [

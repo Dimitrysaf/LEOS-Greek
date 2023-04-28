@@ -4,11 +4,12 @@
 <button
   euiButton
   euiIconButton
-  euiSecondary
+  euiBasicButton
+  euiRounded
   euiSizeS
-  euiOutline
   [title]="'page.editor.search-button.tooltip' | translate"
   [attr.aria-label]="'page.editor.search-button.tooltip' | translate"
+  [disabled]="disabled"
   (click)="doc.toggleSearchPane()"
 >
   <span class="eui-icon eui-icon-search"></span>
@@ -17,11 +18,12 @@
 <button
   euiButton
   euiIconButton
-  euiSecondary
-  euiOutline
+  euiBasicButton
+  euiRounded
   euiSizeS
   [title]="'page.editor.reload-button.tooltip' | translate"
   [attr.aria-label]="'page.editor.reload-button.tooltip' | translate"
+  [disabled]="disabled"
   (click)="doc.reloadDocument()"
 >
   <span class="eui-icon eui-icon-refresh"></span>

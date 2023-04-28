@@ -159,8 +159,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   private setActiveTab(index: number) {
     const doc = this.documents[index];
     if (doc) {
-      this.documentService.setDocumentId(doc.ref);
-      this.documentService.setDocumentCategory(doc.type);
+      this.documentService.setDocumentRefAndCategory(doc.ref, doc.type);
     }
     this.activeTabIndex = index;
   }

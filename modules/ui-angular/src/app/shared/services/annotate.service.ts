@@ -43,7 +43,12 @@ export class AnnotateService {
         mergeRequest,
       )
       .pipe(
-        finalize(() => this.documentService.setDocumentId(this.documentRef)),
+        finalize(() =>
+          this.documentService.setDocumentRefAndCategory(
+            this.documentRef,
+            this.documentType,
+          ),
+        ),
       );
   }
 
@@ -54,7 +59,12 @@ export class AnnotateService {
         { mergeSuggestionRequests: mergeRequests },
       )
       .pipe(
-        finalize(() => this.documentService.setDocumentId(this.documentRef)),
+        finalize(() =>
+          this.documentService.setDocumentRefAndCategory(
+            this.documentRef,
+            this.documentType,
+          ),
+        ),
       );
   }
 
