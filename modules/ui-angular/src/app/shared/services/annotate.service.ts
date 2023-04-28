@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { finalize, tap } from 'rxjs';
+import { finalize } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import {

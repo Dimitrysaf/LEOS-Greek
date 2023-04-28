@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { clone, cloneDeep, setWith } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatest,
@@ -25,16 +25,12 @@ import { apiBaseUrl } from 'src/config';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
-import { DocumentConfig, LeosAppConfig, LeosConfig } from '@/shared/models';
+import { DocumentConfig, LeosConfig } from '@/shared/models';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 import { EditElementResponse } from '../models/ckeditor';
-import { TocItem } from '../models/toc.model';
-
-// FIXME: mockdata
-// TODO This must be fetch from a backend Api. Keep in mind that aktTag must always be lowercase
 
 type ResizeListener<T extends Element = Element> = (event: {
   element: T;
@@ -44,20 +40,11 @@ type ResizeListener<T extends Element = Element> = (event: {
 export class CKEditorService implements OnDestroy {
   private annexRefBS = new BehaviorSubject<string>(null);
   private documentRefBS = new BehaviorSubject<string>(null);
-  private xmlBS = new BehaviorSubject<string>('');
   private documentTypeBS = new BehaviorSubject<string>(null);
   private resizeObserver?: ResizeObserver;
-  private elementEditAndSaveBS = new BehaviorSubject<any>({
-    isEdited: false,
-    isSaved: false,
-  });
   private isElementSaved = false;
   resizeListeners = new Map<Element, Set<ResizeListener>>();
   elementEditor$: Observable<any>;
-  xml$ = this.xmlBS.asObservable();
-  documentRef$ = this.documentRefBS.asObservable();
-  annexRef$ = this.annexRefBS.asObservable();
-  documentType$ = this.documentTypeBS.asObservable();
 
   private elementUnderEdit = null;
 
@@ -358,17 +345,6 @@ export class CKEditorService implements OnDestroy {
       ),
     );
 
-    const leosConfig$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['js/core/leosConfig'], (leosConfig) => {
-              subscriber.next(leosConfig);
-            });
-          }),
-      ),
-    );
-
     const userGuidanceExtension$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -441,20 +417,12 @@ export class CKEditorService implements OnDestroy {
       );
   }
 
-  setXml(xml: string) {
-    this.xmlBS.next(xml);
-  }
-
   setDocumentRef(documentRef: string) {
     this.documentRefBS.next(documentRef);
   }
 
   setDocumentType(documentType: string) {
     this.documentTypeBS.next(documentType);
-  }
-
-  setAnnexRef(annexRef: string) {
-    this.annexRefBS.next(annexRef);
   }
 
   getDocumentElement(
@@ -633,21 +601,5 @@ export class CKEditorService implements OnDestroy {
     }
 
     this.leosStateBS.next(config);
-  }
-
-  private setElementEditAndSave(
-    isElementEdited: boolean,
-    isElementSaved: boolean,
-  ) {
-    const payload = { isEdited: false, isSaved: false };
-    payload.isEdited =
-      isElementEdited !== null
-        ? isElementEdited
-        : this.elementEditAndSaveBS.value.isEdited;
-    payload.isSaved =
-      isElementSaved !== null
-        ? isElementSaved
-        : this.elementEditAndSaveBS.value.isSaved;
-    this.elementEditAndSaveBS.next(payload);
   }
 }
