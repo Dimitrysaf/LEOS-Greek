@@ -611,6 +611,17 @@ export class DocumentEditorComponent
     return `${major}.${intermediate}.${minor}`;
   }
 
+  private getBreadCrumbsDocumentName(name: string): string {
+    switch (this.documentType) {
+      case 'bill':
+        return this.tranlsateService.instant('global.breadcrumb.bill');
+      case 'memorandum':
+        return this.tranlsateService.instant('global.breadcrumb.memorandum');
+      default:
+        return capitalizeFirstLetter(name);
+    }
+  }
+
   private manageBreadCrumbsDocumentScreen() {
     this.breadcrumbService.setBreadcrumb([
       {
@@ -625,7 +636,7 @@ export class DocumentEditorComponent
       },
       {
         id: 'document_view',
-        label: capitalizeFirstLetter(this.documentType),
+        label: this.getBreadCrumbsDocumentName(this.documentType),
         link: null,
       },
     ]);
