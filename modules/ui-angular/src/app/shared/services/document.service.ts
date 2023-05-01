@@ -714,8 +714,6 @@ export class DocumentService implements OnDestroy {
     oldVersionId: string,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    console.debug('getDocumentVersionsComparison old', oldVersionId); // DEBUG
-    console.debug('getDocumentVersionsComparison new', newVersionId); // DEBUG
     return this.http.get<string>(
       `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
       { responseType: 'text' as 'json' },
