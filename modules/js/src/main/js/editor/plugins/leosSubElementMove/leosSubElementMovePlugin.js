@@ -53,6 +53,7 @@ define(function leosSubElementMovePluginModule(require) {
             editor.contextMenu.addListener(function (element) {
                 if(editor.LEOS.isClonedProposal && ((element.hasAttribute(DATA_ORIGIN) &&
                     element.getAttribute(DATA_ORIGIN) === EC_ORIGIN)) &&
+                    element.hasAttribute('data-akn-element') &&
                     element.getAttribute("data-akn-attr-softaction") !== "move_to") {
                     var selection = editor.getSelection();
                     if (selection.isCollapsed()) {
@@ -93,8 +94,8 @@ define(function leosSubElementMovePluginModule(require) {
                 if(editor.LEOS.isClonedProposal) {
                     var movedElement = _getMovedElement();
                     var isMovedElementSibling = ((element.hasClass(MOVED_ELEMENT_CLASS)) ||
-                      (element.getNext() && element.getNext().hasClass(MOVED_ELEMENT_CLASS)) ||
-                      (element.getPrevious() && element.getPrevious().hasClass(MOVED_ELEMENT_CLASS)));
+                        (element.getNext() && element.getNext().type === CKEDITOR.NODE_ELEMENT && element.getNext().hasClass(MOVED_ELEMENT_CLASS)) ||
+                        (element.getPrevious() && element.getPrevious().type === CKEDITOR.NODE_ELEMENT && element.getPrevious().hasClass(MOVED_ELEMENT_CLASS)));
                     if(movedElement && !isMovedElementSibling) {
                         editor.getMenuItem("KeepSourceFormatting").label = 'As ' + element.getAttribute('data-akn-element')
                         return { moveHere: CKEDITOR.TRISTATE_OFF };

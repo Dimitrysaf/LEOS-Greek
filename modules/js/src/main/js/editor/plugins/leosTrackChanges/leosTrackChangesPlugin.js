@@ -50,12 +50,48 @@ define(function leosTrackChangesPluginModule(require) {
                     if (isTrackChangesVisible) {
                         $("head").prepend(defaultTrackChangesEditorStyle);
                     } else {
-                        var editorTcStyle = core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='insert'] { text-decoration: none; }\n";
-                        editorTcStyle += core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='delete'] { display: none; }\n";
+                        var editorTcStyle = "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='insert'] { text-decoration: none; }\n";
+                        editorTcStyle += "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='delete'] { display: none; }\n";
                         $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
                     }
                 }
             });
+
+            // Add context menu accept and reject options
+            if (editor.contextMenu) {
+                editor.addMenuGroup("trackChangesGroup");
+                editor.addMenuItem( "acceptOneChangeItem", {
+                    label: "Accept this change",
+                    icon: this.path + "icons/ok.png",
+                    command: "acceptOneChange",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem( "rejectOneChangeItem", {
+                    label: "Reject this change",
+                    icon: this.path + "icons/remove.png",
+                    command: "rejectOneChange",
+                    group: "trackChangesGroup"
+                });
+                editor.addCommand("acceptOneChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.acceptChange(editor, editor.getSelection().getStartElement());
+                    }
+                });
+                editor.addCommand("rejectOneChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.rejectChange(editor, editor.getSelection().getStartElement());
+                    }
+                });
+                editor.contextMenu.addListener( function(element) {
+                    var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                    if (tcElement && editor.getSelection().isCollapsed()) {
+                        editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
+                        return { acceptOneChangeItem: CKEDITOR.TRISTATE_OFF, rejectOneChangeItem: CKEDITOR.TRISTATE_OFF };
+                    }
+                });
+            }
 
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
@@ -69,7 +105,7 @@ define(function leosTrackChangesPluginModule(require) {
                 var ctrlDown = false, cutText;
                 var editable = editor.editable();
 
-                // Delete functionality - keydown - catch snapshots
+                // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
                     if (isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
@@ -486,13 +522,34 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             }
+        },
+
+        acceptChange: function(editor, element) {
+            var core = trackChanges.core;
+            editor.getSelection().fake(element.getParent());
+            if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                element.remove();
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
+                element.$.outerHTML = element.$.innerHTML;
+            }
+        },
+
+        rejectChange: function(editor, element) {
+            var core = trackChanges.core;
+            editor.getSelection().fake(element.getParent());
+            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                element.remove();
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
+                element.$.outerHTML = element.$.innerHTML;
+            }
         }
+
     };
 
     trackChanges.core = {
 
         // Track changes names and element types
-        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "div#docContainer akomantoso span[data-akn-name='trackchanges']",
+        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-name='trackchanges']",
         ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
         STATUS_ATTR: "data-akn-status", NEW_STATUS: "new",
         UID_ATTR: "data-akn-uid",
