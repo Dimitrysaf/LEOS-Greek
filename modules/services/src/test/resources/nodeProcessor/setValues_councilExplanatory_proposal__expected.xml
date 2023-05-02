@@ -8,10 +8,12 @@
 
         <collectionBody xml:id="body">
             <component refersTo="#memorandum" xml:id="body_cmp_1">
+                <!-- reference to the memorandum, relative to this proposal -->
                 <documentRef href="memorandum_cksyaotr60002s8283zfnj2vt.xml" showAs="EXPLANATORY MEMORANDUM"
                              xml:id="body_cmp_1__dref_1"/>
             </component>
             <component refersTo="#bill" xml:id="body_cmp_2">
+                <!-- reference to the bill, relative to this proposal -->
                 <documentRef href="bill_cksyaouxb0003s828sqpul5di.xml"
                              showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL"
                              xml:id="body_cmp_1__dref_2"/>
