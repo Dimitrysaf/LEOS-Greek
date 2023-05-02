@@ -70,7 +70,7 @@ define(function leosTrackChangesPluginModule(require) {
                 var editable = editor.editable();
 
                 // Delete functionality - keydown - catch snapshots
-                editable.attachListener(editor.document, "keydown", function(e) {
+                editable.attachListener(editor, "key", function(e) {
                     if (isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (event.isCtrl()) {
@@ -114,7 +114,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 // Prevent is different search, if still found tc.
                                 var tcElementPrevent = core.searchTrackChangeElement(editor, core.DELETE_ACTION);
                                 if (tcElementPrevent && (((savedTcLocation === core.BEFORE) && !deleteKey) || ((savedTcLocation === core.AFTER) && deleteKey))) {
-                                    event.getInstance().data.preventDefault();
+                                    event.getInstance().data.domEvent.preventDefault();
                                     savedSnapshot = null;
                                 }
 
@@ -147,11 +147,11 @@ define(function leosTrackChangesPluginModule(require) {
                                 if (!tcElement) { // Check if no TrackChange element is found.
                                     if ((typeof(startContainer.getAttribute) != 'undefined') && (startContainer.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
                                         if ((range.startOffset === 0 && deleteKey) || (range.startOffset !== 0 && !deleteKey)) {
-                                            event.getInstance().data.preventDefault();
+                                            event.getInstance().data.domEvent.preventDefault();
                                             savedSnapshot = null;
                                         }
                                     } else if ((typeof(startContainer.getParent().getAttribute) != 'undefined') && (startContainer.getParent().getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
-                                        event.getInstance().data.preventDefault();
+                                        event.getInstance().data.domEvent.preventDefault();
                                         savedSnapshot = null;
                                     }
                                 }
@@ -193,10 +193,10 @@ define(function leosTrackChangesPluginModule(require) {
                                     lastItem.mergeSiblings(false);
                                 }
 
-                                event.getInstance().data.preventDefault();
+                                event.getInstance().data.domEvent.preventDefault();
                             } else {
                                 // Prevent if lock exists
-                                event.getInstance().data.preventDefault();
+                                event.getInstance().data.domEvent.preventDefault();
                             }
                         }
                     }
@@ -747,7 +747,7 @@ define(function leosTrackChangesPluginModule(require) {
         }
         this.isCtrl = function() {
             var e = event();
-            return e.data.$.metaKey || e.data.$.ctrlKey || (this.getKeyCode() === 17) || (this.getKeyCode() === 91) || (this.getKeyCode() === 224);
+            return (e.data.domEvent ? e.data.domEvent.$.metaKey : e.data.$.metaKey) || (e.data.domEvent ? e.data.domEvent.$.ctrlKey : e.data.$.ctrlKey) || (this.getKeyCode() === 17) || (this.getKeyCode() === 91) || (this.getKeyCode() === 224);
         }
         this.getChar = function() {
             var charCode = getCharCode();
@@ -758,12 +758,12 @@ define(function leosTrackChangesPluginModule(require) {
         }
         this.getKeyCode = function() {
             var e = event();
-            var charCode = e.data.$.keyCode;
+            var charCode = e.data.domEvent ? e.data.domEvent.$.keyCode : e.data.$.keyCode;
             return charCode;
         }
         var getCharCode = function() {
             var e = event();
-            var charCode = (CKEDITOR.env.ie ? e.data.$.keyCode : e.data.$.charCode);
+            var charCode = (CKEDITOR.env.ie ? (e.data.domEvent ? e.data.domEvent.$.keyCode : e.data.$.keyCode) : (e.data.domEvent ? e.data.domEvent.$.charCode : e.data.$.charCode));
             return charCode;
         }
     };
