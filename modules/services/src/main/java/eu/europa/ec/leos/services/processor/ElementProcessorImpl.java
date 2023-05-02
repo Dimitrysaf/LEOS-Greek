@@ -121,16 +121,9 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
 
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         byte[] byteXmlContent = getContent(document);
-        if (manageEntities) {
-            elementContent = XercesUtils.replaceEntities(XercesUtils.replacements, elementContent);
-            byteXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, byteXmlContent);
-        }
         elementContent = removeEmptyHeading(byteXmlContent, elementContent, elementName, elementId, tocItems);
         // merge the updated content with the actual document and return updated document
         byte[] contentBytes = getContent(document);
-        if (manageEntities) {
-            contentBytes = XercesUtils.replaceEntities(XercesUtils.replacements, contentBytes);
-        }
         if (isClonedProposal()) {
             Pair<byte[], String> result = xmlContentProcessor.updateSoftMovedElement(contentBytes, elementContent);
             if(result.left() != null && result.left().length > 0) {
@@ -140,9 +133,6 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
                 elementContent = result.right();
             }
             byte[] originalContentBytes = documentContentService.getOriginalContentToCompare(document);
-            if (manageEntities) {
-                originalContentBytes = XercesUtils.replaceEntities(XercesUtils.replacements, originalContentBytes);
-            }
             Document doc = createXercesDocument(originalContentBytes);
             Node node = XercesUtils.getElementById(doc, elementId);
             String originalContent = nodeToString(node);
@@ -153,9 +143,6 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
             }
         }
         contentBytes = xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId);
-        if (manageEntities) {
-            contentBytes = XercesUtils.restoreEntities(XercesUtils.replacements, contentBytes);
-        }
         return contentBytes;
     }
 
@@ -165,13 +152,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         Validate.notNull(elementId, "Element id is required.");
     
         byte[] byteXmlContent = getContent(document);
-        if (manageEntities) {
-            byteXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, byteXmlContent);
-        }
         byteXmlContent = xmlContentProcessor.removeElementById(byteXmlContent, elementId);
-        if (manageEntities) {
-            byteXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, byteXmlContent);
-        }
         return byteXmlContent;
     }
 
@@ -189,15 +170,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         Validate.notNull(newText, "New Text is required");
         
         byte[] byteXmlContent = getContent(document);
-        if (manageEntities) {
-            origText = XercesUtils.replaceEntities(XercesUtils.replacements, origText);
-            newText = XercesUtils.replaceEntities(XercesUtils.replacements, newText);
-            byteXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, byteXmlContent);
-        }
         byteXmlContent = xmlContentProcessor.replaceTextInElement(byteXmlContent, origText, newText, elementId, startOffset, endOffset);
-        if (manageEntities) {
-            byteXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, byteXmlContent);
-        }
         return byteXmlContent;
     }
 

@@ -538,12 +538,10 @@ public class LegServiceImpl implements LegService {
                 if (exportOptions.isComparisonMode()) {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
-                    xmlContent =
-                            xmlContentProcessor.cleanSoftActions(XercesUtils.replaceEntities(XercesUtils.replacements,
-                                    financialStatement.getContent().get().getSource().getBytes()));
+                    xmlContent = xmlContentProcessor.cleanSoftActions(financialStatement.getContent().get().getSource().getBytes());
                 }
-                xmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, xmlContent);
-                enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement, proposal.getMetadata().getOrNull().getRef(), xmlContent);
+                enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement,
+                        proposal.getMetadata().getOrNull().getRef(), xmlContent);
                 legPackage.addContainedFile(financialStatement.getVersionedReference());
             } else if (Explanatory.class.equals(exportOptions.getFileType())) {
             	addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
@@ -572,9 +570,8 @@ public class LegServiceImpl implements LegService {
                                          String proposalRef) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
 
-        byte[] xmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, financialStatement.getContent().get().getSource().getBytes());
+        byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToFinancialStatement(financialStatement, xmlContent);
-        xmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, xmlContent);
         contentToZip.put(financialStatement.getName(), xmlContent);
 
         addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
