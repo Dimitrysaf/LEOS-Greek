@@ -4,6 +4,7 @@
   "global.breadcrumb.document": "Document",
   "global.breadcrumb.memorandum": "Explanatory Memorandum",
   "global.breadcrumb.bill": "Legal Act",
+  "global.breadcrumb.cover.page": "Cover Page",
   "global.actions.add": "Add",
   "global.actions.cancel": "Cancel",
   "global.actions.close": "Close",
