@@ -280,7 +280,7 @@
                         <list class="~CHECK" xml:id="_body__level_16__list__indent_1__list">
                             <indent xml:id="_body__level_16__list__indent_1__list__indent_1">
                                 <num xml:id="_body__level_16__list__indent_1__list__indent_1__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_1__num__inline">&#x2610;</inline>
+                                    − <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_1__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_1__list__indent_1__content">
                                     <p xml:id="_body__level_16__list__indent_1__list__indent_1__content__p">in effect from
@@ -292,7 +292,7 @@
                             </indent>
                             <indent xml:id="_body__level_16__list__indent_1__list__indent_2">
                                 <num xml:id="_body__level_16__list__indent_1__list__indent_2__num">
-                                    <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_2__num__inline">&#x2610;</inline>
+                                    − <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_2__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_16__list__indent_1__list__indent_2__content">
                                     <p xml:id="_body__level_16__list__indent_1__list__indent_2__content__p">Financial impact from
@@ -322,6 +322,9 @@
                         </subparagraph>
                         <list class="~CHECK" xml:id="_body__level_16__list__indent_2__list" leos:editable="false">
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_1">
+                                <num xml:id="_body__level_16__list__indent_2__list__indent_1_num">
+                                    −
+                                </num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_1__content">
                                     <p xml:id="_body__level_16__list__indent_2__list__indent_1__content__p">Implementation with a start-up period from
                                         <inline name="date" period="yy" xml:id="_body__level_16__list__indent_2__list__indent_1__content__p__inline_1">YYYY</inline>
@@ -331,6 +334,9 @@
                                 </content>
                             </indent>
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_2">
+                                <num xml:id="_body__level_16__list__indent_2__list__indent_2_num">
+                                    −
+                                </num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_2__content">
                                     <p xml:id="_body__level_16__list__indent_2__list__indent_2__content__p">followed by full-scale operation.</p>
                                 </content>
@@ -3498,7 +3504,7 @@
                 <list leos:editable="false" class="~CHECK" xml:id="_body__level_325__list">
                     <indent xml:id="_body__level_325__list__indent_1">
                         <num xml:id="_body__level_325__list__indent_1__num">
-                            <inline name="unchecked" xml:id="_body__level_325__list__indent_1__num__inline">&#x2610;</inline>
+                            − <inline name="unchecked" xml:id="_body__level_325__list__indent_1__num__inline">&#x2610;</inline>
                         </num>
                         <subparagraph leos:editable="false" xml:id="_body__level_325__list__indent_1__subparagraph">
                             <content xml:id="_body__level_325__list__indent_1__subparagraph__content">
@@ -3508,7 +3514,7 @@
                     </indent>
                     <indent xml:id="_body__level_325__list__indent_2">
                         <num xml:id="_body__level_325__list__indent_2__num">
-                            <inline name="unchecked" xml:id="_body__level_325__list__indent_2__num__inline">&#x2610;</inline>
+                            − <inline name="unchecked" xml:id="_body__level_325__list__indent_2__num__inline">&#x2610;</inline>
                         </num>
                         <subparagraph leos:editable="false" xml:id="_body__level_325__list__indent_2__subparagraph">
                             <content xml:id="_body__level_325__list__indent_2__subparagraph__content">
