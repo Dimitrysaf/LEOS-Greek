@@ -29,6 +29,8 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
+import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
+import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
@@ -79,6 +81,33 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         } catch (Exception e) {
             throw new ExportException(messageHelper.getMessage("export.docuwrite.error.message", e.getMessage()));
         }
+    }
+
+    @Override
+    public DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef, String version1, String version2) {
+        return null;
+    }
+
+    @Override
+    public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, String version1, String version2) {
+        throw new ExportException("External system to export documents not available for this instance");
+    }
+
+    @Override
+    public LeosExportStatus exportComparedVersionToConsilium(LeosCategoryClass documentType, String documentRef, ExportComparedVersionRequest exportToConsiliumRequest) {
+        XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
+        XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
+
+        ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD);
+        exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
+        exportOptions.setRelevantElements(exportToConsiliumRequest.getRelevantElements());
+
+        return doExportPackage(exportToConsiliumRequest.getTitle(), false, exportOptions, currentDocument.getId());
+    }
+
+    @Override
+    public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest) {
+        throw new ExportException("External system to download documents not available for this instance");
     }
 
     @Override
