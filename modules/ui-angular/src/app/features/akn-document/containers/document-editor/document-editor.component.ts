@@ -609,6 +609,8 @@ export class DocumentEditorComponent
         return this.tranlsateService.instant('global.breadcrumb.bill');
       case 'memorandum':
         return this.tranlsateService.instant('global.breadcrumb.memorandum');
+      case 'coverPage':
+        return this.tranlsateService.instant('global.breadcrumb.cover.page');
       default:
         return capitalizeFirstLetter(name);
     }
