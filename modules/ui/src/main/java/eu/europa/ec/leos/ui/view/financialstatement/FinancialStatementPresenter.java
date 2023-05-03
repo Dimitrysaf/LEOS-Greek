@@ -626,7 +626,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                         VersionType.MINOR, messageHelper.getMessage("operation.financial.statement.block.updated"));
                 String newElementContent = elementProcessor.getElement(financialStatement, elementTagName, elementId);
                 eventBus.post(new RefreshElementEvent(elementId, elementTagName, newElementContent));
-
+                eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
@@ -694,6 +694,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 if (financialStatement != null) {
                     elementToEditAfterClose = null;
                     eventBus.post(new CloseElementEvent());
+                    eventBus.post(new RefreshDocumentEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
                     LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
@@ -963,6 +964,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         if (financialStatement != null) {
             httpSession.setAttribute("financialStatement#"+getDocumentRef(), financialStatement);
+            eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.replace.success"));
@@ -1272,9 +1274,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         FinancialStatement financialStatement = financialStatementService.createVersion(documentId, event.getVersionType(), event.getCheckinComment());
         setDocumentData(financialStatement);
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.major.version.saved"));
+        eventBus.post(new RefreshDocumentEvent());
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, financialStatement.getVersionSeriesId(), id));
-        populateViewData(financialStatement, TocMode.SIMPLIFIED);
     }
 
     private void resetCloneProposalMetadataVO() {
