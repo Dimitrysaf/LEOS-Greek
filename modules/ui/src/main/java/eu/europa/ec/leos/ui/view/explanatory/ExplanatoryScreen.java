@@ -45,7 +45,7 @@ interface ExplanatoryScreen {
 
     void refreshElementEditor(String elementId, String elementTagName, String elementContent);
 
-    void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO);
+    void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO, List<LeosPermission> permissions);
 
     void populateComparisonContent(String comparedContent, String comparedInfo, Explanatory original, Explanatory current);
 

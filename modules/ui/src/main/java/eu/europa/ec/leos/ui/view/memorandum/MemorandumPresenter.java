@@ -587,7 +587,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
             Memorandum memorandum = getDocument();
             String element = elementProcessor.getElement(memorandum, elementTagName, elementId);
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-            memorandumScreen.showElementEditor(elementId, elementTagName, element);
+            memorandumScreen.showElementEditor(elementId, elementTagName, element, securityContext.getPermissions(memorandum));
             openElementEditors.add(elementId);
         }
         catch (Exception ex){

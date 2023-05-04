@@ -115,6 +115,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @DesignRoot("MemorandumScreenDesign.html")
 @StyleSheet({"vaadin://../assets/css/memorandum.css" + LeosCacheToken.TOKEN})
@@ -350,9 +351,11 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
     }
 
     @Override
-    public void showElementEditor(final String elementId, final String  elementTagName, final String elementFragment) {
+    public void showElementEditor(final String elementId, final String  elementTagName, final String elementFragment, final List<LeosPermission> permissions) {
         eventBus.post(instanceTypeResolver.createEvent(new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.MEMORANDUM.name(),
-                securityContext.getUser(),authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()))));
+                securityContext.getUser(),
+                Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                        permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new))));
     }
 
     @Override

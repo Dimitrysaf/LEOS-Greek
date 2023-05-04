@@ -308,7 +308,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     @Override
-    public void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO) {
+    public void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO, List<LeosPermission> permissions) {
     }
 
     @Override

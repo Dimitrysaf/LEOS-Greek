@@ -114,6 +114,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @DesignRoot("CoverPageScreenDesign.html")
 @StyleSheet({"vaadin://../assets/css/coverpage.css" + LeosCacheToken.TOKEN})
@@ -343,9 +344,10 @@ abstract class CoverPageScreenImpl extends VerticalLayout implements CoverPageSc
     }
 
     @Override
-    public void showElementEditor(final String elementId, final String  elementTagName, final String elementFragment) {
+    public void showElementEditor(final String elementId, final String  elementTagName, final String elementFragment, final List<LeosPermission> permissions) {
         eventBus.post(instanceTypeResolver.createEvent(new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.PROPOSAL.name(),
-                securityContext.getUser(),authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()))));
+                securityContext.getUser(), Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                    permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new))));
     }
 
     @Override

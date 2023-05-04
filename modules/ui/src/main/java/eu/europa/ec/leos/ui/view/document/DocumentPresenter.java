@@ -581,7 +581,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         }
 
         coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-        documentScreen.showElementEditor(event.getElementId(), elementTagName, element, jsonAlternatives);
+        documentScreen.showElementEditor(elementId, elementTagName, element, jsonAlternatives, securityContext.getPermissions(bill));
         this.openElementEditors.add(elementId);
     }
 

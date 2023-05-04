@@ -942,7 +942,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 levelItemVO = explanatoryProcessor.getLevelItemVO(explanatory, elementId, elementTagName);
             }
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-            explanatoryScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
+            explanatoryScreen.showElementEditor(elementId, elementTagName, element, levelItemVO, securityContext.getPermissions(explanatory));
             openElementEditors.add(elementId);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);

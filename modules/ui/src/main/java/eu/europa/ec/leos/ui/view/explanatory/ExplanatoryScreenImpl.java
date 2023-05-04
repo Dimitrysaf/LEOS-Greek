@@ -145,6 +145,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
@@ -336,9 +337,10 @@ abstract class ExplanatoryScreenImpl extends VerticalLayout implements Explanato
     }
     
     @Override
-    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, LevelItemVO levelItemVO) {
+    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, LevelItemVO levelItemVO, final List<LeosPermission> permissions) {
         CreateEventParameter eventParameterObject = new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.COUNCIL_EXPLANATORY.name(), securityContext.getUser(),
-                authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()));
+                Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                        permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new));
         eventParameterObject.setLevelItemVo(levelItemVO);
         eventBus.post(instanceTypeResolver.createEvent(eventParameterObject));
     }
