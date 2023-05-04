@@ -100,13 +100,21 @@ define(function aknOrderedListPluginModule(require) {
             var pointWithoutContent = !selectedElement.getPrevious() && !parent.getPrevious() && leosPluginUtils.isOrderedList(parent.getParent())
                 && !parent.getParent().getPrevious();
 
+            var isParentSubPoint = leosPluginUtils.getElementName(parent) === leosPluginUtils.HTML_SUB_POINT;
+            var point = isParentSubPoint ? parent.getParent() : parent;
+            var isSelectedElementInsidePoint = (leosPluginUtils.getElementName(point) === leosPluginUtils.HTML_POINT) && _getAscendantPoint(point);
+            var isSelectedElementSubPoint = isSelectedElementInsidePoint && leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.HTML_SUB_POINT;
+
             if(isSubPoint && isParentPoint && pointWithoutContent){
                 selectedElement.insertBefore(parent.getParent());
+                leosPluginUtils.setFocus(selectedElement, event.editor);
+            }else if(isParentSubPoint && isSelectedElementSubPoint){
+                selectedElement.insertBefore(parent);
                 leosPluginUtils.setFocus(selectedElement, event.editor);
             }
         }
     }
-    
+
     /**
      * Add an Observer to all ordered lists (OL) present in the editor, considering as a separate list even the nested ones.
      */
