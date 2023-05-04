@@ -45,12 +45,8 @@
                               showAs="en" xml:id="language"/>
             </references>
             <proprietary source="~_leos">
-                <leos:docPurpose xmlns:leos="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
-                                 xml:id="proprietary__docpurpose">NEWVALUE
-                </leos:docPurpose>
-                <leos:docStage xmlns:leos="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
-                               xml:id="proprietary__docstage">NEW Stage
-                </leos:docStage>
+                <leos:docPurpose xml:id="proprietary__docpurpose">NEWVALUE</leos:docPurpose>
+                <leos:docStage xml:id="proprietary__docstage">NEW Stage</leos:docStage>
             </proprietary>
         </meta>
         <coverPage xml:id="em_coverpage">

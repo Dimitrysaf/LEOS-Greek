@@ -155,7 +155,9 @@ public class XercesUtils {
         StringWriter sw = new StringWriter();
         StreamResult output = new StreamResult(sw);
         saveNodeToOutput(node, output);
-        return sw.toString();
+        String xmlString = sw.getBuffer().toString();
+        xmlString = xmlString.replaceAll("xmlns:leos=\""+NAMESPACE_AKN_URI+"\"", "");
+        return xmlString;
     }
 
     private static void saveNodeToOutput(Node node, StreamResult output) {

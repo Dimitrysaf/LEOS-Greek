@@ -2,15 +2,9 @@
     <bill>
         <meta>
             <proprietary source="~_leos">
-                <leos:docPurpose xmlns:leos="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
-                                 xml:id="proprietary__docpurpose">NEWVALUE
-                </leos:docPurpose>
-                <leos:eeaRelevance xmlns:leos="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
-                                   xml:id="proprietary__eeaRelevance">(Text with EEA relevance)
-                </leos:eeaRelevance>
-                <leos:docStage xmlns:leos="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
-                               xml:id="proprietary__docstage">NEW Stage
-                </leos:docStage>
+                <leos:docPurpose xml:id="proprietary__docpurpose">NEWVALUE</leos:docPurpose>
+                <leos:eeaRelevance xml:id="proprietary__eeaRelevance">(Text with EEA relevance)</leos:eeaRelevance>
+                <leos:docStage xml:id="proprietary__docstage">NEW Stage</leos:docStage>
             </proprietary>
             <identification>
                 <FRBRExpression>
