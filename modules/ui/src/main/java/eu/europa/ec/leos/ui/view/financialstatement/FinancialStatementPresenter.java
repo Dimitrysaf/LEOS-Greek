@@ -1007,6 +1007,11 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         if (financialStatementScreen.isCleanVersionShowed()) {
             showCleanVersion(new ShowCleanVersionRequestEvent());
         }
+        if (event.isModified()) {
+            CollectionContext context = proposalContextProvider.get();
+            context.useChildDocument(documentId);
+            context.executeUpdateProposalAsync();
+        }
     }
 
     @Subscribe
