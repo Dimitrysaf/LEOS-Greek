@@ -91,10 +91,7 @@ public class DocumentController {
                                                              @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-            final String version1 = downloadComparedVersionRequest.getOriginalVersion();
-            final String version2 = downloadComparedVersionRequest.getCurrentVersion();
-
-            DownloadVersionResponse response = documentApiService.downloadXMLComparisonFiles(documentCategory, documentRef, version1, version2);
+            DownloadVersionResponse response = documentApiService.downloadXMLComparisonFiles(documentCategory, documentRef, downloadComparedVersionRequest);
 
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();

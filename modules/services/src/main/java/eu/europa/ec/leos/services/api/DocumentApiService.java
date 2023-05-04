@@ -21,11 +21,14 @@ import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 
+import java.io.IOException;
+
 public interface DocumentApiService {
 
     DownloadVersionResponse downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations);
 
-    DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef, String version1, String version2);
+    DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
+            DownloadComparedVersionRequest comparedVersionRequest) throws IOException;
 
     LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, String version1, String version2);
 

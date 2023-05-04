@@ -30,7 +30,7 @@ public class DownloadComparedVersionRequest implements Serializable {
     }
 
     public String getCurrentVersion() {
-        return originalVersion;
+        return currentVersion;
     }
 
     public void setCurrentVersion(String currentVersion) {
