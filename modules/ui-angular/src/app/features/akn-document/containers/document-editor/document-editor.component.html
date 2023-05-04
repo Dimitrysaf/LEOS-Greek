@@ -161,7 +161,7 @@
             [id]="containerId"
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
-            [readonly]="false"
+            [readonly]="enviromentService.isCouncil()"
             class="leos-doc-content"
             [ngClass]="{ 'toc-edit-mode': isEditMode }"
           ></app-annex-document>
