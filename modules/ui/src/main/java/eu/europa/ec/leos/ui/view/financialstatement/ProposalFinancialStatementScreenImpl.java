@@ -15,6 +15,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -62,6 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @ViewScope
 @SpringComponent
@@ -151,9 +153,10 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     }
 
     @Override
-    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, LevelItemVO levelItemVO) {
+    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, LevelItemVO levelItemVO, final List<LeosPermission> permissions) {
         CreateEventParameter eventParameterObject = new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.STAT_FINANC_LEGIS.name(), securityContext.getUser(),
-                authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()));
+                Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                        permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new));
         eventParameterObject.setLevelItemVo(levelItemVO);
         eventParameterObject.setCloneProposal(cloneContext.isClonedProposal());
         eventBus.post(instanceTypeResolver.createEvent(eventParameterObject));

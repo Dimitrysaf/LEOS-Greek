@@ -32,6 +32,8 @@ define(function leosTrackChangesPluginModule(require) {
             var core = trackChanges.core, actions = trackChanges.actions;
             var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
+            var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
+                    canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -88,7 +90,8 @@ define(function leosTrackChangesPluginModule(require) {
                     var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                     if (tcElement && editor.getSelection().isCollapsed()) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
-                        return { acceptOneChangeItem: CKEDITOR.TRISTATE_OFF, rejectOneChangeItem: CKEDITOR.TRISTATE_OFF };
+                        return { acceptOneChangeItem: canUserAcceptChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                            rejectOneChangeItem: canUserRejectChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
                     }
                 });
             }
@@ -376,6 +379,14 @@ define(function leosTrackChangesPluginModule(require) {
 
         getUserId: function(editor) {
             return editor.LEOS.user.login;
+        },
+
+        canUserAcceptChanges: function(editor) {
+            return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
+        },
+
+        canUserRejectChanges: function(editor) {
+            return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_REJECT_CHANGES");
         }
 
     };

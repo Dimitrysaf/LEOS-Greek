@@ -46,7 +46,7 @@ interface MemorandumScreen {
 
     void refreshElementEditor(String elementId, String elementTagName, String elementContent);
 
-    void showElementEditor(String elementId, String elementTagName, String element);
+    void showElementEditor(String elementId, String elementTagName, String element, List<LeosPermission> permissions);
 
     void setUserGuidance(String guidance);
 

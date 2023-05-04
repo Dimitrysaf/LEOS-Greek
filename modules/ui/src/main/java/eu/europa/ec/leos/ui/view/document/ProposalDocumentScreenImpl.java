@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.ui.view.document;
 
+import com.google.common.collect.ObjectArrays;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.StyleSheet;
@@ -13,6 +14,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -60,6 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @ViewScope
 @SpringComponent
@@ -113,12 +116,13 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
     }
 
     @Override
-    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, String alternatives) {
+    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, final String alternatives, final List<LeosPermission> permissions) {
         CreateEventParameter eventParameterObjet = new CreateEventParameter(elementId, elementTagName, elementFragment,
                 LeosCategory.BILL.name(), securityContext.getUser(),
-                authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()));
+                Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                        permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new));
         eventParameterObjet.setAlternative(alternatives);
-        eventParameterObjet.setCloneProposal(cloneContext.isClonedProposal());
+        eventParameterObjet.setCloneProposal(cloneContext.isClonedProposal());;
         eventBus.post(instanceTypeResolver.createEvent(eventParameterObjet));
     }
 

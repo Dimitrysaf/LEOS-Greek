@@ -1129,7 +1129,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 levelItemVO = annexProcessor.getLevelItemVO(annex, elementId, elementTagName);
             }
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-            annexScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
+            annexScreen.showElementEditor(elementId, elementTagName, element, levelItemVO, securityContext.getPermissions(annex));
             openElementEditors.add(elementId);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);

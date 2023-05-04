@@ -92,6 +92,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @SpringComponent
 @ViewScope
@@ -282,10 +283,11 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
     }
 
     @Override
-    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, String alternatives) {
+    public void showElementEditor(final String elementId, final String elementTagName, final String elementFragment, final String alternatives, final List<LeosPermission> permissions) {
         CreateEventParameter eventParameterObjet = new CreateEventParameter(elementId, elementTagName, elementFragment,
                 LeosCategory.BILL.name(), securityContext.getUser(),
-                authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()));
+                Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                        permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new));
         eventParameterObjet.setAlternative(alternatives);
         eventBus.post(instanceTypeResolver.createEvent(eventParameterObjet));
     }

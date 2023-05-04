@@ -583,7 +583,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
             Proposal proposal = getDocument();
             String element = elementProcessor.getElement(proposal, elementTagName, elementId);
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-            coverPageScreen.showElementEditor(elementId, elementTagName, element);
+            coverPageScreen.showElementEditor(elementId, elementTagName, element, securityContext.getPermissions(proposal));
             openElementEditors.add(elementId);
         }
         catch (Exception ex){

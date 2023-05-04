@@ -580,7 +580,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             LevelItemVO levelItemVO = new LevelItemVO();
             String element = elementProcessor.getElement(financialStatement, elementTagName, elementId);
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-            financialStatementScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
+            financialStatementScreen.showElementEditor(elementId, elementTagName, element, levelItemVO, securityContext.getPermissions(financialStatement));
             openElementEditors.add(elementId);
         }
         catch (Exception ex){
