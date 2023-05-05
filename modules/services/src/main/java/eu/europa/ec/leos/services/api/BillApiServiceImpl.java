@@ -475,7 +475,6 @@ public class BillApiServiceImpl implements BillApiService {
         final String description = messageHelper.getMessage("operation.checkin.minor");
         final String elementLabel = generateLabel(elementId, bill);
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
-
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
         if (bill != null) {

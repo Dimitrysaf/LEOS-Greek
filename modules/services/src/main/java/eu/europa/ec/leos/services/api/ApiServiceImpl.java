@@ -939,9 +939,12 @@ public class ApiServiceImpl implements ApiService {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
                 MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage);
+                String tocFile = null;
                 if (isCoverPage) {
                     milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
+                    tocFile = "coverPage_toc.js";
                 } else {
+                    tocFile = contentFileName + TOC_JS;
                     LeosCategory category = xmlContentProcessor.identifyCategory(key,
                             xmlContent.getBytes(StandardCharsets.UTF_8));
                     milestoneView.setLeosCategory(category);
@@ -950,9 +953,10 @@ public class ApiServiceImpl implements ApiService {
                         annexesComparaison.put((entry.getKey()), isCompared);
                     }
                 }
-                String tocFile = contentFileName + TOC_JS;
-
-                milestoneView.setTocData(this.buildTocTree((File) unzippedFiles.get(tocFile)));
+                File toc = (File) unzippedFiles.get(tocFile);
+                if (toc.exists()) {
+                    milestoneView.setTocData(this.buildTocTree(toc));
+                }
                 listDocuments.add(milestoneView);
             } catch (Exception e) {
                 LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
