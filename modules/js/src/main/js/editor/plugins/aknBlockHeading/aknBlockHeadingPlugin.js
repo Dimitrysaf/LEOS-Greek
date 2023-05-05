@@ -35,13 +35,6 @@ define(function aknBlockHeadingPluginModule(require) {
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
-                key : ENTER_KEY,
-                action : _onEnterKey
-            });
-
-            leosKeyHandler.on({
-                editor : editor,
-                eventType : 'key',
                 key : SHIFT_ENTER,
                 action : _onShiftEnterKey
             });
@@ -68,14 +61,6 @@ define(function aknBlockHeadingPluginModule(require) {
             });
         }
     };
-
-    function _onEnterKey(context) {
-        var selection = context.event.editor.getSelection();
-        var startElement = leosKeyHandler.getSelectedElement(selection);
-        if(startElement.getAttribute(DATA_AKN_NAME) === CROSS_HEADING) {
-            context.event.cancel();
-        }
-    }
 
     function _onShiftEnterKey(context) {
         var selection = context.event.editor.getSelection();
