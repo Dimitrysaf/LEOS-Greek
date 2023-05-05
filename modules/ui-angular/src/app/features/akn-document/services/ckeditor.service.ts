@@ -24,7 +24,13 @@ import { apiBaseUrl } from 'src/config';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
+import {
+  ChangeDetailsConnector,
+  ChangeDetailsConnectorState,
+} from '@/features/akn-document/services/change-details-connector';
 import { LeosEditorConnector } from '@/features/akn-document/services/leos-editor-connector';
+import { RefToLinkConnector } from '@/features/akn-document/services/ref-to-link-connector';
+import { SoftActionsConnector } from '@/features/akn-document/services/soft-actions-connector';
 import { UserGuidanceConnector } from '@/features/akn-document/services/user-guidance-connector';
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
@@ -47,6 +53,9 @@ export class CKEditorService implements OnDestroy {
   private actionManagerConnector?: ActionManagerConnector;
   private leosEditorConnector?: LeosEditorConnector;
   private userGuidanceConnector?: UserGuidanceConnector;
+  private changeDetailsConnector?: ChangeDetailsConnector;
+  private refToLinkConnector?: RefToLinkConnector;
+  private softActionsConnector?: SoftActionsConnector;
 
   connector: any = {
     getParentId: () => 123,
@@ -126,40 +135,10 @@ export class CKEditorService implements OnDestroy {
         this.initActionManager(require, leosState, rootElement);
         this.initLeosEditor(require, leosState, rootElement);
         this.initUserGuideance(require, leosState, rootElement);
+        this.initChangeDetails(require, leosState, rootElement);
+        this.initRefToLink(require, leosState, rootElement);
+        this.initSoftActions(require, leosState, rootElement);
       });
-
-    const refToLinkExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/refToLinkExtension'], (refToLink) => {
-              subscriber.next(refToLink);
-            });
-          }),
-      ),
-    );
-
-    const softActionsExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/softActionsExtension'], (softActions) => {
-              subscriber.next(softActions);
-            });
-          }),
-      ),
-    );
-
-    const changeDetailsExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/changeDetailsExtension'], (changeDetails) => {
-              subscriber.next(changeDetails);
-            });
-          }),
-      ),
-    );
 
     this.elementEditor$ = this.leosLegacyService.require$.pipe(
       switchMap(
@@ -171,18 +150,6 @@ export class CKEditorService implements OnDestroy {
           }),
       ),
     );
-
-    combineLatest([
-      refToLinkExtension$,
-      softActionsExtension$,
-      changeDetailsExtension$,
-    ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([refTolink, softActions, changeDetails]: any[]) => {
-        refTolink.init(this.connector);
-        softActions.init(this.connector);
-        changeDetails.init(this.connector);
-      });
   }
 
   private initActionManager(
@@ -227,6 +194,23 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
+  private initChangeDetails(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.changeDetailsConnector = new ChangeDetailsConnector(
+      //TODO pass only required state
+      leosState,
+      {
+        rootElement,
+      },
+    );
+    require(['extension/changeDetailsExtension'], (changeDetails) => {
+      changeDetails.init(this.changeDetailsConnector);
+    });
+  }
+
   private initUserGuideance(
     require: Require,
     leosState: any,
@@ -241,6 +225,40 @@ export class CKEditorService implements OnDestroy {
     );
     require(['extension/userGuidanceExtension'], (userGuideance) => {
       userGuideance.init(this.userGuidanceConnector);
+    });
+  }
+
+  private initRefToLink(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.refToLinkConnector = new RefToLinkConnector(
+      //TODO pass only required state
+      leosState,
+      {
+        rootElement,
+      },
+    );
+    require(['extension/userGuidanceExtension'], (userGuideance) => {
+      userGuideance.init(this.refToLinkConnector);
+    });
+  }
+
+  private initSoftActions(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.softActionsConnector = new SoftActionsConnector(
+      //TODO pass only required state
+      leosState,
+      {
+        rootElement,
+      },
+    );
+    require(['extension/softActionsExtension'], (sofrActions) => {
+      sofrActions.init(this.softActionsConnector);
     });
   }
 
