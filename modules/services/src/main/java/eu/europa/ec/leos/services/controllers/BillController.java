@@ -251,7 +251,7 @@ public class BillController {
 
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> compareBillVersions(@PathVariable("newVersionId") String newVersionId,
                                                       @PathVariable("oldVersionId") String oldVersionId) {
@@ -415,7 +415,7 @@ public class BillController {
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename="+jobFileName);
+            headers.set("Content-Disposition", "attachment; filename=" + jobFileName);
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for bill " + e.getMessage());
