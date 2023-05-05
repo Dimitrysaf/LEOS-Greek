@@ -383,7 +383,8 @@ public class BillApiServiceImpl implements BillApiService {
                     metadata.getLanguage());
             String notificationMsg = "document.import.element.inserted" + (elementIds.stream().anyMatch((s) -> s.startsWith("rec_")) ? ".recitals" : "") +
                     (elementIds.stream().anyMatch((s) -> s.startsWith("art_")) ? ".articles" : "");
-            bill = billService.updateBill(bill, newXmlContent, messageHelper.getMessage(notificationMsg));
+            String operationMessage = messageHelper.getMessage("operation.import.element.inserted");
+            bill = billService.updateBill(bill, newXmlContent, operationMessage);
             return this.documentViewService.getDocumentView(bill);
         } else {
             throw new ImportElementException("Search returned with no result! Please modify the search parameters");
@@ -474,7 +475,6 @@ public class BillApiServiceImpl implements BillApiService {
         final String description = messageHelper.getMessage("operation.checkin.minor");
         final String elementLabel = generateLabel(elementId, bill);
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
-
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
         if (bill != null) {

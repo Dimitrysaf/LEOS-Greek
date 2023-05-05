@@ -18,11 +18,15 @@
     margin-right: auto;
   }
 
-  akomantoso > * {
+  akomantoso > coverpage {
+    border: $border;
+  }
+
+  akomantoso > *:not(coverpage) {
     padding: 1px;
   }
 
-  akomantoso > * > {
+  akomantoso > *:not(coverpage) > {
     * {
       border-left: $border;
       border-right: $border;

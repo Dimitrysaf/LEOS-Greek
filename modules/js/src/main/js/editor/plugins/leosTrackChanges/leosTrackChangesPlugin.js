@@ -32,6 +32,8 @@ define(function leosTrackChangesPluginModule(require) {
             var core = trackChanges.core, actions = trackChanges.actions;
             var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
+            var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
+                    canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -50,12 +52,49 @@ define(function leosTrackChangesPluginModule(require) {
                     if (isTrackChangesVisible) {
                         $("head").prepend(defaultTrackChangesEditorStyle);
                     } else {
-                        var editorTcStyle = core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='insert'] { text-decoration: none; }\n";
-                        editorTcStyle += core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='delete'] { display: none; }\n";
+                        var editorTcStyle = "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='insert'] { text-decoration: none; }\n";
+                        editorTcStyle += "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='delete'] { display: none; }\n";
                         $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
                     }
                 }
             });
+
+            // Add context menu accept and reject options
+            if (editor.contextMenu) {
+                editor.addMenuGroup("trackChangesGroup");
+                editor.addMenuItem( "acceptOneChangeItem", {
+                    label: "Accept this change",
+                    icon: this.path + "icons/ok.png",
+                    command: "acceptOneChange",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem( "rejectOneChangeItem", {
+                    label: "Reject this change",
+                    icon: this.path + "icons/remove.png",
+                    command: "rejectOneChange",
+                    group: "trackChangesGroup"
+                });
+                editor.addCommand("acceptOneChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.acceptChange(editor, editor.getSelection().getStartElement());
+                    }
+                });
+                editor.addCommand("rejectOneChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.rejectChange(editor, editor.getSelection().getStartElement());
+                    }
+                });
+                editor.contextMenu.addListener( function(element) {
+                    var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                    if (tcElement && editor.getSelection().isCollapsed()) {
+                        editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
+                        return { acceptOneChangeItem: canUserAcceptChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                            rejectOneChangeItem: canUserRejectChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                    }
+                });
+            }
 
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
@@ -69,8 +108,8 @@ define(function leosTrackChangesPluginModule(require) {
                 var ctrlDown = false, cutText;
                 var editable = editor.editable();
 
-                // Delete functionality - keydown - catch snapshots
-                editable.attachListener(editor.document, "keydown", function(e) {
+                // Delete functionality - key - catch snapshots
+                editable.attachListener(editor, "key", function(e) {
                     if (isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (event.isCtrl()) {
@@ -114,7 +153,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 // Prevent is different search, if still found tc.
                                 var tcElementPrevent = core.searchTrackChangeElement(editor, core.DELETE_ACTION);
                                 if (tcElementPrevent && (((savedTcLocation === core.BEFORE) && !deleteKey) || ((savedTcLocation === core.AFTER) && deleteKey))) {
-                                    event.getInstance().data.preventDefault();
+                                    event.getInstance().data.domEvent.preventDefault();
                                     savedSnapshot = null;
                                 }
 
@@ -147,11 +186,11 @@ define(function leosTrackChangesPluginModule(require) {
                                 if (!tcElement) { // Check if no TrackChange element is found.
                                     if ((typeof(startContainer.getAttribute) != 'undefined') && (startContainer.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
                                         if ((range.startOffset === 0 && deleteKey) || (range.startOffset !== 0 && !deleteKey)) {
-                                            event.getInstance().data.preventDefault();
+                                            event.getInstance().data.domEvent.preventDefault();
                                             savedSnapshot = null;
                                         }
                                     } else if ((typeof(startContainer.getParent().getAttribute) != 'undefined') && (startContainer.getParent().getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
-                                        event.getInstance().data.preventDefault();
+                                        event.getInstance().data.domEvent.preventDefault();
                                         savedSnapshot = null;
                                     }
                                 }
@@ -193,10 +232,10 @@ define(function leosTrackChangesPluginModule(require) {
                                     lastItem.mergeSiblings(false);
                                 }
 
-                                event.getInstance().data.preventDefault();
+                                event.getInstance().data.domEvent.preventDefault();
                             } else {
                                 // Prevent if lock exists
-                                event.getInstance().data.preventDefault();
+                                event.getInstance().data.domEvent.preventDefault();
                             }
                         }
                     }
@@ -340,6 +379,14 @@ define(function leosTrackChangesPluginModule(require) {
 
         getUserId: function(editor) {
             return editor.LEOS.user.login;
+        },
+
+        canUserAcceptChanges: function(editor) {
+            return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
+        },
+
+        canUserRejectChanges: function(editor) {
+            return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_REJECT_CHANGES");
         }
 
     };
@@ -486,13 +533,34 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             }
+        },
+
+        acceptChange: function(editor, element) {
+            var core = trackChanges.core;
+            editor.getSelection().fake(element.getParent());
+            if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                element.remove();
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
+                element.$.outerHTML = element.$.innerHTML;
+            }
+        },
+
+        rejectChange: function(editor, element) {
+            var core = trackChanges.core;
+            editor.getSelection().fake(element.getParent());
+            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                element.remove();
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
+                element.$.outerHTML = element.$.innerHTML;
+            }
         }
+
     };
 
     trackChanges.core = {
 
         // Track changes names and element types
-        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "div#docContainer akomantoso span[data-akn-name='trackchanges']",
+        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-name='trackchanges']",
         ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
         STATUS_ATTR: "data-akn-status", NEW_STATUS: "new",
         UID_ATTR: "data-akn-uid",
@@ -747,7 +815,7 @@ define(function leosTrackChangesPluginModule(require) {
         }
         this.isCtrl = function() {
             var e = event();
-            return e.data.$.metaKey || e.data.$.ctrlKey || (this.getKeyCode() === 17) || (this.getKeyCode() === 91) || (this.getKeyCode() === 224);
+            return (e.data.domEvent ? e.data.domEvent.$.metaKey : e.data.$.metaKey) || (e.data.domEvent ? e.data.domEvent.$.ctrlKey : e.data.$.ctrlKey) || (this.getKeyCode() === 17) || (this.getKeyCode() === 91) || (this.getKeyCode() === 224);
         }
         this.getChar = function() {
             var charCode = getCharCode();
@@ -758,12 +826,12 @@ define(function leosTrackChangesPluginModule(require) {
         }
         this.getKeyCode = function() {
             var e = event();
-            var charCode = e.data.$.keyCode;
+            var charCode = e.data.domEvent ? e.data.domEvent.$.keyCode : e.data.$.keyCode;
             return charCode;
         }
         var getCharCode = function() {
             var e = event();
-            var charCode = (CKEDITOR.env.ie ? e.data.$.keyCode : e.data.$.charCode);
+            var charCode = (CKEDITOR.env.ie ? (e.data.domEvent ? e.data.domEvent.$.keyCode : e.data.$.keyCode) : (e.data.domEvent ? e.data.domEvent.$.charCode : e.data.$.charCode));
             return charCode;
         }
     };

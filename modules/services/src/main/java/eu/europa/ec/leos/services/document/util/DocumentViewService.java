@@ -18,8 +18,10 @@ import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -32,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -49,10 +52,19 @@ public class DocumentViewService<T extends XmlDocument> {
     ProposalService proposalService;
     @Autowired
     UserHelperAPI userHelper;
+    @Autowired
+    MessageHelper messageHelper;
+    @Autowired
+    Provider<CollectionContextService> proposalContextProvider;
+
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public DocumentViewResponse getDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
+        CollectionContextService context = proposalContextProvider.get();
+        context.useChildDocument(proposal.getId());
+        context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
+        context.executeUpdateProposalAsync();
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
         return new DocumentViewResponse(getProposalRef(document.getId()), editableXml, versionInfoVO);

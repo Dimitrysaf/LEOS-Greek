@@ -78,106 +78,6 @@ public class XercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
 
-    public static final Map<String, String> replacements = Stream.of(new String[][] {
-            { "#x2610", "#x2610" },
-            { "#x2611", "#x2611" },
-    }).collect(Collectors.collectingAndThen(
-            Collectors.toMap(data -> data[0], data -> data[1]),
-            Collections::<String, String> unmodifiableMap));
-
-    /**
-     * This function takes the Map containing the entities to be replaced
-     * and uses those values to replace any entities in the XML string
-     * with their unique random integer replacements. The end results is an XML
-     * string that contains no entities, but contains identifiable strings that
-     * can be used to replace those entities at a later point.
-     *
-     * @param replacements
-     *            The Map containing the entities to be replaced
-     * @param xml
-     *            The XML string to modify
-     * @return The modified XML
-     */
-    public static String replaceEntities(final Map<String, String> replacements, final String xml)
-    {
-        String retValue = xml;
-        for (final String entity : replacements.keySet()) {
-            retValue = retValue.replaceAll("\\&" + entity + ";", replacements.get(entity));
-        }
-        return retValue;
-    }
-
-    /**
-     * This function takes the Map containing the entities to be replaced
-     * and uses those values to replace any entities in the XML byte array
-     * with their unique random integer replacements. The end results is an XML
-     * array that contains no entities, but contains identifiable strings that
-     * can be used to replace those entities at a later point.
-     *
-     * @param replacements
-     *            The Map containing the entities to be replaced
-     * @param xml
-     *            The XML byte array to modify
-     * @return The modified XML
-     */
-    public static byte[] replaceEntities(final Map<String, String> replacements, final byte[] xml)
-    {
-        return replaceEntities(replacements, new String(xml, UTF_8)).getBytes(StandardCharsets.UTF_8);
-    }
-
-    /**
-     * This function takes a string, along with the Map containing the
-     * entities to be replaced, and restores all the entities.
-     *
-     * @param replacements
-     *            The Map containing the entities to be replaced
-     * @param xml
-     *            The xml string to modify
-     * @return The modified XML
-     */
-    public static String restoreEntities(final Map<String, String> replacements, final String xml)
-    {
-        String retValue = xml;
-        for (final Map.Entry<String, String> entityReplacement : replacements.entrySet())
-        {
-            final String entityName = entityReplacement.getKey();
-            final String entityPlaceholder = entityReplacement.getValue();
-            final int entityPlaceholderLength = entityPlaceholder.length();
-
-            /* The text in this node, with the substitutions */
-            final StringBuilder originalText = new StringBuilder(retValue);
-
-            int index = originalText.indexOf(entityPlaceholder);
-
-            while (index>=0) {
-                if (originalText.charAt(index-1) != '\u0026') { // Is already restored?
-                    originalText.insert(index, "\u0026");
-                    originalText.insert(index + entityPlaceholderLength + 1, ";");
-                    originalText.replace(index + 1, index + entityPlaceholderLength + 1, entityName);
-                }
-                index = originalText.indexOf(entityPlaceholder, index + entityPlaceholderLength + 1);
-            }
-
-            retValue = originalText.toString();
-        }
-        return retValue;
-    }
-
-    /**
-     * This function takes a byte array, along with the Map containing the
-     * entities to be replaced, and restores all the entities.
-     *
-     * @param replacements
-     *            The Map containing the entities to be replaced
-     * @param xml
-     *            The xml byte array to modify
-     * @return The modified XML
-     */
-    public static byte[] restoreEntities(final Map<String, String> replacements, final byte[] xml)
-    {
-        return restoreEntities(replacements, new String(xml, UTF_8)).getBytes(StandardCharsets.UTF_8);
-    }
-
     public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -255,7 +155,9 @@ public class XercesUtils {
         StringWriter sw = new StringWriter();
         StreamResult output = new StreamResult(sw);
         saveNodeToOutput(node, output);
-        return sw.toString();
+        String xmlString = sw.getBuffer().toString();
+        xmlString = xmlString.replaceAll("xmlns:leos=\""+NAMESPACE_AKN_URI+"\"", "");
+        return xmlString;
     }
 
     private static void saveNodeToOutput(Node node, StreamResult output) {
@@ -271,10 +173,6 @@ public class XercesUtils {
         } catch (Exception e) {
             throw new IllegalStateException("Cannot save Node to output", e);
         }
-    }
-
-    public static byte[] nodeToByteArraySimple(Node node) {
-        return nodeToStringSimple(node).getBytes(UTF_8);
     }
 
     public static String getContentNodeAsXmlFragment(Node node) {

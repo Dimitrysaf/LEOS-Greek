@@ -94,10 +94,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                 .withRef(ref)
                 .build();
         FinancialStatement FinancialStatement = financialStatementRepository.createFinancialStatement(templateId, path, fileName, metadata);
-        content = (content == null) ? XercesUtils.replaceEntities(XercesUtils.replacements, getContent(FinancialStatement))
-                : XercesUtils.replaceEntities(XercesUtils.replacements, content);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(FinancialStatement) : content, metadata);
-        updatedBytes = XercesUtils.restoreEntities(XercesUtils.replacements, updatedBytes);
         return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
     }
 
@@ -146,9 +143,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                                        VersionType versionType, String comment) {
         LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={}, versionType={}, comment={}]", financialStatement.getId(), updatedMetadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        byte [] content = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
-        byte[] updatedBytes = updateDataInXml(content, updatedMetadata);
-        updatedBytes = XercesUtils.restoreEntities(XercesUtils.replacements, updatedBytes);
+        byte[] updatedBytes = updateDataInXml(getContent(financialStatement), updatedMetadata);
 
         financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedMetadata, updatedBytes, versionType, comment);
 
@@ -164,9 +159,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                                        FinancialStatementMetadata metadata, VersionType versionType, String comment) {
         LOG.trace("Updating FinancialStatement... [id={}, updatedMetadata={}, versionType={}, comment={}]", financialStatement.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        updatedFinancialStatementContent = XercesUtils.replaceEntities(XercesUtils.replacements, updatedFinancialStatementContent);
         updatedFinancialStatementContent = updateDataInXml(updatedFinancialStatementContent, metadata);
-        updatedFinancialStatementContent = XercesUtils.restoreEntities(XercesUtils.replacements, updatedFinancialStatementContent);
 
         financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, updatedFinancialStatementContent, versionType, comment);
 
@@ -230,15 +223,13 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                                  FinancialStatementStructureType financialStatementStructureType, String actionMsg, User user) {
         Validate.notNull(financialStatement, "FinancialStatement is required");
         Validate.notNull(tocList, "Table of content list is required");
-        byte[] newXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
-        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, newXmlContent, user);
+        byte[] newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user);
         if (financialStatementStructureType != null && LEVEL.equals(financialStatementStructureType.getType())) {
             newXmlContent = numberService.renumberLevel(newXmlContent);
         }
         newXmlContent = numberService.renumberParagraph(newXmlContent);
         newXmlContent = numberService.renumberDivisions(newXmlContent);
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
-        newXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, newXmlContent);
 
         return updateFinancialStatement(financialStatement, newXmlContent, VersionType.MINOR, actionMsg);
     }

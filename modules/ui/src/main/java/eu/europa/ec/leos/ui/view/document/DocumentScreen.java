@@ -54,7 +54,7 @@ interface DocumentScreen {
 
     void setToc(List<TableOfContentItemVO> tableOfContentItemVoList);
     
-    void showElementEditor(String elementId, String elementTagName, String elementContent, String alternatives);
+    void showElementEditor(String elementId, String elementTagName, String elementContent, String alternatives, List<LeosPermission> permissions);
 
     void refreshElementEditor(String elementId, String elementTagName, String elementContent);
     

@@ -581,7 +581,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         }
 
         coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-        documentScreen.showElementEditor(event.getElementId(), elementTagName, element, jsonAlternatives);
+        documentScreen.showElementEditor(elementId, elementTagName, element, jsonAlternatives, securityContext.getPermissions(bill));
         this.openElementEditors.add(elementId);
     }
 
@@ -1519,17 +1519,14 @@ class DocumentPresenter extends AbstractLeosPresenter {
     @Subscribe
     void downloadXmlFiles(DownloadXmlFilesRequestEvent event) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        final Map<String, Object> contentToZip = new HashMap<>();
-
+        cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         final ExportVersions<Bill> exportVersions = event.getExportOptions().getExportVersions();
         final Bill current = exportVersions.getCurrent();
         final Bill original = exportVersions.getOriginal();
         final Bill intermediate = exportVersions.getIntermediate();
-
         final String leosComparedContent;
         final String docuWriteComparedContent;
         final String comparedInfo;
-        cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         String language = original.getMetadata().get().getLanguage();
 
         if (intermediate != null) {

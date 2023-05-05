@@ -580,7 +580,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             LevelItemVO levelItemVO = new LevelItemVO();
             String element = elementProcessor.getElement(financialStatement, elementTagName, elementId);
             coEditionHelper.storeUserEditInfo(httpSession.getId(), id, user, strDocumentVersionSeriesId, elementId, InfoType.ELEMENT_INFO);
-            financialStatementScreen.showElementEditor(elementId, elementTagName, element, levelItemVO);
+            financialStatementScreen.showElementEditor(elementId, elementTagName, element, levelItemVO, securityContext.getPermissions(financialStatement));
             openElementEditors.add(elementId);
         }
         catch (Exception ex){
@@ -601,7 +601,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         try {
             FinancialStatement financialStatement = getDocument();
             byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId, true);
-            updatedXmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, updatedXmlContent);
             updatedXmlContent = xmlContentProcessor.doXMLPostProcessing(updatedXmlContent);
             if (updatedXmlContent == null) {
                 financialStatementScreen.showAlertDialog("operation.element.not.performed");
@@ -623,12 +622,11 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                         eventBus.post(new CloseElementEvent());
                     }
                 }
-                updatedXmlContent = XercesUtils.restoreEntities(XercesUtils.replacements, updatedXmlContent);
                 financialStatement = financialStatementService.updateFinancialStatement(financialStatement, updatedXmlContent,
                         VersionType.MINOR, messageHelper.getMessage("operation.financial.statement.block.updated"));
                 String newElementContent = elementProcessor.getElement(financialStatement, elementTagName, elementId);
                 eventBus.post(new RefreshElementEvent(elementId, elementTagName, newElementContent));
-
+                eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             }
@@ -688,7 +686,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
             FinancialStatement financialStatement = getDocument();
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
-            xmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, xmlContent);
             Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
                 byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
@@ -697,6 +694,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 if (financialStatement != null) {
                     elementToEditAfterClose = null;
                     eventBus.post(new CloseElementEvent());
+                    eventBus.post(new RefreshDocumentEvent());
                     eventBus.post(new DocumentUpdatedEvent());
                     leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
                     LOG.info("Element '{}' merged into '{}' in FinancialStatement {} id {}, in {} milliseconds ({} sec)", elementId, mergeOnElement.getElementId(),
@@ -966,6 +964,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         if (financialStatement != null) {
             httpSession.setAttribute("financialStatement#"+getDocumentRef(), financialStatement);
+            eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
             eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.replace.success"));
@@ -1007,6 +1006,11 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         financialStatementScreen.refreshVersions(allVersions, comparisonMode);
         if (financialStatementScreen.isCleanVersionShowed()) {
             showCleanVersion(new ShowCleanVersionRequestEvent());
+        }
+        if (event.isModified()) {
+            CollectionContext context = proposalContextProvider.get();
+            context.useChildDocument(documentId);
+            context.executeUpdateProposalAsync();
         }
     }
 
@@ -1275,9 +1279,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         FinancialStatement financialStatement = financialStatementService.createVersion(documentId, event.getVersionType(), event.getCheckinComment());
         setDocumentData(financialStatement);
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.major.version.saved"));
+        eventBus.post(new RefreshDocumentEvent());
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, financialStatement.getVersionSeriesId(), id));
-        populateViewData(financialStatement, TocMode.SIMPLIFIED);
     }
 
     private void resetCloneProposalMetadataVO() {

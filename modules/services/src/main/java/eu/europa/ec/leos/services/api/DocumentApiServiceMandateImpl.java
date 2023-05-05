@@ -25,10 +25,14 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
+import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
+import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
+import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
@@ -39,11 +43,13 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -55,11 +61,12 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceMandateImpl.class);
 
     public DocumentApiServiceMandateImpl(DocumentContentService documentContentService, PackageService packageService,
-            ProposalService proposalService, ExportService exportService,
+            ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
             ExportPackageService exportPackageService, NotificationService notificationService,
-            SecurityContext securityContext, MessageHelper messageHelper) {
-        super(documentContentService, packageService, proposalService, exportService, exportPackageService, notificationService, securityContext,
-                messageHelper);
+            SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
+            LegService legService) {
+        super(documentContentService, packageService, proposalService, exportService, leosRepository, exportPackageService, notificationService,
+                securityContext, messageHelper, comparisonDelegate, legService);
     }
 
     @Override
@@ -79,6 +86,57 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         } catch (Exception e) {
             throw new ExportException(messageHelper.getMessage("export.docuwrite.error.message", e.getMessage()));
         }
+    }
+
+    @Override
+    public DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
+            DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
+        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+        final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
+        final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
+        XmlDocument intermediate = null;
+        String comparedInfo;
+        String leosComparedContent;
+        String docuWriteComparedContent;
+
+        if(comparedVersionRequest.getIntermediateVersion() != null) {
+            intermediate = getDocumentByVersion(documentRef, comparedVersionRequest.getIntermediateVersion(), clazz);
+        }
+        String language = original.getMetadata().get().getLanguage();
+
+        if (intermediate != null) {
+            comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
+            leosComparedContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
+            docuWriteComparedContent = legService.doubleCompareXmlContents(original, intermediate, current, true);
+        } else {
+            comparedInfo = messageHelper.getMessage("version.compare.simple", original.getVersionLabel(), current.getVersionLabel());
+            leosComparedContent = comparisonDelegate.getMarkedContent(original, current);
+            docuWriteComparedContent = legService.simpleCompareXmlContents(original, current, true);
+        }
+        return packageComparedXmlFiles(original, current, intermediate, leosComparedContent, docuWriteComparedContent, comparedInfo, language,
+                "docuWrite");
+    }
+
+    @Override
+    public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, String version1, String version2) {
+        throw new ExportException("External system to export documents not available for this instance");
+    }
+
+    @Override
+    public LeosExportStatus exportComparedVersionToConsilium(LeosCategoryClass documentType, String documentRef, ExportComparedVersionRequest exportToConsiliumRequest) {
+        XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
+        XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
+
+        ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD);
+        exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
+        exportOptions.setRelevantElements(exportToConsiliumRequest.getRelevantElements());
+
+        return doExportPackage(exportToConsiliumRequest.getTitle(), false, exportOptions, currentDocument.getId());
+    }
+
+    @Override
+    public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest) {
+        throw new ExportException("External system to download documents not available for this instance");
     }
 
     @Override

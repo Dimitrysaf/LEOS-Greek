@@ -322,8 +322,19 @@ export class CKEditorService implements OnDestroy {
   // called from constructor
   private renameConfigKeysForEditor(config: any) {
     const oldConfig: LeosConfig & DocumentConfig = cloneDeep(config);
-    const tocItems = cloneDeep(oldConfig.tocItems);
-    tocItems.forEach((i) => (i.aknTag = i.aknTag.toLowerCase() as any));
+    const tocItems: any = cloneDeep(oldConfig.tocItems);
+
+    tocItems.forEach((i) => {
+      i.aknTag = i.aknTag.toLowerCase() as any;
+      if (this.documentTypeBS.value === 'memorandum') {
+        if (i.aknTag === 'main_body') {
+          i.aknTag = 'mainBody';
+        } else if (i.aknTag === 'block_container') {
+          i.aknTag = 'blockContainer';
+        }
+      }
+    });
+
     //toc-items
     Object.defineProperty(
       config,

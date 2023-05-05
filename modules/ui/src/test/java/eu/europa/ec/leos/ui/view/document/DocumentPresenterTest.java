@@ -657,7 +657,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         documentPresenter.editElement(new EditElementRequestEvent(articleId, ARTICLE_TAG));
 
         verify(billService).findBillByRef(docRef);
-        verify(documentScreen).showElementEditor(articleId, ARTICLE_TAG, articleContent, "");
+        verify(documentScreen).showElementEditor(articleId, ARTICLE_TAG, articleContent, "", Collections.emptyList());
         verify(elementProcessor).getElementAttributeValueByNameAndId(document, LEOS_ALTERNATIVE_ATTR, ARTICLE_TAG, articleId);
         verifyNoMoreInteractions(billService, documentScreen);
     }
@@ -893,7 +893,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(billService).findBillByRef(docRef);
         verify(elementProcessor).getElement(document, CITATIONS_TAG, citationsId);
         verify(elementProcessor).getElementAttributeValueByNameAndId(document, LEOS_ALTERNATIVE_ATTR, CITATIONS_TAG, citationsId);
-        verify(documentScreen).showElementEditor(citationsId, CITATIONS_TAG, citationsContent, "");
+        verify(documentScreen).showElementEditor(citationsId, CITATIONS_TAG, citationsContent, "", Collections.emptyList());
 
         verifyNoMoreInteractions(billService, documentScreen);
     }
@@ -1031,7 +1031,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(billService).findBillByRef(docRef);
         verify(elementProcessor).getElement(document, RECITALS_TAG, recitalsId);
         verify(elementProcessor).getElementAttributeValueByNameAndId(document, LEOS_ALTERNATIVE_ATTR, RECITALS_TAG, recitalsId);
-        verify(documentScreen).showElementEditor(recitalsId, RECITALS_TAG, recitalsContent, "");
+        verify(documentScreen).showElementEditor(recitalsId, RECITALS_TAG, recitalsContent, "", Collections.emptyList());
 
         verifyNoMoreInteractions(billService, documentScreen);
     }

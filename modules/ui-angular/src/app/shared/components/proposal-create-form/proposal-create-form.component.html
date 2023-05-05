@@ -3,14 +3,14 @@
     {{ 'page.workspace.create-form.' + translationKey + '.title' | translate }}
   </p>
 
-  <div euiInputGroup class="row eui-u-mt-m">
+  <div euiInputGroup class="row">
     <div class="col-md-3">
       <label euiLabel for="templateName">{{
         'page.workspace.create-form.' + translationKey + '.document-template'
           | translate
       }}</label>
     </div>
-    <div class="col-md-9 eui-inline-edit">
+    <div class="col-md-9">
       <textarea
         id="templateName"
         euiTextArea

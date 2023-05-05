@@ -581,7 +581,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         annexPresenter.editElement(new EditElementRequestEvent(elementId, elementTag));
 
         verify(annexService).findAnnexByRef(docRef);
-        verify(annexScreen).showElementEditor(elementId, elementTag, contentString, null);
+        verify(annexScreen).showElementEditor(elementId, elementTag, contentString, null, Collections.emptyList());
         verifyNoMoreInteractions(annexService, annexScreen);
     }
 
@@ -611,7 +611,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         annexPresenter.editElement(new EditElementRequestEvent(elementId, elementTag));
         verify(eventBus).post(any(ShowConfirmDialogEvent.class));
 
-        verify(annexScreen, times(0)).showElementEditor(elementId, elementTag, contentString, null);
+        verify(annexScreen, times(0)).showElementEditor(elementId, elementTag, contentString, null, Collections.emptyList());
         verifyNoMoreInteractions(annexService, annexScreen);
     }
     @Test

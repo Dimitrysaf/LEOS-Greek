@@ -46,6 +46,7 @@ import { AnnotateService } from '@/shared/services/annotate.service';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
@@ -116,6 +117,7 @@ export class DocumentEditorComponent
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
     public breadcrumbService: EuiBreadcrumbService,
+    public enviromentService: EnvironmentService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -611,6 +613,8 @@ export class DocumentEditorComponent
         return this.tranlsateService.instant('global.breadcrumb.bill');
       case 'memorandum':
         return this.tranlsateService.instant('global.breadcrumb.memorandum');
+      case 'coverPage':
+        return this.tranlsateService.instant('global.breadcrumb.cover.page');
       default:
         return capitalizeFirstLetter(name);
     }

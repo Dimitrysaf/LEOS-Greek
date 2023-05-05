@@ -66,7 +66,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(elementFragment, "Element Fragment is required.");
         byte[] updatedContent = elementProcessor.updateElement(document, elementFragment, elementName, elementId, true);
 
-        return updateFinancialStatementContent(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 
     @Override
@@ -76,14 +76,13 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         byte[] content;
         switch (tagName) {
             case SUBPARAGRAPH:
-                content = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
-                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(content, template,
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(financialStatement), template,
                         tagName, elementId, before);
                 break;
             case CONTENT:
-                content = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
+                content = getContent(financialStatement);
                 Element contentElement = xmlContentProcessor.getElementById(content, elementId);
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
@@ -98,8 +97,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
             default:
                 throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
         }
-        updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
-        return XercesUtils.restoreEntities(XercesUtils.replacements, updatedContent);
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 
     @Override
@@ -107,21 +105,14 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(financialStatement, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
         Validate.notNull(tagName, "Tag name is required.");
-        byte[] updatedContent = XercesUtils.replaceEntities(XercesUtils.replacements, getContent(financialStatement));
+        byte[] updatedContent = getContent(financialStatement);
         if(tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
             //TODO: Check for last element deletion
             updatedContent = xmlContentProcessor.removeElementById(updatedContent, elementId);
         } else {
             throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
         }
-        updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
-        return XercesUtils.restoreEntities(XercesUtils.replacements, updatedContent);
-    }
-
-    private byte[] updateFinancialStatementContent(byte[] xmlContent) {
-        xmlContent = XercesUtils.replaceEntities(XercesUtils.replacements, xmlContent);
-        xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
-        return XercesUtils.restoreEntities(XercesUtils.replacements, xmlContent);
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 
     private String convertToSubparagraph(Element contentElement, String template) {
@@ -144,11 +135,10 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(elementId, "ElementId is required.");
 
         byte[] contentBytes = getContent(document);
-        contentBytes = XercesUtils.replaceEntities(XercesUtils.replacements, contentBytes);
         byte[] updatedContent = xmlContentProcessor.mergeElement(contentBytes, elementContent, elementName, elementId);
         if (updatedContent != null) {
             updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         }
-        return XercesUtils.restoreEntities(XercesUtils.replacements, updatedContent);
+        return updatedContent;
     }
 }

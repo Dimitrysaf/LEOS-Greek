@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @ViewScope
 @SpringComponent
@@ -216,9 +217,10 @@ class ProposalMemorandumScreenImpl extends MemorandumScreenImpl {
     }
 
     @Override
-    public void showElementEditor(final String elementId, final String  elementTagName, final String elementFragment) {
+    public void showElementEditor(final String elementId, final String  elementTagName, final String elementFragment, final List<LeosPermission> permissions) {
         CreateEventParameter eventParameterObject = new CreateEventParameter(elementId, elementTagName, elementFragment, LeosCategory.MEMORANDUM.name(), securityContext.getUser(),
-                authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles()));
+                Stream.concat(Stream.of(authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles())),
+                        permissions.stream().map(p -> p.name())).distinct().toArray(String[]::new));
         eventParameterObject.setCloneProposal(cloneContext.isClonedProposal());
         eventBus.post(instanceTypeResolver.createEvent(eventParameterObject));
     }
