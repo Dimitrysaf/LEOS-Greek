@@ -170,10 +170,6 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
           this.proposalService
             .updateProposalMetadata(e.body.proposalId, requestData)
             .subscribe((response) => {
-              console.log(
-                'this.proposalService.updateProposalMetadata:',
-                response,
-              );
               this.router.navigate([`collection/${e.body.proposalId}`]);
               this.resetInitials();
               this.closeDialog();
