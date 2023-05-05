@@ -25,6 +25,7 @@ import { apiBaseUrl } from 'src/config';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
 import { LeosEditorConnector } from '@/features/akn-document/services/leos-editor-connector';
+import { UserGuidanceConnector } from '@/features/akn-document/services/user-guidance-connector';
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentConfig, LeosConfig } from '@/shared/models';
@@ -45,6 +46,7 @@ export class CKEditorService implements OnDestroy {
 
   private actionManagerConnector?: ActionManagerConnector;
   private leosEditorConnector?: LeosEditorConnector;
+  private userGuidanceConnector?: UserGuidanceConnector;
 
   connector: any = {
     getParentId: () => 123,
@@ -108,6 +110,7 @@ export class CKEditorService implements OnDestroy {
   ngOnDestroy() {
     this.leosEditorConnector.destroy();
     this.actionManagerConnector.destroy();
+    this.userGuidanceConnector.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -122,6 +125,7 @@ export class CKEditorService implements OnDestroy {
         require(['js/leosModulesBootstrap']);
         this.initActionManager(require, leosState, rootElement);
         this.initLeosEditor(require, leosState, rootElement);
+        this.initUserGuideance(require, leosState, rootElement);
       });
 
     const refToLinkExtension$ = this.leosLegacyService.require$.pipe(
@@ -157,17 +161,6 @@ export class CKEditorService implements OnDestroy {
       ),
     );
 
-    const userGuidanceExtension$ = this.leosLegacyService.require$.pipe(
-      switchMap(
-        (require) =>
-          new Observable((subscriber) => {
-            require(['extension/userGuidanceExtension'], (userGuidance) => {
-              subscriber.next(userGuidance);
-            });
-          }),
-      ),
-    );
-
     this.elementEditor$ = this.leosLegacyService.require$.pipe(
       switchMap(
         (require) =>
@@ -183,22 +176,13 @@ export class CKEditorService implements OnDestroy {
       refToLinkExtension$,
       softActionsExtension$,
       changeDetailsExtension$,
-      userGuidanceExtension$,
     ])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        ([
-          refTolink,
-          softActions,
-          changeDetails,
-          userGuidanceExtension,
-        ]: any[]) => {
-          refTolink.init(this.connector);
-          softActions.init(this.connector);
-          changeDetails.init(this.connector);
-          userGuidanceExtension.init(this.connector);
-        },
-      );
+      .subscribe(([refTolink, softActions, changeDetails]: any[]) => {
+        refTolink.init(this.connector);
+        softActions.init(this.connector);
+        changeDetails.init(this.connector);
+      });
   }
 
   private initActionManager(
@@ -243,6 +227,23 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
+  private initUserGuideance(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.userGuidanceConnector = new UserGuidanceConnector(
+      //TODO pass only required state
+      leosState,
+      {
+        rootElement,
+      },
+    );
+    require(['extension/userGuidanceExtension'], (userGuideance) => {
+      userGuideance.init(this.userGuidanceConnector);
+    });
+  }
+
   // called from document-editor.component
   setDocumentRef(documentRef: string) {
     this.documentRefBS.next(documentRef);
@@ -257,10 +258,12 @@ export class CKEditorService implements OnDestroy {
   toogleUserGuidance() {
     this.documentService.seeUserGuidance().subscribe((userGuidance) => {
       if (!userGuidance) {
-        this.connector.enableUserGuidance(false);
+        this.userGuidanceConnector.enableUserGuidance(false);
       } else {
-        this.connector.receiveUserGuidance(JSON.stringify(userGuidance));
-        this.connector.enableUserGuidance(true);
+        this.userGuidanceConnector.receiveUserGuidance(
+          JSON.stringify(userGuidance),
+        );
+        this.userGuidanceConnector.enableUserGuidance(true);
       }
     });
   }
