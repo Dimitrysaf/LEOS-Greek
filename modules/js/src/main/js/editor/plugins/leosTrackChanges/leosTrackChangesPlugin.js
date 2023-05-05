@@ -19,6 +19,7 @@ define(function leosTrackChangesPluginModule(require) {
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var diff_match_patch = require("diff_match_patch");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginName = "leosTrackChanges";
 
@@ -198,41 +199,20 @@ define(function leosTrackChangesPluginModule(require) {
                                 wasCollapsed = false;
                                 editor.fire("saveSnapshot");
 
-                                var childrenOfSelection = editor.getSelection().getRanges()[0].extractContents(true).getChildren();
-                                var firstItem = null, lastItem = null;
-                                var objNonReferencedArray = core.toArray(childrenOfSelection);
-                                var updatedRange = editor.getSelection().getRanges()[0];
-
-                                for (var i = 0; objNonReferencedArray.length > i; i++) {
-                                    editor.fire("lockSnapshot"); // To prevent undo to catch every part
-                                    var item = objNonReferencedArray[i];
-                                    var tcItem = core.addTrackChangesNested(editor, item);
-                                    if (tcItem != null) {
-                                        if (!updatedRange.collapsed) {
-                                            updatedRange.collapse(true);
-                                            updatedRange.select();
-                                        }
-                                        editor.insertElement(tcItem);
-                                    }
-                                    if (firstItem == null) {
-                                        firstItem = tcItem;
-                                    } else {
-                                        lastItem = tcItem;
-                                    }
-                                    editor.fire("unlockSnapshot");
+                                var fragment = range.cloneContents(true);
+                                var nodeList = fragment.find('li:not(:has(ol))');
+                                if (nodeList.count() > 0) {
+                                    actions.deletFromListAndAddTrackChange(editor, core, range, nodeList);
+                                    range.collapse(true);
+                                    range.select();
+                                    event.getInstance().data.domEvent.preventDefault();
+                                    event.getInstance().stop();
+                                } else {
+                                    fragment = range.extractContents(true);
+                                    actions.deletTextAndAddTrackChange(editor, core, fragment);
+                                    event.getInstance().data.domEvent.preventDefault();
                                 }
 
-                                //editor.fire("updateSnapshot");
-                                editor.fire("saveSnapshot");
-
-                                // Merge changes with previous HTML
-                                if ((firstItem != null) && (firstItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
-                                    firstItem.mergeSiblings(false);
-                                } if ((lastItem != null) && (lastItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
-                                    lastItem.mergeSiblings(false);
-                                }
-
-                                event.getInstance().data.domEvent.preventDefault();
                             } else {
                                 // Prevent if lock exists
                                 event.getInstance().data.domEvent.preventDefault();
@@ -553,6 +533,63 @@ define(function leosTrackChangesPluginModule(require) {
             } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
             }
+        },
+
+        deletTextAndAddTrackChange: function(editor, core, fragment) {
+            var childrenOfSelection = fragment.getChildren();
+            var firstItem = null, lastItem = null;
+            var objNonReferencedArray = core.toArray(childrenOfSelection);
+            var updatedRange = editor.getSelection().getRanges()[0];
+
+            for (var i = 0; objNonReferencedArray.length > i; i++) {
+                editor.fire("lockSnapshot"); // To prevent undo to catch every part
+                var item = objNonReferencedArray[i];
+                var tcItem = core.addTrackChangesNested(editor, item);
+                if (tcItem != null) {
+                    if (!updatedRange.collapsed) {
+                        updatedRange.collapse(true);
+                        updatedRange.select();
+                    }
+                    editor.insertElement(tcItem);
+                }
+                if (firstItem == null) {
+                    firstItem = tcItem;
+                } else {
+                    lastItem = tcItem;
+                }
+                editor.fire("unlockSnapshot");
+            }
+
+            //editor.fire("updateSnapshot");
+            editor.fire("saveSnapshot");
+
+            // Merge changes with previous HTML
+            if ((firstItem != null) && (firstItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
+                firstItem.mergeSiblings(false);
+            }
+            if ((lastItem != null) && (lastItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
+                lastItem.mergeSiblings(false);
+            }
+        },
+
+        deletFromListAndAddTrackChange: function(editor, core, range, nodeList) {
+            for (var i = 0; i < nodeList.toArray().length; i++) {
+                var domElement = nodeList.getItem(i).$;
+                var item = new CKEDITOR.dom.text(domElement.childNodes[0]);
+                var tcItem = core.addTrackChangesNested(editor, item);
+                var olElement = editor.getSelection().getStartElement().getAscendant("ol");
+                var currentElement = olElement.find('#' + item.getAscendant('li').$.id).getItem(0).$;
+                if (i === 0) {
+                    currentElement.innerHTML =
+                        currentElement.innerHTML.substring(0, currentElement.innerHTML.length - domElement.innerHTML.length) +
+                        tcItem.$.outerHTML;
+                } else if(i === nodeList.toArray().length-1) {
+                    currentElement.innerHTML = tcItem.$.outerHTML + currentElement.innerHTML.substring(domElement.innerHTML.length);
+                } else {
+                    currentElement.innerHTML = tcItem.$.outerHTML;
+                }
+            }
+            editor.fire("saveSnapshot");
         }
 
     };
