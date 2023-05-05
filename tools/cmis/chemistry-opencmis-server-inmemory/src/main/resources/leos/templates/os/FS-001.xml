@@ -2668,7 +2668,7 @@
                             </tr>
                             <!-- à vérifier et cleaner -->
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3">
-                                <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_1">
+                                <td style="border: solid windowtext 1.0pt; background: #CCCCCC;" xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_1">
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_1__p">
                                         <b xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_1__p__b_1">HEADING 7</b>
                                         <br xml:id="_body__level_323__subparagraph_5__content__table__tr_3_3__td_1__p__br"/>
@@ -2748,7 +2748,7 @@
                                 </td>
                             </tr>
                             <tr style="height: 29.25pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6">
-                                <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_1">
+                                <td style="border: solid windowtext 1.0pt; background: #CCCCCC;" xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_1">
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_1__p">
                                         <b xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_1__p__b">Subtotal HEADING 7
                                             <br xml:id="_body__level_323__subparagraph_5__content__table__tr_6_6__td_1__p__b__br"/>
@@ -2777,8 +2777,13 @@
                                     </p>
                                 </td>
                             </tr>
+                            <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_6_1_6">
+                                <td colspan="7" style="border: solid windowtext 1.0pt;border-left: none;border-right:none;height: 41px;" xml:id="_body__level_323__subparagraph_5__content__table__tr_6_1_6_td">
+                                    <p xml:id="_body__level_323__subparagraph_5__content__table__tr_6_1_6_td_p"/>
+                                </td>
+                            </tr>
                             <tr xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7">
-                                <td style="border: solid windowtext 1.0pt;" xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_1">
+                                <td style="border: solid windowtext 1.0pt;background: #CCCCCC;" xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_1">
                                     <p xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_1__p_1">
                                         <b xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_1__p_1__b">Outside HEADING 7
                                             <authorialNote marker="13" placement="bottom" xml:id="_body__level_323__subparagraph_5__content__table__tr_7_7__td_1__p_1__b__authorialnote">
@@ -2962,9 +2967,9 @@
                         </content>
                     </indent>
                 </list>
-                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_4" style="text-align: right;padding-right:10%;">
                     <content xml:id="_body__level_3231__subparagraph_4__content">
-                        <p xml:id="_body__level_3231__subparagraph_4__content__p">Estimates to be expressed in full time equivalent units</p>
+                        <p xml:id="_body__level_3231__subparagraph_4__content__p"><i>Estimates to be expressed in full time equivalent units</i></p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" xml:id="_body__level_3231__subparagraph_5_5">
@@ -3660,21 +3665,18 @@
                                             <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph_content_p">on other revenue</p>
                                         </content>
                                     </subparagraph>
-                                    <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3">
-                                        <num xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_num">
-                                            <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_num_inline">&#x2610;</inline>
-                                        </num>
-                                        <content xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_content">
-                                            <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_indent_3_content_p">please indicate, if the revenue is assigned to expenditure lines</p>
+                                    <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3">
+                                        <num xml:id="_body__level_33__list__indent_2__list__indent_3__num"> </num>
+                                        <content xml:id="_body__level_33__list__indent_2__list__indent_3__content">
+                                            <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3__content__p">please indicate, if the revenue is assigned to expenditure lines  <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__content_inline">&#x2610;</inline></p>
                                         </content>
                                     </indent>
                                 </list>
                             </indent>
-
                         </list>
                     </indent>
                 </list>
-                <subparagraph leos:editable="false" xml:id="_body__level_33__subparagraph_4">
+                <subparagraph leos:editable="false" xml:id="_body__level_33__subparagraph_4" style="text-align: right;padding-right:20%;">
                     <content xml:id="_body__level_33__subparagraph_4__content">
                         <p xml:id="_body__level_33__subparagraph_4__content__p">EUR million (to three decimal places)</p>
                     </content>
