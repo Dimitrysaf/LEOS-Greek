@@ -80,11 +80,6 @@ public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    public LeosExportStatus exportComparedVersionToConsilium(LeosCategoryClass documentType, String documentRef, ExportComparedVersionRequest exportToConsiliumRequest) {
-        throw new ExportException("External system to export documents not available for this instance");
-    }
-
-    @Override
     public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest) {
         throw new ExportException("External system to download documents not available for this instance");
     }

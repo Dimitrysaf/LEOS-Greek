@@ -104,20 +104,6 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/export-compared-version-to-econsilium/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> exportComparedVersionToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                     @RequestBody ExportComparedVersionRequest exportComparedVersionRequest) {
-        try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-            LeosExportStatus processedStatus = documentApiService.exportComparedVersionToConsilium(documentCategory, documentRef, exportComparedVersionRequest);
-            return new ResponseEntity<>(processedStatus, HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Error occurred while requesting export to eConsilium", e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @RequestMapping(value = "/export-compared-version-as-PDF/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> exportComparedVersionAsPDF(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
@@ -153,5 +139,4 @@ public class DocumentController {
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }
