@@ -111,6 +111,7 @@
         <copy-maven-plugin.version>0.2.5</copy-maven-plugin.version>
         <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
         <mycila-license-maven-plugin.version>3.0</mycila-license-maven-plugin.version>
+        <codehause-license-maven-plugin.version>2.0.0</codehause-license-maven-plugin.version>
         <!-- Extensions -->
         <wagon-ftp-extension.version>2.2</wagon-ftp-extension.version>
         <!-- Libraries -->
@@ -948,9 +949,9 @@
                     <version>${sql-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.mycila</groupId>
+                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>${mycila-license-maven-plugin.version}</version>
+                    <version>${codehause-license-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
@@ -1035,43 +1036,17 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.mycila</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
+                <version>${codehause-license-maven-plugin.version}</version>
                 <configuration>
-                    <header>NOTICE.txt</header>
-                    <headerDefinitions>
-                        <headerDefinition>tools/license/headers/scss_definition.xml</headerDefinition>
-                    </headerDefinitions>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                        <kt>SLASHSTAR_STYLE</kt>
-                        <scss>DOUBLESLASH_STYLE</scss>
-                    </mapping>
-                    <excludes>
-                        <exclude>**/src/main/filters/**</exclude>
-                        <exclude>**/src/main/resources/**</exclude>
-                        <exclude>**/src/main/assets/css/**</exclude>
-                        <exclude>**/src/test/resources/**</exclude>
-                        <exclude>**/src/test/data/**</exclude>
-                        <exclude>**/src/etc/**</exclude>
-                        <exclude>**/src/test/etc/**</exclude>
-                        <exclude>**/themes/**/layouts/**</exclude>
-                        <exclude>**/themes/**/fonts/**</exclude>
-                        <exclude>**/main/lib/**</exclude>
-                        <exclude>**/layouts/*.html</exclude>
-                        <exclude>**/js/**/*.html</exclude>
-                        <exclude>**/widgetsets/**</exclude>
-                        <exclude>**/freemarker/*.ftl</exclude>
-                        <exclude>tools/cmis/**</exclude>
-                        <exclude>docs/**</exclude>
-                        <exclude>*.txt</exclude>
-                    </excludes>
+                    <skipAggregateAddThirdParty>false</skipAggregateAddThirdParty>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>none</phase>
+                        <id>download-licenses</id>
                         <goals>
-                            <goal>check</goal>
+                            <goal>aggregate-add-third-party</goal>
                         </goals>
                     </execution>
                 </executions>
