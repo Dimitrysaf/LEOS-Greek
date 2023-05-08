@@ -124,7 +124,7 @@ public class DocumentController {
                                                                     @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-            LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest.getOriginalVersion(), downloadComparedVersionRequest.getCurrentVersion());
+            LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting export to eConsilium", e);

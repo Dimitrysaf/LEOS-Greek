@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
+import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -95,8 +96,25 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, String version1, String version2) {
-        return null;
+    public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest comparedVersionRequest) {
+        LeosExportStatus processedStatus = null;
+
+        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+        final XmlDocument originalDoc = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
+        final XmlDocument currentDoc = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
+        ExportVersions exportVersions = new ExportVersions(originalDoc, currentDoc);
+        ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, clazz, false);
+        exportOptions.setExportVersions(exportVersions);
+
+        try {
+            Proposal proposal = getProposal(currentDoc.getId());
+            exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
+            processedStatus = LeosExportStatus.PROCESSED_OK;
+        } catch (Exception exception) {
+            LOG.error("Unexpected error occurred while using Legiswrite export service", exception);
+            processedStatus = LeosExportStatus.PROCESSED_ERROR;
+        }
+        return processedStatus;
     }
 
     @Override
