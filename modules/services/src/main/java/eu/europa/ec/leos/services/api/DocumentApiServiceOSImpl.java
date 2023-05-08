@@ -75,7 +75,7 @@ public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, String version1, String version2) {
+    public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest) {
         throw new ExportException("External system to export documents not available for this instance");
     }
 

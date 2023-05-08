@@ -30,7 +30,7 @@ public interface DocumentApiService {
     DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
             DownloadComparedVersionRequest comparedVersionRequest) throws IOException;
 
-    LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, String version1, String version2);
+    LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest);
 
     LeosExportStatus exportComparedVersionToConsilium(LeosCategoryClass documentType, String documentRef, ExportComparedVersionRequest exportComparedVersionRequest);
 
