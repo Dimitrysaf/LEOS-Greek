@@ -9,6 +9,9 @@ public class ExportToConsiliumRequest {
     private boolean withAnnotations;
     private String annotations;
     private boolean cleanVersion;
+    private String originalVersion;
+    private String currentVersion;
+    private String intermediateVersion;
 
     public void setTitle(String title) {
         this.title = title;
@@ -46,14 +49,41 @@ public class ExportToConsiliumRequest {
         return cleanVersion;
     }
 
+    public String getOriginalVersion() {
+        return originalVersion;
+    }
+
+    public void setOriginalVersion(String originalVersion) {
+        this.originalVersion = originalVersion;
+    }
+
+    public String getCurrentVersion() {
+        return currentVersion;
+    }
+
+    public void setCurrentVersion(String currentVersion) {
+        this.currentVersion = currentVersion;
+    }
+
+    public String getIntermediateVersion() {
+        return intermediateVersion;
+    }
+
+    public void setIntermediateVersion(String intermediateVersion) {
+        this.intermediateVersion = intermediateVersion;
+    }
+
     @Override
     public String toString() {
         return "ExportToConsiliumRequest{" +
                 "title='" + title + '\'' +
                 ", relevantElements=" + relevantElements +
-                ", isWithAnnotations=" + withAnnotations +
+                ", withAnnotations=" + withAnnotations +
                 ", annotations='" + annotations + '\'' +
-                ", isCleanVersion=" + cleanVersion +
+                ", cleanVersion=" + cleanVersion +
+                ", originalVersion='" + originalVersion + '\'' +
+                ", currentVersion='" + currentVersion + '\'' +
+                ", intermediateVersion='" + intermediateVersion + '\'' +
                 '}';
     }
 }

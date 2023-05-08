@@ -125,18 +125,6 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    public LeosExportStatus exportComparedVersionToConsilium(LeosCategoryClass documentType, String documentRef, ExportComparedVersionRequest exportToConsiliumRequest) {
-        XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
-        XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
-
-        ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD);
-        exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
-        exportOptions.setRelevantElements(exportToConsiliumRequest.getRelevantElements());
-
-        return doExportPackage(exportToConsiliumRequest.getTitle(), false, exportOptions, currentDocument.getId());
-    }
-
-    @Override
     public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef,
             DownloadComparedVersionRequest downloadComparedVersionRequest) throws Exception {
         try {
@@ -144,7 +132,6 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
             ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, clazz, false);
             exportOptions.setDocuwrite(true);
-            downloadComparedVersionRequest.getCurrentVersion();
             ExportVersions exportVersions = getExportVersions(clazz, documentRef, downloadComparedVersionRequest);
             exportOptions.setExportVersions(exportVersions);
 
@@ -181,15 +168,32 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     public LeosExportStatus exportToConsilium(LeosCategoryClass documentType, String documentRef, ExportToConsiliumRequest exportToConsiliumRequest) {
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
-        XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
-
+        ExportVersions exportVersions = getExportVersionsForEconsilium(documentRef, documentType, clazz, exportToConsiliumRequest);
         ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, clazz, exportToConsiliumRequest.isWithAnnotations());
-        exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
+        exportOptions.setExportVersions(exportVersions);
         exportOptions.setRelevantElements(exportToConsiliumRequest.getRelevantElements());
         exportOptions.setWithFilteredAnnotations(exportToConsiliumRequest.isWithAnnotations());
         exportOptions.setFilteredAnnotations(exportToConsiliumRequest.getAnnotations());
 
         return doExportPackage(exportToConsiliumRequest.getTitle(), exportToConsiliumRequest.isCleanVersion(), exportOptions, currentDocument.getId());
+    }
+
+    private ExportVersions getExportVersionsForEconsilium(String documentRef, LeosCategoryClass documentType, Class<XmlDocument> clazz,
+            ExportToConsiliumRequest exportToConsiliumRequest) {
+        XmlDocument current; XmlDocument original; XmlDocument intermediate;
+
+        if(exportToConsiliumRequest.getOriginalVersion() == null && exportToConsiliumRequest.getCurrentVersion() == null) {
+            current = documentContentService.getDocumentByRef(documentRef, documentType);
+            original = documentContentService.getOriginalDocument(current);
+            return new ExportVersions(original, current);
+        }
+        original = getDocumentByVersion(documentRef, exportToConsiliumRequest.getOriginalVersion(), clazz);
+        current = getDocumentByVersion(documentRef, exportToConsiliumRequest.getCurrentVersion(), clazz);
+        if(exportToConsiliumRequest.getIntermediateVersion() != null) {
+            intermediate = getDocumentByVersion(documentRef, exportToConsiliumRequest.getIntermediateVersion(), clazz);
+            return new ExportVersions(original, current, intermediate);
+        }
+        return new ExportVersions(original, current);
     }
 
     private LeosExportStatus doExportPackage(final String title, final Boolean isExportCleanVersion, ExportOptions exportOptions, String currentDocumentId) {
