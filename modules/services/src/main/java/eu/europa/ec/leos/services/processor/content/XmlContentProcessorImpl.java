@@ -744,6 +744,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     public void doXMLPostProcessing(Document document) {
         Node node = document.getFirstChild();  //avoid adding id to <akomantoso> tag
+        if (XML_STYLESHEET.equals(node.getNodeName())) {
+            node = node.getNextSibling();
+        }
         doXmlPostProcessingCommon(node);
         specificInstanceXMLPostProcessing(node);
         updatePointStructure(node);
