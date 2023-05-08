@@ -132,23 +132,25 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/download-compared-version-as-docuwrtie/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @RequestMapping(value = "/download-compared-version-as-docuwrite/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> downloadComparedVersionAsDocuwrite(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                             @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+    public ResponseEntity<Object> downloadComparedVersionAsDocuwrite(@PathVariable("documentType") String documentType,
+            @PathVariable("documentRef") String documentRef,
+            @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
 
-            DownloadVersionResponse response = documentApiService.downloadComparedVersionAsDocuwrite(documentCategory, documentRef, downloadComparedVersionRequest);
+            DownloadVersionResponse response = documentApiService.downloadComparedVersionAsDocuwrite(documentCategory, documentRef,
+                    downloadComparedVersionRequest);
 
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename="+response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting export to eConsilium", e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

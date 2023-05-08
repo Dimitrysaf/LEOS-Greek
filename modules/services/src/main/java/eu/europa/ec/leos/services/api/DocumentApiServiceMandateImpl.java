@@ -17,7 +17,9 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
+import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -135,8 +137,44 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     }
 
     @Override
-    public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest) {
-        throw new ExportException("External system to download documents not available for this instance");
+    public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef,
+            DownloadComparedVersionRequest downloadComparedVersionRequest) throws Exception {
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+            ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, clazz, false);
+            exportOptions.setDocuwrite(true);
+            downloadComparedVersionRequest.getCurrentVersion();
+            ExportVersions exportVersions = getExportVersions(clazz, documentRef, downloadComparedVersionRequest);
+            exportOptions.setExportVersions(exportVersions);
+
+            XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
+            final Proposal proposal = getProposal(currentDocument.getId());
+            if (proposal != null) {
+                final String jobFileName = "Proposal_" + proposal.getId() + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+                final byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"),
+                        proposal.getId(), exportOptions);
+
+                LOG.info("Exported to DocuWrite and downloaded file {}, in {} milliseconds ({} sec)", jobFileName,
+                        stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+                return new DownloadVersionResponse(jobFileName, exportedBytes);
+            }
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using DocuWriteExportService", e);
+            throw new ExportException("Unexpected error occurred while using DocuWriteExportService", e);
+        }
+        return null;
+    }
+
+    private ExportVersions getExportVersions(Class<XmlDocument> clazz, String documentRef,
+            DownloadComparedVersionRequest comparedVersionRequest) {
+        final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
+        final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
+        XmlDocument intermediate = null;
+        if(comparedVersionRequest.getIntermediateVersion() != null) {
+            intermediate = getDocumentByVersion(documentRef, comparedVersionRequest.getIntermediateVersion(), clazz);
+        }
+        return new ExportVersions(original, intermediate, current);
     }
 
     @Override
