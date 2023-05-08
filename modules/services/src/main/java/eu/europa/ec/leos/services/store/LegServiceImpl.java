@@ -88,6 +88,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1314,9 +1315,11 @@ public class LegServiceImpl implements LegService {
     }
 
     private String[] generateColors(String valueToHash) {
-        int hashCode, i;
-        for (i = 0, hashCode = 0; i < valueToHash.length(); hashCode = valueToHash.charAt(i++) + ((hashCode << 5) - hashCode));
-        int hue = Math.abs(hashCode) % 360;
+        BigInteger hashCode = BigInteger.valueOf(0);
+        for (int i = 0; i < valueToHash.length(); i++) {
+            hashCode = BigInteger.valueOf(valueToHash.charAt(i)).add(hashCode.shiftLeft(5).subtract(hashCode));
+        }
+        int hue = hashCode.abs().remainder(BigInteger.valueOf(360)).intValue();
         return new String[]{"hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"};
     }
 
