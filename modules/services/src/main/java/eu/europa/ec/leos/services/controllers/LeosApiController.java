@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
+import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -574,6 +575,23 @@ public class LeosApiController {
         try {
             List<MilestoneDocumentView> milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
             return new ResponseEntity<>(milestonesView, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting milestone documents views - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while milestone documents views", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/list-milestones-view/pdf-export/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getMilestoneExportPDF(@PathVariable("documentRef") String documentRef,
+                                                        @RequestParam("legFileName") String legFileName) {
+        try {
+            MilestonePDFDownloadResponse response = apiService.downloadMilestonePDF(documentRef, legFileName);
+            // create the HttpHeaders object and set the Content-Type header
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.set("Content-Disposition", "attachment; filename=" + response.getFilename());
+            return new ResponseEntity<>(response.getContent(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);

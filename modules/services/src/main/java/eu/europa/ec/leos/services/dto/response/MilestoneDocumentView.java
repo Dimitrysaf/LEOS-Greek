@@ -15,12 +15,14 @@ public class MilestoneDocumentView {
     private LeosCategory leosCategory;
     private Integer order;
     private String tocData;
+    private boolean isPdfRenditionsPresent;
 
-    public MilestoneDocumentView(String xmlContent, String version, String contentFileName, Boolean isCoverPage) {
+    public MilestoneDocumentView(String xmlContent, String version, String contentFileName, Boolean isCoverPage, boolean isPdfRenditionsPresent) {
         this.xmlContent = xmlContent;
         this.version = version;
         this.contentFileName = contentFileName;
         this.isCoverPage = isCoverPage;
+        this.isPdfRenditionsPresent = isPdfRenditionsPresent;
     }
 
 
@@ -78,5 +80,13 @@ public class MilestoneDocumentView {
 
     public void setTocData(String tocData) {
         this.tocData = tocData;
+    }
+
+    public boolean isPdfRenditionsPresent() {
+        return isPdfRenditionsPresent;
+    }
+
+    public void setPdfRenditionsPresent(boolean pdfRenditionsPresent) {
+        isPdfRenditionsPresent = pdfRenditionsPresent;
     }
 }
