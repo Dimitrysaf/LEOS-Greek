@@ -7,6 +7,8 @@ type ResizeListener<T extends Element = Element> = (event: {
   element: T;
 }) => void;
 
+let parentIdCounter = 0;
+
 /*
  * Provided by Vaadin
  * @see {https://vaadin.com/api/framework/8.14.3/com/vaadin/ui/AbstractJavaScriptComponent.html}
@@ -34,6 +36,8 @@ export abstract class AbstractJavaScriptComponent<
     Object.assign(this._state, state);
   }
 
+  private _parentId = `${++parentIdCounter}}`;
+
   private _stateChanged = debounce(
     () => this.onStateChange?.(this, 'onStateChange'),
     10,
@@ -46,12 +50,11 @@ export abstract class AbstractJavaScriptComponent<
 
   getParentId(connectorId?: string) {
     console.warn('stub:', 'getParentId', connectorId); // FIXME
-    return '123';
+    return this._parentId;
   }
 
   getElement(connectorId?: string): Element | null {
-    console.warn('stub:', 'getElement', connectorId); // FIXME
-    return null;
+    return connectorId === this._parentId ? this._rootElement : null;
   }
 
   getState() {
