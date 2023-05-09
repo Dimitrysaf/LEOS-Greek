@@ -601,7 +601,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
                 this.hanldeNodeSelect(nodeDragged);
               });
             } catch (e) {
-              console.log(e);
               this.clearDragInfo(true);
               return;
             }

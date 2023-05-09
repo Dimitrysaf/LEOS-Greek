@@ -13,9 +13,7 @@ export class ProposalItemComponent implements OnInit {
 
   constructor(private translateService: TranslateService) {}
 
-  ngOnInit() {
-    console.log('[ProposalItemComponent] proposal => ', this.proposal);
-  }
+  ngOnInit() {}
 
   getStatus(status: string) {
     return status === 'ready'

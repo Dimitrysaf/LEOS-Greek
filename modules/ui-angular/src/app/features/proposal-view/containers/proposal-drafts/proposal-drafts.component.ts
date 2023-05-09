@@ -93,7 +93,6 @@ export class ProposalDraftsComponent
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => {
-        console.log(perms);
         this.permissions = perms;
       });
   }

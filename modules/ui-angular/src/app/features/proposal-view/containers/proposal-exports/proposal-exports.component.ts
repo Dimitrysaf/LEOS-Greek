@@ -64,9 +64,7 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
     this.proposalDetailsService
       .notifyExport(id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
-        console.log(res);
-      });
+      .subscribe((res) => {});
   }
 
   handlePreviewExport(id: string) {

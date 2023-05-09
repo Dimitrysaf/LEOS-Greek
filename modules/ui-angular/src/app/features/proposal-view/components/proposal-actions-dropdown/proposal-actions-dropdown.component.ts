@@ -35,7 +35,6 @@ export class ProposalActionsDropdownComponent {
   ) {
     this.config.config.subscribe((conf) => {
       if (conf.user.roles.length) {
-        console.log(conf);
         conf.permissions.map((perm) => {
           if (perm === 'CAN_EXPORT_LW') {
             this.canExportLW = true;

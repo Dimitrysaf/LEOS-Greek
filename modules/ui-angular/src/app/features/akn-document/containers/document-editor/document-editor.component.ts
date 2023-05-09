@@ -42,6 +42,7 @@ import {
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
+import { AnnotateService } from '@/shared/services/annotate.service';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
@@ -55,6 +56,7 @@ import { CKEditorService } from '../../services/ckeditor.service';
   selector: 'app-document-editor',
   templateUrl: './document-editor.component.html',
   styleUrls: ['./document-editor.component.scss'],
+  providers: [AnnotateService, DocumentService, CKEditorService],
 })
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit

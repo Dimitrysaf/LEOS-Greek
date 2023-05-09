@@ -45,7 +45,6 @@ export class MilestoneTocComponent implements OnInit {
       .querySelectorAll('.selected-node')
       .forEach((el) => el.classList.remove('selected-node'));
     const element = document.querySelector(`[data-id="${node.href}"]`);
-    console.log(element.children);
     element.children[0].children[0].classList.add('selected-node');
   }
 

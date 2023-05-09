@@ -36,7 +36,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (milestones) => {
-          console.log('Milestones => ', milestones);
           this.dataSource = milestones;
         },
         error: (error) => {

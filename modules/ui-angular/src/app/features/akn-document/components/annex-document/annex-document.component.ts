@@ -127,7 +127,6 @@ export class AnnexDocumentComponent
           iconSpan.style.display = 'inline-block';
           const textDiv = this.document.createElement('div');
           textDiv.innerHTML = this.generateTooltip(coEdits[key]);
-          console.log(textDiv.innerHTML);
           coEditNode.append(iconSpan);
           coEditNode.append(textDiv);
           coEditNode.style.top = elemInDoc.offsetTop + 'px';
