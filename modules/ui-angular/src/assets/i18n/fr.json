@@ -85,6 +85,7 @@
   "page.collection.tabs.milestones": "Milestones",
   "page.collection.tabs.e-consilium": "Exports",
   "page.collection.tabs.collaborators": "Collaborateurs",
+  "page.collection.milestone-view-dialog.export-button": "[FR] Export",
   "page.collection.milestones.add-dialog.title": "Ajouter un milestone",
   "page.collection.milestones.actions.view-milestone": "Afficher",
   "page.collection.milestones.table.title": "Titre",
