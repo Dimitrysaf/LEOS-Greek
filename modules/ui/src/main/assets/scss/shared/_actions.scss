@@ -177,7 +177,7 @@ $DARK_BLUE: #0066a5;
         @extend %elementEditable;
     }
 
-    paragraph[leos\:origin='ec'] {
+    paragraph {
         .leos-editable-content {
             @extend %contentEditable;
         }

@@ -259,7 +259,7 @@
                     <profileName>inlineAknAnnexECParagraphMandate</profileName>
                 </profile>
                 <profile>
-                    <elementSelector>paragraph[leos\:origin='cn']</elementSelector>
+                    <elementSelector>paragraph[leos\:origin='cn']:not(:has(*[leos\:origin='ec']))</elementSelector>
                     <profileName>inlineAknAnnexCNParagraphMandate</profileName>
                 </profile>
             </profiles>
@@ -284,9 +284,13 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>level[leos\:origin='ec'] subparagraph, paragraph[leos\:origin='ec'] subparagraph, point[leos\:origin='ec']
-                        subparagraph, indent[leos\:origin='ec']
-                        subparagraph</elementSelector>
+                    <elementSelector>
+                        level[leos\:origin='ec'] subparagraph, 
+                        paragraph[leos\:origin='ec'] subparagraph, 
+                        point[leos\:origin='ec'] subparagraph, 
+                        indent[leos\:origin='ec'] subparagraph, 
+                        paragraph[leos\:origin='cn']:has(*[leos\:origin='ec']) subparagraph
+                    </elementSelector>
                     <profileName>inlineAknSubParagraphMandate</profileName>
                 </profile>
             </profiles>
@@ -331,9 +335,12 @@
             <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>level[leos\:origin='ec'] point:not(:has(point)):not(:has(indent)):not(:has(subparagraph)),
+                    <elementSelector>
+                        level[leos\:origin='ec'] point:not(:has(point)):not(:has(indent)):not(:has(subparagraph)),
                         paragraph[leos\:origin='ec'] list point:not(:has(point)):not(:has(indent)):not(:has(subparagraph)),
-                        paragraph[leos\:origin='ec'] list point subparagraph</elementSelector>
+                        paragraph[leos\:origin='ec'] list point subparagraph,
+                        paragraph[leos\:origin='cn']:has(*[leos\:origin='ec']) list point
+                    </elementSelector>
                     <profileName>inlineAknPointMandate</profileName>
                 </profile>
             </profiles>
