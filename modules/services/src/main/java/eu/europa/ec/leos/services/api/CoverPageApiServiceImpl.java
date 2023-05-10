@@ -63,7 +63,6 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -176,7 +175,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
             proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
         }
-        return this.documentViewService.getDocumentView(proposal);
+        return this.documentViewService.updateDocumentView(proposal);
     }
 
     @Override
@@ -262,7 +261,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal sourceVersion = proposalService.findProposalVersion(documentRef);
         byte[] resultXmlContent = getContent(targetVersion);
         Proposal updatedProposal = proposalService.updateProposal(sourceVersion, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
-        return this.documentViewService.getDocumentView(updatedProposal);
+        return this.documentViewService.updateDocumentView(updatedProposal);
     }
 
     @Override
@@ -354,7 +353,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
         Proposal updateProposal = proposalService.updateProposal(proposal, event.getUpdatedContent().getBytes(), VersionType.MINOR,
                 messageHelper.getMessage("operation.search.replace.updated"));
-        return documentViewService.getDocumentView(updateProposal);
+        return documentViewService.updateDocumentView(updateProposal);
     }
 
     @Override

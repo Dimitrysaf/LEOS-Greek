@@ -165,7 +165,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex, elementId, elementName);
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
 
     }
 
@@ -177,7 +177,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         //TODO add splitted content functionality since
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
 
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
     }
 
     @Override
@@ -202,7 +202,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Annex {} id {})", elementId, mergeOnElement.getElementId(), annex.getName(), annex.getId());
         }
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
     }
 
     @Override
@@ -306,7 +306,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = annexService.findAnnexByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
         Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
-        return this.documentViewService.getDocumentView(updatedAnnex);
+        return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
     @Override
@@ -414,7 +414,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
-        return this.documentViewService.getDocumentView(updateAnnex);
+        return this.documentViewService.updateDocumentView(updateAnnex);
     }
 
     @Override
@@ -450,7 +450,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         service.useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + newAnnexStructureType.getType() + ".structure"));
         service.executeUpdateAnnexStructure();
         Annex updatedAnnex = this.annexService.findAnnexByRef(documentRef);
-        return this.documentViewService.getDocumentView(updatedAnnex);
+        return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
     @Override
@@ -472,7 +472,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex updateAnnex = annexService.updateAnnex(annex, newXmlContent, checkinCommentJson);
 
         LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        return this.documentViewService.getDocumentView(updateAnnex);
+        return this.documentViewService.updateDocumentView(updateAnnex);
     }
 
     @Override
