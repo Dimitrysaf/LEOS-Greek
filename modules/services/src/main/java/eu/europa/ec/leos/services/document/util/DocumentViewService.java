@@ -61,13 +61,30 @@ public class DocumentViewService<T extends XmlDocument> {
 
     public DocumentViewResponse getDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
+        String editableXml = getEditableXml(document, proposal);
+        VersionInfoVO versionInfoVO = getVersionInfo(document);
+        String proposalRef = proposal.getMetadata().getOrNull().getRef();
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO);
+    }
+
+    public DocumentViewResponse updateDocumentView(T document) {
+        Proposal proposal = getProposalFromPackage(document);
         CollectionContextService context = proposalContextProvider.get();
         context.useChildDocument(proposal.getId());
         context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
         context.executeUpdateProposalAsync();
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
-        return new DocumentViewResponse(getProposalRef(document.getId()), editableXml, versionInfoVO);
+        String proposalRef = proposal.getMetadata().getOrNull().getRef();
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO);
+    }
+
+    public void updateProposalAsync(T document) {
+        Proposal proposal = getProposalFromPackage(document);
+        CollectionContextService context = proposalContextProvider.get();
+        context.useChildDocument(proposal.getId());
+        context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
+        context.executeUpdateProposalAsync();
     }
 
     public VersionInfoVO getVersionInfo(T document) {
