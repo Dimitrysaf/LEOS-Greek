@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
+import { Version } from '@/features/akn-document/models';
 import {
   DocumentService,
   DownloadEConsiliumOptions,
@@ -25,6 +26,8 @@ export class DownloadEconsiliumModalComponent implements OnInit {
   includeEnactingTerms = this.doc.documentType === 'bill';
   form = this.createFormGroup();
   dialogOpen = false;
+
+  private versionsData: any;
 
   constructor(private formBuilder: FormBuilder, public doc: DocumentService) {}
 
@@ -57,8 +60,9 @@ export class DownloadEconsiliumModalComponent implements OnInit {
     });
   }
 
-  open() {
+  open(versionsData?: any) {
     this.dialogOpen = true;
+    this.versionsData = versionsData;
     this.dialog.openDialog();
   }
 
@@ -112,6 +116,12 @@ export class DownloadEconsiliumModalComponent implements OnInit {
       relevantElements: this.getRelevantElements(),
       isWithAnnotations: val.relevantElements.annotations,
       isCleanVersion: JSON.parse(val.cleanVersion),
+      currentVersion:
+        this.versionsData?.currentVersion?.cmisVersionNumber || null,
+      originalVersion:
+        this.versionsData?.originalVersion?.cmisVersionNumber || null,
+      intermediateVersion:
+        this.versionsData?.intermediateVersion?.cmisVersionNumber || null,
     };
   }
 
