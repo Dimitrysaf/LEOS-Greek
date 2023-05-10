@@ -27,7 +27,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   receiveMergeSuggestion?: (result) => void;
   receiveMergeSuggestions?: (...results) => void;
   receiveDocumentMetadata?: (metadata: string) => void;
-  receiveSearchMetadata?: (metadatasets: AnnotateMetadata[]) => void;
+  receiveSearchMetadata?: (metadatasets: string) => void;
   requestFilteredAnnotations?: () => void;
 
   constructor(
@@ -115,7 +115,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       .fetchSearchMetada()
       .pipe(take(1), distinctUntilChanged())
       .subscribe((res) => {
-        this.receiveSearchMetadata(res);
+        this.receiveSearchMetadata(JSON.stringify([{ status: res[0].status }]));
       });
   }
 
