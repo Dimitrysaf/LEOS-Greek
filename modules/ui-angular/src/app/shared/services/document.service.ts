@@ -56,6 +56,9 @@ export type DownloadEConsiliumParams = {
   isWithAnnotations: boolean;
   annotations: string;
   isCleanVersion: boolean;
+  currentVersion: string;
+  originalVersion: string;
+  intermediateVersion: string;
 };
 
 export type DownloadEConsiliumOptions = Omit<
@@ -352,6 +355,49 @@ export class DocumentService implements OnDestroy {
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${category}/${ref}`,
     );
+  }
+
+  compareDocumentsDownloadDocuwrite(
+    currentVersion: Version,
+    originalVersion: Version,
+    intermediateVersion?: Version,
+  ) {
+    const documentType = this.documentType;
+    const documentRef = this.documentRef;
+
+    this.http
+      .post(
+        `${apiBaseUrl}/download-compared-version-as-docuwrite/${documentType}/${documentRef}/`,
+        {
+          originalVersion: originalVersion.cmisVersionNumber,
+          currentVersion: currentVersion.cmisVersionNumber,
+          intermediateVersion: intermediateVersion
+            ? intermediateVersion.cmisVersionNumber
+            : null,
+        },
+      )
+      .subscribe((resp: any) => this.handleDownloadResponse(resp));
+  }
+
+  compareDocumentsDownloadXML(
+    currentVersion: Version,
+    originalVersion: Version,
+    intermediateVersion?: Version,
+  ) {
+    const documentType = this.documentType;
+    const documentRef = this.documentRef;
+    this.http
+      .post(
+        `${apiBaseUrl}/download-compared-version-XML/${documentType}/${documentRef}`,
+        {
+          originalVersion: originalVersion.cmisVersionNumber,
+          currentVersion: currentVersion.cmisVersionNumber,
+          intermediateVersion: intermediateVersion
+            ? intermediateVersion.cmisVersionNumber
+            : null,
+        },
+      )
+      .subscribe((resp: any) => this.handleDownloadResponse(resp));
   }
 
   reloadDocument() {
