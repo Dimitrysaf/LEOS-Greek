@@ -33,7 +33,7 @@ define(function leosTrackChangesPluginModule(require) {
             var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
             var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
-                    canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
+                canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -201,14 +201,14 @@ define(function leosTrackChangesPluginModule(require) {
                                 var fragment = range.cloneContents(true);
                                 var nodeList = fragment.find('li:not(:has(ol))');
                                 if (nodeList.count() > 0) {
-                                    actions.deletFromListAndAddTrackChange(editor, core, range, nodeList);
-                                    range.collapse(true);
-                                    range.select();
+                                    actions.deletFromListAndAddTrackChange(editor, range, nodeList);
+
+
                                     event.getInstance().data.domEvent.preventDefault();
                                     event.getInstance().stop();
                                 } else {
                                     fragment = range.extractContents(true);
-                                    actions.deletTextAndAddTrackChange(editor, core, fragment);
+                                    actions.deletTextAndAddTrackChange(editor, fragment);
                                     event.getInstance().data.domEvent.preventDefault();
                                 }
 
@@ -539,7 +539,8 @@ define(function leosTrackChangesPluginModule(require) {
             }
         },
 
-        deletTextAndAddTrackChange: function(editor, core, fragment) {
+        deletTextAndAddTrackChange: function(editor, fragment) {
+            var core = trackChanges.core;
             var childrenOfSelection = fragment.getChildren();
             var firstItem = null, lastItem = null;
             var objNonReferencedArray = core.toArray(childrenOfSelection);
@@ -576,18 +577,23 @@ define(function leosTrackChangesPluginModule(require) {
             }
         },
 
-        deletFromListAndAddTrackChange: function(editor, core, range, nodeList) {
+        deletFromListAndAddTrackChange: function(editor, range, nodeList) {
+            var core = trackChanges.core;
+            if (!range.collapsed) {
+                range.collapse(true);
+                range.select();
+            }
             for (var i = 0; i < nodeList.toArray().length; i++) {
                 var domElement = nodeList.getItem(i).$;
                 var item = new CKEDITOR.dom.text(domElement.childNodes[0]);
-                var tcItem = core.addTrackChangesNested(editor, item);
-                var olElement = editor.getSelection().getStartElement().getAscendant("ol");
-                var currentElement = olElement.find('#' + item.getAscendant('li').$.id).getItem(0).$;
-                if (i === 0) {
+                var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, item.getText(),true);
+                var currentElement = editor.getSelection().document.find('#' + domElement.id).getItem(0).$;
+                if (i === 0 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
+
                     currentElement.innerHTML =
                         currentElement.innerHTML.substring(0, currentElement.innerHTML.length - domElement.innerHTML.length) +
                         tcItem.$.outerHTML;
-                } else if(i === nodeList.toArray().length-1) {
+                } else if(i === nodeList.toArray().length-1 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
                     currentElement.innerHTML = tcItem.$.outerHTML + currentElement.innerHTML.substring(domElement.innerHTML.length);
                 } else {
                     currentElement.innerHTML = tcItem.$.outerHTML;
