@@ -24,8 +24,6 @@ export type LeosEditorConnectorInitialState = Omit<
 
 export type LeosEditorConnectorOptions = {
   rootElement: HTMLElement;
-  documentRef: string;
-  documentType: string;
 };
 
 export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScriptExtensionState> {
@@ -55,8 +53,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
   receiveRefLabel?: (references: any, documentRef: any) => void;
   closeElement?: () => void;
 
-  private documentRef: string;
-  private documentType: string;
   private elementUnderEdit = null;
   private isElementSaved = false;
 
@@ -70,8 +66,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     private translateService: TranslateService,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
-    this.documentRef = options.documentRef;
-    this.documentType = options.documentType;
   }
 
   // leosEditorExtension > actionHandler
@@ -80,9 +74,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string;
     elementType: string;
   }) {
-    const documentRef = this.documentRef;
-    const documentType = this.documentType;
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
     this.elementUnderEdit = data.elementId;
+
     if (
       this.coEditionService.checkForCoEdition(
         'EDIT_ELEMENT',
@@ -169,8 +164,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementFragment: string;
     isSplit: boolean;
   }) {
-    const documentRef = this.documentRef;
-    const documentType = this.documentType;
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
     this.saveDocumentElement(
       documentRef,
       elemData.elementId,
@@ -188,11 +183,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       );
     });
   }
+
   // leosEditorExtension > elementEditor
   releaseElement() {
-    const documentRef = this.documentRef;
     this.coEditionService.removeElementCoEditInfo(
-      documentRef,
+      this.documentService.documentRef,
       this.elementUnderEdit,
     );
     if (this.isElementSaved) {
@@ -208,8 +203,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string;
     elementType: string;
   }) {
-    const documentRef = this.documentRef;
-    const documentType = this.documentType;
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
     this.deleteDocumentElement(
       documentRef,
       elementData.elementType.toLowerCase(),
@@ -227,8 +222,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementType: string;
     position: string;
   }) {
-    const documentRef = this.documentRef;
-    const documentType = this.documentType;
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
     this.insertDocumentElement(
       documentRef,
       elementData.elementType.toLowerCase(),
@@ -252,8 +247,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementType: string;
     elementContent: string;
   }) {
-    const documentRef = this.documentRef;
-    const documentType = this.documentType;
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
     this.mergeDocumentElement(
       documentRef,
       documentType,
@@ -280,7 +275,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       )
       .pipe(
         tap(() => {
-          this.documentService.getToc(this.documentRef);
+          this.documentService.getToc(this.documentService.documentRef);
         }),
       );
   }

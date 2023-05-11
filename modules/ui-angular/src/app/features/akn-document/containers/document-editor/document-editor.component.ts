@@ -171,8 +171,6 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
-        this.cdkEditor.setDocumentRef(this.documentRef);
-        this.cdkEditor.setDocumentType(this.documentType);
       });
     this.loadStyleSheet();
 

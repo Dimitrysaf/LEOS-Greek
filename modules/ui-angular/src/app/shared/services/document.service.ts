@@ -639,7 +639,7 @@ export class DocumentService implements OnDestroy {
   }
 
   getToc(
-    annexRef: string,
+    documentRef: string, // TODO: should this be `= this.documentRef`?
     tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
       ? 'NOT_SIMPLIFIED'
       : 'SIMPLIFIED',
@@ -648,7 +648,7 @@ export class DocumentService implements OnDestroy {
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
 
     return this.http.get<TableOfContentItemVO[]>(
-      `${apiBaseUrl}/secured/${category}/${annexRef}/getToc`,
+      `${apiBaseUrl}/secured/${category}/${documentRef}/getToc`,
       {
         params: { tocMode },
       },
@@ -656,7 +656,7 @@ export class DocumentService implements OnDestroy {
   }
 
   getTocItems(
-    annexRef: string,
+    documentRef: string,
     tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
       ? 'NOT_SIMPLIFIED'
       : 'SIMPLIFIED',
@@ -664,7 +664,7 @@ export class DocumentService implements OnDestroy {
     const category =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     return this.http.get<TocItem[]>(
-      `${apiBaseUrl}/secured/${category}/${annexRef}/getTocItems`,
+      `${apiBaseUrl}/secured/${category}/${documentRef}/getTocItems`,
       {
         params: { tocMode },
       },
