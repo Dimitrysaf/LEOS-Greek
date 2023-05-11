@@ -376,7 +376,7 @@ abstract class CoverPageScreenImpl extends VerticalLayout implements CoverPageSc
     @Subscribe
     public void handleElementState(StateChangeEvent event) {
         if(event.getState() != null) {
-            actionsMenuBar.setSaveVersionEnabled(event.getState().isState());
+            actionsMenuBar.setEnabled(event.getState().isState());
             refreshButton.setEnabled(event.getState().isState());
             refreshNoteButton.setEnabled(event.getState().isState());
         }

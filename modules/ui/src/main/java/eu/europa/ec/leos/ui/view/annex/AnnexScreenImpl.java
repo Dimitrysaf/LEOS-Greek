@@ -436,7 +436,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     @Subscribe
     public void handleElementState(StateChangeEvent event) {
         if(event.getState() != null) {
-            actionsMenuBar.setSaveVersionEnabled(event.getState().isState());
+            actionsMenuBar.setEnabled(event.getState().isState());
             refreshButton.setEnabled(event.getState().isState());
             refreshNoteButton.setEnabled(event.getState().isState());
             searchDelegate.handleElementState(event);

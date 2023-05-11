@@ -163,10 +163,6 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
     public void setSaveVersionVisible(boolean visible) {
         saveVersionItem.setVisible(visible);
     }
-    
-    public void setSaveVersionEnabled(boolean enable) {
-        saveVersionItem.setEnabled(enable);
-    }
 
     public void setDownloadCleanVersionVisible(boolean visible) {
         downloadCleanVersionItem.setVisible(visible);
