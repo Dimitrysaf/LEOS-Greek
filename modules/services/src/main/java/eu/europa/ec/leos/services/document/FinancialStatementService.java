@@ -10,6 +10,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FinancialStatementService {
 
@@ -24,6 +25,8 @@ public interface FinancialStatementService {
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, VersionType versionType, String comment);
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, FinancialStatementMetadata metadata, VersionType versionType, String comment);
+
+    FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest);
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, String comment);
 

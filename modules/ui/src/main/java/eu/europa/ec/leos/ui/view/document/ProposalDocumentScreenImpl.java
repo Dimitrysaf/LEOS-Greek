@@ -110,7 +110,7 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
     public void refreshContent(final String documentContent, boolean trackChangesEnabled) {
         if(isClonedProposal()) {
             eventBus.post(new AddChangeDetailsMenuEvent());
-            eventBus.post(new AddTrackChangesMenuEvent(trackChangesEnabled));
+            eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));
         }
         legalTextPaneComponent.populateContent(documentContent);
     }

@@ -21,7 +21,6 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
@@ -177,6 +177,12 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedFinancialStatementContent, VersionType.MINOR, comment);
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return financialStatement;
+    }
+
+    @Override
+    public FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest) {
+        LOG.trace("Updating FinancialStatement metadata properties... [id={}]", id);
+        return financialStatementRepository.updateFinancialStatement(id, properties, latest);
     }
 
     @Override

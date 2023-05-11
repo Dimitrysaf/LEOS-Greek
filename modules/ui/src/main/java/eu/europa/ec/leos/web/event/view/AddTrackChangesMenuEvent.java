@@ -15,17 +15,19 @@ package eu.europa.ec.leos.web.event.view;
 
 public class AddTrackChangesMenuEvent {
 
+    private boolean menuEnabled;
     private boolean trackChangesEnabled;
 
-    public AddTrackChangesMenuEvent(boolean trackChangesEnabled) {
+    public AddTrackChangesMenuEvent(boolean menuEnabled, boolean trackChangesEnabled) {
+        this.menuEnabled = menuEnabled;
         this.trackChangesEnabled = trackChangesEnabled;
+    }
+
+    public boolean isMenuEnabled() {
+        return menuEnabled;
     }
 
     public boolean isTrackChangesEnabled() {
         return trackChangesEnabled;
-    }
-
-    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
-        this.trackChangesEnabled = trackChangesEnabled;
     }
 }

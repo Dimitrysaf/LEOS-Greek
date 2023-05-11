@@ -261,9 +261,12 @@ public class BillContextService {
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
         final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
         bill = billService.updateBill(bill, updatedBytes, updateRefsComment);
-        Map<String, Object> billProperties = new HashMap<>();
-        billProperties.put(CmisProperties.CLONED_FROM.getId(), billDocument.getId()); //TODO is this correct? It will add the property even in simple import
-        billService.updateBill(bill.getId(), billProperties, true);
+        if (cloneProposal) {
+            Map<String, Object> billProperties = new HashMap<>();
+            billProperties.put(CmisProperties.CLONED_FROM.getId(), billDocument.getId());
+            billProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            billService.updateBill(bill.getId(), billProperties, true);
+        }
         for (Annex annex : annexes) {
             DocumentVO docChild = billDocument.getChildDocuments().stream()
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
@@ -474,6 +477,7 @@ public class BillContextService {
         annexContext.useDocument(annexDocument);
         annexContext.useActionMessageMap(actionMsgMap);
         annexContext.useAnnexNumber(annexMeta.getNumber());
+        annexContext.useCloneProposal(cloneProposal);
         Annex annex = annexContext.executeImportAnnex();
         String annexRef = annex.getMetadata().get().getRef();
         idsAndUrlsHolder.addAnnexIdAndUrl(annexRef, urlBuilder.buildAnnexViewUrl(annexRef));
