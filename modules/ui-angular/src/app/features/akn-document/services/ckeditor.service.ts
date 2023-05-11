@@ -29,6 +29,8 @@ import { DocumentConfig, LeosConfig } from '@/shared/models';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
+import { TableOfContentService } from './tableOfContent.service';
+
 @Injectable()
 export class CKEditorService implements OnDestroy {
   private actionManagerConnector?: ActionManagerConnector;
@@ -48,6 +50,7 @@ export class CKEditorService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
+    private tableOfContentService: TableOfContentService,
     @Inject(DOCUMENT) private domDocument: Document,
   ) {}
 
@@ -113,6 +116,7 @@ export class CKEditorService implements OnDestroy {
       this.coEditionService,
       this.dialogService,
       this.translateService,
+      this.tableOfContentService,
     );
     require(['js/editor/leosEditorExtension'], (leosEditor) => {
       leosEditor.init(this.leosEditorConnector);

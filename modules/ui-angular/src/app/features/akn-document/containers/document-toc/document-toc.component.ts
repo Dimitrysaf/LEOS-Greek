@@ -38,6 +38,7 @@ import {
   TableOfContentItemVO,
   TocItem,
 } from '../../../../shared/models/toc.model';
+import { TableOfContentService } from '../../services/tableOfContent.service';
 
 const MAX_LABEL_TREE_LENGTH = 50;
 
@@ -87,6 +88,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   constructor(
     private documentService: DocumentService,
+    private tableOfContentService: TableOfContentService,
     public tranlsateService: TranslateService,
     public elementRef: ElementRef,
     private cdRef: ChangeDetectorRef,
@@ -97,7 +99,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.getChildren,
     );
     this.dataSource = new MatTreeNestedDataSource();
-
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
       .subscribe((dConfig) => (this.documentConfig = dConfig));
@@ -119,11 +120,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.documentService.setDocumentRefAndCategory(
-      this.documentRef,
-      this.documentType.toLowerCase(),
-    );
-    this.documentService.toc$
+    this.tableOfContentService.toc$
       .pipe(takeUntil(this.destroy$))
       .subscribe((toc) => {
         this.setTree(toc);
