@@ -6,12 +6,9 @@ import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
-  BehaviorSubject,
   combineLatest,
-  combineLatestWith,
   filter,
-  mergeMap,
-  of,
+  map,
   Subject,
   switchMap,
   take,
@@ -34,9 +31,6 @@ import { DocumentService } from '@/shared/services/document.service';
 
 @Injectable()
 export class CKEditorService implements OnDestroy {
-  private documentRefBS = new BehaviorSubject<string>(null);
-  private documentTypeBS = new BehaviorSubject<string>(null);
-
   private actionManagerConnector?: ActionManagerConnector;
   private leosEditorConnector?: LeosEditorConnector;
   private userGuidanceConnector?: UserGuidanceConnector;
@@ -45,11 +39,6 @@ export class CKEditorService implements OnDestroy {
   private softActionsConnector?: SoftActionsConnector;
 
   private destroy$ = new Subject<void>();
-  private leosStateBS = new BehaviorSubject<any | null>(null);
-  private leosState$ = this.leosStateBS.pipe(
-    takeUntil(this.destroy$),
-    filter(Boolean),
-  );
 
   constructor(
     private leosLegacyService: LeosLegacyService,
@@ -60,24 +49,15 @@ export class CKEditorService implements OnDestroy {
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
     @Inject(DOCUMENT) private domDocument: Document,
-  ) {
-    this.appConfig.config
-      .pipe(
-        combineLatestWith(this.getConnectorExtraConfig()),
-        mergeMap(([config, extraConfig]) => of({ ...config, ...extraConfig })),
-      )
-      .subscribe((c) => {
-        this.renameConfigKeysForEditor(c);
-      });
-  }
+  ) {}
 
   ngOnDestroy() {
-    this.leosEditorConnector.destroy();
-    this.actionManagerConnector.destroy();
-    this.userGuidanceConnector.destroy();
-    this.softActionsConnector.destroy();
-    this.changeDetailsConnector.destroy();
-    this.refToLinkConnector.destroy();
+    this.leosEditorConnector?.destroy();
+    this.actionManagerConnector?.destroy();
+    this.userGuidanceConnector?.destroy();
+    this.softActionsConnector?.destroy();
+    this.changeDetailsConnector?.destroy();
+    this.refToLinkConnector?.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -86,13 +66,13 @@ export class CKEditorService implements OnDestroy {
     // TODO: this should not be hardcoded
     const rootElement = this.domDocument.getElementById('docContainer');
 
-    combineLatest([this.leosLegacyService.require$, this.leosState$])
+    combineLatest([this.leosLegacyService.require$, this.getLeosState()])
       .pipe(take(1))
       .subscribe(([require, leosState]) => {
         require(['js/leosModulesBootstrap']);
         this.initActionManager(require, leosState, rootElement);
         this.initLeosEditor(require, leosState, rootElement);
-        this.initUserGuideance(require, leosState, rootElement);
+        this.initUserGuidance(require, leosState, rootElement);
         this.initChangeDetails(require, leosState, rootElement);
         this.initRefToLink(require, leosState, rootElement);
         this.initSoftActions(require, leosState, rootElement);
@@ -127,8 +107,6 @@ export class CKEditorService implements OnDestroy {
       leosState,
       {
         rootElement,
-        documentRef: this.documentRefBS.value,
-        documentType: this.documentTypeBS.value,
       },
       this.http,
       this.documentService,
@@ -158,7 +136,7 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
-  private initUserGuideance(
+  private initUserGuidance(
     require: Require,
     leosState: any,
     rootElement: HTMLElement,
@@ -209,18 +187,8 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
-  // called from document-editor.component
-  setDocumentRef(documentRef: string) {
-    this.documentRefBS.next(documentRef);
-  }
-
-  // called from document-editor.component
-  setDocumentType(documentType: string) {
-    this.documentTypeBS.next(documentType);
-  }
-
   // called from annex-actions-dropdown.component.html
-  toogleUserGuidance() {
+  toggleUserGuidance() {
     this.documentService.seeUserGuidance().subscribe((userGuidance) => {
       if (!userGuidance) {
         this.userGuidanceConnector.enableUserGuidance(false);
@@ -236,6 +204,19 @@ export class CKEditorService implements OnDestroy {
   // called from document-editor.component
   closeElementEditor() {
     this.leosEditorConnector?.closeElement();
+  }
+
+  private getLeosState() {
+    return combineLatest([
+      this.appConfig.config,
+      this.getConnectorExtraConfig(),
+    ]).pipe(
+      takeUntil(this.destroy$),
+      take(1),
+      map(([config, extraConfig]) =>
+        this.renameConfigKeysForEditor({ ...config, ...extraConfig }),
+      ),
+    );
   }
 
   // called from constructor
@@ -260,7 +241,7 @@ export class CKEditorService implements OnDestroy {
 
     tocItems.forEach((i) => {
       i.aknTag = i.aknTag.toLowerCase() as any;
-      if (this.documentTypeBS.value === 'memorandum') {
+      if (this.documentService.documentType === 'memorandum') {
         if (i.aknTag === 'main_body') {
           i.aknTag = 'mainBody';
         } else if (i.aknTag === 'block_container') {
@@ -351,6 +332,6 @@ export class CKEditorService implements OnDestroy {
         'https://webgate.acceptance.ec.testa.eu/qas/static/wscbundle/wscbundle.js';
     }
 
-    this.leosStateBS.next(config);
+    return config;
   }
 }
