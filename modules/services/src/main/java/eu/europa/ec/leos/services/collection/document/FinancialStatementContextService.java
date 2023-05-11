@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.collection.document;
 
+import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
@@ -48,6 +49,8 @@ public class FinancialStatementContextService {
     private String versionComment;
     private String milestoneComment;
     private String financialStatementId;
+
+    private boolean cloneProposal = false;
 
     public FinancialStatementContextService(
             TemplateService templateService,
@@ -146,6 +149,10 @@ public class FinancialStatementContextService {
         this.financialStatementId = financialStatementId;
     }
 
+    public void useCloneProposal(boolean cloneProposal) {
+        this.cloneProposal = cloneProposal;
+    }
+
     public FinancialStatement executeCreateFinancialStatement() {
         LOG.trace("Executing 'Create FinancialStatement' use case...");
 
@@ -167,7 +174,11 @@ public class FinancialStatementContextService {
 
         financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
         financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
-
+        if (cloneProposal) {
+            Map<String, Object> financialStatementProperties = new HashMap<>();
+            financialStatementProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            financialStatementService.updateFinancialStatement(financialStatement.getId(), financialStatementProperties, true);
+        }
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

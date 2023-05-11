@@ -58,6 +58,7 @@ public class MemorandumContextService {
     private String type = null;
     private String template = null;
     private boolean eeaRelevance;
+    private boolean cloneProposal = false;
 
     private DocumentVO memoDocument;
 
@@ -129,6 +130,10 @@ public class MemorandumContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useCloneProposal(boolean cloneProposal) {
+        this.cloneProposal = cloneProposal;
+    }
+
     public Memorandum executeCreateMemorandum() {
         LOG.trace("Executing 'Create Memorandum' use case...");
         Validate.notNull(leosPackage, "Memorandum package is required!");
@@ -192,9 +197,12 @@ public class MemorandumContextService {
                 xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
         Memorandum memorandumCreated = memorandumService.createMemorandumFromContent(leosPackage.getPath(), metadata,
                 actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, memoDocument.getName());
-        Map<String, Object> memoProperties = new HashMap<>();
-        memoProperties.put(CmisProperties.CLONED_FROM.getId(), memoDocument.getId());
-        memorandumService.updateMemorandum(memorandumCreated.getId(), memoProperties, true);
+        if (cloneProposal) {
+            Map<String, Object> memoProperties = new HashMap<>();
+            memoProperties.put(CmisProperties.CLONED_FROM.getId(), memoDocument.getId());
+            memoProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            memorandumService.updateMemorandum(memorandumCreated.getId(), memoProperties, true);
+        }
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

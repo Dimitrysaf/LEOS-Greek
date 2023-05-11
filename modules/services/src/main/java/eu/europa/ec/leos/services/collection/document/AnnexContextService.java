@@ -64,6 +64,7 @@ public class AnnexContextService {
     private String versionComment;
     private String milestoneComment;
     private boolean eeaRelevance;
+    private boolean cloneProposal = false;
 
     public AnnexContextService(
             TemplateService templateService,
@@ -160,6 +161,10 @@ public class AnnexContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useCloneProposal(boolean cloneProposal) {
+        this.cloneProposal = cloneProposal;
+    }
+
     public Annex executeCreateAnnex() {
         LOG.trace("Executing 'Create Annex' use case...");
 
@@ -207,9 +212,12 @@ public class AnnexContextService {
                 .build();
         annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
         annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
-        Map<String, Object> annexProperties = new HashMap<>();
-        annexProperties.put(CmisProperties.CLONED_FROM.getId(), annexDocument.getId());
-        annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
+        if (cloneProposal) {
+            Map<String, Object> annexProperties = new HashMap<>();
+            annexProperties.put(CmisProperties.CLONED_FROM.getId(), annexDocument.getId());
+            annexProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
+        }
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

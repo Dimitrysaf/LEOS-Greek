@@ -84,6 +84,7 @@ public class BillContext {
     private String annexClonedRef;
     private int annexIndex;
     private String annexNumber;
+    private boolean cloneProposal = false;
 
     private final Map<ContextAction, String> actionMsgMap;
 
@@ -198,6 +199,10 @@ public class BillContext {
     public void useEeaRelevance(boolean eeaRelevance) {
         LOG.trace("Using EEA Relevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void useCloneProposal(boolean cloneProposal) {
+        this.cloneProposal = cloneProposal;
     }
 
     public Bill executeCreateBill() {
@@ -412,6 +417,7 @@ public class BillContext {
         annexContext.useCollaborators(bill.getCollaborators());
         annexContext.useActionMessageMap(actionMsgMap);
         annexContext.useAnnexNumber(annexNumber);
+        annexContext.useCloneProposal(cloneProposal);
         Annex annex = annexContext.executeCreateAnnex();
 
         String href = annex.getName();

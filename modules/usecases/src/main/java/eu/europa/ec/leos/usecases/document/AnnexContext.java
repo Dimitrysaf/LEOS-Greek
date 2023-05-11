@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.usecases.document;
 
+import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
@@ -62,6 +63,7 @@ public class AnnexContext {
     private String annexNumber;
     private String versionComment;
     private String milestoneComment;
+    private boolean cloneProposal;
 
     public AnnexContext(
             TemplateService templateService,
@@ -153,6 +155,10 @@ public class AnnexContext {
         actionMsgMap.put(action, actionMsg);
     }
 
+    public void useCloneProposal(boolean cloneProposal) {
+        this.cloneProposal = cloneProposal;
+    }
+
     public Annex executeCreateAnnex() {
         LOG.trace("Executing 'Create Annex' use case...");
 
@@ -177,7 +183,11 @@ public class AnnexContext {
 
         annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), null);
         annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
-
+        if (cloneProposal) {
+            Map<String, Object> annexProperties = new HashMap<>();
+            annexProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
+        }
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 

@@ -1,11 +1,13 @@
 package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FinancialStatementRepository {
     /**
@@ -38,6 +40,16 @@ public interface FinancialStatementRepository {
      * @return the updated FinancialStatement document.
      */
     FinancialStatement updateFinancialStatement(String id, FinancialStatementMetadata metadata);
+
+    /**
+     * Updates a [FinancialStatement] document with the given properties.
+     *
+     * @param id the ID of the FinancialStatement document to update.
+     * @param properties the metadata properties of the FinancialStatement.
+     * @param latest
+     * @return the updated FinancialStatement document.
+     */
+    FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates an [FinancialStatement] document with the given content.

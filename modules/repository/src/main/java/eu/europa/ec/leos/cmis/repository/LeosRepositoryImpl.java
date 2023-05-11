@@ -147,6 +147,7 @@ public class LeosRepositoryImpl implements LeosRepository {
         properties.put(CmisProperties.ORIGIN_REF.getId(), cloneProposalMetadataVO.getOriginRef());
         properties.put(CmisProperties.CLONED_FROM.getId(), cloneProposalMetadataVO.getClonedFromRef());
         properties.put(CmisProperties.REVISION_STATUS.getId(), cloneProposalMetadataVO.getRevisionStatus());
+        properties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), cloneProposalMetadataVO.isClonedProposal());
 
         Document doc = cmisRepository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
