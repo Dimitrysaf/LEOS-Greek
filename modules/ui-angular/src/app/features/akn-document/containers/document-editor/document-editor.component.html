@@ -95,20 +95,23 @@
         class="eui-u-p-none eui-page-column--no-scrollbars"
         [interactiveScrollbars]="false"
       >
-        <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1 leos-editing-pane"
-        >
+        <eui-page-column-header-body>
           <!-- Search & Refresh -->
           <div class="eui-u-flex eui-u-flex-row">
             <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
               {{ pageSubTitle }}
             </h4>
             <app-actions-toolbar
-              class="eui-u-flex app-u-flex-basis-0"
+              class="eui-u-flex app-u-gap-s app-u-flex-basis-0 mt-1"
               [disabled]="isEditMode"
             ></app-actions-toolbar>
           </div>
+        </eui-page-column-header-body>
+        <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
+        <eui-page-column-body
+          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1 leos-editing-pane"
+          euiNoContentPadding
+        >
           <!-- Search panel -->
           <eui-card
             class="eui-u-font-size-s"
@@ -161,48 +164,78 @@
             [id]="containerId"
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
-            [readonly]="enviromentService.isCouncil()"
-            class="leos-doc-content"
+            [readonly]="
+              enviromentService.isCouncil() &&
+              documentService.documentType === 'memorandum'
+            "
+            class="leos-doc-content sync-scroll"
             [ngClass]="{ 'toc-edit-mode': isEditMode }"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
 
-      <!-- compare: a -->
-      <eui-page-column
-        class="eui-u-p-none"
-        interactiveScrollbars
-        *ngIf="isVersionForViewOpen"
-      >
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
-        >
-          <div class="eui-u-flex eui-u-flex-row">
-            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
-              {{ versionForViewHeaderTitle }}
-            </h4>
+      <!-- compare -> compare with this Version -->
+      <eui-page-column interactiveScrollbars *ngIf="isVersionForViewOpen">
+        <!-- <eui-page-column-header-left-content class="font-inherit-header">{{
+          versionForViewHeaderTitle
+        }}</eui-page-column-header-left-content> -->
+        <eui-page-column-header-body>
+          <div
+            class="eui-u-flex eui-u-flex-row justify-content-between w-100 app-u-gap-xs"
+            style="min-height: 35.99px"
+          >
             <button
               euiButton
               euiIconButton
-              euiBasicButton
-              euiRounded
               euiSizeS
-              [title]="
-                'page.editor.close-compare-view-button.tooltip' | translate
-              "
-              [attr.aria-label]="
-                'page.editor.close-compare-view-button.tooltip' | translate
-              "
+              [euiPrimary]="isAsyncScrollEnabled"
+              [euiSecondary]="!isAsyncScrollEnabled"
+              (click)="handleAsyncScroll()"
+            >
+              <span euiSizeS class="eui-icon eui-icon-sync"></span>
+            </button>
+            <h4 class="eui-u-font-size-s">{{ versionForViewHeaderTitle }}</h4>
+            <button
+              euiButton
+              euiIconButton
+              euiSecondary
+              euiSizeS
+              euiOutline
               (click)="closeVersionView()"
             >
-              <span class="eui-icon eui-icon-close-m"></span>
+              <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
             </button>
           </div>
+        </eui-page-column-header-body>
+        <eui-page-column-body
+          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
+        >
+          <!--          <div class="eui-u-flex eui-u-flex-row">-->
+          <!--            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">-->
+          <!--              {{ versionForViewHeaderTitle }}-->
+          <!--            </h4>-->
+          <!--            <button-->
+          <!--              euiButton-->
+          <!--              euiIconButton-->
+          <!--              euiBasicButton-->
+          <!--              euiRounded-->
+          <!--              euiSizeS-->
+          <!--              [title]="-->
+          <!--                'page.editor.close-compare-view-button.tooltip' | translate-->
+          <!--              "-->
+          <!--              [attr.aria-label]="-->
+          <!--                'page.editor.close-compare-view-button.tooltip' | translate-->
+          <!--              "-->
+          <!--              (click)="closeVersionView()"-->
+          <!--            >-->
+          <!--              <span class="eui-icon eui-icon-close-m"></span>-->
+          <!--            </button>-->
+          <!--          </div>-->
 
           <app-annex-document
             id="versionContainer"
             [xml]="versionForView"
-            class="leos-doc-content"
+            class="leos-doc-content sync-scroll"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
@@ -213,34 +246,146 @@
         interactiveScrollbars
         *ngIf="documentService.compareModeEnabled$ | async"
       >
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
-        >
-          <div class="eui-u-flex eui-u-flex-row">
-            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
+        <eui-page-column-header-body>
+          <div
+            class="eui-u-flex eui-u-flex-row justify-content-between w-100 app-u-gap-xs"
+            style="min-height: 35.99px"
+          >
+            <div
+              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
+              style="max-width: fit-content"
+            >
+              <button
+                euiButton
+                euiIconButton
+                euiSizeS
+                [euiPrimary]="isAsyncScrollEnabled"
+                [euiSecondary]="!isAsyncScrollEnabled"
+                *ngIf="versionsComparisonForView"
+                (click)="handleAsyncScroll()"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.synchronous-scrolling'
+                    | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
+              </button>
+              <button
+                id="prev-change"
+                euiButton
+                euiIconButton
+                euiBasicButton
+                euiPrimary
+                euiSizeS
+                *ngIf="versionsComparisonForView"
+                (click)="handlePrevChange()"
+                [disabled]="compareIndex === 0"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.next-change' | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <span class="eui-icon eui-icon-sort-asc"></span>
+              </button>
+
+              <button
+                id="next-change"
+                euiButton
+                euiIconButton
+                euiBasicButton
+                euiPrimary
+                euiSizeS
+                *ngIf="versionsComparisonForView"
+                (click)="handleNextChange()"
+                [disabled]="compareIndex >= compareChanges.length"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.prev-change' | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <span class="eui-icon eui-icon-sort-desc"></span>
+              </button>
+            </div>
+            <h4 class="eui-u-font-size-s">
               {{ versionsComparisonForViewHeaderTitle$ | async }}
             </h4>
-            <button
-              euiButton
-              euiIconButton
-              euiBasicButton
-              euiRounded
-              euiSizeS
-              [title]="
-                'page.editor.close-compare-view-button.tooltip' | translate
-              "
-              [attr.aria-label]="
-                'page.editor.close-compare-view-button.tooltip' | translate
-              "
-              (click)="closeVersionComparisonView()"
+            <div
+              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
+              style="max-width: fit-content"
             >
-              <span class="eui-icon eui-icon-close-m"></span>
-            </button>
+              <button
+                euiButton
+                euiBasicButton
+                euiSecondary
+                euiSizeS
+                *ngIf="versionsComparisonForView"
+                (click)="downloadXmlFile(versionsComparisonForView)"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.download-xml-files'
+                    | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <span class="eui-icon eui-icon-ecl-download"></span>
+              </button>
+              <button
+                euiButton
+                euiBasicButton
+                euiSecondary
+                euiSizeS
+                *ngIf="versionsComparisonForView && isCNInstance"
+                (click)="downloadVersionOfFile()"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.download-docuwrite'
+                    | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <span
+                  class="eui-icon eui-icon-filetype-doc"
+                  euiIconColored
+                ></span>
+              </button>
+              <button
+                euiButton
+                euiBasicButton
+                euiSecondary
+                euiSizeS
+                *ngIf="versionsComparisonForView"
+                (click)="downloadVersionOfFileEConsil()"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.download-eConsilium'
+                    | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <span
+                  class="eui-icon eui-icon-filetype-unknown"
+                  euiIconColored
+                ></span>
+              </button>
+              <button
+                euiButton
+                euiIconButton
+                euiSecondary
+                euiSizeS
+                euiOutline
+                (click)="closeVersionComparisonView()"
+              >
+                <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
+              </button>
+            </div>
           </div>
-
+        </eui-page-column-header-body>
+        <eui-page-column-body
+          class="eui-u-flex eui-u-flex-column align-items-center"
+          style="position: relative; overflow: auto"
+        >
           <app-annex-document
             id="versionComparisonContainer"
             [xml]="versionsComparisonForView"
+            class="sync-scroll"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
@@ -432,6 +577,10 @@
   </eui-page-content>
 </eui-page>
 
+<app-download-econsilium-modal
+  *ngIf="documentRef"
+  #eConsiliumModal
+></app-download-econsilium-modal>
 <app-proposal-milestone-view
   #milestoneViewDialog
   [milestone]="milestoneViewData"

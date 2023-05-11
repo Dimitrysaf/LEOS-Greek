@@ -5,13 +5,17 @@
 <div class="d-flex flex-column">
   <p>{{ 'page.editor.co-edition-detected.body.part1' | translate }}</p>
   <div class="d-flex flex-column">
-    <span *ngFor="let item of coEditionsVO">{{
-      item.userName +
-        ' ' +
-        ('page.editor.co-edition-detected.body.part2' | translate) +
-        ' ' +
-        (item.editionTime | date)
-    }}</span>
+    <span *ngFor="let item of coEditionsVO | keyvalue">
+      <ng-container *ngFor="let ite of item.value">
+        {{
+          ite.userName +
+            ' ' +
+            ('page.editor.co-edition-detected.body.part2' | translate) +
+            ' ' +
+            (ite.editionTime | date)
+        }}
+      </ng-container>
+    </span>
   </div>
   <p>{{ 'page.editor.co-edition-detected.body.part3' | translate }}</p>
 </div>

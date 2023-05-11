@@ -451,7 +451,12 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 } else if (savedTcLocation != core.NONE) {
                     var node = startContainer;
-                    if (savedTcLocation == core.AFTER) {
+                    if (range.startContainer.$.nodeName === '#text' &&
+                        range.endContainer.$.nodeName === '#text' &&
+                        range.startOffset === range.endOffset &&
+                        range.startOffset === range.startContainer.$.length) {
+                        node = range.getNextNode();
+                    } else if (savedTcLocation == core.AFTER) {
                         while (node.hasNext() && (node.type != 1)) {
                             node = node.getNextSourceNode();
                         }
@@ -657,7 +662,14 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         searchNextTrackChangeElement: function(editor, action, deleteKey) {
+            var range = editor.getSelection().getRanges()[0];
             var node = editor.getSelection().getRanges()[0].getNextNode();
+            if (range.startContainer.$.localName === 'span' &&
+                range.endContainer.$.localName === 'span' &&
+                range.startOffset === 0 &&
+                range.endOffset === 0) {
+                node = range.startContainer;
+            }
             if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                 return [node, this.CARET_START];
             } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasNext() && (deleteKey === true) && (node.getText().length === CKEDITOR.NODE_ELEMENT)) {

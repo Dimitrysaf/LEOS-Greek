@@ -57,6 +57,7 @@ public class XmlHelper {
     public static final String PROPOSAL = "proposal";
     public static final String AKOMANTOSO = "akomaNtoso";
     public static final String META = "meta";
+    public static final String XML_STYLESHEET = "xml-stylesheet";
     public static final String BLOCKCONTAINER = "blockContainer";
     public static final String AUTHORIAL_NOTE = "authorialNote";
     public static final String MATHJAX = "mathjax";

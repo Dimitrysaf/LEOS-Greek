@@ -21,11 +21,11 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 export class CoEditionDetectedDialogComponent implements OnInit, OnChanges {
   @ViewChild('coEditionDetectedDialog')
   coEditionDetectedDialog: EuiDialogComponent;
-  coEditionsVO: CoEditionVO[];
+  coEditionsVO: { [key: string]: CoEditionVO[] };
   constructor(private coEditionService: CoEditionServiceWS) {
-    // this.coEditionService
-    //   .getDocCoEditionInfo()
-    //   .subscribe((c) => (this.coEditionsVO = c));
+    this.coEditionService.getDocCoEditionInfo().subscribe((c: any) => {
+      this.coEditionsVO = c;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {}

@@ -158,7 +158,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementName, elementId, elementFragment, false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
-        return this.documentViewService.getDocumentView(memorandum);
+        return this.documentViewService.updateDocumentView(memorandum);
     }
 
     @Override
@@ -342,7 +342,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
         Memorandum updateMemorandum = memorandumService.updateMemorandum(memorandum, event.getUpdatedContent().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
-        return this.documentViewService.getDocumentView(updateMemorandum);
+        return this.documentViewService.updateDocumentView(updateMemorandum);
     }
 
     @Override
