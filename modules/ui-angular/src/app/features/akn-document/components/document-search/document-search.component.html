@@ -171,8 +171,9 @@
       <button
         euiSizeS
         euiButton
-        euiOutline
-        euiSecondary
+        [euiOutline]="!doc.replacedTextPresent"
+        [euiSecondary]="!doc.replacedTextPresent"
+        [euiPrimary]="doc.replacedTextPresent"
         (click)="doc.searchSave()"
       >
         <span euiLabel translate="global.actions.save"></span>
@@ -181,8 +182,9 @@
       <button
         euiSizeS
         euiButton
-        euiOutline
-        euiSecondary
+        [euiOutline]="!doc.replacedTextPresent"
+        [euiSecondary]="!doc.replacedTextPresent"
+        [euiPrimary]="doc.replacedTextPresent"
         (click)="doc.searchSaveAndClose()"
       >
         <span

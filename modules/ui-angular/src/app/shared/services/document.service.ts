@@ -97,6 +97,7 @@ export class DocumentService implements OnDestroy {
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
+  replacedTextPresent = false;
 
   currentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
@@ -454,6 +455,7 @@ export class DocumentService implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.updatedContentToSaveAfterReplace = res;
+        this.replacedTextPresent = true;
       });
     if (
       currentIndex >= 0 &&
@@ -483,6 +485,7 @@ export class DocumentService implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.updatedContentToSaveAfterReplace = res;
+        this.replacedTextPresent = true;
       });
     this.searchResultIndexArray.forEach((el, i) => {
       this.document.getElementById(el.id).innerText =
@@ -495,17 +498,10 @@ export class DocumentService implements OnDestroy {
 
   searchSave() {
     this.removeHighlights();
-    // const updatedContent =
-    //   this.document.getElementById('docContainer').childNodes[0];
-    //
-    // const xmlSerializer = new XMLSerializer();
-    // let xmlContent = xmlSerializer.serializeToString(updatedContent);
-    // xmlContent = xmlContent.replaceAll('id', 'xml:id');
-    const documentRef = this.documentIdBS.value;
-
+    const documentRef = this.documentRef;
     this.http
       .put<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/${this.documentType}/${documentRef}/save-after-replace`,
+        `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/save-after-replace`,
         {
           documentRef,
           updatedContent: this.updatedContentToSaveAfterReplace,
@@ -519,11 +515,13 @@ export class DocumentService implements OnDestroy {
   searchSaveAndClose() {
     this.searchSave();
     this.toggleSearchPane(false);
+    this.replacedTextPresent = false;
   }
 
   searchCancelAndClose() {
     this.toggleSearchPane(false);
     this.resetDocument();
+    this.replacedTextPresent = false;
   }
 
   seeNavigation() {
