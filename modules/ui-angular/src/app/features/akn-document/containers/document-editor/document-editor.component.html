@@ -164,7 +164,10 @@
             [id]="containerId"
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
-            [readonly]="enviromentService.isCouncil()"
+            [readonly]="
+              enviromentService.isCouncil() &&
+              documentService.documentType === 'memorandum'
+            "
             class="leos-doc-content sync-scroll"
             [ngClass]="{ 'toc-edit-mode': isEditMode }"
           ></app-annex-document>
@@ -207,27 +210,27 @@
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
-<!--          <div class="eui-u-flex eui-u-flex-row">-->
-<!--            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">-->
-<!--              {{ versionForViewHeaderTitle }}-->
-<!--            </h4>-->
-<!--            <button-->
-<!--              euiButton-->
-<!--              euiIconButton-->
-<!--              euiBasicButton-->
-<!--              euiRounded-->
-<!--              euiSizeS-->
-<!--              [title]="-->
-<!--                'page.editor.close-compare-view-button.tooltip' | translate-->
-<!--              "-->
-<!--              [attr.aria-label]="-->
-<!--                'page.editor.close-compare-view-button.tooltip' | translate-->
-<!--              "-->
-<!--              (click)="closeVersionView()"-->
-<!--            >-->
-<!--              <span class="eui-icon eui-icon-close-m"></span>-->
-<!--            </button>-->
-<!--          </div>-->
+          <!--          <div class="eui-u-flex eui-u-flex-row">-->
+          <!--            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">-->
+          <!--              {{ versionForViewHeaderTitle }}-->
+          <!--            </h4>-->
+          <!--            <button-->
+          <!--              euiButton-->
+          <!--              euiIconButton-->
+          <!--              euiBasicButton-->
+          <!--              euiRounded-->
+          <!--              euiSizeS-->
+          <!--              [title]="-->
+          <!--                'page.editor.close-compare-view-button.tooltip' | translate-->
+          <!--              "-->
+          <!--              [attr.aria-label]="-->
+          <!--                'page.editor.close-compare-view-button.tooltip' | translate-->
+          <!--              "-->
+          <!--              (click)="closeVersionView()"-->
+          <!--            >-->
+          <!--              <span class="eui-icon eui-icon-close-m"></span>-->
+          <!--            </button>-->
+          <!--          </div>-->
 
           <app-annex-document
             id="versionContainer"
@@ -575,7 +578,9 @@
 </eui-page>
 
 <app-download-econsilium-modal
-  *ngIf="documentRef" #eConsiliumModal></app-download-econsilium-modal>
+  *ngIf="documentRef"
+  #eConsiliumModal
+></app-download-econsilium-modal>
 <app-proposal-milestone-view
   #milestoneViewDialog
   [milestone]="milestoneViewData"

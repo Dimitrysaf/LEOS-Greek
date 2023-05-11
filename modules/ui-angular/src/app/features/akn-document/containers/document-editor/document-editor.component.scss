@@ -105,34 +105,36 @@
   }
 
   .pin-container .pin-leos-content-removed {
-    background: #ff9999;
-    border-top: 1px solid red;
+    background: #f99;
     border-bottom: 1px solid red;
+    border-top: 1px solid red;
     margin-left: 9px;
     width: 8px;
   }
+
   .pin-container .pin-leos-content-new {
-    background: #99ff66;
-    border-top: 1px solid #66cc00;
-    border-bottom: 1px solid #66cc00;
+    background: #9f6;
+    border-bottom: 1px solid #6c0;
+    border-top: 1px solid #6c0;
     width: 9px;
   }
+
   .pin-container .pin-popup-side-bar {
-    background: #999999;
+    background: #999;
     height: 2px;
   }
 
   .pin-container .pin-popup-side-bar {
-    background: #999999;
+    background: #999;
     height: 2px;
   }
 
   .pin-container {
+    bottom: 0;
+    margin: 15px 0;
     position: absolute;
     top: 0;
-    bottom: 0;
     width: 0;
-    margin: 15px 0;
   }
 
   .pin-left {
@@ -144,9 +146,9 @@
   }
 
   .pin-container .pin {
-    position: absolute;
-    height: 5px;
     cursor: pointer;
+    height: 5px;
+    position: absolute;
     z-index: 10;
   }
 
