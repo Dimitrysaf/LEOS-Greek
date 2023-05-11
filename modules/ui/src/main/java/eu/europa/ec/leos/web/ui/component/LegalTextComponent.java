@@ -434,8 +434,7 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
     @Subscribe
     public void handleElementState(StateChangeEvent event) {
         if (event.getState() != null) {
-            legalTextActionMenuBar.setSaveVersionEnabled(event.getState().isState());
-            legalTextActionMenuBar.setImporterEnabled(event.getState().isState());
+            legalTextActionMenuBar.setEnabled(event.getState().isState());
             textRefreshNote.setEnabled(event.getState().isState());
             textRefreshButton.setEnabled(event.getState().isState());
             searchDelegate.handleElementState(event);

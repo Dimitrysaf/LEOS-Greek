@@ -3,7 +3,6 @@
 @mixin actionsMenuBar {
 
     .leos-actions-menu {
-        background: $MAIN_BLUE;
         color: $WHITE;
         box-shadow: none;
         
@@ -22,6 +21,10 @@
                 }
             }
         }
+    }
+
+    .v-menubar-leos-actions-menu {
+        background: $MAIN_BLUE;
     }
 
     .leos-actions-milestone-menu, .leos-actions-export-package-menu {

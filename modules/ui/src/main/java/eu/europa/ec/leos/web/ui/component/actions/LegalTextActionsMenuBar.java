@@ -45,10 +45,6 @@ public class LegalTextActionsMenuBar extends CommonActionsMenuBar {
         importerItem = createMenuItem(messageHelper.getMessage("menu.actions.importer"), new ImporterCommand());
     }
     
-    public void setImporterEnabled(boolean enabled) {
-        importerItem.setEnabled(enabled);
-    }
-    
     public void setImporterVisible(boolean visible) {
         importerSeparator.setVisible(visible);
         importerItem.setVisible(visible);

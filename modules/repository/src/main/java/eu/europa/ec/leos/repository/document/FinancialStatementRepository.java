@@ -1,7 +1,6 @@
 package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
 import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
 import org.springframework.security.access.prepost.PostAuthorize;

@@ -433,7 +433,7 @@ abstract class ExplanatoryScreenImpl extends VerticalLayout implements Explanato
     @Subscribe
     public void handleElementState(StateChangeEvent event) {
         if(event.getState() != null) {
-            explanatoryActionsMenuBar.setSaveVersionEnabled(event.getState().isState());
+            explanatoryActionsMenuBar.setEnabled(event.getState().isState());
             refreshButton.setEnabled(event.getState().isState());
             refreshNoteButton.setEnabled(event.getState().isState());
             searchDelegate.handleElementState(event);
