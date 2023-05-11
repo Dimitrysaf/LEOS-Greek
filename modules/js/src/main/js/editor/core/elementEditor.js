@@ -363,7 +363,7 @@ define(function elementEditorModule(require) {
         if (bogus && bogus[0]) {
             sibling = bogus[0].previousSibling;
         }
-        var emptyElements = $("#" + elementId + ", h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
+        var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
         if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
             || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
