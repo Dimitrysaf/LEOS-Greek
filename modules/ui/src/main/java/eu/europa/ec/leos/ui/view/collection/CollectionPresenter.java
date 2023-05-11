@@ -124,6 +124,7 @@ import eu.europa.ec.leos.web.ui.component.MoveAnnexEvent;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -360,7 +361,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     proposalVO.setUpdatedOn(Date.from(proposal.getLastModificationInstant()));
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
-                    if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
+                    if (ArrayUtils.isNotEmpty(proposalXmlContent) && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO));
                     }
                     if (akn4euConversionDocumentsEnabled) {
