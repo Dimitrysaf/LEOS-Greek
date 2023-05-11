@@ -28,7 +28,7 @@ public interface DocumentApiService {
     DownloadVersionResponse downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations);
 
     DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
-            DownloadComparedVersionRequest comparedVersionRequest) throws IOException;
+                                                       DownloadComparedVersionRequest comparedVersionRequest) throws IOException;
 
     LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest);
 
@@ -37,4 +37,5 @@ public interface DocumentApiService {
 
     LeosExportStatus exportToConsilium(LeosCategoryClass documentType, String documentRef, ExportToConsiliumRequest exportToConsiliumRequest);
 
+    String doubleCompare(LeosCategoryClass documentType, String documentRef, String originalProposalId, String intermediateMajorId, String currentId);
 }
