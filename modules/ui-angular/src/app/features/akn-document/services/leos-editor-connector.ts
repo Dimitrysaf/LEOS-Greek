@@ -195,6 +195,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     } else {
       this.documentService.resetDocument();
     }
+    this.isElementSaved = false;
   }
 
   // leosEditorExtension > actionHandler
