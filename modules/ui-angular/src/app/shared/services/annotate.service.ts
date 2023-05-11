@@ -26,46 +26,32 @@ export class AnnotateService {
   }
   getUserPermissions() {
     return this.httpClient.get<Permission[]>(
-      `${apiBaseUrl}/secured/annotation/requestUserPermissions/${this.documentType}/${this.documentRef}`,
+      `${apiBaseUrl}/secured/annotation/requestUserPermissions/${this.documentTypeEnum}/${this.documentRef}`,
     );
   }
 
   getDocumentsMetadata() {
     return this.httpClient.get<AnnotateMetadata>(
-      `${apiBaseUrl}/secured/annotation/requestDocumentMetadata/${this.documentType}/${this.documentRef}`,
+      `${apiBaseUrl}/secured/annotation/requestDocumentMetadata/${this.documentTypeEnum}/${this.documentRef}`,
     );
   }
 
   requestMergeSuggestion(mergeRequest: MergeSuggestionRequest) {
     return this.httpClient
       .post(
-        `${apiBaseUrl}/secured/annotation/requestMergeSuggestion/${this.documentType}/${this.documentRef}`,
+        `${apiBaseUrl}/secured/annotation/requestMergeSuggestion/${this.documentTypeEnum}/${this.documentRef}`,
         mergeRequest,
       )
-      .pipe(
-        finalize(() =>
-          this.documentService.setDocumentRefAndCategory(
-            this.documentRef,
-            this.documentType,
-          ),
-        ),
-      );
+      .pipe(finalize(() => this.reloadDocument()));
   }
 
   requestMergeSuggestions(mergeRequests: MergeSuggestionRequest[]) {
     return this.httpClient
       .post<MergeSuggestionResponse[]>(
-        `${apiBaseUrl}/secured/annotation/requestMergeSuggestions/${this.documentType}/${this.documentRef}`,
+        `${apiBaseUrl}/secured/annotation/requestMergeSuggestions/${this.documentTypeEnum}/${this.documentRef}`,
         { mergeSuggestionRequests: mergeRequests },
       )
-      .pipe(
-        finalize(() =>
-          this.documentService.setDocumentRefAndCategory(
-            this.documentRef,
-            this.documentType,
-          ),
-        ),
-      );
+      .pipe(finalize(() => this.reloadDocument()));
   }
 
   fetchSearchMetada() {
@@ -74,11 +60,18 @@ export class AnnotateService {
     );
   }
 
-  get documentType() {
-    return (this.documentService.documentType as string).toUpperCase();
+  private reloadDocument() {
+    this.documentService.setDocumentRefAndCategory(
+      this.documentService.documentRef,
+      this.documentService.documentType,
+    );
   }
 
-  get documentRef() {
+  private get documentTypeEnum() {
+    return this.documentService.documentType.toUpperCase();
+  }
+
+  private get documentRef() {
     return this.documentService.documentRef;
   }
 }
