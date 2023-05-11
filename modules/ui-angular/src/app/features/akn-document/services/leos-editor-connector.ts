@@ -12,6 +12,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { apiBaseUrl } from '../../../../config';
+import { TableOfContentService } from './tableOfContent.service';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -64,6 +65,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     private coEditionService: CoEditionServiceWS,
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
+    private tableOfContentService: TableOfContentService,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
   }
@@ -238,7 +240,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
           documentRef,
           documentType,
         );
-        this.documentService.getToc(documentRef);
+        this.tableOfContentService.reloadToc(documentRef, documentType);
       });
   }
 
@@ -276,7 +278,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       )
       .pipe(
         tap(() => {
-          this.documentService.getToc(this.documentService.documentRef);
+          this.tableOfContentService.reloadToc(
+            this.documentService.documentRef,
+            this.documentService.documentType,
+          );
         }),
       );
   }

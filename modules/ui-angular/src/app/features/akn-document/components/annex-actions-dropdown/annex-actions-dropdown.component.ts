@@ -1,4 +1,12 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Subject } from 'rxjs';
 
@@ -12,8 +20,11 @@ import { DocumentService } from '@/shared/services/document.service';
   selector: 'app-annex-actions-dropdown',
   templateUrl: './annex-actions-dropdown.component.html',
   styleUrls: ['./annex-actions-dropdown.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
+  @Output() annexChangeStructure = new EventEmitter<void>();
+
   saveVersionVisible = false;
   exportVersionVisible = false;
   exportVersionWithAnnotationsVisible = false;
@@ -45,6 +56,10 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.doc.permissions$.subscribe((perms) => this.setMenuState(perms));
+  }
+
+  handleAnnexStructureChange() {
+    this.annexChangeStructure.emit();
   }
 
   setMenuState(permissions: Permission[]) {

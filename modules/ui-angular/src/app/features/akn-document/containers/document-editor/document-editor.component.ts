@@ -1,3 +1,4 @@
+import { TemplatePortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
@@ -9,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   EuiDialogComponent,
@@ -37,6 +39,7 @@ import { DocumentTocComponent } from '@/features/akn-document/containers/documen
 import { Version } from '@/features/akn-document/models';
 import { DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
@@ -49,10 +52,12 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LoadingService } from '@/shared/services/loading.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
+import { TableOfContentService } from '../../services/tableOfContent.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -109,6 +114,8 @@ export class DocumentEditorComponent
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
+  @ViewChild('confirmAnnexStructureChangeDialog')
+  annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
   @ViewChild('milestoneViewDialog')
   protected milestoneViewDialog: ProposalMilestoneViewComponent;
@@ -135,6 +142,9 @@ export class DocumentEditorComponent
     private appShellService: UxAppShellService,
     public breadcrumbService: EuiBreadcrumbService,
     public enviromentService: EnvironmentService,
+    private tableOfContentService: TableOfContentService,
+    private domSatinizer: DomSanitizer,
+    private loadingService: LoadingService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -142,6 +152,12 @@ export class DocumentEditorComponent
       .subscribe(([params, data]) => {
         this.documentRef = params.id;
         this.documentType = data.category;
+
+        //init services
+        this.tableOfContentService.setDocumentRefAndCategory(
+          this.documentRef,
+          this.documentType,
+        );
       });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -182,8 +198,7 @@ export class DocumentEditorComponent
         this.proposalRef = documentView.proposalRef;
       });
 
-    this.documentService
-      .getTocItems(this.documentRef)
+    this.tableOfContentService.tocItems$
       .pipe(takeUntil(this.destroy$))
       .subscribe((tocItems) => {
         this.tocItems = tocItems;
@@ -231,6 +246,7 @@ export class DocumentEditorComponent
         this.setPageTitle();
         this.manageBreadCrumbsDocumentScreen();
       });
+    // this.loadingService.setLoading(false);
   }
 
   ngAfterViewInit(): void {
@@ -396,6 +412,30 @@ export class DocumentEditorComponent
         ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
+  confirmAnnexStructureChange() {
+    const nextAnnexStructure =
+      this.documentConfig.documentsMetadata.find(
+        (d) => d.ref === this.documentRef,
+      ).template === 'SG-018'
+        ? 'level'
+        : 'article';
+
+    const content = this.tranlsateService.instant(
+      `editor-switch-annex-structure-to-${nextAnnexStructure}-content`,
+    );
+    const conteSanitized = this.domSatinizer.bypassSecurityTrustHtml(content);
+
+    this.dialogService.openDialog({
+      title: this.tranlsateService.instant(
+        'editor.annex-structure-change-title',
+      ),
+      content: conteSanitized as TemplatePortal,
+      acceptLabel: 'Confirm',
+      accept: () => {
+        this.handleAnnexChangeStructure();
+      },
+    });
+  }
 
   handleNextChange() {
     this.arrowClicked = true;
@@ -426,14 +466,18 @@ export class DocumentEditorComponent
   handleSave() {
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
-    this.documentService
-      .saveToc(this.documentRef, toc)
+    this.tableOfContentService
+      .saveToc(this.documentRef, this.documentType, toc)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           this.documentTocComponent.isToCDraft = false;
           this.documentTocComponent.treeHistory = [];
           this.documentService.reloadDocument();
+          this.tableOfContentService.reload(
+            this.documentRef,
+            this.documentType,
+          );
         },
         error: (err) => {},
       });
@@ -520,14 +564,22 @@ export class DocumentEditorComponent
   }
 
   handleClose() {
+    const proposalRef = this.documentConfig.proposalMetadata.ref;
     if (this.document.querySelectorAll('.cke').length > 0) {
       this.openEditorDialog.openDialog();
     } else {
       this.cdkEditor.closeElementEditor();
-
-      const proposalRef = this.documentConfig.proposalMetadata.ref;
       this.router.navigate([`/collection/${proposalRef}`]);
     }
+  }
+
+  handleAnnexChangeStructure() {
+    this.documentService
+      .switchDocumentStructure()
+      .pipe(take(1))
+      .subscribe(() => {
+        this.reloadComponent();
+      });
   }
 
   onCancelClose() {
@@ -600,6 +652,15 @@ export class DocumentEditorComponent
       '.leos-content-new': 'pin-leos-content-new',
     };
     this.addPins(container, pinContainer, selectorStyleMap);
+  }
+
+  private reloadComponent() {
+    // TODO: reload document and services without page reload
+    const currentUrl = this.router.url;
+    // this.loadingService.setLoading(true);
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl]);
+    });
   }
 
   private addPins(

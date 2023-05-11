@@ -70,9 +70,7 @@ export type DocumentRefAndCategory = { ref: string; category: string };
 
 @Injectable()
 export class DocumentService implements OnDestroy {
-  // documentCategory$: Observable<string | null>;
   compareModeEnabled$: Observable<boolean>;
-  // documentId$: Observable<string | null>;
   documentView$: Observable<DocumentViewResponse | null>;
   versionView$: Observable<DocumentViewResponse | null>;
   versionCompareView$: Observable<string>;
@@ -80,7 +78,6 @@ export class DocumentService implements OnDestroy {
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
-  toc$: Observable<TableOfContentItemVO[]>;
   recentChanges$: Observable<Version[]>;
   documentConfig$: Observable<DocumentConfig>;
   versionId$: Observable<string | null>;
@@ -127,7 +124,6 @@ export class DocumentService implements OnDestroy {
   private reloadTriggerBS = new BehaviorSubject<number>(0);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
-
   private updatedContentToSaveAfterReplace: string = null;
   private getAnnotations?: () => Promise<string>;
 
@@ -142,19 +138,9 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
   ) {
-    this.documentRefAndCategory$ = this.documentRefAndCategoryBS.asObservable();
-
-    // this.documentId$ = this.documentIdBS.asObservable();
-    // const documentRefNotNull$ = this.documentId$.pipe(filter(Boolean));
-    // this.documentCategory$ = this.documentCategoryBS.asObservable();
-    // const documentCategoryNotNull$ = this.documentCategory$.pipe(
-    //   filter(Boolean),
-    // );
-    //
-    // this.documentView$ = documentRefNotNull$.pipe(
-    //   combineLatestWith(documentCategoryNotNull$),
-    //   switchMap(([ref, category]) => this.getDocumentByRef(ref, category)),
-    // );
+    this.documentRefAndCategory$ = this.documentRefAndCategoryBS
+      .asObservable()
+      .pipe(filter(Boolean));
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
@@ -192,10 +178,6 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentRecentChangesData(option.category, option.ref),
       ),
-    );
-
-    this.toc$ = this.documentRefAndCategory$.pipe(
-      switchMap((option) => this.getToc(option.ref)),
     );
 
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
@@ -638,53 +620,6 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  getToc(
-    documentRef: string, // TODO: should this be `= this.documentRef`?
-    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
-      ? 'NOT_SIMPLIFIED'
-      : 'SIMPLIFIED',
-  ) {
-    const category =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-
-    return this.http.get<TableOfContentItemVO[]>(
-      `${apiBaseUrl}/secured/${category}/${documentRef}/getToc`,
-      {
-        params: { tocMode },
-      },
-    );
-  }
-
-  getTocItems(
-    documentRef: string,
-    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
-      ? 'NOT_SIMPLIFIED'
-      : 'SIMPLIFIED',
-  ) {
-    const category =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    return this.http.get<TocItem[]>(
-      `${apiBaseUrl}/secured/${category}/${documentRef}/getTocItems`,
-      {
-        params: { tocMode },
-      },
-    );
-  }
-
-  saveToc(documentRef: string, toc: TableOfContentItemVO[]) {
-    const category =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    this.loadingService.setLoading(true);
-    return this.http
-      .post<TableOfContentItemVO[]>(
-        `${apiBaseUrl}/secured/${category}/${documentRef}/save-toc`,
-        {
-          tableOfContentItemVOs: toc,
-        },
-      )
-      .pipe(finalize(() => this.loadingService.setLoading(false)));
-  }
-
   validateNodeDrop(
     draggedNodeId: string[],
     draggedNodeTagName: string,
@@ -783,13 +718,9 @@ export class DocumentService implements OnDestroy {
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     const documentRef = this.documentRef;
-    this.http
-      .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
-      )
-      .subscribe((response) => {
-        this.setDocumentRefAndCategory(documentRef, documentType);
-      });
+    return this.http.get<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/switch-annex-structure`,
+    );
   }
 
   setAnnotationGetter(getAnnotations: () => Promise<string>) {
@@ -1036,8 +967,8 @@ export class DocumentService implements OnDestroy {
   }
 
   private notifyExportEmailSent() {
-    this.appConfig.config.subscribe((config) => {
-      const userEmail = config.user.email;
+    this.appConfig.config.subscribe((c) => {
+      const userEmail = c.user.email;
       this.translate
         .get('page.editor.export-email-sent', { userEmail })
         .subscribe((message) => {
