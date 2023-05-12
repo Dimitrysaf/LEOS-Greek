@@ -134,17 +134,17 @@ public class LeosApiController {
     public ResponseEntity<Object> getToken(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-store");
         response.setHeader("Pragma", "no-cache");
-
+        String contextPath = request.getContextPath();
         final String grantType = request.getHeader(GRANT_TYPE);
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
-            return validateAndGenerateAccessToken(token, response);
+            return validateAndGenerateAccessToken(token, response, contextPath);
         } else {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("Authorization")) {
-                        return validateAndGenerateAccessToken(cookie.getValue(), response);
+                        return validateAndGenerateAccessToken(cookie.getValue(), response, contextPath);
                     } else {
                         LOG.warn("Authorization failed! Wrong Headers: No authorization cookie found");
                     }
@@ -156,7 +156,7 @@ public class LeosApiController {
         return new ResponseEntity<>("Wrong Headers!", HttpStatus.FORBIDDEN);
     }
 
-    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, HttpServletResponse response) {
+    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, HttpServletResponse response, String contextPath) {
         AuthClient authClient = tokenService.validateClientByJwtToken(token);
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
@@ -168,8 +168,8 @@ public class LeosApiController {
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // set 403 status code
-            response.setHeader("Set-Cookie", "Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
-            response.setHeader("Set-Cookie", "JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
+            response.setHeader("Set-Cookie", "Authorization=; Path="+contextPath+"; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
+            response.setHeader("Set-Cookie", "JSESSIONID=; Path="+contextPath+"; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
             return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
         }
     }
