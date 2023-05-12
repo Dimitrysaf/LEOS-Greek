@@ -202,7 +202,8 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((tocItems) => {
         this.tocItems = tocItems;
-        this.dragItems = this.buildTocItemToTOC(tocItems);
+        if (tocItems?.length > 0)
+          this.dragItems = this.buildTocItemToTOC(tocItems);
       });
 
     this.documentService.versionView$
