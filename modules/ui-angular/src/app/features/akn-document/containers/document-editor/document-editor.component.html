@@ -61,7 +61,10 @@
               euiSizeS
               class=""
               (click)="handleEdit()"
-              *ngIf="!isEditMode && documentType !== 'coverPage'"
+              *ngIf="
+                !isEditMode &&
+                !['coverPage', 'memorandum'].includes(documentType)
+              "
             >
               <span class="eui-icon eui-icon-edit"></span>
             </button>
