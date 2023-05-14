@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -154,11 +155,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementName, elementId, elementFragment, false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
-        return this.documentViewService.updateDocumentView(memorandum);
+        return new RefreshElementResponse(elementId, elementName, elementProcessor.getElement(memorandum, elementName, elementId));
     }
 
     @Override

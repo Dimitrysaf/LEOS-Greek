@@ -22,7 +22,9 @@ import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -67,8 +69,8 @@ public class BillController {
                                                   @PathVariable("elementId") String elementId,
                                                   @RequestBody String elementContent) {
         try {
-            DocumentViewResponse bill = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent);
-            return ResponseEntity.ok().body(bill);
+            RefreshElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -440,6 +442,18 @@ public class BillController {
     public ResponseEntity<Object> importElements(@PathVariable("documentRef") String documentRef, @RequestBody ImportElementRequest request) {
         DocumentViewResponse view = this.billApiService.importElements(documentRef, request);
         return ResponseEntity.ok().body(view);
+    }
+
+    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors/{elementIds}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef, @PathVariable("elementIds") List<String> elementIds) {
+        try {
+            TocAndAncestorsResponse tocAncestors = this.billApiService.fetchTocAncestor(documentRef, elementIds);
+            return ResponseEntity.ok().body(tocAncestors);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get toc ancestors for bill " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for bill", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

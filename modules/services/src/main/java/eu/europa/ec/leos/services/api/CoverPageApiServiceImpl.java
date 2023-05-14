@@ -42,6 +42,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -157,7 +158,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
 
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
@@ -174,8 +175,10 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             }
 
             proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
+            String newContent = elementProcessor.getElement(proposal, elementName, elementId);
+            return new RefreshElementResponse(elementId, elementName, newContent);
         }
-        return this.documentViewService.updateDocumentView(proposal);
+        return null;
     }
 
     @Override

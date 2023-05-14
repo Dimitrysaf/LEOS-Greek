@@ -1,13 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, tap } from 'rxjs';
+import { distinctUntilChanged, filter, take, tap, withLatestFrom } from 'rxjs';
 
 import { EditElementResponse } from '@/features/akn-document/models/ckeditor';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
-import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
+import {
+  DocumentViewResponse,
+  RefreshElementResponse,
+} from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -69,6 +72,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
   }
+  //leosEditorExtension > requestToc
+  requestToc(...args) {
+    this.requestTocAndAncestors([]);
+  }
 
   // leosEditorExtension > actionHandler
   editElementAction(data: {
@@ -76,10 +83,32 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string;
     elementType: string;
   }) {
+    const promise = new Promise<void>((resolve, reject) => {
+      this.documentService.didDocumentLoadAndRender$
+        .pipe(
+          tap((loaded) => console.log('document loading : ', loaded)),
+          filter((isLoaded) => isLoaded === true),
+        )
+        .subscribe((loaded) => {
+          console.log('document loaded from observable');
+          resolve();
+        });
+    });
+
+    promise
+      .then(() => {
+        console.log('sucessfult handled edit', data);
+        this.handleEdit(data);
+      })
+      .catch((error) => {
+        console.log('handleEdit failed:', error);
+      });
+  }
+
+  handleEdit(data: { action: string; elementId: string; elementType: string }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
     this.elementUnderEdit = data.elementId;
-
     if (
       this.coEditionService.checkForCoEdition(
         'EDIT_ELEMENT',
@@ -107,13 +136,14 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
               // this.connector.getState(false).user = response.user;
               // this.connector.getState(false).permissions =
               // response.permissions;
-
               this.editElement(
                 response.elementId,
                 response.elementTagName,
                 response.element,
                 documentType,
-                process.env.NG_APP_LEOS_INSTANCE,
+                process.env.NG_APP_LEOS_INSTANCE === 'cn'
+                  ? 'COUNCIL'
+                  : 'COMISSION',
                 response.alternatives,
                 JSON.stringify(response.levelItem),
                 false,
@@ -139,7 +169,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
         .pipe(distinctUntilChanged())
         .subscribe((response) => {
           //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
-
           this.editElement(
             response.elementId,
             response.elementTagName,
@@ -166,6 +195,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementFragment: string;
     isSplit: boolean;
   }) {
+    //! this is needed
+    this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
     this.saveDocumentElement(
@@ -179,10 +210,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       this.isElementSaved = true;
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.refreshElement(
-        elemData.elementId,
-        elemData.elementType,
-        elemData.elementFragment,
+        response.elementId,
+        response.elementTagName,
+        response.elementFragment,
       );
+      this.documentService.reloadDocument();
     });
   }
 
@@ -192,9 +224,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    if (this.isElementSaved) {
-      this.documentService.reloadDocument();
-    } else {
+    if (!this.isElementSaved) {
+      //   this.documentService.reloadDocument();
+      // } else {
       this.documentService.resetDocument();
     }
     this.isElementSaved = false;
@@ -261,6 +293,15 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     );
   }
 
+  private requestTocAndAncestors(elementdIds) {
+    this.documentService
+      .fetchTocAndAncestors(elementdIds)
+      .pipe(take(1))
+      .subscribe((response) => {
+        this.receiveToc(JSON.stringify(response));
+      });
+  }
+
   // called from this.saveElement
   private saveDocumentElement(
     documentRef: string,
@@ -270,20 +311,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     isSplit: boolean,
     documentType: string,
   ) {
-    return this.http
-      .put<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
-        elementFragment,
-        { headers: { contentType: 'text' } },
-      )
-      .pipe(
-        tap(() => {
-          this.tableOfContentService.reloadToc(
-            this.documentService.documentRef,
-            this.documentService.documentType,
-          );
-        }),
-      );
+    return this.http.put<RefreshElementResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      elementFragment,
+      { headers: { contentType: 'text' } },
+    );
   }
 
   // called from this.editElementAction > dialog accept

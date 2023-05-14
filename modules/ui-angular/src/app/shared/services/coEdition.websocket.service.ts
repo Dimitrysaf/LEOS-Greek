@@ -65,8 +65,10 @@ export class CoEditionServiceWS {
     const socket = new SockJS(`${apiBaseUrl}/ws`, null, {
       transports: ['websocket', 'xhr-polling', 'jsonp-polling'],
       fallbackTransport: 'auto',
+      debug: false,
     });
     this.stompClient = Stomp.over(socket);
+    this.stompClient.debug = () => {};
 
     this.stompClient.connect({}, () => {
       while (this.subscribeQueue.length > 0) {

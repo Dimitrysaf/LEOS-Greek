@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -45,7 +46,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception;
 
-    DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception;
+    RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception;
 
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
 

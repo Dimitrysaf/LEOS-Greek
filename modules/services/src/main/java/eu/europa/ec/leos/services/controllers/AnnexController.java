@@ -23,7 +23,9 @@ import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.SwitchAnnexStructureTypeRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -68,8 +70,8 @@ public class AnnexController {
                                                    @PathVariable("elementId") String elementId,
                                                    @RequestBody String elementContent) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.saveElement(documentRef, elementId, elementName, elementContent);
-            return ResponseEntity.ok().body(annexXml);
+            RefreshElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -417,7 +419,7 @@ public class AnnexController {
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename="+jobFileName);
+            headers.set("Content-Disposition", "attachment; filename=" + jobFileName);
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for annex " + e.getMessage());
@@ -434,6 +436,18 @@ public class AnnexController {
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for annex " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while trying to get clean version for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors/{elementIds}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef, @PathVariable("elementIds") List<String> elementIds) {
+        try {
+            TocAndAncestorsResponse tocAncestors = this.annexAPIService.fetchTocAncestor(documentRef, elementIds);
+            return ResponseEntity.ok().body(tocAncestors);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get toc ancestors for annex " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
