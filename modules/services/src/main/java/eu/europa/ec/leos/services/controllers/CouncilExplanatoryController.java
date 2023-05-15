@@ -24,7 +24,9 @@ import eu.europa.ec.leos.services.api.CouncilExplanatoryApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
+import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -69,8 +71,8 @@ public class CouncilExplanatoryController {
                                                          @PathVariable("elementId") String elementId,
                                                          @RequestBody String elementContent) {
         try {
-            DocumentViewResponse explanatory = this.explanatoryApiService.saveElement(documentRef, elementId, elementName, elementContent);
-            return ResponseEntity.ok().body(explanatory);
+            RefreshElementResponse updatedElement = this.explanatoryApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting explanatory element", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -198,7 +200,7 @@ public class CouncilExplanatoryController {
         }
 
     }
-    
+
     @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
@@ -394,7 +396,7 @@ public class CouncilExplanatoryController {
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename="+jobFileName);
+            headers.set("Content-Disposition", "attachment; filename=" + jobFileName);
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for council_explanatory " + e.getMessage());
@@ -411,6 +413,18 @@ public class CouncilExplanatoryController {
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for council_explanatory " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while trying to get clean version for explanatory", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors/{elementIds}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef, @PathVariable("elementIds") List<String> elementIds) {
+        try {
+            TocAndAncestorsResponse tocAncestors = this.explanatoryApiService.fetchTocAncestor(documentRef, elementIds);
+            return ResponseEntity.ok().body(tocAncestors);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while trying to get toc ancestors for council explanatory " + e.getMessage());
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for council explanatory", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

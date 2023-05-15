@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -152,7 +153,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName, elementFragment);
@@ -164,7 +165,8 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, updatedLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
-        return this.documentViewService.updateDocumentView(explanatory);
+        String newContent = elementProcessor.getElement(explanatory, elementName, elementId);
+        return new RefreshElementResponse(elementId, elementName, newContent);
     }
 
     @Override

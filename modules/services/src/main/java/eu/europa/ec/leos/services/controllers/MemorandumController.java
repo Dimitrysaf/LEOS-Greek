@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.api.MemorandumApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -98,8 +99,8 @@ public class MemorandumController {
                                                         @PathVariable("elementId") String elementId,
                                                         @RequestBody String elementContent) {
         try {
-            DocumentViewResponse memorandum = this.memorandumApiService.saveElement(documentRef, elementId, elementName, elementContent);
-            return ResponseEntity.ok().body(memorandum);
+            RefreshElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);

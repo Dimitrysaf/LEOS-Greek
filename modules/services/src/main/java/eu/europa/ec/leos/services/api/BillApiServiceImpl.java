@@ -52,6 +52,7 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -466,7 +467,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
@@ -476,9 +477,7 @@ public class BillApiServiceImpl implements BillApiService {
         final String elementLabel = generateLabel(elementId, bill);
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-
-        if (bill != null) {
-            bill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
 
 //            Pair<byte[], Element> splittedContent = null;
 //            if (event.isSplit() && checkIfCloseElementEditor(elementTagName, event.getElementContent())) {
@@ -499,8 +498,8 @@ public class BillApiServiceImpl implements BillApiService {
 //            eventBus.post(new DocumentUpdatedEvent());
 //            documentScreen.scrollToMarkedChange(elementId);
 //            leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-        }
-        return this.documentViewService.updateDocumentView(bill);
+        String newContent = elementProcessor.getElement(updatedBill, elementName, elementId);
+        return new RefreshElementResponse(elementId, elementName, newContent);
     }
 
     @Override

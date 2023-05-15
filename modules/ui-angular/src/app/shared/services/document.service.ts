@@ -72,6 +72,7 @@ export type DocumentRefAndCategory = { ref: string; category: string };
 export class DocumentService implements OnDestroy {
   compareModeEnabled$: Observable<boolean>;
   documentView$: Observable<DocumentViewResponse | null>;
+  didDocumentLoadAndRender$: Observable<boolean>;
   versionView$: Observable<DocumentViewResponse | null>;
   versionCompareView$: Observable<string>;
   searchPaneOpen$: Observable<boolean>;
@@ -125,6 +126,7 @@ export class DocumentService implements OnDestroy {
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
+  private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -138,6 +140,7 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
   ) {
+    this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
       .pipe(filter(Boolean));
@@ -384,6 +387,7 @@ export class DocumentService implements OnDestroy {
   }
 
   reloadDocument() {
+    this.setDidDocumentLoadAndRender(false);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
   }
@@ -523,6 +527,14 @@ export class DocumentService implements OnDestroy {
     } else {
       return of(null);
     }
+  }
+
+  fetchTocAndAncestors(elementIds: string[]) {
+    return this.http.get(
+      `${apiBaseUrl}/sercured/${this.documentType}/${
+        this.documentRef
+      }/fetch-toc-ancestors/${elementIds.join(',')}`,
+    );
   }
 
   setDocumentRefAndCategory(ref: string, category: string) {
@@ -731,6 +743,10 @@ export class DocumentService implements OnDestroy {
     setAnnotationsReadOnly: (mode: AnnotateOperationMode) => void,
   ) {
     this.setAnnotationMode = setAnnotationsReadOnly;
+  }
+
+  setDidDocumentLoadAndRender(loaded: boolean) {
+    this.isDocumentLoadedBS.next(loaded);
   }
 
   private getDocumentConfig(documentRef: string, documentType: string) {
