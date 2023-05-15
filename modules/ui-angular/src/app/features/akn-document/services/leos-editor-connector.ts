@@ -321,14 +321,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
   // called from this.editElementAction > dialog accept
   private getDocumentElement(
     documentRef: string,
-    elementName: string,
     elementId: string,
+    elementName: string,
     documentType: string,
   ) {
-    //! TODO: elementid and elementname needs to be swapped, tried to fix swap them but i was causing error, need to be fixed
-    if (elementId === 'blockcontainer') elementId = 'blockContainer';
+    if (elementName === 'blockcontainer') elementName = 'blockContainer';
     return this.http.get<EditElementResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementId}/${elementName}`,
     );
   }
 

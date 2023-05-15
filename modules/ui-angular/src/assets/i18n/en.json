@@ -20,6 +20,7 @@
   "global.notifications.title.info": "Info",
   "global.notifications.title.success": "Success",
   "global.notifications.title.warning": "Warning",
+  "operation.blockcontainer.updated": "EM updated",
   "app.header.logo-alt": "{{ title }} home",
   "app.breadcrumb.home": "Home",
   "page.home.title": "Welcome to eUI!",

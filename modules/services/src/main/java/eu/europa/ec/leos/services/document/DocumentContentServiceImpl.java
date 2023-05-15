@@ -518,12 +518,24 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public XmlDocument updateDocument(XmlDocument document, byte[] xmlContent, String message) {
-        if (document instanceof Bill) {
-            document = billService.updateBill((Bill)document, xmlContent, message);
-        } else if (document instanceof Annex) {
-            document = annexService.updateAnnex((Annex) document, xmlContent, message);
-        } else {
-            LOG.error("Invalid document type");
+        switch (document.getCategory()) {
+            case BILL:
+                document = billService.updateBill((Bill) document, xmlContent, message);
+                break;
+            case MEMORANDUM:
+                document = memorandumService.updateMemorandum((Memorandum) document, xmlContent, message);
+                break;
+            case ANNEX:
+                document = annexService.updateAnnex((Annex) document, xmlContent, message);
+                break;
+            case COUNCIL_EXPLANATORY:
+                document = explanatoryService.updateExplanatory((Explanatory) document, xmlContent, message);
+                break;
+            case COVERPAGE:
+                document = proposalService.updateProposal((Proposal) document, xmlContent, message);
+                break;
+            default:
+                throw new UnsupportedOperationException("Invalid Document Type");
         }
         return document;
     }
