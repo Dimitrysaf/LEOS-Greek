@@ -325,6 +325,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string,
     documentType: string,
   ) {
+    //! TODO: elementid and elementname needs to be swapped, tried to fix swap them but i was causing error, need to be fixed
+    if (elementId === 'blockcontainer') elementId = 'blockContainer';
     return this.http.get<EditElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}`,
     );
