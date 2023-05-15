@@ -60,6 +60,9 @@
               euiBasicButton
               euiSizeS
               class=""
+              euiTooltip="{{
+                'page.editor.toc.toc-column.actions.edit' | translate
+              }}"
               (click)="handleEdit()"
               *ngIf="
                 !isEditMode &&
