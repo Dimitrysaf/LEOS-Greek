@@ -46,9 +46,9 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     this.removeEventListener?.();
   }
 
-  onVersionRevert(version: string, versionNumber: string) {
+  onVersionRevert(version: string, versionNumber: { major: number; intermediate: number; minor: number }) {
     this.translate
-      .get('page.editor.versions.restore.modal-text-version', { versionNumber })
+      .get('page.editor.versions.restore.modal-text-version', { versionNumber:`${versionNumber.major}.${versionNumber.intermediate}.${versionNumber.minor}` })
       .subscribe((res) => {
         this.versionModalText = res;
       });
