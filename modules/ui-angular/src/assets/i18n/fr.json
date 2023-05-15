@@ -261,6 +261,7 @@
   "page.editor.toc.toc-column.actions.undo": "Annuler l'action",
   "page.editor.toc.toc-column.actions.collapseAll": "Tout réduire",
   "page.editor.toc.toc-column.actions.expandAll": "Tout afficher",
+  "page.editor.toc.toc-column.actions.edit": "[FR] Edit document structure inline",
   "page.editor.drag-items.title": "Elements",
   "page.editor.toc.unsaved-changes-dialog.title": "Vous avez des changements non sauvegardés.",
   "page.editor.toc.unsaved-changes-dialog.body": "Souhaitez-vous enregistrer ces modifications avant de fermer ?",
