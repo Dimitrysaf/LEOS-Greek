@@ -314,7 +314,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     return this.http.put<RefreshElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
       elementFragment,
-      { headers: { contentType: 'text' } },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );
   }
 
@@ -369,6 +369,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     this.documentService.documentView$ = this.http.put<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementName}/${elementId}/merge-element`,
       { elementContent },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );
   }
 }
