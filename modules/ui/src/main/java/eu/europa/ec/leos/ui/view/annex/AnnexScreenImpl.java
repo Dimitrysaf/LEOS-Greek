@@ -447,6 +447,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     public void setPermissions(DocumentVO annex, boolean isClonedProposal, boolean isAnnexFromCouncil){
         boolean enableUpdate = securityContext.hasPermission(annex, LeosPermission.CAN_UPDATE);
         actionsMenuBar.setSaveVersionVisible(enableUpdate);
+        actionsMenuBar.setSwitchStructureVisible(enableUpdate);
         tableOfContentComponent.setPermissions(enableUpdate);
         searchButton.setVisible(enableUpdate);
 

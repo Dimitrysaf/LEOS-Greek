@@ -29,6 +29,7 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
     private MenuItem switchStructure;
     private MenuItem createExportPackageItem;
 
+    private boolean isSwitchStructureVisible;
     @Autowired
     public AnnexActionsMenuBar(MessageHelper messageHelper, EventBus eventBus) {
         super(messageHelper, eventBus);
@@ -39,11 +40,13 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
         LOG.debug("Building annex actions menu item...");
         mainMenuItem.removeChild(annexActionSeparator);
         mainMenuItem.removeChild(switchStructure);
-        annexActionSeparator = addCustomSeparator(messageHelper.getMessage("menu.annex.action"));
-        AnnexStructureType switchStructureType = getSwitchStructureType(event.getStructureType());
-        //Structure change
-        switchStructure = createMenuItem(messageHelper.getMessage("menu.actions.separator.structure.change." + switchStructureType.getType()),
-                selectedItem -> switchStructure(switchStructureType));
+        if(isSwitchStructureVisible) {
+            annexActionSeparator = addCustomSeparator(messageHelper.getMessage("menu.annex.action"));
+            AnnexStructureType switchStructureType = getSwitchStructureType(event.getStructureType());
+            //Structure change
+            switchStructure = createMenuItem(messageHelper.getMessage("menu.actions.separator.structure.change." + switchStructureType.getType()),
+                    selectedItem -> switchStructure(switchStructureType));
+        }
     }
     
     private void switchStructure(AnnexStructureType structureType) {
@@ -88,6 +91,10 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
 
     public void setExportPackageVisible(boolean visible) {
         createExportPackageItem.setVisible(visible);
+    }
+
+    public void setSwitchStructureVisible(boolean visible) {
+        isSwitchStructureVisible = visible;
     }
 
 }
