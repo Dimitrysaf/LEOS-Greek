@@ -3623,7 +3623,7 @@
                     </content>
                 </subparagraph>
             </level>
-            <level leos:editable="true" leos:depth="2" class="landscape" xml:id="_body__level_33" leos:deletable="false">
+            <level leos:depth="2" class="landscape" xml:id="_body__level_33" leos:deletable="false">
                 <num leos:editable="false" xml:id="_body__level_33__num">3.3.</num>
                 <heading leos:editable="false" xml:id="_body__level_33__heading">
                     <b leos:editable="false" xml:id="_body__level_33__heading__b">Estimated impact on revenue</b>
@@ -3666,9 +3666,9 @@
                                         </content>
                                     </subparagraph>
                                     <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3">
-                                        <num xml:id="_body__level_33__list__indent_2__list__indent_3__num"> </num>
+                                        <num xml:id="_body__level_33__list__indent_2__list__indent_3__num" style="float:right; padding-right:50%;"><inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__content_inline">&#x2610;</inline></num>
                                         <content xml:id="_body__level_33__list__indent_2__list__indent_3__content">
-                                            <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3__content__p">please indicate, if the revenue is assigned to expenditure lines  <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__content_inline">&#x2610;</inline></p>
+                                            <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3__content__p">please indicate, if the revenue is assigned to expenditure lines  </p>
                                         </content>
                                     </indent>
                                 </list>
@@ -3765,7 +3765,7 @@
                         <p xml:id="_body__level_33__subparagraph_6_6__content__p">For assigned revenue, specify the budget expenditure line(s) affected.</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" xml:id="_body__level_33__subparagraph_7_7">
+                <subparagraph leos:editable="true" leos:deletable="false" xml:id="_body__level_33__subparagraph_7_7">
                     <content xml:id="_body__level_33__subparagraph_7_7__content">
                         <p xml:id="_body__level_33__subparagraph_7_7__content__p">[...]</p>
                     </content>
@@ -3775,7 +3775,7 @@
                         <p xml:id="_body__level_33__subparagraph_8_8__content__p">Other remarks (e.g. method/formula used for calculating the impact on revenue or any other information).</p>
                     </content>
                 </subparagraph>
-                <subparagraph leos:editable="true" xml:id="_body__level_33__subparagraph_9">
+                <subparagraph leos:editable="true" leos:deletable="false" xml:id="_body__level_33__subparagraph_9">
                     <content xml:id="_body__level_33__subparagraph_9__content">
                         <p xml:id="_body__level_33__subparagraph_9__content__p">[...]</p>
                     </content>
