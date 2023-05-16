@@ -7,10 +7,9 @@
   <div class="d-flex flex-column">
     <span *ngFor="let item of coEditionsVO | keyvalue">
       <ng-container *ngFor="let ite of item.value">
+        <a href="mailto:{{ ite.userEmail }}">{{ ite.userName }}</a>
         {{
-          ite.userName +
-            ' ' +
-            ('page.editor.co-edition-detected.body.part2' | translate) +
+          ('page.editor.co-edition-detected.body.part2' | translate) +
             ' ' +
             (ite.editionTime | date)
         }}
@@ -18,6 +17,7 @@
     </span>
   </div>
   <p>{{ 'page.editor.co-edition-detected.body.part3' | translate }}</p>
+  <p>{{ 'page.editor.co-edition-detected.body.part4' | translate }}</p>
 </div>
 <!-- <eui-dialog-footer>
     <div class="app-dialog-footer-content">
