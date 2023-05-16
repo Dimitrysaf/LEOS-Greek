@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.ui.event.CreateMilestoneEvent;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.web.ui.window.AbstractWindow;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,9 +174,9 @@ public class MilestoneWindow extends AbstractWindow {
         createButton.addStyleName("primary");
         createButton.addClickListener(event -> {
             if (titleBinder.validate().isOk()) {
-                String savedTitle = titleBinder.getBean().getTitle();
-                LOG.debug("Milestone creation titled '{}' has been requested.", savedTitle.trim());
-                eventBus.post(new CreateMilestoneEvent(savedTitle.trim()));
+                String savedTitle = StringEscapeUtils.escapeXml10(titleBinder.getBean().getTitle()).trim();
+                LOG.debug("Milestone creation titled '{}' has been requested.", savedTitle);
+                eventBus.post(new CreateMilestoneEvent(savedTitle));
                 close();
             }
         });
