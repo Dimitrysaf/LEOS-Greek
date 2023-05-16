@@ -74,6 +74,18 @@ define(function leosTrackChangesPluginModule(require) {
                     command: "rejectOneChange",
                     group: "trackChangesGroup"
                 });
+                editor.addMenuItem( "acceptSelectedChangesItem", {
+                    label: "Accept selected changes",
+                    icon: this.path + "icons/ok.png",
+                    command: "acceptSelectedChanges",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem( "rejectSelectedChangesItem", {
+                    label: "Reject selected changes",
+                    icon: this.path + "icons/remove.png",
+                    command: "rejectSelectedChanges",
+                    group: "trackChangesGroup"
+                });
                 editor.addCommand("acceptOneChange", {
                     canUndo: true,
                     exec: function(editor) {
@@ -86,12 +98,38 @@ define(function leosTrackChangesPluginModule(require) {
                         actions.rejectChange(editor, editor.getSelection().getStartElement());
                     }
                 });
+                editor.addCommand("acceptSelectedChanges", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        for (var i = 0; tcElements.length > i; i++) {
+                            actions.acceptChange(editor, tcElements[i]);
+                        }
+                    }
+                });
+                editor.addCommand("rejectSelectedChanges", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        for (var i = 0; tcElements.length > i; i++) {
+                            actions.rejectChange(editor, tcElements[i]);
+                        }
+                    }
+                });
                 editor.contextMenu.addListener( function(element) {
-                    var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
-                    if (tcElement && editor.getSelection().isCollapsed()) {
-                        editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
-                        return { acceptOneChangeItem: canUserAcceptChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                            rejectOneChangeItem: canUserRejectChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                    if (editor.getSelection().isCollapsed()) {
+                        var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                        if (tcElement) {
+                            editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
+                            return { acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                        }
+                    } else {
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        if (tcElements.length > 0) {
+                            return { acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                        }
                     }
                 });
             }
@@ -841,6 +879,21 @@ define(function leosTrackChangesPluginModule(require) {
                 element.getNext().remove();
             }
             this.setToEditablePosition(editor, element, moveTo);
+        },
+
+        findElementsInSelection: function(selection) {
+            var selectedTcElements = [];
+            var range = selection.getRanges()[0];
+            if ((typeof(range.getCommonAncestor) !== undefined) && (typeof(range.getCommonAncestor().getElementsByTag) !== undefined)) {
+                var allTcElementsWithinRangeParent = range.getCommonAncestor().getElementsByTag(this.TRACKCHANGES_ELEMENT);
+                for (var i = 0, tcElement; allTcElementsWithinRangeParent.count() > i; i++) {
+                    tcElement = allTcElementsWithinRangeParent.getItem(i);
+                    if ((selection.getNative().containsNode !== undefined) && selection.getNative().containsNode(tcElement.$,true)) {
+                        selectedTcElements.push(tcElement);
+                    }
+                }
+            }
+            return selectedTcElements;
         }
 
     };
