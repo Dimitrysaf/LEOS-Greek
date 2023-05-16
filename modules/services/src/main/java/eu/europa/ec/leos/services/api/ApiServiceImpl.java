@@ -292,7 +292,7 @@ public class ApiServiceImpl implements ApiService {
         String jobFileName = getJobFileName(proposalRef);
         File packageFile;
         try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportLW(ExportOptions.Output.WORD));
+            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId());
             return FileUtils.readFileToByteArray(packageFile);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
