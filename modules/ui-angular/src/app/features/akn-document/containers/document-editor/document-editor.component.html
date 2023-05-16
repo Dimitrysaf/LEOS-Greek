@@ -35,6 +35,12 @@
         isCollapsible
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
         (collapsed)="onToggleTOCColumnCollapsed()"
+        [title]="
+          (this.isTOCColumnCollapsed
+            ? 'global.actions.show'
+            : 'global.actions.hide'
+          ) | translate
+        "
       >
         <eui-page-column-header-right-content>
           <div class="d-flex flex-row align-items-center">

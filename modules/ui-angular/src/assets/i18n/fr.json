@@ -16,6 +16,8 @@
   "global.actions.next": "Suivant",
   "global.actions.create": "Créer",
   "global.actions.save-close": "Save and close",
+  "global.actions.show": "[FR] Show",
+  "global.actions.hide": "[FR] Hide",
   "operation.blockcontainer.updated": "[FR] EM updated",
   "app.header.logo-alt": "accueil {{ title }}",
   "page.home.title": "Bienvenue dans eUI!",
