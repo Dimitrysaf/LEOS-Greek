@@ -84,6 +84,25 @@ eui-icon-svg > svg > use {
   font-family: Vaadin-Icons;
 }
 
+.cke_reset_all .cke_dialog_ui_checkbox {
+  position: relative;
+}
+
+.cke_reset_all .cke_dialog_ui_checkbox .cke_dialog_ui_checkbox_input {
+  clip: unset !important;
+  font-size: 1.3rem;
+  height: unset !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+}
+
+.cke_reset_all
+  .cke_dialog_ui_checkbox
+  .cke_dialog_ui_checkbox_input
+  + label::after {
+  font-size: 1.3rem;
+}
+
 .eui-footer.leos-footer-content {
   font-size: 0.8rem;
   justify-content: center;
