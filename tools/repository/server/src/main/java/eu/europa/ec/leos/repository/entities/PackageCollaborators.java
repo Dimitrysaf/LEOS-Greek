@@ -16,11 +16,8 @@ package eu.europa.ec.leos.repository.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,57 +25,49 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "DOCUMENT_PROPERTIES")
+@Table(name = "PACKAGE_COLLABORATORS")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DocumentProperties.findAll", query = "SELECT d FROM DocumentProperties d"),
-    @NamedQuery(name = "DocumentProperties.findById", query = "SELECT d FROM DocumentProperties d WHERE d.id = :id"),
-    @NamedQuery(name = "DocumentProperties.findByPropertyName", query = "SELECT d FROM DocumentProperties d WHERE d.propertyName = :propertyName"),
-    @NamedQuery(name = "DocumentProperties.findByAuditCBy", query = "SELECT d FROM DocumentProperties d WHERE d.auditCBy = :auditCBy"),
-    @NamedQuery(name = "DocumentProperties.findByAuditCDate", query = "SELECT d FROM DocumentProperties d WHERE d.auditCDate = :auditCDate"),
-    @NamedQuery(name = "DocumentProperties.findByAuditLastMBy", query = "SELECT d FROM DocumentProperties d WHERE d.auditLastMBy = :auditLastMBy"),
-    @NamedQuery(name = "DocumentProperties.findByAuditLastMDate", query = "SELECT d FROM DocumentProperties d WHERE d.auditLastMDate = :auditLastMDate")})
-public class DocumentProperties implements Serializable {
+        @NamedQuery(name = "PackageCollaborators.findAll", query = "SELECT p FROM PackageCollaborators p"),
+        @NamedQuery(name = "PackageCollaborators.findById", query = "SELECT p FROM PackageCollaborators p WHERE p.id = :id"),
+        @NamedQuery(name = "PackageCollaborators.findByAuditCBy", query = "SELECT p FROM PackageCollaborators p WHERE p.auditCBy = :auditCBy"),
+        @NamedQuery(name = "PackageCollaborators.findByAuditCDate", query = "SELECT p FROM PackageCollaborators p WHERE p.auditCDate = :auditCDate"),
+        @NamedQuery(name = "PackageCollaborators.findByAuditLastMBy", query = "SELECT p FROM PackageCollaborators p WHERE p.auditLastMBy = :auditLastMBy"),
+        @NamedQuery(name = "PackageCollaborators.findByAuditLastMDate", query = "SELECT p FROM PackageCollaborators p WHERE p.auditLastMDate = :auditLastMDate")})
+public class PackageCollaborators implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
     private BigDecimal id;
-    @Column(name = "PROPERTY_NAME", nullable = false)
-    private String propertyName;
-    @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
+    @Column(name = "AUDIT_C_BY")
     private String auditCBy;
-    @Column(name = "AUDIT_C_DATE", nullable = false)
+    @Column(name = "AUDIT_C_DATE")
     private LocalDateTime auditCDate;
-    @Column(name = "AUDIT_LAST_M_BY", length = 30)
+    @Column(name = "AUDIT_LAST_M_BY")
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "propertyId")
-    private Collection<DocumentPropertyValues> documentPropertyValuesCollection;
-    @JoinColumn(name = "DOC_CATEGORY_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DocumentCategories docCategoryId;
+    @JoinColumn(name = "COLLABORATOR_ID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private Collaborators collaboratorId;
+    @JoinColumn(name = "PACKAGE_ID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private Package packageId;
 
-    public DocumentProperties() {
+    public PackageCollaborators() {
     }
 
-    public DocumentProperties(BigDecimal id) {
+    public PackageCollaborators(BigDecimal id) {
         this.id = id;
-    }
-
-    public DocumentProperties(BigDecimal id, String propertyName, String auditCBy, LocalDateTime auditCDate) {
-        this.id = id;
-        this.propertyName = propertyName;
-        this.auditCBy = auditCBy;
-        this.auditCDate = auditCDate;
     }
 
     public BigDecimal getId() {
@@ -87,14 +76,6 @@ public class DocumentProperties implements Serializable {
 
     public void setId(BigDecimal id) {
         this.id = id;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
     }
 
     public String getAuditCBy() {
@@ -129,21 +110,20 @@ public class DocumentProperties implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
-    @XmlTransient
-    public Collection<DocumentPropertyValues> getDocumentPropertyValuesCollection() {
-        return documentPropertyValuesCollection;
+    public Collaborators getCollaboratorId() {
+        return collaboratorId;
     }
 
-    public void setDocumentPropertyValuesCollection(Collection<DocumentPropertyValues> documentPropertyValuesCollection) {
-        this.documentPropertyValuesCollection = documentPropertyValuesCollection;
+    public void setCollaboratorId(Collaborators collaboratorId) {
+        this.collaboratorId = collaboratorId;
     }
 
-    public DocumentCategories getDocCategoryId() {
-        return docCategoryId;
+    public Package getPackageId() {
+        return packageId;
     }
 
-    public void setDocCategoryId(DocumentCategories docCategoryId) {
-        this.docCategoryId = docCategoryId;
+    public void setPackageId(Package packageId) {
+        this.packageId = packageId;
     }
 
     @Override
@@ -156,10 +136,10 @@ public class DocumentProperties implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DocumentProperties)) {
+        if (!(object instanceof PackageCollaborators)) {
             return false;
         }
-        DocumentProperties other = (DocumentProperties) object;
+        PackageCollaborators other = (PackageCollaborators) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -168,7 +148,7 @@ public class DocumentProperties implements Serializable {
 
     @Override
     public String toString() {
-        return "eu.europa.ec.leos.repository.DocumentProperties[ id=" + id + " ]";
+        return "eu.europa.ec.leos.repository.entities.PackageCollaborators[ id=" + id + " ]";
     }
-    
+
 }

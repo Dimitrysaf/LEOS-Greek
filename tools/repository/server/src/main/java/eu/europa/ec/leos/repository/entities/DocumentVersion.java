@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -80,6 +80,8 @@ public class DocumentVersion implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "IS_IMMUTABLE")
     private Boolean isImmutable;
+    @Column(name = "COMMENTS")
+    private String comments;
     @Column(name = "DOCUMENT_ID", precision = 22, scale = 0)
     private BigDecimal documentId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "versionId")
@@ -205,6 +207,14 @@ public class DocumentVersion implements Serializable {
 
     public void setDocumentId(BigDecimal documentId) {
         this.documentId = documentId;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     @XmlTransient

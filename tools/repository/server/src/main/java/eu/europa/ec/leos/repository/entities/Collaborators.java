@@ -17,42 +17,49 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
-@Table(name = "DOCUMENT_PROPERTIES")
+@Table(name = "COLLABORATORS")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DocumentProperties.findAll", query = "SELECT d FROM DocumentProperties d"),
-    @NamedQuery(name = "DocumentProperties.findById", query = "SELECT d FROM DocumentProperties d WHERE d.id = :id"),
-    @NamedQuery(name = "DocumentProperties.findByPropertyName", query = "SELECT d FROM DocumentProperties d WHERE d.propertyName = :propertyName"),
-    @NamedQuery(name = "DocumentProperties.findByAuditCBy", query = "SELECT d FROM DocumentProperties d WHERE d.auditCBy = :auditCBy"),
-    @NamedQuery(name = "DocumentProperties.findByAuditCDate", query = "SELECT d FROM DocumentProperties d WHERE d.auditCDate = :auditCDate"),
-    @NamedQuery(name = "DocumentProperties.findByAuditLastMBy", query = "SELECT d FROM DocumentProperties d WHERE d.auditLastMBy = :auditLastMBy"),
-    @NamedQuery(name = "DocumentProperties.findByAuditLastMDate", query = "SELECT d FROM DocumentProperties d WHERE d.auditLastMDate = :auditLastMDate")})
-public class DocumentProperties implements Serializable {
+        @NamedQuery(name = "Collaborators.findAll", query = "SELECT c FROM Collaborators c"),
+        @NamedQuery(name = "Collaborators.findById", query = "SELECT c FROM Collaborators c WHERE c.id = :id"),
+        @NamedQuery(name = "Collaborators.findByCollaboratorName", query = "SELECT c FROM Collaborators c WHERE c.collaboratorName = :collaboratorName"),
+        @NamedQuery(name = "Collaborators.findByRole", query = "SELECT c FROM Collaborators c WHERE c.role = :role"),
+        @NamedQuery(name = "Collaborators.findByOrganization", query = "SELECT c FROM Collaborators c WHERE c.organization = :organization"),
+        @NamedQuery(name = "Collaborators.findByAuditCBy", query = "SELECT c FROM Collaborators c WHERE c.auditCBy = :auditCBy"),
+        @NamedQuery(name = "Collaborators.findByAuditCDate", query = "SELECT c FROM Collaborators c WHERE c.auditCDate = :auditCDate"),
+        @NamedQuery(name = "Collaborators.findByAuditLastMBy", query = "SELECT c FROM Collaborators c WHERE c.auditLastMBy = :auditLastMBy"),
+        @NamedQuery(name = "Collaborators.findByAuditLastMDate", query = "SELECT c FROM Collaborators c WHERE c.auditLastMDate = :auditLastMDate")})
+public class Collaborators implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
     private BigDecimal id;
-    @Column(name = "PROPERTY_NAME", nullable = false)
-    private String propertyName;
+    @Column(name = "COLLABORATOR_NAME", nullable = false, length = 100)
+    private String collaboratorName;
+    @Column(name = "ROLE_ID", nullable = false, length = 100)
+    private String role;
+    @Column(name = "ORGANIZATION", nullable = false, length = 100)
+    private String organization;
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
     @Column(name = "AUDIT_C_DATE", nullable = false)
@@ -61,24 +68,21 @@ public class DocumentProperties implements Serializable {
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "propertyId")
-    private Collection<DocumentPropertyValues> documentPropertyValuesCollection;
-    @JoinColumn(name = "DOC_CATEGORY_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DocumentCategories docCategoryId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collaboratorId")
+    private Collection<PackageCollaborators> packageCollaboratorsCollection;
 
-    public DocumentProperties() {
+    public Collaborators() {
     }
 
-    public DocumentProperties(BigDecimal id) {
+    public Collaborators(BigDecimal id) {
         this.id = id;
     }
 
-    public DocumentProperties(BigDecimal id, String propertyName, String auditCBy, LocalDateTime auditCDate) {
+    public Collaborators(BigDecimal id, String collaboratorName, String role, String organization) {
         this.id = id;
-        this.propertyName = propertyName;
-        this.auditCBy = auditCBy;
-        this.auditCDate = auditCDate;
+        this.collaboratorName = collaboratorName;
+        this.role = role;
+        this.organization = organization;
     }
 
     public BigDecimal getId() {
@@ -89,12 +93,28 @@ public class DocumentProperties implements Serializable {
         this.id = id;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public String getCollaboratorName() {
+        return collaboratorName;
     }
 
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setCollaboratorName(String collaboratorName) {
+        this.collaboratorName = collaboratorName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public String getAuditCBy() {
@@ -130,20 +150,12 @@ public class DocumentProperties implements Serializable {
     }
 
     @XmlTransient
-    public Collection<DocumentPropertyValues> getDocumentPropertyValuesCollection() {
-        return documentPropertyValuesCollection;
+    public Collection<PackageCollaborators> getPackageCollaboratorsCollection() {
+        return packageCollaboratorsCollection;
     }
 
-    public void setDocumentPropertyValuesCollection(Collection<DocumentPropertyValues> documentPropertyValuesCollection) {
-        this.documentPropertyValuesCollection = documentPropertyValuesCollection;
-    }
-
-    public DocumentCategories getDocCategoryId() {
-        return docCategoryId;
-    }
-
-    public void setDocCategoryId(DocumentCategories docCategoryId) {
-        this.docCategoryId = docCategoryId;
+    public void setPackageCollaboratorsCollection(Collection<PackageCollaborators> packageCollaboratorsCollection) {
+        this.packageCollaboratorsCollection = packageCollaboratorsCollection;
     }
 
     @Override
@@ -156,10 +168,10 @@ public class DocumentProperties implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DocumentProperties)) {
+        if (!(object instanceof Collaborators)) {
             return false;
         }
-        DocumentProperties other = (DocumentProperties) object;
+        Collaborators other = (Collaborators) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -168,7 +180,7 @@ public class DocumentProperties implements Serializable {
 
     @Override
     public String toString() {
-        return "eu.europa.ec.leos.repository.DocumentProperties[ id=" + id + " ]";
+        return "eu.europa.ec.leos.repository.entities.Collaborators[ id=" + id + " ]";
     }
-    
+
 }

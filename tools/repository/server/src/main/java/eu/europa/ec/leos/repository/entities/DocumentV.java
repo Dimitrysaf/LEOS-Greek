@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DocumentV.findByUniqueId", query = "SELECT d FROM DocumentV d WHERE d.uniqueId = :uniqueId"),
     @NamedQuery(name = "DocumentV.findByDocumentId", query = "SELECT d FROM DocumentV d WHERE d.documentId = :documentId"),
     @NamedQuery(name = "DocumentV.findByPackageId", query = "SELECT d FROM DocumentV d WHERE d.packageId = :packageId"),
+    @NamedQuery(name = "DocumentV.findByVersionId", query = "SELECT d FROM DocumentV d WHERE d.versionId = :versionId"),
     @NamedQuery(name = "DocumentV.findByDocObjectId", query = "SELECT d FROM DocumentV d WHERE d.docObjectId = :docObjectId"),
     @NamedQuery(name = "DocumentV.findByCategoryId", query = "SELECT d FROM DocumentV d WHERE d.categoryId = :categoryId"),
     @NamedQuery(name = "DocumentV.findByCategoryCode", query = "SELECT d FROM DocumentV d WHERE d.categoryCode = :categoryCode"),
@@ -117,6 +118,8 @@ public class DocumentV implements Serializable {
     private LocalDateTime docAuditLastMDate;
     @Column(name = "DOC_AUDIT_LAST_M_BY", updatable = false)
     private String docAuditLastMBy;
+    @Column(name = "VERSION_ID", updatable = false)
+    private BigDecimal versionId;
     @Column(name = "VERSION_LABEL", updatable = false)
     private String versionLabel;
     @Column(name = "VERSION_SERIES_ID", updatable = false)
@@ -131,9 +134,11 @@ public class DocumentV implements Serializable {
     private Boolean isMajorVersion;
     @Column(name = "IS_VERSION_SERIES_CHECKED_OUT", updatable = false)
     private Boolean isVersionSeriesCheckedOut;
+    @Column(name = "COMMENTS", updatable = false)
+    private String comments;
     @Lob
     @Column(name = "CONTENT", updatable = false)
-    private byte[] content;
+    private String content;
     @Column(name = "ACT_TYPE", updatable = false)
     private String actType;
     @Column(name = "DOC_PURPOSE", updatable = false)
@@ -141,7 +146,7 @@ public class DocumentV implements Serializable {
     @Column(name = "DOC_TYPE", updatable = false)
     private String docType;
     @Column(name = "EEA_RELEVANCE", updatable = false)
-    private BigDecimal eeaRelevance;
+    private Boolean eeaRelevance;
     @Column(name = "TEMPLATE", updatable = false)
     private String template;
     @Column(name = "TITLE", updatable = false)
@@ -174,6 +179,14 @@ public class DocumentV implements Serializable {
         this.packageId = packageId;
     }
 
+    public BigDecimal getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(BigDecimal versionId) {
+        this.versionId = versionId;
+    }
+
     public BigDecimal getDocObjectId() {
         return docObjectId;
     }
@@ -204,6 +217,14 @@ public class DocumentV implements Serializable {
 
     public void setCategoryDesc(String categoryDesc) {
         this.categoryDesc = categoryDesc;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getName() {
@@ -390,11 +411,11 @@ public class DocumentV implements Serializable {
         this.isVersionSeriesCheckedOut = isVersionSeriesCheckedOut;
     }
 
-    public byte[] getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(byte[] content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -422,11 +443,11 @@ public class DocumentV implements Serializable {
         this.docType = docType;
     }
 
-    public BigDecimal getEeaRelevance() {
+    public Boolean getEeaRelevance() {
         return eeaRelevance;
     }
 
-    public void setEeaRelevance(BigDecimal eeaRelevance) {
+    public void setEeaRelevance(Boolean eeaRelevance) {
         this.eeaRelevance = eeaRelevance;
     }
 

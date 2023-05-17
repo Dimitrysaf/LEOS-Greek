@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -14,7 +14,13 @@
 package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.DocumentContent;
+import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DocumentContentRepository extends JpaRepository<DocumentContent, Long> {
+import java.math.BigDecimal;
+import java.util.Optional;
+
+public interface DocumentContentRepository extends JpaRepository<DocumentContent, BigDecimal> {
+
+    Optional<DocumentContent> findDocumentContentByVersionId(DocumentVersion version);
 }

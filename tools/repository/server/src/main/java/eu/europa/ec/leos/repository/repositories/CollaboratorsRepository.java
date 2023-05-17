@@ -11,16 +11,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.repositories;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import eu.europa.ec.leos.repository.entities.Collaborators;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public class ServletInitializer extends SpringBootServletInitializer {
+import java.math.BigDecimal;
+import java.util.Optional;
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(Application.class);
-	}
-
+public interface CollaboratorsRepository extends JpaRepository<Collaborators, BigDecimal> {
+    @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2", nativeQuery = true)
+    Optional<Collaborators> findCollaboratorByNameAndByRole(String collaboratorName, String role);
 }
