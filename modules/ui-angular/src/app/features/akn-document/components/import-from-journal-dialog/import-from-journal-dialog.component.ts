@@ -10,6 +10,7 @@ import { DocType } from '@/features/akn-document/models/import.model';
 import { ImportService } from '@/features/akn-document/services/import.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { TableOfContentService } from '../../services/tableOfContent.service';
 
 @Component({
   selector: 'app-import-from-journal-dialog',
@@ -37,6 +38,7 @@ export class ImportFromJournalDialogComponent implements OnInit {
     private importService: ImportService,
     private leos: LeosLegacyService,
     private documentService: DocumentService,
+    private tableOfContentService: TableOfContentService,
     private uxAppShellService: UxAppShellService,
     private translateService: TranslateService,
   ) {}
@@ -79,6 +81,7 @@ export class ImportFromJournalDialogComponent implements OnInit {
     this.importService.importElements(params).subscribe({
       next: () => {
         this.documentService.reloadDocument();
+        this.tableOfContentService.reload();
         this.showSuccessMessage(elementIds);
         this.close();
       },

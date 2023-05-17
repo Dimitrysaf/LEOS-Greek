@@ -351,32 +351,15 @@
       </div>
       <!-- Delete -->
       <button
-        *ngIf="
-          this.selectedNode.childItems &&
-          this.selectedNode.childItems.length > 0
-        "
         euiButton
         euiSize2XS
-        euiDanger
-        class="align-self-end mt-1"
-        (click)="onTocDeleteWithChildren()"
-        [disabled]="!selectedNode.tocItem.deletable"
-      >
-        {{ 'global.actions.delete' | translate }}
-      </button>
-      <button
-        *ngIf="
-          this.selectedNode.childItems &&
-          this.selectedNode.childItems.length === 0
-        "
-        euiButton
-        euiSize2XS
-        euiDanger
+        [euiDanger]="deleteType === 'delete'"
+        [euiSecondary]="deleteType === 'undelete'"
         class="align-self-end mt-1"
         (click)="onTocRemove(this.selectedNode)"
-        [disabled]="!selectedNode.tocItem.deletable"
+        [disabled]="!isDeleteButtonEnabled"
       >
-        {{ 'global.actions.delete' | translate }}
+        {{ deleteButtonCaption }}
       </button>
     </div>
   </eui-card-content>
@@ -388,5 +371,5 @@
   [description]="
     'toc.edit.window.item.selecdted.delete-dialog.desc' | translate
   "
-  (confirmDeletion)="onTocRemove(this.selectedNode)"
+  (confirmDeletion)="this.handleTocRemove.emit()"
 ></app-confirm-delete-dialog>

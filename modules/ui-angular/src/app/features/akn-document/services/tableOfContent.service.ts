@@ -69,18 +69,24 @@ export class TableOfContentService implements OnDestroy {
     this.documentRefAndCategoryBS.next({ ref, category });
   }
 
-  reload(documentRef: string, documentType: string) {
-    this.setDocumentRefAndCategory(documentRef, documentType);
+  reload() {
+    const ref = this.documentRefAndCategoryBS.value.ref;
+    const category = this.documentRefAndCategoryBS.value.category;
+    this.setDocumentRefAndCategory(ref, category);
   }
 
-  reloadTocItems(documentRef: string, documentType: string) {
-    this.getTocItems(documentRef, documentType)
+  reloadTocItems() {
+    const ref = this.documentRefAndCategoryBS.value.ref;
+    const category = this.documentRefAndCategoryBS.value.category;
+    this.getTocItems(ref, category)
       .pipe(take(1))
       .subscribe((tocItems) => this.tocItemsBS.next(tocItems));
   }
 
-  reloadToc(documentRef: string, documentType: string) {
-    this.getToc(documentRef, documentType)
+  reloadToc() {
+    const ref = this.documentRefAndCategoryBS.value.ref;
+    const category = this.documentRefAndCategoryBS.value.category;
+    this.getToc(ref, category)
       .pipe(take(1))
       .subscribe((toc) => this.tocBS.next(toc));
   }

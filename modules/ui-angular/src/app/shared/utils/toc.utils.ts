@@ -1,8 +1,45 @@
+import { cloneDeep, remove } from 'lodash-es';
+
+import {
+  ADD,
+  ARTICLE,
+  BLOCK,
+  BULLET_NUM,
+  CHAPTER,
+  CN,
+  CROSSHEADING,
+  DELETE,
+  DIVISION,
+  EC,
+  ELEMENTS_TO_REMOVE_FROM_CONTENT,
+  INDENT,
+  LEVEL,
+  LIST,
+  MOVE_FROM,
+  MOVE_TO,
+  PARAGRAPH,
+  PART,
+  POINT,
+  SECTION,
+  SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
+  SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
+  SUBPARAGRAPH,
+  TEMP_PREFIX,
+  TITLE,
+  UNDELETE,
+} from '../constants/toc.constant';
 import { NumberingConfig, NumberingType } from '../models';
 import { AknTag, TableOfContentItemVO, TocItem } from '../models/toc.model';
 
-const BULLET_NUM = 'BULLET_NUM';
-
+export const removeNode = (
+  root: TableOfContentItemVO[],
+  target: TableOfContentItemVO,
+) => {
+  const parentNode = findNodeById(root, target.parentItem);
+  parentNode.childItems = parentNode.childItems.filter(
+    (n) => target.id !== n.id,
+  );
+};
 export const getNumberingTypeByTagNameAndTocItemType = (
   tocItems: TocItem[],
   tocItemType: string,
@@ -47,11 +84,11 @@ export const convertArticle = (
   updateTocItemsNumberingConfig(
     tocItems,
     article,
-    getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, 'POINT'),
+    getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, POINT),
     getNumberingTypeByTagNameAndTocItemType(
       tocItems,
       newValue,
-      'POINT',
+      POINT,
     ) as NumberingType,
   );
 };
@@ -185,17 +222,17 @@ export const checkPositionAfterValidationExplanatory = (
   position: string,
 ) => {
   switch (nodeDragged.tocItem.aknTag) {
-    case 'PART': {
+    case PART: {
       if (
         (
           [
-            'BLOCK',
-            'LEVEL',
-            'PART',
-            'CHAPTER',
-            'DIVISION',
-            'CROSS_HEADING',
-            'PARAGRAPH',
+            BLOCK,
+            LEVEL,
+            PART,
+            CHAPTER,
+            DIVISION,
+            CROSSHEADING,
+            PARAGRAPH,
           ] as AknTag[]
         ).includes(nodeTarget.tocItem.aknTag)
       ) {
@@ -203,36 +240,29 @@ export const checkPositionAfterValidationExplanatory = (
       }
       return position;
     }
-    case 'TITLE': {
+    case TITLE: {
       if (
         (
-          [
-            'BLOCK',
-            'CHAPTER',
-            'DIVISION',
-            'CROSS_HEADING',
-            'PARAGRAPH',
-            'LEVEL',
-          ] as AknTag[]
+          [BLOCK, CHAPTER, DIVISION, CROSSHEADING, PARAGRAPH, LEVEL] as AknTag[]
         ).includes(nodeTarget.tocItem.aknTag)
       )
         return 'AFTER';
-      if ((['PART'] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
+      if (([PART] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
         return position;
       }
       return position;
     }
-    case 'CHAPTER': {
+    case CHAPTER: {
       if (
         (
           [
-            'BLOCK',
-            'LEVEL',
-            'CHAPTER',
-            'DIVISION',
-            'CROSS_HEADING',
-            'POINT',
-            'PARAGRAPH',
+            BLOCK,
+            LEVEL,
+            CHAPTER,
+            DIVISION,
+            CROSSHEADING,
+            POINT,
+            PARAGRAPH,
           ] as AknTag[]
         ).includes(nodeTarget.tocItem.aknTag)
       ) {
@@ -240,36 +270,28 @@ export const checkPositionAfterValidationExplanatory = (
       }
       return position;
     }
-    case 'SECTION': {
+    case SECTION: {
       if (
         (
-          [
-            'BLOCK',
-            'LEVEL',
-            'DIVISION',
-            'CROSS_HEADING',
-            'LEVEL',
-            'PARAGRAPH',
-            'SECTION',
-          ] as AknTag[]
+          [BLOCK, LEVEL, DIVISION, CROSSHEADING, PARAGRAPH, SECTION] as AknTag[]
         ).includes(nodeTarget.tocItem.aknTag)
       )
         return 'AFTER';
       return position;
     }
-    case 'DIVISION': {
+    case DIVISION: {
       if (
         (
           [
-            'BLOCK',
-            'LEVEL',
-            'PART',
-            'CHAPTER',
-            'DIVISION',
-            'CROSS_HEADING',
-            'POINT',
-            'SECTION',
-            'PARAGRAPH',
+            BLOCK,
+            LEVEL,
+            PART,
+            CHAPTER,
+            DIVISION,
+            CROSSHEADING,
+            POINT,
+            SECTION,
+            PARAGRAPH,
           ] as AknTag[]
         ).includes(nodeTarget.tocItem.aknTag)
       ) {
@@ -277,24 +299,34 @@ export const checkPositionAfterValidationExplanatory = (
       }
       return position;
     }
-    case 'CROSS_HEADING': {
+    case CROSSHEADING: {
       if (
-        (['DIVISION', 'PARAGRAPH'] as AknTag[]).includes(
-          nodeTarget.tocItem.aknTag,
-        )
+        ([DIVISION, PARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag)
       )
         return 'AFTER';
       return position;
     }
-    case 'LEVEL': {
+    case LEVEL: {
+      if (
+        (
+          [DIVISION, CROSSHEADING, LEVEL, PARAGRAPH, BLOCK] as AknTag[]
+        ).includes(nodeTarget.tocItem.aknTag)
+      ) {
+        return 'AFTER';
+      }
+      return position;
+    }
+    case PARAGRAPH: {
       if (
         (
           [
-            'DIVISON',
-            'CROSS_HEADING',
-            'LEVEL',
-            'PARAGRAPH',
-            'BLOCK',
+            BLOCK,
+            PART,
+            DIVISION,
+            LEVEL,
+            CROSSHEADING,
+            LEVEL,
+            PARAGRAPH,
           ] as AknTag[]
         ).includes(nodeTarget.tocItem.aknTag)
       ) {
@@ -302,27 +334,9 @@ export const checkPositionAfterValidationExplanatory = (
       }
       return position;
     }
-    case 'PARAGRAPH': {
+    case SUBPARAGRAPH: {
       if (
-        (
-          [
-            'BLOCK',
-            'PART',
-            'DIVISION',
-            'LEVEL',
-            'CROSS_HEADING',
-            'LEVEL',
-            'PARAGRAPH',
-          ] as AknTag[]
-        ).includes(nodeTarget.tocItem.aknTag)
-      ) {
-        return 'AFTER';
-      }
-      return position;
-    }
-    case 'SUBPARAGRAPH': {
-      if (
-        (['DIVISION', 'SUBPARAGRAPH'] as AknTag[]).includes(
+        ([DIVISION, SUBPARAGRAPH] as AknTag[]).includes(
           nodeTarget.tocItem.aknTag,
         ) ||
         nodeTarget.tocItem.numberingType === BULLET_NUM
@@ -331,15 +345,15 @@ export const checkPositionAfterValidationExplanatory = (
       }
       return position;
     }
-    case 'POINT': {
-      if ((['SUBPARAGRAPH'] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
+    case POINT: {
+      if (([SUBPARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag)) {
         return 'AFTER';
       }
       return position;
     }
     case 'INDENT': {
       if (
-        (['SUBPARAGRAPH'] as AknTag[]).includes(nodeTarget.tocItem.aknTag) &&
+        ([SUBPARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag) &&
         nodeDragged.tocItem.numberingType === BULLET_NUM
       ) {
         return 'AFTER';
@@ -364,50 +378,45 @@ export const checkPositionAfterValidation = (
       if (['RECITAL'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       break;
     }
-    case 'PART': {
-      if (['PART'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+    case PART: {
+      if ([PART].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
       return position;
     }
-    case 'TITLE': {
-      if (['TITLE', 'PART'].includes(nodeDragged.tocItem.aknTag))
+    case TITLE: {
+      if ([TITLE, PART].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      return position;
+    }
+    case CHAPTER: {
+      if ([CHAPTER, PART, TITLE].includes(nodeDragged.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
-    case 'CHAPTER': {
-      if (['CHAPTER', 'PART', 'TITLE'].includes(nodeDragged.tocItem.aknTag))
+    case SECTION: {
+      if ([SECTION, PART, TITLE, CHAPTER].includes(nodeDragged.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
-    case 'SECTION': {
+    case ARTICLE: {
       if (
-        ['SECTION', 'PART', 'TITLE', 'CHAPTER'].includes(
+        [PART, 'BODY', TITLE, CHAPTER, SECTION, ARTICLE].includes(
           nodeDragged.tocItem.aknTag,
         )
       )
         return 'AFTER';
       return position;
     }
-    case 'ARTICLE': {
-      if (
-        ['PART', 'BODY', 'TITLE', 'CHAPTER', 'SECTION', 'ARTICLE'].includes(
-          nodeDragged.tocItem.aknTag,
-        )
-      )
+    case PARAGRAPH: {
+      if ([PARAGRAPH].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
+      return position;
+    }
+    case SUBPARAGRAPH: {
+      if ([SUBPARAGRAPH, POINT].includes(nodeDragged.tocItem.aknTag))
         return 'AFTER';
       return position;
     }
-    case 'PARAGRAPH': {
-      if (['PARAGRAPH'].includes(nodeDragged.tocItem.aknTag)) return 'AFTER';
-      return position;
-    }
-    case 'SUBPARAGRAPH': {
-      if (['SUBPARAGRAPH', 'POINT'].includes(nodeDragged.tocItem.aknTag))
-        return 'AFTER';
-      return position;
-    }
-    case 'LEVEL': {
+    case LEVEL: {
       if (
-        ['SECTION', 'CHAPTER', 'TITLE', 'PART', 'LEVEL', 'PARAGRAPH'].includes(
+        [SECTION, CHAPTER, TITLE, PART, LEVEL, PARAGRAPH].includes(
           nodeDragged.tocItem.aknTag,
         )
       )
@@ -469,7 +478,7 @@ export const isNumbered = (
   const droppedElementParent = findNodeById(toc, droppedElement.parentItem);
   if (
     numbered &&
-    droppedElement.tocItem.aknTag === 'PARAGRAPH' &&
+    droppedElement.tocItem.aknTag === PARAGRAPH &&
     droppedElementParent &&
     droppedElementParent.numberingToggled &&
     droppedElement.numberingToggled === false
@@ -478,7 +487,7 @@ export const isNumbered = (
   }
   if (
     !numbered &&
-    droppedElement.tocItem.aknTag === 'PARAGRAPH' &&
+    droppedElement.tocItem.aknTag === PARAGRAPH &&
     droppedElementParent &&
     droppedElementParent.numberingToggled &&
     droppedElement.numberingToggled === false
@@ -493,8 +502,8 @@ export const setBlockOrCrossHeading = (
   sourceItem: TableOfContentItemVO,
 ) => {
   const isCross =
-    sourceItem.tocItem.aknTag === 'CROSS_HEADING' ||
-    sourceItem.tocItem.aknTag === 'BLOCK';
+    sourceItem.tocItem.aknTag === CROSSHEADING ||
+    sourceItem.tocItem.aknTag === BLOCK;
   const parentItem = findNodeById(toc, sourceItem.parentItem);
   if (isCross && parentItem.tocItem.aknTag === 'MAIN_BODY') {
     sourceItem.isBlock = true;
@@ -516,7 +525,7 @@ export const isInList = (
       return true;
     }
     for (const item of parent.childItems) {
-      if (item.tocItem.aknTag === 'POINT' || item.tocItem.aknTag === 'INDENT')
+      if (item.tocItem.aknTag === POINT || item.tocItem.aknTag === 'INDENT')
         return true;
     }
   }
@@ -529,8 +538,8 @@ export const handleLevelMove = (
   targetItem: TableOfContentItemVO,
 ) => {
   if (
-    sourceItem.tocItem.aknTag === 'LEVEL' &&
-    targetItem.tocItem.aknTag === 'LEVEL'
+    sourceItem.tocItem.aknTag === LEVEL &&
+    targetItem.tocItem.aknTag === LEVEL
   )
     sourceItem.itemDepth = targetItem.itemDepth;
 };
@@ -546,7 +555,7 @@ export const updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
   const tocItems = list
     .flatMap((l) => flattened(l))
     .filter(
-      (tocItemVO: TableOfContentItemVO) => tocItemVO.tocItem.aknTag === 'LEVEL',
+      (tocItemVO: TableOfContentItemVO) => tocItemVO.tocItem.aknTag === LEVEL,
     );
 
   for (let index = 0; index < tocItems.length; index++) {
@@ -558,34 +567,14 @@ export const updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
         depth = previousDepth + 1;
       }
       const numOrigin = item.originNumAttr;
-      if (numOrigin == null || numOrigin === 'CN') {
+      if (numOrigin == null || numOrigin === CN) {
         item.itemDepth = depth;
       }
     }
   }
 };
 
-export const addOrMoveItem = (
-  isAdd: boolean,
-  sourceItem: TableOfContentItemVO,
-  targetItem: TableOfContentItemVO,
-  toc: TableOfContentItemVO[],
-  actualTargetItem: TableOfContentItemVO,
-  position: string,
-) => {
-  if (isAdd) {
-    if (actualTargetItem) {
-      sourceItem.itemDepth = 1;
-      sourceItem.parentItem = null;
-    } else if (sourceItem.parentItem) {
-      sourceItem.originalDepthLevel = sourceItem.itemDepth;
-    }
-  }
-  setItemDepth(sourceItem, targetItem, position);
-  setItemLevel(toc, sourceItem, targetItem, position);
-};
-
-const setItemDepth = (
+export const setItemDepth = (
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
   position: string,
@@ -612,7 +601,7 @@ const setItemDepth = (
   }
 };
 
-const setItemDepthInHigherElements = (
+export const setItemDepthInHigherElements = (
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
 ) => {
@@ -622,7 +611,7 @@ const setItemDepthInHigherElements = (
   );
 };
 
-const setItemLevel = (
+export const setItemLevel = (
   toc: TableOfContentItemVO[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
@@ -630,10 +619,10 @@ const setItemLevel = (
 ) => {
   const targetItemLevel = 0;
   getItemIndentLevel(toc, targetItem, targetItemLevel, [
-    'LEVEL',
-    'PARAGRAPH',
+    LEVEL,
+    PARAGRAPH,
     'INDENT',
-    'POINT',
+    POINT,
   ]);
 
   switch (position) {
@@ -641,9 +630,7 @@ const setItemLevel = (
       if (targetItem.tocItem.root) {
         sourceItem.indentLevel = 0;
       } else if (
-        ['LEVEL', 'PARAGRAPH', 'INDENT', 'POINT'].includes(
-          targetItem.tocItem.aknTag,
-        )
+        [LEVEL, PARAGRAPH, 'INDENT', POINT].includes(targetItem.tocItem.aknTag)
       ) {
         sourceItem.indentLevel = targetItemLevel + 1;
       } else {
@@ -666,3 +653,406 @@ export const getNumberingByName = (
   numberingConfigs: NumberingConfig[],
   numType: NumberingType,
 ) => numberingConfigs.find((config) => config.type === numType);
+
+export const validateAgainstSoftDeletedOrMoveToItems = (
+  droppedItems: TableOfContentItemVO[],
+  targetItem: TableOfContentItemVO,
+  parentItem: TableOfContentItemVO,
+  position: string,
+) => {
+  const originalFound = false;
+  for (const sourceItem of droppedItems) {
+    if (isSoftDeletedOrMoveToItem(sourceItem)) {
+    }
+  }
+};
+
+export const isSoftDeletedOrMoveToItem = (item: TableOfContentItemVO) =>
+  hasTocItemSoftAction(item, DELETE) || hasTocItemSoftAction(item, MOVE_TO);
+
+export const hasTocItemSoftAction = (
+  item: TableOfContentItemVO,
+  actionType: string,
+) => item && item.softActionAttr && item.softActionAttr === actionType;
+
+export const containsItemOfOrigin = (
+  tableOfContentItemVO: TableOfContentItemVO,
+  origin: string,
+  elementOrigin: string,
+) => {
+  if (
+    (tableOfContentItemVO.originAttr.length &&
+      tableOfContentItemVO.originAttr === origin) ||
+    (!tableOfContentItemVO.originAttr && origin === elementOrigin)
+  ) {
+    return true;
+  }
+  let containsItem1 = false;
+  for (const item of tableOfContentItemVO.childItems) {
+    containsItem1 = containsItemOfOrigin(item, origin, elementOrigin);
+    if (containsItem) break;
+  }
+};
+
+export const softDeleteItem = (
+  tocTree: TableOfContentItemVO[],
+  item: TableOfContentItemVO,
+  elementOrigin: string,
+) => {
+  const wasRoot = isRootElement(item);
+  const wasMoved = item.softActionAttr === MOVE_FROM;
+  softDeleteMovedRootItems(tocTree, item);
+
+  let movedTableOfContentItemVO: TableOfContentItemVO = null;
+  if (wasMoved) {
+    if (!wasRoot) {
+      // all its moved children are now restored to their original position and deleted,
+      // but the item element still needs to be restored to its original position and deleted
+      revertMoveAndTransformToSoftDeleted(tocTree, item);
+    }
+  } else {
+    // all its moved children are now restored to their original position and deleted,
+    // and the item only needs to be deleted
+    movedTableOfContentItemVO = transformToSoftDeleted(tocTree, item);
+  }
+  if (elementOrigin === item.originAttr) {
+    if (movedTableOfContentItemVO != null) {
+      removeNode(tocTree, movedTableOfContentItemVO);
+    }
+    removeNode(tocTree, item);
+  }
+  return movedTableOfContentItemVO;
+};
+
+export const copyDeletedItemToTempForUndelete = (
+  originalItem: TableOfContentItemVO,
+) => {
+  const tempDeletedItem = cloneDeep(originalItem);
+  if (originalItem.softActionAttr === DELETE) {
+    tempDeletedItem.id = originalItem.id.replace(
+      SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
+      '',
+    );
+    tempDeletedItem.originNumAttr = EC;
+    tempDeletedItem.softActionAttr = UNDELETE;
+    tempDeletedItem.softActionRoot = null;
+    tempDeletedItem.softUserAttr = null;
+    tempDeletedItem.softDateAttr = null;
+    tempDeletedItem.softMoveFrom = null;
+    tempDeletedItem.softMoveTo = null;
+    tempDeletedItem.softTransFrom = null;
+    tempDeletedItem.undeleted = true;
+  }
+  tempDeletedItem.childItems = originalItem.childItems.map((child) =>
+    copyDeletedItemToTempForUndelete(originalItem),
+  );
+  return tempDeletedItem;
+};
+
+export const softDeleteMovedRootItems = (
+  tocTree: TableOfContentItemVO[],
+  item: TableOfContentItemVO,
+) => {
+  let index = 0;
+  while (index < item.childItems.length) {
+    index += softDeleteMovedRootItems(tocTree, item.childItems.at(index));
+  }
+  if (isRootElement(item) && MOVE_FROM === item.softActionAttr) {
+    revertMoveAndTransformToSoftDeleted(tocTree, item);
+    return 0;
+  } else if (CN === item.originAttr && item.softActionAttr == null) {
+    // tocTree.getTreeData().removeItem(item);
+    // TableOfContentHelper.removeChildItem(item.getParentItem(), item);
+    return 0;
+  }
+  return 1;
+};
+
+export const revertMoveAndTransformToSoftDeleted = (
+  tocTree: TableOfContentItemVO[],
+  item: TableOfContentItemVO,
+) => {
+  const originalItem = getTableOfContentItemVOById(item.softMoveFrom, tocTree);
+  if (originalItem != null) {
+    //TODO either check if this valid and needed or remove it
+    // const movedItem = moveItem(item, originalItem, tocTree.getTreeData());
+    // restoreOriginal(movedItem, originalItem, tocTree);
+    // if (originalItem.getParentItem() != null) {
+    //     TableOfContentHelper.removeChildItem(originalItem.getParentItem(), originalItem);
+    // }
+    // transformToSoftDeleted(tocTree.getTreeData(), movedItem);
+  } else {
+    throw new Error(
+      'Soft-moved element was later hard-deleted or its id was not set in its placeholder',
+    );
+  }
+};
+
+export const transformToSoftDeleted = (
+  treeData: TableOfContentItemVO[],
+  item: TableOfContentItemVO,
+) => {
+  const tempDeletedItem = copyDeletedItemToTemp(item, true);
+  return movingItem(tempDeletedItem, item, treeData);
+};
+
+export const movingItem = (
+  item: TableOfContentItemVO,
+  moveBefore: TableOfContentItemVO,
+  tocTree: TableOfContentItemVO[],
+) => {
+  const originalParent = findNodeById(tocTree, moveBefore.parentItem);
+  const indexOfOriginalNode = originalParent.childItems.indexOf(moveBefore);
+  if (indexOfOriginalNode !== -1) {
+    originalParent.childItems.splice(indexOfOriginalNode, 0, item);
+  }
+  originalParent.childItems = originalParent.childItems.filter(
+    (n) => n.id !== moveBefore.id,
+  );
+  //TODO : handle not found, edge case senario the previous code won't be able to reach here
+  return item;
+};
+
+export const copyDeletedItemToTemp = (
+  originalItem: TableOfContentItemVO,
+  isSoftActionRoot: boolean,
+) => {
+  const tempDeletedItem = cloneDeep(originalItem);
+  if (
+    MOVE_TO !== originalItem.softActionAttr &&
+    DELETE !== originalItem.softActionAttr
+  ) {
+    tempDeletedItem.id = SOFT_DELETE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    tempDeletedItem.originNumAttr = EC;
+    tempDeletedItem.softActionRoot = isSoftActionRoot;
+    tempDeletedItem.softActionAttr = DELETE;
+    tempDeletedItem.softUserAttr = null;
+    tempDeletedItem.softDateAttr = null;
+  } else {
+    tempDeletedItem.id = TEMP_PREFIX + originalItem.id;
+  }
+  tempDeletedItem.childItems = [];
+  originalItem.childItems.forEach((c) =>
+    tempDeletedItem.childItems.push(copyDeletedItemToTemp(c, false)),
+  );
+  return tempDeletedItem;
+};
+
+export const isRootElement = (element: TableOfContentItemVO) =>
+  element.softActionAttr;
+
+export const isSourceDivision = (sourceItem: TableOfContentItemVO) =>
+  sourceItem.tocItem.aknTag === DIVISION;
+
+export const getActualTargetItem = (
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+  parentItem: TableOfContentItemVO,
+  position: string,
+  isTocItemSibling: boolean,
+) => {
+  switch (position) {
+    case 'AS_CHILDREN':
+      if (
+        (isTocItemSibling &&
+          parentItem != null &&
+          !targetItem.tocItem.sameParentAsChild &&
+          !isCrossheading(sourceItem)) ||
+        (targetItem.tocItem.sameParentAsChild &&
+          containsItem(targetItem, LIST)) ||
+        targetItem.id === SOFT_MOVE_PLACEHOLDER_ID_PREFIX + sourceItem.id ||
+        (targetItem.tocItem.aknTag === SUBPARAGRAPH &&
+          isCrossheading(sourceItem))
+      ) {
+        return parentItem;
+      } else if (sourceItem !== targetItem) {
+        return targetItem;
+      }
+      break;
+    case 'BEFORE':
+      return parentItem != null ? parentItem : targetItem;
+    case 'AFTER':
+      return isTocItemSibling ? parentItem : targetItem;
+  }
+  return null;
+};
+
+export const isCrossheading = (sourceItem: TableOfContentItemVO) => {
+  const sourceTagValue = sourceItem.tocItem.aknTag;
+  return sourceTagValue === CROSSHEADING;
+};
+
+export const containsItem = (node: TableOfContentItemVO, aknTag: AknTag) => {
+  for (const child of node.childItems) {
+    if (child.tocItem.aknTag === aknTag) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const getTableOfContentItemVOById = (
+  id: string,
+  tableOfContentItemVOS: Array<TableOfContentItemVO>,
+) => {
+  for (const tableOfContentItemVO of tableOfContentItemVOS) {
+    if (tableOfContentItemVO.id === id) {
+      return tableOfContentItemVO;
+    } else {
+      const childResult = getTableOfContentItemVOById(
+        id,
+        tableOfContentItemVO.childItems,
+      );
+      if (childResult != null) {
+        return childResult;
+      }
+    }
+  }
+  return null;
+};
+
+export const isDroppedOnPointOrIndent = (
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+) => {
+  const sourceTagValue: string = sourceItem.tocItem.aknTag;
+  const targetTagValue: string = targetItem.tocItem.aknTag;
+  return (
+    (sourceTagValue === CROSSHEADING ||
+      sourceTagValue === POINT ||
+      sourceTagValue === INDENT) &&
+    (targetTagValue === POINT || targetTagValue === INDENT)
+  );
+};
+
+export const removeTag = (itemContent: string) => {
+  for (const element of ELEMENTS_TO_REMOVE_FROM_CONTENT) {
+    itemContent = itemContent.replaceAll(
+      '<' + element + '.*?</' + element + '>',
+      '',
+    );
+  }
+  itemContent = itemContent.replaceAll('<[^>]+>', '');
+  return itemContent.replaceAll('\\s+', ' ').trim();
+};
+
+export const getItemSoftStyle = (
+  tableOfContentItemVO: TableOfContentItemVO,
+) => {
+  let itemSoftStyle = '';
+  if (tableOfContentItemVO.softActionAttr) {
+    if (hasTocItemSoftAction(tableOfContentItemVO, ADD)) {
+      itemSoftStyle = 'leos-soft-new';
+    } else if (hasTocItemSoftAction(tableOfContentItemVO, DELETE)) {
+      let initialNum = tableOfContentItemVO.initialNum;
+      if (initialNum != null) {
+        initialNum = initialNum.replace('Article ', '');
+        tableOfContentItemVO.number = initialNum;
+      }
+      itemSoftStyle = 'leos-soft-removed';
+    } else if (hasTocItemSoftAction(tableOfContentItemVO, MOVE_TO)) {
+      itemSoftStyle = 'leos-soft-movedto';
+    } else if (hasTocItemSoftAction(tableOfContentItemVO, MOVE_FROM)) {
+      itemSoftStyle = 'leos-soft-movedfrom';
+    }
+  }
+  return itemSoftStyle;
+};
+
+export const checkDeleteOnLastItemInList = (
+  tocTree: TableOfContentItemVO[],
+  deletedItem: TableOfContentItemVO,
+) => {
+  const parentItem = findNodeById(tocTree, deletedItem.id);
+  if (
+    parentItem.tocItem.aknTag === LIST &&
+    isLastExistingChildElement(deletedItem, parentItem)
+  ) {
+    return parentItem;
+  }
+  return null;
+};
+
+export const isLastExistingChildElement = (
+  tocItemVO: TableOfContentItemVO,
+  parentItem: TableOfContentItemVO,
+) => parentItem.childItems.length === 1;
+
+export const isDeletedItem = (tableOfContentItemVO: TableOfContentItemVO) =>
+  DELETE === tableOfContentItemVO.softActionAttr;
+
+export const isMoveToItem = (tableOfContentItemVO: TableOfContentItemVO) =>
+  MOVE_TO === tableOfContentItemVO.softActionAttr;
+
+export const isUndeletableItem = (
+  tocTree: TableOfContentItemVO[],
+  tableOfContentItemVO: TableOfContentItemVO,
+) => {
+  const parentItem = findNodeById(tocTree, tableOfContentItemVO.parentItem);
+  return (
+    parentItem &&
+    !isMoveToItem(tableOfContentItemVO) &&
+    DELETE !== parentItem.softActionAttr
+  );
+};
+
+export const isDeletableItem = (
+  treeData: TableOfContentItemVO[],
+  tableOfContentItemVO: TableOfContentItemVO,
+) => {
+  const elementName = tableOfContentItemVO.tocItem.aknTag;
+  const parentItem = findNodeById(treeData, tableOfContentItemVO.parentItem);
+  if (process.env.NG_APP_LEOS_INSTANCE === CN)
+    return !(
+      (DELETE === tableOfContentItemVO.softActionAttr ||
+        MOVE_TO === tableOfContentItemVO.softActionAttr ||
+        (PARAGRAPH === elementName &&
+          checkOriginParentTocITem(tableOfContentItemVO, CN))) &&
+      isLastExistingChildElement(tableOfContentItemVO, parentItem)
+    );
+  if (process.env.NG_APP_LEOS_INSTANCE !== CN) {
+    return !(PARAGRAPH === elementName
+      ? isLastExistingChildElement(tableOfContentItemVO, parentItem)
+      : false);
+  }
+};
+
+export const checkOriginParentTocITem = (
+  tableOfContentItemVO: TableOfContentItemVO,
+  origin: string,
+) =>
+  tableOfContentItemVO.originAttr && tableOfContentItemVO.originAttr === origin;
+
+export const checkIfConfirmDeletion = (
+  treeData: TableOfContentItemVO[],
+  tableOfContentItemVO: TableOfContentItemVO,
+) => {
+  if (process.env.NG_APP_LEOS_INSTANCE === CN) {
+    return (
+      tableOfContentItemVO.childItems.length > 0 &&
+      containsNoSoftDeletedItem(treeData, tableOfContentItemVO)
+    );
+  }
+  if (process.env.NG_APP_LEOS_INSTANCE === EC) {
+    return tableOfContentItemVO.childItems.length > 0;
+  }
+};
+
+export const containsNoSoftDeletedItem = (
+  treeData: TableOfContentItemVO[],
+  tableOfContentItemVO: TableOfContentItemVO,
+) => {
+  let containsItemNoSoftDeleted = false;
+  for (const item of tableOfContentItemVO.childItems || []) {
+    if (item.softActionAttr == null || !hasTocItemSoftAction(item, DELETE)) {
+      containsItemNoSoftDeleted = true;
+    } else {
+      containsItemNoSoftDeleted = containsNoSoftDeletedItem(
+        item.childItems,
+        tableOfContentItemVO,
+      );
+    }
+    if (containsItemNoSoftDeleted) break;
+  }
+  return containsItemNoSoftDeleted;
+};

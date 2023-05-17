@@ -3,6 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { TableOfContentService } from '../../services/tableOfContent.service';
 
 @Component({
   selector: 'app-actions-toolbar',
@@ -18,6 +19,7 @@ export class ActionsToolbarComponent implements AfterViewInit, OnDestroy {
   constructor(
     public doc: DocumentService,
     private coEditionService: CoEditionServiceWS,
+    private tableOfContentService: TableOfContentService,
   ) {}
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -34,5 +36,9 @@ export class ActionsToolbarComponent implements AfterViewInit, OnDestroy {
           this.shouldReloadAfterUpdate = true;
         }
       });
+  }
+  handleReload() {
+    this.doc.reloadDocument();
+    this.tableOfContentService.reload();
   }
 }
