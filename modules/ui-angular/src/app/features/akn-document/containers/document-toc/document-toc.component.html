@@ -27,9 +27,11 @@
         <div class="drop-placeholder"></div>
         <li class="node-li">
           <div class="mat-tree-node">
-            <span class="label" (click)="hanldeNodeSelect(node)">{{
-              node.label
-            }}</span>
+            <div
+              [class]="'label' + ' ' + node.tocStyling"
+              (click)="hanldeNodeSelect(node)"
+              [innerHTML]="node.label"
+            ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"
               [isNodeSelectedToMove]="selectedNodeToMove !== null"
@@ -58,7 +60,7 @@
         [cdkDropListDisabled]="!isEdit"
       >
         <div class="drop-placeholder"></div>
-        <li class="">
+        <li>
           <div class="mat-tree-node">
             <eui-icon
               euiSizeS
@@ -72,9 +74,11 @@
               iconClass="eui-icon eui-icon-angle-down"
               (click)="nodeCollapsed(node)"
             ></eui-icon>
-            <span class="label-extended" (click)="hanldeNodeSelect(node)">{{
-              node.label
-            }}</span>
+            <div
+              [class]="'label-extended' + ' ' + node.tocStyling"
+              (click)="hanldeNodeSelect(node)"
+              [innerHTML]="node.label"
+            ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"
               [isNodeSelectedToMove]="selectedNodeToMove !== null"

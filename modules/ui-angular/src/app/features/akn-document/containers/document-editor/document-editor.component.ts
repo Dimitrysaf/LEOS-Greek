@@ -475,10 +475,7 @@ export class DocumentEditorComponent
           this.documentTocComponent.isToCDraft = false;
           this.documentTocComponent.treeHistory = [];
           this.documentService.reloadDocument();
-          this.tableOfContentService.reload(
-            this.documentRef,
-            this.documentType,
-          );
+          this.tableOfContentService.reload();
         },
         error: (err) => {},
       });

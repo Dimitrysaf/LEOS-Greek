@@ -186,6 +186,7 @@ export class CKEditorService implements OnDestroy {
       {
         rootElement,
       },
+      this.documentService
     );
     require(['extension/softActionsExtension'], (sofrActions) => {
       sofrActions.init(this.softActionsConnector);

@@ -140,3 +140,56 @@ eui-icon-svg > svg > use {
 .version-search-found .eui-card-header {
   background-color: #a0a0a0 !important;
 }
+
+article.leos-content-soft-new[leos\:softaction='add']
+  num:not([leos\:origin='ec']) {
+  font-weight: bold;
+}
+
+#docContainer span.leos-soft-move-label {
+  background-color: #808080;
+  cursor: pointer;
+  height: 18px;
+  padding: 2px 5px;
+}
+
+#docContainer .leos-soft-move-title {
+  margin-left: 0;
+}
+
+#docContainer span.leos-transparent-soft-move-label {
+  background-color: #fff;
+  visibility: hidden;
+}
+
+#docContainer span.leos-toc-tree span.leos-soft-move-label {
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: normal;
+  height: 16px;
+  padding: 2px;
+}
+
+#docContainer .leos-soft-removed *,
+.leos .leos-soft-num-removed,
+.leos .leos-soft-movedto * {
+  color: #a7a7a7;
+  text-decoration: line-through;
+}
+
+#docContainer .leos-soft-new *,
+.leos .leos-soft-num-new,
+.leos .leos-soft-movedfrom span {
+  font-weight: bold;
+}
+
+#docContainer span.leos-soft-move-label,
+.leos span.leos-transparent-soft-move-label {
+  border-radius: 4px;
+  color: #fff !important;
+  display: inline-block;
+  font-size: 15px;
+  font-style: normal;
+  line-height: 1;
+  margin: 0 2px;
+  text-decoration: none !important;
+}

@@ -208,6 +208,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       documentType,
     ).subscribe((response) => {
       this.isElementSaved = true;
+      this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.refreshElement(
         response.elementId,
@@ -272,7 +273,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
           documentRef,
           documentType,
         );
-        this.tableOfContentService.reloadToc(documentRef, documentType);
+        this.tableOfContentService.reloadToc();
       });
   }
 

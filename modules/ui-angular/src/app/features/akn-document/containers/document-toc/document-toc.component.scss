@@ -37,6 +37,45 @@
     -webkit-user-drag: initial;
     user-select: initial;
   }
+
+  .leos-soft-removed,
+  .leos-soft-num-removed,
+  .leos-soft-movedto {
+    color: #a7a7a7;
+    text-decoration: line-through;
+  }
+
+  .leos-soft-new,
+  .leos-soft-num-new,
+  .leos-soft-movedfrom span {
+    font-weight: bold;
+  }
+
+  .leos-soft-move-label {
+    background-color: #808080;
+    cursor: pointer;
+    height: 18px;
+    padding: 2px 5px;
+  }
+
+  .leos-soft-move-label,
+  .leos-transparent-soft-move-label {
+    border-radius: 4px;
+    color: #fff !important;
+    display: inline-block;
+    font-size: 15px;
+    font-style: normal;
+    line-height: 1;
+    margin: 0 2px;
+    text-decoration: none !important;
+  }
+
+  .leos-soft-move-label {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: normal;
+    height: 16px;
+    padding: 2px;
+  }
 }
 
 .tree-container {
