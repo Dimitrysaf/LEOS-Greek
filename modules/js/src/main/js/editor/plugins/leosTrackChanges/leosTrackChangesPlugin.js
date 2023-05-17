@@ -399,7 +399,9 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         canUserAcceptChanges: function(editor) {
-            return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
+            // return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
+            //TODO: Accept has been enabled in cloned proposals for testing purposes
+            return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
         },
 
         canUserRejectChanges: function(editor) {
