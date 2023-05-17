@@ -29,6 +29,7 @@ import { DocumentConfig, LeosConfig } from '@/shared/models';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
+import { TocItem } from '../models/toc.model';
 import { TableOfContentService } from './tableOfContent.service';
 
 @Injectable()
@@ -243,8 +244,13 @@ export class CKEditorService implements OnDestroy {
     const oldConfig: LeosConfig & DocumentConfig = cloneDeep(config);
     const tocItems: any = cloneDeep(oldConfig.tocItems);
 
-    tocItems.forEach((i) => {
+    tocItems.forEach((i: TocItem) => {
       i.aknTag = i.aknTag.toLowerCase() as any;
+      if (this.documentService.documentType.toLowerCase() === 'coverpage') {
+        if (i.aknTag.toLowerCase() === 'doc_purpose') {
+          i.aknTag = 'docpurpose';
+        }
+      }
       if (this.documentService.documentType === 'memorandum') {
         if (i.aknTag === 'main_body') {
           i.aknTag = 'mainBody';
