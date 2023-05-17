@@ -326,6 +326,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     documentType: string,
   ) {
     if (elementName === 'blockcontainer') elementName = 'blockContainer';
+    if (elementName === 'docpurpose') elementName = 'docPurpose';
     return this.http.get<EditElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementId}/${elementName}`,
     );
