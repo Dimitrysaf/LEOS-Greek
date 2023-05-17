@@ -89,6 +89,14 @@ eui-icon-svg > svg > use {
   justify-content: center;
   max-height: 22px;
   padding: 0.3rem;
+
+  a {
+    text-decoration: none;
+
+    span {
+      white-space: pre;
+    }
+  }
 }
 
 .app-dialog-footer-content {
