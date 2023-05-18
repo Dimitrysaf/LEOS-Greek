@@ -177,4 +177,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       (v) => v.versionNumber.minor,
     ]);
   }
+
+  public isLatestRecentVersion(version: Version): boolean {
+    return this.isRecent && this.versions[0] === version;
+  }
 }

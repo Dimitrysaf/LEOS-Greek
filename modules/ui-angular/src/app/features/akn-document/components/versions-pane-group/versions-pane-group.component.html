@@ -58,7 +58,10 @@
         <div>
           <app-version-actions-dropdown
             [version]="version"
-            *ngIf="(docService.compareModeEnabled$ | async) === false"
+            *ngIf="
+              (docService.compareModeEnabled$ | async) === false &&
+              isLatestRecentVersion(version) === false
+            "
           ></app-version-actions-dropdown>
           <input
             id="select-{{ version.documentId }}"
