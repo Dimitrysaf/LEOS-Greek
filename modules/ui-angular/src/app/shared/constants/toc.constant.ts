@@ -1,4 +1,3 @@
-export const MAX_LABEL_TREE_LENGTH = 50;
 export const MAX_INDENT_LEVEL = 4;
 export const TIME_TO_CLEAR_INVALID = 10000;
 export const MOVE_TO = 'MOVE_TO';

@@ -92,13 +92,19 @@
 }
 
 .label {
+  display: inline-block;
   font-size: var(--eui-base-font-size-s) !important;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .label-extended {
   font-size: var(--eui-base-font-size-s) !important;
+  overflow: hidden;
   text-align: center;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

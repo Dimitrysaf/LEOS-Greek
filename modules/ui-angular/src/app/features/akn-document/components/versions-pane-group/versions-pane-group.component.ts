@@ -62,6 +62,10 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     }
   }
 
+  isLatestRecentVersion(version: Version): boolean {
+    return this.isRecent && this.versions[0] === version;
+  }
+
   protected onSelectVersion(version: Version, inputChangeEvent: Event) {
     const checked = (inputChangeEvent.target as HTMLInputElement).checked;
     const currentVersions = this.docService.getVersionCompareIds();
@@ -176,9 +180,5 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       (v) => v.versionNumber.intermediate,
       (v) => v.versionNumber.minor,
     ]);
-  }
-
-  public isLatestRecentVersion(version: Version): boolean {
-    return this.isRecent && this.versions[0] === version;
   }
 }
