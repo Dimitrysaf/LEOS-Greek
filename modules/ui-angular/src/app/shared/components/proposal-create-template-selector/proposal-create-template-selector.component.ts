@@ -32,6 +32,7 @@ export class ProposalCreateTemplateSelectorComponent
   implements OnInit, OnDestroy
 {
   @Input() translationKey: 'document' | 'draft' = 'document';
+  @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
   @ViewChild('treeComponent') treeComponent: UxTreeComponent;
@@ -41,6 +42,7 @@ export class ProposalCreateTemplateSelectorComponent
   treeNodes: UxLink[] = [];
   selectedLanguage: string;
   languages: Array<{ code: string; label: string }>;
+  doubleClickTimer: any;
 
   private destroy$ = new Subject<void>();
   private templates: Map<string, CatalogItem> = new Map();
@@ -86,9 +88,27 @@ export class ProposalCreateTemplateSelectorComponent
     }
   }
 
-  onNodeClick(node: UxLink) {
+  simulateDoubleClick(node: UxLink): void {
+    const delay = 300; // Adjust the delay (in milliseconds) as needed
+
+    if (this.doubleClickTimer) {
+      clearTimeout(this.doubleClickTimer);
+      this.doubleClickTimer = null;
+      this.onNodeClick(node, true); // Handle the double click
+    } else {
+      this.doubleClickTimer = setTimeout(() => {
+        this.doubleClickTimer = null;
+        this.onNodeClick(node); // Handle the single click
+      }, delay);
+    }
+  }
+
+  onNodeClick(node: UxLink, isDoubleClicked = false) {
     if (this.templates.has(node.id)) {
       this.setTemplate(this.templates.get(node.id));
+      if (isDoubleClicked) {
+        this.navigationClick.emit();
+      }
     } else {
       this.unsetTemplate();
     }
@@ -128,6 +148,7 @@ export class ProposalCreateTemplateSelectorComponent
             .map((child) => this.catalogItemToUxLink(child))
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
+    const isTemplate = type !== 'CATEGORY';
     return new UxLink({
       id,
       label,
@@ -140,6 +161,14 @@ export class ProposalCreateTemplateSelectorComponent
             // then hide it using css, while keeping the indentation
             children: [new UxLink({ disabled: true, visible: false })],
             tooltipLabel: 'empty-category',
+          }
+        : {}),
+      ...(isTemplate
+        ? {
+            // add a dummy child to force the toggle button to be displayed
+            // then hide it using css, while keeping the indentation
+            children: [new UxLink({ disabled: true, visible: false })],
+            tooltipLabel: 'template',
           }
         : {}),
     });

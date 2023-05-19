@@ -21,6 +21,7 @@
       <uxWizardStepContent>
         <app-proposal-create-template-selector
           #templateSelector
+          (navigationClick)="onNavigation(+1)"
           (selectTemplate)="handleSelectTemplate($event)"
           (selectLanguage)="handleSelectLanguage($event)"
         ></app-proposal-create-template-selector>
