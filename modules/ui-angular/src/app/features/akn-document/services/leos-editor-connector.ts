@@ -13,6 +13,7 @@ import {
 } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './tableOfContent.service';
@@ -241,13 +242,50 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
   }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.deleteDocumentElement(
-      documentRef,
-      elementData.elementType.toLowerCase(),
-      elementData.elementId,
-      documentType,
-    ).subscribe((response) => {
-      this.documentService.setDocumentRefAndCategory(documentRef, documentType);
+
+    const deleteDocumentElement = () =>
+      this.deleteDocumentElement(
+        documentRef,
+        elementData.elementType.toLowerCase(),
+        elementData.elementId,
+        documentType,
+      ).subscribe((response) => {
+        this.documentService.setDocumentRefAndCategory(
+          documentRef,
+          documentType,
+        );
+        this.tableOfContentService.reloadToc();
+      });
+
+    if (
+      elementData.elementType === 'recital' &&
+      this.isLastRecitalElement(elementData.elementId)
+    ) {
+      this.openLastRecitalDeleteConfirmation(deleteDocumentElement);
+      return;
+    }
+    deleteDocumentElement();
+  }
+
+  private isLastRecitalElement(elementId: string) {
+    const toc = this.tableOfContentService.getCurrentToc();
+    const targetNode = findNodeById(toc, elementId);
+    const parentNode = findNodeById(toc, targetNode.parentItem);
+
+    return parentNode?.childItems?.length === 1;
+  }
+
+  private openLastRecitalDeleteConfirmation(onConfirm: () => void) {
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.last-element-delete-confirmation.title',
+      ),
+      content: this.translateService.instant(
+        'page.editor.last-element-delete-confirmation.message',
+      ),
+      acceptLabel: this.translateService.instant('global.actions.continue'),
+      accept: onConfirm,
+      dismiss: () => {},
     });
   }
 
