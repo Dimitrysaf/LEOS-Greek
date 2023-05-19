@@ -48,6 +48,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buildForm();
     this.handleChanges();
+    this.addStyleForDialogHeaderAndFooter();
   }
 
   ngOnDestroy(): void {
@@ -138,5 +139,18 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
         }
         milestonesTitle.updateValueAndValidity();
       });
+  }
+
+  private addStyleForDialogHeaderAndFooter() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .eui-dialog-container .eui-dialog .eui-dialog__content .eui-dialog__header {
+        padding: var(--eui-base-spacing-m) var(--eui-base-spacing-m);
+      }
+      .eui-dialog-container .eui-dialog .eui-dialog__content .eui-dialog__footer {
+        padding: var(--eui-base-spacing-s) var(--eui-base-spacing-m);
+      }
+    `;
+    document.head.appendChild(style);
   }
 }
