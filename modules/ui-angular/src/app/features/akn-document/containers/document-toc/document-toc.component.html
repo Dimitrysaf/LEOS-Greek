@@ -28,9 +28,11 @@
         <li class="node-li">
           <div class="mat-tree-node">
             <div
+              #label
               [class]="'label' + ' ' + node.tocStyling"
               (click)="hanldeNodeSelect(node)"
               [innerHTML]="node.label"
+              euiTooltip="{{ isLabelTextTruncated(label) ? node.label : null }}"
             ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"
@@ -75,9 +77,13 @@
               (click)="nodeCollapsed(node)"
             ></eui-icon>
             <div
+              #labelExt
               [class]="'label-extended' + ' ' + node.tocStyling"
               (click)="hanldeNodeSelect(node)"
               [innerHTML]="node.label"
+              euiTooltip="{{
+                isLabelTextTruncated(labelExt) ? node.label : null
+              }}"
             ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"

@@ -34,7 +34,6 @@ import {
   INDENT,
   LEVEL,
   LS,
-  MAX_LABEL_TREE_LENGTH,
   MOVE_FROM,
   MOVE_LABEL_SPAN_START_TAG,
   MOVE_TO,
@@ -186,6 +185,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
               this.defaultExpanded(nodes);
         });
       });
+  }
+
+  isLabelTextTruncated(element: HTMLDivElement): boolean {
+    return element.offsetWidth < element.scrollWidth;
   }
 
   getChildren = (node: TableOfContentItemVO) => node.childItems;
@@ -992,7 +995,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
     for (const n of root || []) {
       if (n) {
-        let captionMaxSize = MAX_LABEL_TREE_LENGTH;
         n.tocStyling = getItemSoftStyle(n);
         let label: string = n.tocItem.itemDescription
           ? this.getLabel(n) + SPACE
@@ -1039,12 +1041,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
               label +=
                 '<span class="leos-soft-num-new">' + n.number + '</span>';
             }
-            captionMaxSize += captionMaxSize + label.length;
           } else {
             if (this.isIndented(n) && n.number !== n.indentOriginNumValue) {
               label +=
                 '<span class="leos-soft-num-new">' + n.number + '</span>';
-              captionMaxSize += captionMaxSize + label.length;
             } else {
               label += n.number;
             }
@@ -1067,11 +1067,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           label += label.length > 0 ? CONTENT_SEPARATOR : '';
           label += removeTag(n.content);
         }
-        n.label = truncate(label, {
-          length: shoudlAddMovedLabel
-            ? captionMaxSize + MOVED_LABEL_SIZE
-            : captionMaxSize,
-        });
+        n.label = label;
       }
       if (n.childItems) this.prepareTreeForDisplay(n.childItems);
     }
