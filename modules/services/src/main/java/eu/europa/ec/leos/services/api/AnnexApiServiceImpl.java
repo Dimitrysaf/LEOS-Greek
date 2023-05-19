@@ -429,9 +429,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
 
+
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context.getTocRules()
         );
     }
 

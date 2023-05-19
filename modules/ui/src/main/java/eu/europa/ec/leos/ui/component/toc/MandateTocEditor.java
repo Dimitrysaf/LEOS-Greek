@@ -128,19 +128,19 @@ public class MandateTocEditor extends AbstractTocEditor {
             softDeleteItem(tocTree, item, CN);
             actionType = ActionType.SOFTDELETED;
         }
-        
+
         // LEOS-5958: If parentItem is not null, means it is a list without any points. Then delete parentItem as well.
-        if(parentItem != null) {
-        	if (!containsItemOfOrigin(parentItem, EC, CN)) {
+        if (parentItem != null) {
+            if (!containsItemOfOrigin(parentItem, EC, CN)) {
                 hardDeleteFromTree(tocTree, parentItem);
             } else {
                 softDeleteItem(tocTree, parentItem, CN);
             }
         } else {
-        	updateStyleClassOfTocItems(tocTree.getTreeData().getChildren(item.getParentItem()), DIVISION);
+            updateStyleClassOfTocItems(tocTree.getTreeData().getChildren(item.getParentItem()), DIVISION);
             updateDepthOfTocItems(tocTree.getTreeData().getChildren(item.getParentItem()));
         }
-        
+
         tocTree.getDataProvider().refreshAll();
         tocTree.deselectAll();
         return actionType;
@@ -156,7 +156,7 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     @Override
     public TocDropResult addOrMoveItems(final boolean isAdd, final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
-            final List<TableOfContentItemVO> droppedItems, final TableOfContentItemVO targetItem, final ItemPosition position) {
+                                        final List<TableOfContentItemVO> droppedItems, final TableOfContentItemVO targetItem, final ItemPosition position) {
 
         TocDropResult result = validateAction(tocTree, tableOfContentRules, droppedItems, targetItem, position);
         if (result.isSuccess()) {
@@ -164,7 +164,7 @@ public class MandateTocEditor extends AbstractTocEditor {
             List<TableOfContentItemVO> sourceItems = ((ItemPosition.BEFORE == position) || targetItem.getTocItem().isChildrenAllowed())
                     ? droppedItems : Lists.reverse(droppedItems);
             TableOfContentItemVO originalForTarget = sourceItems.stream().filter(sourceItem -> isPlaceholderForDroppedItem(targetItem, sourceItem)).findFirst().orElse(null);
-            if (originalForTarget !=  null && !isAdd) {
+            if (originalForTarget != null && !isAdd) {
                 //first move the original over placeholder and then the rest over the original
                 performAddOrMoveAction(false, tocTree, tableOfContentRules, originalForTarget, targetItem, parentItem, position);
                 parentItem = tocTree.getTreeData().getParent(originalForTarget);
@@ -187,7 +187,7 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     @Override
     protected void addOrMoveItem(final boolean isAdd, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,
-            final TreeGrid<TableOfContentItemVO> tocTree, final TableOfContentItemVO actualTargetItem, final ItemPosition position) {
+                                 final TreeGrid<TableOfContentItemVO> tocTree, final TableOfContentItemVO actualTargetItem, final ItemPosition position) {
         if (isAdd) {
             super.addOrMoveItem(true, sourceItem, targetItem, tocTree, actualTargetItem, position);
             moveOriginAttribute(sourceItem, targetItem);
@@ -197,7 +197,7 @@ public class MandateTocEditor extends AbstractTocEditor {
                 sourceItem.setSoftActionAttr(ADD);
                 sourceItem.setSoftActionRoot(Boolean.TRUE);
             }
-            if(DIVISION.equals(sourceItem.getTocItem().getAknTag().value())){
+            if (DIVISION.equals(sourceItem.getTocItem().getAknTag().value())) {
                 sourceItem.setStyle(ClassToDepthType.TYPE_1.name());
             }
         } else {
@@ -243,10 +243,10 @@ public class MandateTocEditor extends AbstractTocEditor {
     }
 
     protected TocDropResult validateAction(final TreeGrid<TableOfContentItemVO> tocTree, final Map<TocItem, List<TocItem>> tableOfContentRules,
-            final List<TableOfContentItemVO> droppedItems, final TableOfContentItemVO targetItem, final ItemPosition position) {
+                                           final List<TableOfContentItemVO> droppedItems, final TableOfContentItemVO targetItem, final ItemPosition position) {
 
         TocDropResult result = validateAgainstSoftDeletedOrMoveToItems(droppedItems, targetItem, tocTree.getTreeData().getParent(targetItem), position);
-        if (result.isSuccess()){
+        if (result.isSuccess()) {
             return super.validateAction(tocTree, tableOfContentRules, droppedItems, targetItem, position);
         }
         return result;
@@ -254,9 +254,9 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     @Override
     protected boolean validateAddingToItem(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,
-            final TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO actualTargetItem, final ItemPosition position) {
+                                           final TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO actualTargetItem, final ItemPosition position) {
         Validate.notNull(targetItem, "Target item should not be null");
-        if(actualTargetItem == null) {
+        if (actualTargetItem == null) {
             actualTargetItem = targetItem;
         }
         String droppedElementTagName = sourceItem.getTocItem().getAknTag().value();
@@ -281,11 +281,11 @@ public class MandateTocEditor extends AbstractTocEditor {
                 if (!indentAllowed
                         || !Arrays.asList(PARAGRAPH, LEVEL, LIST, POINT, INDENT).contains(targetName)
                         || (Arrays.asList(PARAGRAPH, LEVEL).contains(targetName)
-                            && actualTargetItem.containsItem(droppedElementTagName)
-                            && !droppedElementTagName.equals(POINT))
-                            && !Arrays.asList(NumberingType.INDENT, BULLET_NUM).contains(droppedElementTagNumberingType)
+                        && actualTargetItem.containsItem(droppedElementTagName)
+                        && !droppedElementTagName.equals(POINT))
+                        && !Arrays.asList(NumberingType.INDENT, BULLET_NUM).contains(droppedElementTagNumberingType)
                         || (Arrays.asList(PARAGRAPH, LEVEL).contains(targetName)
-                            && (actualTargetItem.containsItem(LIST) || !actualTargetItem.containsOnlySameIndentType(droppedElementTagNumberingType)))
+                        && (actualTargetItem.containsItem(LIST) || !actualTargetItem.containsOnlySameIndentType(droppedElementTagNumberingType)))
                         || (targetName.equals(droppedElementTagName) && actualTargetItem.containsItem(LIST))
                         || !validateAgainstOtherIndentsInList(sourceItem, targetItem)) {
                     result.setSuccess(false);
@@ -301,8 +301,11 @@ public class MandateTocEditor extends AbstractTocEditor {
                 break;
             case LIST:
                 indentAllowed = isIndentAllowed(actualTargetItem, MAX_INDENT_LEVEL - getIndentLevel(sourceItem));
-                if (!isPlaceholderForDroppedItem(targetItem, sourceItem) && (!indentAllowed || ((targetName.equals(PARAGRAPH) || targetName.equals(LEVEL)) && actualTargetItem.containsItem(LIST)) ||
-                        ((targetName.equals(POINT) || targetName.equals(INDENT)) && actualTargetItem.containsItem(LIST)))) {
+                if (!isPlaceholderForDroppedItem(targetItem, sourceItem) && (
+                        !indentAllowed || (
+                                (targetName.equals(PARAGRAPH) || targetName.equals(LEVEL)) && actualTargetItem.containsItem(LIST)
+                        ) ||
+                                ((targetName.equals(POINT) || targetName.equals(INDENT)) && actualTargetItem.containsItem(LIST)))) {
                     result.setSuccess(false);
                     result.setMessageKey(!indentAllowed ? "toc.edit.window.drop.error.indentation.message" : "toc.edit.window.drop.error.list.message");
                     return false;
@@ -440,8 +443,8 @@ public class MandateTocEditor extends AbstractTocEditor {
             }
         } else {
             moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
-                    EC,  null, originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
-                    MOVE_TO, isSoftActionRoot,null, null);
+                    EC, null, originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
+                    MOVE_TO, isSoftActionRoot, null, null);
 
         }
         moveToItem.setSoftMoveTo(originalItem.getId());
@@ -456,15 +459,15 @@ public class MandateTocEditor extends AbstractTocEditor {
     private void handleMoveAction(TableOfContentItemVO moveFromItem, TreeGrid<TableOfContentItemVO> tocTree) {
         final TreeData<TableOfContentItemVO> container = tocTree.getTreeData();
         if ((moveFromItem.getOriginAttr() != null && moveFromItem.getOriginAttr().equals(EC)) &&
-           ((moveFromItem.getSoftActionAttr() == null) || ((!hasTocItemSoftAction(moveFromItem, MOVE_FROM)) && (!hasTocItemSoftAction(moveFromItem, MOVE_TO))
-           && (!hasTocItemSoftAction(moveFromItem, ADD)) && (!hasTocItemSoftAction(moveFromItem, DELETE))))) {
+                ((moveFromItem.getSoftActionAttr() == null) || ((!hasTocItemSoftAction(moveFromItem, MOVE_FROM)) && (!hasTocItemSoftAction(moveFromItem, MOVE_TO))
+                        && (!hasTocItemSoftAction(moveFromItem, ADD)) && (!hasTocItemSoftAction(moveFromItem, DELETE))))) {
 
             TableOfContentItemVO moveToTemp = copyMovingItemToTemp(moveFromItem, Boolean.TRUE, tocTree);
 
             // Handles specific case while moving unnumbered paragraph together with numbered paragraphs
             if (Arrays.asList(PARAGRAPH, LEVEL).contains(getTagValueFromTocItemVo(moveFromItem)) && StringUtils.isEmpty(moveFromItem.getNumber())) {
                 List<TableOfContentItemVO> moveFromSiblings = container.getParent(moveFromItem).getChildItems();
-                if (moveFromSiblings.size()>0) {
+                if (moveFromSiblings.size() > 0) {
                     TableOfContentItemVO refItem = moveFromSiblings.get(0);
                     if (StringUtils.isNotEmpty(refItem.getNumber())) {
                         moveFromItem.setNumber(StructureConfigUtils.HASH_NUM_VALUE);
@@ -503,7 +506,7 @@ public class MandateTocEditor extends AbstractTocEditor {
     }
 
     private void updateMovedOnEmptyParent(final TableOfContentItemVO dropData, final TableOfContentItemVO targetItemVO,
-            final String movedOntoType, final String movedElementType) {
+                                          final String movedOntoType, final String movedElementType) {
 
         if (targetItemVO != null && targetItemVO.getTocItem().getAknTag().value().equals(movedOntoType) &&
                 dropData != null && dropData.getTocItem().getAknTag().value().equals(movedElementType) &&
@@ -512,16 +515,16 @@ public class MandateTocEditor extends AbstractTocEditor {
         }
     }
 
-    private boolean containsMovedElement( List<TableOfContentItemVO> childItems, String movedElementType) {
-        for(TableOfContentItemVO child: childItems) {
-            if(child.getTocItem().getAknTag().value().equals(movedElementType) && (child.getNode() != null)) {
+    private boolean containsMovedElement(List<TableOfContentItemVO> childItems, String movedElementType) {
+        for (TableOfContentItemVO child : childItems) {
+            if (child.getTocItem().getAknTag().value().equals(movedElementType) && (child.getNode() != null)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean checkOriginParentTocITem(TableOfContentItemVO tableOfContentItemVO, String origin){
+    private boolean checkOriginParentTocITem(TableOfContentItemVO tableOfContentItemVO, String origin) {
         return tableOfContentItemVO.getOriginAttr() != null && tableOfContentItemVO.getOriginAttr().equals(origin);
     }
 
@@ -532,7 +535,7 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     private void propagateListType(List<TableOfContentItemVO> list, TocItem tocItem, List<NumberingConfig> numberingConfigs, MultiSelectTreeGrid<TableOfContentItemVO> tocTree) {
         String newNumberingValue = getNewNumberingFromListTocItem(list, tocItem, numberingConfigs);
-        for (TableOfContentItemVO child: list) {
+        for (TableOfContentItemVO child : list) {
             if (getTagValueFromTocItemVo(child).equals(POINT) || getTagValueFromTocItemVo(child).equals(INDENT)) {
                 child.setTocItem(tocItem);
                 child.setNumber(newNumberingValue);
@@ -603,7 +606,7 @@ public class MandateTocEditor extends AbstractTocEditor {
         if (!getTagValueFromTocItemVo(targetItem).equals(INDENT)
                 && !getTagValueFromTocItemVo(targetItem).equals(POINT)
                 && !targetItem.getChildItems().isEmpty()) {
-            for (TableOfContentItemVO child: targetItem.getChildItems()) {
+            for (TableOfContentItemVO child : targetItem.getChildItems()) {
                 if (!validateAgainstOtherIndent(sourceItem, child)) {
                     return false;
                 }
