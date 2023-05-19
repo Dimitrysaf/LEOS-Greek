@@ -195,11 +195,14 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
   }
 
   private userToAutoCompleteItem(user: User) {
+    const label = user.defaultEntity.organizationName
+      ? `${user.name} (${user.defaultEntity.organizationName})`
+      : user.name;
+
     return new EuiAutoCompleteItem({
       ...user,
-      label: user.defaultEntity.organizationName
-        ? `${user.name} (${user.defaultEntity.organizationName})`
-        : user.name,
+      label,
+      tooltip: { tooltipMessage: label },
     });
   }
 
