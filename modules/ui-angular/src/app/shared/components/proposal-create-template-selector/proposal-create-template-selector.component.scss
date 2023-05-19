@@ -1,10 +1,11 @@
 :host ::ng-deep {
   .ux-tree__node--disabled {
-    opacity: 0.5;
+    opacity: 0.7;
   }
 
-  .ux-tree__node[title='empty-category'] .ux-tree__node-toggle-icon {
-    // hide empty category toggle icon, while keeping indentation
+  .ux-tree__node[title='empty-category'] .ux-tree__node-toggle-icon,
+  .ux-tree__node[title='template'] .ux-tree__node-toggle-icon {
+    // hide empty category or extra template toggle icon, while keeping indentation
     visibility: hidden;
   }
 

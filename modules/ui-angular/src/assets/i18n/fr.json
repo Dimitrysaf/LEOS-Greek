@@ -57,6 +57,8 @@
   "page.workspace.create-form.document.package-title": "Titre du paquet",
   "page.workspace.create-form.document.eea-relevance": "Intérêt EEE",
   "page.workspace.create-form.document.eea-relevance.placeholder": "(Texte présentant de l'intérêt pour l'EEE)",
+  "page.workspace.create-form.document.confidentiality-level-predefined-value": "[FR] Standard treatment",
+  "page.workspace.create-form.document.document-title-predefined-value": "[FR] on ...",
   "page.workspace.create-form.draft.title": "[FR] Enter draft metadata",
   "page.workspace.create-form.draft.document-template": "Modèle",
   "page.workspace.create-form.draft.document-title": "[FR] Draft Title",

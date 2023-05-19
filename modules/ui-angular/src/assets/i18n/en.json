@@ -63,6 +63,8 @@
   "page.workspace.create-form.document.package-title": "Package Title",
   "page.workspace.create-form.document.eea-relevance": "EEA Relevance",
   "page.workspace.create-form.document.eea-relevance.placeholder": "(Text with EEA relevance)",
+  "page.workspace.create-form.document.confidentiality-level-predefined-value": "Standard treatment",
+  "page.workspace.create-form.document.document-title-predefined-value": "on ...",
   "page.workspace.create-form.draft.title": "Enter draft metadata",
   "page.workspace.create-form.draft.document-template": "Template",
   "page.workspace.create-form.draft.document-title": "Draft Title",
