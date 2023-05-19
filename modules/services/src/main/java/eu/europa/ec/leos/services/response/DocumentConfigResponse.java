@@ -9,6 +9,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +22,11 @@ public class DocumentConfigResponse {
     private Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray;
     private Map<String, Attribute> articleTypesConfig;
     private String internalRef;
+    private Map<String, List<TocItem>> tocRules;
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
                                   List<AlternateConfig> alternateConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
-                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata) {
+                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata, Map<TocItem, List<TocItem>> tocRules) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -33,6 +35,7 @@ public class DocumentConfigResponse {
         this.alternateConfigs = alternateConfigs;
         this.internalRef = internalRef;
         this.proposalMetadata = proposalMetadata;
+        this.tocRules = transformMap(tocRules);
     }
 
     public List<LeosMetadata> getDocumentsMetadata() {
@@ -98,4 +101,27 @@ public class DocumentConfigResponse {
     public void setProposalMetadata(ProposalMetadata proposalMetadata) {
         this.proposalMetadata = proposalMetadata;
     }
+
+    public Map<String, List<TocItem>> getTocRules() {
+        return tocRules;
+    }
+
+    public void setTocRules(Map<String, List<TocItem>> tocRules) {
+        this.tocRules = tocRules;
+    }
+
+    private Map<String, List<TocItem>> transformMap(Map<TocItem, List<TocItem>> originalMap) {
+        Map<String, List<TocItem>> transformedMap = new HashMap<>();
+
+        for (Map.Entry<TocItem, List<TocItem>> entry : originalMap.entrySet()) {
+            TocItem tocItem = entry.getKey();
+            List<TocItem> tocItemList = entry.getValue();
+
+            String key = tocItem.getAknTag().toString().toUpperCase() + "_" + tocItem.getNumberingType().toString();
+            transformedMap.put(key, tocItemList);
+        }
+
+        return transformedMap;
+    }
+
 }

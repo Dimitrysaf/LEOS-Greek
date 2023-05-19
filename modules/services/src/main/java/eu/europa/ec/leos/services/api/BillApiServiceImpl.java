@@ -344,7 +344,7 @@ public class BillApiServiceImpl implements BillApiService {
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, alternateConfigs, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structure.getTocRules()
         );
     }
 

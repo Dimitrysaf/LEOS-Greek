@@ -3,6 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
+
 import { TableOfContentService } from '../../services/tableOfContent.service';
 
 @Component({

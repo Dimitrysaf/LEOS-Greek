@@ -146,6 +146,7 @@ article.leos-content-soft-new[leos\:softaction='add']
   font-weight: bold;
 }
 
+/* stylelint-disable selector-id-pattern */
 #docContainer span.leos-soft-move-label {
   background-color: #808080;
   cursor: pointer;

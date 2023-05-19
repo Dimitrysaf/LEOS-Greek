@@ -15,6 +15,7 @@ import {
   INDENT,
   LEVEL,
   LIST,
+  MAX_INDENT_LEVEL,
   MOVE_FROM,
   MOVE_TO,
   PARAGRAPH,
@@ -29,6 +30,7 @@ import {
   UNDELETE,
 } from '../constants/toc.constant';
 import { NumberingConfig, NumberingType } from '../models';
+import { NodeValidation } from '../models/drop-response.model';
 import { AknTag, TableOfContentItemVO, TocItem } from '../models/toc.model';
 
 export const removeNode = (
@@ -1055,4 +1057,223 @@ export const containsNoSoftDeletedItem = (
     if (containsItemNoSoftDeleted) break;
   }
   return containsItemNoSoftDeleted;
+};
+
+export const validateMaxDepth = (
+  validationResult: NodeValidation,
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+) => {
+  if (targetItem.tocItem.maxDepth != null) {
+    const maxDepthRule = parseInt(targetItem.tocItem.maxDepth, 10);
+    if (maxDepthRule > 0 && targetItem.itemDepth >= maxDepthRule) {
+      validationResult.success = false;
+      validationResult.messageKey = 'toc.edit.window.drop.error.depth.message';
+      validationResult.sourceItem = sourceItem;
+      validationResult.targetItem = targetItem;
+    }
+  }
+  return true;
+};
+
+export const validateAddingToItem = (
+  validationResult: NodeValidation,
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+  tocTree: TableOfContentItemVO[],
+  actualTargetItem: TableOfContentItemVO,
+  position: string,
+) => {
+  const isNumberedCN = (element: TableOfContentItemVO) => {
+    let _isNumbered = true;
+    if (element.tocItem.itemNumber === 'NONE') {
+      _isNumbered = false;
+    } else if (
+      element.tocItem.itemNumber === 'OPTIONAL' &&
+      (!element.number ||
+        element.number === '' ||
+        isNumSoftDeleted(element.numSoftActionAttr))
+    ) {
+      _isNumbered = false;
+    }
+    return _isNumbered;
+  };
+  if (process.env.NG_APP_LEOS_INSTANCE !== 'cn') {
+    return true;
+  }
+  if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+  }
+  if (!actualTargetItem) {
+    actualTargetItem = targetItem;
+  }
+  const droppedElementTagName = sourceItem.tocItem.aknTag;
+  const droppedElementTagNumberingType = sourceItem.tocItem.numberingType;
+
+  const targetName = actualTargetItem.tocItem.aknTag;
+  let indentAllowed = false;
+
+  switch (droppedElementTagName) {
+    case SUBPARAGRAPH: {
+      if (!isNumberedCN(actualTargetItem)) {
+        validationResult.success = true;
+        validationResult.messageKey =
+          'toc.edit.window.drop.error.subparagraph.message';
+        return false;
+      }
+      break;
+    }
+    case POINT:
+    case INDENT: {
+      indentAllowed = isIndentAllowed(
+        tocTree,
+        actualTargetItem,
+        MAX_INDENT_LEVEL - getIndentLevel(sourceItem),
+      );
+      if (
+        !indentAllowed ||
+        ![PARAGRAPH, LEVEL, LIST, POINT, INDENT].includes(targetName) ||
+        ([PARAGRAPH, LEVEL].includes(targetName) &&
+          containsItem(actualTargetItem, droppedElementTagName) &&
+          droppedElementTagName !== POINT &&
+          ![INDENT, BULLET_NUM].includes(droppedElementTagNumberingType)) ||
+        ([PARAGRAPH, LEVEL].includes(targetName) &&
+          (containsItem(actualTargetItem, LIST) ||
+            !containsOnlySameIndentType(
+              actualTargetItem,
+              droppedElementTagNumberingType,
+            ))) ||
+        (targetName === droppedElementTagName &&
+          containsItem(actualTargetItem, LIST)) ||
+        !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem)
+      ) {
+        validationResult.success = false;
+        if (!indentAllowed) {
+          validationResult.messageKey =
+            'toc.edit.window.drop.error.indentation.message';
+          console.log('toc.edit.window.drop.error.indentation.message');
+          // result.setMessageKey("toc.edit.window.drop.error.indentation.message");
+        } else if (containsItem(actualTargetItem, LIST)) {
+          validationResult.messageKey =
+            'toc.edit.window.drop.already.contains.list.error.message';
+        } else {
+          validationResult.messageKey = 'toc.edit.window.drop.error.message';
+        }
+        return false;
+      }
+      break;
+    }
+    case LIST: {
+      indentAllowed = isIndentAllowed(
+        tocTree,
+        actualTargetItem,
+        MAX_INDENT_LEVEL - getIndentLevel(sourceItem),
+      );
+      if (
+        !indentAllowed ||
+        ((targetName === PARAGRAPH || targetName === LEVEL) &&
+          containsItem(actualTargetItem, LIST)) ||
+        ((targetName === POINT || targetName === INDENT) &&
+          containsItem(actualTargetItem, LIST))
+      ) {
+        validationResult.success = false;
+        validationResult.messageKey = !indentAllowed
+          ? 'toc.edit.window.drop.error.indentation.message'
+          : 'toc.edit.window.drop.error.list.message';
+        return false;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  return true;
+};
+
+export const isNumSoftDeleted = (numSoftACtionAttr: string) =>
+  DELETE === numSoftACtionAttr;
+
+export const isIndentAllowed = (
+  treeData: TableOfContentItemVO[],
+  targetElement: TableOfContentItemVO,
+  indentLevel: number,
+) => {
+  let isAllowed = true;
+  if (indentLevel < 0) {
+    isAllowed = false;
+  } else if (targetElement != null) {
+    const tagValue = targetElement.tocItem.aknTag;
+    const parentItem = findNodeById(treeData, targetElement.parentItem);
+    isAllowed = isIndentAllowed(
+      treeData,
+      parentItem,
+      tagValue === POINT || tagValue === INDENT ? indentLevel - 1 : indentLevel,
+    );
+  }
+  return isAllowed;
+};
+
+export const getIndentLevel = (element: TableOfContentItemVO) => {
+  let identLevel = 0;
+  for (const child of element.childItems) {
+    identLevel = Math.max(identLevel, getIndentLevel(child));
+  }
+  const tagValue = element.tocItem.aknTag;
+  return tagValue === POINT || tagValue === INDENT
+    ? identLevel + 1
+    : identLevel;
+};
+
+export const validateAgainstOtherIndentsInList = (
+  tocTree: TableOfContentItemVO[],
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+) => {
+  if (
+    targetItem.tocItem.aknTag !== INDENT &&
+    targetItem.tocItem.aknTag !== POINT &&
+    targetItem.childItems.length > 0
+  ) {
+    for (const child of targetItem.childItems) {
+      if (!validateAgainstOtherIndent(sourceItem, child)) {
+        return false;
+      }
+    }
+  } else if (
+    targetItem.tocItem.aknTag === POINT ||
+    targetItem.tocItem.aknTag === INDENT
+  ) {
+    return validateAgainstOtherIndent(sourceItem, targetItem);
+  } else if (
+    targetItem.tocItem.aknTag === LIST &&
+    targetItem.childItems.length === 0
+  ) {
+    const parentItem = findNodeById(tocTree, sourceItem.parentItem);
+    return validateAgainstOtherIndentsInList(tocTree, sourceItem, parentItem);
+  }
+  return true;
+};
+
+export const validateAgainstOtherIndent = (
+  sourceItem: TableOfContentItemVO,
+  targetItem: TableOfContentItemVO,
+) => {
+  const targetNumberingType = targetItem.tocItem.numberingType;
+  const sourceNumberingType = sourceItem.tocItem.numberingType;
+  return targetNumberingType === sourceNumberingType;
+};
+
+export const containsOnlySameIndentType = (
+  node: TableOfContentItemVO,
+  numberingType: string,
+) => {
+  const childItems: TableOfContentItemVO[] = node.childItems;
+  for (const child of childItems || []) {
+    if (
+      child.tocItem.aknTag === INDENT &&
+      child.tocItem.numberingType !== numberingType
+    ) {
+      return false;
+    }
+  }
+  return true;
 };

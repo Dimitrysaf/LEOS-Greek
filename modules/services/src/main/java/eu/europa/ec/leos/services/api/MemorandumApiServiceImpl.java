@@ -361,10 +361,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         List<TocItem> tocItems = context1.getTocItems();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
-
+        
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context1.getTocRules()
         );
     }
 

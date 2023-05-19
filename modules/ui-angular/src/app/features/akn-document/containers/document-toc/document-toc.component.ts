@@ -16,7 +16,7 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { getUserDetails, UserDetails } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep, some, truncate, update } from 'lodash-es';
+import { cloneDeep, result, some, truncate, update } from 'lodash-es';
 import { Subject, take, takeUntil } from 'rxjs';
 
 import {
@@ -55,7 +55,10 @@ import {
 } from '@/shared/constants/toc.constant';
 import { DocumentConfig } from '@/shared/models';
 import { DragAction } from '@/shared/models/drag-action.model';
-import { NodeValidationResponse } from '@/shared/models/drop-response.model';
+import {
+  NodeValidation,
+  NodeValidationResponse,
+} from '@/shared/models/drop-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
@@ -74,6 +77,7 @@ import {
   isDeletedItem,
   isDroppedOnPointOrIndent,
   isNumbered,
+  isRootElement,
   isSourceDivision,
   removeTag,
   setBlockOrCrossHeading,
@@ -81,7 +85,10 @@ import {
   setItemLevel,
   softDeleteItem,
   updateDepthOfTocItems,
+  validateAddingToItem,
+  validateMaxDepth,
 } from '@/shared/utils/toc.utils';
+import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
 
 import {
   TableOfContentItemVO,
@@ -385,8 +392,13 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           );
     if (targetItem.tocItem.childrenAllowed) {
       const targetTocItem: TocItem = targetItem.tocItem;
-      // const targetTocItems: TocItem[] =
-      //   this.documentConfig.tocRules.get(targetTocItem);
+      // const targetTocItems: TocItem[] = this.documentConfig.tocRules.get(
+      //   [
+      //     targetTocItem.aknTag.toUpperCase(),
+      //     targetTocItem.numberingType.toUpperCase(),
+      //   ].join('_'),
+      // );
+      // console.log(targetTocItems);
 
       if (
         isSourceDivision(sourceItem) ||
@@ -953,9 +965,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .forEach((el) => el.classList.remove('selected-node'));
   }
 
-  private populateValidationMessage(response: NodeValidationResponse) {
-    this.isDropValid = response.result.success;
-    this.messageFromValidation = response.result.messageKey;
+  private populateValidationMessage(validationResult: NodeValidation) {
+    this.isDropValid = validationResult.success;
+    this.messageFromValidation = this.tranlsateService.instant(
+      validationResult.messageKey,
+      {
+        0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
+        1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
+      },
+    );
   }
 
   private clearValidationMessage() {
@@ -1093,11 +1111,32 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.populateValidationMessage(response);
+          this.populateValidationMessage(response.result);
           setTimeout(() => {
             this.clearValidationMessage();
           }, TIME_TO_CLEAR_INVALID);
           if (response.result.success) {
+            if (position === 'AS_CHILDREN') {
+              const validationResult: NodeValidation = {
+                success: true,
+                targetItem: nodeTarget,
+                sourceItem: nodeDragged,
+                messageKey: 'toc.edit.window.drop.success.message',
+              };
+              const resultOfValidation =
+                this.validateAddingItemAsChildOrSibling(
+                  validationResult,
+                  nodeDragged,
+                  nodeTarget,
+                  this.treeControl.dataNodes,
+                  parentNode,
+                  position,
+                );
+              if (!validationResult?.success) {
+                this.populateValidationMessage(validationResult);
+                return;
+              }
+            }
             // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
             // so the resutl.success will now mean that it can be dropped as a sibling
             if (position === 'AS_CHILDREN') {
@@ -1130,19 +1169,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
                 newTargetItem,
                 position,
               );
-              // //TODO remove this logic from here to addOrMoveItems
-              //   switch (position) {
-              //     case 'AFTER':
-              //       this.insertAfter(nodeTarget, nodeDragged, isAdd);
-              //       break;
-              //     case 'BEFORE':
-              //       this.insertBefore(nodeTarget, nodeDragged, isAdd);
-              //       break;
-              //     case 'AS_CHILDREN':
-              //       this.insertChild(nodeTarget, nodeDragged, isAdd);
-              //       break;
-              //   }
-              //if source was the tocitems rebuild to change the uuid
               if (isAdd) {
                 this.reBuildTocItems.emit(true);
               }
@@ -1594,4 +1620,128 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     setItemDepth(sourceItem, targetItem, position);
     setItemLevel(tocTree, sourceItem, targetItem, position);
   }
+
+  private validateAddingItemAsChildOrSibling(
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    parentItem: TableOfContentItemVO,
+    position: string,
+  ): boolean {
+    const targetTocItem = targetItem.tocItem;
+    const targetRules = [
+      targetTocItem.aknTag.toUpperCase(),
+      targetTocItem.numberingType.toUpperCase(),
+    ].join('_');
+    const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
+
+    console.log(targetTocItems);
+    if (
+      isSourceDivision(sourceItem) ||
+      isCrossheading(sourceItem) ||
+      isDroppedOnPointOrIndent(sourceItem, targetItem) ||
+      sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag
+    ) {
+      const actualTargetItem = getActualTargetItem(
+        sourceItem,
+        targetItem,
+        parentItem,
+        position,
+        true,
+      );
+      return this.validateAddingToActualTargetItem(
+        validationResult,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+    }
+    //TODO : Add toc rules current problem rules are of type -> Map<TocItem,List<TocItem>> this cant't be parsed as json , and because some values have the same toc item key (aknTag) we can't map them by this identifier
+    else if (
+      targetTocItems?.length > 0 &&
+      targetTocItems.some((item) => isTocItemsEqual(item, sourceItem.tocItem))
+    ) {
+      //If target item type is root, source item will be added as child, else validate dropping item at dragged location
+      const actualTargetItem = getActualTargetItem(
+        sourceItem,
+        targetItem,
+        parentItem,
+        position,
+        false,
+      );
+      return (
+        // isRootElement(targetItem) ||
+        this.validateAddingToActualTargetItem(
+          validationResult,
+          sourceItem,
+          targetItem,
+          tocTree,
+          actualTargetItem,
+          position,
+        )
+      );
+    } else {
+      // If child elements not allowed in target validate adding it to its parent
+      return this.validateAddingItemAsSibling(
+        validationResult,
+        sourceItem,
+        targetItem,
+        tocTree,
+        parentItem,
+        position,
+      );
+    }
+  }
+
+  private validateAddingItemAsSibling(
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    parentItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    const actualTargetItem = getActualTargetItem(
+      sourceItem,
+      targetItem,
+      parentItem,
+      position,
+      true,
+    );
+    return this.validateAddingToActualTargetItem(
+      validationResult,
+      sourceItem,
+      targetItem,
+      tocTree,
+      actualTargetItem,
+      position,
+    );
+  }
+
+  private validateAddingToActualTargetItem = (
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ): boolean => {
+    const validAddingToItem = validateAddingToItem(
+      validationResult,
+      sourceItem,
+      targetItem,
+      tocTree,
+      actualTargetItem,
+      position,
+    );
+    const maxDepthReached = validateMaxDepth(
+      validationResult,
+      sourceItem,
+      targetItem,
+    );
+    return validAddingToItem && !maxDepthReached;
+  };
 }

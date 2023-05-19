@@ -10,6 +10,7 @@ import { DocType } from '@/features/akn-document/models/import.model';
 import { ImportService } from '@/features/akn-document/services/import.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentService } from '@/shared/services/document.service';
+
 import { TableOfContentService } from '../../services/tableOfContent.service';
 
 @Component({

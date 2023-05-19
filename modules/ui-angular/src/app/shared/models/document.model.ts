@@ -101,7 +101,11 @@ export interface DocumentConfig {
   proposalMetadata: LeosMetadata;
   alternateConfigs: AlternateConfig;
   levelItemVO: LevelItemVO;
-  tocRules: Map<TocItem, TocItem[]>;
+  tocRules: TocRules;
+}
+
+export interface TocRules {
+  [key: string]: TocItem[];
 }
 
 export interface LevelItemVO {
