@@ -48,7 +48,7 @@
         [ngClass]="{ 'eui-u-bg-color-danger-5': item.errors }"
       >
         <div [formGroupName]="i" class="row align-items-center">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <label euiLabel for="item">{{
               'page.collection.collaborators.dialog.form.name' | translate
             }}</label>
@@ -61,7 +61,7 @@
               (selectionChange)="handleNameSelect($event, i)"
             ></eui-autocomplete>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label euiLabel for="entity">{{
               'page.collection.collaborators.dialog.form.entity' | translate
             }}</label>
