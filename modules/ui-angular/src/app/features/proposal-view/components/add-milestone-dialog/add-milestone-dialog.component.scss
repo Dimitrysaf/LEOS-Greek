@@ -1,4 +1,9 @@
 .milestones {
+  &-header {
+    border-bottom: none !important;
+    padding: var(--eui-base-spacing-2xs) 0 !important;
+  }
+
   &-select,
   &-title {
     width: 436px !important;

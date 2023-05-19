@@ -1,9 +1,19 @@
-<eui-dialog
-  #dialog
-  [title]="'page.collection.milestones.add-dialog.title' | translate"
-  (clickOutside)="close()"
-  (close)="close()"
->
+<eui-dialog #dialog (clickOutside)="close()" (close)="close()">
+  <eui-dialog-header>
+    <div class="eui-dialog__header milestones-header">
+      <h5 class="eui-dialog__header-title">
+        {{ 'page.collection.milestones.add-dialog.title' | translate }}
+      </h5>
+      <button
+        type="button"
+        class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
+      >
+        <span class="eui-button__container">
+          <span class="eui-icon eui-icon-close-m"></span
+        ></span>
+      </button>
+    </div>
+  </eui-dialog-header>
   <form [formGroup]="form" class="eui-u-ml-4xl">
     <div
       class="eui-u-flex eui-u-mb-m eui-u-flex-justify-content-between eui-u-flex-align-items-start"
