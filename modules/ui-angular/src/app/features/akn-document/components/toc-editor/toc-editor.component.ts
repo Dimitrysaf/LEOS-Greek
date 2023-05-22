@@ -17,27 +17,34 @@ import { Subject } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
+  BULLET_NUM,
+  INDENT,
+  LIST,
+  MAIN_BODY,
+  NUMBERED,
+  POINT,
+  UNNUMBERED,
+} from '@/shared/constants';
+import {
   DocumentConfig,
   NumberingConfig,
   NumberingType,
 } from '@/shared/models';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import {
+  checkIfConfirmDeletion,
   convertArticle,
   findNodeById,
   getItemIndentLevel,
   getNumberingByName,
   getNumberingConfig,
   getTocItemByNumberingType,
+  isDeletableItem,
+  isDeletedItem,
+  isMoveToItem,
+  isUndeletableItem,
 } from '@/shared/utils/toc.utils';
 
-const NUMBERED = 'Numbered';
-const UNNUMBERED = 'Unnumbered';
-const INDENT = 'INDENT';
-const POINT = 'POINT';
-const LIST = 'LIST';
-const BULLET_NUM = 'BULLET_NUM';
-const MAIN_BODY = 'MAIN_BODY';
 const TYPING_TIME = 500;
 
 @Component({
@@ -85,6 +92,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
   type: string;
   tocType: string;
   possibleDivisionType: any[];
+  isDeleteButtonEnabled: boolean;
+  deleteType: string;
+  deleteButtonCaption: string;
 
   invalidHeadingMsg: string;
   invalidNumberMsg: string;
@@ -115,7 +125,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   onTocRemove(node: TableOfContentItemVO) {
-    this.handleTocRemove.emit(node);
+    this.deleteWithConfirmationCheck(this.toc, node);
   }
 
   isArticle(tocItem: TocItem) {
@@ -224,6 +234,29 @@ export class TocEditorComponent implements OnInit, OnChanges {
       node.tocItem.numberingType,
     );
     this.tocType = node.tocItemType?.toLowerCase();
+    const deletedItem = isDeletedItem(node) || isMoveToItem(node);
+    // If toc item is configured to be deletable, then check:
+    // - if the item has already been deleted => check if it can be undelete
+    // - if has not been deleted => check if it can be deleted (Ex: when mixed EC/CN element are present)
+    this.isDeleteButtonEnabled =
+      node.tocItem.deletable &&
+      (deletedItem
+        ? isUndeletableItem(this.toc, node)
+        : isDeletableItem(this.toc, node));
+
+    if (deletedItem) {
+      this.deleteButtonCaption = this.translateService.instant(
+        'global.actions.undelete',
+      );
+      this.deleteType = 'undelete';
+    }
+    if (!deletedItem) {
+      this.deleteButtonCaption = this.translateService.instant(
+        'global.actions.delete',
+      );
+      this.deleteType = 'delete';
+    }
+
     //enable identListRadioButton
     if (
       this.indentListRadioButtonGroupItemsToEnable != null &&
@@ -252,6 +285,17 @@ export class TocEditorComponent implements OnInit, OnChanges {
         node.childItems?.[0]?.number?.length > 0
           ? NUMBERED
           : UNNUMBERED ?? UNNUMBERED;
+    }
+  }
+
+  deleteWithConfirmationCheck(
+    tocTree: TableOfContentItemVO[],
+    item: TableOfContentItemVO,
+  ) {
+    if (checkIfConfirmDeletion(tocTree, item)) {
+      this.onTocDeleteWithChildren();
+    } else {
+      this.handleTocRemove.emit();
     }
   }
 

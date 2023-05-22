@@ -51,6 +51,7 @@ import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -165,19 +166,20 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex, elementId, elementName);
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
 
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
 
         //TODO add splitted content functionality since
-        annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
-        return documentViewService.getDocumentView(annex);
+        Annex updatedAnnex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
+        String newContent = elementProcessor.getElement(updatedAnnex, elementName, elementId);
+        return new RefreshElementResponse(elementId, elementName, newContent);
     }
 
     @Override
@@ -188,7 +190,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
 
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
     }
 
     @Override
@@ -202,7 +204,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Annex {} id {})", elementId, mergeOnElement.getElementId(), annex.getName(), annex.getId());
         }
-        return documentViewService.getDocumentView(annex);
+        return documentViewService.updateDocumentView(annex);
     }
 
     @Override
@@ -306,7 +308,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = annexService.findAnnexByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
         Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
-        return this.documentViewService.getDocumentView(updatedAnnex);
+        return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
     @Override
@@ -414,7 +416,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
-        return this.documentViewService.getDocumentView(updateAnnex);
+        return this.documentViewService.updateDocumentView(updateAnnex);
     }
 
     @Override
@@ -427,9 +429,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
 
+
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context.getTocRules()
         );
     }
 
@@ -450,7 +453,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         service.useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED, messageHelper.getMessage("operation.annex.switch." + newAnnexStructureType.getType() + ".structure"));
         service.executeUpdateAnnexStructure();
         Annex updatedAnnex = this.annexService.findAnnexByRef(documentRef);
-        return this.documentViewService.getDocumentView(updatedAnnex);
+        return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
     @Override
@@ -472,7 +475,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex updateAnnex = annexService.updateAnnex(annex, newXmlContent, checkinCommentJson);
 
         LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        return this.documentViewService.getDocumentView(updateAnnex);
+        return this.documentViewService.updateDocumentView(updateAnnex);
     }
 
     @Override

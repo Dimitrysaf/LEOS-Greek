@@ -23,7 +23,7 @@ export class TableOfContentItemVO {
   childItems: TableOfContentItemVO[];
   parentItem: string;
   softActionAttr: string;
-  isSoftActionRoot: boolean;
+  softActionRoot: boolean;
   softMoveTo: string;
   softMoveFrom: string;
   softTransFrom: string;
@@ -36,7 +36,7 @@ export class TableOfContentItemVO {
   indentLevel: number;
   elementNumberId: number;
   indentOriginType: string = null;
-  indentOriginIndentLevel = -1;
+  indentOriginIndentLevel = '-1';
   indentOriginNumId: string = null;
   indentOriginNumValue: string = null;
   indentOriginNumOrigin: string = null;
@@ -46,6 +46,8 @@ export class TableOfContentItemVO {
   isAffected: boolean;
   expanded: boolean;
   label?: string;
+  itemDescription?: string;
+  tocStyling?: string;
 }
 
 export type AknTag =

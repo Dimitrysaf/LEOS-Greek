@@ -261,9 +261,12 @@ public class BillContextService {
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
         final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
         bill = billService.updateBill(bill, updatedBytes, updateRefsComment);
-        Map<String, Object> billProperties = new HashMap<>();
-        billProperties.put(CmisProperties.CLONED_FROM.getId(), billDocument.getId()); //TODO is this correct? It will add the property even in simple import
-        billService.updateBill(bill.getId(), billProperties, true);
+        if (cloneProposal) {
+            Map<String, Object> billProperties = new HashMap<>();
+            billProperties.put(CmisProperties.CLONED_FROM.getId(), billDocument.getId());
+            billProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            billService.updateBill(bill.getId(), billProperties, true);
+        }
         for (Annex annex : annexes) {
             DocumentVO docChild = billDocument.getChildDocuments().stream()
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
@@ -348,26 +351,27 @@ public class BillContextService {
         Validate.notNull(leosPackage, "Bill package is required!");
         
         Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
-
-        Option<BillMetadata> metadataOption = bill.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
-        Validate.notNull(purpose, "Bill purpose is required!");
-        BillMetadata metadata = metadataOption.get()
-                .builder()
-                .withPurpose(purpose)
-                .withEeaRelevance(eeaRelevance)
-                .build();
-        billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
-        // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
-        List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
-        annexes.forEach(annex -> {
-            AnnexContextService annexContext = annexContextProvider.get();
-            annexContext.usePurpose(purpose);
-            annexContext.useAnnexId(annex.getId());
-            annexContext.useActionMessageMap(actionMsgMap);
-            annexContext.useEeaRelevance(eeaRelevance);
-            annexContext.executeUpdateAnnexMetadata();
-        });
+        if(bill != null) {
+            Option<BillMetadata> metadataOption = bill.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
+            Validate.notNull(purpose, "Bill purpose is required!");
+            BillMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
+            billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
+            // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
+            List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+            annexes.forEach(annex -> {
+                AnnexContextService annexContext = annexContextProvider.get();
+                annexContext.usePurpose(purpose);
+                annexContext.useAnnexId(annex.getId());
+                annexContext.useActionMessageMap(actionMsgMap);
+                annexContext.useEeaRelevance(eeaRelevance);
+                annexContext.executeUpdateAnnexMetadata();
+            });
+        }
     }
 
     public void executeRemoveBillAnnex() {
@@ -474,6 +478,7 @@ public class BillContextService {
         annexContext.useDocument(annexDocument);
         annexContext.useActionMessageMap(actionMsgMap);
         annexContext.useAnnexNumber(annexMeta.getNumber());
+        annexContext.useCloneProposal(cloneProposal);
         Annex annex = annexContext.executeImportAnnex();
         String annexRef = annex.getMetadata().get().getRef();
         idsAndUrlsHolder.addAnnexIdAndUrl(annexRef, urlBuilder.buildAnnexViewUrl(annexRef));

@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
+import { RouteReuseStrategy } from '@angular/router';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
 import { SharedModule } from '@/shared/shared.module';
 
+import { AknRouteReUseStrategy } from './akn-route-strategy';
 import { ActionsToolbarComponent } from './components/actions-toolbar/actions-toolbar.component';
 import { AnnexActionsDropdownComponent } from './components/annex-actions-dropdown/annex-actions-dropdown.component';
 import { AnnexDocumentComponent } from './components/annex-document/annex-document.component';
@@ -21,6 +23,7 @@ import { VersionsPaneGroupComponent } from './components/versions-pane-group/ver
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { DocumentTocComponent } from './containers/document-toc/document-toc.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
+import { CKEditorService } from './services/ckeditor.service';
 
 @NgModule({
   declarations: [
@@ -48,6 +51,9 @@ import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.
     SharedModule,
     MatTreeModule,
   ],
-  providers: [],
+  providers: [
+    CKEditorService,
+    { provide: RouteReuseStrategy, useClass: AknRouteReUseStrategy },
+  ],
 })
 export class AknDocumentModule {}

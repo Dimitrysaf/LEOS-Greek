@@ -73,7 +73,7 @@
         <!-- See/Hide user guidance -->
         <li
           euiListItem
-          (click)="ckEditorService.toogleUserGuidance()"
+          (click)="ckEditorService.toggleUserGuidance()"
           *ngIf="toggleUserGuidanceVisible"
         >
           <button euiListItem>
@@ -111,7 +111,7 @@
         <!-- Change Annex Structure -->
         <li
           euiListItem
-          (click)="doc.switchDocumentStructure()"
+          (click)="handleAnnexStructureChange()"
           *ngIf="changeDocumentStructureVisible"
         >
           <button

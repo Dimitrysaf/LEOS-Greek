@@ -25,6 +25,12 @@
       "
     ></div>
 
+    <div class="eui-u-p-absolute export-button" *ngIf="showPdfExport">
+      <button euiButton (click)="exportPdf()" euiSizeS euiPrimary>
+        {{ 'page.collection.milestone-view-dialog.export-button' | translate }}
+      </button>
+    </div>
+
     <!-- Tabs -->
     <eui-tabs (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index">

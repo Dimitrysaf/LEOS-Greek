@@ -139,6 +139,7 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         if (trackChangesItem == null) {
             trackChangesItem = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.enable.trackchanges"),
                     new TrackChangesCommand(), changeDetails);
+            trackChangesItem.setEnabled(event.isMenuEnabled());
             trackChangesItem.setChecked(event.isTrackChangesEnabled());
         }
     }
@@ -161,10 +162,6 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
 
     public void setSaveVersionVisible(boolean visible) {
         saveVersionItem.setVisible(visible);
-    }
-    
-    public void setSaveVersionEnabled(boolean enable) {
-        saveVersionItem.setEnabled(enable);
     }
 
     public void setDownloadCleanVersionVisible(boolean visible) {

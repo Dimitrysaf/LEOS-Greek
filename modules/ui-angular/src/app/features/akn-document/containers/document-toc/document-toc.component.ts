@@ -16,32 +16,85 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { getUserDetails, UserDetails } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep, some, truncate } from 'lodash-es';
+import { cloneDeep, result, some, truncate, update } from 'lodash-es';
 import { Subject, take, takeUntil } from 'rxjs';
 
+import {
+  ADD,
+  ARTICLE,
+  BULLET_NUM,
+  CN,
+  CONTENT_SEPARATOR,
+  DELETE,
+  DIVISION,
+  EC,
+  ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING,
+  ELEMENTS_WITHOUT_CONTENT,
+  HASH_NUM_VALUE,
+  INDENT,
+  LEVEL,
+  LS,
+  MOVE_FROM,
+  MOVE_LABEL_SPAN_START_TAG,
+  MOVE_TO,
+  MOVED_LABEL_SIZE,
+  MOVED_TITLE_SPAN_START_TAG,
+  NUM_HEADING_SEPARATOR,
+  PARAGRAPH,
+  POINT,
+  POINT_ROOT_PARENT_ELEMENTS,
+  RESTORED,
+  SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
+  SPACE,
+  SPAN_END_TAG,
+  SUBPARAGRAPH,
+  TBLOCK,
+  TEMP_PREFIX,
+  TIME_TO_CLEAR_INVALID,
+} from '@/shared/constants/toc.constant';
 import { DocumentConfig } from '@/shared/models';
 import { DragAction } from '@/shared/models/drag-action.model';
-import { NodeValidationResponse } from '@/shared/models/drop-response.model';
+import {
+  NodeValidation,
+  NodeValidationResponse,
+} from '@/shared/models/drop-response.model';
 import { DocumentService } from '@/shared/services/document.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
-  addOrMoveItem,
+  checkDeleteOnLastItemInList,
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
+  containsItem,
+  containsItemOfOrigin,
+  copyDeletedItemToTempForUndelete,
+  getActualTargetItem,
+  getItemSoftStyle,
+  getTableOfContentItemVOById,
   handleLevelMove,
+  hasTocItemSoftAction,
+  isCrossheading,
+  isDeletedItem,
+  isDroppedOnPointOrIndent,
+  isNumbered,
+  isRootElement,
+  isSourceDivision,
+  removeTag,
   setBlockOrCrossHeading,
-  setNumber,
+  setItemDepth,
+  setItemLevel,
+  softDeleteItem,
   updateDepthOfTocItems,
+  validateAddingToItem,
+  validateMaxDepth,
 } from '@/shared/utils/toc.utils';
+import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
 
 import {
   TableOfContentItemVO,
   TocItem,
 } from '../../../../shared/models/toc.model';
+import { TableOfContentService } from '../../services/tableOfContent.service';
 
-const MAX_LABEL_TREE_LENGTH = 50;
-
-const TIME_TO_CLEAR_INVALID = 10000;
 @Component({
   selector: 'app-document-toc',
   templateUrl: './document-toc.component.html',
@@ -87,6 +140,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   constructor(
     private documentService: DocumentService,
+    private tableOfContentService: TableOfContentService,
     public tranlsateService: TranslateService,
     public elementRef: ElementRef,
     private cdRef: ChangeDetectorRef,
@@ -97,7 +151,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.getChildren,
     );
     this.dataSource = new MatTreeNestedDataSource();
-
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
       .subscribe((dConfig) => (this.documentConfig = dConfig));
@@ -119,11 +172,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.documentService.setDocumentRefAndCategory(
-      this.documentRef,
-      this.documentType.toLowerCase(),
-    );
-    this.documentService.toc$
+    this.tableOfContentService.toc$
       .pipe(takeUntil(this.destroy$))
       .subscribe((toc) => {
         this.setTree(toc);
@@ -138,40 +187,31 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       });
   }
 
+  isLabelTextTruncated(element: HTMLDivElement): boolean {
+    return element.offsetWidth < element.scrollWidth;
+  }
+
   getChildren = (node: TableOfContentItemVO) => node.childItems;
 
   hasChildren = (index: number, node: TableOfContentItemVO) =>
     node.childItems.length > 0;
 
+  shouldAddMoveLabel(tocItem: TableOfContentItemVO) {
+    return (
+      tocItem.softActionRoot &&
+      (MOVE_TO === tocItem.softActionAttr ||
+        MOVE_FROM === tocItem.softActionAttr)
+    );
+  }
   getLabel(node: TableOfContentItemVO) {
-    switch (node.tocItem.aknTag) {
-      case 'CITATIONS':
-      case 'PREAMBLE':
-      case 'RECITALS':
-      case 'BODY':
-      case 'PREFACE':
-      case 'MAIN_BODY':
-      case 'CONCLUSIONS':
+    if (node != null) {
+      if (node.tocItem.numberingType === BULLET_NUM) {
+        return this.tranlsateService.instant('toc.item.type.bullet');
+      } else {
         return this.tranlsateService.instant(
-          `toc.item.type.${node.tocItem.aknTag.toLowerCase()}`,
+          'toc.item.type.' + node.tocItem.aknTag.toLowerCase(),
         );
-      //higher division numbering
-      case 'ARTICLE':
-      case 'CHAPTER':
-      case 'TITLE':
-      case 'PART':
-      case 'SECTION':
-        return truncate(
-          `${capitalizeFirstLetter(node.tocItem.aknTag)} ${node.number} ${
-            node.heading ? '- ' + node.heading : ''
-          }`,
-          { length: MAX_LABEL_TREE_LENGTH },
-        );
-      default:
-        return truncate(
-          [node.number, node.heading || node.content].filter(Boolean).join(' '),
-          { length: MAX_LABEL_TREE_LENGTH },
-        );
+      }
     }
   }
 
@@ -223,10 +263,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     const env = process.env.NG_APP_LEOS_INSTANCE;
     return (
       item.originAttr &&
-      item.originAttr === 'ec' &&
-      item.tocItem.aknTag === 'ARTICLE' &&
+      item.originAttr === EC &&
+      item.tocItem.aknTag === ARTICLE &&
       item.childItems.length > 0 &&
-      !(item.softActionAttr === 'DELETE' || item.softActionAttr === 'MOVE')
+      !(item.softActionAttr === DELETE || item.softActionAttr === 'MOVE')
     );
   }
 
@@ -261,19 +301,442 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   hanldeTocRemove() {
     const newTree = cloneDeep(this.treeControl.dataNodes);
-    //TODO : handle if a node can remove or not show message
-    if (this.selectedNodeToMove && this.selectedNodeToMove.tocItem.deletable) {
-      this.removeNode(newTree, this.selectedNodeToMove);
-      this.treeHistory.push(this.treeControl.dataNodes);
-      this.setTree(newTree);
-      this.selectedNodeToMove = null;
+    const item = this.findNodeById(newTree, this.selectedNode.id);
+    const parentItem: TableOfContentItemVO = checkDeleteOnLastItemInList(
+      newTree,
+      item,
+    );
+    if (isDeletedItem(item)) {
+      this.undeleteItem(newTree, item);
+    } else {
+      if (this.environment === CN) {
+        this.setAffectedAttribute(item, newTree);
+        // LEOS-5958: Delete selected item element.
+        if (!containsItemOfOrigin(item, EC, CN)) {
+          this.removeNode(newTree, item);
+        } else {
+          softDeleteItem(newTree, item, CN);
+        }
+
+        // LEOS-5958: If parentItem is not null, means it is a list without any points. Then delete parentItem as well.
+        if (parentItem != null) {
+          if (!containsItemOfOrigin(parentItem, EC, CN)) {
+            this.removeNode(newTree, parentItem);
+          } else {
+            softDeleteItem(newTree, parentItem, CN);
+          }
+        } else {
+          const parent = this.findNodeById(newTree, item.parentItem);
+          // updateStyleClassOfTocItems(
+          //   tocTree.getTreeData().getChildren(item.getParentItem()),
+          //   DIVISION,
+          // );
+          updateDepthOfTocItems(parent.childItems);
+        }
+      }
+      if (this.environment !== CN) {
+        if (!containsItemOfOrigin(item, EC, LS)) {
+          this.removeNode(newTree, item);
+        } else {
+          softDeleteItem(newTree, item, LS);
+        }
+        const parent = this.findNodeById(newTree, item.parentItem);
+        updateDepthOfTocItems(parent.childItems);
+      }
     }
-    if (this.selectedNode && this.selectedNode.tocItem.deletable) {
-      this.removeNode(newTree, this.selectedNode);
-      this.treeHistory.push(this.treeControl.dataNodes);
-      this.setTree(newTree);
-      this.selectedNode = null;
+
+    this.treeHistory.push(this.treeControl.dataNodes);
+    this.setTree(newTree);
+    this.selectedNodeToMove = null;
+  }
+
+  undeleteItem = (
+    tocTree: TableOfContentItemVO[],
+    tableOfContentItemVO: TableOfContentItemVO,
+  ) => {
+    const tempDeletedItem =
+      copyDeletedItemToTempForUndelete(tableOfContentItemVO);
+    this.dropItemAtOriginalPosition(
+      tempDeletedItem,
+      tableOfContentItemVO,
+      tocTree,
+    );
+    this.removeNode(tocTree, tableOfContentItemVO);
+  };
+
+  performAddOrMoveAction(
+    isAdd: boolean,
+    tocTree: TableOfContentItemVO[],
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    parentItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    const addOrMoveItem = (
+      actualTargetItem: TableOfContentItemVO,
+      clauseItem?: TableOfContentItemVO,
+    ) =>
+      this.environment === CN
+        ? this.addOrMoveItemCN(
+            isAdd,
+            sourceItem,
+            clauseItem ? clauseItem : targetItem,
+            tocTree,
+            actualTargetItem,
+            position,
+          )
+        : this.addOrMoveItemProposal(
+            isAdd,
+            sourceItem,
+            clauseItem ? clauseItem : targetItem,
+            tocTree,
+            actualTargetItem,
+            position,
+          );
+    if (targetItem.tocItem.childrenAllowed) {
+      const targetTocItem: TocItem = targetItem.tocItem;
+      // const targetTocItems: TocItem[] = this.documentConfig.tocRules.get(
+      //   [
+      //     targetTocItem.aknTag.toUpperCase(),
+      //     targetTocItem.numberingType.toUpperCase(),
+      //   ].join('_'),
+      // );
+      // console.log(targetTocItems);
+
+      if (
+        isSourceDivision(sourceItem) ||
+        isCrossheading(sourceItem) ||
+        isDroppedOnPointOrIndent(sourceItem, targetItem) ||
+        sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag
+        // || !(targetTocItems && targetTocItems.includes(sourceItem.tocItem))
+      ) {
+        // If items have the same type or if child elements are not allowed in target add it to its parent
+        const actualTargetItem = getActualTargetItem(
+          sourceItem,
+          targetItem,
+          parentItem,
+          position,
+          true,
+        );
+        addOrMoveItem(actualTargetItem);
+      } else if (!targetTocItem.root) {
+        const actualTargetItem = getActualTargetItem(
+          sourceItem,
+          targetItem,
+          parentItem,
+          position,
+          false,
+        );
+        addOrMoveItem(actualTargetItem);
+      } else {
+        if (containsItem(targetItem, 'CLAUSE')) {
+          const clauseItem: TableOfContentItemVO =
+            targetItem.childItems.filter(
+              (x) => x.tocItem.aknTag === 'CLAUSE',
+            )[0] ?? null;
+          if (clauseItem != null) {
+            const parent = this.findNodeById(tocTree, clauseItem.parentItem);
+            const actualTargetItem = getActualTargetItem(
+              sourceItem,
+              clauseItem,
+              parent,
+              'BEFORE',
+              true,
+            );
+            addOrMoveItem(actualTargetItem, clauseItem);
+          }
+        } else {
+          addOrMoveItem(targetItem);
+        }
+      }
+    } else {
+      const actualTargetItem: TableOfContentItemVO = getActualTargetItem(
+        sourceItem,
+        targetItem,
+        parentItem,
+        position,
+        true,
+      );
+      addOrMoveItem(actualTargetItem);
     }
+  }
+
+  addOrMoveItemCN(
+    isAdd: boolean,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    if (isAdd) {
+      this.addOrMoveItem(
+        isAdd,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+      this.moveOriginAttribute(sourceItem, targetItem);
+      this.setNumber(sourceItem, targetItem);
+      if (!sourceItem.tocItem.addSoftAttr) {
+        sourceItem.softActionAttr = ADD;
+        sourceItem.softActionRoot = true;
+      }
+      if (sourceItem.tocItem.aknTag === 'DIVISION') {
+        sourceItem.style = 'type_1';
+      }
+    } else {
+      this.updateMovedOnEmptyParent(
+        sourceItem,
+        actualTargetItem,
+        PARAGRAPH,
+        SUBPARAGRAPH,
+      );
+      this.updateMovedOnEmptyParent(
+        sourceItem,
+        actualTargetItem,
+        POINT,
+        SUBPARAGRAPH,
+      );
+      this.updateMovedOnEmptyParent(
+        sourceItem,
+        actualTargetItem,
+        INDENT,
+        SUBPARAGRAPH,
+      );
+      this.updateMovedOnEmptyParent(
+        sourceItem,
+        actualTargetItem,
+        LEVEL,
+        SUBPARAGRAPH,
+      );
+      //handle the logic for original item
+      this.handleMoveActionCN(sourceItem, tocTree);
+      //insert the moved node to the target position
+      this.addOrMoveItem(
+        isAdd,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+    }
+    const paretnNode = this.findNodeById(tocTree, sourceItem.parentItem);
+    handleLevelMove(sourceItem, targetItem);
+    updateDepthOfTocItems(paretnNode?.childItems ?? []);
+    this.setAffectedAttribute(sourceItem, tocTree);
+    setBlockOrCrossHeading(tocTree, sourceItem);
+
+    this.resetUserInfo(sourceItem);
+  }
+
+  addOrMoveItemProposal(
+    isAdd: boolean,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    if (isAdd) {
+      this.addOrMoveItem(
+        isAdd,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+      sourceItem.softActionAttr = ADD;
+      sourceItem.softActionRoot = true;
+      this.moveOriginAttribute(sourceItem, targetItem);
+      this.setNumber(sourceItem, targetItem);
+    } else {
+      this.handleMoveActionEC(sourceItem, tocTree);
+      this.addOrMoveItem(
+        isAdd,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+    }
+    const paretnNode = this.findNodeById(tocTree, sourceItem.parentItem);
+    handleLevelMove(sourceItem, targetItem);
+    updateDepthOfTocItems(paretnNode?.childItems ?? []);
+    this.resetUserInfo(sourceItem);
+  }
+
+  copyMovingItemToTempCN(
+    originalItem: TableOfContentItemVO,
+    isSoftActionRoot: boolean,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    const moveToItem = cloneDeep(originalItem);
+    moveToItem.childItems = [];
+    if (!ELEMENTS_WITHOUT_CONTENT.includes(originalItem.tocItem.aknTag)) {
+      moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
+      moveToItem.originNumAttr = EC;
+      moveToItem.softActionAttr = MOVE_TO;
+      moveToItem.softActionRoot = isSoftActionRoot;
+      moveToItem.softUserAttr = null;
+      moveToItem.softDateAttr = null;
+    } else {
+      moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
+      moveToItem.softActionAttr = MOVE_TO;
+      moveToItem.softActionRoot = isSoftActionRoot;
+
+      originalItem.childItems.forEach((child) => {
+        if (
+          child.originAttr === EC &&
+          child.softActionAttr !== MOVE_FROM &&
+          child.softActionAttr !== MOVE_TO &&
+          child.softActionAttr !== ADD &&
+          child.softActionAttr !== DELETE
+        ) {
+          moveToItem.childItems.push(
+            this.copyMovingItemToTempCN(child, false, tocTree),
+          );
+        } else if (
+          child.originAttr === EC &&
+          (child.softActionAttr === MOVE_TO || child.softActionAttr === DELETE)
+        ) {
+          this.setAffectedAttribute(child, tocTree);
+        }
+      });
+    }
+    moveToItem.softMoveTo = originalItem.id;
+    moveToItem.itemDepth = originalItem.itemDepth;
+    moveToItem.originalDepthLevel = originalItem.originalDepthLevel;
+    originalItem.softActionAttr = MOVE_FROM;
+    originalItem.softActionRoot = isSoftActionRoot;
+    originalItem.softMoveFrom =
+      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    return moveToItem;
+  }
+
+  copyMovingItemToTempEC(
+    originalItem: TableOfContentItemVO,
+    isSoftActionRoot: boolean,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    const moveToItem = cloneDeep(originalItem);
+    moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    moveToItem.originNumAttr = EC;
+    moveToItem.softUserAttr = null;
+    moveToItem.softDateAttr = null;
+    originalItem.softActionAttr = MOVE_FROM;
+    originalItem.softActionRoot = isSoftActionRoot;
+    originalItem.softMoveFrom =
+      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    return moveToItem;
+  }
+
+  handleMoveActionCN(
+    moveFromItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    if (
+      moveFromItem.originAttr === EC &&
+      (moveFromItem.softActionAttr == null ||
+        (!hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
+          !hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
+          !hasTocItemSoftAction(moveFromItem, ADD) &&
+          !hasTocItemSoftAction(moveFromItem, DELETE)))
+    ) {
+      //skips the copyMovingItemFinal since it only does replace the temp from the id not necessary here
+      const moveTemp = this.copyMovingItemToTempCN(moveFromItem, true, tocTree);
+      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
+
+      // Handles specific case while moving unnumbered paragraph together with numbered paragraphs
+      if (
+        [PARAGRAPH, LEVEL].includes(moveFromItem.tocItem.aknTag) &&
+        moveFromItem.number === ''
+      ) {
+        const moveFromSiblings = this.findNodeById(
+          tocTree,
+          moveTemp.parentItem,
+        ).childItems;
+        if (moveFromSiblings?.length > 0) {
+          const refItem = moveFromSiblings[0];
+          if (refItem.number !== '') {
+            moveFromItem.number = HASH_NUM_VALUE;
+          }
+        }
+      }
+      moveFromItem.originNumAttr = CN;
+      moveFromItem.softActionRoot = true;
+
+      // dropItemAtOriginalPosition(moveToTemp, moveToFinal, container);
+
+      this.setAffectedAttribute(moveFromItem, tocTree);
+
+      if (moveFromItem.softActionAttr === MOVE_FROM) {
+        moveFromItem.softMoveFrom =
+          SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveFromItem.id;
+        const moveToItem = this.findNodeById(
+          tocTree,
+          moveFromItem.softMoveFrom,
+        );
+        if (moveToItem) {
+          moveToItem.softActionRoot = true;
+          this.setAffectedAttribute(moveToItem, tocTree);
+        }
+      }
+    }
+  }
+
+  handleMoveActionEC(
+    moveFromItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    if (
+      moveFromItem.originAttr === EC &&
+      (moveFromItem.softActionAttr == null ||
+        (!hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
+          !hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
+          !hasTocItemSoftAction(moveFromItem, ADD) &&
+          !hasTocItemSoftAction(moveFromItem, DELETE)))
+    ) {
+      const moveTemp = this.copyMovingItemToTempEC(moveFromItem, true, tocTree);
+      moveFromItem.originNumAttr = LS;
+      moveFromItem.softActionRoot = true;
+
+      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
+    }
+    moveFromItem.originNumAttr = LS;
+    moveFromItem.softActionRoot = true;
+    if (moveFromItem.softActionAttr === MOVE_FROM) {
+      moveFromItem.softMoveFrom =
+        SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveFromItem.id;
+      const moveToItem: TableOfContentItemVO = getTableOfContentItemVOById(
+        moveFromItem.softMoveFrom,
+        tocTree,
+      );
+      if (moveToItem != null) {
+        moveToItem.softActionRoot = true;
+      }
+    }
+  }
+  //copy the source item, to a temp moved
+  copyMovingItemToTemp(
+    originalItem: TableOfContentItemVO,
+    isSoftActionRoot: boolean,
+  ) {
+    const moveToItem: TableOfContentItemVO = cloneDeep(originalItem);
+    moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    moveToItem.originNumAttr = EC;
+    moveToItem.softActionAttr = MOVE_TO;
+    moveToItem.softMoveTo = originalItem.id;
+    originalItem.softActionAttr = MOVE_FROM;
+    originalItem.softActionRoot = isSoftActionRoot;
+    originalItem.softMoveFrom =
+      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    return moveToItem;
   }
 
   handleInvalidNodes(event: Set<TableOfContentItemVO>) {
@@ -505,9 +968,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .forEach((el) => el.classList.remove('selected-node'));
   }
 
-  private populateValidationMessage(response: NodeValidationResponse) {
-    this.isDropValid = response.result.success;
-    this.messageFromValidation = response.result.messageKey;
+  private populateValidationMessage(validationResult: NodeValidation) {
+    this.isDropValid = validationResult.success;
+    this.messageFromValidation = this.tranlsateService.instant(
+      validationResult.messageKey,
+      {
+        0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
+        1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
+      },
+    );
   }
 
   private clearValidationMessage() {
@@ -526,11 +995,94 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   private prepareTreeForDisplay(root: TableOfContentItemVO[]) {
     for (const n of root || []) {
       if (n) {
-        //get label to display
-        n.label = this.getLabel(n);
+        n.tocStyling = getItemSoftStyle(n);
+        let label: string = n.tocItem.itemDescription
+          ? this.getLabel(n) + SPACE
+          : '';
+
+        const shoudlAddMovedLabel = this.shouldAddMoveLabel(n);
+        if (shoudlAddMovedLabel) {
+          label = MOVED_TITLE_SPAN_START_TAG.concat(' ', label);
+          label += SPACE;
+        }
+        if (n.number && n.heading) {
+          if (
+            n.tocItem.aknTag.toLowerCase() === n.number.toLowerCase().trim()
+          ) {
+            n.number = HASH_NUM_VALUE;
+          }
+          label += n.number;
+          if (shoudlAddMovedLabel) {
+            label += SPAN_END_TAG;
+            label += this.getMovedLabel();
+          }
+          if (n.tocItem.aknTag === TBLOCK || n.content === '') {
+            label += CONTENT_SEPARATOR;
+            label += n.heading;
+          } else if (n.content !== '') {
+            label += NUM_HEADING_SEPARATOR;
+            label += n.heading;
+          }
+        } else if (n.number) {
+          const softAction = n.numSoftActionAttr;
+          if (softAction) {
+            if (
+              PARAGRAPH === n.tocItem.aknTag &&
+              DELETE === softAction &&
+              MOVE_TO !== n.softActionAttr
+            ) {
+              label +=
+                '<span class="leos-soft-num-removed">' + n.number + '</span>';
+            } else if (
+              PARAGRAPH === n.tocItem.aknTag &&
+              ADD === softAction &&
+              MOVE_TO !== n.softActionAttr
+            ) {
+              label +=
+                '<span class="leos-soft-num-new">' + n.number + '</span>';
+            }
+          } else {
+            if (this.isIndented(n) && n.number !== n.indentOriginNumValue) {
+              label +=
+                '<span class="leos-soft-num-new">' + n.number + '</span>';
+            } else {
+              label += n.number;
+            }
+            if (shoudlAddMovedLabel) {
+              label += SPAN_END_TAG;
+              label += this.getMovedLabel();
+            }
+          }
+        } else if (n.heading) {
+          label += n.heading;
+          if (shoudlAddMovedLabel) {
+            label += SPAN_END_TAG;
+            label += this.getMovedLabel();
+          }
+        } else if (shoudlAddMovedLabel) {
+          label += SPAN_END_TAG;
+          label += this.getMovedLabel();
+        }
+        if (n.tocItem.contentDisplayed) {
+          label += label.length > 0 ? CONTENT_SEPARATOR : '';
+          label += removeTag(n.content);
+        }
+        n.label = label;
       }
       if (n.childItems) this.prepareTreeForDisplay(n.childItems);
     }
+  }
+
+  private isIndented(item: TableOfContentItemVO) {
+    return item.indentOriginType && item.indentOriginType !== RESTORED;
+  }
+
+  private getMovedLabel() {
+    return (
+      MOVE_LABEL_SPAN_START_TAG +
+      this.tranlsateService.instant('toc.edit.window.softmove.label') +
+      SPAN_END_TAG
+    );
   }
 
   private validateAndMove(
@@ -555,11 +1107,32 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.populateValidationMessage(response);
+          this.populateValidationMessage(response.result);
           setTimeout(() => {
             this.clearValidationMessage();
           }, TIME_TO_CLEAR_INVALID);
           if (response.result.success) {
+            if (position === 'AS_CHILDREN') {
+              const validationResult: NodeValidation = {
+                success: true,
+                targetItem: nodeTarget,
+                sourceItem: nodeDragged,
+                messageKey: 'toc.edit.window.drop.success.message',
+              };
+              const resultOfValidation =
+                this.validateAddingItemAsChildOrSibling(
+                  validationResult,
+                  nodeDragged,
+                  nodeTarget,
+                  this.treeControl.dataNodes,
+                  parentNode,
+                  position,
+                );
+              if (!validationResult?.success) {
+                this.populateValidationMessage(validationResult);
+                return;
+              }
+            }
             // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
             // so the resutl.success will now mean that it can be dropped as a sibling
             if (position === 'AS_CHILDREN') {
@@ -580,18 +1153,18 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
               }
             }
             try {
-              switch (position) {
-                case 'AFTER':
-                  this.insertAfter(nodeTarget, nodeDragged, isAdd);
-                  break;
-                case 'BEFORE':
-                  this.insertBefore(nodeTarget, nodeDragged, isAdd);
-                  break;
-                case 'AS_CHILDREN':
-                  this.insertChild(nodeTarget, nodeDragged, isAdd);
-                  break;
-              }
-              //if source was the tocitems rebuild to change the uuid
+              const newTree = cloneDeep(this.treeControl.dataNodes);
+              const newEventItem = isAdd
+                ? nodeDragged
+                : this.findNodeById(newTree, nodeDragged.id);
+              const newTargetItem = this.findNodeById(newTree, nodeTarget.id);
+              this.addDefaultToNewItem(
+                newTree,
+                isAdd,
+                newEventItem,
+                newTargetItem,
+                position,
+              );
               if (isAdd) {
                 this.reBuildTocItems.emit(true);
               }
@@ -614,9 +1187,123 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       });
   }
 
+  private resetUserInfo(sourceItem: TableOfContentItemVO) {
+    sourceItem.softUserAttr = null;
+    sourceItem.softUserAttr = null;
+  }
+  private handleLevelMove(
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+  ) {
+    // when moving back a LEVEL restore the initial depth
+    if (
+      sourceItem.tocItem.aknTag === 'LEVEL' &&
+      targetItem.tocItem.aknTag === 'LEVEL'
+    ) {
+      sourceItem.itemDepth = targetItem.itemDepth;
+    }
+  }
+
+  private moveOriginAttribute(
+    droppedElement: TableOfContentItemVO,
+    targetElement: TableOfContentItemVO,
+  ) {
+    if (this.isElementAndTargetOriginDifferent(droppedElement, targetElement)) {
+      droppedElement.originAttr = this.environment === CN ? CN : LS;
+    }
+    droppedElement.originAttr = this.environment === CN ? CN : LS;
+  }
+
+  private setNumber(
+    droppedElement: TableOfContentItemVO,
+    targetElement: TableOfContentItemVO,
+  ) {
+    if (isNumbered(this.treeControl.dataNodes, droppedElement, targetElement)) {
+      if (!droppedElement.isAutoNumOverwritten) {
+        droppedElement.number = HASH_NUM_VALUE;
+      }
+      if (this.isNumSoftDeleted(droppedElement.numSoftActionAttr)) {
+        droppedElement.numSoftActionAttr = null;
+      } else {
+        droppedElement.number = null;
+      }
+    }
+  }
+
+  private isNumSoftDeleted(numSoftACtionAttr: string) {
+    return numSoftACtionAttr === DELETE;
+  }
   private cancelDrop() {
     this.restoreExpanded(this.treeControl.dataNodes);
     this.clearDragInfo();
+  }
+
+  private updateMovedOnEmptyParent(
+    dropData: TableOfContentItemVO,
+    targetItemVO: TableOfContentItemVO,
+    movedOntoType: string,
+    movedElementType: string,
+  ) {
+    if (
+      targetItemVO != null &&
+      targetItemVO.tocItem.aknTag === movedOntoType &&
+      dropData != null &&
+      dropData.tocItem.aknTag === movedElementType &&
+      !this.containsMovedElement(targetItemVO.childItems, movedElementType)
+    ) {
+      dropData.movedOnEmptyParent = true;
+    }
+  }
+
+  private containsMovedElement(
+    childItems: TableOfContentItemVO[],
+    movedElementType: string,
+  ) {
+    for (const child of childItems) {
+      if (child.tocItem.aknTag === movedElementType && child.node != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private setAffectedAttribute(
+    dropData: TableOfContentItemVO,
+    treeData: TableOfContentItemVO[],
+  ) {
+    if (
+      ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(dropData.tocItem.aknTag)
+    ) {
+      let parentItemVO = this.findNodeById(treeData, dropData.parentItem);
+      while (parentItemVO != null) {
+        if (
+          ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(
+            parentItemVO.tocItem.aknTag,
+          )
+        ) {
+          parentItemVO.isAffected = true;
+          if (
+            POINT_ROOT_PARENT_ELEMENTS.includes(parentItemVO.tocItem.aknTag)
+          ) {
+            break;
+          }
+        }
+        parentItemVO = this.findNodeById(treeData, parentItemVO.parentItem);
+      }
+    }
+  }
+
+  private dropItemAtOriginalPosition(
+    nodeToAdd: TableOfContentItemVO,
+    originalNode: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    const originalParent = this.findNodeById(tocTree, originalNode.parentItem);
+    const indexOfOriginalNode = originalParent.childItems.indexOf(originalNode);
+    if (indexOfOriginalNode !== -1) {
+      originalParent.childItems.splice(indexOfOriginalNode, 0, nodeToAdd);
+    }
+    //handle not found, edge case senario the previous code won't be able to reach here
   }
 
   private showNodeInsertion(node: HTMLElement, invalid = false) {
@@ -726,18 +1413,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private insertAfter(
+    tree: TableOfContentItemVO[],
     target: TableOfContentItemVO,
     eventItem: TableOfContentItemVO,
     isAdd: boolean,
   ) {
-    //clone the tree
-    const newTree = cloneDeep(this.treeControl.dataNodes);
-    this.addDefaultToNewItem(isAdd, eventItem, target, 'AFTER');
-
     //remove the node from the tree
-    if (!isAdd) this.removeNode(newTree, eventItem);
+    // if (!isAdd) this.removeNode(newTree, eventItem);
     //get parent of the node droped / to moved at
-    const parentNode = this.findNodeById(newTree, target.parentItem);
+    const parentNode = this.findNodeById(tree, target.parentItem);
 
     //set the selected / dragged  node to have the same id as the node droped/moved at
     eventItem.parentItem = parentNode.id;
@@ -747,21 +1431,17 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     parentNode.childItems.splice(targetIndex + 1, 0, eventItem);
     //set the new tree
     this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(newTree);
+    this.setTree(tree);
   }
 
   private insertBefore(
+    tree: TableOfContentItemVO[],
     target: TableOfContentItemVO,
     eventItem: TableOfContentItemVO,
     isAdd: boolean,
   ) {
-    //deep clone the tree
-    const newTree = cloneDeep(this.treeControl.dataNodes);
-    //remove the already existing node
-    this.addDefaultToNewItem(isAdd, eventItem, target, 'BEFORE');
-
-    if (!isAdd) this.removeNode(newTree, eventItem);
-    const parentNode = this.findNodeById(newTree, target.parentItem);
+    // if (!isAdd) this.removeNode(tree, eventItem);
+    const parentNode = this.findNodeById(tree, target.parentItem);
     const targetIndex = parentNode.childItems.findIndex(
       (x) => x.id === target.id,
     );
@@ -774,25 +1454,23 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       parentNode.childItems.splice(targetIndex, 0, eventItem);
     }
     this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(newTree);
+    this.setTree(tree);
   }
 
   private insertChild(
+    tree: TableOfContentItemVO[],
     target: TableOfContentItemVO,
     eventItem: TableOfContentItemVO,
     isAdd: boolean,
   ) {
-    const newTree = cloneDeep(this.treeControl.dataNodes);
-    this.addDefaultToNewItem(isAdd, eventItem, target, 'AS_CHILDREN');
-
-    if (!isAdd) this.removeNode(newTree, eventItem);
+    // if (!isAdd) this.removeNode(tree, eventItem);
     //get node to insert to as child
-    const parentToBeNode = this.findNodeById(newTree, target.id);
+    const parentToBeNode = this.findNodeById(tree, target.id);
     //set the selected / dragged  node to have the same id as the node droped/moved at
     eventItem.parentItem = parentToBeNode.id;
     parentToBeNode.childItems.push(eventItem);
     this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(newTree);
+    this.setTree(tree);
   }
 
   private restoreExpanded(root: TableOfContentItemVO[]) {
@@ -846,21 +1524,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  private moveOriginAttribute(
-    droppedElement: TableOfContentItemVO,
-    targetElement: TableOfContentItemVO,
-  ) {
-    if (this.environment === 'cn') {
-      if (
-        this.isElementAndTargetOriginDifferent(droppedElement, targetElement)
-      ) {
-        droppedElement.originNumAttr = 'cn';
-      }
-      droppedElement.originAttr = 'cn';
-    } else {
-    }
-  }
-
   private isElementAndTargetOriginDifferent(
     element: TableOfContentItemVO,
     parent: TableOfContentItemVO,
@@ -875,32 +1538,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private addDefaultToNewItem(
+    tree: TableOfContentItemVO[],
     isAdd: boolean,
     eventItem: TableOfContentItemVO,
     targetElement: TableOfContentItemVO,
     position: string,
   ) {
-    addOrMoveItem(
-      isAdd,
-      eventItem,
-      targetElement,
-      this.treeControl.dataNodes,
-      null,
-      position,
-    );
+    const parent = this.findNodeById(tree, targetElement.parentItem);
     if (isAdd) {
-      eventItem.indentOriginIndentLevel = -1;
-
-      setNumber(this.treeControl.dataNodes, eventItem, targetElement);
-      this.moveOriginAttribute(eventItem, targetElement);
-      if (eventItem.tocItem.addSoftAttr) {
-        eventItem.softActionAttr = 'ADD';
-        eventItem.isSoftActionRoot = true;
-      }
-      if (eventItem.tocItem.aknTag === 'DIVISION') {
-        eventItem.style = 'type_1';
-      }
-
+      eventItem.indentOriginIndentLevel = '-1';
       switch (eventItem.tocItem.aknTag) {
         case 'DIVISION': {
           break;
@@ -918,9 +1564,180 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       }
     }
 
-    //for both add or move
-    updateDepthOfTocItems(this.treeControl.dataNodes);
-    handleLevelMove(eventItem, targetElement);
-    setBlockOrCrossHeading(this.treeControl.dataNodes, eventItem);
+    this.performAddOrMoveAction(
+      isAdd,
+      tree,
+      eventItem,
+      targetElement,
+      parent,
+      position,
+    );
   }
+
+  private addOrMoveItem(
+    isAdd: boolean,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    if (isAdd) {
+      if (actualTargetItem == null) {
+        sourceItem.parentItem = null;
+        sourceItem.itemDepth = 1;
+      }
+    } else if (sourceItem.parentItem != null) {
+      this.removeNode(tocTree, sourceItem);
+      sourceItem.originalDepthLevel = sourceItem.itemDepth;
+    }
+
+    if (actualTargetItem !== targetItem) {
+      if ('BEFORE' === position) {
+        this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
+      }
+      if ('AFTER' === position) {
+        this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
+      }
+    } else if (
+      actualTargetItem === targetItem &&
+      LEVEL === sourceItem.tocItem.aknTag
+    ) {
+      /*
+       * This else is when we add level as child or after a Part, Title, Chapter or Section,
+       * because in this case the actualTargetItem is equal to targetItem, and we need to set
+       * the level as the first of list of children
+       */
+      actualTargetItem.childItems.splice(0, 0, sourceItem);
+    } else {
+      this.insertChild(tocTree, targetItem, sourceItem, isAdd);
+    }
+
+    setItemDepth(sourceItem, targetItem, position);
+    setItemLevel(tocTree, sourceItem, targetItem, position);
+  }
+
+  private validateAddingItemAsChildOrSibling(
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    parentItem: TableOfContentItemVO,
+    position: string,
+  ): boolean {
+    const targetTocItem = targetItem.tocItem;
+    const targetRules = [
+      targetTocItem.aknTag.toUpperCase(),
+      targetTocItem.numberingType.toUpperCase(),
+    ].join('_');
+    const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
+
+    console.log(targetTocItems);
+    if (
+      isSourceDivision(sourceItem) ||
+      isCrossheading(sourceItem) ||
+      isDroppedOnPointOrIndent(sourceItem, targetItem) ||
+      sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag
+    ) {
+      const actualTargetItem = getActualTargetItem(
+        sourceItem,
+        targetItem,
+        parentItem,
+        position,
+        true,
+      );
+      return this.validateAddingToActualTargetItem(
+        validationResult,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+    }
+    //TODO : Add toc rules current problem rules are of type -> Map<TocItem,List<TocItem>> this cant't be parsed as json , and because some values have the same toc item key (aknTag) we can't map them by this identifier
+    else if (
+      targetTocItems?.length > 0 &&
+      targetTocItems.some((item) => isTocItemsEqual(item, sourceItem.tocItem))
+    ) {
+      //If target item type is root, source item will be added as child, else validate dropping item at dragged location
+      const actualTargetItem = getActualTargetItem(
+        sourceItem,
+        targetItem,
+        parentItem,
+        position,
+        false,
+      );
+      return (
+        // isRootElement(targetItem) ||
+        this.validateAddingToActualTargetItem(
+          validationResult,
+          sourceItem,
+          targetItem,
+          tocTree,
+          actualTargetItem,
+          position,
+        )
+      );
+    } else {
+      // If child elements not allowed in target validate adding it to its parent
+      return this.validateAddingItemAsSibling(
+        validationResult,
+        sourceItem,
+        targetItem,
+        tocTree,
+        parentItem,
+        position,
+      );
+    }
+  }
+
+  private validateAddingItemAsSibling(
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    parentItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    const actualTargetItem = getActualTargetItem(
+      sourceItem,
+      targetItem,
+      parentItem,
+      position,
+      true,
+    );
+    return this.validateAddingToActualTargetItem(
+      validationResult,
+      sourceItem,
+      targetItem,
+      tocTree,
+      actualTargetItem,
+      position,
+    );
+  }
+
+  private validateAddingToActualTargetItem = (
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ): boolean => {
+    const validAddingToItem = validateAddingToItem(
+      validationResult,
+      sourceItem,
+      targetItem,
+      tocTree,
+      actualTargetItem,
+      position,
+    );
+    const maxDepthReached = validateMaxDepth(
+      validationResult,
+      sourceItem,
+      targetItem,
+    );
+    return validAddingToItem && !maxDepthReached;
+  };
 }

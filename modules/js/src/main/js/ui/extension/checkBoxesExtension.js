@@ -90,20 +90,13 @@ define(function checkBoxesExtensionModule(require) {
     }
     function _addListeners(connector, tagName, attrName, attrValue) {
         let target = connector.target;
-        $(target).find(tagName).each(function( index ) {
-            if ($(this).children(NUM).length > 0) {
-                let num = $($(this).children(NUM)[0]);
-                if(!!num && num.children(INLINE).length > 0){
-                    let inline = $(num.children(INLINE)[0]);
-                    if (!!inline.attr(attrName) && inline.attr(attrName) === attrValue) {
-                        inline.on("click", _toggleCheckBox.bind(inline, connector));
-                    }
-                }
+        $(target).find(INLINE).each(function( index ) {
+            let inline = $(this);
+            if (!!inline.attr(attrName) && inline.attr(attrName) === attrValue) {
+                inline.on("click", _toggleCheckBox.bind(inline, connector));
             }
         });
     }
-
-
     return {
         init: _initExtension
     };

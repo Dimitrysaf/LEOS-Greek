@@ -46,6 +46,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
+    private translateService: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -60,10 +61,20 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         { validators: Validators.required },
       ),
       documentLanguage: new FormControl({ value: '', disabled: true }),
-      confidentialityLevel: new FormControl({ value: '', disabled: true }),
-      docPurpose: new FormControl('', {
-        validators: [Validators.required, noWhitespaceValidator],
+      confidentialityLevel: new FormControl({
+        value: this.translateService.instant(
+          'page.workspace.create-form.document.confidentiality-level-predefined-value',
+        ),
+        disabled: true,
       }),
+      docPurpose: new FormControl(
+        this.translateService.instant(
+          'page.workspace.create-form.document.document-title-predefined-value',
+        ),
+        {
+          validators: [Validators.required, noWhitespaceValidator],
+        },
+      ),
       templateId: new FormControl(
         { value: '', disabled: true },
         { validators: Validators.required },

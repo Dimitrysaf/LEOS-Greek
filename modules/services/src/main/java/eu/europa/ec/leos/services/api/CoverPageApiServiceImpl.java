@@ -42,6 +42,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -63,7 +64,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.user.UserHelperAPI;
+import eu.europa.ec.leos.vo.toc.AknTag;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -158,7 +159,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
 
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
@@ -175,8 +176,10 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             }
 
             proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
+            String newContent = elementProcessor.getElement(proposal, elementName, elementId);
+            return new RefreshElementResponse(elementId, elementName, newContent);
         }
-        return this.documentViewService.getDocumentView(proposal);
+        return null;
     }
 
     @Override
@@ -262,7 +265,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal sourceVersion = proposalService.findProposalVersion(documentRef);
         byte[] resultXmlContent = getContent(targetVersion);
         Proposal updatedProposal = proposalService.updateProposal(sourceVersion, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
-        return this.documentViewService.getDocumentView(updatedProposal);
+        return this.documentViewService.updateDocumentView(updatedProposal);
     }
 
     @Override
@@ -354,7 +357,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
         Proposal updateProposal = proposalService.updateProposal(proposal, event.getUpdatedContent().getBytes(), VersionType.MINOR,
                 messageHelper.getMessage("operation.search.replace.updated"));
-        return documentViewService.getDocumentView(updateProposal);
+        return documentViewService.updateDocumentView(updateProposal);
     }
 
     @Override
@@ -367,7 +370,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules()
         );
     }
 

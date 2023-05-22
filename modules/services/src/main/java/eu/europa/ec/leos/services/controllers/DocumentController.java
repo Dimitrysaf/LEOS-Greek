@@ -17,6 +17,7 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.services.api.DocumentApiService;
+import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
@@ -29,6 +30,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +54,7 @@ public class DocumentController {
     @RequestMapping(value = "/downloadVersion/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> downloadVersion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                         @RequestBody DownloadVersionRequest downloadVersionRequest) {
+                                                  @RequestBody DownloadVersionRequest downloadVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             final boolean isWithAnnotations = downloadVersionRequest.isWithAnnotations();
@@ -63,7 +65,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename="+response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting Annotation filtering", e);
@@ -74,7 +76,7 @@ public class DocumentController {
     @RequestMapping(value = "/export-to-econsilium/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> exportToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-            @RequestBody ExportToConsiliumRequest exportToConsiliumRequest) {
+                                                     @RequestBody ExportToConsiliumRequest exportToConsiliumRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             LeosExportStatus processedStatus = documentApiService.exportToConsilium(documentCategory, documentRef, exportToConsiliumRequest);
@@ -88,7 +90,7 @@ public class DocumentController {
     @RequestMapping(value = "/download-compared-version-XML/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> downloadComparedVersionXMLFile(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                             @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+                                                                 @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             DownloadVersionResponse response = documentApiService.downloadXMLComparisonFiles(documentCategory, documentRef, downloadComparedVersionRequest);
@@ -96,7 +98,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename="+response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting Annotation filtering", e);
@@ -104,27 +106,13 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/export-compared-version-to-econsilium/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> exportComparedVersionToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                     @RequestBody ExportComparedVersionRequest exportComparedVersionRequest) {
-        try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-            LeosExportStatus processedStatus = documentApiService.exportComparedVersionToConsilium(documentCategory, documentRef, exportComparedVersionRequest);
-            return new ResponseEntity<>(processedStatus, HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Error occurred while requesting export to eConsilium", e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @RequestMapping(value = "/export-compared-version-as-PDF/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> exportComparedVersionAsPDF(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                                    @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+                                                             @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
-            LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest.getOriginalVersion(), downloadComparedVersionRequest.getCurrentVersion());
+            LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting export to eConsilium", e);
@@ -132,24 +120,42 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/download-compared-version-as-docuwrtie/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @RequestMapping(value = "/download-compared-version-as-docuwrite/{documentType}/{documentRef}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> downloadComparedVersionAsDocuwrite(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                             @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+    public ResponseEntity<Object> downloadComparedVersionAsDocuwrite(@PathVariable("documentType") String documentType,
+                                                                     @PathVariable("documentRef") String documentRef,
+                                                                     @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
 
-            DownloadVersionResponse response = documentApiService.downloadComparedVersionAsDocuwrite(documentCategory, documentRef, downloadComparedVersionRequest);
+            DownloadVersionResponse response = documentApiService.downloadComparedVersionAsDocuwrite(documentCategory, documentRef,
+                    downloadComparedVersionRequest);
 
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename="+response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting export to eConsilium", e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @GetMapping(value = "/double-compare/{documentType}/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> doubleCompare(@PathVariable("documentType") String documentType,
+                                                @PathVariable("documentRef") String documentRef,
+                                                @RequestBody DoubleCompareRequest doubleCompareRequest) {
+        try {
+            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            String response = documentApiService.doubleCompare(documentCategory, documentRef,
+                    doubleCompareRequest.getOriginalProposalId(), doubleCompareRequest.getIntermediateMajorId(), doubleCompareRequest.getCurrentId());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while requesting double compare", e);
+            return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

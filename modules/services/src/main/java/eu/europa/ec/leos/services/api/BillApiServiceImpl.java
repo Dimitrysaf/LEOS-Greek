@@ -52,6 +52,7 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -79,7 +80,6 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.user.UserHelperAPI;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -180,6 +180,7 @@ public class BillApiServiceImpl implements BillApiService {
         User user = securityContext.getUser();
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc, messageHelper.getMessage("operation.toc.updated"), user);
+        documentViewService.updateProposalAsync(bill);
         return billService.getTableOfContent(updatedBill, TocMode.SIMPLIFIED);
     }
 
@@ -215,7 +216,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill sourceVersion = billService.findBillByRef(documentRef);
         byte[] resultXmlContent = getContent(targetVersion);
         Bill updatedBill = billService.updateBill(sourceVersion, resultXmlContent, messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
-        return this.documentViewService.getDocumentView(updatedBill);
+        return this.documentViewService.updateDocumentView(updatedBill);
     }
 
     @Override
@@ -327,7 +328,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
         String comment = messageHelper.getMessage("operation.search.replace.updated");
         Bill updateBill = billService.updateBill(bill, event.getUpdatedContent().getBytes(), comment);
-        return this.documentViewService.getDocumentView(updateBill);
+        return this.documentViewService.updateDocumentView(updateBill);
     }
 
     @Override
@@ -343,7 +344,7 @@ public class BillApiServiceImpl implements BillApiService {
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, alternateConfigs, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structure.getTocRules()
         );
     }
 
@@ -385,7 +386,7 @@ public class BillApiServiceImpl implements BillApiService {
                     (elementIds.stream().anyMatch((s) -> s.startsWith("art_")) ? ".articles" : "");
             String operationMessage = messageHelper.getMessage("operation.import.element.inserted");
             bill = billService.updateBill(bill, newXmlContent, operationMessage);
-            return this.documentViewService.getDocumentView(bill);
+            return this.documentViewService.updateDocumentView(bill);
         } else {
             throw new ImportElementException("Search returned with no result! Please modify the search parameters");
         }
@@ -435,7 +436,7 @@ public class BillApiServiceImpl implements BillApiService {
 
         //leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
         //updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
-        return documentViewService.getDocumentView(bill);
+        return documentViewService.updateDocumentView(bill);
     }
 
     @Override
@@ -456,7 +457,7 @@ public class BillApiServiceImpl implements BillApiService {
 
 //        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(bill.getId(), bill.getMetadata().get().getRef(), id));
         LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        return this.documentViewService.getDocumentView(updatedBill);
+        return this.documentViewService.updateDocumentView(updatedBill);
     }
 
     private String generateLabel(String reference, XmlDocument sourceDocument) {
@@ -466,7 +467,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
@@ -476,9 +477,7 @@ public class BillApiServiceImpl implements BillApiService {
         final String elementLabel = generateLabel(elementId, bill);
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-
-        if (bill != null) {
-            bill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
 
 //            Pair<byte[], Element> splittedContent = null;
 //            if (event.isSplit() && checkIfCloseElementEditor(elementTagName, event.getElementContent())) {
@@ -499,8 +498,8 @@ public class BillApiServiceImpl implements BillApiService {
 //            eventBus.post(new DocumentUpdatedEvent());
 //            documentScreen.scrollToMarkedChange(elementId);
 //            leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-        }
-        return this.documentViewService.getDocumentView(bill);
+        String newContent = elementProcessor.getElement(updatedBill, elementName, elementId);
+        return new RefreshElementResponse(elementId, elementName, newContent);
     }
 
     @Override
@@ -516,7 +515,7 @@ public class BillApiServiceImpl implements BillApiService {
 
         bill = billService.updateBill(bill, updatedXmlContent, checkinCommentJson);
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return this.documentViewService.getDocumentView(bill);
+        return this.documentViewService.updateDocumentView(bill);
     }
 
     @Override
@@ -530,13 +529,13 @@ public class BillApiServiceImpl implements BillApiService {
             bill = billService.updateBill(bill, updatedXmlContent, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Bill {} id {})", elementId, mergeOnElement.getElementId(), bill.getName(), bill.getId());
             if (bill != null) {
-                return this.documentViewService.getDocumentView(bill);
+                return this.documentViewService.updateDocumentView(bill);
             }
         } else {
             LOG.info("Element '{}' merged into '{}' in Bill {} id {})", elementId, mergeOnElement.getElementId(), bill.getName(), bill.getId());
             throw new Exception();
         }
-        return this.documentViewService.getDocumentView(bill);
+        return this.documentViewService.updateDocumentView(bill);
     }
 
     @Override

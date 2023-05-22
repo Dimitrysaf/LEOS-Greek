@@ -54,6 +54,7 @@ import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
+import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -291,7 +292,7 @@ public class ApiServiceImpl implements ApiService {
         String jobFileName = getJobFileName(proposalRef);
         File packageFile;
         try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId(), new ExportLW(ExportOptions.Output.WORD));
+            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId());
             return FileUtils.readFileToByteArray(packageFile);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
@@ -938,8 +939,8 @@ public class ApiServiceImpl implements ApiService {
             try {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
-                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage);
                 String tocFile = null;
+                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage, !pdfRenditions.isEmpty());
                 if (isCoverPage) {
                     milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
                     tocFile = "coverPage_toc.js";
@@ -963,6 +964,24 @@ public class ApiServiceImpl implements ApiService {
             }
         }
         return listDocuments;
+    }
+
+    @Override
+    public MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName) throws IOException {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        byte[] content = null;
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LegDocument legDocument = getLegDocument(legFileName, leosPackage);
+        File legFileTemp = File.createTempFile("milestone", ".leg");
+        Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
+        String fileName = null;
+        if (!pdfRenditions.isEmpty()) {
+            Map.Entry<String, Object> entry = pdfRenditions.entrySet().iterator().next();
+            content = Files.readAllBytes(((File) entry.getValue()).toPath());
+            fileName = ((File) entry.getValue()).getName();
+        }
+        return new MilestonePDFDownloadResponse(content, fileName);
     }
 
     private static String readFileToString(File file) throws IOException {

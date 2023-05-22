@@ -65,8 +65,10 @@ export class CoEditionServiceWS {
     const socket = new SockJS(`${apiBaseUrl}/ws`, null, {
       transports: ['websocket', 'xhr-polling', 'jsonp-polling'],
       fallbackTransport: 'auto',
+      debug: false,
     });
     this.stompClient = Stomp.over(socket);
+    this.stompClient.debug = () => {};
 
     this.stompClient.connect({}, () => {
       while (this.subscribeQueue.length > 0) {
@@ -253,7 +255,7 @@ export class CoEditionServiceWS {
 
   private handleCoEditForDocument(coEdits: CoEditionVO[]) {
     const coEditsFilterCurrUser = coEdits?.filter(
-      (c) => c.userLoginName !== this.user.login,
+      (c) => c.sessionId !== this.sessionId,
     );
     const groupedCoEditsByElemenet = groupBy(
       coEditsFilterCurrUser,
@@ -263,7 +265,7 @@ export class CoEditionServiceWS {
     //filter coEditions for TOC
     this.coEditionForTocBS.next(
       coEdits?.filter(
-        (c) => c.infoType === 'TOC_INFO' && c.userLoginName !== this.user.login,
+        (c) => c.infoType === 'TOC_INFO' && c.sessionId !== this.sessionId,
       ),
     );
   }

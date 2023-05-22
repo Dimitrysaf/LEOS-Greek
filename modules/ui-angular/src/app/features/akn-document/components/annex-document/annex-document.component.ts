@@ -18,6 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-annex-document',
@@ -41,6 +42,7 @@ export class AnnexDocumentComponent
     @Inject(DOCUMENT) private document: Document,
     private rootElementRef: ElementRef<HTMLElement>,
     private http: HttpClient,
+    private documentService: DocumentService,
     private coEditionWSService: CoEditionServiceWS,
     private translate: TranslateService,
   ) {}
@@ -60,6 +62,7 @@ export class AnnexDocumentComponent
       const rootEl = this.rootElementRef.nativeElement;
       this.xml = changes.xml.currentValue;
       rootEl.innerHTML = this.xml;
+      this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (
       'reloadTrigger' in changes &&
@@ -71,6 +74,7 @@ export class AnnexDocumentComponent
   }
 
   ngAfterViewInit(): void {
+    this.documentService.setDidDocumentLoadAndRender(true);
     if (!this.readonly) {
       this.interceptAndProcessBookmarkLink();
       this.ckeditorService.init();

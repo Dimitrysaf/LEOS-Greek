@@ -84,11 +84,38 @@ eui-icon-svg > svg > use {
   font-family: Vaadin-Icons;
 }
 
+.cke_reset_all .cke_dialog_ui_checkbox {
+  position: relative;
+}
+
+.cke_reset_all .cke_dialog_ui_checkbox .cke_dialog_ui_checkbox_input {
+  clip: unset !important;
+  font-size: 1.3rem;
+  height: unset !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+}
+
+.cke_reset_all
+  .cke_dialog_ui_checkbox
+  .cke_dialog_ui_checkbox_input
+  + label::after {
+  font-size: 1.3rem;
+}
+
 .eui-footer.leos-footer-content {
   font-size: 0.8rem;
   justify-content: center;
   max-height: 22px;
   padding: 0.3rem;
+
+  a {
+    text-decoration: none;
+
+    span {
+      white-space: pre;
+    }
+  }
 }
 
 .app-dialog-footer-content {
@@ -99,11 +126,11 @@ eui-icon-svg > svg > use {
 }
 
 .search-result {
-  background-color: green;
+  background-color: #feca1d;
 }
 
 .focused-search-result {
-  background-color: deepskyblue !important;
+  background-color: #7ed3f8 !important;
 }
 
 .version-search-found {
@@ -112,4 +139,58 @@ eui-icon-svg > svg > use {
 
 .version-search-found .eui-card-header {
   background-color: #a0a0a0 !important;
+}
+
+article.leos-content-soft-new[leos\:softaction='add']
+  num:not([leos\:origin='ec']) {
+  font-weight: bold;
+}
+
+/* stylelint-disable selector-id-pattern */
+#docContainer span.leos-soft-move-label {
+  background-color: #808080;
+  cursor: pointer;
+  height: 18px;
+  padding: 2px 5px;
+}
+
+#docContainer .leos-soft-move-title {
+  margin-left: 0;
+}
+
+#docContainer span.leos-transparent-soft-move-label {
+  background-color: #fff;
+  visibility: hidden;
+}
+
+#docContainer span.leos-toc-tree span.leos-soft-move-label {
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: normal;
+  height: 16px;
+  padding: 2px;
+}
+
+#docContainer .leos-soft-removed *,
+.leos .leos-soft-num-removed,
+.leos .leos-soft-movedto * {
+  color: #a7a7a7;
+  text-decoration: line-through;
+}
+
+#docContainer .leos-soft-new *,
+.leos .leos-soft-num-new,
+.leos .leos-soft-movedfrom span {
+  font-weight: bold;
+}
+
+#docContainer span.leos-soft-move-label,
+.leos span.leos-transparent-soft-move-label {
+  border-radius: 4px;
+  color: #fff !important;
+  display: inline-block;
+  font-size: 15px;
+  font-style: normal;
+  line-height: 1;
+  margin: 0 2px;
+  text-decoration: none !important;
 }

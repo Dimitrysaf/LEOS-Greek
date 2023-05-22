@@ -20,4 +20,5 @@ export interface MilestoneViewItem {
   version: string;
   xmlContent: string;
   tocData: string;
+  isPdfRenditionsPresent: boolean;
 }

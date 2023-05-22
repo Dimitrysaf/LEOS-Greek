@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -148,11 +149,11 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
 
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, comment);
-        return this.documentViewService.getDocumentView(explanatory);
+        return this.documentViewService.updateDocumentView(explanatory);
     }
 
     @Override
-    public DocumentViewResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName, elementFragment);
@@ -164,7 +165,8 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, updatedLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
-        return this.documentViewService.getDocumentView(explanatory);
+        String newContent = elementProcessor.getElement(explanatory, elementName, elementId);
+        return new RefreshElementResponse(elementId, elementName, newContent);
     }
 
     @Override
@@ -182,7 +184,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
 
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
-        return documentViewService.getDocumentView(explanatory);
+        return documentViewService.updateDocumentView(explanatory);
     }
 
     @Override
@@ -196,7 +198,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
             explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
             LOG.info("Element '{}' merged into '{}' in Explanatory {} id {})", elementId, mergeOnElement.getElementId(), explanatory.getName(), explanatory.getId());
         }
-        return documentViewService.getDocumentView(explanatory);
+        return documentViewService.updateDocumentView(explanatory);
     }
 
     @Override
@@ -299,7 +301,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         Explanatory annex = explanatoryService.findExplanatoryByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
         Explanatory updatedAnnex = explanatoryService.updateExplanatory(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
-        return this.documentViewService.getDocumentView(updatedAnnex);
+        return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
     @Override
@@ -391,7 +393,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
         Explanatory updateAnnex = explanatoryService.updateExplanatory(explanatory, event.getUpdatedContent().getBytes(),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
-        return this.documentViewService.getDocumentView(updateAnnex);
+        return this.documentViewService.updateDocumentView(updateAnnex);
     }
 
     @Override
@@ -407,7 +409,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull()
+                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules()
         );
     }
 

@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -62,7 +63,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
                                      ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
                                      ExportPackageService exportPackageService, NotificationService notificationService,
                                      SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
-            LegService legService) {
+                                     LegService legService) {
         this.documentContentService = documentContentService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -74,6 +75,16 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         this.messageHelper = messageHelper;
         this.comparisonDelegate = comparisonDelegate;
         this.legService = legService;
+    }
+
+    @Override
+    public String doubleCompare(LeosCategoryClass documentType, String documentRef, String originalProposalId, String intermediateMajorId, String currentId) {
+        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+        final XmlDocument original = this.getDocumentByVersion(documentRef, originalProposalId, clazz);
+        final XmlDocument intermediate = this.getDocumentByVersion(documentRef, intermediateMajorId, clazz);
+        final XmlDocument current = this.getDocumentByVersion(documentRef, currentId, clazz);
+        String resultContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
+        return resultContent;
     }
 
     @Override
@@ -107,7 +118,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     }
 
     protected DownloadVersionResponse packageComparedXmlFiles(XmlDocument original, XmlDocument current, XmlDocument intermediate, String leosComparedContent,
-            String exportComparedContent, String comparedInfo, String language, String type) throws IOException {
+                                                              String exportComparedContent, String comparedInfo, String language, String type) throws IOException {
         File zipFile = null;
         try {
             final Map<String, Object> contentToZip = new HashMap<>();
@@ -118,7 +129,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
             contentToZip.put(current.getMetadata().get().getRef() + "_v" + current.getVersionLabel() + ".xml", current.getContent().get().getSource().getBytes());
             contentToZip.put(original.getMetadata().get().getRef() + "_v" + original.getVersionLabel() + ".xml", original.getContent().get().getSource().getBytes());
             contentToZip.put("comparedContent_leos.xml", leosComparedContent);
-            if(exportComparedContent != null) {
+            if (exportComparedContent != null) {
                 contentToZip.put("comparedContent_" + type + ".xml", exportComparedContent);
             }
             final String zipFileName = original.getMetadata().get().getRef().concat("-").concat(comparedInfo).
@@ -131,7 +142,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
             throw e;
         } finally {
             if (zipFile != null) {
-                if(!zipFile.delete()){
+                if (!zipFile.delete()) {
                     LOG.info("File was not deleted {}", zipFile.toPath());
                 }
             }

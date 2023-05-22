@@ -30,6 +30,7 @@ export interface Document {
 }
 
 /** AKA `MetadataVO` in Java code */
+//used in proposal.metadata
 export interface Metadata {
   docStage: string | null;
   docType: string | null;
@@ -46,7 +47,23 @@ export interface Metadata {
   index: string | null;
   number: string | null;
 }
-
+//used in document-config.documentsmetadata
+export interface DocumentsMetadata {
+  category: string;
+  clonedRef: null;
+  docTemplate: string;
+  docVersion: string;
+  eeaRelevance: boolean;
+  index: number;
+  language: string;
+  number: string;
+  objectId: null;
+  purpose: string;
+  ref: string;
+  stage: string;
+  template: string;
+  title: string;
+}
 export interface LeosMetadata {
   category: DocumentType;
   stage: string;
@@ -76,7 +93,7 @@ export interface ClonedProposalMetadata {
 
 export interface DocumentConfig {
   articleTypesConfig: ArticleType;
-  documentsMetadata: Metadata[];
+  documentsMetadata: DocumentsMetadata[];
   internalRef: string;
   listNumberConfigJsonArray: any;
   numberingConfig: NumberingConfig[];
@@ -84,6 +101,11 @@ export interface DocumentConfig {
   proposalMetadata: LeosMetadata;
   alternateConfigs: AlternateConfig;
   levelItemVO: LevelItemVO;
+  tocRules: TocRules;
+}
+
+export interface TocRules {
+  [key: string]: TocItem[];
 }
 
 export interface LevelItemVO {

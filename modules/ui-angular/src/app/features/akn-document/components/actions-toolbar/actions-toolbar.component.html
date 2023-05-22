@@ -24,7 +24,7 @@
   [title]="'page.editor.reload-button.tooltip' | translate"
   [attr.aria-label]="'page.editor.reload-button.tooltip' | translate"
   [disabled]="disabled"
-  (click)="doc.reloadDocument()"
+  (click)="handleReload()"
 >
   <span class="eui-icon eui-icon-refresh"></span>
 </button>

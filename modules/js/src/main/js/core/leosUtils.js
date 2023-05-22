@@ -234,8 +234,8 @@ define(function leosUtilsModule(require) {
     }
 
     function _generateColors(str) {
-        for (var i = 0, hashCode = 0; i < str.length; hashCode = str.charCodeAt(i++) + ((hashCode << 5) - hashCode));
-        var hue = Math.abs(hashCode) % 360;
+        for (var i = 0, hashCode = BigInt(0); i < str.length; hashCode = BigInt(str.charCodeAt(i++)) + ((hashCode << BigInt(5)) - hashCode));
+        var hue = (((hashCode === -BigInt(0) || hashCode < BigInt(0)) ? -hashCode : hashCode) % BigInt(360)).toString();
         return ["hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"];
     }
 

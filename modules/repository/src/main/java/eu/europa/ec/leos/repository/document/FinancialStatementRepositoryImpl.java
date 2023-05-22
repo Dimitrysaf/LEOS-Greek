@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class FinancialStatementRepositoryImpl implements FinancialStatementRepository {
@@ -41,6 +42,12 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     public FinancialStatement updateFinancialStatement(String id, FinancialStatementMetadata metadata) {
         logger.debug("Updating FinancialStatement metadata... [id=" + id + "]");
         return leosRepository.updateDocument(id, metadata, FinancialStatement.class);
+    }
+
+    @Override
+    public FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest) {
+        logger.trace("Updating FinancialStatement metadata properties... [id={}]", id);
+        return leosRepository.updateDocument(id, properties, FinancialStatement.class, latest);
     }
 
     @Override

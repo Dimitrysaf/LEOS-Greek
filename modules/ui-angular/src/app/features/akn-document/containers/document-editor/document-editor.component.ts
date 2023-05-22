@@ -1,3 +1,4 @@
+import { TemplatePortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
@@ -5,9 +6,11 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  QueryList,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   EuiDialogComponent,
@@ -31,10 +34,12 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
 import { DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
@@ -47,10 +52,12 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LoadingService } from '@/shared/services/loading.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
+import { TableOfContentService } from '../../services/tableOfContent.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -89,20 +96,37 @@ export class DocumentEditorComponent
 
   isEditMode = false;
 
+  compareChanges: NodeListOf<HTMLElement>;
+  compareIndex = 0;
+  isAsyncScrollEnabled: boolean;
+  arrowClicked = false;
+  eventFunc;
+  isScrollFromButton: boolean;
+  tooltipsDelay = 1000;
+
   versionSearchForm = new FormGroup({
     type: new FormControl('all'),
     author: new FormControl(''),
   });
+
+  isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
+  @ViewChild('confirmAnnexStructureChangeDialog')
+  annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
   @ViewChild('milestoneViewDialog')
   protected milestoneViewDialog: ProposalMilestoneViewComponent;
   protected milestoneViewData: MilestoneDescriptor = null;
 
+  @ViewChild('eConsiliumModal')
+  eConsiliumModal: DownloadEconsiliumModalComponent;
+
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
+  private scrollables: NodeListOf<Element>;
 
   constructor(
     private domService: DomService,
@@ -118,6 +142,9 @@ export class DocumentEditorComponent
     private appShellService: UxAppShellService,
     public breadcrumbService: EuiBreadcrumbService,
     public enviromentService: EnvironmentService,
+    private tableOfContentService: TableOfContentService,
+    private domSatinizer: DomSanitizer,
+    private loadingService: LoadingService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -125,6 +152,12 @@ export class DocumentEditorComponent
       .subscribe(([params, data]) => {
         this.documentRef = params.id;
         this.documentType = data.category;
+
+        //init services
+        this.tableOfContentService.setDocumentRefAndCategory(
+          this.documentRef,
+          this.documentType,
+        );
       });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -154,8 +187,6 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
-        this.cdkEditor.setDocumentRef(this.documentRef);
-        this.cdkEditor.setDocumentType(this.documentType);
       });
     this.loadStyleSheet();
 
@@ -167,12 +198,12 @@ export class DocumentEditorComponent
         this.proposalRef = documentView.proposalRef;
       });
 
-    this.documentService
-      .getTocItems(this.documentRef)
+    this.tableOfContentService.tocItems$
       .pipe(takeUntil(this.destroy$))
       .subscribe((tocItems) => {
         this.tocItems = tocItems;
-        this.dragItems = this.buildTocItemToTOC(tocItems);
+        if (tocItems?.length > 0)
+          this.dragItems = this.buildTocItemToTOC(tocItems);
       });
 
     this.documentService.versionView$
@@ -196,6 +227,9 @@ export class DocumentEditorComponent
             versionCompareXML,
             `marked-${this.documentRef}`,
           );
+          setTimeout(() => {
+            this.handleCompareChanges();
+          });
         }
       });
 
@@ -213,6 +247,7 @@ export class DocumentEditorComponent
         this.setPageTitle();
         this.manageBreadCrumbsDocumentScreen();
       });
+    // this.loadingService.setLoading(false);
   }
 
   ngAfterViewInit(): void {
@@ -232,6 +267,42 @@ export class DocumentEditorComponent
             )}`,
             life: 4000,
           });
+      });
+  }
+
+  downloadXmlFile(v: any) {
+    this.documentService.versionCompareIds$
+      .pipe(take(1))
+      .subscribe((versions) => {
+        this.documentService.compareDocumentsDownloadXML(
+          versions[1],
+          versions[0],
+          this.getIntermediateVersion(versions),
+        );
+      });
+  }
+
+  downloadVersionOfFile() {
+    this.documentService.versionCompareIds$
+      .pipe(take(1))
+      .subscribe((versions) => {
+        this.documentService.compareDocumentsDownloadDocuwrite(
+          versions[1],
+          versions[0],
+          this.getIntermediateVersion(versions),
+        );
+      });
+  }
+
+  downloadVersionOfFileEConsil() {
+    this.documentService.versionCompareIds$
+      .pipe(take(1))
+      .subscribe((versions) => {
+        this.eConsiliumModal.open({
+          currentVersion: versions[1],
+          originalVersion: versions[0],
+          intermediateVersion: this.getIntermediateVersion(versions),
+        });
       });
   }
 
@@ -332,17 +403,79 @@ export class DocumentEditorComponent
     }
   }
 
+  handlePrevChange() {
+    this.arrowClicked = true;
+    if (this.compareIndex - 1 >= 0) {
+      this.isScrollFromButton = true;
+      this.compareIndex -= 1;
+      this.compareChanges
+        .item(this.compareIndex)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  confirmAnnexStructureChange() {
+    const nextAnnexStructure =
+      this.documentConfig.documentsMetadata.find(
+        (d) => d.ref === this.documentRef,
+      ).template === 'SG-018'
+        ? 'level'
+        : 'article';
+
+    const content = this.tranlsateService.instant(
+      `editor-switch-annex-structure-to-${nextAnnexStructure}-content`,
+    );
+    const conteSanitized = this.domSatinizer.bypassSecurityTrustHtml(content);
+
+    this.dialogService.openDialog({
+      title: this.tranlsateService.instant(
+        'editor.annex-structure-change-title',
+      ),
+      content: conteSanitized as TemplatePortal,
+      acceptLabel: 'Confirm',
+      accept: () => {
+        this.handleAnnexChangeStructure();
+      },
+    });
+  }
+
+  handleNextChange() {
+    this.arrowClicked = true;
+    if (this.compareIndex <= this.compareChanges.length) {
+      this.isScrollFromButton = true;
+      const targetItem = this.compareChanges.item(this.compareIndex);
+      if (targetItem)
+        targetItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.compareIndex += 1;
+    }
+  }
+
+  handleAsyncScroll() {
+    this.isAsyncScrollEnabled = !this.isAsyncScrollEnabled;
+    if (this.isAsyncScrollEnabled) {
+      this.scrollables = this.document.querySelectorAll('.sync-scroll');
+      this.scrollables.forEach((scrollable: Element) => {
+        scrollable.addEventListener('scroll', this.handleSyncScroll.bind(this));
+      });
+    }
+    if (!this.isAsyncScrollEnabled) {
+      this.scrollables.forEach((scrollable: Element) => {
+        scrollable.removeEventListener('scroll', this.handleSyncScroll);
+      });
+    }
+  }
+
   handleSave() {
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
-    this.documentService
-      .saveToc(this.documentRef, toc)
+    this.tableOfContentService
+      .saveToc(this.documentRef, this.documentType, toc)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           this.documentTocComponent.isToCDraft = false;
           this.documentTocComponent.treeHistory = [];
           this.documentService.reloadDocument();
+          this.tableOfContentService.reload();
         },
         error: (err) => {},
       });
@@ -421,18 +554,30 @@ export class DocumentEditorComponent
   }
 
   closeVersionComparisonView() {
+    this.compareChanges = null;
+    this.compareIndex = 0;
+    this.removeAllPins();
+    this.versionsComparisonForView = null;
     this.documentService.toggleCompareMode(false);
   }
 
   handleClose() {
+    const proposalRef = this.documentConfig.proposalMetadata.ref;
     if (this.document.querySelectorAll('.cke').length > 0) {
       this.openEditorDialog.openDialog();
     } else {
       this.cdkEditor.closeElementEditor();
-
-      const proposalRef = this.documentConfig.proposalMetadata.ref;
       this.router.navigate([`/collection/${proposalRef}`]);
     }
+  }
+
+  handleAnnexChangeStructure() {
+    this.documentService
+      .switchDocumentStructure()
+      .pipe(take(1))
+      .subscribe(() => {
+        this.reloadComponent();
+      });
   }
 
   onCancelClose() {
@@ -459,6 +604,179 @@ export class DocumentEditorComponent
 
   protected onMilestoneViewDialogClosed() {
     this.milestoneViewData = null;
+  }
+
+  private handleSyncScroll(event: Event) {
+    if (!this.isAsyncScrollEnabled) {
+      return;
+    }
+    const sender = event.target as HTMLElement;
+    if (sender.matches(':hover') || this.arrowClicked) {
+      setTimeout(() => {
+        const percentage =
+          sender.scrollTop / (sender.scrollHeight - sender.clientHeight);
+        this.scrollables.forEach((scrollable: Element) => {
+          if (scrollable !== sender) {
+            scrollable.scrollTop =
+              percentage * (scrollable.scrollHeight - scrollable.clientHeight);
+          }
+        });
+        this.arrowClicked = false;
+      }, 100);
+    }
+  }
+
+  private handleCompareChanges() {
+    const nodeList = document.querySelectorAll(
+      '.leos-content-new, .leos-content-removed',
+    );
+    this.compareChanges = nodeList as NodeListOf<HTMLElement>;
+    const container = this.document.getElementById(
+      'versionComparisonContainer',
+    );
+    if (!container) return;
+    this.handlePins(container);
+  }
+
+  private handlePins(container: HTMLElement) {
+    const pinContainer = this.document.createElement('div');
+    pinContainer.classList.add('pin-container');
+    pinContainer.classList.add('pin-right');
+    container.appendChild(pinContainer);
+    const selectorStyleMap = {
+      '.leos-marker-content-removed': 'pin-leos-marker-content-removed',
+      '.leos-marker-content-added': 'pin-leos-marker-content-added',
+      '.leos-content-removed': 'pin-leos-content-removed',
+      '.leos-content-new': 'pin-leos-content-new',
+    };
+    this.addPins(container, pinContainer, selectorStyleMap);
+  }
+
+  private reloadComponent() {
+    // TODO: reload document and services without page reload
+    const currentUrl = this.router.url;
+    // this.loadingService.setLoading(true);
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl]);
+    });
+  }
+
+  private addPins(
+    target: HTMLElement,
+    pinContainer: HTMLElement,
+    selectorStyleMap: { [key: string]: string },
+  ): HTMLElement[] {
+    this.removeAllPins();
+    const pins: HTMLElement[] = [];
+    Object.keys(selectorStyleMap).forEach((selector) => {
+      const elements = target.querySelectorAll(selector);
+      elements.forEach((el, elIndex) => {
+        const pinElement = this.createPin(
+          pins.length + 1,
+          el as HTMLElement,
+          selectorStyleMap[selector],
+          target,
+        );
+        if (this.uniquePin(pins, pinElement)) {
+          this.attachTo(pinContainer, pinElement);
+          pins.push(pinElement);
+        }
+      });
+    });
+    return pins;
+  }
+
+  private uniquePin(pins: HTMLElement[], el: HTMLElement): boolean {
+    const top = el.style.top;
+    const className = el.className;
+    return pins.every(
+      (pin) => top !== pin.style.top || className !== pin.className,
+    );
+  }
+
+  private createPin(
+    index: number,
+    refToElement: HTMLElement,
+    pinStyle: string,
+    target: HTMLElement,
+  ): HTMLElement {
+    const pinDiv = document.createElement('div');
+    this.addClass(pinDiv, 'pin');
+    this.addClass(pinDiv, pinStyle);
+    pinDiv.setAttribute('data-index', index.toString());
+    pinDiv.setAttribute('ref-to', refToElement.id); // add custom attribute
+    pinDiv.style.top = this.getPercentageDistanceFromTop(refToElement, target);
+    pinDiv.addEventListener('click', () =>
+      this.scrollToChange(refToElement, target),
+    );
+    return pinDiv;
+  }
+
+  private getPercentageDistanceFromTop(
+    element: HTMLElement,
+    target: HTMLElement,
+  ): string {
+    const totalHeight = target.scrollHeight;
+    const elementPosFromTargetTop = this.getElementDistanceFromTop(
+      element,
+      target,
+    );
+    return `${((100 * elementPosFromTargetTop) / totalHeight).toFixed(2)}%`;
+  }
+
+  private _roundOffTo(floatNumber, digitsAfterDecimal) {
+    return floatNumber.toFixed(digitsAfterDecimal);
+  }
+
+  private addClass(el: HTMLElement, className: string) {
+    if (el.classList) {
+      el.classList.add(className);
+    } else {
+      el.className += ` ${className}`;
+    }
+  }
+
+  private attachTo(container: HTMLElement, el: HTMLElement) {
+    container.appendChild(el);
+  }
+
+  private getElementDistanceFromTop(
+    el: HTMLElement,
+    target: HTMLElement,
+  ): number {
+    let distance = 0;
+    while (el && el !== target) {
+      if (el.hidden) el = el.parentElement;
+      else {
+        distance += el.offsetTop;
+        el = el.offsetParent as HTMLElement;
+      }
+    }
+    return distance;
+  }
+
+  private scrollToChange(el: HTMLElement, target: HTMLElement) {
+    const topOffset = this.getElementDistanceFromTop(el, target) - 106;
+    target.scrollTop = topOffset;
+  }
+
+  private removeAllPins() {
+    const pins = document.querySelectorAll('.pin-container .pin');
+    pins.forEach((pin) => pin.remove());
+  }
+
+  private disableDocument() {
+    const xml = this.document.getElementById(`${this.documentRef}`);
+    xml.style.opacity = '0.3';
+    xml.style.pointerEvents = 'none';
+    xml.style.userSelect = 'none';
+  }
+
+  private enableDocument() {
+    const xml = this.document.getElementById(`${this.documentRef}`);
+    xml.style.opacity = '1';
+    xml.style.pointerEvents = 'all';
+    xml.style.userSelect = 'all';
   }
 
   private closeInlineToCEdit() {
@@ -541,6 +859,11 @@ export class DocumentEditorComponent
   private cleanupAndSerializeXML(xml: string, akomantosoId?: string) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/html');
+
+    if (this.documentType !== 'coverPage') {
+      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
+    }
+
     if (akomantosoId) {
       xmlDoc.querySelector('akomantoso').id = akomantosoId;
     }
@@ -638,5 +961,12 @@ export class DocumentEditorComponent
         link: null,
       },
     ]);
+  }
+
+  private getIntermediateVersion(versions): Version {
+    if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && versions.length === 3) {
+      return versions[0];
+    }
+    return null;
   }
 }

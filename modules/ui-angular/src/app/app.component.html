@@ -31,8 +31,14 @@
   </eui-app-toolbar>
   <eui-app-footer>
     <eui-footer euiPrimary [className]="'leos-footer-content'">
-      Developed by DIGIT.A3 | Version: {{ 'NG_APP_LEOS_VERSION' | env }} |
-      Revision: {{ 'NG_APP_LEOS_SOURCE_REVISION' | env }} | Date:
+      <a
+        href="https://webgate.ec.europa.eu/fpfis/wikis/display/DIGITB2Support/EdiT"
+        target="_target"
+        ><span>Help </span></a
+      >
+      | Privacy Statement | Developed by DIGIT.A3 | Version:
+      {{ 'NG_APP_LEOS_VERSION' | env }} | Revision:
+      {{ 'NG_APP_LEOS_SOURCE_REVISION' | env }} | Date:
       {{ 'NG_APP_LEOS_VERSION_BUILD_DATE' | env }}
     </eui-footer>
   </eui-app-footer>

@@ -24,6 +24,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.web.event.view.document.SaveIntermediateVersionEvent;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,8 @@ public class IntermediateVersionWindow extends AbstractWindow {
         saveButton.addClickListener(event -> {
             if (commentsBinder.validate().isOk()) {
                 CheckinCommentVO checkinCommentVO = commentsBinder.getBean();
-                checkinCommentVO.setDescription(descriptionArea.getValue());
+                checkinCommentVO.setTitle(StringEscapeUtils.escapeXml10(checkinCommentVO.getTitle()));
+                checkinCommentVO.setDescription(StringEscapeUtils.escapeXml10(descriptionArea.getValue()));
                 final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinCommentVO);
                 LOG.debug("Saved as Major Version with checkinCommentVO - {}", checkinCommentJson);
                 eventBus.post(new SaveIntermediateVersionEvent(checkinCommentJson, VersionType.INTERMEDIATE));

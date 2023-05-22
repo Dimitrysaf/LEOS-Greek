@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
+import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -133,17 +134,17 @@ public class LeosApiController {
     public ResponseEntity<Object> getToken(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-store");
         response.setHeader("Pragma", "no-cache");
-
+        String contextPath = request.getContextPath();
         final String grantType = request.getHeader(GRANT_TYPE);
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
-            return validateAndGenerateAccessToken(token, response);
+            return validateAndGenerateAccessToken(token, response, contextPath);
         } else {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("Authorization")) {
-                        return validateAndGenerateAccessToken(cookie.getValue(), response);
+                        return validateAndGenerateAccessToken(cookie.getValue(), response, contextPath);
                     } else {
                         LOG.warn("Authorization failed! Wrong Headers: No authorization cookie found");
                     }
@@ -155,7 +156,7 @@ public class LeosApiController {
         return new ResponseEntity<>("Wrong Headers!", HttpStatus.FORBIDDEN);
     }
 
-    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, HttpServletResponse response) {
+    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, HttpServletResponse response, String contextPath) {
         AuthClient authClient = tokenService.validateClientByJwtToken(token);
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
@@ -167,8 +168,8 @@ public class LeosApiController {
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // set 403 status code
-            response.setHeader("Set-Cookie", "Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
-            response.setHeader("Set-Cookie", "JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
+            response.setHeader("Set-Cookie", "Authorization=; Path="+contextPath+"; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
+            response.setHeader("Set-Cookie", "JSESSIONID=; Path="+contextPath+"; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
             return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
         }
     }
@@ -574,6 +575,23 @@ public class LeosApiController {
         try {
             List<MilestoneDocumentView> milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
             return new ResponseEntity<>(milestonesView, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting milestone documents views - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while milestone documents views", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/list-milestones-view/pdf-export/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getMilestoneExportPDF(@PathVariable("documentRef") String documentRef,
+                                                        @RequestParam("legFileName") String legFileName) {
+        try {
+            MilestonePDFDownloadResponse response = apiService.downloadMilestonePDF(documentRef, legFileName);
+            // create the HttpHeaders object and set the Content-Type header
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.set("Content-Disposition", "attachment; filename=" + response.getFilename());
+            return new ResponseEntity<>(response.getContent(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting application configuration", HttpStatus.INTERNAL_SERVER_ERROR);

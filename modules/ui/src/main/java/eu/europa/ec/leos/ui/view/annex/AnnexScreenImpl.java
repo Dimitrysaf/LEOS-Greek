@@ -436,7 +436,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     @Subscribe
     public void handleElementState(StateChangeEvent event) {
         if(event.getState() != null) {
-            actionsMenuBar.setSaveVersionEnabled(event.getState().isState());
+            actionsMenuBar.setEnabled(event.getState().isState());
             refreshButton.setEnabled(event.getState().isState());
             refreshNoteButton.setEnabled(event.getState().isState());
             searchDelegate.handleElementState(event);
@@ -447,6 +447,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     public void setPermissions(DocumentVO annex, boolean isClonedProposal, boolean isAnnexFromCouncil){
         boolean enableUpdate = securityContext.hasPermission(annex, LeosPermission.CAN_UPDATE);
         actionsMenuBar.setSaveVersionVisible(enableUpdate);
+        actionsMenuBar.setSwitchStructureVisible(enableUpdate);
         tableOfContentComponent.setPermissions(enableUpdate);
         searchButton.setVisible(enableUpdate);
 

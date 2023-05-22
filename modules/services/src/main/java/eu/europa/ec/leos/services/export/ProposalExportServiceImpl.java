@@ -88,7 +88,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         File legisWritePackage = null;
         String jobId;
         try {
-            legisWritePackage = createCollectionPackage("job.zip", proposalId, exportOptions);
+            legisWritePackage = createCollectionPackage("job.zip", proposalId);
             String destinationEmail = securityContext.getUser().getEmail();
             Map<String, File> packages = new HashMap<>();
             packages.put(exportOptions.getFilePrefix() + ZIP_PACKAGE_NAME, legisWritePackage);
@@ -261,6 +261,25 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
                 }
             }
             LOG.debug("createLegisWritePackage() end....");
+        }
+    }
+
+    @Override
+    public File createCollectionPackage(String jobFileName, String documentId) throws Exception {
+        Validate.notNull(jobFileName);
+        Validate.notNull(documentId);
+        File legFile = null;
+        try {
+            ExportOptions exportOptions = new ExportLW(ExportOptions.Output.WORD);
+            LegPackage legPackage = legService.createLegPackage(documentId, exportOptions);
+            legFile = legPackage.getFile();
+            return createZipFile(legPackage, jobFileName, exportOptions);
+        } finally {
+            if (legFile != null && legFile.exists()) {
+                if(!legFile.delete()){
+                    LOG.info("File not deleted {}", legFile.toPath());
+                }
+            }
         }
     }
 

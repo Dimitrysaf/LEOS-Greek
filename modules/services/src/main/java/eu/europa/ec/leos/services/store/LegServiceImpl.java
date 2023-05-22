@@ -88,6 +88,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -580,7 +581,7 @@ public class LegServiceImpl implements LegService {
         addResourceToZipContent(contentToZip, financialStatementStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
         structureContextProvider.get().useDocumentTemplate(financialStatement.getMetadata().get().getDocTemplate());
         final String fsTocJson = getTocAsJson(financialStatementService.getTableOfContent(financialStatement, TocMode.SIMPLIFIED_CLEAN));
-        addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson);
+        addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson, proposalRef);
 
         final ExportResource financialStatementExportResource = buildExportResourceFinancialStatement(proposalRefsMap, xmlContent);
         exportProposalResource.addChildResource(financialStatementExportResource);
@@ -600,7 +601,7 @@ public class LegServiceImpl implements LegService {
             addResourceToZipContent(contentToZip, financialStatementStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(financialStatement.getMetadata().get().getDocTemplate());
             final String fsTocJson = getTocAsJson(financialStatementService.getTableOfContent(financialStatement, TocMode.SIMPLIFIED_CLEAN));
-            addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson);
+            addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson, proposalRef);
         }
 
         final ExportResource exportfinStmntResource = buildExportResourceFinancialStatement(proposalRefsMap, xmlContent);
@@ -789,7 +790,7 @@ public class LegServiceImpl implements LegService {
         addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
         structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
         final String memoTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
-        addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson);
+        addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson, proposalRef);
 
         final ExportResource memorandumExportResource = buildExportResourceMemorandum(proposalRefsMap, xmlContent);
         exportProposalResource.addChildResource(memorandumExportResource);
@@ -809,7 +810,7 @@ public class LegServiceImpl implements LegService {
             addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
             final String memorandumTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
-            addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memorandumTocJson);
+            addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memorandumTocJson, proposalRef);
         }
 
         final ExportResource exportMemorandumResource = buildExportResourceMemorandum(proposalRefsMap, xmlContent);
@@ -833,7 +834,7 @@ public class LegServiceImpl implements LegService {
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
             final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
             final String coverPage = exportProposalResource.getComponentId(XmlNodeConfigProcessor.DOC_REF_COVER);
-            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson);
+            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
         }
 
         final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, xmlContent);
@@ -936,7 +937,7 @@ public class LegServiceImpl implements LegService {
             addResourceToZipContent(contentToZip, annexStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(annex.getMetadata().get().getDocTemplate());
             final String annexTocJson = getTocAsJson(annexService.getTableOfContent(annex, TocMode.SIMPLIFIED_CLEAN));
-            addHtmlRendition(contentToZip, annex.getName(), xmlContent, annexStyleSheet, annexTocJson);
+            addHtmlRendition(contentToZip, annex.getName(), xmlContent, annexStyleSheet, annexTocJson, proposalRef);
         }
 
         int docNumber = annex.getMetadata().get().getIndex();
@@ -972,7 +973,7 @@ public class LegServiceImpl implements LegService {
             addResourceToZipContent(contentToZip, explanatoryStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(explanatory.getMetadata().get().getDocTemplate());
             final String explanatoryTocJson = getTocAsJson(explanatoryService.getTableOfContent(explanatory, TocMode.SIMPLIFIED_CLEAN));
-            addHtmlRendition(contentToZip, explanatory.getName(), xmlContent, explanatoryStyleSheet, explanatoryTocJson);
+            addHtmlRendition(contentToZip, explanatory.getName(), xmlContent, explanatoryStyleSheet, explanatoryTocJson, proposalRef);
         }
 
         int docNumber = 0;
@@ -1141,13 +1142,13 @@ public class LegServiceImpl implements LegService {
             return packageRepository.updateLegDocument(document.getId(), LeosLegStatus.FILE_ERROR);
         }
     }
-    
+
     @Override
     public LegDocument findLegDocumentById(String id) {
         LOG.trace("Finding Leg Document by id... [documentId={}]", id);
         return packageRepository.findLegDocumentById(id, true);
     }
-    
+
     @Override
     public LegDocument findLegDocumentByAnyDocumentIdAndJobId(String documentId, String jobId) {
         LOG.trace("Finding Leg Document by proposal id and job id... [proposalId={}, jobId={}]", documentId, jobId);
@@ -1256,10 +1257,6 @@ public class LegServiceImpl implements LegService {
         contentToZip.put(tocHtmlFile, htmlRenditionProcessor.processCoverPageTocTemplate(tocHtmlDocument, tocJsName).getBytes(UTF_8));
     }
 
-    private void addHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent, String styleSheetName, String tocJson) {
-        this.addHtmlRendition(contentToZip, xmlDocumentName, xmlContent, styleSheetName, tocJson, "");
-    }
-
     private void addHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent, String styleSheetName, String tocJson, String proposalRef) {
         RenderedDocument htmlDocument = new RenderedDocument();
         htmlDocument.setContent(new ByteArrayInputStream(xmlContent));
@@ -1314,9 +1311,11 @@ public class LegServiceImpl implements LegService {
     }
 
     private String[] generateColors(String valueToHash) {
-        int hashCode, i;
-        for (i = 0, hashCode = 0; i < valueToHash.length(); hashCode = valueToHash.charAt(i++) + ((hashCode << 5) - hashCode));
-        int hue = Math.abs(hashCode) % 360;
+        BigInteger hashCode = BigInteger.valueOf(0);
+        for (int i = 0; i < valueToHash.length(); i++) {
+            hashCode = BigInteger.valueOf(valueToHash.charAt(i)).add(hashCode.shiftLeft(5).subtract(hashCode));
+        }
+        int hue = hashCode.abs().remainder(BigInteger.valueOf(360)).intValue();
         return new String[]{"hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"};
     }
 
@@ -1621,7 +1620,7 @@ public class LegServiceImpl implements LegService {
             }
             contentToZip.put(annex.getName(), xmlContent);
         }
-        addHtmlRendition(contentToZip, annex.getName(), xmlContent, annexStyleSheet, annexTocJson);
+        addHtmlRendition(contentToZip, annex.getName(), xmlContent, annexStyleSheet, annexTocJson, proposalRef);
 
         int docNumber = annex.getMetadata().get().getIndex();
         final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, resourceId, href, xmlContent);
@@ -1661,7 +1660,7 @@ public class LegServiceImpl implements LegService {
         addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
         structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
         final String memoTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
-        addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson);
+        addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson, proposalRef);
 
         final ExportResource memorandumExportResource = buildExportResourceMemorandum(proposalRefsMap, xmlContent);
         exportProposalResource.addChildResource(memorandumExportResource);

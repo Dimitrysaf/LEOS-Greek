@@ -27,6 +27,10 @@
     padding: var(--eui-base-spacing-xs);
   }
 
+  .eui-page-column__header-left-content-body {
+    margin: 0;
+  }
+
   .scrollable-page-column {
     overflow: auto;
     width: 40%;
@@ -98,6 +102,54 @@
         display: flex;
       }
     }
+  }
+
+  .pin-container .pin-leos-content-removed {
+    background: #f99;
+    border-bottom: 1px solid red;
+    border-top: 1px solid red;
+    margin-left: 9px;
+    width: 8px;
+  }
+
+  .pin-container .pin-leos-content-new {
+    background: #9f6;
+    border-bottom: 1px solid #6c0;
+    border-top: 1px solid #6c0;
+    width: 9px;
+  }
+
+  .pin-container .pin-popup-side-bar {
+    background: #999;
+    height: 2px;
+  }
+
+  .pin-container .pin-popup-side-bar {
+    background: #999;
+    height: 2px;
+  }
+
+  .pin-container {
+    bottom: 0;
+    margin: 15px 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+  }
+
+  .pin-left {
+    left: 0;
+  }
+
+  .pin-right {
+    right: 17px;
+  }
+
+  .pin-container .pin {
+    cursor: pointer;
+    height: 5px;
+    position: absolute;
+    z-index: 10;
   }
 
   @include eui-scrollbars();

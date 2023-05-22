@@ -33,7 +33,7 @@ define(function leosTrackChangesPluginModule(require) {
             var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
             var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
-                    canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
+                canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -74,6 +74,18 @@ define(function leosTrackChangesPluginModule(require) {
                     command: "rejectOneChange",
                     group: "trackChangesGroup"
                 });
+                editor.addMenuItem( "acceptSelectedChangesItem", {
+                    label: "Accept selected changes",
+                    icon: this.path + "icons/ok.png",
+                    command: "acceptSelectedChanges",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem( "rejectSelectedChangesItem", {
+                    label: "Reject selected changes",
+                    icon: this.path + "icons/remove.png",
+                    command: "rejectSelectedChanges",
+                    group: "trackChangesGroup"
+                });
                 editor.addCommand("acceptOneChange", {
                     canUndo: true,
                     exec: function(editor) {
@@ -86,12 +98,38 @@ define(function leosTrackChangesPluginModule(require) {
                         actions.rejectChange(editor, editor.getSelection().getStartElement());
                     }
                 });
+                editor.addCommand("acceptSelectedChanges", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        for (var i = 0; tcElements.length > i; i++) {
+                            actions.acceptChange(editor, tcElements[i]);
+                        }
+                    }
+                });
+                editor.addCommand("rejectSelectedChanges", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        for (var i = 0; tcElements.length > i; i++) {
+                            actions.rejectChange(editor, tcElements[i]);
+                        }
+                    }
+                });
                 editor.contextMenu.addListener( function(element) {
-                    var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
-                    if (tcElement && editor.getSelection().isCollapsed()) {
-                        editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
-                        return { acceptOneChangeItem: canUserAcceptChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                            rejectOneChangeItem: canUserRejectChanges ?  CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                    if (editor.getSelection().isCollapsed()) {
+                        var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                        if (tcElement) {
+                            editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
+                            return { acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                        }
+                    } else {
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        if (tcElements.length > 0) {
+                            return { acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                        }
                     }
                 });
             }
@@ -198,41 +236,20 @@ define(function leosTrackChangesPluginModule(require) {
                                 wasCollapsed = false;
                                 editor.fire("saveSnapshot");
 
-                                var childrenOfSelection = editor.getSelection().getRanges()[0].extractContents(true).getChildren();
-                                var firstItem = null, lastItem = null;
-                                var objNonReferencedArray = core.toArray(childrenOfSelection);
-                                var updatedRange = editor.getSelection().getRanges()[0];
+                                var fragment = range.cloneContents(true);
+                                var nodeList = fragment.find('li:not(:has(ol))');
+                                if (nodeList.count() > 0) {
+                                    actions.deletFromListAndAddTrackChange(editor, range, nodeList);
 
-                                for (var i = 0; objNonReferencedArray.length > i; i++) {
-                                    editor.fire("lockSnapshot"); // To prevent undo to catch every part
-                                    var item = objNonReferencedArray[i];
-                                    var tcItem = core.addTrackChangesNested(editor, item);
-                                    if (tcItem != null) {
-                                        if (!updatedRange.collapsed) {
-                                            updatedRange.collapse(true);
-                                            updatedRange.select();
-                                        }
-                                        editor.insertElement(tcItem);
-                                    }
-                                    if (firstItem == null) {
-                                        firstItem = tcItem;
-                                    } else {
-                                        lastItem = tcItem;
-                                    }
-                                    editor.fire("unlockSnapshot");
+
+                                    event.getInstance().data.domEvent.preventDefault();
+                                    event.getInstance().stop();
+                                } else {
+                                    fragment = range.extractContents(true);
+                                    actions.deletTextAndAddTrackChange(editor, fragment);
+                                    event.getInstance().data.domEvent.preventDefault();
                                 }
 
-                                //editor.fire("updateSnapshot");
-                                editor.fire("saveSnapshot");
-
-                                // Merge changes with previous HTML
-                                if ((firstItem != null) && (firstItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
-                                    firstItem.mergeSiblings(false);
-                                } if ((lastItem != null) && (lastItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
-                                    lastItem.mergeSiblings(false);
-                                }
-
-                                event.getInstance().data.domEvent.preventDefault();
                             } else {
                                 // Prevent if lock exists
                                 event.getInstance().data.domEvent.preventDefault();
@@ -382,6 +399,8 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         canUserAcceptChanges: function(editor) {
+            // return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
+            //TODO: Accept has been enabled in cloned proposals for testing purposes
             return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES");
         },
 
@@ -472,7 +491,12 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 } else if (savedTcLocation != core.NONE) {
                     var node = startContainer;
-                    if (savedTcLocation == core.AFTER) {
+                    if (range.startContainer.$.nodeName === '#text' &&
+                        range.endContainer.$.nodeName === '#text' &&
+                        range.startOffset === range.endOffset &&
+                        range.startOffset === range.startContainer.$.length) {
+                        node = range.getNextNode();
+                    } else if (savedTcLocation == core.AFTER) {
                         while (node.hasNext() && (node.type != 1)) {
                             node = node.getNextSourceNode();
                         }
@@ -553,6 +577,69 @@ define(function leosTrackChangesPluginModule(require) {
             } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
             }
+        },
+
+        deletTextAndAddTrackChange: function(editor, fragment) {
+            var core = trackChanges.core;
+            var childrenOfSelection = fragment.getChildren();
+            var firstItem = null, lastItem = null;
+            var objNonReferencedArray = core.toArray(childrenOfSelection);
+            var updatedRange = editor.getSelection().getRanges()[0];
+
+            for (var i = 0; objNonReferencedArray.length > i; i++) {
+                editor.fire("lockSnapshot"); // To prevent undo to catch every part
+                var item = objNonReferencedArray[i];
+                var tcItem = core.addTrackChangesNested(editor, item);
+                if (tcItem != null) {
+                    if (!updatedRange.collapsed) {
+                        updatedRange.collapse(true);
+                        updatedRange.select();
+                    }
+                    editor.insertElement(tcItem);
+                }
+                if (firstItem == null) {
+                    firstItem = tcItem;
+                } else {
+                    lastItem = tcItem;
+                }
+                editor.fire("unlockSnapshot");
+            }
+
+            //editor.fire("updateSnapshot");
+            editor.fire("saveSnapshot");
+
+            // Merge changes with previous HTML
+            if ((firstItem != null) && (firstItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
+                firstItem.mergeSiblings(false);
+            }
+            if ((lastItem != null) && (lastItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
+                lastItem.mergeSiblings(false);
+            }
+        },
+
+        deletFromListAndAddTrackChange: function(editor, range, nodeList) {
+            var core = trackChanges.core;
+            if (!range.collapsed) {
+                range.collapse(true);
+                range.select();
+            }
+            for (var i = 0; i < nodeList.toArray().length; i++) {
+                var domElement = nodeList.getItem(i).$;
+                var item = new CKEDITOR.dom.text(domElement.childNodes[0]);
+                var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, item.getText(),true);
+                var currentElement = editor.getSelection().document.find('#' + domElement.id).getItem(0).$;
+                if (i === 0 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
+
+                    currentElement.innerHTML =
+                        currentElement.innerHTML.substring(0, currentElement.innerHTML.length - domElement.innerHTML.length) +
+                        tcItem.$.outerHTML;
+                } else if(i === nodeList.toArray().length-1 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
+                    currentElement.innerHTML = tcItem.$.outerHTML + currentElement.innerHTML.substring(domElement.innerHTML.length);
+                } else {
+                    currentElement.innerHTML = tcItem.$.outerHTML;
+                }
+            }
+            editor.fire("saveSnapshot");
         }
 
     };
@@ -621,7 +708,14 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         searchNextTrackChangeElement: function(editor, action, deleteKey) {
+            var range = editor.getSelection().getRanges()[0];
             var node = editor.getSelection().getRanges()[0].getNextNode();
+            if (range.startContainer.$.localName === 'span' &&
+                range.endContainer.$.localName === 'span' &&
+                range.startOffset === 0 &&
+                range.endOffset === 0) {
+                node = range.startContainer;
+            }
             if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                 return [node, this.CARET_START];
             } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasNext() && (deleteKey === true) && (node.getText().length === CKEDITOR.NODE_ELEMENT)) {
@@ -787,6 +881,21 @@ define(function leosTrackChangesPluginModule(require) {
                 element.getNext().remove();
             }
             this.setToEditablePosition(editor, element, moveTo);
+        },
+
+        findElementsInSelection: function(selection) {
+            var selectedTcElements = [];
+            var range = selection.getRanges()[0];
+            if ((typeof(range.getCommonAncestor) !== undefined) && (typeof(range.getCommonAncestor().getElementsByTag) !== undefined)) {
+                var allTcElementsWithinRangeParent = range.getCommonAncestor().getElementsByTag(this.TRACKCHANGES_ELEMENT);
+                for (var i = 0, tcElement; allTcElementsWithinRangeParent.count() > i; i++) {
+                    tcElement = allTcElementsWithinRangeParent.getItem(i);
+                    if ((selection.getNative().containsNode !== undefined) && selection.getNative().containsNode(tcElement.$,true)) {
+                        selectedTcElements.push(tcElement);
+                    }
+                }
+            }
+            return selectedTcElements;
         }
 
     };

@@ -5,3 +5,9 @@ export interface DocumentViewResponse {
   versionInfoVO: VersionInfoVO;
   proposalRef: string;
 }
+
+export interface RefreshElementResponse {
+  elementFragment: string;
+  elementId: string;
+  elementTagName: string;
+}
