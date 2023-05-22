@@ -140,4 +140,8 @@ export class TableOfContentService implements OnDestroy {
       },
     );
   }
+
+  public getCurrentToc() {
+    return this.tocBS.value;
+  }
 }
