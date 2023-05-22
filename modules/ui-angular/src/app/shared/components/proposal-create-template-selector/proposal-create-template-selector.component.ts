@@ -154,6 +154,7 @@ export class ProposalCreateTemplateSelectorComponent
       label,
       iconClass,
       disabled,
+      expanded: this.isExpanded,
       children,
       ...(isEmptyCategory
         ? {
@@ -176,7 +177,7 @@ export class ProposalCreateTemplateSelectorComponent
 
   private setInitialState() {
     this.filterText = '';
-    this.isExpanded = false;
+    this.isExpanded = true;
     this.selectedLanguage = '';
     this.languages = [];
   }

@@ -70,24 +70,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     return this.isRecent && this.versions[0] === version;
   }
 
-  private onVersionSearchResultsChange(results: string[]) {
-    if (!Array.isArray(results)) {
-      this.isSearchExcluded = false;
-      return;
-    }
-
-    const versions = [];
-    if (this.majorVersion) {
-      versions.push(this.majorVersion.versionedReference);
-    }
-    this.subVersions?.forEach((subVersion) =>
-      versions.push(subVersion.versionedReference),
-    );
-    this.isSearchExcluded = !(
-      versions.length === 0 || versions.some((v) => results.includes(v))
-    );
-  }
-
   protected onSelectVersion(version: Version, inputChangeEvent: Event) {
     const checked = (inputChangeEvent.target as HTMLInputElement).checked;
     const currentVersions = this.docService.getVersionCompareIds();
@@ -129,6 +111,24 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected toggleShowMore(expanded = !this.showMore) {
     this.showMore = expanded;
     this.updateState();
+  }
+
+  private onVersionSearchResultsChange(results: string[]) {
+    if (!Array.isArray(results)) {
+      this.isSearchExcluded = false;
+      return;
+    }
+
+    const versions = [];
+    if (this.majorVersion) {
+      versions.push(this.majorVersion.versionedReference);
+    }
+    this.subVersions?.forEach((subVersion) =>
+      versions.push(subVersion.versionedReference),
+    );
+    this.isSearchExcluded = !(
+      versions.length === 0 || versions.some((v) => results.includes(v))
+    );
   }
 
   private updateState() {
