@@ -93,9 +93,13 @@ define(function actionManagerExtensionModule(require) {
 
     function _registerActionsHandler(connector, $rootElement) {
         // register delegated event handlers for content
-        // LEOS-2764 Listening on 'mouseup' events for double clicks in place of
-        //  'dblclick' to avoid that double click will be managed by annotate
-        $rootElement.on("mouseup.actions", ".leos-editable-content", _handleDoubleClickAction.bind(undefined, connector, "edit"));
+        if(connector.getState().isAngularUI){
+            $rootElement.on("click.actions", ".leos-editable-content", _handleElementClickAction.bind(undefined, connector, "edit"));
+        } else {
+            // LEOS-2764 Listening on 'mouseup' events for double clicks in place of
+            // 'dblclick' to avoid that double click will be managed by annotate
+            $rootElement.on("mouseup.actions", ".leos-editable-content", _handleDoubleClickAction.bind(undefined, connector, "edit"));
+        }
         // register delegated event handlers for widgets
         $rootElement.on("click.actions", "[data-widget-type='insert.before']", _handleAction.bind(undefined, connector, "insert.before"));
         $rootElement.on("click.actions", "[data-widget-type='edit']", _handleAction.bind(undefined, connector, "edit"));
@@ -299,11 +303,21 @@ define(function actionManagerExtensionModule(require) {
         $(element).removeClass("leos-editable-content");
     }
 
+    function _handleElementClickAction(connector, action, event) {
+        const selection = window.getSelection();
+
+        if (selection.isCollapsed && selection.type === 'Caret') {
+          // Means the event was fired from single click and not selection
+            _handleAction(connector, "edit", event)
+        }
+    }
+
     function _handleDoubleClickAction(connector, action, event) {
         if (event.detail > 1) /*Means 'double mouseup' == double click */ {
             _handleAction(connector, "edit", event)
         }
     }
+
 
     function _isCouncilInstance(connector) {
         return UTILS.COUNCIL_INSTANCE === connector.instanceType;
