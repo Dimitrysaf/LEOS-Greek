@@ -30,6 +30,7 @@ import {
   Subject,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -110,6 +111,10 @@ export class DocumentEditorComponent
   });
 
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+
+  folder_id$: Observable<string>;
+
+  id: string;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -247,7 +252,14 @@ export class DocumentEditorComponent
         this.setPageTitle();
         this.manageBreadCrumbsDocumentScreen();
       });
-    // this.loadingService.setLoading(false);
+
+    this.documentService.collapseExpandAnnotation$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        if (value && this.isAnnotationsColumnCollapsed) {
+          this.onToggleAnnotationsColumnCollapsed();
+        }
+      });
   }
 
   ngAfterViewInit(): void {

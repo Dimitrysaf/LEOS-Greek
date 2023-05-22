@@ -99,13 +99,14 @@ export class DocumentService implements OnDestroy {
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
+  collapseExpandAnnotation$: Observable<boolean>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
-
   currentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
   // private documentCategoryBS = new BehaviorSubject(null);
+  private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
   private searchPaneOpenBS = new BehaviorSubject(false);
@@ -270,6 +271,8 @@ export class DocumentService implements OnDestroy {
         this.onVersionSearchParamChange(searchParams, versions, recentChanges),
       );
     this.versionSearchResults$ = this.versionSearchResultsBS$.asObservable();
+    this.collapseExpandAnnotation$ =
+      this.collapseExpandAnnotationSubj.asObservable();
   }
 
   ngOnDestroy() {
@@ -553,6 +556,10 @@ export class DocumentService implements OnDestroy {
 
   setDocumentRefAndCategory(ref: string, category: string) {
     this.documentRefAndCategoryBS.next({ ref, category });
+  }
+
+  setCollapseExpandAnnotation(value: boolean) {
+    this.collapseExpandAnnotationSubj.next(value);
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
