@@ -3,7 +3,7 @@
   height: 100%;
 }
 
-input[type=checkbox].eui-input-checkbox:not(.cdk-visually-hidden)+label {
+input[type='checkbox'].eui-input-checkbox:not(.cdk-visually-hidden) + label {
   display: inline-block;
   max-width: 100%;
   overflow: hidden;
