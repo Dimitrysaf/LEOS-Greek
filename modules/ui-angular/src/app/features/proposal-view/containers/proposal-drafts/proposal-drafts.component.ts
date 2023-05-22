@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Document, DocumentType, Permission } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -64,6 +65,7 @@ export class ProposalDraftsComponent
     private proposalDetailsService: ProposalDetailsService,
     private route: ActivatedRoute,
     private coEditionService: CoEditionServiceWS,
+    private translate: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -106,7 +108,9 @@ export class ProposalDraftsComponent
   }
 
   handleAnnexEditTitle(annex: Document) {
-    this.title = annex.title;
+    this.title =
+      annex.title ||
+      this.translate.instant('page.collection.drafts.annex.table.tr.no-title');
     this.activeAnnexId = annex.id;
     this.editAnnexTitleDialog.openDialog();
   }
