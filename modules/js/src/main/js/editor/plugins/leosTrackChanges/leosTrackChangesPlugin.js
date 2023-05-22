@@ -143,8 +143,17 @@ define(function leosTrackChangesPluginModule(require) {
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
                 var savedSnapshot, savedTcLocation, keyCodeLock, betweenFix, wasInsert, wasCollapsed;
+                var ctrlXArray;
                 var ctrlDown = false, cutText;
                 var editable = editor.editable();
+
+                // Used for CTRL-X
+                editable.attachListener(editor.document, "keydown", function(e) {
+                    var event = new EventWrapper(e);
+                    if (event.getKeyCode() === 88) {
+                        ctrlXArray = editor.getSelection().getRanges()[0].cloneContents().getChildren().$;
+                    }
+                });
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
@@ -240,8 +249,6 @@ define(function leosTrackChangesPluginModule(require) {
                                 var nodeList = fragment.find('li:not(:has(ol))');
                                 if (nodeList.count() > 0) {
                                     actions.deletFromListAndAddTrackChange(editor, range, nodeList);
-
-
                                     event.getInstance().data.domEvent.preventDefault();
                                     event.getInstance().stop();
                                 } else {
@@ -381,7 +388,11 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "cut", function(e) {
                     // Save the text for the cut element
                     if (isTrackChangesEnabled) {
-                        cutText = core.getSelectedHtml(editor);
+                        for (var indexElem = 0; indexElem < ctrlXArray.length; indexElem++) {
+                            var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, ctrlXArray[indexElem].data,true);
+                            editor.insertHtml(tcItem.$.outerHTML, "html");
+                        }
+                        e.cancel();
                     }
                 });
             });
