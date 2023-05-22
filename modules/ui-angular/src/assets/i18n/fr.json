@@ -316,7 +316,7 @@
   "toc.item.type.clause": "Clause",
   "toc.item.type.crossheading": "Crossheading",
   "toc.item.type.block": "Bloc",
-  "toc.item.type.longtitle": "Titre",
+  "toc.item.type.long_title": "Titre",
   "toc.item.type.mainbody": "Body",
   "toc.item.type.main_body": "Body",
   "toc.item.type.level": "Point 1.",

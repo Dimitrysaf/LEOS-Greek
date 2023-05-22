@@ -58,6 +58,15 @@
     font-size: var(--eui-base-font-size-l);
   }
 
+  .eui-fieldset__header {
+    border-bottom: none;
+    text-transform: capitalize;
+  }
+
+  .eui-fieldset__header-right-content {
+    margin: 0;
+  }
+
   eui-page-column-body {
     flex-grow: 1;
   }

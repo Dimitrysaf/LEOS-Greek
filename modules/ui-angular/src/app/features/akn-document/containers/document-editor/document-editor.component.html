@@ -102,6 +102,125 @@
             [documentRef]="documentRef"
             (reBuildTocItems)="onRebuildTocItems($event)"
           ></app-document-toc>
+          <!-- versions -->
+          <eui-fieldset
+            class="eui-u-mt-s"
+            label="{{ 'page.editor.versions-column.label' | translate }}"
+            isExpandable
+            [isExpanded]="false"
+          >
+            <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
+              <button
+                euiButton
+                euiIconButton
+                euiSecondary
+                euiOutline
+                euiSizeS
+                [title]="
+                  ((documentService.compareModeEnabled$ | async)
+                    ? 'page.editor.versions.compare-button.tooltip-disable'
+                    : 'page.editor.versions.compare-button.tooltip-enable'
+                  ) | translate
+                "
+                [attr.aria-label]="
+                  ((documentService.compareModeEnabled$ | async)
+                    ? 'page.editor.versions.compare-button.tooltip-disable'
+                    : 'page.editor.versions.compare-button.tooltip-enable'
+                  ) | translate
+                "
+                (click)="toggleVersionComparisonView()"
+              >
+                <eui-icon-svg icon="documents"></eui-icon-svg>
+              </button>
+
+              <button
+                euiButton
+                euiIconButton
+                euiSecondary
+                euiOutline
+                euiSizeS
+                [title]="
+                  ((documentService.versionSearchOpen$ | async)
+                    ? 'page.editor.versions.search-button.tooltip-disable'
+                    : 'page.editor.versions.search-button.tooltip-enable'
+                  ) | translate
+                "
+                [attr.aria-label]="
+                  ((documentService.versionSearchOpen$ | async)
+                    ? 'page.editor.versions.search-button.tooltip-disable'
+                    : 'page.editor.versions.search-button.tooltip-enable'
+                  ) | translate
+                "
+                (click)="documentService.toggleVersionsSearchPane()"
+              >
+                <eui-icon-svg icon="search"></eui-icon-svg>
+              </button>
+            </div>
+
+            <div
+              class="eui-u-display-flex app-u-gap-m"
+              *ngIf="documentService.versionSearchOpen$ | async"
+            >
+              <eui-card euiNoShadow>
+                <eui-card-content>
+                  <form [formGroup]="versionSearchForm">
+                    <div class="row g-0">
+                      <div class="col-md-3">
+                        {{ 'version.search.form.type' | translate }}
+                      </div>
+                      <div class="col-md-3 no-g">
+                        <div class="eui-u-display-flex eui-u-flex-row">
+                          <input
+                            name="type"
+                            euiInputRadio
+                            id="type-all"
+                            formControlName="type"
+                            value="all"
+                            label="All"
+                            euiSizeXS
+                          />
+                          <div>
+                            <input
+                              name="type"
+                              euiInputRadio
+                              id="type-save"
+                              formControlName="type"
+                              value="save"
+                              label="Save"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              name="type"
+                              euiInputRadio
+                              id="type-milestone"
+                              formControlName="type"
+                              value="milestone"
+                              label="Milestone"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row g-0">
+                      <div class="col-md-4 version-search-form-author-label">
+                        <label for="author">{{
+                          'version.search.form.author' | translate
+                        }}</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input id="author" formControlName="author" />
+                      </div>
+                    </div>
+                  </form>
+                </eui-card-content>
+              </eui-card>
+            </div>
+            <app-versions-pane
+              (exploreMilestone)="exploreMilestone($event)"
+            ></app-versions-pane>
+          </eui-fieldset>
         </eui-page-column-body>
       </eui-page-column>
 
@@ -457,136 +576,6 @@
             [showStatusFilter]="showStatusFilter"
             *ngIf="!milestoneViewData"
           ></app-document-annotations>
-        </eui-page-column-body>
-      </eui-page-column>
-
-      <!-- versions -->
-      <eui-page-column
-        class="eui-page-column--right-column"
-        [label]="'page.editor.versions-column.label' | translate"
-        size="4xl"
-        isCollapsible
-        [isCollapsed]="isVersionsColumnCollapsed"
-        interactiveScrollbars
-        (collapsed)="onToggleVersionsColumn()"
-      >
-        <eui-page-column-header-body
-          class="eui-u-display-flex eui-u-flex-column eui-u-pb-s app-u-gap-s"
-        >
-          <div class="eui-u-display-flex app-u-gap-m">
-            <button
-              euiButton
-              euiIconButton
-              euiSecondary
-              euiOutline
-              euiSizeS
-              [title]="
-                ((documentService.compareModeEnabled$ | async)
-                  ? 'page.editor.versions.compare-button.tooltip-disable'
-                  : 'page.editor.versions.compare-button.tooltip-enable'
-                ) | translate
-              "
-              [attr.aria-label]="
-                ((documentService.compareModeEnabled$ | async)
-                  ? 'page.editor.versions.compare-button.tooltip-disable'
-                  : 'page.editor.versions.compare-button.tooltip-enable'
-                ) | translate
-              "
-              (click)="toggleVersionComparisonView()"
-            >
-              <eui-icon-svg icon="documents"></eui-icon-svg>
-            </button>
-
-            <button
-              euiButton
-              euiIconButton
-              euiSecondary
-              euiOutline
-              euiSizeS
-              [title]="
-                ((documentService.versionSearchOpen$ | async)
-                  ? 'page.editor.versions.search-button.tooltip-disable'
-                  : 'page.editor.versions.search-button.tooltip-enable'
-                ) | translate
-              "
-              [attr.aria-label]="
-                ((documentService.versionSearchOpen$ | async)
-                  ? 'page.editor.versions.search-button.tooltip-disable'
-                  : 'page.editor.versions.search-button.tooltip-enable'
-                ) | translate
-              "
-              (click)="documentService.toggleVersionsSearchPane()"
-            >
-              <eui-icon-svg icon="search"></eui-icon-svg>
-            </button>
-          </div>
-
-          <div
-            class="eui-u-display-flex app-u-gap-m"
-            *ngIf="documentService.versionSearchOpen$ | async"
-          >
-            <eui-card euiNoShadow>
-              <eui-card-content>
-                <form [formGroup]="versionSearchForm">
-                  <div class="row g-0">
-                    <div class="col-md-3">
-                      {{ 'page.editor.versions.search.form.type' | translate }}:
-                    </div>
-                    <div class="col-md-3 no-g">
-                      <div class="eui-u-display-flex eui-u-flex-row">
-                        <input
-                          name="type"
-                          euiInputRadio
-                          id="type-all"
-                          formControlName="type"
-                          value="all"
-                          label="All"
-                          euiSizeXS
-                        />
-                        <div>
-                          <input
-                            name="type"
-                            euiInputRadio
-                            id="type-save"
-                            formControlName="type"
-                            value="save"
-                            label="Save"
-                          />
-                        </div>
-                        <div>
-                          <input
-                            name="type"
-                            euiInputRadio
-                            id="type-milestone"
-                            formControlName="type"
-                            value="milestone"
-                            label="Milestone"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row g-0">
-                    <div class="col-md-4 version-search-form-author-label">
-                      <label class="px-0 py-0" for="author">
-                        {{
-                          'page.editor.versions.search.form.author' | translate
-                        }}:
-                      </label>
-                    </div>
-                    <div class="col-md-8">
-                      <input id="author" formControlName="author" />
-                    </div>
-                  </div>
-                </form>
-              </eui-card-content>
-            </eui-card>
-          </div>
-        </eui-page-column-header-body>
-        <eui-page-column-body>
-          <app-versions-pane
-            (exploreMilestone)="exploreMilestone($event)"
-          ></app-versions-pane>
         </eui-page-column-body>
       </eui-page-column>
     </eui-page-columns>
