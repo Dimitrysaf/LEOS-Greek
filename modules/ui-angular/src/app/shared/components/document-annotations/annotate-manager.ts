@@ -17,6 +17,7 @@ import {
   Permission,
 } from '@/shared/models';
 import { AnnotateService } from '@/shared/services/annotate.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 import { AnnotateConnector } from './annotate-connector';
 
@@ -42,6 +43,7 @@ export class AnnotateManager {
     permissions: Permission[],
     private options: AnnotateConnectorOptions,
     private annotateService: AnnotateService,
+    private documentService: DocumentService,
   ) {
     const responseFilteredAnnotations = (annotations: string) => {
       this.annotationsCb.forEach((cb) => cb(annotations));
@@ -58,6 +60,7 @@ export class AnnotateManager {
               responseFilteredAnnotations,
             },
             annotateService,
+            this.documentService,
           ),
       ),
       tap((connector) => (this.connector = connector)),

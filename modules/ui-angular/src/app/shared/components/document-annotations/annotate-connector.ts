@@ -1,4 +1,4 @@
-import { distinctUntilChanged, take } from 'rxjs';
+import { distinctUntilChanged, Observable, of, take } from 'rxjs';
 
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
@@ -9,6 +9,7 @@ import type {
   Permission,
 } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
@@ -34,11 +35,13 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     state: AnnotateConnectorInitialState,
     private options: AnnotateConnectorOptions,
     private annotateService: AnnotateService,
+    private documentService: DocumentService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
   }
 
   requestDocumentMetadata(...args) {
+    this.documentService.setCollapseExpandAnnotation(true);
     this.annotateService
       .getDocumentsMetadata()
       .pipe(take(1))
