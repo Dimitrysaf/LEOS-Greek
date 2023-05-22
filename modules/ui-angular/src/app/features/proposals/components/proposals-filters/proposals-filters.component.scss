@@ -2,3 +2,11 @@
   border-right: 1px solid var(--eui-base-color-grey-15);
   height: 100%;
 }
+
+input[type=checkbox].eui-input-checkbox:not(.cdk-visually-hidden)+label {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
