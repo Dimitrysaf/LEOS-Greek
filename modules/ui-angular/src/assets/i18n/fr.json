@@ -246,6 +246,8 @@
   "page.editor.versions.show-more": "[FR]Show more",
   "page.editor.versions.search-button.tooltip-enable": "Afficher la barre de recherche",
   "page.editor.versions.search-button.tooltip-disable": "Cacher la barre de recherche",
+  "page.editor.versions.search.form.type": "[FR] By type",
+  "page.editor.versions.search.form.author": "[FR] By author",
   "page.editor.versions.restore.modal-title": "Restore Version [FR]",
   "page.editor.versions.restore.modal-button": "Revert [FR]",
   "page.editor.versions.restore.modal-text-version": "You are about to revert to version {{ version }}. [FR]",
