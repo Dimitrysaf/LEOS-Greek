@@ -483,7 +483,12 @@
         cdkDrag
       >
         <span class="eui-icon eui-icon-bars"></span>
-        <div [attr.data-index]="i">{{ annex.title }}</div>
+        <div [attr.data-index]="i">
+          {{
+            annex.title ||
+              ('page.collection.drafts.annex.table.tr.no-title' | translate)
+          }}
+        </div>
       </div>
     </div>
   </div>
