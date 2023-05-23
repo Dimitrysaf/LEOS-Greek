@@ -190,8 +190,6 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClose() {}
-
   closeDialog() {
     this.createWizard.closeDialog();
     this.resetInitials();
