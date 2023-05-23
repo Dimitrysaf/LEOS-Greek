@@ -56,7 +56,8 @@
 
     <xs:simpleType name="optionsType" final="restriction">
         <xs:annotation>
-            <xs:documentation>Option values used to configure an element like itemNumber and itemHeading</xs:documentation>
+            <xs:documentation>Option values used to configure an element like itemNumber and itemHeading
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none"/>
@@ -83,6 +84,7 @@
             <xs:element name="sequence" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="description" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="regex" type="xs:string" default="" minOccurs="0"/>
+            <xs:element name="regexJS" type="xs:string" default="" minOccurs="0"/>
             <xs:element name="msgValidationError" type="xs:string" default="" minOccurs="0"/>
 
             <!-- ATTENTION: Make sure that all configNumbers indicated in the list levels are present in the plugin listItemNumberModule.js -->
@@ -108,7 +110,8 @@
 
     <xs:simpleType name="tocItemTypeName" final="restriction">
         <xs:annotation>
-            <xs:documentation>Names of tocItems' types. For instance: definition articles or regular articles</xs:documentation>
+            <xs:documentation>Names of tocItems' types. For instance: definition articles or regular articles
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="REGULAR"/>
@@ -277,7 +280,8 @@
 
     <xs:simpleType name="actionPositions" final="restriction">
         <xs:annotation>
-            <xs:documentation>Action positions is used to configure action button position for any element profile</xs:documentation>
+            <xs:documentation>Action positions is used to configure action button position for any element profile
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="LEFT"/>

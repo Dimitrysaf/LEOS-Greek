@@ -110,7 +110,7 @@
             type="text"
             [placeholder]="numberConfig.description"
             [required]="isItemNumberMandatory(this.selectedNode.tocItem)"
-            [pattern]="numberConfig.regex"
+            [pattern]="numberConfig.regexJS"
             [disabled]="!isItemNumberEditable(this.selectedNode.tocItem)"
             [(ngModel)]="number"
             [isInvalid]="invalidNodes.has(this.selectedNode)"

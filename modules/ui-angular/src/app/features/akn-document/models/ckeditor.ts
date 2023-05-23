@@ -146,7 +146,7 @@ export type NumberingConfig = {
   suffix: string;
   sequence: string;
   description: string;
-  regex: string;
+  regex: string | RegExp;
   msgValidationError: string;
   levels: Levels;
   level: string;
