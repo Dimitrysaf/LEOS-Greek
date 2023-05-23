@@ -53,11 +53,13 @@
         <div>{{ formatVersionNumber(version) }}</div>
         <div class="title">
           {{
-            version.checkinCommentVO.checkinElement
+            version.checkinCommentVO.title !== ''
+              ? version.checkinCommentVO.title
+              : version.checkinCommentVO.checkinElement
               ? version.checkinCommentVO.checkinElement.elementLabel +
                 ' ' +
                 version.checkinCommentVO.checkinElement.actionType.toLowerCase()
-              : version.checkinCommentVO.title
+              : ''
           }}
         </div>
         <div>
