@@ -179,8 +179,6 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  onClose() {}
-
   closeDialog() {
     this.uploadWizard.closeDialog();
     this.resetInitials();

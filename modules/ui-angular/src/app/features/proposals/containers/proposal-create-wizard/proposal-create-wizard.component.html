@@ -7,7 +7,7 @@
   [title]="'page.workspace.create-title' | translate"
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
-  (close)="onClose()"
+  (close)="closeDialog()"
 >
   <ux-wizard-steps
     (selectStep)="onSelectStepRemoteNav($event)"

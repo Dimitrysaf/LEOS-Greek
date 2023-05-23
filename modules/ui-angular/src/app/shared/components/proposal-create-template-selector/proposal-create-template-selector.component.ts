@@ -71,6 +71,7 @@ export class ProposalCreateTemplateSelectorComponent
   reset() {
     this.setInitialState();
     this.treeComponent.onFilter(this.filterText);
+    this.treeComponent.onExpandAll(this.event);
     this.cd.detectChanges();
   }
 
