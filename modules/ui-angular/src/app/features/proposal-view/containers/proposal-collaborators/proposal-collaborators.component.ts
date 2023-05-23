@@ -71,7 +71,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.collaboratorToDelete = null;
   }
 
-  hanldeOnChange(event) {
+  handleOnChange(event) {
     //reset previous state
     this.detailsService.setCollaboratorsRole({
       userId: this.editUserId,
