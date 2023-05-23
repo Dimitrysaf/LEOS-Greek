@@ -267,28 +267,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     deleteDocumentElement();
   }
 
-  private isLastRecitalElement(elementId: string) {
-    const toc = this.tableOfContentService.getCurrentToc();
-    const targetNode = findNodeById(toc, elementId);
-    const parentNode = findNodeById(toc, targetNode.parentItem);
-
-    return parentNode?.childItems?.length === 1;
-  }
-
-  private openLastRecitalDeleteConfirmation(onConfirm: () => void) {
-    this.dialogService.openDialog({
-      title: this.translateService.instant(
-        'page.editor.last-element-delete-confirmation.title',
-      ),
-      content: this.translateService.instant(
-        'page.editor.last-element-delete-confirmation.message',
-      ),
-      acceptLabel: this.translateService.instant('global.actions.continue'),
-      accept: onConfirm,
-      dismiss: () => {},
-    });
-  }
-
   // leosEditorExtension > actionHandler
   insertElementAction(elementData: {
     action: string;
@@ -330,6 +308,28 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       elementData.elementType,
       elementData.elementContent,
     );
+  }
+
+  private isLastRecitalElement(elementId: string) {
+    const toc = this.tableOfContentService.getCurrentToc();
+    const targetNode = findNodeById(toc, elementId);
+    const parentNode = findNodeById(toc, targetNode.parentItem);
+
+    return parentNode?.childItems?.length === 1;
+  }
+
+  private openLastRecitalDeleteConfirmation(onConfirm: () => void) {
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.last-element-delete-confirmation.title',
+      ),
+      content: this.translateService.instant(
+        'page.editor.last-element-delete-confirmation.message',
+      ),
+      acceptLabel: this.translateService.instant('global.actions.continue'),
+      accept: onConfirm,
+      dismiss: () => {},
+    });
   }
 
   private requestTocAndAncestors(elementdIds) {

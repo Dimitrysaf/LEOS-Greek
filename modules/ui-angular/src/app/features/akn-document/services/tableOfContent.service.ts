@@ -108,6 +108,10 @@ export class TableOfContentService implements OnDestroy {
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
+  getCurrentToc() {
+    return this.tocBS.value;
+  }
+
   private getTocItems(
     documentRef: string,
     documentType: string,
@@ -139,9 +143,5 @@ export class TableOfContentService implements OnDestroy {
         params: { tocMode },
       },
     );
-  }
-
-  public getCurrentToc() {
-    return this.tocBS.value;
   }
 }
