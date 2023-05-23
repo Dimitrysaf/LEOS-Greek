@@ -125,7 +125,12 @@ define(function leosCrossReferenceDialog(require) {
                                         var $widget = $(widget.element.$);
                                         $widget.removeAttr('leos:broken');
                                         // Sets the user friendly label for referenced element
-                                        $widget.html(tabHandlers.nodeContentHandlers[documentMetadata.ref].getRefrenceText());
+                                        var refTxt = tabHandlers.nodeContentHandlers[documentMetadata.ref].getRefrenceText();
+                                        var ranges = editor.getSelection().getRanges();
+                                        var isStart = ranges != null && ranges.length > 0 && ranges[0] != null && ranges[0].collapsed && (ranges[0].startOffset == 0 || ranges[0].checkStartOfBlock());
+                                        var first = refTxt.charAt(0);
+                                        refTxt = (isStart ? first.toUpperCase() : first.toLowerCase()) + refTxt.slice(1);
+                                        $widget.html(refTxt);
                                     }
                                 },
 
