@@ -11,6 +11,9 @@
         euiOutline
         euiPrimary
         class="eui-u-ml-s"
+        [euiTooltip]="
+          'page.collection.proposal-header.edit.tooltip' | translate
+        "
         (click)="handleEdit()"
       >
         {{ 'page.collection.proposal-header.edit' | translate }}
