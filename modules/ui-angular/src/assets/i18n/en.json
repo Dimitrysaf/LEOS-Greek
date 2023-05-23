@@ -20,6 +20,7 @@
   "global.actions.save-close": "Save and close",
   "global.actions.show": "Show",
   "global.actions.hide": "Hide",
+  "global.actions.undo": "Undo",
   "global.notifications.title.error": "Error",
   "global.notifications.title.info": "Info",
   "global.notifications.title.success": "Success",
