@@ -47,23 +47,41 @@
           <ng-container
             *ngIf="isEditRole && editUserId === row.login; else tdRole"
           >
-            <select
-              euiSelect
-              (change)="hanldeOnChange($event)"
-              [selectedIndex]="getIndexByRole()"
-            >
-              <option value="OWNER">
-                {{ 'page.collection.collaborators.role.author' | translate }}
-              </option>
-              <option value="CONTRIBUTOR">
-                {{
-                  'page.collection.collaborators.role.contributor' | translate
-                }}
-              </option>
-              <option value="REVIEWER">
-                {{ 'page.collection.collaborators.role.reviewer' | translate }}
-              </option>
-            </select>
+            <div euiInputGroup class="row">
+              <div class="col-sm-10">
+                <select
+                  euiSelect
+                  (change)="hanldeOnChange($event)"
+                  [selectedIndex]="getIndexByRole()"
+                >
+                  <option value="OWNER">
+                    {{
+                      'page.collection.collaborators.role.author' | translate
+                    }}
+                  </option>
+                  <option value="CONTRIBUTOR">
+                    {{
+                      'page.collection.collaborators.role.contributor'
+                        | translate
+                    }}
+                  </option>
+                  <option value="REVIEWER">
+                    {{
+                      'page.collection.collaborators.role.reviewer' | translate
+                    }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-sm-2">
+                <div class="eui-u-mr-s" (click)="exitEditMode()">
+                  <eui-icon
+                    euiPrimary
+                    euiSizeL
+                    iconClass="eui-icon-ecl-close-filled"
+                  ></eui-icon>
+                </div>
+              </div>
+            </div>
           </ng-container>
           <ng-template #tdRole>
             <span>{{
