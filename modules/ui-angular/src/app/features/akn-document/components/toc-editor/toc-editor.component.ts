@@ -348,8 +348,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
   handleNumberChange(number: string) {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
-      const numberRegex = this.numberConfig.regex;
-      if (number && numberRegex.match(number)) {
+      const numberRegex = RegExp(this.numberConfig.regexJS);
+      if (number && numberRegex.test(number)) {
         //clear invalid
         this.removeInvalidNode();
         //save snapshot of old tree

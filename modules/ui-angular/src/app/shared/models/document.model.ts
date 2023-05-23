@@ -137,7 +137,8 @@ export interface NumberingConfig {
   msgValidationError: string;
   numbered: true;
   prefix: '';
-  regex: string;
+  regex: string; // deprecated
+  regexJS: string;
   sequence: string;
   suffix: string;
   type: NumberingType;
