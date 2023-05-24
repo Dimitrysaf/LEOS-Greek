@@ -29,7 +29,7 @@ define(function leosCrossReferenceDialog(require) {
     var dialogDefinition = {
         dialogName: "leosCrossReferenceDialog"
     };
-
+    var THIS_REF = "this";
     dialogDefinition.initializeDialog = function initializeDialog(editor) {
         var docType = editor.LEOS.type;
         tabHandlers.build(editor);
@@ -126,10 +126,12 @@ define(function leosCrossReferenceDialog(require) {
                                         $widget.removeAttr('leos:broken');
                                         // Sets the user friendly label for referenced element
                                         var refTxt = tabHandlers.nodeContentHandlers[documentMetadata.ref].getRefrenceText();
-                                        var ranges = editor.getSelection().getRanges();
-                                        var isStart = ranges != null && ranges.length > 0 && ranges[0] != null && ranges[0].collapsed && (ranges[0].startOffset == 0 || ranges[0].checkStartOfBlock());
-                                        var first = refTxt.charAt(0);
-                                        refTxt = (isStart ? first.toUpperCase() : first.toLowerCase()) + refTxt.slice(1);
+                                        if (refTxt.toLowerCase().startsWith(THIS_REF)) {
+                                            var ranges = editor.getSelection().getRanges();
+                                            var isStart = ranges != null && ranges.length > 0 && ranges[0] != null && ranges[0].collapsed && (ranges[0].startOffset == 0 || ranges[0].checkStartOfBlock());
+                                            var first = refTxt.charAt(0);
+                                            refTxt = (isStart ? first.toUpperCase() : first.toLowerCase()) + refTxt.slice(1);
+                                        }
                                         $widget.html(refTxt);
                                     }
                                 },
