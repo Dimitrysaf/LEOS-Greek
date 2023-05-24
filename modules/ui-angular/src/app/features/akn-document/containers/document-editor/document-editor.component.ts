@@ -224,20 +224,6 @@ export class DocumentEditorComponent
         }
       });
 
-    this.documentService.versionCompareView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((versionCompareXML) => {
-        if (versionCompareXML) {
-          this.versionsComparisonForView = this.cleanupAndSerializeXML(
-            versionCompareXML,
-            `marked-${this.documentRef}`,
-          );
-          setTimeout(() => {
-            this.handleCompareChanges();
-          });
-        }
-      });
-
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
@@ -251,6 +237,20 @@ export class DocumentEditorComponent
         this.documentConfig = config;
         this.setPageTitle();
         this.manageBreadCrumbsDocumentScreen();
+      });
+
+    this.documentService.versionCompareView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((versionCompareXML) => {
+        if (versionCompareXML) {
+          this.versionsComparisonForView = this.cleanupAndSerializeXML(
+            versionCompareXML,
+            `marked-${this.documentRef}`,
+          );
+          setTimeout(() => {
+            this.handleCompareChanges();
+          });
+        }
       });
 
     this.documentService.collapseExpandAnnotation$
@@ -287,6 +287,18 @@ export class DocumentEditorComponent
       .pipe(take(1))
       .subscribe((versions) => {
         this.documentService.compareDocumentsDownloadXML(
+          versions[1],
+          versions[0],
+          this.getIntermediateVersion(versions),
+        );
+      });
+  }
+
+  downloadPdfFile() {
+    this.documentService.versionCompareIds$
+      .pipe(take(1))
+      .subscribe((versions) => {
+        this.documentService.compareDocumentsExportAsPdf(
           versions[1],
           versions[0],
           this.getIntermediateVersion(versions),
@@ -637,10 +649,15 @@ export class DocumentEditorComponent
   }
 
   private handleCompareChanges() {
+    const nodeListCN = document.querySelectorAll(
+      '.leos-content-new-cn, .leos-content-removed-cn',
+    );
     const nodeList = document.querySelectorAll(
       '.leos-content-new, .leos-content-removed',
     );
-    this.compareChanges = nodeList as NodeListOf<HTMLElement>;
+    this.compareChanges = (
+      nodeList.length > 0 ? nodeList : nodeListCN
+    ) as NodeListOf<HTMLElement>;
     const container = this.document.getElementById(
       'versionComparisonContainer',
     );
@@ -657,7 +674,9 @@ export class DocumentEditorComponent
       '.leos-marker-content-removed': 'pin-leos-marker-content-removed',
       '.leos-marker-content-added': 'pin-leos-marker-content-added',
       '.leos-content-removed': 'pin-leos-content-removed',
+      '.leos-content-removed-cn': 'pin-leos-content-removed',
       '.leos-content-new': 'pin-leos-content-new',
+      '.leos-content-new-cn': 'pin-leos-content-new',
     };
     this.addPins(container, pinContainer, selectorStyleMap);
   }

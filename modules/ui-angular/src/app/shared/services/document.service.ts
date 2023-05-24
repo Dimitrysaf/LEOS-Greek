@@ -382,6 +382,28 @@ export class DocumentService implements OnDestroy {
       .subscribe((resp: any) => this.handleDownloadResponse(resp));
   }
 
+  compareDocumentsExportAsPdf(
+    currentVersion: Version,
+    originalVersion: Version,
+    intermediateVersion?: Version,
+  ) {
+    const documentType = this.documentType;
+    const documentRef = this.documentRef;
+
+    this.http
+      .post(
+        `${apiBaseUrl}/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
+        {
+          originalVersion: originalVersion.cmisVersionNumber,
+          currentVersion: currentVersion.cmisVersionNumber,
+          intermediateVersion: intermediateVersion
+            ? intermediateVersion.cmisVersionNumber
+            : null,
+        },
+      )
+      .subscribe((resp: any) => this.handleDownloadResponse(resp));
+  }
+
   compareDocumentsDownloadXML(
     currentVersion: Version,
     originalVersion: Version,
