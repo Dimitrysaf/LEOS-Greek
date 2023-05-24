@@ -11,16 +11,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.ui.extension;
+package eu.europa.ec.leos.web.event.view;
 
-import eu.europa.ec.leos.ui.shared.js.LeosJavaScriptExtensionState;
-import eu.europa.ec.leos.web.model.UserVO;
+public class ShowTrackChangesEvent {
+    private boolean showed;
 
-public class TrackChangesState extends LeosJavaScriptExtensionState {
+    public ShowTrackChangesEvent(boolean showed) {
+        this.showed = showed;
+    }
 
-    private static final long serialVersionUID = 1L;
-
-    public UserVO user;
-    public String proposalRef;
-    public boolean isTrackChangesShowed;
+    public boolean isShowed() {
+        return showed;
+    }
 }

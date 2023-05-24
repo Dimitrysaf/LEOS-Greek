@@ -19,6 +19,7 @@ define(function leosTrackChangesPluginModule(require) {
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var diff_match_patch = require("diff_match_patch");
+    var UTILS = require("core/leosUtils");
 
     var pluginName = "leosTrackChanges";
 
@@ -30,10 +31,12 @@ define(function leosTrackChangesPluginModule(require) {
             }
 
             var core = trackChanges.core, actions = trackChanges.actions;
-            var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
-            var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
+            var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
                 canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
+
+            // Initialize styles with selected track changes showed option
+            core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -41,21 +44,14 @@ define(function leosTrackChangesPluginModule(require) {
                 icon: this.path + "icons/display.png",
                 command: "toggleDisplayCommand",
                 toolbar: "trackChanges",
-                isToggle: true
+                isToggle: isTrackChangesShowed
             });
             editor.addCommand("toggleDisplayCommand", {
                 canUndo: false,
                 exec: function(editor) {
-                    isTrackChangesVisible = !isTrackChangesVisible;
-                    this.setState(isTrackChangesVisible ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
-                    $("head #editorTcStyle").remove();
-                    if (isTrackChangesVisible) {
-                        $("head").prepend(defaultTrackChangesEditorStyle);
-                    } else {
-                        var editorTcStyle = "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='insert'] { text-decoration: none; }\n";
-                        editorTcStyle += "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='delete'] { display: none; }\n";
-                        $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
-                    }
+                    isTrackChangesShowed = !isTrackChangesShowed;
+                    this.setState(isTrackChangesShowed ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
+                    core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
                 }
             });
 
@@ -137,7 +133,7 @@ define(function leosTrackChangesPluginModule(require) {
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
                 editor.getCommand("toggleDisplayCommand")
-                    .setState(isTrackChangesVisible ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
+                    .setState(isTrackChangesShowed ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
             });
 
             // Bind events if the Dom is ready!
@@ -911,6 +907,13 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             }
             return selectedTcElements;
+        },
+
+        updateTrackChangesStyles: function(currentUserId, proposalRef, isTrackChangesShowed) {
+            var editorTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed,
+                "akomantoso div.cke_editable " + this.TRACKCHANGES_ELEMENT_SELECTOR, this.UID_ATTR, this.ACTION_ATTR);
+            $("head #editorTcStyle").remove();
+            $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
         }
 
     };

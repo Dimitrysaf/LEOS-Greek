@@ -159,7 +159,9 @@ define(function elementEditorModule(require) {
                 documentsMetadata: JSON.parse(connector.getState().documentsMetadataJsonArray),
                 documentRef: connector.getState().documentRef,
                 isClonedProposal: params.isClonedProposal,
-                isTrackChangesEnabled: connector.getState().isTrackChangesEnabled
+                proposalRef: connector.getState().proposalRef,
+                isTrackChangesEnabled: connector.getState().isTrackChangesEnabled,
+                isTrackChangesShowed: connector.getState().isTrackChangesShowed
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));

@@ -1129,6 +1129,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
                 LeosCategory.PROPOSAL,
                 proposal.getLastModifiedBy(),
                 Date.from(proposal.getLastModificationInstant()), proposal.isTrackChangesEnabled());
+        proposalVO.setProposalRef(proposalRef);
         if (proposal.getMetadata().isDefined()) {
             ProposalMetadata metadata = proposal.getMetadata().get();
             proposalVO.getMetadata().setInternalRef(metadata.getRef());
