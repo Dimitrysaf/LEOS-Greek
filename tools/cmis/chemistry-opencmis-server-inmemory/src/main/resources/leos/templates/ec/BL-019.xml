@@ -17,7 +17,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage xml:id="_FRBRlanguage" language="en"/>
+                    <FRBRlanguage language="en"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -43,7 +43,7 @@
                 <TLCConcept xml:id="_ART_DEF" href="http://publications.europa.eu/resource/subdivision-content/ART_DEF" showAs="Article on definitions"/>
             </references>
             <proprietary source="~_leos">
-                <leos:templateVersion>3.0.0</leos:templateVersion>
+                <leos:templateVersion>3.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:template>SJ-019</leos:template>
                 <leos:docTemplate>BL-019</leos:docTemplate>
