@@ -25,8 +25,8 @@ export class TocActionsButtonsComponent implements OnInit, OnChanges {
   @Input() isUndoDisabled: boolean;
   @Input() isSaveDisabled: boolean;
   @Input() isCollapseToc: boolean;
-  @Input() isAnnotationsColumnCollapsed: boolean;
-  @Input() isVersionsColumnCollapsed: boolean;
+  @Input() isAnnotationsPaneCollapsed: boolean;
+  @Input() isVersionsPaneCollapsed: boolean;
 
   @Output() handleUndo = new EventEmitter<void>();
   @Output() handleSave = new EventEmitter<void>();
@@ -45,8 +45,8 @@ export class TocActionsButtonsComponent implements OnInit, OnChanges {
     //check for overflow on column state change
     if (
       'isEditMode' in changes ||
-      'isAnnotationsColumnCollapsed' in changes ||
-      'isVersionsColumnCollapsed' in changes
+      'isAnnotationsPaneCollapsed' in changes ||
+      'isVersionsPaneCollapsed' in changes
     ) {
       this.checkOverflow();
     }
@@ -77,11 +77,11 @@ export class TocActionsButtonsComponent implements OnInit, OnChanges {
   getTooltipForToggleTree() {
     if (this.isCollapseToc) {
       return this.translateService.instant(
-        'page.editor.toc.toc-column.actions.collapseAll',
+        'page.editor.toc.toc-pane.actions.collapseAll',
       );
     }
     return this.translateService.instant(
-      'page.editor.toc.toc-column.actions.expandAll',
+      'page.editor.toc.toc-pane.actions.expandAll',
     );
   }
 

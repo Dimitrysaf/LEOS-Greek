@@ -87,9 +87,9 @@ export class DocumentEditorComponent
   documentConfig: DocumentConfig;
 
   isVersionForViewOpen = false;
-  isTOCColumnCollapsed = true;
-  isAnnotationsColumnCollapsed = false;
-  isVersionsColumnCollapsed = true;
+  isTOCPaneCollapsed = true;
+  isAnnotationsPaneCollapsed = false;
+  isVersionsPaneCollapsed = true;
   reloadTrigger: number;
 
   tocItems: Array<TocItem> = [];
@@ -256,8 +256,8 @@ export class DocumentEditorComponent
     this.documentService.collapseExpandAnnotation$
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
-        if (value && this.isAnnotationsColumnCollapsed) {
-          this.onToggleAnnotationsColumnCollapsed();
+        if (value && this.isAnnotationsPaneCollapsed) {
+          this.onToggleAnnotationsPaneCollapsed();
         }
       });
   }
@@ -354,22 +354,22 @@ export class DocumentEditorComponent
     }
   }
 
-  onToggleTOCColumnCollapsed() {
-    this.isTOCColumnCollapsed = !this.isTOCColumnCollapsed;
+  onToggleTOCPaneCollapsed() {
+    this.isTOCPaneCollapsed = !this.isTOCPaneCollapsed;
     this.documentService.seeNavigation();
   }
 
-  onToggleAnnotationsColumnCollapsed() {
+  onToggleAnnotationsPaneCollapsed() {
     (
       document.querySelector(
         'button.annotator-frame-button--sidebar_toggle',
       ) as HTMLButtonElement
     )?.click();
-    this.isAnnotationsColumnCollapsed = !this.isAnnotationsColumnCollapsed;
+    this.isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed;
   }
 
-  onToggleVersionsColumn() {
-    this.isVersionsColumnCollapsed = !this.isVersionsColumnCollapsed;
+  onToggleVersionsPane() {
+    this.isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed;
   }
 
   handleEdit() {
@@ -548,12 +548,10 @@ export class DocumentEditorComponent
   getTooltipForToggleTree() {
     if (this.isCollapseToc) {
       return this.translate.instant(
-        'page.editor.toc.toc-column.actions.collapseAll',
+        'page.editor.toc.toc-pane.actions.collapseAll',
       );
     }
-    return this.translate.instant(
-      'page.editor.toc.toc-column.actions.expandAll',
-    );
+    return this.translate.instant('page.editor.toc.toc-pane.actions.expandAll');
   }
 
   closeVersionView() {
