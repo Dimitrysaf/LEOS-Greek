@@ -35,9 +35,6 @@ define(function leosTrackChangesPluginModule(require) {
             var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
                 canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
 
-            // Initialize styles with selected track changes showed option
-            core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
-
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
                 label: "Toggle track changes display",
@@ -142,6 +139,9 @@ define(function leosTrackChangesPluginModule(require) {
                 var ctrlXArray;
                 var ctrlDown = false, cutText;
                 var editable = editor.editable();
+
+                // Initialize styles with selected track changes showed option
+                core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
 
                 // Used for CTRL-X
                 editable.attachListener(editor.document, "keydown", function(e) {
