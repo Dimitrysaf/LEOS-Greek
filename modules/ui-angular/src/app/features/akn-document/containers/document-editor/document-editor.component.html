@@ -31,12 +31,16 @@
     <eui-page-columns>
       <!-- ToC -->
       <eui-page-column
-        [label]="'page.editor.toc-column.label' | translate"
         isCollapsible
+        [label]="
+          (documentService.navigationPaneCollapse$ | async)
+            ? ''
+            : ('page.editor.toc-pane.label' | translate)
+        "
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
-        (collapsed)="onToggleTOCColumnCollapsed()"
+        (collapsed)="onToggleTOCPaneCollapsed()"
         [title]="
-          (this.isTOCColumnCollapsed
+          (this.isTOCPaneCollapsed
             ? 'global.actions.show'
             : 'global.actions.hide'
           ) | translate
@@ -67,7 +71,7 @@
               euiSizeS
               class=""
               euiTooltip="{{
-                'page.editor.toc.toc-column.actions.edit' | translate
+                'page.editor.toc.toc-pane.actions.edit' | translate
               }}"
               (click)="handleEdit()"
               *ngIf="
@@ -83,8 +87,8 @@
               [isUndoDisabled]="disableUndoButton()"
               [isSaveDisabled]="disableSaveButton()"
               [isCollapseToc]="isCollapseToc"
-              [isAnnotationsColumnCollapsed]="isAnnotationsColumnCollapsed"
-              [isVersionsColumnCollapsed]="isVersionsColumnCollapsed"
+              [isAnnotationsPaneCollapsed]="isAnnotationsPaneCollapsed"
+              [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
               (handleExpandAll)="expandAll()"
               (handleUndo)="handleUndo()"
               (handleSave)="handleSave()"
@@ -105,7 +109,7 @@
           <!-- versions -->
           <eui-fieldset
             class="eui-u-mt-s"
-            label="{{ 'page.editor.versions-column.label' | translate }}"
+            label="{{ 'page.editor.versions-pane.label' | translate }}"
             isExpandable
             [isExpanded]="false"
           >
@@ -560,10 +564,10 @@
       <!-- annotations -->
       <eui-page-column
         class="eui-page-column--right-column"
-        [label]="'page.editor.annotations-column.label' | translate"
+        [label]="'page.editor.annotations-pane.label' | translate"
         isCollapsible
-        [isCollapsed]="isAnnotationsColumnCollapsed"
-        (collapsed)="onToggleAnnotationsColumnCollapsed()"
+        [isCollapsed]="isAnnotationsPaneCollapsed"
+        (collapsed)="onToggleAnnotationsPaneCollapsed()"
         style="width: calc(620px + 330px)"
       >
         <eui-page-column-body class="flex-grow-1">
