@@ -826,7 +826,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                         LeosCategory.STAT_FINANC_LEGIS,
                         financialStatement.getLastModifiedBy(),
                         Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
-
+        financialStatementVO.setProposalRef(proposalRef);
         if (financialStatement.getMetadata().isDefined()) {
             FinancialStatementMetadata financialStatementMetadata = financialStatement.getMetadata().get();
             financialStatementVO.setTitle(financialStatementMetadata.getTitle());

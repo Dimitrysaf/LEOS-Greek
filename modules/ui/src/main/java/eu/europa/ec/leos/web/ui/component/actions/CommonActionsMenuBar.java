@@ -15,6 +15,7 @@ import eu.europa.ec.leos.web.event.view.ChangeDetailsRequestEvent;
 import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.PaneAddEvent;
 import eu.europa.ec.leos.web.event.view.PaneEnableEvent;
+import eu.europa.ec.leos.web.event.view.ShowTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
 import eu.europa.ec.leos.web.event.view.document.ShowCleanVersionRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.ShowImportWindowEvent;
@@ -40,7 +41,8 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
     protected MenuItem viewSeparator;
     protected MenuItem guidance;
     protected MenuItem changeDetails;
-    protected MenuItem trackChangesItem;
+    protected MenuItem enableTrackChangesItem;
+    protected MenuItem showTrackChangesItem;
     private SimpleFileDownloader fileDownloader;
     private Class<?> childClass;
     private MenuItem showCleanVersionItem;
@@ -135,12 +137,17 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
 
     @Subscribe
     public void addTrackChangesActionMenu(AddTrackChangesMenuEvent event) {
-        // Track changes menu item
-        if (trackChangesItem == null) {
-            trackChangesItem = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.enable.trackchanges"),
-                    new TrackChangesCommand(), changeDetails);
-            trackChangesItem.setEnabled(event.isMenuEnabled());
-            trackChangesItem.setChecked(event.isTrackChangesEnabled());
+        // Track changes menu items
+        if (showTrackChangesItem == null) {
+            showTrackChangesItem = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.see.trackchanges"),
+                    new ShowTrackChangesCommand(), changeDetails);
+            showTrackChangesItem.setChecked(true);
+        }
+        if (enableTrackChangesItem == null) {
+            enableTrackChangesItem = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.enable.trackchanges"),
+                    new EnableTrackChangesCommand(), showTrackChangesItem);
+            enableTrackChangesItem.setEnabled(event.isMenuEnabled());
+            enableTrackChangesItem.setChecked(event.isTrackChangesEnabled());
         }
     }
 
@@ -238,13 +245,23 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
         }
     }
 
-    protected class TrackChangesCommand implements Command {
+    protected class EnableTrackChangesCommand implements Command {
         private static final long serialVersionUID = 1L;
 
         @Override
         public void menuSelected(MenuItem selectedItem) {
-            LOG.debug("Track changes menu item clicked...");
+            LOG.debug("Track changes enable menu item clicked...");
             eventBus.post(new EnableTrackChangesEvent(selectedItem.isChecked()));
+        }
+    }
+
+    protected class ShowTrackChangesCommand implements Command {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void menuSelected(MenuItem selectedItem) {
+            LOG.debug("Track changes see menu item clicked...");
+            eventBus.post(new ShowTrackChangesEvent(selectedItem.isChecked()));
         }
     }
 

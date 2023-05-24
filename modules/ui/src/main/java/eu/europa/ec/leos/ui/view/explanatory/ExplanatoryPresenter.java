@@ -1280,7 +1280,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                         LeosCategory.COUNCIL_EXPLANATORY,
                         explanatory.getLastModifiedBy(),
                         Date.from(explanatory.getLastModificationInstant()), explanatory.isTrackChangesEnabled());
-
+        explanatoryVO.setProposalRef(proposalRef);
         if (explanatory.getMetadata().isDefined()) {
             ExplanatoryMetadata metadata = explanatory.getMetadata().get();
             explanatoryVO.getMetadata().setInternalRef(metadata.getRef());

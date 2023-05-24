@@ -13,8 +13,11 @@
  */
 package eu.europa.ec.leos.ui.extension;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.ui.AbstractField;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.web.event.view.ShowTrackChangesEvent;
 import eu.europa.ec.leos.web.model.UserVO;
 import eu.europa.ec.leos.web.support.LeosCacheToken;
 
@@ -25,10 +28,14 @@ public class TrackChangesExtension<T extends AbstractField<V>, V> extends LeosJa
 
     private static final long serialVersionUID = 1L;
 
-    public TrackChangesExtension(T target, SecurityContext securityContext, String proposalRef) {
+    private EventBus eventBus;
+
+    public TrackChangesExtension(T target, SecurityContext securityContext, String proposalRef, EventBus eventBus) {
         super();
         getState().user = new UserVO(securityContext.getUser());
         getState().proposalRef = proposalRef;
+        getState().isTrackChangesShowed = true;
+        this.eventBus = eventBus;
         extend(target);
     }
 
@@ -42,6 +49,18 @@ public class TrackChangesExtension<T extends AbstractField<V>, V> extends LeosJa
         return (TrackChangesState) super.getState(markAsDirty);
     }
 
+    @Override
+    public void attach() {
+        super.attach();
+        eventBus.register(this);
+    }
+
+    @Override
+    public void detach() {
+        eventBus.unregister(this);
+        super.detach();
+    }
+
     protected void extend(T target) {
         super.extend(target);
         // handle target's value change
@@ -52,5 +71,11 @@ public class TrackChangesExtension<T extends AbstractField<V>, V> extends LeosJa
             // since we just want to trigger a state change event...
             forceDirty();
         });
+    }
+
+    @Subscribe
+    public void showTrackChanges(ShowTrackChangesEvent event) {
+        LOG.trace("Show track changes...");
+        getState().isTrackChangesShowed = event.isShowed();
     }
 }

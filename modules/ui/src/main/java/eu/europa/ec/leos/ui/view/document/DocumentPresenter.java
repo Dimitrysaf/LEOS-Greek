@@ -1817,6 +1817,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
                 bill.getLastModifiedBy(),
                 Date.from(bill.getLastModificationInstant()),
                 bill.isTrackChangesEnabled());
+        billVO.setProposalRef(proposalRef);
         if (bill.getMetadata().isDefined()) {
             BillMetadata metadata = bill.getMetadata().get();
             billVO.getMetadata().setInternalRef(metadata.getRef());

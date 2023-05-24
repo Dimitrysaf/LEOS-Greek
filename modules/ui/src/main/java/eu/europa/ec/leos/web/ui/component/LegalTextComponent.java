@@ -475,7 +475,7 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
 
     public void initTrackChanges(final String proposalRef) {
         if (trackChangesExtension == null) {
-            trackChangesExtension = new TrackChangesExtension<>(docContent, securityContext, proposalRef);
+            trackChangesExtension = new TrackChangesExtension<>(docContent, securityContext, proposalRef, eventBus);
         }
     }
 }
