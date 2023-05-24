@@ -200,7 +200,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
           'toc.edit.window.item.selected.heading.error.message',
         );
       case 'number':
-        if (node.number.length === 0)
+        if (node.number?.length === 0)
           return this.translateService.instant(
             'toc.edit.window.item.selected.number.error.message',
           );
