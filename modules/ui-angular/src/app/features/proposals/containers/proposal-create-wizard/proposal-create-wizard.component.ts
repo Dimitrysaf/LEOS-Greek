@@ -55,44 +55,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.createForm = this.fb.group({
-      templateName: new FormControl(
-        { value: '', disabled: true },
-        { validators: Validators.required },
-      ),
-      documentLanguage: new FormControl({ value: '', disabled: true }),
-      confidentialityLevel: new FormControl({
-        value: this.translateService.instant(
-          'page.workspace.create-form.document.confidentiality-level-predefined-value',
-        ),
-        disabled: true,
-      }),
-      docPurpose: new FormControl(
-        this.translateService.instant(
-          'page.workspace.create-form.document.document-title-predefined-value',
-        ),
-        {
-          validators: [Validators.required, noWhitespaceValidator],
-        },
-      ),
-      templateId: new FormControl(
-        { value: '', disabled: true },
-        { validators: Validators.required },
-      ),
-      langCode: new FormControl(
-        { value: '', disabled: true },
-        { validators: Validators.required },
-      ),
-      internalReference: new FormControl({ value: '', disabled: true }),
-      interInstitutionalReference: new FormControl({
-        value: '',
-        disabled: true,
-      }),
-      packageTitleCheck: new FormControl({ value: false, disabled: true }),
-      packageTitle: new FormControl({ value: '', disabled: true }),
-      eeaRelevance: new FormControl(false, { validators: Validators.required }),
-      eeaRelevanceText: new FormControl({ value: '', disabled: true }),
-    });
+    this.initCreateForm();
   }
 
   handleSelectTemplate(template: CatalogItem | null) {
@@ -196,10 +159,52 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     };
   }
 
+  private initCreateForm() {
+    this.createForm = this.fb.group({
+      templateName: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      documentLanguage: new FormControl({ value: '', disabled: true }),
+      confidentialityLevel: new FormControl({
+        value: this.translateService.instant(
+          'page.workspace.create-form.document.confidentiality-level-predefined-value',
+        ),
+        disabled: true,
+      }),
+      docPurpose: new FormControl(
+        this.translateService.instant(
+          'page.workspace.create-form.document.document-title-predefined-value',
+        ),
+        {
+          validators: [Validators.required, noWhitespaceValidator],
+        },
+      ),
+      templateId: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      langCode: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      internalReference: new FormControl({ value: '', disabled: true }),
+      interInstitutionalReference: new FormControl({
+        value: '',
+        disabled: true,
+      }),
+      packageTitleCheck: new FormControl({ value: false, disabled: true }),
+      packageTitle: new FormControl({ value: '', disabled: true }),
+      eeaRelevance: new FormControl(false, { validators: Validators.required }),
+      eeaRelevanceText: new FormControl({ value: '', disabled: true }),
+    });
+  }
+
   private resetInitials() {
     this.templateSelector.reset();
     this.createForm.reset();
     this.stepSelected = null;
     this.currentStepIndex = 1;
+    this.initCreateForm();
   }
 }
