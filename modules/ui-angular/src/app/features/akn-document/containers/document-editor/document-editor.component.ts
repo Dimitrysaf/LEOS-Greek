@@ -814,7 +814,7 @@ export class DocumentEditorComponent
     this.isEditMode = false;
     this.documentTocComponent.resetTreeState();
     this.documentTocComponent.handleTocStylingOnInlineEdit(false);
-    this.documentTocComponent.clearHilightInvalidNodes();
+    this.documentTocComponent.clearHighlightInvalidNodes();
     this.coEditionWSService.removeTocInlineEdit(this.documentRef);
     this.documentService.setAnnotationMode('NORMAL');
   }

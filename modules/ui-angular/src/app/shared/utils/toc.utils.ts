@@ -1,5 +1,7 @@
 import { cloneDeep, remove } from 'lodash-es';
 
+import { TableOfContentService } from '@/features/akn-document/services/tableOfContent.service';
+
 import {
   ADD,
   ARTICLE,
@@ -683,7 +685,7 @@ export const containsItemOfOrigin = (
   elementOrigin: string,
 ) => {
   if (
-    (tableOfContentItemVO.originAttr.length &&
+    (tableOfContentItemVO.originAttr?.length &&
       tableOfContentItemVO.originAttr === origin) ||
     (!tableOfContentItemVO.originAttr && origin === elementOrigin)
   ) {
@@ -1276,4 +1278,14 @@ export const containsOnlySameIndentType = (
     }
   }
   return true;
+};
+
+export const isNodeLastElement = (
+  toc: TableOfContentItemVO[],
+  elementId: string,
+) => {
+  const targetNode = findNodeById(toc, elementId);
+  const parentNode = findNodeById(toc, targetNode.parentItem);
+
+  return parentNode?.childItems?.length === 1;
 };

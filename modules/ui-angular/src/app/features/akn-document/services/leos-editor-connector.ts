@@ -13,7 +13,7 @@ import {
 } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-import { findNodeById } from '@/shared/utils/toc.utils';
+import { findNodeById, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './tableOfContent.service';
@@ -300,7 +300,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
 
     if (
       elementData.elementType === 'recital' &&
-      this.isLastRecitalElement(elementData.elementId)
+      isNodeLastElement(
+        this.tableOfContentService.getCurrentToc(),
+        elementData.elementId,
+      )
     ) {
       this.openLastRecitalDeleteConfirmation(deleteDocumentElement);
       return;
@@ -349,14 +352,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       elementData.elementType,
       elementData.elementContent,
     );
-  }
-
-  private isLastRecitalElement(elementId: string) {
-    const toc = this.tableOfContentService.getCurrentToc();
-    const targetNode = findNodeById(toc, elementId);
-    const parentNode = findNodeById(toc, targetNode.parentItem);
-
-    return parentNode?.childItems?.length === 1;
   }
 
   private openLastRecitalDeleteConfirmation(onConfirm: () => void) {
