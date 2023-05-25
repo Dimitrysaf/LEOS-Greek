@@ -170,7 +170,9 @@
                   <form [formGroup]="versionSearchForm">
                     <div class="row g-0">
                       <div class="col-md-3">
-                        {{ 'version.search.form.type' | translate }}
+                        {{
+                          'page.editor.versions.search.form.type' | translate
+                        }}:
                       </div>
                       <div class="col-md-3 no-g">
                         <div class="eui-u-display-flex eui-u-flex-row">
@@ -209,9 +211,12 @@
 
                     <div class="row g-0">
                       <div class="col-md-4 version-search-form-author-label">
-                        <label for="author">{{
-                          'version.search.form.author' | translate
-                        }}</label>
+                        <label for="author"
+                          >{{
+                            'page.editor.versions.search.form.author'
+                              | translate
+                          }}:</label
+                        >
                       </div>
                       <div class="col-md-8">
                         <input id="author" formControlName="author" />
