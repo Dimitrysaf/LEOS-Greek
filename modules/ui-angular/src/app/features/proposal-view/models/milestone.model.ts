@@ -11,6 +11,11 @@ export interface Milestone {
   updatedDate: number;
 }
 
+export interface MilestoneViewResponse {
+  documents: MilestoneViewItem[];
+  pdfRenditionsPresent: boolean;
+}
+
 export interface MilestoneViewItem {
   /* proposalRef */
   contentFileName: string;
@@ -20,5 +25,4 @@ export interface MilestoneViewItem {
   version: string;
   xmlContent: string;
   tocData: string;
-  isPdfRenditionsPresent: boolean;
 }

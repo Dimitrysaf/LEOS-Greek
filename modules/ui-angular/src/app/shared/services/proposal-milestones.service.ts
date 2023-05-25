@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { apiBaseUrl } from 'src/config';
 
-import type { MilestoneViewItem } from '@/features/proposal-view/models/milestone.model';
+import type {
+  MilestoneViewItem,
+  MilestoneViewResponse,
+} from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
 
@@ -16,7 +19,7 @@ export class ProposalMilestonesService {
   ) {}
 
   listMilestoneView(proposalRef: string, legFileName: string) {
-    return this.http.get<MilestoneViewItem[]>(
+    return this.http.get<MilestoneViewResponse>(
       `${apiBaseUrl}/secured/list-milestones-view/${proposalRef}`,
       {
         params: { legFileName },

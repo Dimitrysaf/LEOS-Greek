@@ -29,7 +29,6 @@ type MilestoneDocument = {
   version: string;
   label: string;
   tocData: MilestoneTocItem[];
-  isPdfRenditionsPresent: boolean;
 };
 
 export type MilestoneDescriptor = Pick<
@@ -115,8 +114,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         this.milestone.proposalRef,
         this.milestone.legDocumentName,
       )
-      .subscribe((items) => {
-        this.documents = items
+      .subscribe((response) => {
+        this.showPdfExport = response.pdfRenditionsPresent;
+
+        this.documents = response.documents
           .filter((x) => !hiddenCategories.includes(x.leosCategory))
           .sort(this.tabOrderComparator)
           .map((x) => this.viewToDoc(x));
@@ -132,7 +133,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       version: item.version,
       label: this.createTabLabel(item),
       tocData: JSON.parse(item.tocData),
-      isPdfRenditionsPresent: item.isPdfRenditionsPresent,
     };
   }
 
@@ -169,7 +169,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   private setActiveTab(index: number) {
     const doc = this.documents[index];
     if (doc) {
-      this.showPdfExport = doc.isPdfRenditionsPresent;
       this.documentService.setDocumentRefAndCategory(doc.ref, doc.type);
     }
     this.activeTabIndex = index;
