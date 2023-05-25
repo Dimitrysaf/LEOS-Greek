@@ -13,6 +13,7 @@ import {
   Output,
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { EuiDialogService } from '@eui/components/eui-dialog';
 import { getUserDetails, UserDetails } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -75,6 +76,7 @@ import {
   isCrossheading,
   isDeletedItem,
   isDroppedOnPointOrIndent,
+  isNodeLastElement,
   isNumbered,
   isRootElement,
   isSourceDivision,
@@ -140,8 +142,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   constructor(
     private documentService: DocumentService,
+    private dialogService: EuiDialogService,
     private tableOfContentService: TableOfContentService,
-    public tranlsateService: TranslateService,
+    public translateService: TranslateService,
     public elementRef: ElementRef,
     private cdRef: ChangeDetectorRef,
     private store: Store,
@@ -206,9 +209,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   getLabel(node: TableOfContentItemVO) {
     if (node != null) {
       if (node.tocItem.numberingType === BULLET_NUM) {
-        return this.tranlsateService.instant('toc.item.type.bullet');
+        return this.translateService.instant('toc.item.type.bullet');
       } else {
-        return this.tranlsateService.instant(
+        return this.translateService.instant(
           'toc.item.type.' + node.tocItem.aknTag.toLowerCase(),
         );
       }
@@ -222,7 +225,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
     this.setTree(event.newTree);
     this.isToCDraft = true;
-    this.hilightInvalidNodes();
+    this.highlightInvalidNodes();
   }
 
   handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
@@ -299,16 +302,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     );
   }
 
-  hanldeTocRemove() {
+  handleTocRemove() {
     const newTree = cloneDeep(this.treeControl.dataNodes);
     const item = this.findNodeById(newTree, this.selectedNode.id);
     const parentItem: TableOfContentItemVO = checkDeleteOnLastItemInList(
       newTree,
       item,
     );
-    if (isDeletedItem(item)) {
-      this.undeleteItem(newTree, item);
-    } else {
+    const deleteTocElement = () => {
       if (this.environment === CN) {
         this.setAffectedAttribute(item, newTree);
         // LEOS-5958: Delete selected item element.
@@ -317,7 +318,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         } else {
           softDeleteItem(newTree, item, CN);
         }
-
         // LEOS-5958: If parentItem is not null, means it is a list without any points. Then delete parentItem as well.
         if (parentItem != null) {
           if (!containsItemOfOrigin(parentItem, EC, CN)) {
@@ -327,14 +327,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           }
         } else {
           const parent = this.findNodeById(newTree, item.parentItem);
-          // updateStyleClassOfTocItems(
-          //   tocTree.getTreeData().getChildren(item.getParentItem()),
-          //   DIVISION,
-          // );
           updateDepthOfTocItems(parent.childItems);
         }
-      }
-      if (this.environment !== CN) {
+      } else {
         if (!containsItemOfOrigin(item, EC, LS)) {
           this.removeNode(newTree, item);
         } else {
@@ -342,12 +337,43 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         }
         const parent = this.findNodeById(newTree, item.parentItem);
         updateDepthOfTocItems(parent.childItems);
+
+        this.treeHistory.push(this.treeControl.dataNodes);
+        this.setTree(newTree);
+        this.selectedNodeToMove = null;
+      }
+
+      this.treeHistory.push(this.treeControl.dataNodes);
+      this.setTree(newTree);
+      this.selectedNodeToMove = null;
+    };
+
+    if (isDeletedItem(item)) {
+      this.undeleteItem(newTree, item);
+    } else {
+      if (
+        'RECITAL' === item.tocItem.aknTag &&
+        isNodeLastElement(this.tableOfContentService.getCurrentToc(), item.id)
+      ) {
+        this.openLastRecitalDeleteConfirmation(deleteTocElement);
+      } else {
+        deleteTocElement();
       }
     }
+  }
 
-    this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(newTree);
-    this.selectedNodeToMove = null;
+  openLastRecitalDeleteConfirmation(onConfirm: () => void) {
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.last-element-delete-confirmation.title',
+      ),
+      content: this.translateService.instant(
+        'page.editor.last-element-delete-confirmation.message',
+      ),
+      acceptLabel: this.translateService.instant('global.actions.continue'),
+      accept: onConfirm,
+      dismiss: () => {},
+    });
   }
 
   undeleteItem = (
@@ -395,13 +421,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           );
     if (targetItem.tocItem.childrenAllowed) {
       const targetTocItem: TocItem = targetItem.tocItem;
-      // const targetTocItems: TocItem[] = this.documentConfig.tocRules.get(
-      //   [
-      //     targetTocItem.aknTag.toUpperCase(),
-      //     targetTocItem.numberingType.toUpperCase(),
-      //   ].join('_'),
-      // );
-      // console.log(targetTocItems);
 
       if (
         isSourceDivision(sourceItem) ||
@@ -743,7 +762,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.invalidNodes = event;
     //show invalid message
     if (event.size > 0) {
-      this.messageFromValidation = this.tranlsateService.instant(
+      this.messageFromValidation = this.translateService.instant(
         'page.editor.toc.invalid-node.save-error',
       );
       setTimeout(() => {
@@ -752,14 +771,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       //clear any invalid node that was removed
       setTimeout(() => {
         //TODO:
-        this.hilightInvalidNodes();
+        this.highlightInvalidNodes();
       });
     } else {
       this.clearValidationMessage();
     }
   }
 
-  hilightInvalidNodes() {
+  highlightInvalidNodes() {
     this.document
       .querySelectorAll('.invalid-node')
       .forEach((el) => el.classList.remove('invalid-node'));
@@ -771,7 +790,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  clearHilightInvalidNodes() {
+  clearHighlightInvalidNodes() {
     this.document
       .querySelectorAll('.invalid-node')
       .forEach((el) => el.classList.remove('invalid-node'));
@@ -884,7 +903,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     node.expanded = true;
     //wait for the node to render and then show if invalid
     setTimeout(() => {
-      this.hilightInvalidNodes();
+      this.highlightInvalidNodes();
     });
   }
 
@@ -903,7 +922,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       if (this.selectedNode) this.hanldeNodeSelect(this.selectedNode);
-      this.hilightInvalidNodes();
+      this.highlightInvalidNodes();
     });
 
     this.restoreExpanded(toc);
@@ -970,7 +989,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   private populateValidationMessage(validationResult: NodeValidation) {
     this.isDropValid = validationResult.success;
-    this.messageFromValidation = this.tranlsateService.instant(
+    this.messageFromValidation = this.translateService.instant(
       validationResult.messageKey,
       {
         0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
@@ -1080,7 +1099,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   private getMovedLabel() {
     return (
       MOVE_LABEL_SPAN_START_TAG +
-      this.tranlsateService.instant('toc.edit.window.softmove.label') +
+      this.translateService.instant('toc.edit.window.softmove.label') +
       SPAN_END_TAG
     );
   }
@@ -1557,7 +1576,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         }
         case 'ARTICLE': {
           eventItem.tocItemType = 'REGULAR';
-          eventItem.heading = this.tranlsateService.instant(
+          eventItem.heading = this.translateService.instant(
             'toc.item.type.regular.article.heading',
           );
         }
