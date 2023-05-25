@@ -11,3 +11,10 @@ export interface RefreshElementResponse {
   elementId: string;
   elementTagName: string;
 }
+
+export interface FetchElementResponse {
+  documentRef: string;
+  elementFragment: string;
+  elementId: string;
+  elementTagName: string;
+}

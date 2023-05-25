@@ -39,7 +39,10 @@ import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { downloadBlob } from '@/shared/utils';
 
 import { apiBaseUrl } from '../../../config';
-import { DocumentViewResponse } from '../models/document-view-response.model';
+import {
+  DocumentViewResponse,
+  FetchElementResponse,
+} from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
@@ -569,10 +572,55 @@ export class DocumentService implements OnDestroy {
   }
 
   fetchTocAndAncestors(elementIds: string[]) {
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const documentRef = this.documentRef;
+    const params =
+      elementIds?.length > 0
+        ? {
+            elementIds: elementIds.join(','),
+          }
+        : {};
     return this.http.get(
-      `${apiBaseUrl}/sercured/${this.documentType}/${
-        this.documentRef
-      }/fetch-toc-ancestors/${elementIds.join(',')}`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/fetch-toc-ancestors`,
+      {
+        params,
+      },
+    );
+  }
+
+  fetchReferenceLabel(
+    references: Array<string>,
+    currentElementId: string,
+    capital: boolean,
+    documentRef: string,
+  ) {
+    return this.http.get<any>(
+      `${apiBaseUrl}/secured/document/fetch-reference-label/${documentRef}`,
+      {
+        responseType: 'text' as any,
+        params: {
+          references,
+          currentElementId: currentElementId ?? null,
+          capital,
+        },
+      },
+    );
+  }
+
+  requestElement(
+    elementId: string,
+    elementTagName: string,
+    documentRef: string,
+  ) {
+    return this.http.get<FetchElementResponse>(
+      `${apiBaseUrl}/secured/document/request-element/${documentRef}`,
+      {
+        params: {
+          elementId,
+          elementTagName,
+        },
+      },
     );
   }
 

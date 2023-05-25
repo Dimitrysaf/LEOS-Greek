@@ -17,11 +17,12 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
-import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
+import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface DocumentApiService {
 
@@ -38,4 +39,8 @@ public interface DocumentApiService {
     LeosExportStatus exportToConsilium(LeosCategoryClass documentType, String documentRef, ExportToConsiliumRequest exportToConsiliumRequest);
 
     String doubleCompare(LeosCategoryClass documentType, String documentRef, String originalProposalId, String intermediateMajorId, String currentId);
+
+    String fetchReferenceLabel(String documentRef, List<String> references, String currentElementID, boolean capital);
+
+    FetchElementResponse fetchElement(String elementId, String elementTagName, String documentRef);
 }

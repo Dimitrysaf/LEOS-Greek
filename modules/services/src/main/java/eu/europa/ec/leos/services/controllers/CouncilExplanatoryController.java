@@ -416,9 +416,10 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors/{elementIds}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef, @PathVariable("elementIds") List<String> elementIds) {
+    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef,
+                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
         try {
             TocAndAncestorsResponse tocAncestors = this.explanatoryApiService.fetchTocAncestor(documentRef, elementIds);
             return ResponseEntity.ok().body(tocAncestors);
