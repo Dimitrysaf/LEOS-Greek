@@ -318,6 +318,18 @@ export class DocumentEditorComponent
       });
   }
 
+  downloadVersionOfPDF() {
+    this.documentService.versionCompareIds$
+      .pipe(take(1))
+      .subscribe((versions) => {
+        this.documentService.compareDocumentsDownloadPDF(
+          versions[1],
+          versions[0],
+          this.getIntermediateVersion(versions),
+        );
+      });
+  }
+
   downloadVersionOfFileEConsil() {
     this.documentService.versionCompareIds$
       .pipe(take(1))

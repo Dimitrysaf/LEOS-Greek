@@ -236,6 +236,7 @@
   "page.editor.versions.compare.actions.prev-change": "[FR] Prev change",
   "page.editor.versions.compare.actions.download-xml-files": "[FR] Download XML files",
   "page.editor.versions.compare.actions.download-docuwrite": "[FR] Download docuwrite version",
+  "page.editor.versions.compare.actions.download-pdf": "[FR] Export as PDF file",
   "page.editor.versions.compare.actions.download-eConsilium": "[FR] Export to eConsilium",
   "page.editor.versions.group-tag.milestone": "Milestone",
   "page.editor.versions.group-tag.creation": "Création",

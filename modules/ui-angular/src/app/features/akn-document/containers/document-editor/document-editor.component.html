@@ -465,40 +465,34 @@
                 "
                 [showDelay]="tooltipsDelay"
               >
-                <span class="eui-icon eui-icon-ecl-download"></span>
+                <eui-icon-svg
+                  icon="cloud-download"
+                  set="sharp"
+                  size="m"
+                  fillColor="grey-100"
+                ></eui-icon-svg>
               </button>
               <button
                 euiButton
                 euiBasicButton
                 euiSecondary
                 euiSizeS
-                *ngIf="versionsComparisonForView && !isCNInstance"
-                (click)="downloadVersionOfFile()"
-                [euiTooltip]="
-                  'page.editor.versions.compare.actions.download-docuwrite'
-                    | translate
+                *ngIf="versionsComparisonForView"
+                (click)="
+                  isCNInstance
+                    ? downloadVersionOfFile()
+                    : downloadVersionOfPDF()
                 "
+                euiTooltip="{{
+                  (isCNInstance
+                    ? 'page.editor.versions.compare.actions.download-docuwrite'
+                    : 'page.editor.versions.compare.actions.download-pdf'
+                  ) | translate
+                }}"
                 [showDelay]="tooltipsDelay"
               >
                 <span
-                  class="eui-icon eui-icon-filetype-doc"
-                  euiIconColored
-                ></span>
-              </button>
-              <button
-                euiButton
-                euiBasicButton
-                euiSecondary
-                euiSizeS
-                *ngIf="versionsComparisonForView && isCNInstance"
-                (click)="downloadPdfFile()"
-                [euiTooltip]="
-                  'page.collection.actions-dropdown.export.pdf' | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span
-                  class="eui-icon eui-icon-filetype-doc"
+                  class="eui-icon eui-icon-ecl-download"
                   euiIconColored
                 ></span>
               </button>
