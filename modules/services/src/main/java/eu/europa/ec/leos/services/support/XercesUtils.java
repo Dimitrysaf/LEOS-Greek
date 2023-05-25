@@ -559,17 +559,14 @@ public class XercesUtils {
         return element;
     }
 
-    public static boolean removeAttribute(Node node, String attName) {
-        boolean flag = false;
+    public static void removeAttribute(Node node, String attName) {
         if (node.getNodeType() != Node.ELEMENT_NODE) {
-            throw new IllegalArgumentException("Node is not of type Element");
+            return;
         }
         Element element = (Element) node;
         if (element.hasAttribute(attName)) {
             element.removeAttribute(attName);
-            flag = true;
         }
-        return flag;
     }
 
     public static Node removeAllAttributes(Node node, String attrName, boolean namespaceEnabled) {

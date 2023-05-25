@@ -486,13 +486,9 @@ public class XercesUtilsTest extends LeosTest {
         Document document = createXercesDocument(fileContent);
         Node current = XercesUtils.getElementById(document, "art_1");
 
-        boolean removed = XercesUtils.removeAttribute(current, XMLID);
-        assertTrue(removed);
+        XercesUtils.removeAttribute(current, XMLID);
         String newNode = XercesUtils.nodeToString(current);
         assertFalse(newNode.contains("xml:id=\"art_1\""));
-
-        removed = XercesUtils.removeAttribute(current, "notPresentAttribute");
-        assertFalse(removed);
     }
 
     @Test
