@@ -37,6 +37,7 @@ import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
+import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
@@ -168,8 +169,8 @@ public class LeosApiController {
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // set 403 status code
-            response.setHeader("Set-Cookie", "Authorization=; Path="+contextPath+"; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
-            response.setHeader("Set-Cookie", "JSESSIONID=; Path="+contextPath+"; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
+            response.setHeader("Set-Cookie", "Authorization=; Path=" + contextPath + "; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
+            response.setHeader("Set-Cookie", "JSESSIONID=; Path=" + contextPath + "; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
             return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
         }
     }
@@ -573,7 +574,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getListMilestoneDocumentViews(@PathVariable("documentRef") String documentRef,
                                                                 @RequestParam("legFileName") String legFileName) {
         try {
-            List<MilestoneDocumentView> milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
+            MilestoneViewResponse milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
             return new ResponseEntity<>(milestonesView, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting milestone documents views - " + e.getMessage());

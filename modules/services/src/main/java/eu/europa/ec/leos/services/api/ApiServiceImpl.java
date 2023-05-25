@@ -55,6 +55,7 @@ import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
+import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -908,7 +909,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public List<MilestoneDocumentView> listMilestoneDocuments(String proposalRef, String legFileName) throws IOException {
+    public MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName) throws IOException {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
 
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
@@ -940,7 +941,7 @@ public class ApiServiceImpl implements ApiService {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
                 String tocFile = null;
-                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage, !pdfRenditions.isEmpty());
+                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage);
                 if (isCoverPage) {
                     milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
                     tocFile = "coverPage_toc.js";
@@ -963,7 +964,7 @@ public class ApiServiceImpl implements ApiService {
                 LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
             }
         }
-        return listDocuments;
+        return new MilestoneViewResponse(listDocuments, !pdfRenditions.isEmpty());
     }
 
     @Override
