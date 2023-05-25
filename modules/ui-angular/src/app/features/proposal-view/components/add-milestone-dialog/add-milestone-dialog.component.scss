@@ -1,4 +1,12 @@
 .milestones {
+  &-header {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-between;
+    padding: var(--eui-base-spacing-2xs) 0;
+  }
+
   &-select,
   &-title {
     width: 436px !important;
