@@ -7,6 +7,8 @@ import { UxAllModule } from '@eui/components/legacy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
+import { DraggableSplitterComponent } from '@/features/akn-document/containers/draggable-splitter/draggable-splitter.component';
+
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
 import { CoEditionDetectedDialogComponent } from './components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { CoEditionInfoComponent } from './components/co-edition-info/co-edition-info.component';
@@ -45,6 +47,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
     MilestoneTocComponent,
+    DraggableSplitterComponent,
     ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
@@ -68,6 +71,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmDeleteDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
+    DraggableSplitterComponent,
     ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,

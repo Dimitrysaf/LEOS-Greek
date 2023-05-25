@@ -7,12 +7,18 @@
     padding: 0.2rem;
   }
 
+  .toc-pane,
+  .annotations-pane {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
   .eui-page-column__header {
     padding: 0;
   }
 
-  .eui-page-column:first-of-type {
-    max-width: 33% !important;
+  .eui-page-column__body {
+    min-width: 200px;
   }
 
   .eui-page-column__body:first-of-type {
@@ -204,4 +210,10 @@
   opacity: 0.3;
   pointer-events: none;
   user-select: none;
+}
+
+.splitter {
+  background-color: #ccc;
+  cursor: ew-resize;
+  width: 10px;
 }

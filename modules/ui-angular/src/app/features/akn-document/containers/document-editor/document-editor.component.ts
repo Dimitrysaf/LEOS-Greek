@@ -3,6 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   Inject,
   OnDestroy,
   OnInit,
@@ -87,7 +88,7 @@ export class DocumentEditorComponent
   documentConfig: DocumentConfig;
 
   isVersionForViewOpen = false;
-  isTOCPaneCollapsed = true;
+  isTocPaneCollapsed = true;
   isAnnotationsPaneCollapsed = false;
   isVersionsPaneCollapsed = true;
   reloadTrigger: number;
@@ -115,6 +116,8 @@ export class DocumentEditorComponent
   folder_id$: Observable<string>;
 
   id: string;
+  hideTocSplitter: boolean;
+  hideAnnotationsSplitter: boolean;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -128,6 +131,18 @@ export class DocumentEditorComponent
 
   @ViewChild('eConsiliumModal')
   eConsiliumModal: DownloadEconsiliumModalComponent;
+
+  @ViewChild('tocPane', { read: ElementRef }) tocPaneElement: ElementRef;
+  @ViewChild('documentPane', { read: ElementRef })
+  documentPaneElement: ElementRef;
+  @ViewChild('annotationsPane', { read: ElementRef })
+  annotationsPaneElement: ElementRef;
+  @ViewChild('versionsPane', { read: ElementRef })
+  versionsPaneElement: ElementRef;
+  @ViewChild('versionForViewPane', { read: ElementRef })
+  versionForViewPaneElement: ElementRef;
+  @ViewChild('compareModePane', { read: ElementRef })
+  compareModePaneElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -260,6 +275,8 @@ export class DocumentEditorComponent
           this.onToggleAnnotationsPaneCollapsed();
         }
       });
+    this.hideTocSplitter = this.isTocPaneCollapsed;
+    this.hideAnnotationsSplitter = this.isAnnotationsPaneCollapsed;
   }
 
   ngAfterViewInit(): void {
@@ -366,22 +383,38 @@ export class DocumentEditorComponent
     }
   }
 
-  onToggleTOCPaneCollapsed() {
-    this.isTOCPaneCollapsed = !this.isTOCPaneCollapsed;
+  onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
+    this.isTocPaneCollapsed = isTocPaneCollapsed;
+    if (!this.isTocPaneCollapsed) this.onHideTocSplitter(false);
     this.documentService.seeNavigation();
   }
 
-  onToggleAnnotationsPaneCollapsed() {
+  onHideTocSplitter(hideTocSplitter = !this.hideTocSplitter) {
+    this.hideTocSplitter = hideTocSplitter;
+  }
+
+  onToggleAnnotationsPaneCollapsed(
+    isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
+  ) {
     (
       document.querySelector(
         'button.annotator-frame-button--sidebar_toggle',
       ) as HTMLButtonElement
     )?.click();
-    this.isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed;
+    this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
+    if (!this.isAnnotationsPaneCollapsed) this.onHideAnnotationsSplitter(false);
   }
 
-  onToggleVersionsPane() {
-    this.isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed;
+  onHideAnnotationsSplitter(
+    hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
+  ) {
+    this.hideAnnotationsSplitter = hideAnnotationsSplitter;
+  }
+
+  onToggleVersionsPane(
+    isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed,
+  ) {
+    this.isVersionsPaneCollapsed = isVersionsPaneCollapsed;
   }
 
   handleEdit() {

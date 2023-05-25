@@ -1,5 +1,6 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
@@ -49,12 +50,24 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
+
+  @ViewChild('tocPane', { read: ElementRef }) tocPaneElement: ElementRef;
+  @ViewChild('documentPane', { read: ElementRef })
+  documentPaneElement: ElementRef;
+  @ViewChild('annotationsPane', { read: ElementRef })
+  annotationsPaneElement: ElementRef;
+
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
   connectedEntity: string;
   showStatusFilter: boolean;
   activeTabIndex: number;
   showPdfExport = false;
+
+  isTocPaneCollapsed = false;
+  isAnnotationsPaneCollapsed = false;
+  hideTocSplitter: boolean;
+  hideAnnotationsSplitter: boolean;
 
   private destroy$: Subject<any> = new Subject();
 
@@ -93,6 +106,28 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.milestone.proposalRef,
       this.milestone.legDocumentName,
     );
+  }
+
+  onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
+    this.isTocPaneCollapsed = isTocPaneCollapsed;
+    if (!this.isTocPaneCollapsed) this.onHideTocSplitter(false);
+  }
+
+  onHideTocSplitter(hideTocSplitter = !this.hideTocSplitter) {
+    this.hideTocSplitter = hideTocSplitter;
+  }
+
+  onToggleAnnotationsPaneCollapsed(
+    isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
+  ) {
+    this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
+    if (!this.isAnnotationsPaneCollapsed) this.onHideAnnotationsSplitter(false);
+  }
+
+  onHideAnnotationsSplitter(
+    hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
+  ) {
+    this.hideAnnotationsSplitter = hideAnnotationsSplitter;
   }
 
   private loadConfig() {
