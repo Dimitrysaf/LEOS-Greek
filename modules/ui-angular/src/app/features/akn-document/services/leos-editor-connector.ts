@@ -20,6 +20,7 @@ import { TableOfContentService } from './tableOfContent.service';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
+  documentRef?: string;
 };
 
 export type LeosEditorConnectorInitialState = Omit<
@@ -71,7 +72,14 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
   ) {
-    super({ ...staticExtensionState, ...state }, options.rootElement);
+    super(
+      {
+        ...staticExtensionState,
+        documentRef: documentService.documentRef,
+        ...state,
+      },
+      options.rootElement,
+    );
   }
   //leosEditorExtension > requestToc
   requestToc(...args) {
@@ -86,24 +94,15 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
   }) {
     const promise = new Promise<void>((resolve, reject) => {
       this.documentService.didDocumentLoadAndRender$
-        .pipe(
-          tap((loaded) => console.log('document loading : ', loaded)),
-          filter((isLoaded) => isLoaded === true),
-        )
+        .pipe(filter((isLoaded) => isLoaded === true))
         .subscribe((loaded) => {
-          console.log('document loaded from observable');
           resolve();
         });
     });
 
-    promise
-      .then(() => {
-        console.log('sucessfult handled edit', data);
-        this.handleEdit(data);
-      })
-      .catch((error) => {
-        console.log('handleEdit failed:', error);
-      });
+    promise.then(() => {
+      this.handleEdit(data);
+    });
   }
 
   handleEdit(data: { action: string; elementId: string; elementType: string }) {
@@ -186,6 +185,48 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
           );
         });
     }
+  }
+
+  requestRefLabel(data: {
+    references: string[];
+    currentEditPosition: string;
+    capital: boolean;
+    documentRef: string;
+  }) {
+    this.documentService
+      .fetchReferenceLabel(
+        data.references,
+        data.currentEditPosition ?? null,
+        data.capital,
+        data.documentRef,
+      )
+      .pipe(take(1))
+      .subscribe((response) => {
+        console.log(response);
+        this.receiveRefLabel(response, data.documentRef);
+      });
+  }
+
+  requestElement(data: {
+    elementId: string;
+    elementType: string;
+    documentRef: string;
+  }) {
+    this.documentService
+      .requestElement(
+        data.elementId,
+        data.elementType.toLowerCase(),
+        data.documentRef,
+      )
+      .pipe(take(1))
+      .subscribe((response) => {
+        this.receiveElement(
+          response.elementId,
+          response.elementTagName,
+          response.elementFragment,
+          response.documentRef,
+        );
+      });
   }
 
   // leosEditorExtension > elementEditor
@@ -337,6 +378,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       .fetchTocAndAncestors(elementdIds)
       .pipe(take(1))
       .subscribe((response) => {
+        console.log(response);
         this.receiveToc(JSON.stringify(response));
       });
   }

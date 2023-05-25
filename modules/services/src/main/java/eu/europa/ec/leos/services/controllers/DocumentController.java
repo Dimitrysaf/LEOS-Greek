@@ -20,9 +20,9 @@ import eu.europa.ec.leos.services.api.DocumentApiService;
 import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
-import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
+import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +35,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/secured/document")
@@ -152,6 +155,33 @@ public class DocumentController {
             String response = documentApiService.doubleCompare(documentCategory, documentRef,
                     doubleCompareRequest.getOriginalProposalId(), doubleCompareRequest.getIntermediateMajorId(), doubleCompareRequest.getCurrentId());
 
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while requesting double compare", e);
+            return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/fetch-reference-label/{documentRef}", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> fetchReferenceLabel(@PathVariable("documentRef") String documentRef,
+                                                      @RequestParam List<String> references,
+                                                      @RequestParam String currentElementId, @RequestParam boolean capital) {
+        try {
+            String response = documentApiService.fetchReferenceLabel(documentRef, references, currentElementId, capital);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while requesting double compare", e);
+            return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/request-element/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> requestElement(@PathVariable("documentRef") String documentRef,
+                                                 @RequestParam String elementId, @RequestParam String elementTagName) {
+        try {
+            FetchElementResponse response = documentApiService.fetchElement(elementId, elementTagName, documentRef);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting double compare", e);

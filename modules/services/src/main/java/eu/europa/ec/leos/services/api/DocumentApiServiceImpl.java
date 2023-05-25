@@ -16,24 +16,30 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
+import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.notification.NotificationService;
+import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.store.WorkspaceService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +47,13 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
 public abstract class DocumentApiServiceImpl implements DocumentApiService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceImpl.class);
@@ -58,12 +69,17 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     protected final MessageHelper messageHelper;
     protected final ComparisonDelegateAPI comparisonDelegate;
     protected final LegService legService;
+    protected final ReferenceLabelService referenceLabelService;
+    protected final WorkspaceService workspaceService;
+    protected final ElementProcessor elementProcessor;
+    protected final TransformationService transformationService;
 
     protected DocumentApiServiceImpl(DocumentContentService documentContentService, PackageService packageService,
                                      ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
                                      ExportPackageService exportPackageService, NotificationService notificationService,
                                      SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
-                                     LegService legService) {
+                                     LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
+                                     ElementProcessor elementProcessor, TransformationService transformationService) {
         this.documentContentService = documentContentService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -75,7 +91,12 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         this.messageHelper = messageHelper;
         this.comparisonDelegate = comparisonDelegate;
         this.legService = legService;
+        this.referenceLabelService = referenceLabelService;
+        this.workspaceService = workspaceService;
+        this.elementProcessor = elementProcessor;
+        this.transformationService = transformationService;
     }
+
 
     @Override
     public String doubleCompare(LeosCategoryClass documentType, String documentRef, String originalProposalId, String intermediateMajorId, String currentId) {
@@ -147,5 +168,26 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
                 }
             }
         }
+    }
+
+    @Override
+    public String fetchReferenceLabel(String documentRef, List<String> references, String currentElementID, boolean capital) {
+        XmlDocument currentDocument = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
+        final byte[] sourceXmlContent = currentDocument.getContent().get().getSource().getBytes();
+        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(references, documentRef, currentElementID, sourceXmlContent, documentRef, capital);
+
+        return updatedLabel.get();
+    }
+
+    @Override
+    public FetchElementResponse fetchElement(String elementId, String elementTagName, String documentRef) {
+        XmlDocument document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
+        String contentForType = elementProcessor.getElement(document, elementTagName, elementId);
+        String wrappedContentXml = wrapXmlFragment(contentForType != null ? contentForType : "");
+        InputStream contentStream = new ByteArrayInputStream(wrappedContentXml.getBytes(StandardCharsets.UTF_8));
+        contentForType = transformationService.toXmlFragmentWrapper(contentStream, "",
+                securityContext.getPermissions(document));
+
+        return new FetchElementResponse(elementId, elementTagName, contentForType, documentRef);
     }
 }
