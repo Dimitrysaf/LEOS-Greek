@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { orderBy } from 'lodash-es';
-import { Observable, of } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 
 import { Version } from '@/features/akn-document/models/versions';
 import { DocumentService } from '@/shared/services/document.service';
@@ -35,6 +35,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected hasMore = false;
   protected versions: Version[] = [];
   protected isFilteredOut = false;
+  protected isSearchExcluded = false;
 
   private filter = 'all';
 
@@ -46,6 +47,9 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.docService.versionFilter$.subscribe((filter) =>
       this.applyFilter(filter),
+    );
+    this.docService.versionSearchResults$.subscribe((results) =>
+      this.onVersionSearchResultsChange(results),
     );
     this.toggleShowMore(false);
     this.translate.onTranslationChange.subscribe(() => this.updateState());
@@ -107,6 +111,24 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected toggleShowMore(expanded = !this.showMore) {
     this.showMore = expanded;
     this.updateState();
+  }
+
+  private onVersionSearchResultsChange(results: string[]) {
+    if (!Array.isArray(results)) {
+      this.isSearchExcluded = false;
+      return;
+    }
+
+    const versions = [];
+    if (this.majorVersion) {
+      versions.push(this.majorVersion.versionedReference);
+    }
+    this.subVersions?.forEach((subVersion) =>
+      versions.push(subVersion.versionedReference),
+    );
+    this.isSearchExcluded = !(
+      versions.length === 0 || versions.some((v) => results.includes(v))
+    );
   }
 
   private updateState() {

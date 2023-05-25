@@ -1,4 +1,9 @@
-<eui-card class="version-panes" euiNoShadow *ngIf="!isFilteredOut">
+<eui-card
+  class="version-panes"
+  euiNoShadow
+  *ngIf="!isFilteredOut"
+  [ngClass]="{ 'version-search-excluded': isSearchExcluded }"
+>
   <eui-card-header>
     <eui-card-header-title>{{ title | async }}</eui-card-header-title>
     <eui-card-header-subtitle *ngIf="description">
@@ -48,11 +53,13 @@
         <div>{{ formatVersionNumber(version) }}</div>
         <div class="title">
           {{
-            version.checkinCommentVO.checkinElement
+            version.checkinCommentVO.title !== ''
+              ? version.checkinCommentVO.title
+              : version.checkinCommentVO.checkinElement
               ? version.checkinCommentVO.checkinElement.elementLabel +
                 ' ' +
                 version.checkinCommentVO.checkinElement.actionType.toLowerCase()
-              : version.checkinCommentVO.title
+              : ''
           }}
         </div>
         <div>

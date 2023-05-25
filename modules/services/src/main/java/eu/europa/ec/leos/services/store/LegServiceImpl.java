@@ -77,7 +77,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -101,7 +100,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
@@ -119,9 +117,6 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.c
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ANONYMOUS;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -1283,9 +1278,6 @@ public class LegServiceImpl implements LegService {
     }
 
     private String createTrackChangesCss(byte[] xmlContent, String proposalRef) {
-
-        LOG.debug("Track changes _updateTrackChangesStyles invoked...");
-
         Document document = createXercesDocument(xmlContent);
         NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         List<String> usersId = new ArrayList();
@@ -1296,8 +1288,7 @@ public class LegServiceImpl implements LegService {
                 usersId.add(userId);
             }
         }
-
-        String trackChangesCss = "<style id=\"xmlTcStyle\">\n";
+        String trackChangesCss = "<style id=\"docTcStyle\">\n";
         for (int i = 0; i < usersId.size(); i++) {
             String userId = usersId.get(i);
             String userIdColor[] = this.generateColors(String.join("", Collections.nCopies(5, userId)) + proposalRef);
@@ -1305,9 +1296,7 @@ public class LegServiceImpl implements LegService {
             trackChangesCss += "akomantoso inline[name='trackchanges'][leos\\:uid='" + userId + "']:hover { background-color: " + userIdColor[1] + "; }\n";
         }
         trackChangesCss += "</style>";
-
         return trackChangesCss;
-
     }
 
     private String[] generateColors(String valueToHash) {

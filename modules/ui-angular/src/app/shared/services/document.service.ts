@@ -7,7 +7,9 @@ import { parse as parseContentDisposition } from 'content-disposition-attachment
 import { isEqual } from 'lodash-es';
 import {
   BehaviorSubject,
+  combineLatest,
   combineLatestWith,
+  concat,
   distinctUntilChanged,
   filter,
   finalize,
@@ -21,6 +23,7 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
+import { combineLatestInit } from 'rxjs/internal/observable/combineLatest';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
@@ -36,7 +39,10 @@ import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { downloadBlob } from '@/shared/utils';
 
 import { apiBaseUrl } from '../../../config';
-import { DocumentViewResponse } from '../models/document-view-response.model';
+import {
+  DocumentViewResponse,
+  FetchElementResponse,
+} from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { TableOfContentItemVO, TocItem } from '../models/toc.model';
@@ -88,6 +94,7 @@ export class DocumentService implements OnDestroy {
   focusedSearchResult: any | null;
   currentSearchResults: Array<SearchMatchVO>;
   versionSearchParams$: Observable<VersionSearchParams>;
+  versionSearchResults$: Observable<string[]>;
   versionFilter$: Observable<string>;
   // documentReplaceView$: Observable<DocumentViewResponse | null>;
   collaborators$: Observable<Collaborator[]>;
@@ -95,13 +102,14 @@ export class DocumentService implements OnDestroy {
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
+  collapseExpandAnnotation$: Observable<boolean>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
-
   currentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
   // private documentCategoryBS = new BehaviorSubject(null);
+  private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
   private searchPaneOpenBS = new BehaviorSubject(false);
@@ -117,6 +125,8 @@ export class DocumentService implements OnDestroy {
     type: 'all',
     author: '',
   });
+  private versionSearchResultsBS$ = new BehaviorSubject<string[] | null>(null);
+
   private versionFilterBS = new BehaviorSubject<string>('All');
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
@@ -233,10 +243,6 @@ export class DocumentService implements OnDestroy {
       ),
     );
 
-    this.versionSearchParams$
-      .pipe(takeUntil(this.destroy$), skip(1))
-      .subscribe((params) => this.handleVersionSearch(params));
-
     this.collaborators$ = this.collaboratorsBS.asObservable();
     this.documentView$
       .pipe(
@@ -257,6 +263,19 @@ export class DocumentService implements OnDestroy {
     this.navigationPaneCollapse$ = this.navigationPaneCollapseBS.asObservable();
     this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
     this.reloadTrigger$ = this.reloadTriggerBS.asObservable();
+
+    this.versionSearchParams$
+      .pipe(
+        takeUntil(this.destroy$),
+        skip(1),
+        combineLatestWith(this.versions$, this.recentChanges$),
+      )
+      .subscribe(([searchParams, versions, recentChanges]) =>
+        this.onVersionSearchParamChange(searchParams, versions, recentChanges),
+      );
+    this.versionSearchResults$ = this.versionSearchResultsBS$.asObservable();
+    this.collapseExpandAnnotation$ =
+      this.collapseExpandAnnotationSubj.asObservable();
   }
 
   ngOnDestroy() {
@@ -355,6 +374,28 @@ export class DocumentService implements OnDestroy {
     this.http
       .post(
         `${apiBaseUrl}/download-compared-version-as-docuwrite/${documentType}/${documentRef}/`,
+        {
+          originalVersion: originalVersion.cmisVersionNumber,
+          currentVersion: currentVersion.cmisVersionNumber,
+          intermediateVersion: intermediateVersion
+            ? intermediateVersion.cmisVersionNumber
+            : null,
+        },
+      )
+      .subscribe((resp: any) => this.handleDownloadResponse(resp));
+  }
+
+  compareDocumentsExportAsPdf(
+    currentVersion: Version,
+    originalVersion: Version,
+    intermediateVersion?: Version,
+  ) {
+    const documentType = this.documentType;
+    const documentRef = this.documentRef;
+
+    this.http
+      .post(
+        `${apiBaseUrl}/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
         {
           originalVersion: originalVersion.cmisVersionNumber,
           currentVersion: currentVersion.cmisVersionNumber,
@@ -531,15 +572,64 @@ export class DocumentService implements OnDestroy {
   }
 
   fetchTocAndAncestors(elementIds: string[]) {
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const documentRef = this.documentRef;
+    const params =
+      elementIds?.length > 0
+        ? {
+            elementIds: elementIds.join(','),
+          }
+        : {};
     return this.http.get(
-      `${apiBaseUrl}/sercured/${this.documentType}/${
-        this.documentRef
-      }/fetch-toc-ancestors/${elementIds.join(',')}`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/fetch-toc-ancestors`,
+      {
+        params,
+      },
+    );
+  }
+
+  fetchReferenceLabel(
+    references: Array<string>,
+    currentElementId: string,
+    capital: boolean,
+    documentRef: string,
+  ) {
+    return this.http.get<any>(
+      `${apiBaseUrl}/secured/document/fetch-reference-label/${documentRef}`,
+      {
+        responseType: 'text' as any,
+        params: {
+          references,
+          currentElementId: currentElementId ?? null,
+          capital,
+        },
+      },
+    );
+  }
+
+  requestElement(
+    elementId: string,
+    elementTagName: string,
+    documentRef: string,
+  ) {
+    return this.http.get<FetchElementResponse>(
+      `${apiBaseUrl}/secured/document/request-element/${documentRef}`,
+      {
+        params: {
+          elementId,
+          elementTagName,
+        },
+      },
     );
   }
 
   setDocumentRefAndCategory(ref: string, category: string) {
     this.documentRefAndCategoryBS.next({ ref, category });
+  }
+
+  setCollapseExpandAnnotation(value: boolean) {
+    this.collapseExpandAnnotationSubj.next(value);
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
@@ -891,56 +981,29 @@ export class DocumentService implements OnDestroy {
     }
   }
 
-  private handleVersionSearch(params: VersionSearchParams) {
-    this.removeVersionSearchHighlight();
-    if (params.type !== 'all') {
-      this.setVersionFilter(params.type);
-    } else {
-      this.setVersionFilter('all');
-    }
+  private onVersionSearchParamChange(
+    searchParams: VersionSearchParams,
+    versions: Version[],
+    recentChanges: Version[],
+  ): void {
+    const author = searchParams?.author?.toLowerCase() ?? '';
+    const type = searchParams?.type ?? 'all';
 
-    if (params.author !== '') {
-      // TODO: this should be reimplemented the angular way
-      this.document.querySelectorAll('.version-panes').forEach((element) => {
-        this.handleNode(element, params.author);
-      });
+    this.setVersionFilter(type);
+    if (!author) {
+      this.versionSearchResultsBS$.next(null);
     } else {
-    }
-  }
-
-  private handleNode(node: any, searchText: string) {
-    if (node.childNodes.length > 0) {
-      if (node.childNodes.length === 1) {
-        if (node.innerText && node.innerText.search(searchText) !== -1) {
-          const cardParentNode = this.findClosestParentByClass(
-            node,
-            'version-panes',
-          );
-          if (cardParentNode) {
-            cardParentNode.classList.add('version-search-found');
-          }
+      const searchResult = [];
+      [
+        ...recentChanges,
+        ...versions,
+        ...versions.flatMap((ver) => ver.subVersions),
+      ].forEach((version) => {
+        if (version.createdBy?.toLowerCase()?.includes(author)) {
+          searchResult.push(version.versionedReference);
         }
-      } else if (node.childNodes.length > 1) {
-        node.childNodes.forEach((n) => {
-          this.handleNode(n, searchText);
-        });
-      }
-    }
-  }
-
-  private removeVersionSearchHighlight() {
-    this.document
-      .querySelectorAll('.version-search-found')
-      .forEach((element) => {
-        element.classList.remove('version-search-found');
       });
-  }
-
-  private findClosestParentByClass(node: any, searchByClass: string) {
-    if (node.parentElement.classList.contains(searchByClass)) {
-      return node.parentElement;
-    } else {
-      return this.findClosestParentByClass(node.parentElement, searchByClass);
+      this.versionSearchResultsBS$.next(searchResult);
     }
   }
 

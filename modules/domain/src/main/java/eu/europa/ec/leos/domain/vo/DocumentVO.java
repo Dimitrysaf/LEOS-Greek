@@ -42,6 +42,7 @@ public class DocumentVO {
     private String versionSeriesId;
     private String ref;
     private boolean trackChangesEnabled;
+    private String proposalRef;
 
     private LeosCategory documentType;
     private ProcedureType procedureType;
@@ -434,5 +435,13 @@ public class DocumentVO {
 
     public LeosMetadata getMetadataDocument() {
         return metadataDocument;
+    }
+
+    public void setProposalRef(String proposalRef) {
+        this.proposalRef = proposalRef;
+    }
+
+    public String getProposalRef() {
+        return proposalRef;
     }
 }

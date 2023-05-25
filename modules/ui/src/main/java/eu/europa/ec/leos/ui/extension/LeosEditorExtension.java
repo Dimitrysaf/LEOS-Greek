@@ -24,6 +24,7 @@ import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.TocItemType;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
+import eu.europa.ec.leos.web.event.view.ShowTrackChangesEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -93,6 +94,8 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         getState().documentsMetadataJsonArray = toJsonString(documents);
         getState().documentRef = documentVO.getMetadata().getInternalRef();
         getState().isTrackChangesEnabled = documentVO.isTrackChangesEnabled();
+        getState().isTrackChangesShowed = true;
+        getState().proposalRef = documentVO.getProposalRef();
 
         registerServerSideAPI();
         extend(target);
@@ -322,6 +325,12 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         } catch (JsonProcessingException e) {
             return "null";
         }
+    }
+
+    @Subscribe
+    public void showTrackChanges(ShowTrackChangesEvent event) {
+        LOG.trace("Show track changes...");
+        getState().isTrackChangesShowed = event.isShowed();
     }
 
 }

@@ -30,6 +30,7 @@ import {
   Subject,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -86,9 +87,9 @@ export class DocumentEditorComponent
   documentConfig: DocumentConfig;
 
   isVersionForViewOpen = false;
-  isTOCColumnCollapsed = true;
-  isAnnotationsColumnCollapsed = false;
-  isVersionsColumnCollapsed = true;
+  isTOCPaneCollapsed = true;
+  isAnnotationsPaneCollapsed = false;
+  isVersionsPaneCollapsed = true;
   reloadTrigger: number;
 
   tocItems: Array<TocItem> = [];
@@ -110,6 +111,10 @@ export class DocumentEditorComponent
   });
 
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+
+  folder_id$: Observable<string>;
+
+  id: string;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -219,20 +224,6 @@ export class DocumentEditorComponent
         }
       });
 
-    this.documentService.versionCompareView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((versionCompareXML) => {
-        if (versionCompareXML) {
-          this.versionsComparisonForView = this.cleanupAndSerializeXML(
-            versionCompareXML,
-            `marked-${this.documentRef}`,
-          );
-          setTimeout(() => {
-            this.handleCompareChanges();
-          });
-        }
-      });
-
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
@@ -247,7 +238,28 @@ export class DocumentEditorComponent
         this.setPageTitle();
         this.manageBreadCrumbsDocumentScreen();
       });
-    // this.loadingService.setLoading(false);
+
+    this.documentService.versionCompareView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((versionCompareXML) => {
+        if (versionCompareXML) {
+          this.versionsComparisonForView = this.cleanupAndSerializeXML(
+            versionCompareXML,
+            `marked-${this.documentRef}`,
+          );
+          setTimeout(() => {
+            this.handleCompareChanges();
+          });
+        }
+      });
+
+    this.documentService.collapseExpandAnnotation$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        if (value && this.isAnnotationsPaneCollapsed) {
+          this.onToggleAnnotationsPaneCollapsed();
+        }
+      });
   }
 
   ngAfterViewInit(): void {
@@ -275,6 +287,18 @@ export class DocumentEditorComponent
       .pipe(take(1))
       .subscribe((versions) => {
         this.documentService.compareDocumentsDownloadXML(
+          versions[1],
+          versions[0],
+          this.getIntermediateVersion(versions),
+        );
+      });
+  }
+
+  downloadPdfFile() {
+    this.documentService.versionCompareIds$
+      .pipe(take(1))
+      .subscribe((versions) => {
+        this.documentService.compareDocumentsExportAsPdf(
           versions[1],
           versions[0],
           this.getIntermediateVersion(versions),
@@ -342,22 +366,22 @@ export class DocumentEditorComponent
     }
   }
 
-  onToggleTOCColumnCollapsed() {
-    this.isTOCColumnCollapsed = !this.isTOCColumnCollapsed;
+  onToggleTOCPaneCollapsed() {
+    this.isTOCPaneCollapsed = !this.isTOCPaneCollapsed;
     this.documentService.seeNavigation();
   }
 
-  onToggleAnnotationsColumnCollapsed() {
+  onToggleAnnotationsPaneCollapsed() {
     (
       document.querySelector(
         'button.annotator-frame-button--sidebar_toggle',
       ) as HTMLButtonElement
     )?.click();
-    this.isAnnotationsColumnCollapsed = !this.isAnnotationsColumnCollapsed;
+    this.isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed;
   }
 
-  onToggleVersionsColumn() {
-    this.isVersionsColumnCollapsed = !this.isVersionsColumnCollapsed;
+  onToggleVersionsPane() {
+    this.isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed;
   }
 
   handleEdit() {
@@ -536,12 +560,10 @@ export class DocumentEditorComponent
   getTooltipForToggleTree() {
     if (this.isCollapseToc) {
       return this.translate.instant(
-        'page.editor.toc.toc-column.actions.collapseAll',
+        'page.editor.toc.toc-pane.actions.collapseAll',
       );
     }
-    return this.translate.instant(
-      'page.editor.toc.toc-column.actions.expandAll',
-    );
+    return this.translate.instant('page.editor.toc.toc-pane.actions.expandAll');
   }
 
   closeVersionView() {
@@ -627,10 +649,15 @@ export class DocumentEditorComponent
   }
 
   private handleCompareChanges() {
+    const nodeListCN = document.querySelectorAll(
+      '.leos-content-new-cn, .leos-content-removed-cn',
+    );
     const nodeList = document.querySelectorAll(
       '.leos-content-new, .leos-content-removed',
     );
-    this.compareChanges = nodeList as NodeListOf<HTMLElement>;
+    this.compareChanges = (
+      nodeList.length > 0 ? nodeList : nodeListCN
+    ) as NodeListOf<HTMLElement>;
     const container = this.document.getElementById(
       'versionComparisonContainer',
     );
@@ -647,7 +674,9 @@ export class DocumentEditorComponent
       '.leos-marker-content-removed': 'pin-leos-marker-content-removed',
       '.leos-marker-content-added': 'pin-leos-marker-content-added',
       '.leos-content-removed': 'pin-leos-content-removed',
+      '.leos-content-removed-cn': 'pin-leos-content-removed',
       '.leos-content-new': 'pin-leos-content-new',
+      '.leos-content-new-cn': 'pin-leos-content-new',
     };
     this.addPins(container, pinContainer, selectorStyleMap);
   }

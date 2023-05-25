@@ -200,7 +200,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
           'toc.edit.window.item.selected.heading.error.message',
         );
       case 'number':
-        if (node.number.length === 0)
+        if (node.number?.length === 0)
           return this.translateService.instant(
             'toc.edit.window.item.selected.number.error.message',
           );
@@ -348,8 +348,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
   handleNumberChange(number: string) {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
-      const numberRegex = this.numberConfig.regex;
-      if (number && numberRegex.match(number)) {
+      const numberRegex = RegExp(this.numberConfig.regexJS);
+      if (number && numberRegex.test(number)) {
         //clear invalid
         this.removeInvalidNode();
         //save snapshot of old tree

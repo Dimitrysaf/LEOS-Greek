@@ -22,4 +22,5 @@ public class TrackChangesState extends LeosJavaScriptExtensionState {
 
     public UserVO user;
     public String proposalRef;
+    public boolean isTrackChangesShowed;
 }

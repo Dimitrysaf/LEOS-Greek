@@ -171,8 +171,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     return await promise;
   }
 
-  onClose() {}
-
   closeDialog() {
     this.createWizard.closeDialog();
     this.resetInitials();

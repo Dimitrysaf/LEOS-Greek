@@ -11,20 +11,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
+package eu.europa.ec.leos.web.event.view;
 
-package eu.europa.ec.leos.services.api;
+public class ShowTrackChangesEvent {
+    private boolean showed;
 
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
+    public ShowTrackChangesEvent(boolean showed) {
+        this.showed = showed;
+    }
 
-import java.util.List;
-
-public interface AnnexApiService extends BaseDocumentService<Annex> {
-
-    public DocumentViewResponse changeAnnexStructureType(String documentRef);
-
-    public DocumentViewResponse renumberAnnex(String annexRef);
-
-    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds);
+    public boolean isShowed() {
+        return showed;
+    }
 }

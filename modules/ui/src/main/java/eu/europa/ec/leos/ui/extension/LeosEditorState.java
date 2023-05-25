@@ -36,5 +36,7 @@ public class LeosEditorState extends LeosJavaScriptExtensionState {
     public String documentsMetadataJsonArray;
     public String documentRef;
     public boolean isTrackChangesEnabled;
+    public boolean isTrackChangesShowed;
+    public String proposalRef;
 
 }

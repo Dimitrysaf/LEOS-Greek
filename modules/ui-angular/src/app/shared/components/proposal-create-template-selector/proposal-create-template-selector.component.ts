@@ -71,6 +71,7 @@ export class ProposalCreateTemplateSelectorComponent
   reset() {
     this.setInitialState();
     this.treeComponent.onFilter(this.filterText);
+    this.treeComponent.onExpandAll(this.event);
     this.cd.detectChanges();
   }
 
@@ -154,6 +155,7 @@ export class ProposalCreateTemplateSelectorComponent
       label,
       iconClass,
       disabled,
+      expanded: this.isExpanded,
       children,
       ...(isEmptyCategory
         ? {
@@ -176,7 +178,7 @@ export class ProposalCreateTemplateSelectorComponent
 
   private setInitialState() {
     this.filterText = '';
-    this.isExpanded = false;
+    this.isExpanded = true;
     this.selectedLanguage = '';
     this.languages = [];
   }

@@ -27,6 +27,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
@@ -36,10 +37,13 @@ import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.notification.NotificationService;
+import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.store.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -52,12 +56,12 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceProposalImpl.class);
 
     protected DocumentApiServiceProposalImpl(DocumentContentService documentContentService, PackageService packageService,
-            ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
-            ExportPackageService exportPackageService, NotificationService notificationService,
-            SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
-            LegService legService) {
+                                             ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
+                                             ExportPackageService exportPackageService, NotificationService notificationService,
+                                             SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
+                                             LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService, ElementProcessor elementProcessor, TransformationService transformationService) {
         super(documentContentService, packageService, proposalService, exportService, leosRepository, exportPackageService, notificationService,
-                securityContext, messageHelper, comparisonDelegate, legService);
+                securityContext, messageHelper, comparisonDelegate, legService, referenceLabelService, workspaceService, elementProcessor, transformationService);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
 
     @Override
     public DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
-            DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
+                                                              DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
         final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);

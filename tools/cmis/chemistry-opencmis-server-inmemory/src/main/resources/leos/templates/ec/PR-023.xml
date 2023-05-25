@@ -17,7 +17,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage xml:id="_FRBRlanguage" language="en"/>
+                    <FRBRlanguage language="en"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -31,16 +31,12 @@
             </identification>
             <references source="~_COM">
                 <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
-                <TLCOrganization xml:id="_CONSIL" href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="_EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
                 <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCRole xml:id="_PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
                 <TLCReference xml:id="_REG" name="docType"
                               href="http://publications.europa.eu/resource/authority/resource-type/REG"  showAs="Regulation"/>
                 <TLCReference xml:id="_PROP_ACT" name="docType"
                               href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT"
                               showAs="Proposal for an act"/>
-                <TLCReference xml:id="_legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456" showAs="Legal basis"/>
                 <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
                 <TLCReference xml:id="_procedure_YYYY_NNN" name="procedureReference" href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" showAs="YYYY/NNNN (AAA)" shortForm="YYYY/NNN/AAA"/>
                 <TLCReference xml:id="_azs3y" name="identifier" href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" showAs="AAA(YYYY) NNN" shortForm="AAA/YYYY/NNN"/>
@@ -48,7 +44,7 @@
                 <TLCConcept xml:id="_memorandum" href="/software/leos/memorandum" showAs="Memorandum"/>
             </references>
             <proprietary source="~_leos">
-                <leos:templateVersion>3.0.0</leos:templateVersion>
+                <leos:templateVersion>3.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:template>SJ-023</leos:template>
                 <leos:docTemplate>PR-023</leos:docTemplate>

@@ -32,6 +32,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
@@ -43,10 +44,13 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.notification.NotificationService;
+import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.store.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,12 +67,12 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceMandateImpl.class);
 
     public DocumentApiServiceMandateImpl(DocumentContentService documentContentService, PackageService packageService,
-            ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
-            ExportPackageService exportPackageService, NotificationService notificationService,
-            SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
-            LegService legService) {
+                                         ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
+                                         ExportPackageService exportPackageService, NotificationService notificationService,
+                                         SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
+                                         LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService, ElementProcessor elementProcessor, TransformationService transformationService) {
         super(documentContentService, packageService, proposalService, exportService, leosRepository, exportPackageService, notificationService,
-                securityContext, messageHelper, comparisonDelegate, legService);
+                securityContext, messageHelper, comparisonDelegate, legService, referenceLabelService, workspaceService, elementProcessor, transformationService);
     }
 
     @Override
@@ -92,7 +96,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
 
     @Override
     public DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
-            DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
+                                                              DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
         final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
@@ -101,7 +105,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         String leosComparedContent;
         String docuWriteComparedContent;
 
-        if(comparedVersionRequest.getIntermediateVersion() != null) {
+        if (comparedVersionRequest.getIntermediateVersion() != null) {
             intermediate = getDocumentByVersion(documentRef, comparedVersionRequest.getIntermediateVersion(), clazz);
         }
         String language = original.getMetadata().get().getLanguage();
@@ -126,7 +130,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
 
     @Override
     public DownloadVersionResponse downloadComparedVersionAsDocuwrite(LeosCategoryClass documentType, String documentRef,
-            DownloadComparedVersionRequest downloadComparedVersionRequest) throws Exception {
+                                                                      DownloadComparedVersionRequest downloadComparedVersionRequest) throws Exception {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
@@ -154,11 +158,11 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     }
 
     private ExportVersions getExportVersions(Class<XmlDocument> clazz, String documentRef,
-            DownloadComparedVersionRequest comparedVersionRequest) {
+                                             DownloadComparedVersionRequest comparedVersionRequest) {
         final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
         final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
         XmlDocument intermediate = null;
-        if(comparedVersionRequest.getIntermediateVersion() != null) {
+        if (comparedVersionRequest.getIntermediateVersion() != null) {
             intermediate = getDocumentByVersion(documentRef, comparedVersionRequest.getIntermediateVersion(), clazz);
         }
         return new ExportVersions(original, intermediate, current);
@@ -179,17 +183,19 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     }
 
     private ExportVersions getExportVersionsForEconsilium(String documentRef, LeosCategoryClass documentType, Class<XmlDocument> clazz,
-            ExportToConsiliumRequest exportToConsiliumRequest) {
-        XmlDocument current; XmlDocument original; XmlDocument intermediate;
+                                                          ExportToConsiliumRequest exportToConsiliumRequest) {
+        XmlDocument current;
+        XmlDocument original;
+        XmlDocument intermediate;
 
-        if(exportToConsiliumRequest.getOriginalVersion() == null && exportToConsiliumRequest.getCurrentVersion() == null) {
+        if (exportToConsiliumRequest.getOriginalVersion() == null && exportToConsiliumRequest.getCurrentVersion() == null) {
             current = documentContentService.getDocumentByRef(documentRef, documentType);
             original = documentContentService.getOriginalDocument(current);
             return new ExportVersions(original, current);
         }
         original = getDocumentByVersion(documentRef, exportToConsiliumRequest.getOriginalVersion(), clazz);
         current = getDocumentByVersion(documentRef, exportToConsiliumRequest.getCurrentVersion(), clazz);
-        if(exportToConsiliumRequest.getIntermediateVersion() != null) {
+        if (exportToConsiliumRequest.getIntermediateVersion() != null) {
             intermediate = getDocumentByVersion(documentRef, exportToConsiliumRequest.getIntermediateVersion(), clazz);
             return new ExportVersions(original, current, intermediate);
         }

@@ -7,6 +7,7 @@ import {
   Input,
   OnDestroy,
 } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
@@ -63,6 +64,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
         showStatusFilter: this.showStatusFilter,
       },
       this.annotateService,
+      this.documentService,
     );
     this.documentService.setAnnotationGetter(() =>
       this.annotate.getAnnotations(),

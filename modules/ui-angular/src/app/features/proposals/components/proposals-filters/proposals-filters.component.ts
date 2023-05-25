@@ -86,6 +86,10 @@ export class ProposalsFiltersComponent implements OnInit, OnDestroy {
     );
   }
 
+  isLabelTextTruncated(element: HTMLLabelElement): boolean {
+    return element.offsetWidth < element.scrollWidth;
+  }
+
   private setupFilterGroups(catalog: CatalogItem[]) {
     this.filterGroups = this.createFilters(catalog);
   }

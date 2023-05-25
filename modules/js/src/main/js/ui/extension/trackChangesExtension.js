@@ -30,15 +30,21 @@ define(function trackChangesExtensionModule(require) {
     function _connectorUnregistrationListener() {
         var connector = this;
         log.debug("Unregistering track changes extension...");
-        $("head #xmlTcStyle").remove();
-        $("head #editorTcStyle").remove();
+        $("head style[id$=TcStyle]").remove();
     }
 
     function _connectorStateChangeListener() {
         var connector = this;
         log.debug("Track changes extension state changed...");
         // KLUGE delay execution due to sync issues with target update
-        setTimeout(UTILS.updateTrackChangesStyles, 500, connector.getState().user, connector.getState().proposalRef);
+        setTimeout(_updateTrackChangesStyles, 500, connector.getState().user.login, connector.getState().proposalRef, connector.getState().isTrackChangesShowed);
+    }
+
+    function _updateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed) {
+        var docTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed,
+            "akomantoso inline[name='trackchanges']", "leos:uid", "leos:action");
+        $("head #docTcStyle").remove();
+        $("head").prepend("<style id='docTcStyle'>" + docTcStyle + "</style>");
     }
 
     return {

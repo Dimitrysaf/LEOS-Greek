@@ -261,11 +261,21 @@ class AnnexProcessorImpl implements AnnexProcessor {
         if (hasDepth(tagName)) {
             xmlContent = xmlContentProcessor.insertDepthAttribute(xmlContent, tagName, elementId);
         }
-        if (Arrays.asList(PARAGRAPH, SUBPARAGRAPH, POINT, INDENT, SUBPOINT).contains(tagName)) {
-            xmlContent = numberService.renumberParagraph(xmlContent);
-            xmlContent = numberService.renumberLevel(xmlContent);
-        } else if (tagName.equals(ARTICLE)) {
-            xmlContent = numberService.renumberArticles(xmlContent);
+        switch (tagName) {
+            case PARAGRAPH:
+            case SUBPARAGRAPH:
+            case POINT:
+            case INDENT:
+            case SUBPOINT:
+                xmlContent = numberService.renumberParagraph(xmlContent);
+                xmlContent = numberService.renumberLevel(xmlContent);
+                break;
+            case ARTICLE:
+                xmlContent = numberService.renumberArticles(xmlContent);
+                break;
+            case LEVEL:
+                xmlContent = numberService.renumberLevel(xmlContent);
+                break;
         }
         return xmlContentProcessor.doXMLPostProcessing(xmlContent);
     }

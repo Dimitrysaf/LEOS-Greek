@@ -12,7 +12,7 @@
   [title]="'page.workspace.create-title.draft' | translate"
   [isHandleCloseOnAccept]="true"
   [isHandleCloseOnDismiss]="true"
-  (close)="onClose()"
+  (close)="closeDialog()"
 >
   <ux-wizard-steps
     *ngIf="!fromProposal"

@@ -71,7 +71,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.collaboratorToDelete = null;
   }
 
-  hanldeOnChange(event) {
+  handleOnChange(event) {
     //reset previous state
     this.detailsService.setCollaboratorsRole({
       userId: this.editUserId,
@@ -82,12 +82,17 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.editUserId = null;
   }
 
-  public onFilterChange(event: any) {
+  onFilterChange(event: any) {
     this.filteredData = this.collaboratorsTable.filterRows(
       event,
       this.dataSource,
     );
     // this._refreshTotalPopulation();
+  }
+
+  exitEditMode() {
+    this.isEditRole = false;
+    this.editUserId = null;
   }
 
   getIndexByRole() {

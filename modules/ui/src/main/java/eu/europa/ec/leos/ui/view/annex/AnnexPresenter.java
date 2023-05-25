@@ -1617,7 +1617,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                         LeosCategory.ANNEX,
                         annex.getLastModifiedBy(),
                         Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
-
+        annexVO.setProposalRef(proposalRef);
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();
             annexVO.setDocNumber(metadata.getIndex());

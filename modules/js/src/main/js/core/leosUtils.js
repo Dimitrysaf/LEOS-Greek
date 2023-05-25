@@ -201,36 +201,26 @@ define(function leosUtilsModule(require) {
         }
     }
 
-    function _updateTrackChangesStyles(currentUser, proposalRef) {
-        log.debug("Track changes _updateTrackChangesStyles invoked...");
-        var xmlTcSelector = "akomantoso inline[name='trackchanges']";
-        var editorTcSelector = "akomantoso span[data-akn-name='trackchanges']";
-
-        var usersUid = [currentUser.login];
-        $(xmlTcSelector).each(function() {
-            // Retrieve user and add it to users array if not exists
-            var userUid = $(this).attr("leos:uid");
-            if ($.inArray(userUid, usersUid) === -1) {
-                usersUid.push(userUid);
+    function _generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, tcSelector, uidAttr, actionAttr) {
+        var tcStyle = "";
+        if (isTrackChangesShowed) {
+            var usersUid = [currentUserId];
+            $(tcSelector).each(function () {
+                var userUid = $(this).attr(uidAttr); // Retrieve user and add it to users array if not exists
+                if (userUid && $.inArray(userUid, usersUid) === -1) {
+                    usersUid.push(userUid);
+                }
+            });
+            for (var i = 0; usersUid.length > i; i++) {
+                var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
+                tcStyle += tcSelector + "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
+                tcStyle += tcSelector + "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
             }
-        });
-
-        // Create styles for users
-        var xmlTcStyle = "";
-        var editorTcStyle = "";
-        for (var i = 0; usersUid.length > i; i++) {
-            var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
-            xmlTcStyle += xmlTcSelector + "[leos\\:uid='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
-            xmlTcStyle += xmlTcSelector + "[leos\\:uid='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
-            editorTcStyle += editorTcSelector + "[data-akn-uid='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
-            editorTcStyle += editorTcSelector + "[data-akn-uid='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
+        } else {
+            tcStyle = tcSelector + "[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
+            tcStyle += tcSelector + "[" + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
         }
-
-        $("head #xmlTcStyle").remove();
-        $("head").prepend("<style id='xmlTcStyle'>" + xmlTcStyle + "</style>");
-
-        $("head #editorTcStyle").remove();
-        $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
+        return tcStyle;
     }
 
     function _generateColors(str) {
@@ -250,7 +240,7 @@ define(function leosUtilsModule(require) {
         getElementTagName : _getElementTagName,
         getParentWrapper : _getParentWrapper,
         toIsoString : _toIsoString,
-        updateTrackChangesStyles: _updateTrackChangesStyles,
+        generateTrackChangesStyles : _generateTrackChangesStyles,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE
     };
 });

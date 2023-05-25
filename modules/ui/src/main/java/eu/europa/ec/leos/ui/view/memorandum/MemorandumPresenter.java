@@ -1114,6 +1114,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                 LeosCategory.MEMORANDUM,
                 memorandum.getLastModifiedBy(),
                 Date.from(memorandum.getLastModificationInstant()), memorandum.isTrackChangesEnabled());
+        memorandumVO.setProposalRef(proposalRef);
         if (memorandum.getMetadata().isDefined()) {
             MemorandumMetadata metadata = memorandum.getMetadata().get();
             memorandumVO.getMetadata().setInternalRef(metadata.getRef());

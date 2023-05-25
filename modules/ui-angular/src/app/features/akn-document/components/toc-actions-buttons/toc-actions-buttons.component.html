@@ -14,42 +14,58 @@
       ></span>
     </button>
     <!-- Undo -->
-    <button
-      euiButton
-      euiBasicButton
-      class="p-0"
-      euiSizeS
-      [disabled]="isUndoDisabled"
-      (click)="onUndo()"
+    <span
+      *ngIf="isUndoDisabled"
+      [euiTooltip]="'global.actions.undo' | translate"
     >
-      <div class="d-flex flex-row">
-        <eui-icon euiSizeS iconClass="eui-icon-undo"></eui-icon>
-      </div>
-    </button>
+      <button
+        euiButton
+        euiBasicButton
+        class="p-0"
+        euiSizeS
+        [euiTooltip]="'global.actions.undo' | translate"
+        [disabled]="isUndoDisabled"
+        (click)="onUndo()"
+      >
+        <div class="d-flex flex-row">
+          <eui-icon euiSizeS iconClass="eui-icon-undo"></eui-icon>
+        </div>
+      </button>
+    </span>
     <!-- Save -->
-    <button
-      euiButton
-      euiBasicButton
-      class="p-0"
-      euiSizeS
+    <span
+      *ngIf="isSaveDisabled"
       [euiTooltip]="'global.actions.save' | translate"
-      [disabled]="isSaveDisabled"
-      (click)="onSave()"
     >
-      <img src="assets/images/toc-save.png" alt="" />
-    </button>
+      <button
+        euiButton
+        euiBasicButton
+        class="p-0"
+        euiSizeS
+        [euiTooltip]="'global.actions.save' | translate"
+        [disabled]="isSaveDisabled"
+        (click)="onSave()"
+      >
+        <img src="assets/images/toc-save.png" alt="" />
+      </button>
+    </span>
     <!-- Save and close -->
-    <button
-      euiButton
-      euiBasicButton
-      class="p-0"
-      euiSizeS
+    <span
+      *ngIf="isSaveDisabled"
       [euiTooltip]="'global.actions.save-close' | translate"
-      [disabled]="isSaveDisabled"
-      (click)="onSaveAndClose()"
     >
-      <img src="assets/images/toc-save-close.png" alt="" />
-    </button>
+      <button
+        euiButton
+        euiBasicButton
+        class="p-0"
+        euiSizeS
+        [euiTooltip]="'global.actions.save-close' | translate"
+        [disabled]="isSaveDisabled"
+        (click)="onSaveAndClose()"
+      >
+        <img src="assets/images/toc-save-close.png" alt="" />
+      </button>
+    </span>
     <!-- Cancel -->
     <button
       euiButton
@@ -95,7 +111,7 @@
             <div class="d-flex flex-row justify-content-around">
               <eui-icon euiSizeS iconClass="eui-icon-undo"></eui-icon>
               <span>{{
-                'page.editor.toc.toc-column.actions.undo' | translate
+                'page.editor.toc.toc-pane.actions.undo' | translate
               }}</span>
             </div>
           </button>

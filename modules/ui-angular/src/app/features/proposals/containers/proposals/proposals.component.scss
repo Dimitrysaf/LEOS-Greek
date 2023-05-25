@@ -1,3 +1,9 @@
+:host ::ng-deep {
+  .eui-page-column__header:first-of-type {
+    padding: 0 0 var(--eui-base-spacing-xs) 0;
+  }
+}
+
 .proposals-container {
   padding-bottom: 1.25rem;
 }

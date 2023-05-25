@@ -19,6 +19,7 @@ define(function leosTrackChangesPluginModule(require) {
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var diff_match_patch = require("diff_match_patch");
+    var UTILS = require("core/leosUtils");
 
     var pluginName = "leosTrackChanges";
 
@@ -30,8 +31,7 @@ define(function leosTrackChangesPluginModule(require) {
             }
 
             var core = trackChanges.core, actions = trackChanges.actions;
-            var isTrackChangesVisible = true, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
-            var defaultTrackChangesEditorStyle = $("head #editorTcStyle");
+            var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = trackChanges.canUserAcceptChanges(editor),
                 canUserRejectChanges = trackChanges.canUserRejectChanges(editor);
 
@@ -41,21 +41,14 @@ define(function leosTrackChangesPluginModule(require) {
                 icon: this.path + "icons/display.png",
                 command: "toggleDisplayCommand",
                 toolbar: "trackChanges",
-                isToggle: true
+                isToggle: isTrackChangesShowed
             });
             editor.addCommand("toggleDisplayCommand", {
                 canUndo: false,
                 exec: function(editor) {
-                    isTrackChangesVisible = !isTrackChangesVisible;
-                    this.setState(isTrackChangesVisible ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
-                    $("head #editorTcStyle").remove();
-                    if (isTrackChangesVisible) {
-                        $("head").prepend(defaultTrackChangesEditorStyle);
-                    } else {
-                        var editorTcStyle = "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='insert'] { text-decoration: none; }\n";
-                        editorTcStyle += "akomantoso div.cke_editable " + core.TRACKCHANGES_ELEMENT_SELECTOR + "[data-akn-action='delete'] { display: none; }\n";
-                        $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
-                    }
+                    isTrackChangesShowed = !isTrackChangesShowed;
+                    this.setState(isTrackChangesShowed ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
+                    core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
                 }
             });
 
@@ -137,14 +130,26 @@ define(function leosTrackChangesPluginModule(require) {
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
                 editor.getCommand("toggleDisplayCommand")
-                    .setState(isTrackChangesVisible ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
+                    .setState(isTrackChangesShowed ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
             });
 
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
                 var savedSnapshot, savedTcLocation, keyCodeLock, betweenFix, wasInsert, wasCollapsed;
+                var ctrlXArray;
                 var ctrlDown = false, cutText;
                 var editable = editor.editable();
+
+                // Initialize styles with selected track changes showed option
+                core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
+
+                // Used for CTRL-X
+                editable.attachListener(editor.document, "keydown", function(e) {
+                    var event = new EventWrapper(e);
+                    if (event.getKeyCode() === 88) {
+                        ctrlXArray = editor.getSelection().getRanges()[0].cloneContents().getChildren().$;
+                    }
+                });
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
@@ -222,13 +227,24 @@ define(function leosTrackChangesPluginModule(require) {
                                 startContainer = range.startContainer;
 
                                 if (!tcElement) { // Check if no TrackChange element is found.
-                                    if ((typeof(startContainer.getAttribute) != 'undefined') && (startContainer.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
+                                    if (startContainer && startContainer.type === CKEDITOR.NODE_TEXT &&
+                                        range.startOffset === range.endOffset &&
+                                        range.startOffset === startContainer.getText().length && deleteKey) {
+                                        var nextNode = range.getNextNode();
+                                        if (nextNode && (nextNode.type === CKEDITOR.NODE_ELEMENT) && (typeof(nextNode.getAttribute) != 'undefined') && (nextNode.getAttribute(this.ACTION_ATTR) === core.DELETE_ACTION)) {
+                                            event.getInstance().data.domEvent.preventDefault();
+                                            event.getInstance().stop();
+                                            savedSnapshot = null;
+                                        }
+                                    } else if ((typeof(startContainer.getAttribute) != 'undefined') && (startContainer.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
                                         if ((range.startOffset === 0 && deleteKey) || (range.startOffset !== 0 && !deleteKey)) {
                                             event.getInstance().data.domEvent.preventDefault();
+                                            event.getInstance().stop();
                                             savedSnapshot = null;
                                         }
                                     } else if ((typeof(startContainer.getParent().getAttribute) != 'undefined') && (startContainer.getParent().getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
                                         event.getInstance().data.domEvent.preventDefault();
+                                        event.getInstance().stop();
                                         savedSnapshot = null;
                                     }
                                 }
@@ -240,8 +256,6 @@ define(function leosTrackChangesPluginModule(require) {
                                 var nodeList = fragment.find('li:not(:has(ol))');
                                 if (nodeList.count() > 0) {
                                     actions.deletFromListAndAddTrackChange(editor, range, nodeList);
-
-
                                     event.getInstance().data.domEvent.preventDefault();
                                     event.getInstance().stop();
                                 } else {
@@ -381,7 +395,11 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "cut", function(e) {
                     // Save the text for the cut element
                     if (isTrackChangesEnabled) {
-                        cutText = core.getSelectedHtml(editor);
+                        for (var indexElem = 0; indexElem < ctrlXArray.length; indexElem++) {
+                            var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, ctrlXArray[indexElem].data,true);
+                            editor.insertHtml(tcItem.$.outerHTML, "html");
+                        }
+                        e.cancel();
                     }
                 });
             });
@@ -491,10 +509,9 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 } else if (savedTcLocation != core.NONE) {
                     var node = startContainer;
-                    if (range.startContainer.$.nodeName === '#text' &&
-                        range.endContainer.$.nodeName === '#text' &&
+                    if (node && node.type === CKEDITOR.NODE_TEXT &&
                         range.startOffset === range.endOffset &&
-                        range.startOffset === range.startContainer.$.length) {
+                        range.startOffset === node.getText().length) {
                         node = range.getNextNode();
                     } else if (savedTcLocation == core.AFTER) {
                         while (node.hasNext() && (node.type != 1)) {
@@ -710,12 +727,6 @@ define(function leosTrackChangesPluginModule(require) {
         searchNextTrackChangeElement: function(editor, action, deleteKey) {
             var range = editor.getSelection().getRanges()[0];
             var node = editor.getSelection().getRanges()[0].getNextNode();
-            if (range.startContainer.$.localName === 'span' &&
-                range.endContainer.$.localName === 'span' &&
-                range.startOffset === 0 &&
-                range.endOffset === 0) {
-                node = range.startContainer;
-            }
             if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                 return [node, this.CARET_START];
             } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasNext() && (deleteKey === true) && (node.getText().length === CKEDITOR.NODE_ELEMENT)) {
@@ -896,6 +907,13 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             }
             return selectedTcElements;
+        },
+
+        updateTrackChangesStyles: function(currentUserId, proposalRef, isTrackChangesShowed) {
+            var editorTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed,
+                "akomantoso div.cke_editable " + this.TRACKCHANGES_ELEMENT_SELECTOR, this.UID_ATTR, this.ACTION_ATTR);
+            $("head #editorTcStyle").remove();
+            $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
         }
 
     };

@@ -17,7 +17,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage xml:id="_FRBRlanguage" language="en"/>
+                    <FRBRlanguage language="en"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -43,7 +43,7 @@
                 <TLCConcept xml:id="_ART_DEF" href="http://publications.europa.eu/resource/subdivision-content/ART_DEF" showAs="Article on definitions"/>
             </references>
             <proprietary source="~_leos">
-                <leos:templateVersion>3.0.0</leos:templateVersion>
+                <leos:templateVersion>3.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:template>SJ-023</leos:template>
                 <leos:docTemplate>BL-023</leos:docTemplate>
@@ -127,8 +127,7 @@
                 <heading xml:id="_art_3__heading">Entry into force</heading>
                 <paragraph xml:id="_art_3__para_1">
                     <content xml:id="_art_3__para_1__content">
-                        <p xml:id="_art_3__para_1__content__p">This Regulation shall enter into force on the [...] day following that of its publication in
-                            the <i xml:id="_art_3__para_1__content__p__i">Official Journal of the European Union</i>.</p>
+                        <p xml:id="_art_3__para_1__content__p">This Regulation shall enter into force on the [...] day following that of its publication in the <i xml:id="_art_3__para_1__content__p__i">Official Journal of the European Union</i>.</p>
                     </content>
                 </paragraph>
             </article>

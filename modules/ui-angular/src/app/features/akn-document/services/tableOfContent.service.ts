@@ -108,6 +108,10 @@ export class TableOfContentService implements OnDestroy {
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
+  getCurrentToc() {
+    return this.tocBS.value;
+  }
+
   private getTocItems(
     documentRef: string,
     documentType: string,
