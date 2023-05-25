@@ -44,19 +44,32 @@
               <eui-page-columns>
                 <!-- TOC -->
                 <eui-page-column
+                  #tocPane
+                  class="toc-pane"
                   [label]="'page.editor.toc-pane.label' | translate"
                   isCollapsible
+                  (collapsed)="onToggleTocPaneCollapsed()"
                   interactiveScrollbars
-                  size="4xl"
+                  style="flex-basis: 400px"
                 >
                   <eui-page-column-body>
                     <app-milestone-toc [toc]="doc.tocData"></app-milestone-toc>
                   </eui-page-column-body>
                 </eui-page-column>
 
+                <app-draggable-splitter
+                  *ngIf="!hideTocSplitter"
+                  [isLeftAreaCollapsed]="isTocPaneCollapsed"
+                  [leftArea]="tocPaneElement"
+                  [rightArea]="documentPaneElement"
+                  [isRightAreaCollapsed]="false"
+                  (hideSplitter)="onHideTocSplitter($event)"
+                ></app-draggable-splitter>
+
                 <!-- Document -->
                 <eui-page-column
-                  class="eui-u-p-none eui-page-column--no-scrollbars"
+                  #documentPane
+                  class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
                   [interactiveScrollbars]="false"
                 >
                   <eui-page-column-body
@@ -70,13 +83,24 @@
                   </eui-page-column-body>
                 </eui-page-column>
 
+                <app-draggable-splitter
+                  *ngIf="!hideAnnotationsSplitter"
+                  [isLeftAreaCollapsed]="false"
+                  [leftArea]="documentPaneElement"
+                  [rightArea]="annotationsPaneElement"
+                  [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
+                  (hideSplitter)="onHideAnnotationsSplitter($event)"
+                ></app-draggable-splitter>
+
                 <!-- Annotations -->
                 <eui-page-column
-                  class="eui-page-column--right-column"
+                  #annotationsPane
+                  class="eui-page-column--right-column annotations-pane"
                   [label]="'page.editor.annotations-pane.label' | translate"
                   isCollapsible
+                  (collapsed)="onToggleAnnotationsPaneCollapsed()"
                   interactiveScrollbars
-                  style="width: calc(620px + 330px)"
+                  style="flex-basis: 580px"
                 >
                   <eui-page-column-body class="flex-grow-1">
                     <app-document-annotations

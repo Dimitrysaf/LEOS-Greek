@@ -31,6 +31,9 @@
     <eui-page-columns>
       <!-- ToC -->
       <eui-page-column
+        #tocPane
+        class="toc-pane"
+        [label]="'page.editor.toc-pane.label' | translate"
         isCollapsible
         [label]="
           (documentService.navigationPaneCollapse$ | async)
@@ -38,13 +41,14 @@
             : ('page.editor.toc-pane.label' | translate)
         "
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
-        (collapsed)="onToggleTOCPaneCollapsed()"
+        (collapsed)="onToggleTocPaneCollapsed()"
         [title]="
-          (this.isTOCPaneCollapsed
+          (this.isTocPaneCollapsed
             ? 'global.actions.show'
             : 'global.actions.hide'
           ) | translate
         "
+        style="flex-basis: 400px"
       >
         <eui-page-column-header-right-content>
           <div class="d-flex flex-row align-items-center">
@@ -233,9 +237,20 @@
         </eui-page-column-body>
       </eui-page-column>
 
+      <app-draggable-splitter
+        *ngIf="!hideTocSplitter"
+        [isLeftAreaCollapsed]="isTocPaneCollapsed"
+        [leftArea]="tocPaneElement"
+        [rightArea]="documentPaneElement"
+        [isRightAreaCollapsed]="false"
+        (hideSplitter)="onHideTocSplitter($event)"
+      >
+      </app-draggable-splitter>
+
       <!-- document -->
       <eui-page-column
-        class="eui-u-p-none eui-page-column--no-scrollbars"
+        #documentPane
+        class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
         [interactiveScrollbars]="false"
       >
         <eui-page-column-header-body>
@@ -317,8 +332,21 @@
         </eui-page-column-body>
       </eui-page-column>
 
+      <app-draggable-splitter
+        *ngIf="isVersionForViewOpen"
+        [isLeftAreaCollapsed]="false"
+        [leftArea]="documentPaneElement"
+        [rightArea]="versionForViewPaneElement"
+        [isRightAreaCollapsed]="false"
+      ></app-draggable-splitter>
+
       <!-- compare -> compare with this Version -->
-      <eui-page-column interactiveScrollbars *ngIf="isVersionForViewOpen">
+      <eui-page-column
+        #versionForViewPane
+        interactiveScrollbars
+        *ngIf="isVersionForViewOpen"
+        class="version-for-view-pane"
+      >
         <!-- <eui-page-column-header-left-content class="font-inherit-header">{{
           versionForViewHeaderTitle
         }}</eui-page-column-header-left-content> -->
@@ -383,9 +411,22 @@
         </eui-page-column-body>
       </eui-page-column>
 
+      <app-draggable-splitter
+        *ngIf="documentService.compareModeEnabled$ | async"
+        [isLeftAreaCollapsed]="false"
+        [leftArea]="
+          isVersionForViewOpen ? versionForViewPaneElement : documentPaneElement
+        "
+        [rightArea]="compareModePaneElement"
+        [isRightAreaCollapsed]="
+          (documentService.compareModeEnabled$ | async) === false
+        "
+      ></app-draggable-splitter>
+
       <!-- compare: b -->
       <eui-page-column
-        class="eui-u-p-none"
+        #compareModePane
+        class="eui-u-p-none compare-mode-pane"
         interactiveScrollbars
         *ngIf="documentService.compareModeEnabled$ | async"
       >
@@ -544,6 +585,23 @@
         </eui-page-column-body>
       </eui-page-column>
 
+      <app-draggable-splitter
+        *ngIf="!hideAnnotationsSplitter"
+        [isLeftAreaCollapsed]="
+          (documentService.compareModeEnabled$ | async) === false
+        "
+        [leftArea]="
+          (documentService.compareModeEnabled$ | async)
+            ? compareModePaneElement
+            : isVersionForViewOpen
+            ? versionForViewPaneElement
+            : documentPaneElement
+        "
+        [rightArea]="annotationsPaneElement"
+        [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
+        (hideSplitter)="onHideAnnotationsSplitter($event)"
+      ></app-draggable-splitter>
+
       <eui-dialog
         #unSavedDialog
         [title]="
@@ -565,12 +623,7 @@
             >
               {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
             </button>
-            <button
-              euiButton
-              class=""
-              euiPrimary
-              (click)="hanldeUnSaveDialogClose(true)"
-            >
+            <button class="" euiPrimary (click)="hanldeUnSaveDialogClose(true)">
               {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
             </button>
           </div>
@@ -579,12 +632,13 @@
 
       <!-- annotations -->
       <eui-page-column
-        class="eui-page-column--right-column"
+        #annotationsPane
+        class="eui-page-column--right-column annotations-pane"
         [label]="'page.editor.annotations-pane.label' | translate"
         isCollapsible
         [isCollapsed]="isAnnotationsPaneCollapsed"
         (collapsed)="onToggleAnnotationsPaneCollapsed()"
-        style="width: calc(620px + 330px)"
+        style="flex-basis: 580px"
       >
         <eui-page-column-body class="flex-grow-1">
           <app-document-annotations

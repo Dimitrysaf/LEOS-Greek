@@ -40,6 +40,12 @@
     align-self: start;
   }
 
+  .toc-pane,
+  .annotations-pane {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
   .scrollable-page-column {
     overflow: scroll;
     width: 35%;
