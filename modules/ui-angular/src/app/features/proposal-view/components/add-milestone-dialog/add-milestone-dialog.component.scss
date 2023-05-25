@@ -1,7 +1,11 @@
 .milestones {
   &-header {
-    border-bottom: none !important;
-    padding: var(--eui-base-spacing-2xs) 0 !important;
+    align-items: center;
+    border-bottom: none;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-between;
+    padding: var(--eui-base-spacing-2xs) 0;
   }
 
   &-select,
