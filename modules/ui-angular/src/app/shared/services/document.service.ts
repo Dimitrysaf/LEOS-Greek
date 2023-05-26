@@ -922,38 +922,60 @@ export class DocumentService implements OnDestroy {
         let elementTextLength = 0;
         let previousElementTextLength = 0;
         let foundSearchText = false;
-        element.childNodes.forEach((i, j) => {
-          previousElementTextLength = elementTextLength;
-          if (i.nodeType !== 3) {
-            //nodeType=3 represents a text node
-            const currentTextLength = this.getNodeTextOnlyLength(i);
-            elementTextLength += currentTextLength;
-          } else {
-            elementTextLength += i.textContent.length;
+        if (element.children.length === 0) {
+          const range = document.createRange();
+          const start =
+            res.matchedElements[0].matchStartIndex - previousElementTextLength;
+          range.setStart(element.childNodes[0], start);
+          const end =
+            res.matchedElements[0].matchEndIndex - previousElementTextLength;
+          range.setEnd(element.childNodes[0], end);
+          rangeArray.push(range);
+          wrapperIdArray.push('result-' + index);
+          this.searchResultIndexArray.push({
+            id: 'result-' + index,
+            resultArrayIndex: index,
+          });
+        } else {
+          for (let j = 0; j < element.children.length; j++) {
+            const i = element.children[j];
+            if (i.classList.contains('leos-content-soft-removed')) {
+              continue;
+            } else {
+              previousElementTextLength = elementTextLength;
+              if (i.nodeType !== 3) {
+                //nodeType=3 represents a text node
+                const currentTextLength = this.getNodeTextOnlyLength(i);
+                elementTextLength += currentTextLength;
+              } else {
+                elementTextLength += i.textContent.length;
+              }
+              if (
+                elementTextLength - res.matchedElements[0].matchStartIndex >
+                  -1 &&
+                elementTextLength - res.matchedElements[0].matchEndIndex > -1 &&
+                !foundSearchText
+              ) {
+                const range = document.createRange();
+                const start =
+                  res.matchedElements[0].matchStartIndex -
+                  previousElementTextLength;
+                range.setStart(i.firstChild !== null ? i.firstChild : i, start);
+                const end =
+                  res.matchedElements[0].matchEndIndex -
+                  previousElementTextLength;
+                range.setEnd(i.firstChild !== null ? i.firstChild : i, end);
+                rangeArray.push(range);
+                wrapperIdArray.push('result-' + index + '-' + j);
+                this.searchResultIndexArray.push({
+                  id: 'result-' + index + '-' + j,
+                  resultArrayIndex: index,
+                });
+                foundSearchText = true;
+              }
+            }
           }
-
-          if (
-            elementTextLength - res.matchedElements[0].matchStartIndex > -1 &&
-            elementTextLength - res.matchedElements[0].matchEndIndex > -1 &&
-            !foundSearchText
-          ) {
-            const range = document.createRange();
-            const start =
-              res.matchedElements[0].matchStartIndex -
-              previousElementTextLength;
-            range.setStart(i, start);
-            const end =
-              res.matchedElements[0].matchEndIndex - previousElementTextLength;
-            range.setEnd(i, end);
-            rangeArray.push(range);
-            wrapperIdArray.push('result-' + index + '-' + j);
-            this.searchResultIndexArray.push({
-              id: 'result-' + index + '-' + j,
-              resultArrayIndex: index,
-            });
-            foundSearchText = true;
-          }
-        });
+        }
       }
     }
 
