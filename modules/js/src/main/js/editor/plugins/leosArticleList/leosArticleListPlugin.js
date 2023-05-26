@@ -826,7 +826,11 @@ define(function leosArticleListPluginModule(require) {
             var sublist = getSubList( nextLi );
             if ( sublist ) {
                 // If next line is in the sub list of the current list item.
-                if ( currentBlock.contains( nextLi ) ) {
+                var htmlIsEmpty = nextLi.getChild(0) != null
+                    && nextLi.getChild(0).getChild(0) != null
+                    && nextLi.getChild(0).getChild(0).getHtml() != null
+                    && nextLi.getChild(0).getChild(0).getHtml().trim() == '';
+                if ( currentBlock.contains( nextLi )  || htmlIsEmpty) {
                     mergeChildren( sublist, nextLi.getParent(), nextLi );
                     sublist.remove();
                 }

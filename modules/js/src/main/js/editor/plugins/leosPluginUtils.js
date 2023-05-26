@@ -99,7 +99,9 @@ define(function leosPluginUtilsModule(require) {
 
     function _hasEmptyTextAsPrevSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasPrevious()
-            && ((_getElementName(element.getPrevious()) === TEXT && element.getHtml().trim() == "") || _getElementName(element.getPrevious()) === BOGUS);
+            && ((_getElementName(element.getPrevious()) === TEXT
+                    && element.getText() != null
+                    && element.getText().trim() == "") || _getElementName(element.getPrevious()) === BOGUS);
     }
 
     function _getElementName(element) {
@@ -1150,7 +1152,7 @@ define(function leosPluginUtilsModule(require) {
      */
      function _pushNotInlineElements(node, notInlineElements, isNotInlinePushed){
         var hasElementsLI = !!node && _getElementName(node) === HTML_POINT
-             && node.childNodes.length > 1 &&  !!node.getAttribute(DATA_AKN_ELEMENT)
+             && node.childNodes.length > 1 && !!node.getAttribute(DATA_AKN_ELEMENT)
                          && node.getAttribute(DATA_AKN_ELEMENT) === SUBPARAGRAPH;
         if(!hasElementsLI){
             return;
@@ -1158,7 +1160,8 @@ define(function leosPluginUtilsModule(require) {
         var isAtLeastOneMatch = false;
         for (var i = 0; i < node.childNodes.length; i++){
             var child = node.childNodes[i];
-            if(!INLINE_FROM_MATCH.test(_getElementName(child))){
+            var childName = _getElementName(child);
+            if(childName != ORDER_LIST_ELEMENT && !INLINE_FROM_MATCH.test(childName)){
                isAtLeastOneMatch = true;
                break;
             }
