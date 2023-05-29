@@ -40,10 +40,15 @@ This project uses tools for source code linting and formatting.
 
 `prettier`: Static analysis and enforcement of **stylistic** rules in **all files**.
 
-- applies to: `*.{js,ts,css,scss,html,json,md}`
+- applies to: `*.{js,mjs,ts,css,scss,html,json,md}`
 - configuration file: `.prettierrc.js`
 - lint command: `npm run prettier`
 - fix command: `npm run prettier:fix`
+
+...or with a **single command**:
+
+- lint command: `npm run lint`
+- fix command: `npm run lint:fix`
 
 ### `lint-staged`
 
@@ -57,6 +62,10 @@ This project uses `husky` to lint and try fixing errors before committing to `gi
 - It is automatically set up after running `yarn install` (or `npm install`) - see `scripts.prepare` in `package.json`.
 - The actual script for the hook is `.husky/pre-commit`.
 - `husky` expects both `package.json` and `.git` to exist in the same parent directory. Since this is not the case, we must account for it in the `prepare` and `pre-commit` scripts mentioned above. For more details see https://scottsauber.com/2021/06/01/using-husky-git-hooks-and-lint-staged-with-nested-folders/.
+
+#### Important
+
+In order for the git hooks to work in _SourceTree_, go to _SourceTree_ -> _Preferences_ -> _Git_ and choose _Use System Git_.
 
 ### Jetbrains IDE Setup
 
