@@ -523,6 +523,24 @@
                 euiBasicButton
                 euiSecondary
                 euiSizeS
+                *ngIf="versionsComparisonForView && isCNInstance"
+                (click)="downloadVersionOfFileEConsil()"
+                [euiTooltip]="
+                  'page.editor.versions.compare.actions.download-eConsilium'
+                    | translate
+                "
+                [showDelay]="tooltipsDelay"
+              >
+                <span
+                  class="eui-icon eui-icon-filetype-unknown"
+                  euiIconColored
+                ></span>
+              </button>
+              <button
+                euiButton
+                euiBasicButton
+                euiSecondary
+                euiSizeS
                 *ngIf="versionsComparisonForView"
                 (click)="
                   isCNInstance
@@ -539,24 +557,6 @@
               >
                 <span
                   class="eui-icon eui-icon-ecl-download"
-                  euiIconColored
-                ></span>
-              </button>
-              <button
-                euiButton
-                euiBasicButton
-                euiSecondary
-                euiSizeS
-                *ngIf="versionsComparisonForView && isCNInstance"
-                (click)="downloadVersionOfFileEConsil()"
-                [euiTooltip]="
-                  'page.editor.versions.compare.actions.download-eConsilium'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span
-                  class="eui-icon eui-icon-filetype-unknown"
                   euiIconColored
                 ></span>
               </button>
