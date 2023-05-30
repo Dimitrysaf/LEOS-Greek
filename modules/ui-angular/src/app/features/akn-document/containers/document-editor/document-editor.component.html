@@ -448,8 +448,10 @@
                 *ngIf="versionsComparisonForView"
                 (click)="handleAsyncScroll()"
                 [euiTooltip]="
-                  'page.editor.versions.compare.actions.synchronous-scrolling'
-                    | translate
+                  (isAsyncScrollEnabled
+                    ? 'page.editor.versions.compare.actions.synchronous-scrolling.disable'
+                    : 'page.editor.versions.compare.actions.synchronous-scrolling.enable'
+                  ) | translate
                 "
                 [showDelay]="tooltipsDelay"
               >

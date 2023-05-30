@@ -264,6 +264,8 @@ export class DocumentEditorComponent
           );
           setTimeout(() => {
             this.handleCompareChanges();
+            this.isAsyncScrollEnabled = false;
+            this.handleAsyncScroll();
           });
         }
       });
