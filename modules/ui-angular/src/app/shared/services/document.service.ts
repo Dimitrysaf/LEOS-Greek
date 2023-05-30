@@ -373,7 +373,7 @@ export class DocumentService implements OnDestroy {
 
     this.http
       .post(
-        `${apiBaseUrl}/download-compared-version-as-docuwrite/${documentType}/${documentRef}/`,
+        `${apiBaseUrl}/secured/document/download-compared-version-as-docuwrite/${documentType}/${documentRef}/`,
         {
           originalVersion: originalVersion.cmisVersionNumber,
           currentVersion: currentVersion.cmisVersionNumber,
@@ -395,7 +395,7 @@ export class DocumentService implements OnDestroy {
 
     this.http
       .post(
-        `${apiBaseUrl}/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
+        `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
         {
           originalVersion: originalVersion.cmisVersionNumber,
           currentVersion: currentVersion.cmisVersionNumber,
@@ -416,7 +416,7 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentRef;
     this.http
       .post(
-        `${apiBaseUrl}/download-compared-version-XML/${documentType}/${documentRef}`,
+        `${apiBaseUrl}/secured/document/download-compared-version-XML/${documentType}/${documentRef}`,
         {
           originalVersion: originalVersion.cmisVersionNumber,
           currentVersion: currentVersion.cmisVersionNumber,
@@ -437,7 +437,7 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentRef;
     this.http
       .post(
-        `${apiBaseUrl}/export-compared-version-as-PDF/${documentType}/${documentRef}`,
+        `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}`,
         {
           originalVersion: originalVersion.cmisVersionNumber,
           currentVersion: currentVersion.cmisVersionNumber,
