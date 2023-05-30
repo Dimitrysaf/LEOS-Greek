@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -31,9 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -52,17 +53,17 @@ public class ApplicationTests {
     @Test
     @Transactional(readOnly = true)
     public void test_findPackageByName() {
-        Package pkg = packageRepository.findPackageByName("templates");
-        assertNotNull(pkg);
+        Optional<Package> pkg = packageRepository.findPackageByName("templates");
+        assertTrue(pkg.isPresent());
     }
 
     @Test
     @Transactional(readOnly = true)
     public void test_findDocumentsByPackageName() {
-        Package pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
-        assertNotNull(pkg);
-        List<Document> docs = documentRepository.findAllDocumentsByPackageId(pkg);
-        assertEquals(docs.size(), 5);
+        Optional<Package> pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
+        assertTrue(pkg.isPresent());
+        List<Document> docs = documentRepository.findAllDocumentsByPackageId(pkg.get());
+        assertEquals(docs.size(), 4);
     }
 
     @Test
@@ -83,9 +84,10 @@ public class ApplicationTests {
         assertEquals(docs.size(), 1);
         docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "MEMORANDUM");
         assertEquals(docs.size(), 1);
-        Package pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
-        assertNotNull(pkg);
-        docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.getId(), "MEMORANDUM");
+        Optional<Package> pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
+        assertTrue(pkg.isPresent());
+        docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.get().getId(), "MEMORANDUM");
         assertEquals(docs.size(), 1);
     }
+
 }

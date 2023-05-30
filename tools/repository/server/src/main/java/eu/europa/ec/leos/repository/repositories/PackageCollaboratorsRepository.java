@@ -13,14 +13,23 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
+import eu.europa.ec.leos.repository.entities.Collaborators;
+import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface DocumentPropertiesVRepository extends JpaRepository<DocumentPropertiesV, BigDecimal> {
-    @Query(value = "SELECT * FROM DOCUMENT_PROPERTIES_V d WHERE d.ID = ?1", nativeQuery = true)
-    List<DocumentPropertiesV> findDocumentPropertiesVById(BigDecimal id);
+public interface PackageCollaboratorsRepository extends JpaRepository<PackageCollaborators, BigDecimal> {
+    List<PackageCollaborators> findPackageCollaboratorsByPackageId(Package packageId);
+
+    @Query(value = "SELECT * FROM PACKAGE_COLLABORATORS c WHERE c.PACKAGE_ID = ?1", nativeQuery = true)
+    List<PackageCollaborators> findCollaboratorsByPackageId(BigDecimal packageId);
+
+    @Query(value = "SELECT p.PACKAGE_ID FROM PACKAGE_COLLABORATORS p WHERE p.COLLABORATOR_ID IN (SELECT ID FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = " +
+            "?1 AND c.ROLE_ID = ?2)",
+            nativeQuery = true)
+    List<BigDecimal> findPackageIdByCollaboratorNameAndByRole(String collaboratorName, String role);
 }

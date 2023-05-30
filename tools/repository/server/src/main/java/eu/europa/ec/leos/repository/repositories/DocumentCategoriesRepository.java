@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -16,6 +16,9 @@ package eu.europa.ec.leos.repository.repositories;
 import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.math.BigDecimal;
 
-public interface DocumentCategoriesRepository extends JpaRepository<DocumentCategories, Long> {
+
+public interface DocumentCategoriesRepository extends JpaRepository<DocumentCategories, BigDecimal> {
+    DocumentCategories findDocumentCategoriesByCategoryCode(String categoryCode);
 }

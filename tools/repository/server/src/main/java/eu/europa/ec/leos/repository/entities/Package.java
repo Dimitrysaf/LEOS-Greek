@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -45,18 +45,13 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Package.findByAuditLastMDate", query = "SELECT p FROM Package p WHERE p.auditLastMDate = :auditLastMDate"),
     @NamedQuery(name = "Package.findByOriginalId", query = "SELECT p FROM Package p WHERE p.originalId = :originalId"),
     @NamedQuery(name = "Package.findByIsCloned", query = "SELECT p FROM Package p WHERE p.isCloned = :isCloned"),
-    @NamedQuery(name = "Package.findByClonedPackageName", query = "SELECT p FROM Package p WHERE p.clonedPackageName = :clonedPackageName"),
-    @NamedQuery(name = "Package.findByUserId", query = "SELECT p FROM Package p WHERE p.userId = :userId"),
-    @NamedQuery(name = "Package.findByRole", query = "SELECT p FROM Package p WHERE p.role = :role"),
-    @NamedQuery(name = "Package.findByOrganization", query = "SELECT p FROM Package p WHERE p.organization = :organization")})
+    @NamedQuery(name = "Package.findByClonedPackageName", query = "SELECT p FROM Package p WHERE p.clonedPackageName = :clonedPackageName")})
 public class Package implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigDecimal id;
     @Column(name = "OBJECT_ID", nullable = false, precision = 22, scale = 0)
     private BigDecimal objectId;
@@ -75,20 +70,16 @@ public class Package implements Serializable {
     @Column(name = "ORIGINAL_ID", precision = 22, scale = 0)
     private BigDecimal originalId;
     @Column(name = "IS_CLONED")
-    private Short isCloned;
+    private Boolean isCloned;
     @Column(name = "CLONED_PACKAGE_NAME")
     private String clonedPackageName;
-    @Column(name = "USER_ID")
-    private String userId;
-    @Column(name = "ROLE")
-    private String role;
-    @Column(name = "ORGANIZATION")
-    private String organization;
     @OneToMany(mappedBy = "clonedPackageId")
     private Collection<Package> packageCollection;
     @JoinColumn(name = "CLONED_PACKAGE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Package clonedPackageId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "packageId")
+    private Collection<PackageCollaborators> packageCollaboratorsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "packageId")
     private Collection<Document> documentCollection;
 
@@ -180,11 +171,11 @@ public class Package implements Serializable {
         this.originalId = originalId;
     }
 
-    public Short getIsCloned() {
+    public Boolean getIsCloned() {
         return isCloned;
     }
 
-    public void setIsCloned(Short isCloned) {
+    public void setIsCloned(Boolean isCloned) {
         this.isCloned = isCloned;
     }
 
@@ -213,28 +204,13 @@ public class Package implements Serializable {
         this.clonedPackageId = clonedPackageId;
     }
 
-    public String getUserId() {
-        return userId;
+    @XmlTransient
+    public Collection<PackageCollaborators> getPackageCollaboratorsCollection() {
+        return packageCollaboratorsCollection;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setPackageCollaboratorsCollection(Collection<PackageCollaborators> packageCollaboratorsCollection) {
+        this.packageCollaboratorsCollection = packageCollaboratorsCollection;
     }
 
     @XmlTransient

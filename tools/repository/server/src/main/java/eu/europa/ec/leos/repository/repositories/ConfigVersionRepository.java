@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -15,6 +15,11 @@ package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.ConfigVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface ConfigVersionRepository extends JpaRepository<ConfigVersion, Long> {
+import java.math.BigDecimal;
+
+public interface ConfigVersionRepository extends JpaRepository<ConfigVersion, BigDecimal> {
+    @Query(value = "SELECT * FROM CONFIG_VERSION c WHERE c.CONFIG_ID = ?1 AND c.IS_LATEST_VERSION = 1", nativeQuery = true)
+    ConfigVersion findLastConfigVersionByConfigId(BigDecimal configId);
 }

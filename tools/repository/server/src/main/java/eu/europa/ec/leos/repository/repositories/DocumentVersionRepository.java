@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -15,6 +15,20 @@ package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface DocumentVersionRepository extends JpaRepository<DocumentVersion, Long> {
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+public interface DocumentVersionRepository extends JpaRepository<DocumentVersion, BigDecimal> {
+    Optional<DocumentVersion> findDocumentVersionByVersionLabelAndDocumentId(String versionLabel, BigDecimal documentId);
+
+    List<DocumentVersion> findAllVersionsByDocumentId(BigDecimal documentId);
+
+    @Query(value = "SELECT * FROM DOCUMENT_VERSION d WHERE d.DOCUMENT_ID = ?1 AND d.IS_LATEST_VERSION = 1", nativeQuery = true)
+    Optional<DocumentVersion> findLastVersionByDocumentId(BigDecimal documentId);
+
+    @Query(value = "SELECT * FROM DOCUMENT_VERSION d WHERE d.DOCUMENT_ID = ?1 AND d.IS_LATEST_MAJOR_VERSION = 1", nativeQuery = true)
+    Optional<DocumentVersion> findLastMajorVersionByDocumentId(BigDecimal documentId);
 }

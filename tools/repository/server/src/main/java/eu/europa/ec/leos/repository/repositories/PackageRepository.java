@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -17,7 +17,8 @@ import eu.europa.ec.leos.repository.entities.Package;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
-    Package findPackageByName(String name);
+    Optional<Package> findPackageByName(String name);
 }

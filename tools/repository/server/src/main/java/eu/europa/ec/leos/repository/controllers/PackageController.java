@@ -1,3 +1,16 @@
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
 package eu.europa.ec.leos.repository.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Tag(name = "Package API", description = "Package API")
@@ -42,9 +56,9 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Package> getPackageByName(@PathVariable("name") String name) {
         try {
-            Package p = packageRepository.findPackageByName(name);
-            if (p != null) {
-                return new ResponseEntity<>(p, HttpStatus.OK);
+            Optional<Package> p = packageRepository.findPackageByName(name);
+            if (p.isPresent()) {
+                return new ResponseEntity<>(p.get(), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
@@ -64,10 +78,10 @@ public class PackageController {
     public ResponseEntity<String> getDocumentsByPackageName(@PathVariable String name)
     {
         try {
-            Package pkg = packageRepository.findPackageByName(name);
+            Optional<Package> pkg = packageRepository.findPackageByName(name);
             List<DocumentV> docs = Arrays.asList();
-            if (pkg != null) {
-                docs = documentRepository.findDocumentsByPackageId(pkg.getId());
+            if (pkg.isPresent()) {
+                docs = documentRepository.findDocumentsByPackageId(pkg.get().getId());
             } else {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }

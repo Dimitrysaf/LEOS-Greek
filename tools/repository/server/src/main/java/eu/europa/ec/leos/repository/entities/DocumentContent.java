@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -59,7 +59,7 @@ public class DocumentContent implements Serializable {
     private String categoryCode;
     @Lob
     @Column(name = "CONTENT", nullable = false)
-    private byte[] content;
+    private String content;
     @Column(name = "ACT_TYPE", length = 100)
     private String actType;
     @Column(name = "DOC_PURPOSE", nullable = false, length = 400)
@@ -91,7 +91,7 @@ public class DocumentContent implements Serializable {
         this.id = id;
     }
 
-    public DocumentContent(BigDecimal id, byte[] content, String docPurpose, String docType,
+    public DocumentContent(BigDecimal id, String content, String docPurpose, String docType,
                            String template, String title, String auditCBy, LocalDateTime auditCDate) {
         this.id = id;
         this.content = content;
@@ -111,12 +111,20 @@ public class DocumentContent implements Serializable {
         this.id = id;
     }
 
-    public byte[] getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(byte[] content) {
+    public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getCategoryCode() {
+        return categoryCode;
+    }
+
+    public void setCategoryCode(String categoryCode) {
+        this.categoryCode = categoryCode;
     }
 
     public String getActType() {
