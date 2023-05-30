@@ -207,6 +207,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
@@ -1015,6 +1016,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             case POINT:
             case INDENT:
                 return elementContent.contains("<subparagraph>");
+            case BLOCK:
+            	return elementContent.contains("<block");
             default:
                 return false;
         }

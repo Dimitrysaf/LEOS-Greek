@@ -834,7 +834,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     @Override
     public Pair<byte[], Element> getSplittedElement(byte[] xmlContent, String content, String tagName, String idAttributeValue) {
         Element splitElement;
-        if (Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) || (PARAGRAPH.equals(tagName) && !content.contains("<" + SUBPARAGRAPH + ">"))) {
+        if (Arrays.asList(SUBPARAGRAPH, SUBPOINT, BLOCK).contains(tagName) || (PARAGRAPH.equals(tagName) && !content.contains("<" + SUBPARAGRAPH + ">"))) {
             splitElement = getSiblingElement(xmlContent, tagName, idAttributeValue, Collections.emptyList(), false);
 
             // Case when subparagraph is a list's wrapper
