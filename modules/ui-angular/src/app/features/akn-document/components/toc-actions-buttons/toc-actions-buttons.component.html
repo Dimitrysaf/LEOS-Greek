@@ -15,7 +15,7 @@
     </button>
     <!-- Undo -->
     <span
-      *ngIf="isUndoDisabled"
+      *ngIf="!isUndoDisabled"
       [euiTooltip]="'global.actions.undo' | translate"
     >
       <button
@@ -33,7 +33,10 @@
       </button>
     </span>
     <!-- Save -->
-    <span [euiTooltip]="'global.actions.save' | translate">
+    <span
+      *ngIf="!isSaveDisabled"
+      [euiTooltip]="'global.actions.save' | translate"
+    >
       <button
         euiButton
         euiBasicButton
@@ -47,7 +50,10 @@
       </button>
     </span>
     <!-- Save and close -->
-    <span [euiTooltip]="'global.actions.save-close' | translate">
+    <span
+      *ngIf="!isSaveDisabled"
+      [euiTooltip]="'global.actions.save-close' | translate"
+    >
       <button
         euiButton
         euiBasicButton
