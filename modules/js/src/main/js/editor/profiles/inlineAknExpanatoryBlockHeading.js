@@ -50,6 +50,8 @@ define(function aknInlineAknExpanatoryBlockHeadingProfileModule(require) {
     plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
     plugins.push(require("plugins/leosImageResize/leosImageResizePlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
+    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
+    plugins.push(require("plugins/leosElementSplitHandler/leosElementSplitHandlerPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
@@ -94,30 +96,33 @@ define(function aknInlineAknExpanatoryBlockHeadingProfileModule(require) {
         // LEOS-2887 removing tooltip title 
         title: false,
         // toolbar groups arrangement, optimised for a single toolbar row
-        toolbarGroups : [ {
-            name : "save"
+        toolbar : [ {
+            name : "save",
+            items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ]
         }, {
             name : "clipboard",
-            groups : [ "clipboard", "undo" ]
-        }, {
-            name : "editing",
-            groups : [ "selection", "spellchecker" ]
+            items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ]
         }, {
             name : "basicstyles",
-            groups : [ "basicstyles", "cleanup" ]
+            items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Strike', 'Superscript', 'TransformTextSwitcher' ]
         }, {
             name : "paragraph",
-            groups : [ "unumberedList", "indent" ]
+            items : [ "leosBulletList", "leosIndentList", "leosNumberedList", "leosCrossHeadingPoint" ]
         }, {
-            name: "ref"      //Toolbar group containing Authorial Note button
+            name: "ref",
+            items : [ "authorialNoteWidget", "LeosCrossReference" ]      //Toolbar group containing Authorial Note button
         },'/', {
-            name : "align"
+            name : "align",
+            items : [ "JustifyLeft", "JustifyCenter", "JustifyRight" ]
         }, {
-            name: "insert"
+            name: "insert",
+            items: [ "Mathjax", "Table", "SpecialChar", "base64image", "leosHierarchicalElementShiftEnterHandler" ]
         }, {
-            name : "tools"    //Toolbar group containing show blocks
+            name : "tools",
+            items: [ "LeosShowBlocks" ]    //Toolbar group containing show blocks
         }, {
-            name : "mode"       //Toolbar group containing Source button
+            name : "mode",
+            items: [ "Sourcedialog" ]       //Toolbar group containing Source button
         } ]
     };
     // adding the specific configs coming from the plugins.

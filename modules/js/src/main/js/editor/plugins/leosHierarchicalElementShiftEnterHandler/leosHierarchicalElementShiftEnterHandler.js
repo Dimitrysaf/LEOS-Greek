@@ -116,7 +116,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         }
         if (_isElementInsideTable(selection.getStartElement())) {
             context.event.cancel();
-        } else if (elementType && (elementType === 'level' || elementType === 'paragraph') && (_isStartElementOrderedListOrContent(selection))) {
+        } else if (elementType && (elementType === 'block' || ((elementType === 'level' || elementType === 'paragraph') && _isStartElementOrderedListOrContent(selection)))) {
             _executeShiftEnter(context.editor);
             leosPluginUtils.manageEmptyLists(context.editor);
             leosPluginUtils.managePoints(context.editor);
@@ -267,13 +267,15 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             } else if (_isElementInsideTable(startElementParent)) {
                 pElement.setAttribute(DATA_AKN_NAME, 'aknParagraph');
             }
-			if(leosPluginUtils.isAnnexUnnumberedCNParagraph(startElement)) {            
+			if (startElementName === 'p' && startElement.hasAttribute(DATA_AKN_ELEMENT)) {
+                pElement.setAttribute(DATA_AKN_ELEMENT, startElement.getAttribute(DATA_AKN_ELEMENT));
+            } else if(leosPluginUtils.isAnnexUnnumberedCNParagraph(startElement)) {            
 				pElement.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
 			} else {
 				pElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
 			}
 
-            if (leosKeyHandler.isContentEmptyTextNode(content) && _isStartElementOrderedListOrContent(selection)) {
+            if (leosKeyHandler.isContentEmptyTextNode(content)) {
                 pElement.appendBogus();
             } else {
                 pElement.append(content);
