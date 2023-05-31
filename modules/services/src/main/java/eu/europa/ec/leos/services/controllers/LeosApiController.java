@@ -35,7 +35,6 @@ import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
-import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -101,7 +100,6 @@ public class LeosApiController {
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
-
     private final int SINGLE_COLUMN_MODE = 1;
     private final int TWO_COLUMN_MODE = 2;
     private static final String GRANT_TYPE = "grant-type";

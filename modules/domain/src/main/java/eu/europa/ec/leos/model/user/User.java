@@ -33,14 +33,18 @@ public class User implements Serializable {
     private List<String> roles;
 
     private Entity connectedEntity;
-    
-	public User(Long id, String login, String name, List<Entity> entities, String email, List<String> roles) {
+
+    public User(Long id, String login, String name, List<Entity> entities, String email, List<String> roles) {
         this.id = id;
         this.login = login;
         this.name = name;
         this.entities = entities;
         this.email = email;
         this.roles = roles;
+    }
+
+    public User() {
+
     }
 
     public Long getId() {
@@ -60,8 +64,8 @@ public class User implements Serializable {
     }
 
     public Entity getDefaultEntity() {
-	    if(getConnectedEntity() != null) {
-	        return connectedEntity;
+        if (getConnectedEntity() != null) {
+            return connectedEntity;
         }
         return entities != null && !entities.isEmpty() ? entities.get(0) : null;
     }
@@ -88,16 +92,20 @@ public class User implements Serializable {
     }
 
     public List<String> getRoles() {
-		return roles;
-	}
+        return roles;
+    }
 
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
-    public Entity getConnectedEntity() { return connectedEntity; }
+    public Entity getConnectedEntity() {
+        return connectedEntity;
+    }
 
-    public void setConnectedEntity(Entity connectedEntity) { this.connectedEntity = connectedEntity; }
+    public void setConnectedEntity(Entity connectedEntity) {
+        this.connectedEntity = connectedEntity;
+    }
 
     public String toString2() {
         final StringBuilder sb = new StringBuilder("User{");

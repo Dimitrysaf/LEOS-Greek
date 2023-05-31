@@ -32,6 +32,7 @@ import {
   CreateDraftBody,
   CreateDraftResponse,
 } from '@/features/proposals/models';
+import { MilestoneDescriptor } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
 
@@ -282,6 +283,49 @@ export class ProposalDetailsService implements OnDestroy {
         milestoneComment,
       )
       .subscribe(() => this.loadProposalMilestones());
+  }
+
+  sendMilestoneForContribution(milestone: MilestoneDescriptor, login: string) {
+    this.loadingService.setLoading(true);
+    const body = {
+      legDocumentName: milestone.legDocumentName,
+      userLogin: login,
+    };
+    return this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/create-clone-proposal/${this.proposalRef}`,
+        body,
+      )
+      .subscribe({
+        next: (res) => {
+          this.uxAppService.growl({
+            severity: 'success',
+            summary: this.translateService.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.milestones.send-copy-for-contribution-dialog.contribution-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.loadProposalMilestones();
+        },
+        error: (res) => {
+          this.loadingService.setLoading(false);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.send-copy-for-contribution-dialog.contribution-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   updateExplanatoryTitle(docId: string, title: string) {
