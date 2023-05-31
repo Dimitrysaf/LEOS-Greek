@@ -97,30 +97,36 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     @Override
     public DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
                                                               DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
-        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
-        final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
-        final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
-        XmlDocument intermediate = null;
-        String comparedInfo;
-        String leosComparedContent;
-        String docuWriteComparedContent;
+        try {
+            Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+            final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
+            final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
+            XmlDocument intermediate = null;
+            String comparedInfo;
+            String leosComparedContent;
+            String docuWriteComparedContent;
 
-        if (comparedVersionRequest.getIntermediateVersion() != null) {
-            intermediate = getDocumentByVersion(documentRef, comparedVersionRequest.getIntermediateVersion(), clazz);
-        }
-        String language = original.getMetadata().get().getLanguage();
+            if (comparedVersionRequest.getIntermediateVersion() != null) {
+                intermediate = getDocumentByVersion(documentRef, comparedVersionRequest.getIntermediateVersion(), clazz);
+            }
+            String language = original.getMetadata().get().getLanguage();
 
-        if (intermediate != null) {
-            comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(), current.getVersionLabel());
-            leosComparedContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
-            docuWriteComparedContent = legService.doubleCompareXmlContents(original, intermediate, current, true);
-        } else {
-            comparedInfo = messageHelper.getMessage("version.compare.simple", original.getVersionLabel(), current.getVersionLabel());
-            leosComparedContent = comparisonDelegate.getMarkedContent(original, current);
-            docuWriteComparedContent = legService.simpleCompareXmlContents(original, current, true);
+            if (intermediate != null) {
+                comparedInfo = messageHelper.getMessage("version.compare.double", original.getVersionLabel(), intermediate.getVersionLabel(),
+                        current.getVersionLabel());
+                leosComparedContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
+                docuWriteComparedContent = legService.doubleCompareXmlContents(original, intermediate, current, true);
+            } else {
+                comparedInfo = messageHelper.getMessage("version.compare.simple", original.getVersionLabel(), current.getVersionLabel());
+                leosComparedContent = comparisonDelegate.getMarkedContent(original, current);
+                docuWriteComparedContent = legService.simpleCompareXmlContents(original, current, true);
+            }
+            return packageComparedXmlFiles(original, current, intermediate, leosComparedContent, docuWriteComparedContent, comparedInfo, language,
+                    "docuWrite");
+        } catch(Exception ex) {
+            LOG.error("Error occurred while requesting download of xml comparison files", ex);
+            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid " + ex);
         }
-        return packageComparedXmlFiles(original, current, intermediate, leosComparedContent, docuWriteComparedContent, comparedInfo, language,
-                "docuWrite");
     }
 
     @Override

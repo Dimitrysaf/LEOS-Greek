@@ -27,4 +27,13 @@ public enum LeosCategoryClass {
         return clazz;
     }
 
+    public static LeosCategoryClass caseInsensitiveValueOf(String name) {
+        for (LeosCategoryClass value : LeosCategoryClass.values()) {
+            if (value.name().equalsIgnoreCase(name)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant " + LeosCategoryClass.class + "." + name);
+    }
+
 }

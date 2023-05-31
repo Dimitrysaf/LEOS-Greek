@@ -87,16 +87,21 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     @Override
     public DownloadVersionResponse downloadXMLComparisonFiles(LeosCategoryClass documentType, String documentRef,
                                                               DownloadComparedVersionRequest comparedVersionRequest) throws IOException {
-        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
-        final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
-        final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
-        String language = original.getMetadata().get().getLanguage();
+        try {
+            Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+            final XmlDocument current = getDocumentByVersion(documentRef, comparedVersionRequest.getCurrentVersion(), clazz);
+            final XmlDocument original = getDocumentByVersion(documentRef, comparedVersionRequest.getOriginalVersion(), clazz);
+            String language = original.getMetadata().get().getLanguage();
 
-        String comparedInfo = messageHelper.getMessage("version.compare.simple", original.getVersionLabel(), current.getVersionLabel());
-        String leosComparedContent = comparisonDelegate.getMarkedContent(original, current);
-        String legisWriteComparedContent = legService.simpleCompareXmlContents(original, current, false);
-        return packageComparedXmlFiles(original, current, null, leosComparedContent, legisWriteComparedContent, comparedInfo, language,
-                "legisWrite");
+            String comparedInfo = messageHelper.getMessage("version.compare.simple", original.getVersionLabel(), current.getVersionLabel());
+            String leosComparedContent = comparisonDelegate.getMarkedContent(original, current);
+            String legisWriteComparedContent = legService.simpleCompareXmlContents(original, current, false);
+            return packageComparedXmlFiles(original, current, null, leosComparedContent, legisWriteComparedContent, comparedInfo, language,
+                    "legisWrite");
+        } catch(Exception ex) {
+            LOG.error("Error occurred while requesting download of xml comparison files", ex);
+            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid " + ex);
+        }
     }
 
     @Override

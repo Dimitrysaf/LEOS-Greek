@@ -59,7 +59,7 @@ public class DocumentController {
     public ResponseEntity<Object> downloadVersion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                   @RequestBody DownloadVersionRequest downloadVersionRequest) {
         try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             final boolean isWithAnnotations = downloadVersionRequest.isWithAnnotations();
             final String filteredAnnotations = downloadVersionRequest.getAnnotations();
 
@@ -81,7 +81,7 @@ public class DocumentController {
     public ResponseEntity<Object> exportToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                      @RequestBody ExportToConsiliumRequest exportToConsiliumRequest) {
         try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             LeosExportStatus processedStatus = documentApiService.exportToConsilium(documentCategory, documentRef, exportToConsiliumRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
         } catch (Exception e) {
@@ -95,7 +95,7 @@ public class DocumentController {
     public ResponseEntity<Object> downloadComparedVersionXMLFile(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                                  @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             DownloadVersionResponse response = documentApiService.downloadXMLComparisonFiles(documentCategory, documentRef, downloadComparedVersionRequest);
 
             // create the HttpHeaders object and set the Content-Type header
@@ -104,7 +104,7 @@ public class DocumentController {
             headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting Annotation filtering", e);
+            LOG.error("Error occurred while requesting download of xml comparison files", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -114,7 +114,7 @@ public class DocumentController {
     public ResponseEntity<Object> exportComparedVersionAsPDF(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                              @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class DocumentController {
                                                                      @PathVariable("documentRef") String documentRef,
                                                                      @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
 
             DownloadVersionResponse response = documentApiService.downloadComparedVersionAsDocuwrite(documentCategory, documentRef,
                     downloadComparedVersionRequest);
@@ -151,7 +151,7 @@ public class DocumentController {
                                                 @PathVariable("documentRef") String documentRef,
                                                 @RequestBody DoubleCompareRequest doubleCompareRequest) {
         try {
-            final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             String response = documentApiService.doubleCompare(documentCategory, documentRef,
                     doubleCompareRequest.getOriginalProposalId(), doubleCompareRequest.getIntermediateMajorId(), doubleCompareRequest.getCurrentId());
 
