@@ -14,6 +14,7 @@
 <table euiTable euiTableResponsive [rows]="dataSource">
   <ng-template euiTemplate="header">
     <tr>
+      <th aria-hidden="true"></th>
       <th>{{ 'page.collection.milestones.table.title' | translate }}</th>
       <th>{{ 'page.collection.milestones.table.date' | translate }}</th>
       <th>{{ 'page.collection.milestones.table.status' | translate }}</th>
@@ -24,6 +25,38 @@
   </ng-template>
   <ng-template let-row euiTemplate="body">
     <tr>
+      <td
+        *ngIf="row.clonedMilestones && row.clonedMilestones.length > 0"
+        data-col-label="Click to expand"
+        (click)="row.opened = !row.opened"
+        class="expandable-row__toggler"
+      >
+        <button
+          *ngIf="!row.opened"
+          euiButton
+          euiRounded
+          euiIconButton
+          euiSizeS
+          euiBasicButton
+          euiPrimary
+        >
+          <span euiIcon iconClass="eui-icon-angle-right"></span>
+        </button>
+        <button
+          *ngIf="row.opened"
+          euiButton
+          euiRounded
+          euiIconButton
+          euiSizeS
+          euiBasicButton
+          euiPrimary
+        >
+          <span euiIcon iconClass="eui-icon-angle-down"></span>
+        </button>
+      </td>
+      <td
+        *ngIf="!(row.clonedMilestones && row.clonedMilestones.length > 0)"
+      ></td>
       <td
         [attr.data-col-label]="
           'page.collection.milestones.table.title' | translate
@@ -64,18 +97,56 @@
                   }}
                 </button>
               </li>
+              <li euiListItem>
+                <button
+                  euiListItem
+                  (click)="openMilestoneSendCopyForContributionDialog(row)"
+                >
+                  {{
+                    'page.collection.milestones.actions.send-copy-for-contribution'
+                      | translate
+                  }}
+                </button>
+              </li>
             </ul>
           </eui-dropdown-content>
         </eui-dropdown>
       </td>
     </tr>
-  </ng-template>
-  <ng-template euiTemplate="emptyMessage">
-    <tr>
-      <td class="eui-u-text-center" colspan="5">
-        {{ 'page.collection.milestones.table.no-milestone' | translate }}
-      </td>
-    </tr>
+    <ng-template ngFor let-clonedMilestone [ngForOf]="row.clonedMilestones">
+      <tr euiTableExpandableRow *ngIf="row.opened">
+        <td></td>
+        <td
+          [attr.data-col-label]="
+            'page.collection.milestones.table.title' | translate
+          "
+        >
+          {{ clonedMilestone.title }}
+        </td>
+        <td
+          [attr.data-col-label]="
+            'page.collection.milestones.table.date' | translate
+          "
+        >
+          {{ clonedMilestone.updatedDate | date: 'dd/MM/yyyy hh:mm' }}
+        </td>
+        <td
+          [attr.data-col-label]="
+            'page.collection.milestones.table.status' | translate
+          "
+        >
+          {{ clonedMilestone.status }}
+        </td>
+        <td></td>
+      </tr>
+    </ng-template>
+    <ng-template euiTemplate="emptyMessage">
+      <tr>
+        <td class="eui-u-text-center" colspan="5">
+          {{ 'page.collection.milestones.table.no-milestone' | translate }}
+        </td>
+      </tr>
+    </ng-template>
   </ng-template>
 </table>
 
@@ -89,5 +160,12 @@
   #milestoneViewDialog
   [milestone]="milestoneViewData"
   (closed)="onMilestoneViewDialogClosed()"
-  *ngIf="milestoneViewData"
+  *ngIf="openMilestoneViewDialogVisible && milestoneViewData"
 ></app-proposal-milestone-view>
+
+<app-proposal-milestone-send-copy-dialog
+  #sendMilestoneCopyForContributionDialog
+  [milestone]="milestoneViewData"
+  (closed)="onMilestoneSendCopyForContributionDialogClosed()"
+  *ngIf="sendCopyDialogVisible && milestoneViewData"
+></app-proposal-milestone-send-copy-dialog>

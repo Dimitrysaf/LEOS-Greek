@@ -11,6 +11,7 @@ import { ProposalCollaboratorsComponent } from './containers/proposal-collaborat
 import { ProposalCollaboratorsDialogComponent } from './containers/proposal-collaborators-dialog/proposal-collaborators-dialog.component';
 import { ProposalDraftsComponent } from './containers/proposal-drafts/proposal-drafts.component';
 import { ProposalExportsComponent } from './containers/proposal-exports/proposal-exports.component';
+import { ProposalMilestoneSendCopyDialogComponent } from './containers/proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
 import { ProposalMilestonesComponent } from './containers/proposal-milestones/proposal-milestones.component';
 import { ProposalViewComponent } from './containers/proposal-view/proposal-view.component';
 import { ProposalViewRoutingModule } from './proposal-view-routing.module';
@@ -28,6 +29,7 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalLastUpdatedOnComponent,
     ProposalExportsComponent,
     AddMilestoneDialogComponent,
+    ProposalMilestoneSendCopyDialogComponent,
   ],
   providers: [ProposalService],
   imports: [ProposalViewRoutingModule, SharedModule],

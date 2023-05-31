@@ -30,7 +30,6 @@ export class DraggableSplitterComponent implements OnChanges {
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('changes', changes);
     // If isLeftAreaCollapsed or isRightAreaCollapsed has changed...
     if (changes.isLeftAreaCollapsed || changes.isRightAreaCollapsed) {
       // If the right area or the left area is collapsed remove the flex style from both right and left area

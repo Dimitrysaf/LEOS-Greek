@@ -25,7 +25,6 @@ import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
-import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
@@ -95,4 +94,7 @@ public interface ApiService {
     MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName) throws IOException;
 
     MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName) throws IOException;
+
+    CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName);
+
 }
