@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
@@ -45,16 +44,11 @@ public class ContributionControllerTest {
         cloneRequest.setUserLogin(USER_LOGIN);
         cloneRequest.setLegDocumentName(DOCUMENT_LEG_NAME);
 
-        User user = new User();
-        when(userService.getUser(cloneRequest.getUserLogin())).thenReturn(user);
-
         CreateCollectionResult expectedResult = new CreateCollectionResult();
         when(apiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
                 .thenReturn(expectedResult);
 
         ResponseEntity<Object> response = contributionController.createCloneProposal(PROPOSAL_REF, cloneRequest);
-
-        verify(userService, times(1)).getUser(cloneRequest.getUserLogin());
 
         verify(apiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
 
@@ -68,16 +62,11 @@ public class ContributionControllerTest {
         cloneRequest.setUserLogin(USER_LOGIN);
         cloneRequest.setLegDocumentName(DOCUMENT_LEG_NAME);
 
-        User user = new User();
-        when(userService.getUser(cloneRequest.getUserLogin())).thenReturn(user);
-
         Exception exception = new RuntimeException("Test exception");
         when(apiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
                 .thenThrow(exception);
 
         ResponseEntity<Object> response = contributionController.createCloneProposal(PROPOSAL_REF, cloneRequest);
-
-        verify(userService, times(1)).getUser(cloneRequest.getUserLogin());
 
         verify(apiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
 
