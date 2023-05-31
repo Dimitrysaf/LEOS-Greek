@@ -145,6 +145,14 @@ public class DocumentVO {
                 this.getMetadata().setTemplateName(metadataP.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataP.getEeaRelevance());
                 this.setRef(metadataP.getRef());
+                Proposal proposal = ((Proposal) xmlDocument);
+                if(proposal.isClonedProposal()) {
+                    CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
+                    cloneProposalMetadataVO.setClonedProposal(proposal.isClonedProposal());
+                    cloneProposalMetadataVO.setOriginRef(proposal.getOriginRef());
+                    cloneProposalMetadataVO.setRevisionStatus(proposal.getRevisionStatus());
+                    this.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+                }
                 break;
             case MEMORANDUM:
                 MemorandumMetadata metadataM = ((Memorandum) xmlDocument).getMetadata()
