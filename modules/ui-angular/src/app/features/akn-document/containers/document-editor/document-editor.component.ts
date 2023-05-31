@@ -909,7 +909,7 @@ export class DocumentEditorComponent
           number,
           content,
           childItems: [],
-          id: uniqueId(),
+          id: '_' + uniqueId(),
         });
       }
     }
