@@ -95,7 +95,7 @@ define(function leosTrackChangesPluginModule(require) {
                     canUndo: true,
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
-                        for (var i = 0; tcElements.length > i; i++) {
+                        for (var i = tcElements.length - 1; i >= 0; i--) {
                             actions.acceptChange(editor, tcElements[i]);
                         }
                     }
@@ -104,7 +104,7 @@ define(function leosTrackChangesPluginModule(require) {
                     canUndo: true,
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
-                        for (var i = 0; tcElements.length > i; i++) {
+                        for (var i = tcElements.length - 1; i >= 0; i--) {
                             actions.rejectChange(editor, tcElements[i]);
                         }
                     }
@@ -255,15 +255,14 @@ define(function leosTrackChangesPluginModule(require) {
                                 var fragment = range.cloneContents(true);
                                 var nodeList = fragment.find('li:not(:has(ol))');
                                 if (nodeList.count() > 0) {
-                                    actions.deletFromListAndAddTrackChange(editor, range, nodeList);
+                                    actions.deleteFromListAndAddTrackChange(editor, range, nodeList);
                                     event.getInstance().data.domEvent.preventDefault();
                                     event.getInstance().stop();
                                 } else {
                                     fragment = range.extractContents(true);
-                                    actions.deletTextAndAddTrackChange(editor, fragment);
+                                    actions.deleteTextAndAddTrackChange(editor, fragment);
                                     event.getInstance().data.domEvent.preventDefault();
                                 }
-
                             } else {
                                 // Prevent if lock exists
                                 event.getInstance().data.domEvent.preventDefault();
@@ -596,7 +595,7 @@ define(function leosTrackChangesPluginModule(require) {
             }
         },
 
-        deletTextAndAddTrackChange: function(editor, fragment) {
+        deleteTextAndAddTrackChange: function(editor, fragment) {
             var core = trackChanges.core;
             var childrenOfSelection = fragment.getChildren();
             var firstItem = null, lastItem = null;
@@ -634,7 +633,7 @@ define(function leosTrackChangesPluginModule(require) {
             }
         },
 
-        deletFromListAndAddTrackChange: function(editor, range, nodeList) {
+        deleteFromListAndAddTrackChange: function(editor, range, nodeList) {
             var core = trackChanges.core;
             if (!range.collapsed) {
                 range.collapse(true);
@@ -646,7 +645,6 @@ define(function leosTrackChangesPluginModule(require) {
                 var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, item.getText(),true);
                 var currentElement = editor.getSelection().document.find('#' + domElement.id).getItem(0).$;
                 if (i === 0 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
-
                     currentElement.innerHTML =
                         currentElement.innerHTML.substring(0, currentElement.innerHTML.length - domElement.innerHTML.length) +
                         tcItem.$.outerHTML;
