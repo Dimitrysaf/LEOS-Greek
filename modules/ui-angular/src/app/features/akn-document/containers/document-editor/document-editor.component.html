@@ -589,9 +589,7 @@
 
       <app-draggable-splitter
         *ngIf="!hideAnnotationsSplitter"
-        [isLeftAreaCollapsed]="
-          (documentService.compareModeEnabled$ | async) === false
-        "
+        [isLeftAreaCollapsed]="false"
         [leftArea]="
           (documentService.compareModeEnabled$ | async)
             ? compareModePaneElement
