@@ -34,6 +34,7 @@ import org.springframework.web.client.RestOperations;
 import java.io.ByteArrayOutputStream;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -100,11 +101,13 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             Query query = queryStr.asQuery();
             QueryEngineHTTP qexec = QueryExecutionFactory.createServiceRequest(uri, query);
             try {
-                LOG.info("Calling OJ with Sparql query at URL: "+ uri);
+            	String uuid = UUID.randomUUID().toString();
+                LOG.info("Calling OJ with Sparql query at URL: "+ uri + " with uuid: " + uuid);
                 qexec.addDefaultGraph("");
                 qexec.addParam("debug", PARAM_DEBUG_VALUE);
                 qexec.addParam("timeout", String.valueOf(PARAM_TIMEOUT_VALUE));
                 qexec.addParam("format", PARAM_FORMAT_VALUE);
+                qexec.addParam("uuid", uuid);
                 qexec.setTimeout(PARAM_TIMEOUT_VALUE, PARAM_TIMEOUT_VALUE);
                 LOG.debug("OJ Sparql Query: {}", qexec.getQuery().toString(qexec.getQuery().getSyntax()));
                 ResultSet results = qexec.execSelect();
