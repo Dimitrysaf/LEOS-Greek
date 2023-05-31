@@ -61,6 +61,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfig;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -1254,10 +1255,16 @@ public class LegServiceImpl implements LegService {
 
     private void addHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent, String styleSheetName, String tocJson, String proposalRef) {
         RenderedDocument htmlDocument = new RenderedDocument();
-        htmlDocument.setContent(new ByteArrayInputStream(xmlContent));
         htmlDocument.setStyleSheetName(styleSheetName);
         String htmlName = HTML_RENDITION + xmlDocumentName.replaceAll(".xml", ".html");
         String trackChangesCss = this.createTrackChangesCss(xmlContent, proposalRef);
+        if (xmlDocumentName.startsWith(XmlHelper.STAT_FINANC_LEGIS)) {
+            Document document = XercesUtils.createXercesDocument(xmlContent);
+            byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+            htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
+        } else {
+            htmlDocument.setContent(new ByteArrayInputStream(xmlContent));
+        }
         contentToZip.put(htmlName, htmlRenditionProcessor.processTemplate(htmlDocument, trackChangesCss).getBytes(UTF_8));
 
         // Build toc_docName.js file
