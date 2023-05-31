@@ -78,7 +78,11 @@ define(function leosElementSplitHandlerPluginModule(require) {
                 var emptyParElements = rootElement.find("> p:emptyTrim");
                 if (emptyParElements) {
                     emptyParElements.each(function() {
-                        this.innerText = "Text...";
+                        if(this.getAttribute('data-akn-element') === 'crossHeading' || this.getAttribute('data-akn-name') === 'crossHeading') {
+                            this.innerText = "CrossHeading...";
+                        } else {
+                            this.innerText = "Text...";
+                        }
                     });
                 }
                 CKEDITOR.fire("editorInitOngoing");
