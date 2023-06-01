@@ -1258,26 +1258,31 @@ public class LegServiceImpl implements LegService {
         htmlDocument.setStyleSheetName(styleSheetName);
         String htmlName = HTML_RENDITION + xmlDocumentName.replaceAll(".xml", ".html");
         String trackChangesCss = this.createTrackChangesCss(xmlContent, proposalRef);
+
+        //build html_docName_toc.html
+        RenderedDocument tocHtmlDocument = new RenderedDocument();
+
+        // Build toc_docName.js file
+        RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
+
         if (xmlDocumentName.startsWith(XmlHelper.STAT_FINANC_LEGIS)) {
             Document document = XercesUtils.createXercesDocument(xmlContent);
             byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
             htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
+            tocHtmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
+            tocHtmlDocumentJS.setContent(new ByteArrayInputStream(htmlRenditionContent));
         } else {
             htmlDocument.setContent(new ByteArrayInputStream(xmlContent));
+            tocHtmlDocument.setContent(new ByteArrayInputStream(xmlContent));
+            tocHtmlDocumentJS.setContent(new ByteArrayInputStream(xmlContent));
         }
         contentToZip.put(htmlName, htmlRenditionProcessor.processTemplate(htmlDocument, trackChangesCss).getBytes(UTF_8));
 
-        // Build toc_docName.js file
-        RenderedDocument tocHtmlDocument = new RenderedDocument();
-        tocHtmlDocument.setContent(new ByteArrayInputStream(xmlContent));
-        tocHtmlDocument.setStyleSheetName(styleSheetName);
+        tocHtmlDocumentJS.setStyleSheetName(styleSheetName);
         final String tocJsName = xmlDocumentName.substring(0, xmlDocumentName.indexOf(".xml")) + "_toc" + ".js";
         final String tocJsFile = JS_DEST_DIR + tocJsName;
         contentToZip.put(tocJsFile, htmlRenditionProcessor.processJsTemplate(tocJson).getBytes(UTF_8));
 
-        //build html_docName_toc.html
-        tocHtmlDocument = new RenderedDocument();
-        tocHtmlDocument.setContent(new ByteArrayInputStream(xmlContent));
         tocHtmlDocument.setStyleSheetName(styleSheetName);
         String tocHtmlFile = HTML_RENDITION + xmlDocumentName;
         tocHtmlFile = tocHtmlFile.substring(0, tocHtmlFile.indexOf(".xml")) + "_toc" + ".html";
