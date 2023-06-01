@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.exception.ImportElementException;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -77,8 +78,8 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
      * When canModifySource is true, some tags are not included in the source[] field, otherwise when is false the
      * array source contains the xml as it is in the zip/leg file.
      *
-     * @param file leg file from where to create the DocumentVO.
-     * @param proposal DocumentVO with the data of the proposal. The same object will be enriched and returned by the method
+     * @param file            leg file from where to create the DocumentVO.
+     * @param proposal        DocumentVO with the data of the proposal. The same object will be enriched and returned by the method
      * @param canModifySource true to exclude some xml tags into byte array source, false if you need to keep the original integrity of the document
      * @return the enriched DocumentVO representing the proposal inside the leg file.
      */
@@ -88,7 +89,9 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         // unzip file
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, "/unzip/");
         try {
-            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().orElse("");
+            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE))
+                    .findFirst()
+                    .orElseThrow(() -> new ImportElementException("A proposal file is required to upload a valid legislative document."));
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
                 File proposalFile = (File) unzippedFiles.get(proposalFileKey);
@@ -142,7 +145,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
     public DocumentVO createDocument(String docName, File docFile, boolean canModifySource) {
         DocumentVO doc = null;
         try {
-            if(docName.endsWith(XML_DOC_EXT)) {
+            if (docName.endsWith(XML_DOC_EXT)) {
                 byte[] xmlBytes = Files.readAllBytes(docFile.toPath());
                 LeosCategory category = xmlContentProcessor.identifyCategory(docName, xmlBytes);
                 if (category != null) {
@@ -157,7 +160,6 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         }
         return doc;
     }
-
 
 
     protected abstract void updateSource(final DocumentVO document, File documentFile, boolean canModifySource);
@@ -205,11 +207,12 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
 
     /**
      * Will delete form the temporary folder the files uploaded and the unzipped files + parent folder.
+     *
      * @param mainFile
      * @param unzippedFiles
      */
     private void deleteFiles(File mainFile, Map<String, Object> unzippedFiles) {
-        if(!mainFile.delete()){
+        if (!mainFile.delete()) {
             LOG.info("File not deleted {}", mainFile.getPath());
         }
         List<String> parentFolders = new ArrayList<>();
