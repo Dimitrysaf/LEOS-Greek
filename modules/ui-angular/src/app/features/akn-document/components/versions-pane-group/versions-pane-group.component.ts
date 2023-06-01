@@ -128,7 +128,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     this.versionsSearchExcluded = versions.filter(
       (v) => !results.includes(v.cmisVersionNumber),
     );
-    this.isMajorVersionSearchExcluded = this.versionsSearchExcluded.length > 0;
+    this.isMajorVersionSearchExcluded =
+      versions.length === this.versionsSearchExcluded.length;
   }
 
   private updateState() {
