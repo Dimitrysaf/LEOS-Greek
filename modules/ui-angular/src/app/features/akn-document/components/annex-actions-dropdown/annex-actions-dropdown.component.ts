@@ -7,7 +7,11 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import {
+  EuiDialogComponent,
+  EuiDialogService,
+} from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
@@ -47,6 +51,8 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   constructor(
     public doc: DocumentService,
     public ckEditorService: CKEditorService,
+    public dialogService: EuiDialogService,
+    public translateService: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -60,6 +66,22 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
 
   handleAnnexStructureChange() {
     this.annexChangeStructure.emit();
+  }
+
+  onApplyContinuousNumberingSelect() {
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.actions-dropdown.apply-continuous-numbering.confirmation.title',
+      ),
+      content: this.translateService.instant(
+        'page.editor.actions-dropdown.apply-continuous-numbering.confirmation.message',
+      ),
+      acceptLabel: this.translateService.instant('global.actions.continue'),
+      accept: () => {
+        this.doc.renumberDocument();
+      },
+      dismiss: () => {},
+    });
   }
 
   setMenuState(permissions: Permission[]) {
