@@ -1449,8 +1449,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         private void bindNumberField(Binder<TableOfContentItemVO> binder, TextField numberField, boolean tobeValidated) {
 			binder.removeBinding(numberField);
 			BindingBuilder<TableOfContentItemVO, String> binding = binder.forField(numberField)
-					.withNullRepresentation("")
-					.withConverter(StringEscapeUtils::unescapeXml, StringEscapeUtils::escapeXml10, null);
+					.withNullRepresentation("");
 
 			TableOfContentItemVO item = binder.getBean();
 			if (item != null && tobeValidated) {
@@ -1469,7 +1468,13 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 				}
 			}
 
-			binding.bind(TableOfContentItemVO::getNumber, TableOfContentItemVO::setNumber);
+            binding.bind(it -> {
+                return StringEscapeUtils.unescapeXml(it.getNumber());
+            },(it, number) -> {
+                it.setNumber(StringEscapeUtils.escapeXml10(number));
+            });
+
+
 		}
 
         private TextField buildNumberField(Binder<TableOfContentItemVO> binder) {
@@ -1485,7 +1490,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                 	dataChanged = true;
                     TableOfContentItemVO item = binder.getBean();
                     String oldValue = item.getNumber();
-                    item.setNumber(event.getValue()); //new value
+                    item.setNumber(StringEscapeUtils.escapeXml10(event.getValue())); //new value
                     tocTree.getDataProvider().refreshItem(item);
 
                     // remove old binder added previously to the field numberField, and add a specific one depending on the type
@@ -1628,8 +1633,9 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             }, messageHelper.getMessage("toc.edit.window.item.selected.heading.error.message"))
             .bind(it -> {
             	return StringEscapeUtils.unescapeXml(it.getHeading());
+
             },(it, heading) -> {
-            	it.setHeading(heading);
+            	it.setHeading(StringEscapeUtils.escapeXml10(heading));
             });
         }
 
