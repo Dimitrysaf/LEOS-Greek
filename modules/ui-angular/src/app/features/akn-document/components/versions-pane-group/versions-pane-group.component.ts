@@ -35,7 +35,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected hasMore = false;
   protected versions: Version[] = [];
   protected isFilteredOut = false;
-  protected isSearchExcluded = false;
+  protected isMajorVersionSearchExcluded = false;
+  protected versionsSearchExcluded: Version[] = [];
 
   private filter = 'all';
 
@@ -115,20 +116,19 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
   private onVersionSearchResultsChange(results: string[]) {
     if (!Array.isArray(results)) {
-      this.isSearchExcluded = false;
+      this.versionsSearchExcluded = [];
+      this.isMajorVersionSearchExcluded = false;
       return;
     }
 
-    const versions = [];
+    const versions = [...(this.subVersions ?? [])];
     if (this.majorVersion) {
-      versions.push(this.majorVersion.versionedReference);
+      versions.push(this.majorVersion);
     }
-    this.subVersions?.forEach((subVersion) =>
-      versions.push(subVersion.versionedReference),
+    this.versionsSearchExcluded = versions.filter(
+      (v) => !results.includes(v.cmisVersionNumber),
     );
-    this.isSearchExcluded = !(
-      versions.length === 0 || versions.some((v) => results.includes(v))
-    );
+    this.isMajorVersionSearchExcluded = this.versionsSearchExcluded.length > 0;
   }
 
   private updateState() {

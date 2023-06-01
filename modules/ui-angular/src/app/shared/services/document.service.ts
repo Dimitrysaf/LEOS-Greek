@@ -1043,7 +1043,7 @@ export class DocumentService implements OnDestroy {
         ...versions.flatMap((ver) => ver.subVersions),
       ].forEach((version) => {
         if (version.createdBy?.toLowerCase()?.includes(author)) {
-          searchResult.push(version.versionedReference);
+          searchResult.push(version.cmisVersionNumber);
         }
       });
       this.versionSearchResultsBS$.next(searchResult);

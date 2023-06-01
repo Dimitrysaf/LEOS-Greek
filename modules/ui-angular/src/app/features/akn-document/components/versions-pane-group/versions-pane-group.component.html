@@ -2,7 +2,7 @@
   class="version-panes"
   euiNoShadow
   *ngIf="!isFilteredOut"
-  [ngClass]="{ 'version-search-excluded': isSearchExcluded }"
+  [ngClass]="{ 'version-search-excluded': isMajorVersionSearchExcluded }"
 >
   <eui-card-header>
     <eui-card-header-title>{{ title | async }}</eui-card-header-title>
@@ -49,6 +49,9 @@
         class="subversion"
         title="{{ version.updatedDate }} {{ version.createdBy }}"
         *ngFor="let version of versions; trackByProperty: 'cmisVersionNumber'"
+        [ngClass]="{
+          'version-search-excluded': versionsSearchExcluded.includes(version)
+        }"
       >
         <div>{{ formatVersionNumber(version) }}</div>
         <div class="title">
