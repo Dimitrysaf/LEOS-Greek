@@ -156,6 +156,7 @@
   "page.collection.proposal-header.edit": "Edit",
   "page.collection.proposal-header.edit.tooltip": "[FR] Edit Title",
   "page.collection.proposal-header.edit-title-dialog.title": "Nouveau titre",
+  "page.collection.proposal-header.contribution": "Contribution",
   "page.collection.drafts.coverPage": "Page de garde",
   "page.collection.drafts.exports": "Exports",
   "page.collection.drafts.exports.table.title": "Titre",

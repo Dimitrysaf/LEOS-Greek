@@ -5,7 +5,8 @@
     >
       <app-proposal-item
         [proposal]="proposal"
-        [status]="i % 2 === 0 ? 'pending' : 'ready'"
+        [status]="geContributionStatus(proposal)"
+        [originRef]="proposal.cloneProposalMetadataVO?.originRef ?? null"
       ></app-proposal-item>
     </ng-container>
   </ng-container>

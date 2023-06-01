@@ -21,21 +21,24 @@
     >
       <div
         class="eui-u-font-m eui-u-font-bold eui-u-color-grey-75 eui-u-mb-2xs h-25"
+        *ngIf="originRef"
       >
-        <!-- TODO : // This shouldn'y be hardcoded -->
+        {{ originRef }}
       </div>
-      <!-- <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
-        {{ 'page.workspace.proposal-item.contribution-status' | translate }}
+      <div *ngIf="status">
+        <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
+          {{ 'page.workspace.proposal-item.contribution-status' | translate }}
+        </div>
+        <eui-chip
+          euiSize2XL
+          euiOutline
+          [euiSuccess]="status === 'ready'"
+          [euiSecondary]="status === 'sent'"
+          class="eui-u-mr-2xs eui-u-mb-2xs"
+        >
+          <span euiLabel *ngIf="status">{{ getStatus(status) }}</span>
+        </eui-chip>
       </div>
-      <eui-chip
-        euiSize2XL
-        euiOutline
-        [euiSuccess]="status === 'ready'"
-        [euiSecondary]="status === 'pending'"
-        class="eui-u-mr-2xs eui-u-mb-2xs"
-      >
-        <span euiLabel *ngIf="status">{{ getStatus(status) }}</span>
-      </eui-chip> -->
     </eui-card-header-right-content>
   </eui-card-header>
 </eui-card>
