@@ -1,7 +1,8 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { apiBaseUrl } from 'src/config';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
+import { apiBaseUrl } from 'src/config';
 
 import type {
   MilestoneViewItem,
@@ -9,7 +10,6 @@ import type {
 } from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
-import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',

@@ -54,17 +54,7 @@
         }"
       >
         <div>{{ formatVersionNumber(version) }}</div>
-        <div class="title">
-          {{
-            version.checkinCommentVO.title !== ''
-              ? version.checkinCommentVO.title
-              : version.checkinCommentVO.checkinElement
-              ? version.checkinCommentVO.checkinElement.elementLabel +
-                ' ' +
-                version.checkinCommentVO.checkinElement.actionType.toLowerCase()
-              : ''
-          }}
-        </div>
+        <div class="title">{{ formatTitle(version) }}</div>
         <div>
           <app-version-actions-dropdown
             [version]="version"
