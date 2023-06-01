@@ -106,6 +106,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   destroy$: Subject<any> = new Subject();
   private typingTimer;
+  private numberInvalid = false;
+  private headingInvalid = false;
 
   constructor(
     private translateService: TranslateService,
@@ -306,12 +308,14 @@ export class TocEditorComponent implements OnInit, OnChanges {
         this.selectedNode.tocItem.itemHeading === 'OPTIONAL' ||
         (this.selectedNode.tocItem.itemHeading === 'MANDATORY' && value)
       ) {
+        //clear invalid
+        if (!this.numberInvalid) {
+          this.removeInvalidNode();
+          this.invalidNodes.delete(this.selectedNode);
+          this.handleInvalidNodes.emit(this.invalidNodes);
+        }
         //save snapshot of previous tree
         this.handleNodeChanges(this.toc, true);
-        //remove previous invalid node
-
-        //set new tree
-        this.removeInvalidNode();
         this.invalidHeadingMsg = null;
         this.previousHeading = this.heading;
         this.selectedNode.heading = value;
@@ -319,8 +323,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
           this.selectedNode.originHeadingAttr = 'DELETE';
           this.selectedNode.originHeadingAttr = 'ec';
         }
-        this.invalidNodes.delete(this.selectedNode);
-        this.handleInvalidNodes.emit(this.invalidNodes);
+        this.headingInvalid = false;
       } else {
         this.selectedNode.heading = value;
         this.invalidHeadingMsg = this.getTocItemMessageValidationError(
@@ -328,6 +331,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
           'heading',
         );
         this.invalidNodes.add(this.selectedNode);
+        this.headingInvalid = true;
         this.handleInvalidNodes.emit(this.invalidNodes);
       }
 
@@ -351,14 +355,17 @@ export class TocEditorComponent implements OnInit, OnChanges {
       const numberRegex = RegExp(this.numberConfig.regexJS);
       if (number && numberRegex.test(number)) {
         //clear invalid
-        this.removeInvalidNode();
+        if (!this.headingInvalid) {
+          this.removeInvalidNode();
+          this.invalidNodes.delete(this.selectedNode);
+          this.handleInvalidNodes.emit(this.invalidNodes);
+        }
         //save snapshot of old tree
         this.handleNodeChanges(this.toc, true);
         this.invalidNumberMsg = null;
         this.selectedNode.isAutoNumOverwritten = true;
         this.selectedNode.number = number;
-        this.invalidNodes.delete(this.selectedNode);
-        this.handleInvalidNodes.emit(this.invalidNodes);
+        this.numberInvalid = false;
       } else {
         this.invalidNumberMsg = this.getTocItemMessageValidationError(
           this.selectedNode,
@@ -366,6 +373,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
         );
         this.selectedNode.number = number;
         this.invalidNodes.add(this.selectedNode);
+        this.numberInvalid = true;
         this.handleInvalidNodes.emit(this.invalidNodes);
       }
       this.handleNodeChanges(this.toc);
