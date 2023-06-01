@@ -583,11 +583,24 @@ export class DocumentEditorComponent
   }
 
   hanldeUnSaveDialogClose(save: boolean) {
-    if (save) {
-      this.handleSave();
+    if (this.documentTocComponent.invalidNodes?.size > 0) {
+      this.appShellService.growl({
+        severity: 'danger',
+        summary: this.tranlsateService.instant(
+          'global.notifications.title.error',
+        ),
+        detail: this.tranlsateService.instant(
+          'page.editor.toc.invalid-node.save-and-close-error',
+        ),
+        life: 4000,
+      });
+    } else {
+      if (save) {
+        this.handleSave();
+      }
+      this.closeInlineToCEdit();
     }
     this.unSavedDialog.closeDialog();
-    this.closeInlineToCEdit();
   }
 
   handleSaveAndClose() {
