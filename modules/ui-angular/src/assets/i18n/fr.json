@@ -291,6 +291,7 @@
   "page.editor.toc.unsaved-changes-dialog.close": "Fermer sans sauvegarder",
   "page.editor.toc.unsaved-changes-dialog.save": "Enregistrer et fermer",
   "page.editor.toc.invalid-node.save-error": "[FR] Please fill mandatory fields before saving!",
+  "page.editor.toc.invalid-node.save-and-close-error": "[FR] There are invalid tree nodes. Please fix them before saving!",
   "page.editor.co-edition-detected.title": "[FR] Co Edition detected",
   "page.editor.co-edition-detected.body.part1": "[FR] Warning, this section is currently being edited by the following users:",
   "page.editor.co-edition-detected.body.part2": "[FR] editing since",

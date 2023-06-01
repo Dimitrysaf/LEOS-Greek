@@ -314,6 +314,7 @@
   "page.editor.toc.unsaved-changes-dialog.close": "Close without saving",
   "page.editor.toc.unsaved-changes-dialog.save": "Save and close",
   "page.editor.toc.invalid-node.save-error": "Please fill mandatory fields before saving!",
+  "page.editor.toc.invalid-node.save-and-close-error": "There are invalid tree nodes. Please fix them before saving!",
   "page.editor.co-edition-detected.title": "Co Edition detected",
   "page.editor.co-edition-detected.body.part1": "Warning, this section is currently being edited by the following users:",
   "page.editor.co-edition-detected.body.part2": "editing since",
