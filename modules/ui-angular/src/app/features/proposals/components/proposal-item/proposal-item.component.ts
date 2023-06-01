@@ -9,7 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ProposalItemComponent implements OnInit {
   @Input() proposal: Document;
-  @Input() status: string;
+  @Input() status: string | null;
+  @Input() originRef: string | null;
 
   constructor(private translateService: TranslateService) {}
 

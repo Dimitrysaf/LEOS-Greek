@@ -15,6 +15,8 @@
     <app-proposal-header
       [nonEditablePartOfTitle]="proposalTitleNonEditablePart"
       [editableTitle]="proposalTitleEditablePart"
+      [isClonedProposal]="isClonedProposal"
+      [originRef]="originRef"
       (saveTitle)="onSaveTitle($event)"
     ></app-proposal-header>
 

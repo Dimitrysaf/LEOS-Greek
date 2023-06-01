@@ -21,6 +21,8 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   proposalErrorCode: number | null = null;
   proposalTitleEditablePart: string;
   proposalTitleNonEditablePart: string;
+  isClonedProposal = false;
+  originRef: string | null = null;
 
   protected readonly homeUrl = document.baseURI;
 
@@ -48,6 +50,10 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
         next: (proposal) => {
           this.proposalTitleNonEditablePart = `${proposal.metadata.docStage} ${proposal.metadata.docType}`;
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
+          this.isClonedProposal = this.isClonedProposal = Boolean(
+            proposal.cloneProposalMetadataVO?.clonedProposal,
+          );
+          this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);
         },
         error: (error) => this.setStateError(error),

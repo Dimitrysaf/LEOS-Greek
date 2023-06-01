@@ -1,5 +1,5 @@
 <form [formGroup]="createForm">
-  <header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l">
+  <header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs">
     <h1 class="flex-grow-1 eui-u-font-2xl">
       {{ nonEditablePartOfTitle }} {{ editableTitle }}
     </h1>
@@ -64,5 +64,18 @@
       [permissions]="permissions"
       class="eui-u-ml-s"
     ></app-proposal-actions-dropdown>
+  </header>
+  <header
+    *ngIf="isClonedProposal"
+    class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l"
+  >
+    <eui-chip euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+      <span euiLabel>{{
+        'page.collection.proposal-header.contribution' | translate
+      }}</span>
+    </eui-chip>
+    <eui-chip *ngIf="originRef" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+      <span euiLabel>{{ originRef }}</span>
+    </eui-chip>
   </header>
 </form>

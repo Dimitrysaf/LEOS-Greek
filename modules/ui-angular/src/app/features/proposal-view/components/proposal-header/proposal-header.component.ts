@@ -31,6 +31,8 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 export class ProposalHeaderComponent implements OnInit, OnDestroy {
   @Input() nonEditablePartOfTitle: string;
   @Input() editableTitle: string;
+  @Input() isClonedProposal: boolean;
+  @Input() originRef: string | null;
   @Output() saveTitle: EventEmitter<string> = new EventEmitter();
   @ViewChild('editTitle') dialog: EuiDialogComponent;
 

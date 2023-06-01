@@ -99,10 +99,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
     milestones.forEach((milestone) => {
-      milestone.clonedMilestones = milestone.clonedMilestones.map(
-        (clonedMilestone) =>
-          this.formatClonedMilestoneUpdatedDate(clonedMilestone),
-      );
+      if (milestone.clonedMilestones !== null) {
+        milestone.clonedMilestones = milestone.clonedMilestones.map(
+          (clonedMilestone) =>
+            this.formatClonedMilestoneUpdatedDate(clonedMilestone),
+        );
+      }
     });
 
     return milestones;

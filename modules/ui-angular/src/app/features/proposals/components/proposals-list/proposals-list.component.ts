@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Document } from '@leos/shared';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proposals-list',
@@ -8,9 +9,21 @@ import { Document } from '@leos/shared';
 })
 export class ProposalsListComponent {
   @Input() proposals: Document[];
-  constructor() {}
+  constructor(private translateService: TranslateService) {}
 
-  trackProposal(index: number, proposal: any) {
-    return proposal ? proposal.id : undefined;
+  trackProposal(_index: number, proposal: Document) {
+    return proposal?.id ?? undefined;
+  }
+
+  geContributionStatus(proposal: Document) {
+    const contributionStatus =
+      proposal.cloneProposalMetadataVO?.revisionStatus ===
+      'Sent for contribution'
+        ? 'sent'
+        : 'ready';
+
+    return proposal.cloneProposalMetadataVO !== null
+      ? contributionStatus
+      : null;
   }
 }
