@@ -188,7 +188,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 keyCodeLock = true;
 
                                 /*
-                                 * To know whe is before and after the current position
+                                 * To know the blocks before and after the current position
                                  */
                                 var previousEditableNode = editor.getSelection().getRanges()[0].getPreviousEditableNode();
                                 var nextEditableNode = editor.getSelection().getRanges()[0].getNextEditableNode();
