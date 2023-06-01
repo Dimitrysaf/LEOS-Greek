@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { apiBaseUrl } from 'src/config';
+import { parse as parseContentDisposition } from 'content-disposition-attachment';
 
 import type {
   MilestoneViewItem,
@@ -8,6 +9,7 @@ import type {
 } from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +18,7 @@ export class ProposalMilestonesService {
   constructor(
     private http: HttpClient,
     private loadingService: LoadingService,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   listMilestoneView(proposalRef: string, legFileName: string) {
@@ -37,7 +40,15 @@ export class ProposalMilestonesService {
         },
       )
       .subscribe({
-        next: (blob) => downloadBlob(blob, `Proposal_${documentRef}.pdf`),
+        next: (response) => {
+          const cd = parseContentDisposition(
+            response.headers.get('Content-Disposition'),
+          );
+          const filename = cd.attachment
+            ? cd.filename
+            : `Proposal_${documentRef}.pdf`;
+          downloadBlob(response, filename, this.document);
+        },
         complete: () => this.loadingService.setLoading(false),
       });
   }
