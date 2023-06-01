@@ -135,15 +135,28 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
-                var savedSnapshot, savedTcLocation, keyCodeLock, betweenFix, wasInsert, wasCollapsed;
-                var ctrlXArray;
-                var ctrlDown = false, cutText;
+
+                var savedSnapshot, keyCodeLock;
                 var editable = editor.editable();
+
+                /*
+                 * Global variable used to store the content of CTRL-X in "keydown" listener.
+                 * This content will be then used again in "cut" event
+                 */
+                var ctrlXArray;
+
+                /*
+                 * Variables used to store if previous and next blocks are inserts from same user before delete the character.
+                 * We store it in "key" listener, before delete the character and use it again
+                 * in "deleteCharacter" inside "keyup" listener, after character is already deleted
+                 *
+                 */
+                var isPreviousInsertedOfSameUser, isNextInsertedOfSameUser;
 
                 // Initialize styles with selected track changes showed option
                 core.updateTrackChangesStyles(trackChanges.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
 
-                // Used for CTRL-X
+                // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
                     var event = new EventWrapper(e);
                     if (event.getKeyCode() === 88) {
@@ -153,116 +166,121 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
+
                     if (isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+
                         var event = new EventWrapper(e);
-                        if (event.isCtrl()) {
-                            ctrlDown = true; // Track ctrl down for the CTRL + x event
-                        }
 
                         // On delete functionality(prevents/backup of text)
                         if ((event.getKeyCode() === 8) || (event.getKeyCode() === 46)) {
-                            wasInsert = false;
 
                             editor.getSelection().getRanges()[0].optimize();
                             var range = editor.getSelection().getRanges()[0];
-                            var startContainer = range.startContainer;
                             var deleteKey = (event.getKeyCode() === 46);
 
                             if (!keyCodeLock && range.collapsed) {
-                                wasCollapsed = true;
+
+                                /*
+                                 * This if is used when is collapsed, which means that nothing is selected and
+                                 * we are deleting characters isolated, using backspace or delete
+                                 */
+
                                 keyCodeLock = true;
 
-                                // Prevent between 2 deletes
-                                var pTcElement = core.searchTrackChangeElementCheckingParent(editor, core.DELETE_ACTION);
-                                var parentTcElement = (pTcElement && (pTcElement[1] === core.PARENT || pTcElement[1] === core.CURRENT || pTcElement[1] === core.CARET_START));
-                                var nextTcElement = core.searchNextTrackChangeElement(editor, core.DELETE_ACTION, deleteKey);
-                                var previousTcElement = core.searchPreviousTrackChangeElement(editor, core.DELETE_ACTION, deleteKey);
-                                betweenFix = null;
-                                if (parentTcElement && nextTcElement && deleteKey) {
-                                    betweenFix = [pTcElement, nextTcElement, deleteKey];
-                                } else if (parentTcElement && previousTcElement && !deleteKey) {
-                                    betweenFix = [previousTcElement, pTcElement, !deleteKey];
-                                }
-                                // End prevent
+                                /*
+                                 * To know the blocks before and after the current position
+                                 */
+                                var previousEditableNode = editor.getSelection().getRanges()[0].getPreviousEditableNode();
+                                var nextEditableNode = editor.getSelection().getRanges()[0].getNextEditableNode();
+
+                                /*
+                                 * Get if previous and next blocks are inserts from same user before delete the character.
+                                 * To be used in "deleteCharacter".
+                                 * If we get this information after delete, then we loose the information of the deleted character.
+                                 */
+                                isPreviousInsertedOfSameUser = core.isSameUserTrackChangeElement(editor, previousEditableNode, core.INSERT_ACTION);
+                                isNextInsertedOfSameUser = core.isSameUserTrackChangeElement(editor, nextEditableNode, core.INSERT_ACTION);
 
                                 savedSnapshot = core.getCleanData(editor);
 
-                                // Search with direction. No parent Check.
-                                var tcElement = core.searchTrackChangeElement(editor, core.DELETE_ACTION, false, deleteKey);
-                                // Logic of tc before of after the change.
-                                savedTcLocation = (tcElement ? (deleteKey ? (tcElement[1] === core.CARET_END ? core.BEFORE : core.AFTER) : (tcElement[1] === core.CARET_START ? core.AFTER : core.BEFORE)) : core.NONE);
-
-                                // Checks for no delete of delete.
-                                // Prevent is different search, if still found tc.
-                                var tcElementPrevent = core.searchTrackChangeElement(editor, core.DELETE_ACTION);
-                                if (tcElementPrevent && (((savedTcLocation === core.BEFORE) && !deleteKey) || ((savedTcLocation === core.AFTER) && deleteKey))) {
+                                /*
+                                 * Checks for no delete of delete.
+                                 * 2 situations:
+                                 * - If we press delete and NEXT is already a deleted block
+                                 * - If we press backspace and PREVIOUS is already a deleted block
+                                 */
+                                if ((deleteKey && core.isTrackChangeElement(nextEditableNode, core.DELETE_ACTION)) ||
+                                    (!deleteKey && core.isTrackChangeElement(previousEditableNode, core.DELETE_ACTION))) {
                                     event.getInstance().data.domEvent.preventDefault();
                                     savedSnapshot = null;
                                 }
 
-                                // INSERT LAST CHARACTER DELETE FIX
-                                // Search with direction. No parent Check.
-                                var tcElementIns = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
-                                if (tcElementIns) {
-                                    if (!range.checkBoundaryOfElement(range.startContainer, CKEDITOR.END) &&
-                                        !range.checkBoundaryOfElement(range.startContainer, CKEDITOR.START) && (tcElementIns[1] === core.PARENT)) {
-                                        wasInsert = true;
-                                    } else if (!deleteKey) {
-                                        if ((range.checkBoundaryOfElement(range.startContainer, CKEDITOR.END) && (tcElementIns[1] === core.PARENT)) ||
-                                            (range.checkBoundaryOfElement(range.startContainer, CKEDITOR.END) && (tcElementIns[1] === core.CURRENT)) ||
-                                            (!range.checkBoundaryOfElement(range.startContainer, CKEDITOR.END) && (tcElementIns[1] === core.CARET_END))) {
-                                            wasInsert = true;
-                                        }
-                                    } else if (deleteKey) {
-                                        if ((range.checkBoundaryOfElement(range.startContainer, CKEDITOR.START) && (tcElementIns[1] === core.PARENT)) ||
-                                            (!range.checkBoundaryOfElement(range.startContainer, CKEDITOR.START) && (tcElementIns[1] === core.CARET_START))) {
-                                            wasInsert = true;
-                                        }
-                                    }
-                                }
-                                // END
-
-                                var selection = editor.getSelection();
-                                range = selection.getRanges()[0];
-                                startContainer = range.startContainer;
-
-                                if (!tcElement) { // Check if no TrackChange element is found.
-                                    if (startContainer && startContainer.type === CKEDITOR.NODE_TEXT &&
-                                        range.startOffset === range.endOffset &&
-                                        range.startOffset === startContainer.getText().length && deleteKey) {
-                                        var nextNode = range.getNextNode();
-                                        if (nextNode && (nextNode.type === CKEDITOR.NODE_ELEMENT) && (typeof(nextNode.getAttribute) != 'undefined') && (nextNode.getAttribute(this.ACTION_ATTR) === core.DELETE_ACTION)) {
-                                            event.getInstance().data.domEvent.preventDefault();
-                                            event.getInstance().stop();
-                                            savedSnapshot = null;
-                                        }
-                                    } else if ((typeof(startContainer.getAttribute) != 'undefined') && (startContainer.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
-                                        if ((range.startOffset === 0 && deleteKey) || (range.startOffset !== 0 && !deleteKey)) {
-                                            event.getInstance().data.domEvent.preventDefault();
-                                            event.getInstance().stop();
-                                            savedSnapshot = null;
-                                        }
-                                    } else if ((typeof(startContainer.getParent().getAttribute) != 'undefined') && (startContainer.getParent().getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
-                                        event.getInstance().data.domEvent.preventDefault();
-                                        event.getInstance().stop();
-                                        savedSnapshot = null;
-                                    }
-                                }
                             } else if (!range.collapsed) {
-                                wasCollapsed = false;
+
                                 editor.fire("saveSnapshot");
 
                                 var fragment = range.cloneContents(true);
                                 var nodeList = fragment.find('li:not(:has(ol))');
+
+                                /*
+                                 * If count is > 0, we selected more then one line
+                                 * Then we have a treatment per line in deleteFromListAndAddTrackChange, which
+                                 * will call addTrackChangesNested
+                                 */
                                 if (nodeList.count() > 0) {
                                     actions.deleteFromListAndAddTrackChange(editor, range, nodeList);
                                     event.getInstance().data.domEvent.preventDefault();
                                     event.getInstance().stop();
                                 } else {
-                                    fragment = range.extractContents(true);
-                                    actions.deleteTextAndAddTrackChange(editor, fragment);
-                                    event.getInstance().data.domEvent.preventDefault();
+
+                                    /*
+                                     * If it is just one line, the treatment is a little different
+                                     * Then we call deleteTextAndAddTrackChange, which
+                                     * will ALSO call addTrackChangesNested
+                                     */
+
+                                    var childrenFromFragment = fragment.getChildren();
+
+                                    if (childrenFromFragment.toArray().length === 1) {
+
+                                        /*
+                                         * Here, we have 1 line, but selection is inside ONLY ONE track change element.
+                                         * Then, we have 2 possibilities: we are deleting inside a delete or a insert.
+                                         */
+                                        if (core.isTrackChangeElement(range.startContainer, core.DELETE_ACTION)) {
+                                            /*
+                                             * For delete, we NEVER delete a deleted
+                                             */
+                                            event.getInstance().data.domEvent.preventDefault();
+                                        } else if (!core.isSameUserTrackChangeElement(editor, range.startContainer, core.INSERT_ACTION)) {
+                                            /*
+                                             * For insert, we mark as delete track trace if it is another user.
+                                             * If it is same user we don't need any action, as we just delete using normal flow.
+                                             */
+                                            range.extractContents(true);
+                                            var child = childrenFromFragment.getItem(0);
+                                            var tcDeleteItem = core.buildTrackChangeWrapElement(editor, core.DELETE_ACTION, child.$.textContent);
+                                            editor.insertElement(tcDeleteItem);
+                                            event.getInstance().data.domEvent.preventDefault();
+                                            event.getInstance().stop();
+                                        }
+
+                                    } else {
+
+                                        /*
+                                         * Here, we have  more than 1 line.
+                                         * In future we should change to NOT use extractContents,
+                                         * As this is causing problem when we select part of 2 deleted blocks (each one from one user)
+                                         * then we add as separate blocks which should not be separated.
+                                         */
+                                        range.extractContents(true);
+                                        actions.deleteTextAndAddTrackChange(editor, range, childrenFromFragment);
+                                        event.getInstance().data.domEvent.preventDefault();
+
+                                    }
+
                                 }
+
                             } else {
                                 // Prevent if lock exists
                                 event.getInstance().data.domEvent.preventDefault();
@@ -282,6 +300,7 @@ define(function leosTrackChangesPluginModule(require) {
                         // Because the keydown part is leading to track the changes.
                         try {
                             if ((event.getKeyCode() === 8 || event.getKeyCode() === 46) && savedSnapshot) {
+
                                 var diff = new diff_match_patch();
                                 var foundDiff = false;
                                 var differences = diff.diff_main(savedSnapshot, core.getCleanData(editor));
@@ -300,24 +319,16 @@ define(function leosTrackChangesPluginModule(require) {
                                 // Insert deleted contents
                                 if (foundDiff) {
                                     editor.fire("lockSnapshot");
-                                    actions.deleteCharacter(editor, event, savedTcLocation, differences, betweenFix, wasInsert, wasCollapsed);
+                                    actions.deleteCharacter(editor, event, differences, isPreviousInsertedOfSameUser, isNextInsertedOfSameUser);
                                     if (tcInsert && (tcInsert[0].getText().length === 0)) { // Empty tag check.. if so remove..
                                         tcInsert[0].remove();
                                     }
                                     editor.fire("unlockSnapshot");
                                 }
 
-                                if ((cutText !== null) && (cutText !== undefined && event.isCtrl())) {
-                                    // After cut insert track change element
-                                    core.insertTrackChangeElement(editor, core.DELETE_ACTION, cutText, true, true);
-                                    cutText = null;
-                                }
-
-                                if (event.isCtrl()) { // CTRL release (this is tracked for the cut event)
-                                    ctrlDown = false;
-                                }
                                 // No prevent because the text needs to be deleted
                                 // event.getInstance().data.preventDefault();
+
                             }
                         } finally {
                             // Release lock!
@@ -392,12 +403,17 @@ define(function leosTrackChangesPluginModule(require) {
                 });
 
                 editable.attachListener(editor.document, "cut", function(e) {
-                    // Save the text for the cut element
+                    /*
+                     * Here it is another point we use addTrackChangesNested to reuse code.
+                     */
                     if (isTrackChangesEnabled) {
-                        for (var indexElem = 0; indexElem < ctrlXArray.length; indexElem++) {
-                            var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, ctrlXArray[indexElem].data,true);
-                            editor.insertHtml(tcItem.$.outerHTML, "html");
+                        var range = editor.getSelection().getRanges()[0];
+                        var closedElements = actions.addTrackChangesNested(editor, range, new CKEDITOR.dom.nodeList(ctrlXArray));
+                        var outerHTML = "";
+                        for (var countClosedElements = 0; countClosedElements < closedElements.length; countClosedElements++) {
+                            outerHTML += closedElements[countClosedElements].$.outerHTML;
                         }
+                        editor.insertHtml(outerHTML, "html");
                         e.cancel();
                     }
                 });
@@ -484,95 +500,80 @@ define(function leosTrackChangesPluginModule(require) {
             event.getInstance().data.preventDefault(); // Prevent standard insert
         },
 
-        deleteCharacter: function(editor, event, savedTcLocation, differences, betweenFix, wasInsert, wasCollapsed) {
-            editor.getSelection().getRanges()[0].optimize();
-            var range = editor.getSelection().getRanges()[0], startContainer = range.startContainer,
-                tcLocation, tcElement, tcText, setToEl = null, deleteKey = (event.getKeyCode() === 46), core = trackChanges.core;
+        deleteCharacter: function(editor, event, differences, isPreviousInsertedOfSameUserBeforeDelete, isNextInsertedOfSameUserBeforeDelete) {
 
-            if (betweenFix) {
-                betweenFix[0][0].setText(betweenFix[0][0].getText() + differences + betweenFix[1][0].getText());
-                betweenFix[1][0].remove();
-                core.setToEditablePosition(editor, betweenFix[0][0], betweenFix[2]);
-                betweenFix = null; // Clean old value
-            } else if (wasInsert) {
+            /*
+             * This method add a delete track trace for one single character
+             */
+
+            var range = editor.getSelection().getRanges()[0], deleteKey = (event.getKeyCode() === 46), core = trackChanges.core;
+            range.optimize();
+
+            /*
+             * If it is same user, we just return and don't add this character.
+             * This means it will not be included, which means deleted.
+             */
+            if (deleteKey && isNextInsertedOfSameUserBeforeDelete) {
                 return;
-            } else {
-                var tcInsertElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
-
-                // Get current TC Element Place?
-                tcElement = core.searchTrackChangeElementCheckingParent(editor, core.DELETE_ACTION);
-                if (tcElement && (tcInsertElement == undefined)) {
-                    setToEl = tcElement[0];
-                    if (deleteKey && (tcElement[1] === core.CURRENT)) {
-                        savedTcLocation = core.BEFORE;
-                    }
-                } else if (savedTcLocation != core.NONE) {
-                    var node = startContainer;
-                    if (node && node.type === CKEDITOR.NODE_TEXT &&
-                        range.startOffset === range.endOffset &&
-                        range.startOffset === node.getText().length) {
-                        node = range.getNextNode();
-                    } else if (savedTcLocation == core.AFTER) {
-                        while (node.hasNext() && (node.type != 1)) {
-                            node = node.getNextSourceNode();
-                        }
-                    } else {
-                        while (node.hasPrevious() && (node.type != 1)) {
-                            node = node.getPreviousSourceNode();
-                        }
-                    }
-                    setToEl = node;
-                }
-
-                // Set tcLocation en caretMove, depends on delete
-                if ((savedTcLocation === core.NONE) && tcElement) {
-                    tcLocation = deleteKey ? (tcElement[1] === core.CARET_END || tcElement[1] === core.PARENT ? core.BEFORE : core.AFTER) :
-                        (tcElement[1] === core.CARET_START ? core.AFTER : core.BEFORE);
-                } else {
-                    tcLocation = savedTcLocation;
-                }
-
-                // Select text order by tcLocation if not none
-                if ((tcLocation != core.NONE) && setToEl) {
-                    tcText = (tcLocation === core.BEFORE ? setToEl.getText() + differences : differences + setToEl.getText());
-                } else if (setToEl) { // If not new element and see below
-                    // If the caret stayed in contact with the tcElement normal behaviour
-                    tcText = (deleteKey ? setToEl.getText() + differences : differences + setToEl.getText());
-                }
-
-                if (setToEl && tcElement && (tcElement[0].getAttribute(core.UID_ATTR) === trackChanges.getUserId(editor))) {
-                    // Add to already existing element
-                    setToEl.setText(tcText.replace(/\u00a0/g, " "));
-                    if (deleteKey) {
-                        // If delete caret in gecko is set to start? Fix
-                        core.setToEditablePosition(editor, setToEl, core.CARET_END);
-                    }
-                } else {
-                    if (!wasCollapsed && tcInsertElement && (tcInsertElement[0].getAttribute(core.UID_ATTR) === trackChanges.getUserId(editor))
-                        && ((tcInsertElement[1] === core.CURRENT) || (tcInsertElement[1] === core.PARENT))) {
-                        // These checks are fixes to prevent deleting of users own added text.
-                        var selection = editor.getSelection();
-                        range = selection.getRanges()[0];
-                        startContainer = range.startContainer;
-                        if (typeof(startContainer.getAttribute) != 'undefined' && (startContainer.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION)) {
-                            if ((range.startOffset === 0 && deleteKey) || (range.startOffset !== 0 && range.startOffset !== startContainer.length)) {
-                                return; // Normal workflow
-                            }
-                        } else if (typeof(startContainer.getParent().getAttribute) != 'undefined' && startContainer.getParent().getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
-                            if ((range.startOffset === 0 && deleteKey) || (range.startOffset !== 0 && range.startOffset !== startContainer.length)) {
-                                return; // Normal workflow
-                            }
-                        } else {
-                            return; // Possible deep nested flow
-                        }
-                    }
-                    // New trackchange "delete" element
-                    var newElement = core.insertTrackChangeElement(editor, core.DELETE_ACTION, differences, deleteKey);
-                    if (tcInsertElement && tcInsertElement[0] && (tcInsertElement[1] === core.PARENT || tcInsertElement[1] === core.CURRENT)) {
-                        core.breakParentAndMoveTo(editor, newElement, tcInsertElement[0], deleteKey);
-                    }
-                }
+            } else if (!deleteKey && isPreviousInsertedOfSameUserBeforeDelete) {
+                return;
             }
+
+            var elementToMoveTo;
+            var previousEditableNodeAfterDelete = editor.getSelection().getRanges()[0].getPreviousEditableNode();
+            var nextEditableNodeAfterDelete = editor.getSelection().getRanges()[0].getNextEditableNode();
+
+            if (deleteKey && core.isTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
+
+                /*
+                 * If we press delete and next block is a new delete track change, we can join them.
+                 * After save it, we cannot join anymore
+                 */
+                previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + differences);
+                if (core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
+                    previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
+                    nextEditableNodeAfterDelete.remove();
+                }
+                elementToMoveTo = previousEditableNodeAfterDelete;
+
+            } else if (!deleteKey && core.isTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
+
+                /*
+                 * If we press backspace and previous block is a new delete track change, we can join them.
+                 * After save it, we cannot join anymore
+                 */
+                nextEditableNodeAfterDelete.setText(differences + nextEditableNodeAfterDelete.getText());
+                if (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
+                    nextEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
+                    previousEditableNodeAfterDelete.remove();
+                }
+                elementToMoveTo = nextEditableNodeAfterDelete;
+
+            } else {
+
+                /*
+                 * To add a new delete track change to this character
+                 */
+                var newElement = core.buildTrackChangeWrapElement(editor, core.DELETE_ACTION, differences);
+                editor.insertElement(newElement);
+                elementToMoveTo = newElement;
+
+            }
+
+            /*
+             * If it is a delete key, we need move forward.
+             * If it is a backspace key, we need move backward.
+             */
+            if (!deleteKey) {
+                range = editor.createRange();
+                range.moveToPosition(elementToMoveTo, CKEDITOR.POSITION_AFTER_START);
+                range.select();
+            } else {
+                range = editor.createRange();
+                range.moveToPosition(elementToMoveTo, CKEDITOR.POSITION_BEFORE_END);
+                range.select();
+            }
+
         },
 
         acceptChange: function(editor, element) {
@@ -595,66 +596,107 @@ define(function leosTrackChangesPluginModule(require) {
             }
         },
 
-        deleteTextAndAddTrackChange: function(editor, fragment) {
-            var core = trackChanges.core;
-            var childrenOfSelection = fragment.getChildren();
-            var firstItem = null, lastItem = null;
-            var objNonReferencedArray = core.toArray(childrenOfSelection);
-            var updatedRange = editor.getSelection().getRanges()[0];
-
-            for (var i = 0; objNonReferencedArray.length > i; i++) {
-                editor.fire("lockSnapshot"); // To prevent undo to catch every part
-                var item = objNonReferencedArray[i];
-                var tcItem = core.addTrackChangesNested(editor, item);
-                if (tcItem != null) {
-                    if (!updatedRange.collapsed) {
-                        updatedRange.collapse(true);
-                        updatedRange.select();
-                    }
-                    editor.insertElement(tcItem);
-                }
-                if (firstItem == null) {
-                    firstItem = tcItem;
-                } else {
-                    lastItem = tcItem;
-                }
-                editor.fire("unlockSnapshot");
+        /*
+         * Method used in "key" listener when we have just 1 line selected.
+         * Make use of addTrackChangesNested for reusability.
+         */
+        deleteTextAndAddTrackChange: function(editor, range, childrenFromFragment) {
+            if (!range.collapsed) {
+                range.collapse(true);
+                range.select();
             }
-
-            //editor.fire("updateSnapshot");
+            var closedElements = this.addTrackChangesNested(editor, range, childrenFromFragment);
+            for (var i = 0; i < closedElements.length; i++) {
+                editor.insertElement(closedElements[i]);
+            }
             editor.fire("saveSnapshot");
-
-            // Merge changes with previous HTML
-            if ((firstItem != null) && (firstItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
-                firstItem.mergeSiblings(false);
-            }
-            if ((lastItem != null) && (lastItem.$.nodeType === CKEDITOR.NODE_ELEMENT)) {
-                lastItem.mergeSiblings(false);
-            }
         },
 
+        /*
+         * Method used in "key" listener when we have MORE than 1 line selected.
+         * Make use of addTrackChangesNested for reusability.
+         */
         deleteFromListAndAddTrackChange: function(editor, range, nodeList) {
-            var core = trackChanges.core;
             if (!range.collapsed) {
                 range.collapse(true);
                 range.select();
             }
             for (var i = 0; i < nodeList.toArray().length; i++) {
                 var domElement = nodeList.getItem(i).$;
-                var item = new CKEDITOR.dom.text(domElement.childNodes[0]);
-                var tcItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, item.getText(),true);
+                var outerHTML = "";
+                var closedElements = this.addTrackChangesNested(editor, range, new CKEDITOR.dom.nodeList(domElement.childNodes));
+                for (var countClosedElements = 0; countClosedElements < closedElements.length; countClosedElements++) {
+                    outerHTML += closedElements[countClosedElements].$.outerHTML;
+                }
+                /*
+                 * Three ways to thread selection with MORE than 1 line:
+                 * - When we are in first line
+                 * - Last line
+                 * - Middle lines
+                 */
                 var currentElement = editor.getSelection().document.find('#' + domElement.id).getItem(0).$;
                 if (i === 0 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
                     currentElement.innerHTML =
                         currentElement.innerHTML.substring(0, currentElement.innerHTML.length - domElement.innerHTML.length) +
-                        tcItem.$.outerHTML;
+                        outerHTML;
                 } else if(i === nodeList.toArray().length-1 && currentElement.innerHTML.length !== domElement.innerHTML.length) {
-                    currentElement.innerHTML = tcItem.$.outerHTML + currentElement.innerHTML.substring(domElement.innerHTML.length);
+                    currentElement.innerHTML = outerHTML + currentElement.innerHTML.substring(domElement.innerHTML.length);
                 } else {
-                    currentElement.innerHTML = tcItem.$.outerHTML;
+                    currentElement.innerHTML = outerHTML;
                 }
             }
             editor.fire("saveSnapshot");
+        },
+
+        /*
+         * childrenElements is a CKEDITOR.dom.nodeList
+         *
+         * To make code more reusable, this method is used in
+         * - deleteTextAndAddTrackChange
+         * - deleteFromListAndAddTrackChange
+         * - listener for "cut"
+         */
+        addTrackChangesNested: function(editor, range, childrenElements) {
+            var core = trackChanges.core;
+            var html = "";
+            var closedElements = new Array();
+            for (var i = 0; i < childrenElements.toArray().length; i++) {
+                var child = childrenElements.getItem(i);
+                /*
+                 * When we meet a deleted, we close the tag, to start a new one,
+                 * as we don't have deleted inside deleted.
+                 */
+                if (core.isTrackChangeElement(child, core.DELETE_ACTION)) {
+                    if (html !== "") {
+                        var tcItemToClose = core.buildTrackChangeWrapElement(editor, core.DELETE_ACTION, html);
+                        closedElements.push(tcItemToClose);
+                    }
+                    closedElements.push(child);
+                    html = "";
+                } else if (core.isTrackChangeElement(child, core.INSERT_ACTION)) {
+                    /*
+                     * When we meed a inserted track trace block and same user,
+                     * we ignore it to NOT be added.
+                     */
+                    if (child.getAttribute(core.UID_ATTR) !== trackChanges.getUserId(editor)) {
+                        html += child.$.outerHTML;
+                    }
+                } else {
+                    /*
+                     * For elements that are NOT track trace, we add it using outerHTML
+                     * For text elements, we add using textContent
+                     */
+                    html += child.$.outerHTML ? child.$.outerHTML : child.$.textContent;
+                }
+            }
+            /*
+             * To finalize, we need close the final tag
+             */
+            if (html !== "") {
+                var tcItem = core.buildTrackChangeWrapElement(editor, core.DELETE_ACTION, html);
+                closedElements.push(tcItem);
+            }
+            return closedElements;
         }
 
     };
@@ -691,11 +733,11 @@ define(function leosTrackChangesPluginModule(require) {
             return this.searchTrackChangeElement(editor, action);
         },
 
-        searchTrackChangeElement: function(editor, action, previousFirst, deleteKey) {
+        searchTrackChangeElement: function(editor, action, deleteKey) {
             var tcElement = null, previousSearched = false, nextSearched = false;
             editor.getSelection().getRanges()[0].optimize();
             while (!previousSearched || !nextSearched) {
-                if (previousFirst || nextSearched) {
+                if (nextSearched) {
                     tcElement = this.searchPreviousTrackChangeElement(editor, action, deleteKey);
                     previousSearched = true;
                 } else {
@@ -710,10 +752,10 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         searchPreviousTrackChangeElement: function(editor, action, deleteKey) {
-            var node = editor.getSelection().getRanges()[0].getPreviousNode();
+            var node = editor.getSelection().getRanges()[0].getPreviousEditableNode();
             if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                 return [node, this.CARET_END];
-            } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasPrevious() && (deleteKey === false) && (node.getText().length === CKEDITOR.NODE_ELEMENT)) {
+            } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasPrevious() && (deleteKey === false)) {
                 node = node.getPrevious();
                 if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                     return [node, this.CARET_END];
@@ -723,11 +765,10 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         searchNextTrackChangeElement: function(editor, action, deleteKey) {
-            var range = editor.getSelection().getRanges()[0];
-            var node = editor.getSelection().getRanges()[0].getNextNode();
+            var node = editor.getSelection().getRanges()[0].getNextEditableNode();
             if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                 return [node, this.CARET_START];
-            } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasNext() && (deleteKey === true) && (node.getText().length === CKEDITOR.NODE_ELEMENT)) {
+            } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasNext() && (deleteKey === true)) {
                 node = node.getNext();
                 if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
                     return [node, this.CARET_START];
@@ -755,56 +796,18 @@ define(function leosTrackChangesPluginModule(require) {
             return tcElement;
         },
 
+        buildTrackChangeWrapElement: function(editor, action, html) {
+            var tcElement = new CKEDITOR.dom.element(this.TRACKCHANGES_ELEMENT);
+            tcElement.setAttributes(this.getTrackChangeAttributes(editor, action));
+            tcElement.$.innerHTML = html;
+            return tcElement;
+        },
+
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             editor.insertElement(tcElement);
             this.setToEditablePosition(editor, tcElement, toEnd);
             return tcElement;
-        },
-
-        addTrackChangesNested: function(editor, item) {
-            if (this.isTrackChangeElement(item, this.INSERT_ACTION)) {
-                // Span insert element!
-                if (item.getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
-                    // If not own insert, build delete tag
-                    item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.$.innerHTML, true);
-                } else {
-                    // Empty the item but prevent crash. if its own delete
-                    item = null;
-                }
-            } else if (this.isTrackChangeElement(item, this.DELETE_ACTION)) {
-                // Span delete element! - Maintain, no actions needed
-                // Nothing yet... Prevent reaching else.
-            } else if ((item != null) && (item.$.nodeType === CKEDITOR.NODE_TEXT)) {
-                if (this.isTrackChangeElement(item.getParent(), this.INSERT_ACTION)) {
-                    if (item.getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
-                        // If not own insert, build delete tag
-                        item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.$.innerHTML, true);
-                    } else {
-                        // Empty the item but prevent crash. if its own delete
-                        item = null;
-                    }
-                } else {
-                    // Normal flow - Make delete element
-                    if (editor.getSelection().getStartElement().getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
-                        item = this.buildTrackChangeElement(editor, this.DELETE_ACTION, item.getText(),true);
-                    } else {
-                        item = null;
-                    }
-                }
-            } else if (item != null) {
-                //Normal objects, walk recursive
-                var elementGeneratedHTML = "";
-                var tempArray = this.toArray(item.getChildren());
-                for (var e = 0; tempArray.length > e; e++) {
-                    var tempItem = this.addTrackChangesNested(editor, tempArray[e]);
-                    elementGeneratedHTML += (tempItem != null ? tempItem.$.outerHTML : "");
-                }
-                if (editor.getSelection().getStartElement().getAttribute(this.UID_ATTR) != trackChanges.getUserId(editor)) {
-                    item.$.innerHTML = elementGeneratedHTML;
-                }
-            }
-            return item;
         },
 
         toArray: function(list) {
@@ -867,8 +870,31 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         isTrackChangeElement: function(element, action) {
-            return ((element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
-                (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action));
+            var elementIsTracktrace = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
+                (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action);
+            var textHasParentElementTracktrace = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
+                (element.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getParent().getAttribute(this.ACTION_ATTR) === action);
+            return elementIsTracktrace || textHasParentElementTracktrace;
+        },
+
+        isSameUserTrackChangeElement: function(editor, element, action) {
+            var trackChangeElementHasSameUser = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
+                (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action) &&
+                (element.getAttribute(this.UID_ATTR) === trackChanges.getUserId(editor));
+            var parentTrackChangeElementHasSameUser = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
+                (element.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getParent().getAttribute(this.ACTION_ATTR) === action) &&
+                (element.getParent().getAttribute(this.UID_ATTR) === trackChanges.getUserId(editor));
+            return trackChangeElementHasSameUser || parentTrackChangeElementHasSameUser;
+        },
+
+        isNewTrackChangeElement: function(element, action) {
+            var elementIsNewTracktrace = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
+                (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action) &&
+                (element.getAttribute(this.STATUS_ATTR) === this.NEW_STATUS);
+            var textHasParentElementNewTracktrace = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
+                (element.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getParent().getAttribute(this.ACTION_ATTR) === action) &&
+                (element.getParent().getAttribute(this.STATUS_ATTR) === this.NEW_STATUS);
+            return elementIsNewTracktrace || textHasParentElementNewTracktrace;
         },
 
         isInsideTrackChangeElement: function(editor) {
@@ -937,10 +963,6 @@ define(function leosTrackChangesPluginModule(require) {
         }
         this.getInstance = function() {
             return event();
-        }
-        this.isCtrl = function() {
-            var e = event();
-            return (e.data.domEvent ? e.data.domEvent.$.metaKey : e.data.$.metaKey) || (e.data.domEvent ? e.data.domEvent.$.ctrlKey : e.data.$.ctrlKey) || (this.getKeyCode() === 17) || (this.getKeyCode() === 91) || (this.getKeyCode() === 224);
         }
         this.getChar = function() {
             var charCode = getCharCode();
