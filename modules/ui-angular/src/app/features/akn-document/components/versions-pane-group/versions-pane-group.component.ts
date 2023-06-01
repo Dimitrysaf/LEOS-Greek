@@ -109,6 +109,18 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     return `${major}.${intermediate}.${minor}`;
   }
 
+  protected formatTitle(version: Version): string {
+    if (version.checkinCommentVO.checkinElement) {
+      return (
+        version.checkinCommentVO.checkinElement.elementLabel +
+        ' ' +
+        version.checkinCommentVO.checkinElement.actionType.toLowerCase()
+      );
+    } else {
+      return version.checkinCommentVO.title;
+    }
+  }
+
   protected toggleShowMore(expanded = !this.showMore) {
     this.showMore = expanded;
     this.updateState();
