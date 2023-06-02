@@ -170,8 +170,8 @@ export class CKEditorService implements OnDestroy {
         rootElement,
       },
     );
-    require(['extension/userGuidanceExtension'], (userGuideance) => {
-      userGuideance.init(this.refToLinkConnector);
+    require(['extension/refToLinkExtension'], (refToLink) => {
+      refToLink.init(this.refToLinkConnector);
     });
   }
 
