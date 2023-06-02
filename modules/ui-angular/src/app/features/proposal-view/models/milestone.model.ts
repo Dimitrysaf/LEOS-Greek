@@ -9,6 +9,7 @@ export interface Milestone {
   status: string;
   title: string;
   updatedDate: number;
+  opened?: boolean;
 }
 
 export interface MilestoneViewResponse {
