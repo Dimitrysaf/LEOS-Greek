@@ -33,10 +33,12 @@ export class ProposalMilestonesService {
   exportMilestonePdf(documentRef: string, legFileName: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .get<any>(
+      .get(
         `${apiBaseUrl}/secured/list-milestones-view/pdf-export/${documentRef}`,
         {
           params: { legFileName },
+          observe: 'response',
+          responseType: 'blob',
         },
       )
       .subscribe({
@@ -47,7 +49,7 @@ export class ProposalMilestonesService {
           const filename = cd.attachment
             ? cd.filename
             : `Proposal_${documentRef}.pdf`;
-          downloadBlob(response, filename, this.document);
+          downloadBlob(response.body, filename, this.document);
         },
         complete: () => this.loadingService.setLoading(false),
       });
