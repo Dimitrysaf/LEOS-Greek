@@ -7,7 +7,6 @@ import {
   Inject,
   OnDestroy,
   OnInit,
-  QueryList,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -31,7 +30,6 @@ import {
   Subject,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -89,7 +87,7 @@ export class DocumentEditorComponent
 
   isVersionForViewOpen = false;
   isTocPaneCollapsed = true;
-  isAnnotationsPaneCollapsed = false;
+  isAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
   reloadTrigger: number;
 
@@ -671,6 +669,12 @@ export class DocumentEditorComponent
     this.cdkEditor.closeElementEditor();
     //wait for the API where we get all the metadata for each document
     this.router.navigate([`/collection/${this.proposalRef}`]);
+  }
+
+  onAnnotationsLoaded(count: number) {
+    if (count && this.isAnnotationsPaneCollapsed) {
+      this.onToggleAnnotationsPaneCollapsed();
+    }
   }
 
   protected exploreMilestone(version: Version) {

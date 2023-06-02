@@ -3,11 +3,13 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  EventEmitter,
+  HostListener,
   Inject,
   Input,
   OnDestroy,
+  Output,
 } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
@@ -32,11 +34,13 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
   @Input() canvasClass?: string;
+  @Output() annotationsLoaded = new EventEmitter<number>();
 
   private annotate: AnnotateManager;
   private mutationObserver?: MutationObserver;
   private canvasMutationObserver?: MutationObserver;
   private canvasEl?: HTMLCanvasElement;
+  private iframeEl?: HTMLIFrameElement;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -85,19 +89,32 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     this.canvasMutationObserver?.disconnect();
     this.canvasEl?.remove();
     this.canvasEl = null;
+    this.iframeEl = null;
+  }
+
+  @HostListener('window:message', ['$event'])
+  annotationsLoadedListener(event: MessageEvent) {
+    if (
+      event.source === this.iframeEl?.contentWindow &&
+      event.data.method === 'loadAnnotations'
+    ) {
+      const annotations = event.data.arguments[0];
+      this.annotationsLoaded.emit(annotations.length);
+    }
   }
 
   private interceptAndEmbedAnnotatorFrame() {
-    const isAnnotatorFrame = (n: Node): n is Element =>
+    const isAnnotatorFrameWrapper = (n: Node): n is Element =>
       n instanceof Element && n.classList.contains('annotator-frame');
     const callback: MutationCallback = (mutationList, observer) => {
-      const frameEl = mutationList
+      const frameWrapperEl = mutationList
         .filter((ml) => ml.type === 'childList')
         .flatMap((ml) => Array.from(ml.addedNodes))
-        .find(isAnnotatorFrame);
-      if (frameEl) {
+        .find(isAnnotatorFrameWrapper);
+      if (frameWrapperEl) {
         observer.disconnect();
-        this.elementRef.nativeElement.appendChild(frameEl);
+        this.elementRef.nativeElement.appendChild(frameWrapperEl);
+        this.iframeEl = frameWrapperEl.querySelector('iframe');
       }
     };
 
