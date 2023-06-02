@@ -81,6 +81,17 @@ export class CKEditorService implements OnDestroy {
         this.initRefToLink(require, leosState, rootElement);
         this.initSoftActions(require, leosState, rootElement);
       });
+
+    this.documentService.documentView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.leosEditorConnector?.$triggerStateChange();
+        this.actionManagerConnector?.$triggerStateChange();
+        this.userGuidanceConnector?.$triggerStateChange();
+        this.softActionsConnector?.$triggerStateChange();
+        this.changeDetailsConnector?.$triggerStateChange();
+        this.refToLinkConnector?.$triggerStateChange();
+      });
   }
 
   private initActionManager(
@@ -191,10 +202,9 @@ export class CKEditorService implements OnDestroy {
       {
         rootElement,
       },
-      this.documentService,
     );
-    require(['extension/softActionsExtension'], (sofrActions) => {
-      sofrActions.init(this.softActionsConnector);
+    require(['extension/softActionsExtension'], (softActions) => {
+      softActions.init(this.softActionsConnector);
       this.softActionsConnector.jsDepsInited();
     });
   }
