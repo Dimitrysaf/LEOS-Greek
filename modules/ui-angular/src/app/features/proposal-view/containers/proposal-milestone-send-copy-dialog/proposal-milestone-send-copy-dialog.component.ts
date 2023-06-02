@@ -85,7 +85,10 @@ export class ProposalMilestoneSendCopyDialogComponent
   }
 
   get isFormValid() {
-    return this.targetUserForm.valid;
+    return (
+      this.targetUserForm.valid &&
+      Boolean(this.targetUserForm.getRawValue().targetUser.login)
+    );
   }
 
   private loadAutocompleteData(users: User[]) {

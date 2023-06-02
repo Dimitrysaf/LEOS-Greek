@@ -97,17 +97,19 @@
                   }}
                 </button>
               </li>
-              <li euiListItem>
-                <button
-                  euiListItem
-                  (click)="openMilestoneSendCopyForContributionDialog(row)"
-                >
-                  {{
-                    'page.collection.milestones.actions.send-copy-for-contribution'
-                      | translate
-                  }}
-                </button>
-              </li>
+              <ng-container *appShowOnInstance="['ec', 'os']">
+                <li euiListItem>
+                  <button
+                    euiListItem
+                    (click)="openMilestoneSendCopyForContributionDialog(row)"
+                  >
+                    {{
+                      'page.collection.milestones.actions.send-copy-for-contribution'
+                        | translate
+                    }}
+                  </button>
+                </li>
+              </ng-container>
             </ul>
           </eui-dropdown-content>
         </eui-dropdown>
