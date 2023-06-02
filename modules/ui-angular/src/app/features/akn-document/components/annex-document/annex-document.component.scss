@@ -42,4 +42,9 @@
       border-bottom: $border;
     }
   }
+
+  // counter `a:not(eui-breadcrumb-item a)`
+  akomantoso aknp a {
+    text-decoration: underline;
+  }
 }
