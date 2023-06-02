@@ -21,6 +21,7 @@ import { TableOfContentService } from './tableOfContent.service';
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
   documentRef?: string;
+  isAngularUI?: boolean;
 };
 
 export type LeosEditorConnectorInitialState = Omit<
@@ -76,6 +77,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       {
         ...staticExtensionState,
         documentRef: documentService.documentRef,
+        isAngularUI: true,
         ...state,
       },
       options.rootElement,
