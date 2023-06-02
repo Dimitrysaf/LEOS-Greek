@@ -12,6 +12,10 @@ let parentIdCounter = 0;
 /*
  * Provided by Vaadin
  * @see {https://vaadin.com/api/framework/8.14.3/com/vaadin/ui/AbstractJavaScriptComponent.html}
+ *
+ * TODO: Prefix all non-VAADIN member names with `$` (public) or `_` (private)
+ *       to avoid naming collisions
+ * TODO: Reconsider need for `dirtyTimestamp`
  */
 export abstract class AbstractJavaScriptComponent<
   State extends object,
@@ -32,8 +36,11 @@ export abstract class AbstractJavaScriptComponent<
     },
   });
 
+  private static _instances = new Set<AbstractJavaScriptComponent<any>>();
+
   protected constructor(state?: State, protected _rootElement?: El) {
     Object.assign(this._state, state);
+    AbstractJavaScriptComponent._instances.add(this);
   }
 
   private _parentId = `${++parentIdCounter}}`;
@@ -98,8 +105,23 @@ export abstract class AbstractJavaScriptComponent<
     this.resizeListeners.clear();
     this.resizeObserver?.disconnect();
     this._stateChanged.cancel();
+    AbstractJavaScriptComponent._instances.delete(this);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  jsDepsInited() {
+    this._stateChanged();
+  }
+
+  $triggerStateChange() {
+    this._stateChanged();
+  }
+
+  static triggerGlobalStateChange() {
+    AbstractJavaScriptComponent._instances.forEach((instance) =>
+      instance._stateChanged(),
+    );
   }
 
   private getResizeObserver() {
