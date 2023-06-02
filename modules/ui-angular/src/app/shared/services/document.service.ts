@@ -96,7 +96,7 @@ export class DocumentService implements OnDestroy {
   versionSearchParams$: Observable<VersionSearchParams>;
   versionSearchResults$: Observable<string[]>;
   versionFilter$: Observable<string>;
-  // documentReplaceView$: Observable<DocumentViewResponse | null>;
+  searchResultsCounter$: Observable<number>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
   navigationPaneCollapse$: Observable<boolean>;
@@ -106,6 +106,7 @@ export class DocumentService implements OnDestroy {
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
   currentIndex: number;
+  displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
   // private documentCategoryBS = new BehaviorSubject(null);
@@ -138,6 +139,7 @@ export class DocumentService implements OnDestroy {
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
+  private searchResultsCounterBS = new BehaviorSubject<number>(0);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -276,6 +278,7 @@ export class DocumentService implements OnDestroy {
     this.versionSearchResults$ = this.versionSearchResultsBS$.asObservable();
     this.collapseExpandAnnotation$ =
       this.collapseExpandAnnotationSubj.asObservable();
+    this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -453,6 +456,7 @@ export class DocumentService implements OnDestroy {
     this.setDidDocumentLoadAndRender(false);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+    this.setSearchResultsCounter(0);
   }
 
   resetDocument() {
@@ -513,7 +517,15 @@ export class DocumentService implements OnDestroy {
       this.document.getElementById(this.focusedSearchResult.id).innerText =
         this.searchAndReplaceTextBS.value;
       if (currentIndex < this.searchResultIndexArray.length - 1) {
-        this.scrollToElement(this.searchResultIndexArray[currentIndex + 1]);
+        this.scrollToElement(
+          this.searchResultIndexArray[currentIndex + 1],
+          true,
+        );
+      }
+      if (this.searchResultsCounterBS.value - 1 > 0) {
+        this.setSearchResultsCounter(this.searchResultsCounterBS.value - 1);
+      } else {
+        this.setSearchResultsCounter(0);
       }
     }
   }
@@ -543,6 +555,7 @@ export class DocumentService implements OnDestroy {
         this.scrollToElement(this.searchResultIndexArray[i + 1]);
       }
     });
+    this.setSearchResultsCounter(0);
   }
 
   searchSave() {
@@ -657,6 +670,7 @@ export class DocumentService implements OnDestroy {
     if (values.searchText === '') {
       this.currentSearchResults = [];
       this.currentIndex = 0;
+      this.displayedCurrentIndex = 0;
       this.removeHighlights();
     }
     this.searchParamsBS.pipe(take(1)).subscribe((oldVal) => {
@@ -703,6 +717,7 @@ export class DocumentService implements OnDestroy {
     this.setSearchParams({ searchText: '' });
     this.toggleSubject(this.searchPaneOpenBS, open);
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+    this.setSearchResultsCounter(0);
   }
 
   toggleVersionsSearchPane(open?: boolean) {
@@ -861,6 +876,10 @@ export class DocumentService implements OnDestroy {
     this.isDocumentLoadedBS.next(loaded);
   }
 
+  private setSearchResultsCounter(count: number) {
+    this.searchResultsCounterBS.next(count);
+  }
+
   private getDocumentConfig(documentRef: string, documentType: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<DocumentConfig>(
@@ -880,9 +899,11 @@ export class DocumentService implements OnDestroy {
         )
         .subscribe((results) => {
           this.currentSearchResults = results;
+          this.setSearchResultsCounter(results.length);
           this.highlightSearchResults(results);
           this.scrollToElement(this.searchResultIndexArray[0]);
           this.currentIndex = 0;
+          this.displayedCurrentIndex = 0;
         });
     }
   }
@@ -937,9 +958,13 @@ export class DocumentService implements OnDestroy {
             resultArrayIndex: index,
           });
         } else {
-          for (let j = 0; j < element.children.length; j++) {
-            const i = element.children[j];
-            if (i.classList.contains('leos-content-soft-removed')) {
+          for (let j = 0; j < element.childNodes.length; j++) {
+            const i = element.childNodes[j];
+            const iHtml = element.childNodes[j] as HTMLElement;
+            if (
+              i.nodeType !== 3 &&
+              iHtml.classList.contains('leos-content-soft-removed')
+            ) {
               continue;
             } else {
               previousElementTextLength = elementTextLength;
@@ -1003,13 +1028,19 @@ export class DocumentService implements OnDestroy {
     });
   }
 
-  private scrollToElement(searchObj: any) {
+  private scrollToElement(searchObj: any, afterReplace?: boolean) {
     if (this.focusedSearchResult !== null) {
       const currentElement = document.getElementById(
         this.focusedSearchResult.id,
       );
       currentElement.classList.remove('focused-search-result');
-      currentElement.classList.add('search-result');
+      if (afterReplace) {
+        const p = currentElement.parentNode;
+        currentElement.replaceWith(...currentElement.childNodes);
+        p.normalize();
+      } else {
+        currentElement.classList.add('search-result');
+      }
     }
     this.focusedSearchResult = searchObj;
 
@@ -1018,6 +1049,11 @@ export class DocumentService implements OnDestroy {
       this.currentIndex = this.searchResultIndexArray.indexOf(
         this.focusedSearchResult,
       );
+
+      this.displayedCurrentIndex = afterReplace
+        ? this.currentIndex - 1
+        : this.currentIndex;
+
       targetElement.classList.remove('search-result');
       targetElement.classList.add('focused-search-result');
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });

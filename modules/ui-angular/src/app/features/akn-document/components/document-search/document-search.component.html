@@ -17,26 +17,26 @@
         euiClearable
         formControlName="searchText"
         [class]="
-          isSearchActive() && doc.currentSearchResults.length !== 0
+          isSearchActive() && (doc.searchResultsCounter$ | async) !== 0
             ? 'results-found'
-            : isSearchActive() && doc.currentSearchResults.length === 0
+            : isSearchActive() && (doc.searchResultsCounter$ | async) === 0
             ? 'results-not-found'
             : 'no-search'
         "
       />
       <div class="eui-input-group-addon-item">
-        <span euiLabel *ngIf="doc.currentSearchResults.length !== 0"
-          >{{ doc.currentIndex + 1 }}
+        <span euiLabel *ngIf="(doc.searchResultsCounter$ | async) !== 0"
+          >{{ doc.displayedCurrentIndex + 1 }}
           {{ 'page.editor.search.results.separator' | translate }}
-          {{ doc.currentSearchResults.length }}</span
+          {{ doc.searchResultsCounter$ | async }}</span
         >
         <eui-icon
           iconClass="eui-icon-search-m"
-          *ngIf="doc.currentSearchResults.length === 0 && !isSearchActive()"
+          *ngIf="(doc.searchResultsCounter$ | async) === 0 && !isSearchActive()"
         ></eui-icon>
         <span
           euiLabel
-          *ngIf="doc.currentSearchResults.length === 0 && isSearchActive()"
+          *ngIf="(doc.searchResultsCounter$ | async) === 0 && isSearchActive()"
           >{{ 'page.editor.search.results.not.found' | translate }}</span
         >
       </div>
