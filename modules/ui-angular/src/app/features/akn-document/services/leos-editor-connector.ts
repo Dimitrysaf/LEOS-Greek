@@ -275,6 +275,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       this.documentService.resetDocument();
     }
     this.isElementSaved = false;
+    LeosEditorConnector.triggerGlobalStateChange();
   }
 
   // leosEditorExtension > actionHandler

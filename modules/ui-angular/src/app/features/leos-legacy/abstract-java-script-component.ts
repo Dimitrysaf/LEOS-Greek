@@ -32,8 +32,11 @@ export abstract class AbstractJavaScriptComponent<
     },
   });
 
+  private static _instances = new Set<AbstractJavaScriptComponent<any>>();
+
   protected constructor(state?: State, protected _rootElement?: El) {
     Object.assign(this._state, state);
+    AbstractJavaScriptComponent._instances.add(this);
   }
 
   private _parentId = `${++parentIdCounter}}`;
@@ -98,8 +101,15 @@ export abstract class AbstractJavaScriptComponent<
     this.resizeListeners.clear();
     this.resizeObserver?.disconnect();
     this._stateChanged.cancel();
+    AbstractJavaScriptComponent._instances.delete(this);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  static triggerGlobalStateChange() {
+    AbstractJavaScriptComponent._instances.forEach((instance) =>
+      instance._stateChanged(),
+    );
   }
 
   private getResizeObserver() {
