@@ -41,7 +41,6 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   }
 
   requestDocumentMetadata(...args) {
-    this.documentService.setCollapseExpandAnnotation(true);
     this.annotateService
       .getDocumentsMetadata()
       .pipe(take(1))
