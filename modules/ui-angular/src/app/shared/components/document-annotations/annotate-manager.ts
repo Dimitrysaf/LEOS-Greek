@@ -78,9 +78,9 @@ export class AnnotateManager {
     combineLatest([annotateExtension$, connector$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([annotate, connector]) => {
-        annotate.init(connector); // FIXME: possible multiple initializations?
+        annotate.init(connector);
         // trigger sidebar refresh - see annotateExtension.js -> _connectorStateChangeListener()
-        connector.getState().dirtyTimestamp += 1;
+        connector.jsDepsInited();
       });
   }
 
@@ -104,7 +104,7 @@ export class AnnotateManager {
   /** Refreshes the sidebar content, the document highlights and the lines. */
   refresh() {
     if (this.connector) {
-      this.connector.getState().dirtyTimestamp += 1;
+      this.connector.$triggerStateChange();
     }
   }
 

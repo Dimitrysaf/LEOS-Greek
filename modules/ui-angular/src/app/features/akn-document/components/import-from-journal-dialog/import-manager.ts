@@ -23,7 +23,7 @@ export class ImportManager {
     this.count$ = this.countSubj.asObservable();
     this.getImportExtension().subscribe((importExtension) => {
       importExtension.init(this.connector);
-      this.connector.getState().dirtyTimestamp += 1;
+      this.connector.jsDepsInited();
     });
   }
 

@@ -25,7 +25,7 @@ export class SoftActionsConnector extends AbstractJavaScriptComponent<SoftAction
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this._state.dirtyTimestamp = -1;
+        this.$triggerStateChange();
       });
   }
 }

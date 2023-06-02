@@ -12,6 +12,10 @@ let parentIdCounter = 0;
 /*
  * Provided by Vaadin
  * @see {https://vaadin.com/api/framework/8.14.3/com/vaadin/ui/AbstractJavaScriptComponent.html}
+ *
+ * TODO: Prefix all non-VAADIN member names with `$` (public) or `_` (private)
+ *       to avoid naming collisions
+ * TODO: Reconsider need for `dirtyTimestamp`
  */
 export abstract class AbstractJavaScriptComponent<
   State extends object,
@@ -104,6 +108,14 @@ export abstract class AbstractJavaScriptComponent<
     AbstractJavaScriptComponent._instances.delete(this);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  jsDepsInited() {
+    this._stateChanged();
+  }
+
+  $triggerStateChange() {
+    this._stateChanged();
   }
 
   static triggerGlobalStateChange() {
