@@ -30,7 +30,7 @@
             <div
               #label
               [class]="'label' + ' ' + node.tocStyling"
-              (click)="hanldeNodeSelect(node)"
+              (click)="handleNodeSelect(node)"
               [innerHTML]="node.label"
               euiTooltip="{{ isLabelTextTruncated(label) ? node.label : null }}"
             ></div>
@@ -79,7 +79,7 @@
             <div
               #labelExt
               [class]="'label-extended' + ' ' + node.tocStyling"
-              (click)="hanldeNodeSelect(node)"
+              (click)="handleNodeSelect(node)"
               [innerHTML]="node.label"
               euiTooltip="{{
                 isLabelTextTruncated(labelExt) ? node.label : null

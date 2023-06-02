@@ -467,7 +467,7 @@ export class DocumentEditorComponent
           this.documentTocComponent.selectedNode.id,
         );
         if (newSelectedNode)
-          this.documentTocComponent.hanldeNodeSelect(newSelectedNode);
+          this.documentTocComponent.handleNodeSelect(newSelectedNode);
       }
     }
   }

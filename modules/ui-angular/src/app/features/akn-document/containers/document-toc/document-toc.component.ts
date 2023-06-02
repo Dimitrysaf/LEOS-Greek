@@ -242,7 +242,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   handleMove(node: TableOfContentItemVO) {
-    this.hanldeNodeSelect(node);
+    this.handleNodeSelect(node);
     this.selectedNodeToMove = node;
   }
 
@@ -800,15 +800,18 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.selectedNodeToMove = null;
   }
 
-  hanldeNodeSelect(node: TableOfContentItemVO) {
+  handleNodeSelect(node: TableOfContentItemVO) {
     this.selectedNode = node;
     // this.hilightSelectedNode(node);
-    setTimeout(() => {
-      this.handleTocStylingOnInlineEdit(this.isEdit);
-    });
-    setTimeout(() => {
-      this.scrollToDocumentElement(node);
-    });
+
+    this.handleTocStylingOnInlineEdit(this.isEdit);
+
+    this.delay(0) // Delay of 0ms to allow UI rendering
+      .then(() => this.scrollToDocumentElement(node, 'docContainer'))
+      .then(() => this.delay(100)) // Delay of 100ms before the next scroll
+      .then(() =>
+        this.scrollToDocumentElement(node, 'versionComparisonContainer'),
+      );
   }
 
   //a node can be dropped from two sources
@@ -921,7 +924,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.checkForDraft();
 
     setTimeout(() => {
-      if (this.selectedNode) this.hanldeNodeSelect(this.selectedNode);
+      if (this.selectedNode) this.handleNodeSelect(this.selectedNode);
       this.highlightInvalidNodes();
     });
 
@@ -1190,7 +1193,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
               this.isToCDraft = true;
               this.selectedNodeToMove = null;
               setTimeout(() => {
-                this.hanldeNodeSelect(nodeDragged);
+                this.handleNodeSelect(nodeDragged);
               });
             } catch (e) {
               this.clearDragInfo(true);
@@ -1408,16 +1411,28 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       );
   }
 
-  private scrollToDocumentElement(node: TableOfContentItemVO) {
-    const targetElement = document.getElementById(node.id);
+  private delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private scrollToDocumentElement(node: TableOfContentItemVO, id: string) {
+    const targetElement = document.getElementById(id);
     if (targetElement) {
-      targetElement.style.backgroundColor = 'cornsilk';
-      setTimeout(() => {
-        targetElement.style.background = '';
-      }, 1000);
-      setTimeout(() => {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      const childTargetElement = targetElement.querySelector(
+        `#${node.id}`,
+      ) as HTMLElement;
+      if (childTargetElement) {
+        childTargetElement.style.backgroundColor = 'cornsilk';
+        setTimeout(() => {
+          childTargetElement.style.background = '';
+        }, 1000);
+        setTimeout(() => {
+          childTargetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 100);
+      }
     }
   }
 
