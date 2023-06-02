@@ -88,10 +88,10 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         proposal.setCategory(LeosCategory.PROPOSAL);
         // unzip file
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, "/unzip/");
+        String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE))
+                .findFirst()
+                .orElseThrow(() -> new ImportElementException("A proposal file is required to upload a valid legislative document."));
         try {
-            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE))
-                    .findFirst()
-                    .orElseThrow(() -> new ImportElementException("A proposal file is required to upload a valid legislative document."));
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
                 File proposalFile = (File) unzippedFiles.get(proposalFileKey);
