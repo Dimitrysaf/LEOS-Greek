@@ -529,10 +529,6 @@ define(function leosTrackChangesPluginModule(require) {
              * - After save (it is not new anymore) we cannot join
              */
 
-            range = editor.createRange();
-            range.moveToPosition(nextEditableNodeAfterDelete, CKEDITOR.POSITION_BEFORE_START);
-            range.select();
-
             if (deleteKey &&
                 (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION) ||
                     core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION))) {
