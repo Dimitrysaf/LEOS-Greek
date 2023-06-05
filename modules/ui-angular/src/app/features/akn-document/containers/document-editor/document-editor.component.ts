@@ -188,6 +188,7 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((trigger) => {
         this.reloadTrigger = trigger;
+        this.cdkEditor.refreshStateMathJax();
       });
   }
 
@@ -935,6 +936,7 @@ export class DocumentEditorComponent
 
   private loadDocument(xml: string) {
     this.xml = this.cleanupAndSerializeXML(xml);
+    this.cdkEditor.refreshStateMathJax();
   }
 
   private loadStyleSheet() {
