@@ -121,6 +121,13 @@ define(function elementEditorModule(require) {
 
     function _initEditor(connector, params, profile) {
         log.debug("Initializing element editor with %s profile...", profile.name);
+        if(connector.getState().isAngularUI){
+            const mappingUrl = connector.getState().mappingUrl;
+            if (mappingUrl && profile.config.mathJaxLib !== undefined) {
+                profile.config.mathJaxLib = mappingUrl + profile.config.mathJaxLib.substring(1);
+            }
+        }
+
         // retrieve the current user
         var user = connector.getState().user;
         user['permissions'] = connector.getState().permissions;

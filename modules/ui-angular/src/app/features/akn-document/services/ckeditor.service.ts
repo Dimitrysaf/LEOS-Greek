@@ -20,6 +20,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
 import { ChangeDetailsConnector } from '@/features/akn-document/services/change-details-connector';
 import { LeosEditorConnector } from '@/features/akn-document/services/leos-editor-connector';
+import { MathJaxConnector } from '@/features/akn-document/services/math-jax-connector';
 import { RefToLinkConnector } from '@/features/akn-document/services/ref-to-link-connector';
 import { SoftActionsConnector } from '@/features/akn-document/services/soft-actions-connector';
 import { UserGuidanceConnector } from '@/features/akn-document/services/user-guidance-connector';
@@ -40,6 +41,7 @@ export class CKEditorService implements OnDestroy {
   private changeDetailsConnector?: ChangeDetailsConnector;
   private refToLinkConnector?: RefToLinkConnector;
   private softActionsConnector?: SoftActionsConnector;
+  private mathJaxConnector?: MathJaxConnector;
 
   private destroy$ = new Subject<void>();
 
@@ -62,6 +64,7 @@ export class CKEditorService implements OnDestroy {
     this.softActionsConnector?.destroy();
     this.changeDetailsConnector?.destroy();
     this.refToLinkConnector?.destroy();
+    this.mathJaxConnector?.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -80,6 +83,7 @@ export class CKEditorService implements OnDestroy {
         this.initChangeDetails(require, leosState, rootElement);
         this.initRefToLink(require, leosState, rootElement);
         this.initSoftActions(require, leosState, rootElement);
+        this.initMathJax(require, leosState, rootElement);
       });
 
     this.documentService.documentView$
@@ -91,9 +95,15 @@ export class CKEditorService implements OnDestroy {
         this.softActionsConnector?.$triggerStateChange();
         this.changeDetailsConnector?.$triggerStateChange();
         this.refToLinkConnector?.$triggerStateChange();
+        this.mathJaxConnector?.$triggerStateChange()
       });
   }
 
+  refreshStateMathJax() {
+    if (this.mathJaxConnector) {
+      this.mathJaxConnector.getState().dirtyTimestamp += 1;
+    }
+  }
   private initActionManager(
     require: Require,
     leosState: any,
@@ -206,6 +216,21 @@ export class CKEditorService implements OnDestroy {
     require(['extension/softActionsExtension'], (softActions) => {
       softActions.init(this.softActionsConnector);
       this.softActionsConnector.jsDepsInited();
+    });
+  }
+
+  private initMathJax(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.mathJaxConnector = new MathJaxConnector(leosState, {
+      rootElement,
+    });
+
+    require(['extension/mathJaxExtension'], (mathJax) => {
+      mathJax.init(this.mathJaxConnector);
+      this.mathJaxConnector.jsDepsInited()
     });
   }
 

@@ -376,7 +376,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       .fetchTocAndAncestors(elementdIds)
       .pipe(take(1))
       .subscribe((response) => {
-        console.log(response);
         this.receiveToc(JSON.stringify(response));
       });
   }
