@@ -800,12 +800,13 @@ public class ApiServiceImpl implements ApiService {
 
 
     private MilestonesVO getMilestonesVO(LegDocument legDocument, String proposalId, String proposalRef) {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
         List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
                 Date.from(legDocument.getCreationInstant()),
                 Date.from(legDocument.getLastModificationInstant()),
                 legDocument.getStatus().name(),
-                legDocument.getName(), proposalRef);
+                legDocument.getName(), proposalRef, proposal.getTitle(), legDocument.getId());
         milestonesVO.setCreatedBy(userHelper.convertToPresentation(legDocument.getInitialCreatedBy()));
         if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
             List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
@@ -815,7 +816,7 @@ public class ApiServiceImpl implements ApiService {
                         concat(userService.getUser(cpmVo.getTargetUser()).getName()));
                 MilestonesVO milestoneVO = new MilestonesVO(titles, cpmVo.getCreationDate(),
                         null, cpmVo.getRevisionStatus(),
-                        cpmVo.getLegFileName(), cpmVo.getCloneProposalRef());
+                        cpmVo.getLegFileName(), cpmVo.getCloneProposalRef(), proposal.getTitle(), legDocument.getId());
                 milestoneVO.setClone(true);
                 if (cpmVo.getRevisionStatus().equalsIgnoreCase(
                         messageHelper.getMessage("clone.proposal.status.contribution.done")) &&

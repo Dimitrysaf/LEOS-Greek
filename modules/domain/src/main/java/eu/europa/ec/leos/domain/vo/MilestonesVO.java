@@ -9,6 +9,8 @@ import java.util.Objects;
 
 public class MilestonesVO {
     private String title;
+    private String documentTitle;
+    private String legFileId;
     private final String legDocumentName;
     private final String proposalRef;
     private final String createdDate;
@@ -22,17 +24,35 @@ public class MilestonesVO {
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName,
-                        String proposalRef) {
+            String proposalRef, String documentTitle, String legFileId) {
         this.title = String.join(",", titles);
         this.updatedDate = updatedDate;
         this.createdDate = dateFormat.format(createdDate);
         this.status = status;
         this.legDocumentName = legDocumentName;
         this.proposalRef = proposalRef;
+        this.documentTitle = documentTitle;
+        this.legFileId = legFileId;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public String getDocumentTitle() {
+        return documentTitle;
+    }
+
+    public void setDocumentTitle(String documentTitle) {
+        this.documentTitle = documentTitle;
+    }
+
+    public String getLegFileId() {
+        return legFileId;
+    }
+
+    public void setLegFileId(String legFileId) {
+        this.legFileId = legFileId;
     }
 
     public String getCreatedDate() {
