@@ -254,7 +254,7 @@ define(function leosTrackChangesPluginModule(require) {
                                             event.getInstance().data.domEvent.preventDefault();
                                         } else if (!core.isSameUserTrackChangeElement(editor, range.startContainer, core.INSERT_ACTION)) {
                                             /*
-                                             * For insert, we mark as delete track trace if it is another user.
+                                             * For insert, we mark as delete track change if it is another user.
                                              * If it is same user we don't need any action, as we just delete using normal flow.
                                              */
                                             range.extractContents(true);
@@ -503,15 +503,15 @@ define(function leosTrackChangesPluginModule(require) {
         deleteCharacter: function(editor, event, differences, isPreviousInsertedOfSameUserBeforeDelete, isNextInsertedOfSameUserBeforeDelete) {
 
             /*
-             * This method add a delete track trace for one single character
+             * This method add a delete track change for one single character
              */
 
             var range = editor.getSelection().getRanges()[0], deleteKey = (event.getKeyCode() === 46), core = trackChanges.core;
             range.optimize();
 
             /*
-             * If it is same user, we just return and don't add this character.
-             * This means it will not be included, which means deleted.
+             * If it is same user, we just return and don't add this character as a new track change.
+             * This means it will not be included, which means just deleted.
              */
             if (deleteKey && isNextInsertedOfSameUserBeforeDelete) {
                 return;
@@ -523,31 +523,77 @@ define(function leosTrackChangesPluginModule(require) {
             var previousEditableNodeAfterDelete = editor.getSelection().getRanges()[0].getPreviousEditableNode();
             var nextEditableNodeAfterDelete = editor.getSelection().getRanges()[0].getNextEditableNode();
 
-            if (deleteKey && core.isTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
+            /*
+             * Rules to join delete track change is:
+             * - If they are new, we can join
+             * - After save (it is not new anymore) we cannot join
+             */
+
+            if (deleteKey &&
+                (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION) ||
+                    core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION))) {
 
                 /*
-                 * If we press delete and next block is a new delete track change, we can join them.
-                 * After save it, we cannot join anymore
+                 * For DELETE key
+                 * If we have a previous or next block that already is a track change
                  */
-                previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + differences);
-                if (core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
-                    previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
-                    nextEditableNodeAfterDelete.remove();
-                }
-                elementToMoveTo = previousEditableNodeAfterDelete;
 
-            } else if (!deleteKey && core.isTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
-
-                /*
-                 * If we press backspace and previous block is a new delete track change, we can join them.
-                 * After save it, we cannot join anymore
-                 */
-                nextEditableNodeAfterDelete.setText(differences + nextEditableNodeAfterDelete.getText());
                 if (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
-                    nextEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
-                    previousEditableNodeAfterDelete.remove();
+                    /*
+                     * Decide to put character in previous block and check if next is also a new delete track change
+                     * to join with it
+                     */
+                    previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + differences);
+                    if (core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
+                        previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
+                        nextEditableNodeAfterDelete.remove();
+                    }
+                    /*
+                     * If we joined with next, the cursor should go to previous, as we deleted next
+                     * If we didn't join with next, the cursor should stay in previous
+                     */
+                    elementToMoveTo = previousEditableNodeAfterDelete;
+                } else {
+                    /*
+                     * Decide to put character in next block, as we don't have a previous one as a new delete track change
+                     * The cursos should move to next block
+                     */
+                    nextEditableNodeAfterDelete.setText(differences + nextEditableNodeAfterDelete.getText());
+                    elementToMoveTo = nextEditableNodeAfterDelete;
                 }
-                elementToMoveTo = nextEditableNodeAfterDelete;
+
+            } else if (!deleteKey &&
+                (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION) ||
+                    core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION))) {
+
+                /*
+                 * For BACKSPACE key
+                 * If we have a previous or next block that already is a track change
+                 */
+
+                if (core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
+                    /*
+                     * Decide to put character in next block and check if previous is also a new delete track change
+                     * to join with it
+                     */
+                    nextEditableNodeAfterDelete.setText(differences + nextEditableNodeAfterDelete.getText());
+                    if (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
+                        nextEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
+                        previousEditableNodeAfterDelete.remove();
+                    }
+                    /*
+                     * If we joined with previous, the cursor should go to next, as we deleted previous
+                     * If we didn't join with previous, the cursor should stay in next
+                     */
+                    elementToMoveTo = nextEditableNodeAfterDelete;
+                } else {
+                    /*
+                     * Decide to put character in previous block, as we don't have a next one as a new delete track change
+                     * The cursor should move to previous block
+                     */
+                    previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + differences);
+                    elementToMoveTo = previousEditableNodeAfterDelete;
+                }
 
             } else {
 
@@ -675,7 +721,7 @@ define(function leosTrackChangesPluginModule(require) {
                     html = "";
                 } else if (core.isTrackChangeElement(child, core.INSERT_ACTION)) {
                     /*
-                     * When we meed a inserted track trace block and same user,
+                     * When we meed a inserted track change block and same user,
                      * we ignore it to NOT be added.
                      */
                     if (child.getAttribute(core.UID_ATTR) !== trackChanges.getUserId(editor)) {
@@ -683,7 +729,7 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 } else {
                     /*
-                     * For elements that are NOT track trace, we add it using outerHTML
+                     * For elements that are NOT track change, we add it using outerHTML
                      * For text elements, we add using textContent
                      */
                     html += child.$.outerHTML ? child.$.outerHTML : child.$.textContent;
@@ -870,11 +916,11 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         isTrackChangeElement: function(element, action) {
-            var elementIsTracktrace = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
+            var elementIsTrackchange = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
                 (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action);
-            var textHasParentElementTracktrace = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
+            var textHasParentElementTrackchange = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
                 (element.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getParent().getAttribute(this.ACTION_ATTR) === action);
-            return elementIsTracktrace || textHasParentElementTracktrace;
+            return elementIsTrackchange || textHasParentElementTrackchange;
         },
 
         isSameUserTrackChangeElement: function(editor, element, action) {
@@ -888,13 +934,13 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         isNewTrackChangeElement: function(element, action) {
-            var elementIsNewTracktrace = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
+            var elementIsNewTrackchange = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
                 (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action) &&
                 (element.getAttribute(this.STATUS_ATTR) === this.NEW_STATUS);
-            var textHasParentElementNewTracktrace = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
+            var textHasParentElementNewTrackchange = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
                 (element.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getParent().getAttribute(this.ACTION_ATTR) === action) &&
                 (element.getParent().getAttribute(this.STATUS_ATTR) === this.NEW_STATUS);
-            return elementIsNewTracktrace || textHasParentElementNewTracktrace;
+            return elementIsNewTrackchange || textHasParentElementNewTrackchange;
         },
 
         isInsideTrackChangeElement: function(editor) {
