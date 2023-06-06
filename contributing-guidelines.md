@@ -52,13 +52,13 @@ belongs to the respective entity and hence We need to receive from You
 the right to use the contribution.
 
 For this to happen, please have Your legal representative sign the
-Contributor Licence Agreement available [here](./ec-cla.pdf)
+Contributor Licence Agreement available [here](https://code.europa.eu/info/about/-/blob/master/dco-cla/ec-cla.pdf)
 and send it to Us by email at DIGIT-LEOS-FEEDBACK@ec.europa.eu
 
 Any employee submitting a contribution on Your behalf needs to
 sign-off the commits with a GPG key. By signing-off the commit, the
 employee (individual) who submits a contribution indicates that he/
-she has read the terms of the Contributor Licence Agreement available [here](./ec-cla.pdf) 
+she has read the terms of the Contributor Licence Agreement available [here](https://code.europa.eu/info/about/-/blob/master/dco-cla/ec-cla.pdf) 
 and agrees with these.
 
 3. **Individuals acting outside the performance of their duties or
@@ -70,7 +70,7 @@ own the rights in Your contribution and We need to receive from You
 the right to use such contribution.
 
 For this to happen, please sign the Contributor Licence Agreement
-available [here](./ec-cla.pdf) and send it to Us by email at
+available [here](https://code.europa.eu/info/about/-/blob/master/dco-cla/ec-cla.pdf) and send it to Us by email at
 DIGIT-LEOS-FEEDBACK@ec.europa.eu
 
 Additionally, please sign-off on the commits You make with a GPG key.
@@ -86,7 +86,7 @@ it. For this reason, We kindly ask You to address Your employer and
 follow section 2 above.
 
 To this end we need to receive from Your employer the signed
-Contributor Licence Agreement available [here](./ec-cla.pdf).
+Contributor Licence Agreement available [here](https://code.europa.eu/info/about/-/blob/master/dco-cla/ec-cla.pdf).
 
 Additionally, please sign-off on the commits You make with a GPG key.
 
