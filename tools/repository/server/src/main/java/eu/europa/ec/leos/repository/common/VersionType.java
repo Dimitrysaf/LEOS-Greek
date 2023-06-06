@@ -11,17 +11,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository.repositories;
+package eu.europa.ec.leos.repository.common;
 
-import eu.europa.ec.leos.repository.entities.Package;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+public enum VersionType {
 
-import java.math.BigDecimal;
-import java.util.Optional;
+    MAJOR(1), INTERMEDIATE(2), MINOR(3);
+    private final int value;
 
-public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
-    @Query(value = "SELECT * FROM PACKAGE p WHERE p.repository_id in (SELECT r.id from REPOSITORY r WHERE r.CMIS_ID = ?1) and p.name = ?2", nativeQuery =
-            true)
-    Optional<Package> findPackageByName(String reporitoryId, String name);
+    VersionType(int v) {
+        value = v;
+    }
+
+    public int value() {
+        return value;
+    }
+
+    public static VersionType fromValue(int v) {
+        for (VersionType c : VersionType.values()) {
+            if (c.value == v) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(String.valueOf(v));
+    }
+
 }

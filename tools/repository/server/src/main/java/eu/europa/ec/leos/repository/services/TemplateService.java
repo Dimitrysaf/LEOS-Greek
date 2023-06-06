@@ -11,17 +11,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository.repositories;
+package eu.europa.ec.leos.repository.services;
 
-import eu.europa.ec.leos.repository.entities.Package;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.model.Template;
 
-import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.Map;
 
-public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
-    @Query(value = "SELECT * FROM PACKAGE p WHERE p.repository_id in (SELECT r.id from REPOSITORY r WHERE r.CMIS_ID = ?1) and p.name = ?2", nativeQuery =
-            true)
-    Optional<Package> findPackageByName(String reporitoryId, String name);
+public interface TemplateService {
+    Template findTemplateByName(String name, Map<String, ?> metadata) throws RepositoryException;
 }

@@ -78,7 +78,7 @@ public class Package implements Serializable {
     @JoinColumn(name = "CLONED_PACKAGE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Package clonedPackageId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "packageId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pkg")
     private Collection<PackageCollaborators> packageCollaboratorsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "packageId")
     private Collection<Document> documentCollection;

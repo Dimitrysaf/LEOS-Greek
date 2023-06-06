@@ -21,9 +21,17 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface PackageCollaboratorsRepository extends JpaRepository<PackageCollaborators, BigDecimal> {
-    List<PackageCollaborators> findPackageCollaboratorsByPackageId(Package packageId);
+    Optional<PackageCollaborators> findPackageCollaboratorsByPkgAndCollaborator(Package pkg, Collaborators c);
+
+    @Query(value = "SELECT * FROM PACKAGE_COLLABORATORS c WHERE c.PACKAGE_ID = ?1 AND c.COLLABORATOR_ID = ?2", nativeQuery = true)
+    Optional<PackageCollaborators> findPackageCollaboratorsByPkgIdAndCollaboratorId(BigDecimal packageId, BigDecimal collaboratorId);
+
+    List<PackageCollaborators> findPackageCollaboratorsByPkg(Package pkg);
+
+    List<PackageCollaborators> findPackageCollaboratorsByCollaborator(Collaborators collaborator);
 
     @Query(value = "SELECT * FROM PACKAGE_COLLABORATORS c WHERE c.PACKAGE_ID = ?1", nativeQuery = true)
     List<PackageCollaborators> findCollaboratorsByPackageId(BigDecimal packageId);
@@ -31,5 +39,5 @@ public interface PackageCollaboratorsRepository extends JpaRepository<PackageCol
     @Query(value = "SELECT p.PACKAGE_ID FROM PACKAGE_COLLABORATORS p WHERE p.COLLABORATOR_ID IN (SELECT ID FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = " +
             "?1 AND c.ROLE_ID = ?2)",
             nativeQuery = true)
-    List<BigDecimal> findPackageIdByCollaboratorNameAndByRole(String collaboratorName, String role);
+    List<BigDecimal> findPackageIdByCollaboratorNameAndRole(String collaboratorName, String role);
 }

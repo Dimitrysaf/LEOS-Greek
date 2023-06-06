@@ -68,7 +68,7 @@ public class Collaborators implements Serializable {
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collaboratorId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collaborator")
     private Collection<PackageCollaborators> packageCollaboratorsCollection;
 
     public Collaborators() {

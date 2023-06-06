@@ -45,30 +45,32 @@ public class CollaboratorsRepositoryTests {
     @Autowired
     PackageRepository packageRepository;
 
+    private final String REPO_ID = "leos_dev";
+
     @Test
     @Transactional
     public void test_getCollaboratorsFromPackageId() {
         List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findCollaboratorsByPackageId(new BigDecimal(1));
         assertEquals(collaboratorsList.size(), 1);
-        assertEquals(collaboratorsList.get(0).getCollaboratorId().getCollaboratorName(), "demo");
-        assertEquals(collaboratorsList.get(0).getCollaboratorId().getRole(), "OWNER");
+        assertEquals(collaboratorsList.get(0).getCollaborator().getCollaboratorName(), "demo");
+        assertEquals(collaboratorsList.get(0).getCollaborator().getRole(), "OWNER");
     }
 
     @Test
     @Transactional
     public void test_getCollaboratorsFromPackage() {
-        Optional<Package> pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
+        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "package_ckk8202vl0000n070oin84afg");
         assertTrue(pkg.isPresent());
-        List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findPackageCollaboratorsByPackageId(pkg.get());
+        List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg.get());
         assertEquals(collaboratorsList.size(), 1);
-        assertEquals(collaboratorsList.get(0).getCollaboratorId().getCollaboratorName(), "demo");
-        assertEquals(collaboratorsList.get(0).getCollaboratorId().getRole(), "OWNER");
+        assertEquals(collaboratorsList.get(0).getCollaborator().getCollaboratorName(), "demo");
+        assertEquals(collaboratorsList.get(0).getCollaborator().getRole(), "OWNER");
     }
 
     @Test
     @Transactional
     public void test_findPackageIdByCollaboratorNameAndByRole() {
-        List<BigDecimal> packagesList = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndByRole("demo", "OWNER");
+        List<BigDecimal> packagesList = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndRole("demo", "OWNER");
         assertEquals(packagesList.size(), 1);
         assertEquals(packagesList.get(0), new BigDecimal(1));
     }

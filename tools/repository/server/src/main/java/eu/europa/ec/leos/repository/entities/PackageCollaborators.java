@@ -58,10 +58,10 @@ public class PackageCollaborators implements Serializable {
     private LocalDateTime auditLastMDate;
     @JoinColumn(name = "COLLABORATOR_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private Collaborators collaboratorId;
+    private Collaborators collaborator;
     @JoinColumn(name = "PACKAGE_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private Package packageId;
+    private Package pkg;
 
     public PackageCollaborators() {
     }
@@ -110,20 +110,20 @@ public class PackageCollaborators implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
-    public Collaborators getCollaboratorId() {
-        return collaboratorId;
+    public Collaborators getCollaborator() {
+        return collaborator;
     }
 
-    public void setCollaboratorId(Collaborators collaboratorId) {
-        this.collaboratorId = collaboratorId;
+    public void setCollaborator(Collaborators collaborator) {
+        this.collaborator = collaborator;
     }
 
-    public Package getPackageId() {
-        return packageId;
+    public Package getPackage() {
+        return pkg;
     }
 
-    public void setPackageId(Package packageId) {
-        this.packageId = packageId;
+    public void setPackage(Package pkg) {
+        this.pkg = pkg;
     }
 
     @Override

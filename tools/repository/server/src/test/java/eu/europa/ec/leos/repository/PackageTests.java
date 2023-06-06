@@ -14,7 +14,11 @@
 package eu.europa.ec.leos.repository;
 
 import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.model.XmlDocument;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.services.PackageService;
+import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -25,8 +29,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -37,12 +44,42 @@ public class PackageTests {
     private static Logger LOG = LoggerFactory.getLogger(PackageTests.class);
 
     @Autowired
+    private PackageService packageService;
+    @Autowired
     private PackageRepository packageRepository;
+
+    private final String REPO_ID = "leos_dev";
+
+    @Test
+    @Transactional
+    public void test_createAndDeletePackage() {
+        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
+        Optional<Package> pkgO = packageRepository.findPackageByName(REPO_ID, "test");
+        assertTrue(pkgO.isPresent());
+        long count = packageRepository.count();
+        assertEquals(3, count);
+        packageService.deletePackage(pkg.getId());
+        pkgO = packageRepository.findPackageByName(REPO_ID, "test");
+        assertFalse(pkgO.isPresent());
+        count = packageRepository.count();
+        assertEquals(2, count);
+    }
 
     @Test
     @Transactional(readOnly = true)
-    public void test_findPackageByName() {
-        Optional<Package> pkg = packageRepository.findPackageByName("package_ckk8202vl0000n070oin84afg");
-        assertTrue(pkg.isPresent());
+    public void test_documentsByPackageId() {
+        List<XmlDocument> docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "BILL"), false);
+        assertEquals(2, docs.size());
+        docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "ANNEX"), false);
+        assertEquals(2, docs.size());
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_documentsByPackageName() throws RepositoryException {
+        List<XmlDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "package_ckk8202vl0000n070oin84afg", Sets.set("PROPOSAL", "BILL"), false);
+        assertEquals(2, docs.size());
+        docs = packageService.findDocumentsByPackageName(REPO_ID, "package_ckk8202vl0000n070oin84afg", Sets.set("PROPOSAL", "ANNEX"), false);
+        assertEquals(2, docs.size());
     }
 }

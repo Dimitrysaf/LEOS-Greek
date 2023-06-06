@@ -13,15 +13,14 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.entities.ConfigurationV;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
-    @Query(value = "SELECT * FROM PACKAGE p WHERE p.repository_id in (SELECT r.id from REPOSITORY r WHERE r.CMIS_ID = ?1) and p.name = ?2", nativeQuery =
-            true)
-    Optional<Package> findPackageByName(String reporitoryId, String name);
+public interface ConfigurationVRepository extends JpaRepository<ConfigurationV, BigDecimal> {
+    @Query(value = "SELECT * FROM CONFIGURATION_V c WHERE c.NAME = ?1 AND c.IS_LATEST_VERSION = 1", nativeQuery = true)
+    Optional<ConfigurationV> findConfigurationByName(String name);
 }

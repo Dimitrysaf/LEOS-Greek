@@ -48,15 +48,15 @@ public class PackageController {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    @GetMapping(path = "/package/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{repositoryId}/package/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get a Package by name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the Package", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Package.class)) }),
             @ApiResponse(responseCode = "404", description = "Package not found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Package> getPackageByName(@PathVariable("name") String name) {
+    public ResponseEntity<Package> getPackageByName(@PathVariable("repositoryId") String repositoryId, @PathVariable("name") String name) {
         try {
-            Optional<Package> p = packageRepository.findPackageByName(name);
+            Optional<Package> p = packageRepository.findPackageByName(repositoryId, name);
             if (p.isPresent()) {
                 return new ResponseEntity<>(p.get(), HttpStatus.OK);
             } else {
@@ -68,17 +68,17 @@ public class PackageController {
         }
     }
 
-    @GetMapping(path="/package/documents/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="/{repositoryId}/package/documents/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all documents' last version inside a Package by name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the Documents", content = { @Content(mediaType = "application/json", schema =
             @Schema(implementation = List.class)) }),
             @ApiResponse(responseCode = "404", description = "Package not found or no documents found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<String> getDocumentsByPackageName(@PathVariable String name)
+    public ResponseEntity<String> getDocumentsByPackageName(@PathVariable("repositoryId") String repositoryId, @PathVariable String name)
     {
         try {
-            Optional<Package> pkg = packageRepository.findPackageByName(name);
+            Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, name);
             List<DocumentV> docs = Arrays.asList();
             if (pkg.isPresent()) {
                 docs = documentRepository.findDocumentsByPackageId(pkg.get().getId());
