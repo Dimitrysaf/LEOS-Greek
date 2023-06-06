@@ -373,15 +373,14 @@ export class DocumentService implements OnDestroy {
   ) {
     const documentType = this.documentType;
     const documentRef = this.documentRef;
-
     this.http
       .post(
         `${apiBaseUrl}/secured/document/download-compared-version-as-docuwrite/${documentType}/${documentRef}/`,
         {
-          originalVersion: originalVersion.cmisVersionNumber,
-          currentVersion: currentVersion.cmisVersionNumber,
+          originalVersion: this.getVersionReferenceString(originalVersion),
+          currentVersion: this.getVersionReferenceString(currentVersion),
           intermediateVersion: intermediateVersion
-            ? intermediateVersion.cmisVersionNumber
+            ? this.getVersionReferenceString(intermediateVersion)
             : null,
         },
       )
@@ -395,15 +394,15 @@ export class DocumentService implements OnDestroy {
   ) {
     const documentType = this.documentType;
     const documentRef = this.documentRef;
-
+    debugger;
     this.http
       .post(
         `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
         {
-          originalVersion: originalVersion.cmisVersionNumber,
-          currentVersion: currentVersion.cmisVersionNumber,
+          originalVersion: this.getVersionReferenceString(originalVersion),
+          currentVersion: this.getVersionReferenceString(currentVersion),
           intermediateVersion: intermediateVersion
-            ? intermediateVersion.cmisVersionNumber
+            ? this.getVersionReferenceString(intermediateVersion)
             : null,
         },
       )
@@ -421,10 +420,10 @@ export class DocumentService implements OnDestroy {
       .post(
         `${apiBaseUrl}/secured/document/download-compared-version-XML/${documentType}/${documentRef}`,
         {
-          originalVersion: originalVersion.cmisVersionNumber,
-          currentVersion: currentVersion.cmisVersionNumber,
+          originalVersion: this.getVersionReferenceString(originalVersion),
+          currentVersion: this.getVersionReferenceString(currentVersion),
           intermediateVersion: intermediateVersion
-            ? intermediateVersion.cmisVersionNumber
+            ? this.getVersionReferenceString(intermediateVersion)
             : null,
         },
       )
@@ -442,10 +441,10 @@ export class DocumentService implements OnDestroy {
       .post(
         `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}`,
         {
-          originalVersion: originalVersion.cmisVersionNumber,
-          currentVersion: currentVersion.cmisVersionNumber,
+          originalVersion: this.getVersionReferenceString(originalVersion),
+          currentVersion: this.getVersionReferenceString(currentVersion),
           intermediateVersion: intermediateVersion
-            ? intermediateVersion.cmisVersionNumber
+            ? this.getVersionReferenceString(intermediateVersion)
             : null,
         },
       )
@@ -1153,5 +1152,9 @@ export class DocumentService implements OnDestroy {
         node.childNodes.forEach((n, i) => this.getNodeTextOnlyLength(n));
       }
     }
+  }
+
+  private getVersionReferenceString(v: Version): string {
+    return `${v.versionNumber.major}.${v.versionNumber.intermediate}.${v.versionNumber.minor}`;
   }
 }
