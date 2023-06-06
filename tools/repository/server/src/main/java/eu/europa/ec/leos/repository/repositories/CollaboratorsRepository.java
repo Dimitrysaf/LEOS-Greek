@@ -22,5 +22,8 @@ import java.util.Optional;
 
 public interface CollaboratorsRepository extends JpaRepository<Collaborators, BigDecimal> {
     @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2", nativeQuery = true)
-    Optional<Collaborators> findCollaboratorByNameAndByRole(String collaboratorName, String role);
+    Optional<Collaborators> findCollaboratorByNameAndRole(String collaboratorName, String role);
+
+    @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2 AND c.ORGANIZATION = ?3", nativeQuery = true)
+    Optional<Collaborators> findCollaboratorByNameRoleAndOrganization(String collaboratorName, String role, String organization);
 }
