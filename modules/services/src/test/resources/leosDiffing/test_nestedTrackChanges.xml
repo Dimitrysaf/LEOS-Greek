@@ -1,0 +1,31 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <content leos:origin="ec" id="_art_3__para_1__content">
+        <aknp leos:origin="ec" id="_art_3__para_1__content__p">This
+            <b id="_art_3_jbtJnz">Regulation</b>
+            <inline leos:action="insert" leos:title="DOE Jane : 25/04/2023 3:47:58 PM" leos:uid="jane" name="trackchanges" id="_art_3_DrvThw">ADDING </inline>
+            <inline leos:action="insert" leos:title="DEMO Demo : 25/04/2023 3:50:18 PM" leos:uid="demo" name="trackchanges" id="_art_3_I4mB42">FRO
+                <inline leos:action="delete" leos:title="DOE Jane : 25/05/2023 11:10:57 PM" leos:uid="jane" name="trackchanges" id="_art_3_4ccfh6">M USE</inline>
+                R B
+            </inline>
+            <inline leos:action="insert" leos:title="DOE Jane : 25/04/2023 3:47:58 PM" leos:uid="jane" name="trackchanges" id="_art_3_2syKGL">MORE TEXT </inline>
+            shall
+            <inline leos:action="delete" leos:title="DEMO Demo : 25/05/2023 3:17:42 PM" leos:uid="demo" name="trackchanges" id="_art_3_sNKQRD">enter </inline>
+            <inline leos:action="delete" leos:title="DOE Jane : 22/05/2023 1:56:37 PM" leos:uid="jane" name="trackchanges" id="_art_3_0uDXKs">into </inline>
+            force on the [...] day following
+            <inline leos:action="insert" leos:title="DOE Jane : 08/05/2023 10:28:25 AM" leos:uid="jane" name="trackchanges" id="_art_3_xcH8vV">adding text </inline>
+            that of its pub
+            <inline leos:action="insert" leos:title="DOE Jane : 08/05/2023 5:27:13 PM" leos:uid="jane" name="trackchanges" id="_art_3_SVOEPr">some text</inline>
+            licatio
+            <inline leos:action="insert" leos:title="DOE Jane : 16/05/2023 5:47:12 PM" leos:uid="jane" name="trackchanges" id="_art_3_W37Zmc">a</inline>
+            n in the
+            <b id="_art_3_eyBjRQ">
+                <inline leos:action="delete" leos:title="DOE Jane : 30/05/2023 1:19:01 PM" leos:uid="jane" name="trackchanges" id="_art_3_gkdGEi">Official</inline>
+            </b>
+            Journal of the
+            <inline leos:action="delete" leos:title="DOE Jane : 16/05/2023 11:41:36 AM" leos:uid="jane" name="trackchanges" id="_art_3_nWaJcU">European</inline>
+            Uni
+            <inline leos:action="insert" leos:title="DOE Jane : 31/05/2023 3:38:18 PM" leos:uid="jane" name="trackchanges" id="_art_3_5246ry">v</inline>
+            on.
+        </aknp>
+    </content>
+</akomaNtoso>
