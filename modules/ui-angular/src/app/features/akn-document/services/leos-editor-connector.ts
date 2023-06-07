@@ -138,17 +138,20 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
               // this.connector.getState(false).user = response.user;
               // this.connector.getState(false).permissions =
               // response.permissions;
+              this.getState()['user'] = response.user;
+              this.getState()['permissions'] =
+                this.documentService.getUserPermissions();
               this.editElement(
                 response.elementId,
                 response.elementTagName,
                 response.element,
-                documentType,
+                documentType.toUpperCase(),
                 process.env.NG_APP_LEOS_INSTANCE === 'cn'
                   ? 'COUNCIL'
                   : 'COMISSION',
                 response.alternatives,
                 JSON.stringify(response.levelItem),
-                false,
+                response.clonedProposal,
               );
               this.coEditionService.joinElementCoEditInfo(
                 documentRef,
@@ -171,12 +174,15 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
         .pipe(distinctUntilChanged())
         .subscribe((response) => {
           //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
+          this.getState()['user'] = response.user;
+          this.getState()['permissions'] =
+            this.documentService.getUserPermissions();
           this.editElement(
             response.elementId,
             response.elementTagName,
             response.element,
-            documentType,
-            process.env.NG_APP_LEOS_INSTANCE,
+            documentType.toUpperCase(),
+            'OS',
             response.alternatives,
             JSON.stringify(response.levelItem),
             response.clonedProposal,

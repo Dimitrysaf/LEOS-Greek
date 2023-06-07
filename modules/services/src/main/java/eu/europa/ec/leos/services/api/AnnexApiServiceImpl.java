@@ -433,7 +433,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context.getTocRules()
+                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context.getTocRules(), annex.isTrackChangesEnabled(), true
         );
     }
 

@@ -410,7 +410,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules()
+                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules(), explanatory.isTrackChangesEnabled(), true
         );
     }
 
