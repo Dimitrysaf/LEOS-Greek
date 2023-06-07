@@ -542,7 +542,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
             confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
         } else {
             if (action == Action.DELETE) {
-                eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, actionEvent));
+                eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, () -> eventBus.post(actionEvent), false));
             } else {
                 eventBus.post(actionEvent);
             }
@@ -561,7 +561,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
         confirmDialog.show(getUI(), dialog -> {
             if (dialog.isConfirmed()) {
                 if (action == Action.DELETE) {
-                    eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, actionEvent));
+                    eventBus.post(new CheckDeleteLastEditingTypeEvent(elementId, () -> eventBus.post(actionEvent), true));
                 } else {
                     eventBus.post(actionEvent);
                 }

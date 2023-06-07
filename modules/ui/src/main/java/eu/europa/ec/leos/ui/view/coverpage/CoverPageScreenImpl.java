@@ -433,8 +433,25 @@ abstract class CoverPageScreenImpl extends VerticalLayout implements CoverPageSc
                 });
         if (!StringUtils.isEmpty(coEditorsList)) {
             confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
+        } else if (action == Action.DELETE) {
+        	ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
+                    messageHelper.getMessage("action.delete.element.confirmation.title"),
+                    messageHelper.getMessage("action.delete.element.confirmation.message"),
+                    messageHelper.getMessage("action.delete.element.confirmation.confirm"),
+                    messageHelper.getMessage("action.delete.element.confirmation.cancel"),
+                    null);
+            confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
+            confirmDialog.getContent().setHeightUndefined();
+            confirmDialog.setHeightUndefined();
+            confirmDialog.show(UI.getCurrent(), dialog -> {
+                if (dialog.isConfirmed()) {
+                	eventBus.post(actionEvent);
+                } else {
+                    eventBus.post(new CancelActionElementRequestEvent(elementId));
+                }
+            }, true);
         } else {
-            eventBus.post(actionEvent);
+        	eventBus.post(actionEvent);
         }
     }
 
