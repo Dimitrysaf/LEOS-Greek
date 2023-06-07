@@ -351,18 +351,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     if (isDeletedItem(item)) {
       this.undeleteItem(newTree, item);
     } else {
-      if (
-        'RECITAL' === item.tocItem.aknTag &&
-        isNodeLastElement(this.tableOfContentService.getCurrentToc(), item.id)
-      ) {
-        this.openLastRecitalDeleteConfirmation(deleteTocElement);
+      if (isNodeLastElement(this.treeControl.dataNodes, item.id)) {
+        this.openLastElementDeleteConfirmation(deleteTocElement);
       } else {
         deleteTocElement();
       }
     }
   }
 
-  openLastRecitalDeleteConfirmation(onConfirm: () => void) {
+  openLastElementDeleteConfirmation(onConfirm: () => void) {
     this.dialogService.openDialog({
       title: this.translateService.instant(
         'page.editor.last-element-delete-confirmation.title',
