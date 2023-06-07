@@ -310,7 +310,8 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
         String jsonAlternatives = "";
         String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
         User user = securityContext.getUser();
-        boolean isClonedProposal = true;
+        Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
+        boolean isClonedProposal = proposal.isClonedProposal();
 
         try {
             String element = this.elementProcessor.getElement(explanatory, elementTagName, elementId);
