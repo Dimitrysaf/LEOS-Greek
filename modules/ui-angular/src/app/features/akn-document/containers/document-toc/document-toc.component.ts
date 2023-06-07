@@ -35,6 +35,7 @@ import {
   INDENT,
   LEVEL,
   LS,
+  MAX_TRUNCATION_LIMIT,
   MOVE_FROM,
   MOVE_LABEL_SPAN_START_TAG,
   MOVE_TO,
@@ -192,6 +193,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   isLabelTextTruncated(element: HTMLDivElement): boolean {
     return element.offsetWidth < element.scrollWidth;
+  }
+
+  truncateLabelText(label: string) {
+    return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
   }
 
   getChildren = (node: TableOfContentItemVO) => node.childItems;
