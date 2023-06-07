@@ -82,9 +82,16 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       newVersions = [version];
     } else {
       const sorted = this.sortVersions(...currentVersions);
-      const minVersion = this.sortVersions(sorted.at(0), version)[0];
-      const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
-      newVersions = [minVersion, maxVersion];
+      if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && sorted.length === 3) {
+        const minVersion = this.sortVersions(sorted.at(0), version)[0];
+        const medVersion = this.sortVersions(sorted.at(1), version)[0];
+        const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
+        newVersions = [minVersion, medVersion, maxVersion];
+      } else {
+        const minVersion = this.sortVersions(sorted.at(0), version)[0];
+        const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
+        newVersions = [minVersion, maxVersion];
+      }
     }
     this.docService.setVersionCompareIds(newVersions);
   }
@@ -96,10 +103,17 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
   protected isCompareCheckboxDisabled(version: Version): boolean {
     const currentVersions = this.docService.getVersionCompareIds();
-    return (
-      currentVersions.length === 2 &&
-      !currentVersions.some((v) => v.documentId === version.documentId)
-    );
+    if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+      return (
+        currentVersions.length === 3 &&
+        !currentVersions.some((v) => v.documentId === version.documentId)
+      );
+    } else {
+      return (
+        currentVersions.length === 2 &&
+        !currentVersions.some((v) => v.documentId === version.documentId)
+      );
+    }
   }
 
   protected formatVersionNumber(version: Version): string {

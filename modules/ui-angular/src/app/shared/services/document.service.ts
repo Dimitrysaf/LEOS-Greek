@@ -262,12 +262,19 @@ export class DocumentService implements OnDestroy {
         ),
       ),
       combineLatestWith(this.documentRefAndCategory$),
-      mergeMap(([[oldVersion, newVersion], option]) =>
-        oldVersion && newVersion
+      mergeMap(([versionToCompare, option]) =>
+        versionToCompare.length === 2
           ? this.getDocumentVersionsComparison(
               option.category,
-              newVersion.documentId,
-              oldVersion.documentId,
+              versionToCompare[1].documentId,
+              versionToCompare[0].documentId,
+            )
+          : versionToCompare.length === 3 &&
+            process.env.NG_APP_LEOS_INSTANCE === 'cn'
+          ? this.getDocumentVersionsDoubleComparison(
+              option.category,
+              versionToCompare[1].documentId,
+              versionToCompare[0].documentId,
             )
           : of(''),
       ),
@@ -900,6 +907,18 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentVersionsComparison(
+    documentType: string,
+    newVersionId: string,
+    oldVersionId: string,
+  ) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http.get<string>(
+      `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
+      { responseType: 'text' as 'json' },
+    );
+  }
+
+  getDocumentVersionsDoubleComparison(
     documentType: string,
     newVersionId: string,
     oldVersionId: string,

@@ -1266,12 +1266,29 @@ export class DocumentEditorComponent
   }
 
   private getVersionComparisonViewHeaderTitle(versions: Version[]) {
-    return versions.length === 2
-      ? this.translate.instant('version.compare.header', {
+    if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+      if (versions.length === 2) {
+        return this.translate.instant('version.compare.header', {
           oldVersion: this.formatVersionNumber(versions[0]),
           newVersion: this.formatVersionNumber(versions[1]),
-        })
-      : this.translate.instant('version.compare.header.default');
+        });
+      } else if (versions.length === 3) {
+        return this.translate.instant('version.double.compare.header', {
+          oldestVersion: this.formatVersionNumber(versions[0]),
+          newVersion: this.formatVersionNumber(versions[1]),
+          newestVersion: this.formatVersionNumber(versions[2]),
+        });
+      } else {
+        return this.translate.instant('version.compare.header.default.cn');
+      }
+    } else {
+      return versions.length === 2
+        ? this.translate.instant('version.compare.header', {
+            oldVersion: this.formatVersionNumber(versions[0]),
+            newVersion: this.formatVersionNumber(versions[1]),
+          })
+        : this.translate.instant('version.compare.header.default');
+    }
   }
 
   private getFormValues(): VersionSearchParams {
