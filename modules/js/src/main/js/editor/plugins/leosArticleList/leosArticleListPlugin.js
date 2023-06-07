@@ -897,6 +897,7 @@ define(function leosArticleListPluginModule(require) {
     function changedContent(event){
         var editor = event.editor;
         var olList = editor.editable().getElementsByTag('ol');
+        var count =  olList.count();
         for (var i = 0, count =  olList.count(); i < count; i++ ) {
             var sublist = olList.getItem(i);
             if(!!sublist
@@ -904,8 +905,6 @@ define(function leosArticleListPluginModule(require) {
                 && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) == POINT
                 && !!sublist.getParent()
                 && sublist.getParent().getChildCount() == 1){
-                // decrement the element position, it is removed.
-                i--;
                 var nextLi = sublist.getParent();
 
                 mergeChildren( sublist, nextLi.getParent(), nextLi);
