@@ -33,10 +33,14 @@ define(function leosArticleListPluginModule(require) {
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
+    var numberModule = require("plugins/leosNumber/listItemNumberModule");
 
     var pluginName = "leosArticleList";
 
     var listNodeNames = { ol: 1, ul: 1 };
+    var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknOrderedList']";
+    var DATA_AKN_ELEMENT = "data-akn-element";
+    var POINT = "point";
 
     var whitespaces = CKEDITOR.dom.walker.whitespaces(),
         bookmarks = CKEDITOR.dom.walker.bookmark(),
@@ -890,13 +894,58 @@ define(function leosArticleListPluginModule(require) {
         return last && last.type == CKEDITOR.NODE_ELEMENT && last.getName() in listNodeNames ? last : null;
     }
 
+    function changedContent(event){
+        var editor = event.editor;
+        var olList = editor.editable().getElementsByTag('ol');
+        var count =  olList.count();
+        for (var i = 0, count =  olList.count(); i < count; i++ ) {
+            var sublist = olList.getItem(i);
+            if(!!sublist
+                && !!sublist.getFirst()
+                && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) == POINT
+                && !!sublist.getParent()
+                && sublist.getParent().getChildCount() == 1){
+                var nextLi = sublist.getParent();
+
+                mergeChildren( sublist, nextLi.getParent(), nextLi);
+                sublist.remove();
+                nextLi.remove();
+                leosPluginUtils.manageEmptyLists(editor);
+                leosPluginUtils.managePoints(editor);
+                leosPluginUtils.manageEmptySubparagraphs(editor);
+                leosPluginUtils.manageCrossheadings(editor);
+                leosPluginUtils.manageSiblingLists(editor);
+            }
+        }
+
+        leosPluginUtils.manageSiblingLists(editor);
+    }
+
+    /*
+     * Resets the numbering of the points depending on nesting level. LEOS-1487: Current implementation simply goes through whole document and renumbers all
+     * ordered list items. For above reason this could cause some performance issues if so this implementation should be reconsidered.
+     *
+     */
+    function resetNumbering(event) {
+        event.editor.fire('lockSnapshot');
+        var jqEditor = $(event.editor.editable().$);
+        var elementWithoutAutoNum = jqEditor.find('article[data-akn-attr-autonumbering=false]');
+        var orderedLists = jqEditor.find(ORDERED_LIST_SELECTOR);
+        if (elementWithoutAutoNum && elementWithoutAutoNum.length > 0) {
+            numberModule.updateNumbersByDefault(orderedLists);
+        } else {
+            numberModule.updateNumbers(orderedLists);
+        }
+        event.editor.fire('unlockSnapshot');
+    }
+
     var pluginDefinition = {
         hidpi: true, // %REMOVE_LINE_CORE%
         requires: 'leosArticleIndentlist',
         init: function( editor ) {
             if ( editor.blockless )
                 return;
-
+            numberModule.init(editor);
             // Register commands.
             // DELETED!
 
@@ -1186,6 +1235,8 @@ define(function leosArticleListPluginModule(require) {
                     } );
                 }
             } );
+            editor.on('change', changedContent);
+            editor.on("change", resetNumbering);
         }
     };
 
