@@ -178,4 +178,5 @@ export interface EditElementResponse {
   user: any;
   permissions: string[];
   alternatives: string;
+  clonedProposal: boolean;
 }

@@ -224,6 +224,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         String jsonAlternatives = "";
+        boolean isClonedProposal = !bill.getClonedFrom().isEmpty();
         try {
             String element = elementProcessor.getElement(bill, elementTagName, elementId);
             String alternateAttrVal = elementProcessor.getElementAttributeValueByNameAndId(bill, LEOS_ALTERNATIVE_ATTR, elementTagName, elementId);
@@ -234,7 +235,7 @@ public class BillApiServiceImpl implements BillApiService {
             String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
             User user = securityContext.getUser();
             return new EditElementResponse(user, permissions,
-                    elementId, elementTagName, element, jsonAlternatives);
+                    elementId, elementTagName, element, jsonAlternatives, isClonedProposal);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);

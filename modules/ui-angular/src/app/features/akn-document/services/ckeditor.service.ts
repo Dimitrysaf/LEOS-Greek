@@ -95,7 +95,7 @@ export class CKEditorService implements OnDestroy {
         this.softActionsConnector?.$triggerStateChange();
         this.changeDetailsConnector?.$triggerStateChange();
         this.refToLinkConnector?.$triggerStateChange();
-        this.mathJaxConnector?.$triggerStateChange()
+        this.mathJaxConnector?.$triggerStateChange();
       });
   }
 
@@ -230,7 +230,7 @@ export class CKEditorService implements OnDestroy {
 
     require(['extension/mathJaxExtension'], (mathJax) => {
       mathJax.init(this.mathJaxConnector);
-      this.mathJaxConnector.jsDepsInited()
+      this.mathJaxConnector.jsDepsInited();
     });
   }
 

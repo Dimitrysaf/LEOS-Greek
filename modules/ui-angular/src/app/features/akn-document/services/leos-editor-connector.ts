@@ -179,7 +179,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
             process.env.NG_APP_LEOS_INSTANCE,
             response.alternatives,
             JSON.stringify(response.levelItem),
-            false,
+            response.clonedProposal,
           );
           this.coEditionService.joinElementCoEditInfo(
             documentRef,
@@ -275,7 +275,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       this.documentService.resetDocument();
     }
     this.isElementSaved = false;
-    LeosEditorConnector.triggerGlobalStateChange();
   }
 
   // leosEditorExtension > actionHandler
@@ -376,6 +375,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       .fetchTocAndAncestors(elementdIds)
       .pipe(take(1))
       .subscribe((response) => {
+        console.log(response);
         this.receiveToc(JSON.stringify(response));
       });
   }

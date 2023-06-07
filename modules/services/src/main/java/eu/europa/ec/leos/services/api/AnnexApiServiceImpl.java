@@ -323,7 +323,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             }
             String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
             User user = securityContext.getUser();
-            return new EditElementResponse(user, permissions, elementId, elementTagName, element, levelItemVO);
+            boolean isClonedProposal = !annex.getClonedFrom().isEmpty();
+            return new EditElementResponse(user, permissions, elementId, elementTagName, element, levelItemVO, isClonedProposal);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);

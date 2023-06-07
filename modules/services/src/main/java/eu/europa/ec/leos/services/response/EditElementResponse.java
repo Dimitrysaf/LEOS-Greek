@@ -16,9 +16,7 @@ package eu.europa.ec.leos.services.response;
 
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
-import eu.europa.ec.leos.permissions.Permissions;
 
-import java.util.List;
 
 public class EditElementResponse {
     String elementId;
@@ -28,23 +26,26 @@ public class EditElementResponse {
     User user;
     String[] permissions;
     String alternatives;
+    boolean isClonedProposal;
 
-    public EditElementResponse(User user, String[] permissions, String elementId, String elementTagName, String element, LevelItemVO levelItem) {
+    public EditElementResponse(User user, String[] permissions, String elementId, String elementTagName, String element, LevelItemVO levelItem, boolean isClonedProposal) {
         this.elementId = elementId;
         this.elementTagName = elementTagName;
         this.element = element;
         this.levelItem = levelItem;
         this.user = user;
         this.permissions = permissions;
+        this.isClonedProposal = isClonedProposal;
     }
 
-    public EditElementResponse(User user, String[] permissions, String elementId, String elementTagName, String element, String alternatives) {
+    public EditElementResponse(User user, String[] permissions, String elementId, String elementTagName, String element, String alternatives, boolean isClonedProposal) {
         this.elementId = elementId;
         this.elementTagName = elementTagName;
         this.element = element;
         this.alternatives = alternatives;
         this.user = user;
         this.permissions = permissions;
+        this.isClonedProposal = isClonedProposal;
     }
 
     public String getElementId() {
@@ -101,5 +102,13 @@ public class EditElementResponse {
 
     public void setAlternatives(String alternatives) {
         this.alternatives = alternatives;
+    }
+
+    public boolean isClonedProposal() {
+        return isClonedProposal;
+    }
+
+    public void setClonedProposal(boolean clonedProposal) {
+        isClonedProposal = clonedProposal;
     }
 }
