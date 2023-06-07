@@ -1790,7 +1790,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             confirmDialog.show(getUI(), dialog -> {
                 if (dialog.isConfirmed()) {
                     items.forEach(item -> {
-                        checkDeleteLastEditingTypeConsumer.accept(item.getId(), () -> deleteItem(item));
+                        checkDeleteLastEditingTypeConsumer.accept(new CheckDeleteLastEditingTypeEvent(item.getId(), () -> deleteItem(item), true));
                     });
                 }
             }, true);
@@ -1800,7 +1800,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             if (tocEditor.checkIfConfirmDeletion(tocTree.getTreeData(), item)) {
                 confirmItemDeletion(item);
             } else {
-                checkDeleteLastEditingTypeConsumer.accept(item.getId(), () -> deleteItem(item));
+                checkDeleteLastEditingTypeConsumer.accept(new CheckDeleteLastEditingTypeEvent(item.getId(), () -> deleteItem(item), false));
             }
         }
 
@@ -1911,7 +1911,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
             confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
             confirmDialog.show(getUI(), dialog -> {
                 if (dialog.isConfirmed()) {
-                    checkDeleteLastEditingTypeConsumer.accept(item.getId(), () -> deleteItem(item));
+                    checkDeleteLastEditingTypeConsumer.accept(new CheckDeleteLastEditingTypeEvent(item.getId(), () -> deleteItem(item), true));
                 }
             }, true);
         }
@@ -2073,6 +2073,6 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
     @Subscribe
     public void checkDeleteLastEditingType(CheckDeleteLastEditingTypeEvent event) {
-        checkDeleteLastEditingTypeConsumer.accept(event.getElementId(), () -> eventBus.post(event.getActionEvent()));
+        checkDeleteLastEditingTypeConsumer.accept(event);
     }
 }

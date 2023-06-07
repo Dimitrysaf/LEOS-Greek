@@ -6,6 +6,8 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.vo.toc.AknTag;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
+
 import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.vo.toc.AknTag.ARTICLE;
@@ -21,7 +23,7 @@ import static eu.europa.ec.leos.vo.toc.AknTag.CITATION;
 import static eu.europa.ec.leos.vo.toc.AknTag.LEVEL;
 import static eu.europa.ec.leos.vo.toc.AknTag.RECITAL;
 
-public class CheckDeleteLastEditingTypeConsumer implements BiConsumer<String, Runnable> {
+public class CheckDeleteLastEditingTypeConsumer implements Consumer<CheckDeleteLastEditingTypeEvent> {
 
     private static final List<AknTag> NODES_TO_CONSIDER = Arrays.asList(CITATION, RECITAL, ARTICLE, LEVEL);
     private final MultiSelectTreeGrid<TableOfContentItemVO> tocTree;
@@ -35,7 +37,8 @@ public class CheckDeleteLastEditingTypeConsumer implements BiConsumer<String, Ru
     }
 
     @Override
-    public void accept(String elementId, Runnable deletionAction) {
+    public void accept(CheckDeleteLastEditingTypeEvent event) {
+    	String elementId = event.getElementId();
         if (isDeletingLastEditingType(elementId)) {
             ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
                     messageHelper.getMessage("lasteditionelement.confirmation.title"),
@@ -48,13 +51,30 @@ public class CheckDeleteLastEditingTypeConsumer implements BiConsumer<String, Ru
             confirmDialog.setHeightUndefined();
             confirmDialog.show(UI.getCurrent(), dialog -> {
                 if (dialog.isConfirmed()) {
-                    deletionAction.run();
+                	event.getActionEvent().run();
                 } else {
                     eventBus.post(new CancelActionElementRequestEvent(elementId));
                 }
             }, true);
-        } else {
-            deletionAction.run();
+        } else if(event.isConfirmed()) {
+        	event.getActionEvent().run();
+    	} else {
+        	ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
+                    messageHelper.getMessage("action.delete.element.confirmation.title"),
+                    messageHelper.getMessage("action.delete.element.confirmation.message"),
+                    messageHelper.getMessage("action.delete.element.confirmation.confirm"),
+                    messageHelper.getMessage("action.delete.element.confirmation.cancel"),
+                    null);
+            confirmDialog.setContentMode(ConfirmDialog.ContentMode.HTML);
+            confirmDialog.getContent().setHeightUndefined();
+            confirmDialog.setHeightUndefined();
+            confirmDialog.show(UI.getCurrent(), dialog -> {
+                if (dialog.isConfirmed()) {
+                	event.getActionEvent().run();
+                } else {
+                    eventBus.post(new CancelActionElementRequestEvent(elementId));
+                }
+            }, true);
         }
     }
 
