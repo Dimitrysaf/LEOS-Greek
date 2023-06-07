@@ -59,7 +59,7 @@
             [for]="filterOption.id"
             [euiTooltip]="
               isLabelTextTruncated(filterOptionLabel)
-                ? (filterOption.label | translate)
+                ? truncateLabelText(filterOption.label | translate)
                 : null
             "
             >{{ filterOption.label | translate }}</label

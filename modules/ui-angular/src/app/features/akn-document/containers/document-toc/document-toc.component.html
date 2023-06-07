@@ -32,7 +32,11 @@
               [class]="'label' + ' ' + node.tocStyling"
               (click)="handleNodeSelect(node)"
               [innerHTML]="node.label"
-              euiTooltip="{{ isLabelTextTruncated(label) ? node.label : null }}"
+              euiTooltip="{{
+                isLabelTextTruncated(label)
+                  ? truncateLabelText(node.label)
+                  : null
+              }}"
             ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"
@@ -82,7 +86,9 @@
               (click)="handleNodeSelect(node)"
               [innerHTML]="node.label"
               euiTooltip="{{
-                isLabelTextTruncated(labelExt) ? node.label : null
+                isLabelTextTruncated(labelExt)
+                  ? truncateLabelText(node.label)
+                  : null
               }}"
             ></div>
             <app-node-toc-actions
