@@ -302,13 +302,12 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       });
 
     if (
-      elementData.elementType === 'recital' &&
       isNodeLastElement(
         this.tableOfContentService.getCurrentToc(),
         elementData.elementId,
       )
     ) {
-      this.openLastRecitalDeleteConfirmation(deleteDocumentElement);
+      this.openLastElementDeleteConfirmation(deleteDocumentElement);
       return;
     }
     deleteDocumentElement();
@@ -357,7 +356,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     );
   }
 
-  private openLastRecitalDeleteConfirmation(onConfirm: () => void) {
+  private openLastElementDeleteConfirmation(onConfirm: () => void) {
     this.dialogService.openDialog({
       title: this.translateService.instant(
         'page.editor.last-element-delete-confirmation.title',
