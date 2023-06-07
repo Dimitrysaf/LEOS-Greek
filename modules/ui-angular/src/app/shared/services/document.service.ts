@@ -394,7 +394,6 @@ export class DocumentService implements OnDestroy {
   ) {
     const documentType = this.documentType;
     const documentRef = this.documentRef;
-    debugger;
     this.http
       .post(
         `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
