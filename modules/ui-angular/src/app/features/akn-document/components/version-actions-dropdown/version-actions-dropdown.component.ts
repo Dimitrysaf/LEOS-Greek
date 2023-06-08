@@ -13,6 +13,7 @@ import { consumeEvent } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Version } from '@/features/akn-document/models/versions';
+import { TableOfContentService } from '@/features/akn-document/services/tableOfContent.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -35,6 +36,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     public doc: DocumentService,
     private elementRef: ElementRef<HTMLElement>,
     private translate: TranslateService,
+    private tableOfContentService: TableOfContentService,
   ) {}
 
   ngOnInit(): void {
@@ -66,12 +68,18 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     this.doc.versionRevert(this.versionToRevert);
     this.versionToRevert = '';
     this.versionModalText = '';
+    this.handleReload();
   }
 
   onCancel() {
     this.versionRevertDialog.closeDialog();
     this.versionToRevert = '';
     this.versionModalText = '';
+  }
+
+  handleReload() {
+    this.doc.reloadDocument();
+    this.tableOfContentService.reload();
   }
 
   /**
