@@ -134,10 +134,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
           )
             .pipe(distinctUntilChanged())
             .subscribe((response) => {
-              //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
-              // this.connector.getState(false).user = response.user;
-              // this.connector.getState(false).permissions =
-              // response.permissions;
               this.getState()['user'] = response.user;
               this.getState()['permissions'] =
                 this.documentService.getUserPermissions();
@@ -173,7 +169,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       )
         .pipe(distinctUntilChanged())
         .subscribe((response) => {
-          //TODO this will be removed after correct implementation of calls to get docType,instanceType, alternatives and isClonedProposal
           this.getState()['user'] = response.user;
           this.getState()['permissions'] =
             this.documentService.getUserPermissions();
@@ -381,7 +376,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       .fetchTocAndAncestors(elementdIds)
       .pipe(take(1))
       .subscribe((response) => {
-        console.log(response);
         this.receiveToc(JSON.stringify(response));
       });
   }
