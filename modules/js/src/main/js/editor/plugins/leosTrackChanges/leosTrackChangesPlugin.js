@@ -758,8 +758,11 @@ define(function leosTrackChangesPluginModule(require) {
         // Caret definitions
         CARET_START: false, CARET_END: true,
 
-        //TC Locations / where the tc is found
+        // TC Locations / where the tc is found
         BEFORE: "before", AFTER: "after", NONE: "none", CURRENT: "current", PARENT: "parent",
+
+        // Style element types
+        STYLE_ELEMENTS:  ["strong", "em", "sub", "sup"],
 
         searchTrackChangeElementCheckingParent: function(editor, action) {
             editor.getSelection().getRanges()[0].optimize();
@@ -843,15 +846,17 @@ define(function leosTrackChangesPluginModule(require) {
         },
 
         buildTrackChangeWrapElement: function(editor, action, html) {
-            var tcElement = new CKEDITOR.dom.element(this.TRACKCHANGES_ELEMENT);
-            tcElement.setAttributes(this.getTrackChangeAttributes(editor, action));
-            tcElement.$.innerHTML = html;
-            return tcElement;
+            return this.buildTrackChangeElement(editor, action, html, true);
         },
 
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
-            editor.insertElement(tcElement);
+            var selectedElement = editor.getSelection().getStartElement();
+            if (this.isEmpty(selectedElement) && this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
+                tcElement.insertAfter(selectedElement);
+            } else {
+                editor.insertElement(tcElement);
+            }
             this.setToEditablePosition(editor, tcElement, toEnd);
             return tcElement;
         },
@@ -967,11 +972,11 @@ define(function leosTrackChangesPluginModule(require) {
         findElementsInSelection: function(selection) {
             var selectedTcElements = [];
             var range = selection.getRanges()[0];
-            if ((typeof(range.getCommonAncestor) !== undefined) && (typeof(range.getCommonAncestor().getElementsByTag) !== undefined)) {
+            if (!selection.isFake && (typeof(range.getCommonAncestor) !== undefined) && (typeof(range.getCommonAncestor().getElementsByTag) !== undefined)) {
                 var allTcElementsWithinRangeParent = range.getCommonAncestor().getElementsByTag(this.TRACKCHANGES_ELEMENT);
                 for (var i = 0, tcElement; allTcElementsWithinRangeParent.count() > i; i++) {
                     tcElement = allTcElementsWithinRangeParent.getItem(i);
-                    if ((selection.getNative().containsNode !== undefined) && selection.getNative().containsNode(tcElement.$,true)) {
+                    if (selection.getNative().containsNode(tcElement.$, true)) {
                         selectedTcElements.push(tcElement);
                     }
                 }
