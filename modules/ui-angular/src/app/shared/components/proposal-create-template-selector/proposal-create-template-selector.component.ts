@@ -43,6 +43,7 @@ export class ProposalCreateTemplateSelectorComponent
   selectedLanguage: string;
   languages: Array<{ code: string; label: string }>;
   doubleClickTimer: any;
+  filteredNodes: UxLink[] = [];
 
   private destroy$ = new Subject<void>();
   private templates: Map<string, CatalogItem> = new Map();
@@ -69,10 +70,18 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   reset() {
-    this.setInitialState();
-    this.treeComponent.onFilter(this.filterText);
+    this.isExpanded = true;
+    this.selectedLanguage = '';
+    this.languages = [];
     this.treeComponent.onExpandAll(this.event);
     this.cd.detectChanges();
+  }
+
+  onDocumentTypeFilter(documentType: string) {
+    this.filteredNodes = this.filterNodesByDocumentType(
+      this.treeNodes,
+      documentType,
+    );
   }
 
   onLanguageChanged(langCode: string) {
@@ -119,6 +128,7 @@ export class ProposalCreateTemplateSelectorComponent
     catalogItems ??= [];
     this.templates = this.extractTemplatesFromCatalog(catalogItems);
     this.treeNodes = this.catalogToTreeNodes(catalogItems);
+    this.filteredNodes = JSON.parse(JSON.stringify(this.treeNodes));
   }
 
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
@@ -213,5 +223,38 @@ export class ProposalCreateTemplateSelectorComponent
   private onSelectLanguage(code: string) {
     this.selectedLanguage = code;
     this.selectLanguage.emit(code);
+  }
+
+  private filterNodesByDocumentType(
+    nodes: UxLink[] | undefined,
+    documentType: string,
+  ): UxLink[] {
+    if (!nodes) {
+      return [];
+    }
+
+    const documentTypeLower = documentType.toLowerCase();
+
+    return nodes.reduce((acc: UxLink[], node: UxLink) => {
+      const label = node.label?.toLowerCase();
+
+      if (label && label.includes(documentTypeLower)) {
+        return [...acc, node];
+      }
+
+      const filteredChildren = this.filterNodesByDocumentType(
+        node.children,
+        documentType,
+      );
+      if (filteredChildren.length > 0) {
+        const newNode: UxLink = {
+          ...node,
+          children: filteredChildren,
+          hasChildren: true,
+        };
+        return [...acc, newNode];
+      }
+      return acc;
+    }, []);
   }
 }
