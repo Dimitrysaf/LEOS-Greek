@@ -209,7 +209,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       )
       .pipe(take(1))
       .subscribe((response) => {
-        console.log(response);
         this.receiveRefLabel(response, data.documentRef);
       });
   }

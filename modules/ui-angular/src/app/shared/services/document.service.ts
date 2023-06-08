@@ -255,25 +255,17 @@ export class DocumentService implements OnDestroy {
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
       takeUntil(this.destroy$),
-      distinctUntilChanged((a, b) =>
-        isEqual(
-          a.map((x) => x.documentId),
-          b.map((x) => x.documentId),
-        ),
-      ),
+      distinctUntilChanged(),
       combineLatestWith(this.documentRefAndCategory$),
       mergeMap(([versionToCompare, option]) =>
-        versionToCompare.length === 2
+        versionToCompare.length > 1
           ? this.getDocumentVersionsComparison(
+              option.ref,
               option.category,
               versionToCompare[1].documentId,
-              versionToCompare[0].documentId,
-            )
-          : versionToCompare.length === 3 &&
-            process.env.NG_APP_LEOS_INSTANCE === 'cn'
-          ? this.getDocumentVersionsDoubleComparison(
-              option.category,
-              versionToCompare[1].documentId,
+              versionToCompare[2] !== undefined
+                ? versionToCompare[2].documentId
+                : null,
               versionToCompare[0].documentId,
             )
           : of(''),
@@ -907,27 +899,39 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentVersionsComparison(
+    documentRef: string,
     documentType: string,
     newVersionId: string,
+    intermediateVersionId: string,
     oldVersionId: string,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<string>(
-      `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
-      { responseType: 'text' as 'json' },
+    console.log(
+      'newVersionId:',
+      newVersionId,
+      ' - oldVersionId:',
+      oldVersionId,
+      ' - intermediateVersionId:',
+      intermediateVersionId,
     );
-  }
-
-  getDocumentVersionsDoubleComparison(
-    documentType: string,
-    newVersionId: string,
-    oldVersionId: string,
-  ) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<string>(
-      `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
-      { responseType: 'text' as 'json' },
-    );
+    if (
+      process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
+      intermediateVersionId !== null
+    ) {
+      return this.http.post<string>(
+        `${apiBaseUrl}/secured/document/double-compare/${documentType}/${documentRef}`,
+        {
+          originalProposalId: oldVersionId,
+          intermediateMajorId: intermediateVersionId,
+          currentId: newVersionId,
+        },
+      );
+    } else {
+      return this.http.get<string>(
+        `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
+        { responseType: 'text' as 'json' },
+      );
+    }
   }
 
   renumberDocument() {

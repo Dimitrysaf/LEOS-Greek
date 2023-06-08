@@ -82,11 +82,19 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       newVersions = [version];
     } else {
       const sorted = this.sortVersions(...currentVersions);
-      if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && sorted.length === 3) {
-        const minVersion = this.sortVersions(sorted.at(0), version)[0];
-        const medVersion = this.sortVersions(sorted.at(1), version)[0];
-        const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
-        newVersions = [minVersion, medVersion, maxVersion];
+      if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+        currentVersions.push(version);
+        const sortedCN = this.sortVersions(...currentVersions);
+        if (sortedCN.length === 3) {
+          const minVersion = sortedCN[0];
+          const medVersion = sortedCN[1];
+          const maxVersion = sortedCN[2];
+          newVersions = [minVersion, medVersion, maxVersion];
+        } else {
+          const minVersion = this.sortVersions(sorted.at(0), version)[0];
+          const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
+          newVersions = [minVersion, maxVersion];
+        }
       } else {
         const minVersion = this.sortVersions(sorted.at(0), version)[0];
         const maxVersion = this.sortVersions(sorted.at(-1), version)[1];

@@ -24,6 +24,7 @@ import {
   BehaviorSubject,
   combineLatest,
   combineLatestWith,
+  distinctUntilChanged,
   map,
   merge,
   Observable,
@@ -283,6 +284,7 @@ export class DocumentEditorComponent
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
+        distinctUntilChanged(),
         combineLatestWith(merge(of(null), this.translate.onLangChange)),
         map(([versions]) => this.getVersionComparisonViewHeaderTitle(versions)),
       );
@@ -1272,7 +1274,8 @@ export class DocumentEditorComponent
           oldVersion: this.formatVersionNumber(versions[0]),
           newVersion: this.formatVersionNumber(versions[1]),
         });
-      } else if (versions.length === 3) {
+      }
+      if (versions.length === 3) {
         return this.translate.instant('version.double.compare.header', {
           oldestVersion: this.formatVersionNumber(versions[0]),
           newVersion: this.formatVersionNumber(versions[1]),
@@ -1339,7 +1342,7 @@ export class DocumentEditorComponent
 
   private getIntermediateVersion(versions): Version {
     if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && versions.length === 3) {
-      return versions[0];
+      return versions[2];
     }
     return null;
   }
