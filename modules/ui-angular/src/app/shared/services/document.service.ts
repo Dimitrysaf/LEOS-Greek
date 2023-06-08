@@ -874,6 +874,10 @@ export class DocumentService implements OnDestroy {
     this.isDocumentLoadedBS.next(loaded);
   }
 
+  getUserPermissions() {
+    return this.permissionsBS.value;
+  }
+
   private setSearchResultsCounter(count: number) {
     this.searchResultsCounterBS.next(count);
   }

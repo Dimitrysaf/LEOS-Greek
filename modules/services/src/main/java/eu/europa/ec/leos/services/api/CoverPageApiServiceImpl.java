@@ -64,7 +64,6 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.vo.toc.AknTag;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -274,9 +273,10 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         String element = this.elementProcessor.getElement(proposal, elementTagName, elementId);
         String jsonAlternatives = "";
         String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        boolean isClonedProposal = !proposal.getClonedFrom().isEmpty();
         User user = securityContext.getUser();
         return new EditElementResponse(user, permissions,
-                elementId, elementTagName, element, jsonAlternatives);
+                elementId, elementTagName, element, jsonAlternatives, isClonedProposal);
     }
 
     @Override
@@ -370,7 +370,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules()
+                getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules(), proposal.isTrackChangesEnabled(), true
         );
     }
 

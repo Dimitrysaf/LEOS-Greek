@@ -259,10 +259,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
         String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
         User user = securityContext.getUser();
+        boolean isClonedProposal = !memorandum.getClonedFrom().isEmpty();
         try {
             String element = this.elementProcessor.getElement(memorandum, elementTagName, elementId);
             return new EditElementResponse(user, permissions,
-                    elementId, elementTagName, element, jsonAlternatives);
+                    elementId, elementTagName, element, jsonAlternatives, isClonedProposal);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);
@@ -361,10 +362,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         List<TocItem> tocItems = context1.getTocItems();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getId());
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
-        
+
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context1.getTocRules()
+                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context1.getTocRules(), memorandum.isTrackChangesEnabled(), true
         );
     }
 

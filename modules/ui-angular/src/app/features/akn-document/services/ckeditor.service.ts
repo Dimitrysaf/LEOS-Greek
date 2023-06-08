@@ -374,6 +374,9 @@ export class CKEditorService implements OnDestroy {
     );
     delete config['spellCheckerEnabled'];
 
+    config['isTrackChangesShowed'] = oldConfig.trackChangesShowed;
+    config['isTrackChangesEnabled'] = oldConfig.trackChangesEnabled;
+
     if (!oldConfig.spellCheckerServiceUrl) {
       config.spellCheckerServiceUrl =
         'https://webgate.acceptance.ec.testa.eu/qas/spellcheck';

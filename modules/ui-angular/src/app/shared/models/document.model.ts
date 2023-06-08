@@ -102,6 +102,8 @@ export interface DocumentConfig {
   alternateConfigs: AlternateConfig;
   levelItemVO: LevelItemVO;
   tocRules: TocRules;
+  trackChangesEnabled: boolean;
+  trackChangesShowed: boolean;
 }
 
 export interface TocRules {

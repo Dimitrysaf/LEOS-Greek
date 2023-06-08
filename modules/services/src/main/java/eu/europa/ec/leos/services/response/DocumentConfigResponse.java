@@ -23,10 +23,12 @@ public class DocumentConfigResponse {
     private Map<String, Attribute> articleTypesConfig;
     private String internalRef;
     private Map<String, List<TocItem>> tocRules;
+    private boolean isTrackChangesEnabled;
+    private boolean isTrackChangesShowed;
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
                                   List<AlternateConfig> alternateConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
-                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata, Map<TocItem, List<TocItem>> tocRules) {
+                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata, Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -36,6 +38,8 @@ public class DocumentConfigResponse {
         this.internalRef = internalRef;
         this.proposalMetadata = proposalMetadata;
         this.tocRules = transformMap(tocRules);
+        this.isTrackChangesEnabled = isTrackChangesEnabled;
+        this.isTrackChangesShowed = isTrackChangesShowed;
     }
 
     public List<LeosMetadata> getDocumentsMetadata() {
@@ -124,4 +128,19 @@ public class DocumentConfigResponse {
         return transformedMap;
     }
 
+    public boolean isTrackChangesEnabled() {
+        return isTrackChangesEnabled;
+    }
+
+    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
+        isTrackChangesEnabled = trackChangesEnabled;
+    }
+
+    public boolean isTrackChangesShowed() {
+        return isTrackChangesShowed;
+    }
+
+    public void setTrackChangesShowed(boolean trackChangesShowed) {
+        isTrackChangesShowed = trackChangesShowed;
+    }
 }

@@ -306,15 +306,17 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
     @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
-        Explanatory bill = this.explanatoryService.findExplanatoryByRef(documentRef);
+        Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         String jsonAlternatives = "";
         String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
         User user = securityContext.getUser();
+        Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
+        boolean isClonedProposal = proposal.isClonedProposal();
 
         try {
-            String element = this.elementProcessor.getElement(bill, elementTagName, elementId);
+            String element = this.elementProcessor.getElement(explanatory, elementTagName, elementId);
             return new EditElementResponse(user, permissions,
-                    elementId, elementTagName, element, jsonAlternatives);
+                    elementId, elementTagName, element, jsonAlternatives, isClonedProposal);
         } catch (Exception ex) {
             LOG.error("Exception while edit element operation for ", ex);
             throw new RuntimeException(ex);
@@ -409,7 +411,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules()
+                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules(), explanatory.isTrackChangesEnabled(), true
         );
     }
 
