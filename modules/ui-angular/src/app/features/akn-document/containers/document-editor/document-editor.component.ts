@@ -672,8 +672,8 @@ export class DocumentEditorComponent
     this.router.navigate([`/collection/${this.proposalRef}`]);
   }
 
-  onAnnotationsLoaded(count: number) {
-    if (count && this.isAnnotationsPaneCollapsed) {
+  onSidebarShown() {
+    if (this.isAnnotationsPaneCollapsed) {
       this.onToggleAnnotationsPaneCollapsed();
     }
   }
