@@ -1,9 +1,4 @@
-<eui-card
-  class="version-panes"
-  euiNoShadow
-  *ngIf="!isFilteredOut"
-  [ngClass]="{ 'version-search-excluded': isMajorVersionSearchExcluded }"
->
+<eui-card class="version-panes" euiNoShadow *ngIf="!isFilteredOut">
   <eui-card-header>
     <eui-card-header-title>{{ title | async }}</eui-card-header-title>
     <eui-card-header-subtitle *ngIf="description">

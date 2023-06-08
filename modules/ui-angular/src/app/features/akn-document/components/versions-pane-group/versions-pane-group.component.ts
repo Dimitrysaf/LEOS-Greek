@@ -35,7 +35,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected hasMore = false;
   protected versions: Version[] = [];
   protected isFilteredOut = false;
-  protected isMajorVersionSearchExcluded = false;
   protected versionsSearchExcluded: Version[] = [];
 
   private filter = 'all';
@@ -129,7 +128,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   private onVersionSearchResultsChange(results: string[]) {
     if (!Array.isArray(results)) {
       this.versionsSearchExcluded = [];
-      this.isMajorVersionSearchExcluded = false;
       return;
     }
 
@@ -140,8 +138,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     this.versionsSearchExcluded = versions.filter(
       (v) => !results.includes(v.cmisVersionNumber),
     );
-    this.isMajorVersionSearchExcluded =
-      versions.length === this.versionsSearchExcluded.length;
   }
 
   private updateState() {
