@@ -648,7 +648,7 @@
             [proposalRef]="proposalRef"
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
-            (annotationsLoaded)="onAnnotationsLoaded($event)"
+            (sidebarShown)="onSidebarShown()"
             *ngIf="!milestoneViewData"
           ></app-document-annotations>
         </eui-page-column-body>

@@ -34,7 +34,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
   @Input() canvasClass?: string;
-  @Output() annotationsLoaded = new EventEmitter<number>();
+  @Output() sidebarShown = new EventEmitter<void>();
 
   private annotate: AnnotateManager;
   private mutationObserver?: MutationObserver;
@@ -96,10 +96,9 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   annotationsLoadedListener(event: MessageEvent) {
     if (
       event.source === this.iframeEl?.contentWindow &&
-      event.data.method === 'loadAnnotations'
+      event.data.method === 'showSidebar'
     ) {
-      const annotations = event.data.arguments[0];
-      this.annotationsLoaded.emit(annotations.length);
+      this.sidebarShown.emit();
     }
   }
 
