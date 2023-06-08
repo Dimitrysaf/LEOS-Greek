@@ -300,7 +300,7 @@ define(function actionManagerExtensionModule(require) {
 
     function _hideActionButtons(actions, element) {
         $(actions).children().css({display: "none"});
-        $(element).removeClass("leos-editable-content");
+        $(element).removeClass("leos-editable-content").filter("[class='']").removeAttr("class");
     }
 
     function _handleElementClickAction(connector, action, event) {
