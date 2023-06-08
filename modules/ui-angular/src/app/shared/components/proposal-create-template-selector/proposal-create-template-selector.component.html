@@ -15,7 +15,7 @@
           euiInputText
           euiClearable
           [(ngModel)]="filterText"
-          (ngModelChange)="treeComponent.onFilter($event)"
+          (ngModelChange)="onDocumentTypeFilter($event)"
           placeholder="Search by document type"
           aria-label="Search by document type"
         />
@@ -52,7 +52,7 @@
   <div class="tree-wrapper eui-u-mt-l">
     <ux-tree
       #treeComponent
-      [nodes]="treeNodes"
+      [nodes]="filteredNodes"
       isHideLines="true"
       isClickTogglingNode="true"
       isClickSelectingNode="true"
