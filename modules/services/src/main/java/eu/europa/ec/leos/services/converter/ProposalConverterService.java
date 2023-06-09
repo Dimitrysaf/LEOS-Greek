@@ -14,13 +14,14 @@
 
 package eu.europa.ec.leos.services.converter;
 
-import java.io.File;
-
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
+
+import java.io.File;
 
 public interface ProposalConverterService {
 
-    DocumentVO createProposalFromLegFile(File file, final DocumentVO document, boolean canUpdateSource);
-
     DocumentVO createDocument(String docName, File docFile, boolean canModifySource);
+
+    DocumentVO createProposalFromLegFile(File file, final DocumentVO document, boolean canUpdateSource) throws XmlValidationException;
 }

@@ -61,29 +61,33 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     @Override
     public Result<?> processDocument(DocumentVO documentVO) {
         if (documentVO.getCategory().equals(LeosCategory.PROPOSAL)) {
-            byte[] updatedDocContent = preserveDocumentReference(documentVO.getSource());
-            documentVO.setSource(updatedDocContent);
-            for (DocumentVO doc : documentVO.getChildDocuments()) {
-                try {
-                    if (!doc.getCategory().equals(LeosCategory.PROPOSAL)) {
-                        byte[] docContent = doc.getSource();
-                        if (doc.getCategory().equals(LeosCategory.BILL)) {
-                            updatedDocContent = preserveDocumentReference(docContent);
-                            doc.setSource(updatedDocContent);
+            if(documentVO.getSource() != null) {
+                byte[] updatedDocContent = preserveDocumentReference(documentVO.getSource());
+                documentVO.setSource(updatedDocContent);
+                for (DocumentVO doc : documentVO.getChildDocuments()) {
+                    try {
+                        if (!doc.getCategory().equals(LeosCategory.PROPOSAL)) {
+                            byte[] docContent = doc.getSource();
+                            if (doc.getCategory().equals(LeosCategory.BILL)) {
+                                updatedDocContent = preserveDocumentReference(docContent);
+                                doc.setSource(updatedDocContent);
 
-                            for (DocumentVO annex : doc.getChildDocuments()) {
-                                byte[] annexContent = annex.getSource();
-                                byte[] updatedDocContentAnnex = preserveDocumentReference(annexContent);
-                                annex.setSource(updatedDocContentAnnex);
+                                for (DocumentVO annex : doc.getChildDocuments()) {
+                                    byte[] annexContent = annex.getSource();
+                                    byte[] updatedDocContentAnnex = preserveDocumentReference(annexContent);
+                                    annex.setSource(updatedDocContentAnnex);
+                                }
+                            } else {
+                                updatedDocContent = preserveDocumentReference(docContent);
+                                doc.setSource(updatedDocContent);
                             }
-                        } else {
-                            updatedDocContent = preserveDocumentReference(docContent);
-                            doc.setSource(updatedDocContent);
                         }
+                    } catch (Exception e) {
+                        return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);
                     }
-                } catch (Exception e) {
-                    return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);
                 }
+            } else {
+                return new Result<>(messageHelper.getMessage("wizard.document.upload.error.document.proposal.not.found"), ErrorCode.EXCEPTION);
             }
         }
         return new Result<>("OK", null);

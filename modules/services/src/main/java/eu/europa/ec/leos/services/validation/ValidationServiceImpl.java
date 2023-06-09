@@ -47,8 +47,6 @@ class ValidationServiceImpl implements ValidationService {
 
     @Override
     public List<ErrorVO> validateDocument(DocumentVO documentVO) {
-        Validate.notNull(documentVO.getId(), "Document id is required!");
-        Validate.notNull(documentVO.getDocumentType(), "Document type is required!");
         final List<ErrorVO> result = new ArrayList<>();
         try {
             validatorFactory

@@ -4,6 +4,7 @@ import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.LegDocumentVO;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.LegPackage;
 
@@ -20,7 +21,7 @@ public interface LegService {
 
     LegPackage createLegPackageForClone(String proposalId, ExportOptions exportOptions) throws IOException;
 
-    LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException;
+    LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException, XmlValidationException;
     
     List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus);
     

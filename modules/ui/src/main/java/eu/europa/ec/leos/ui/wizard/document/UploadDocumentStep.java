@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.stream.Stream;
 
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.ui.wizard.ErrorResolver;
 import eu.europa.ec.leos.web.event.view.repository.PostProcessingDocumentEvent;
+import eu.europa.ec.leos.web.event.view.repository.ShowPostProcessingResultEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,6 +251,14 @@ class UploadDocumentStep extends CustomComponent implements WizardStep, Upload.S
 
     private void validateProposal(DocumentVO document) {
         eventBus.post(new ValidateProposalEvent(document));
+    }
+
+    @Subscribe
+    void showPostProcessingResult(ShowPostProcessingResultEvent event) {
+        Result<String> postProcessingResult = event.getResult();
+        if (postProcessingResult.isError()) {
+            fileName.setValue(messageHelper.getMessage("wizard.document.upload.error.post.processing"));
+        }
     }
 
     @Subscribe

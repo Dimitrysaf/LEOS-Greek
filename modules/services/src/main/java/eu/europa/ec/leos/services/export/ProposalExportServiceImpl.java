@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -227,6 +228,9 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             LegPackage legPackage = legService.createLegPackage(legFile, exportOptions);
             legFile = legPackage.getFile();
             return createZipFile(legPackage, jobFileName, exportOptions);
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
+            throw new Exception(e.getMessage());
         } finally {
             if (legFile != null && legFile.exists()) {
                 if (!legFile.delete()) {

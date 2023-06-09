@@ -15,10 +15,12 @@
 package eu.europa.ec.leos.services.converter;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.document.DocumentContentService;
-import eu.europa.ec.leos.services.exception.ImportElementException;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -52,6 +54,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
     private final TemplateService templateService;
     protected final XPathCatalog xPathCatalog;
     protected final DocumentContentService documentContentService;
+    private MessageHelper messageHelper;
 
     private List<CatalogItem> templatesCatalog;
 
@@ -61,13 +64,14 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
             XmlNodeConfigProcessor xmlNodeConfigProcessor,
             XmlContentProcessor xmlContentProcessor,
             TemplateService templateService, XPathCatalog xPathCatalog,
-            DocumentContentService documentContentService) {
+            DocumentContentService documentContentService, MessageHelper messageHelper) {
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
         this.templateService = templateService;
         this.xPathCatalog = xPathCatalog;
         this.documentContentService = documentContentService;
+        this.messageHelper = messageHelper;
     }
 
     /**
@@ -83,15 +87,16 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
      * @param canModifySource true to exclude some xml tags into byte array source, false if you need to keep the original integrity of the document
      * @return the enriched DocumentVO representing the proposal inside the leg file.
      */
-    public DocumentVO createProposalFromLegFile(File file, final DocumentVO proposal, boolean canModifySource) {
+    public DocumentVO createProposalFromLegFile(File file, final DocumentVO proposal, boolean canModifySource) throws XmlValidationException {
         proposal.clean();
         proposal.setCategory(LeosCategory.PROPOSAL);
         // unzip file
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, "/unzip/");
-        String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE))
+        /*String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE))
                 .findFirst()
                 .orElseThrow(() -> new ImportElementException("A proposal file is required to upload a valid legislative document."));
-        try {
+*/        try {
+            String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().orElse("");
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();
                 File proposalFile = (File) unzippedFiles.get(proposalFileKey);
@@ -122,6 +127,10 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                     propChildDocs.add(billDoc);
                 }
                 proposal.setChildDocuments(propChildDocs);
+            }
+            else {
+                throw new XmlValidationException(messageHelper.getMessage("wizard.document.upload.error.document.proposal.not.found"),
+                        ErrorCode.DOCUMENT_NOT_FOUND);
             }
         } catch (Exception e) {
             LOG.error("Error generating the map of the document: {}", e);

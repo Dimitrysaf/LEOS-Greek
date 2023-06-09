@@ -48,6 +48,7 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportResource;
 import eu.europa.ec.leos.services.export.ExportVersions;
@@ -412,12 +413,13 @@ public class LegServiceImpl implements LegService {
      * @return LegPackage used to be sent to Toolbox for PDF/LegisWrite generation.
      */
     @Override
-    public LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException {
+    public LegPackage createLegPackage(File legFile, ExportOptions exportOptions) throws IOException, XmlValidationException {
         // legFile will be deleted after createProposalFromLegFile(), so we save the bytes in a temporary file
         File legFileTemp = File.createTempFile("RENDITION_", ".leg");
         FileUtils.copyFile(legFile, legFileTemp);
 
-        final DocumentVO proposalVO = proposalConverterService.createProposalFromLegFile(legFile, new DocumentVO(LeosCategory.PROPOSAL), false);
+        DocumentVO proposalVO = proposalConverterService.createProposalFromLegFile(legFile, new DocumentVO(LeosCategory.PROPOSAL), false);
+
         final byte[] proposalXmlContent = proposalVO.getSource();
         ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
         final Map<String, String> proposalRefsMap = buildProposalExportResource(proposalExportResource, proposalXmlContent);

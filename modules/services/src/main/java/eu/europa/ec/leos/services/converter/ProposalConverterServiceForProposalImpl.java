@@ -17,6 +17,7 @@ package eu.europa.ec.leos.services.converter;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -46,9 +47,10 @@ class ProposalConverterServiceForProposalImpl extends ProposalConverterServiceIm
             XmlNodeProcessor xmlNodeProcessor,
             XmlNodeConfigProcessor xmlNodeConfigProcessor,
             XmlContentProcessor xmlContentProcessor,
-            TemplateService templateService, XPathCatalog xPathCatalog, DocumentContentService documentContentService) {
+            TemplateService templateService, XPathCatalog xPathCatalog, DocumentContentService documentContentService,
+            MessageHelper messageHelper) {
         super(xmlNodeProcessor, xmlNodeConfigProcessor, xmlContentProcessor, templateService, xPathCatalog,
-                documentContentService);
+                documentContentService, messageHelper);
     }
 
     @Override

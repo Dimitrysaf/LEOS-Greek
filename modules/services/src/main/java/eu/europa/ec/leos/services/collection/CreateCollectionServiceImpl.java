@@ -8,6 +8,7 @@ import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.cloneProposal.ClonedProposalNotification;
 import eu.europa.ec.leos.model.notification.cloneProposal.RevisionDoneNotification;
@@ -17,6 +18,7 @@ import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
@@ -31,7 +33,9 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
@@ -77,10 +81,11 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         this.cloneContext = cloneContext;
     }
 
-    private DocumentVO createDocumentVOFromLegfile(File legDocument) {
+    private DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException{
         Validate.notNull(legDocument, "Leg document is required");
-
-        DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, new DocumentVO(PROPOSAL), true);
+        final List<ErrorVO> errorList = new ArrayList<>();
+        DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, new DocumentVO(PROPOSAL),
+                true);
 
         CollectionContextService context = proposalContextProvider.get();
         context.useTemplate(propDocument.getMetadata().getDocTemplate());
@@ -131,7 +136,14 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     @Override
     public CreateCollectionResult createCollectionFromLeg(File legDocument) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-        DocumentVO propDocument = createDocumentVOFromLegfile(legDocument);
+        DocumentVO propDocument = null;
+        try {
+            propDocument = createDocumentVOFromLegfile(legDocument);
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
+            CreateCollectionError error = new CreateCollectionError(e.getErrorCode().ordinal(), e.getMessage());
+            return new CreateCollectionResult(idsAndUrlsHolder, false, error);
+        }
 
         CollectionContextService context = proposalContextProvider.get();
         context.useDocument(propDocument);
@@ -152,7 +164,14 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     @Override
     public CreateCollectionResult cloneCollection(File legDocument, String iscRef, String targetUser, String connectedEntity) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-        DocumentVO propDocument = createDocumentVOFromLegfile(legDocument);
+        DocumentVO propDocument = null;
+        try {
+            propDocument = createDocumentVOFromLegfile(legDocument);
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
+            CreateCollectionError error = new CreateCollectionError(e.getErrorCode().ordinal(), e.getMessage());
+            return new CreateCollectionResult(idsAndUrlsHolder, false, error);
+        }
 
         //set metadata to cloned proposal
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
