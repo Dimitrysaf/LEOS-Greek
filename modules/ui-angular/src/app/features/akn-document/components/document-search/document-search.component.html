@@ -26,7 +26,7 @@
       />
       <div class="eui-input-group-addon-item">
         <span euiLabel *ngIf="(doc.searchResultsCounter$ | async) !== 0"
-          >{{ doc.displayedCurrentIndex + 1 }}
+          >{{ doc.currentIndex + 1 }}
           {{ 'page.editor.search.results.separator' | translate }}
           {{ doc.searchResultsCounter$ | async }}</span
         >

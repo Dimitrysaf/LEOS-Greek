@@ -45,7 +45,6 @@ import {
 } from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
-import { TableOfContentItemVO, TocItem } from '../models/toc.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import { LoadingService } from './loading.service';
 
@@ -514,11 +513,25 @@ export class DocumentService implements OnDestroy {
     ) {
       this.document.getElementById(this.focusedSearchResult.id).innerText =
         this.searchAndReplaceTextBS.value;
-      if (currentIndex < this.searchResultIndexArray.length - 1) {
-        this.scrollToElement(
-          this.searchResultIndexArray[currentIndex + 1],
-          true,
-        );
+      const tmpArray = this.searchResultIndexArray;
+      const previousSearchResultIndexArrayLength =
+        this.searchResultIndexArray.length;
+      this.searchResultIndexArray = [];
+      for (let i = 0; i < tmpArray.length; i++) {
+        if (i !== currentIndex) {
+          this.searchResultIndexArray.push(tmpArray[i]);
+        }
+      }
+
+      if (currentIndex < previousSearchResultIndexArrayLength - 1) {
+        this.scrollToElement(this.searchResultIndexArray[currentIndex], true);
+      } else if (
+        currentIndex === previousSearchResultIndexArrayLength - 1 &&
+        previousSearchResultIndexArrayLength === 1
+      ) {
+        this.removeHighlights();
+      } else {
+        this.scrollToElement(this.searchResultIndexArray[0], true);
       }
       if (this.searchResultsCounterBS.value - 1 > 0) {
         this.setSearchResultsCounter(this.searchResultsCounterBS.value - 1);
@@ -1045,17 +1058,11 @@ export class DocumentService implements OnDestroy {
       }
     }
     this.focusedSearchResult = searchObj;
-
     const targetElement = document.getElementById(searchObj.id);
     if (targetElement) {
       this.currentIndex = this.searchResultIndexArray.indexOf(
         this.focusedSearchResult,
       );
-
-      this.displayedCurrentIndex = afterReplace
-        ? this.currentIndex - 1
-        : this.currentIndex;
-
       targetElement.classList.remove('search-result');
       targetElement.classList.add('focused-search-result');
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
