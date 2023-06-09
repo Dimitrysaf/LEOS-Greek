@@ -217,7 +217,7 @@ public class NpmJsNoticeToXmlCopyrights extends TxtLinesReader {
     }
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, TransformerException {
-        final Path txtFile = Paths.get("NOTICE_Trusted_FE.md");
+        final Path txtFile = Paths.get("NOTICE_ANNOTATION_FE.md");
         NpmJsNoticeToXmlCopyrights generator = new NpmJsNoticeToXmlCopyrights(Files.newBufferedReader(txtFile));
         generator.convertNoticeToXml(System.out);
     }

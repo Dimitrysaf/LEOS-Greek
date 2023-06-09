@@ -159,7 +159,7 @@ public class MavenXmlCopyrightsMapping extends BaseXmlLoader {
     }
 
     public static void main(String[] args) throws URISyntaxException, ParserConfigurationException, IOException, SAXException {
-        final Path xmlPath = new PathRetriever().fromClasspath("/copyrights-lookup-maven.xml");
+        final Path xmlPath = new PathRetriever().fromClasspath("/copyrights-lookup-leos-maven.xml");
         new MavenXmlCopyrightsMapping(xmlPath);
     }
 }

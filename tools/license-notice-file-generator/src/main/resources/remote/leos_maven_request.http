@@ -1,4 +1,6 @@
 POST https://api.clearlydefined.io/notices
+Content-Type: application/json
+
 {
   "coordinates": [
     "maven/mavencentral/aopalliance/aopalliance/1.0",
@@ -48,19 +50,6 @@ POST https://api.clearlydefined.io/notices
     "maven/mavencentral/commons-lang/commons-lang/2.6",
     "maven/mavencentral/cool.graph/cuid-java/0.1.1",
     "maven/mavencentral/de.datenhahn.vaadin/componentrenderer/2.0.0",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-config/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-domain/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-i18n/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-integration/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-js/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-repository/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-security/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-security-preauth/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-services/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-test-support/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-ui/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-ui-angular/4.1.0-SNAPSHOT",
-    "maven/mavencentral/eu.europa.ec.leos.pilot/leos-use-cases/4.1.0-SNAPSHOT",
     "maven/mavencentral/io.atlassian.fugue/fugue/4.4.0",
     "maven/mavencentral/io.micrometer/micrometer-core/1.6.3",
     "maven/mavencentral/io.netty/netty-buffer/4.1.73.Final",

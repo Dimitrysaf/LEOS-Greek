@@ -42,7 +42,8 @@ public class ThirdPartyConverter {
         return line.replaceAll("\\(without dependencies\\) ", "")
                 .replaceAll("\\(SpEL\\) ", "")
                 .replaceAll("\\(SPARQL 1.1 Query Engine\\)", "")
-                .replaceAll("\\(Native Triple Store\\)", "");
+                .replaceAll("\\(Native Triple Store\\)", "")
+                .replaceAll("\\(Aggregator\\) ", "");
     }
 
     // Process a line like:

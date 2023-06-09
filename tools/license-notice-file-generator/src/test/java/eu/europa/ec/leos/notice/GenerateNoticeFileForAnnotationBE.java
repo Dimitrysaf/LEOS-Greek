@@ -14,18 +14,18 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-class GenerateNoticeFileForLeos extends BaseTest {
+class GenerateNoticeFileForAnnotationBE extends BaseTest {
 
     @Test
     void generateNotice() throws IOException, InterruptedException, URISyntaxException, ParserConfigurationException, SAXException {
-        Path trustedAppTxtFile = getPathFromClasspath("/THIRD-PARTY-LEOS-maven.txt");
-        String lookUpFileFile = "/copyrights-lookup-maven.xml";
-        String outputFile = "NOTICE_BE_JUNIT.md";
+        Path trustedAppTxtFile = getPathFromClasspath("/THIRD-PARTY-annotation-maven.txt");
+        String lookUpFileFile = "/copyrights-lookup-annotation-maven.xml";
+        String outputFile = "NOTICE_ANNOTATION_BE.md";
 
         final Path xmlCopyrights = new PathRetriever().fromClasspath(lookUpFileFile);
         MavenXmlCopyrightsMapping mappings = new MavenXmlCopyrightsMapping(xmlCopyrights);
 
-        final Product trustedApp = new Product("LEOS", "2022 European Union", "1.0", EUPLv1_2Content.content());
+        final Product trustedApp = new Product("ANNOTATION", "2022 European Union", "1.0", EUPLv1_2Content.content());
 
         final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings);
         try (PrintStream ps = new PrintStream(outputFile)) {

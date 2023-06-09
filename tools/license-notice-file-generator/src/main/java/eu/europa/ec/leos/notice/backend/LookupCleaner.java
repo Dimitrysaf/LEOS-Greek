@@ -2,6 +2,7 @@ package eu.europa.ec.leos.notice.backend;
 
 import eu.europa.ec.leos.notice.backend.thirdparty.ThirdPartyConverter;
 import eu.europa.ec.leos.notice.backend.thirdparty.ThirdPartyLibrary;
+import eu.europa.ec.leos.notice.backend.xml.LookupXmlMapping;
 import eu.europa.ec.leos.notice.backend.xml.MavenXmlCopyrightsMapping;
 import eu.europa.ec.leos.notice.common.PathRetriever;
 import eu.europa.ec.leos.notice.common.Product;
@@ -17,12 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,13 +38,13 @@ import java.util.stream.Collectors;
  * (BSD License) AntLR Parser Generator (antlr:antlr:2.7.7 - http://www.antlr.org/)
  * </pre>
  */
-public class BackEndNoticeGenerator {
+public class LookupCleaner {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Product product;
     private final Path thirdPartyTxtFile;
     private final MavenXmlCopyrightsMapping xmlCopyrightsMapping;
 
-    public BackEndNoticeGenerator(Product product, Path thirdPartyTxtFile, MavenXmlCopyrightsMapping xmlCopyrightsMapping) {
+    public LookupCleaner(Product product, Path thirdPartyTxtFile, MavenXmlCopyrightsMapping xmlCopyrightsMapping) {
         Objects.requireNonNull(product);
         Objects.requireNonNull(thirdPartyTxtFile);
         Objects.requireNonNull(xmlCopyrightsMapping);
@@ -139,16 +140,18 @@ public class BackEndNoticeGenerator {
         return libNotice;
     }
 
-    public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ParserConfigurationException, SAXException {
-        final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-leos-maven.xml");
-        MavenXmlCopyrightsMapping mappings = new MavenXmlCopyrightsMapping(xmlCopyrights);
+    public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ParserConfigurationException, SAXException, TransformerException {
+        final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-annotation-npmjs_dirty.xml");
+        LookupXmlMapping mappings = new LookupXmlMapping(xmlCopyrights);
 
-        final Path trustedAppTxtFile = Paths.get("target/generated-sources/license/THIRD-PARTY.txt");
-        final Product trustedApp = new Product("LEOS", "2022 European Union", "1.0", EUPLv1_2Content.content());
+        mappings.convertNoticeToXml(System.out);
 
-        final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings);
-        try (PrintStream ps = new PrintStream("NOTICE_BE.md")) {
-            trustedAppNoticeGenerator.generateNotice(ps);
-        }
+//        final Path trustedAppTxtFile = Paths.get("target/generated-sources/license/THIRD-PARTY.txt");
+//        final Product trustedApp = new Product("LEOS", "2022 European Union", "1.0", EUPLv1_2Content.content());
+//
+//        final LookupCleaner trustedAppNoticeGenerator = new LookupCleaner(trustedApp, trustedAppTxtFile, mappings);
+//        try (PrintStream ps = new PrintStream("NOTICE_BE.md")) {
+//            trustedAppNoticeGenerator.generateNotice(ps);
+//        }
     }
 }
