@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
 import { DraggableSplitterComponent } from '@/features/akn-document/containers/draggable-splitter/draggable-splitter.component';
+import { ConfirmReloadDialogComponent } from '@/shared/components/confirm-reload-dialog/confirm-reload-dialog.component';
 
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
 import { CoEditionDetectedDialogComponent } from './components/co-edition-detected-dialog/co-edition-detected-dialog.component';
@@ -52,6 +53,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
+    ConfirmReloadDialogComponent,
   ],
   exports: [
     UxAllModule,
@@ -76,6 +78,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
+    ConfirmReloadDialogComponent,
   ],
 })
 export class SharedModule {}
