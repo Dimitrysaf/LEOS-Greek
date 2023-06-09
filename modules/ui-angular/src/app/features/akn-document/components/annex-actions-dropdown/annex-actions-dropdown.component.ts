@@ -19,6 +19,7 @@ import { ImportFromJournalDialogComponent } from '@/features/akn-document/compon
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
+import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 
 @Component({
   selector: 'app-annex-actions-dropdown',
@@ -74,7 +75,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
         'page.editor.actions-dropdown.apply-continuous-numbering.confirmation.title',
       ),
       content: this.translateService.instant(
-        'page.editor.actions-dropdown.apply-continuous-numbering.confirmation.message',
+        `page.editor.actions-dropdown.${this.doc.documentType.toLowerCase()}.apply-continuous-numbering.confirmation.message`,
       ),
       acceptLabel: this.translateService.instant('global.actions.continue'),
       accept: () => {
