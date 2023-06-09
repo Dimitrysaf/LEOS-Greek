@@ -215,14 +215,19 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.uxAppService.growl({
-            severity: 'info',
-            summary: this.translateService.instant(
-              'page.editor.export-email-sent',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
+          this.appConfig.config.subscribe((c) => {
+            const userEmail = c.user.email;
+            this.translateService
+              .get('page.editor.export-email-sent', { userEmail })
+              .subscribe((message) => {
+                this.uxAppService.growl({
+                  severity: 'info',
+                  summary: message,
+                  life: 3000,
+                  isGrowlSticky: false,
+                  position: 'bottom-right',
+                });
+              });
           });
         },
         error: (err) => {
