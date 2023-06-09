@@ -61,6 +61,7 @@ import {
   NodeValidationResponse,
 } from '@/shared/models/drop-response.model';
 import { DocumentService } from '@/shared/services/document.service';
+import { scrollInParent } from '@/shared/utils';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
   checkDeleteOnLastItemInList,
@@ -804,16 +805,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   handleNodeSelect(node: TableOfContentItemVO) {
     this.selectedNode = node;
-    // this.hilightSelectedNode(node);
-
     this.handleTocStylingOnInlineEdit(this.isEdit);
-
-    this.delay(0) // Delay of 0ms to allow UI rendering
-      .then(() => this.scrollToDocumentElement(node, 'docContainer'))
-      .then(() => this.delay(100)) // Delay of 100ms before the next scroll
-      .then(() =>
-        this.scrollToDocumentElement(node, 'versionComparisonContainer'),
-      );
+    this.scrollToDocumentElement(node, 'docContainer');
+    this.scrollToDocumentElement(node, 'versionComparisonContainer');
   }
 
   //a node can be dropped from two sources
@@ -971,7 +965,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   private hilightSelectedNode(node: TableOfContentItemVO) {
-    this.document
+    this.elementRef.nativeElement
       .querySelectorAll('.selected-node')
       .forEach((el) => el.classList.remove('selected-node'));
     if (node) {
@@ -1413,28 +1407,18 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       );
   }
 
-  private delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  private scrollToDocumentElement(
+    node: TableOfContentItemVO,
+    containerId: string,
+  ) {
+    const el = document.querySelector(`#${containerId} #${node.id}`);
+    if (el instanceof HTMLElement) {
+      el.style.background = 'cornsilk';
+      setTimeout(() => {
+        el.style.background = '';
+      }, 1000);
 
-  private scrollToDocumentElement(node: TableOfContentItemVO, id: string) {
-    const targetElement = document.getElementById(id);
-    if (targetElement) {
-      const childTargetElement = targetElement.querySelector(
-        `#${node.id}`,
-      ) as HTMLElement;
-      if (childTargetElement) {
-        childTargetElement.style.backgroundColor = 'cornsilk';
-        setTimeout(() => {
-          childTargetElement.style.background = '';
-        }, 1000);
-        setTimeout(() => {
-          childTargetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }, 100);
-      }
+      scrollInParent(el, { topOffset: 100, behavior: 'smooth', left: null });
     }
   }
 
