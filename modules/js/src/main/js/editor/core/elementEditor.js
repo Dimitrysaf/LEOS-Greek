@@ -124,7 +124,10 @@ define(function elementEditorModule(require) {
         if(connector.getState().isAngularUI){
             const mappingUrl = connector.getState().mappingUrl;
             if (mappingUrl && profile.config.mathJaxLib !== undefined) {
-                profile.config.mathJaxLib = mappingUrl + profile.config.mathJaxLib.substring(1);
+                // check if the correct url has been already set. This is needed after the first element edit succeeds
+                if(!profile.config.mathJaxLib.startsWith(mappingUrl)){
+                    profile.config.mathJaxLib = mappingUrl + profile.config.mathJaxLib.substring(1);
+                }
             }
         }
 
