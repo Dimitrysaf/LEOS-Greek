@@ -61,8 +61,7 @@ public class NoticeService {
         return toListOfNotices(noticesResponse, noticeProvider);
     }
 
-    private List<RemoteNotice> retrieveNoticesFromRemoteService(Collection<String> fullNames, NoticeProvider noticeProvider)
-            throws IOException, InterruptedException {
+    private List<RemoteNotice> retrieveNoticesFromRemoteService(Collection<String> fullNames, NoticeProvider noticeProvider) throws IOException, InterruptedException {
         NoticesRequest noticesRequest = buildRequest(fullNames, noticeProvider);
         String requestBody = serializeRequest(noticesRequest);
         final String body = executeRequest(requestBody);
@@ -74,9 +73,9 @@ public class NoticeService {
         log.info("Using existing disk data, i.e not querying via {} ...", POST_URL);
         switch (noticeProvider) {
             case MAVENCENTRAL:
-                return retrieveFromJson(getReader("/remote/maven_sample_response.json"), NoticeProvider.MAVENCENTRAL);
+                return retrieveFromJson(getReader("/remote/leos_maven_response.json"), NoticeProvider.MAVENCENTRAL);
             case NPMJS:
-                return retrieveFromJson(getReader("/remote/npmjs_sample_response.json"), NoticeProvider.NPMJS);
+                return retrieveFromJson(getReader("/remote/leos_npmjs_response.json"), NoticeProvider.NPMJS);
             default:
                 throw new IllegalArgumentException("noticeProvider not found");
         }

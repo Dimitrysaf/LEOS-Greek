@@ -1,0 +1,117 @@
+[main] WARN eu.europa.ec.leos.notice.backend.BackEndNoticeGenerator - Total UNIQUE thirdPartyLibraries: 110
+[main] INFO eu.europa.ec.leos.notice.remote.NoticeService - Executing POST to URL 'https://api.clearlydefined.io/notices' using body:
+{
+  "coordinates" : [ "maven/mavencentral/antlr/antlr/2.7.7", "maven/mavencentral/ch.qos.logback/logback-classic/1.2.11", "maven/mavencentral/ch.qos.logback/logback-core/1.2.11", "maven/mavencentral/com.auth0/java-jwt/3.2.0", "maven/mavencentral/com.fasterxml/classmate/1.5.1", "maven/mavencentral/com.fasterxml.jackson.core/jackson-annotations/2.13.2", "maven/mavencentral/com.fasterxml.jackson.core/jackson-core/2.13.2", "maven/mavencentral/com.fasterxml.jackson.core/jackson-databind/2.13.2.1", "maven/mavencentral/com.fasterxml.jackson.datatype/jackson-datatype-jdk8/2.13.2", "maven/mavencentral/com.fasterxml.jackson.datatype/jackson-datatype-jsr310/2.13.2", "maven/mavencentral/com.fasterxml.jackson.module/jackson-module-parameter-names/2.13.2", "maven/mavencentral/com.github.spotbugs/spotbugs-annotations/3.1.0", "maven/mavencentral/com.github.springtestdbunit/spring-test-dbunit/1.3.0", "maven/mavencentral/com.google.code.findbugs/jsr305/3.0.2", "maven/mavencentral/com.h2database/h2/1.4.200", "maven/mavencentral/com.jayway.jsonpath/json-path/2.6.0", "maven/mavencentral/com.oracle.database.jdbc/ojdbc8/21.3.0.0", "maven/mavencentral/com.sun.activation/jakarta.activation/1.2.2", "maven/mavencentral/com.sun.istack/istack-commons-runtime/3.0.12", "maven/mavencentral/com.vaadin.external.google/android-json/0.0.20131108.vaadin1", "maven/mavencentral/com.zaxxer/HikariCP/4.0.3", "maven/mavencentral/commons-codec/commons-codec/1.15", "maven/mavencentral/commons-io/commons-io/1.3.2", "maven/mavencentral/commons-logging/commons-logging/1.2", "maven/mavencentral/eu.europa.ec.leos.annotate/annotate-client/4.1.0-SNAPSHOT", "maven/mavencentral/eu.europa.ec.leos.annotate/annotate-server/4.1.0-SNAPSHOT", "maven/mavencentral/jakarta.activation/jakarta.activation-api/1.2.2", "maven/mavencentral/jakarta.annotation/jakarta.annotation-api/1.3.5", "maven/mavencentral/jakarta.persistence/jakarta.persistence-api/2.2.3", "maven/mavencentral/jakarta.transaction/jakarta.transaction-api/1.3.3", "maven/mavencentral/jakarta.xml.bind/jakarta.xml.bind-api/2.3.3", "maven/mavencentral/junit/junit/4.13.1", "maven/mavencentral/net.bytebuddy/byte-buddy/1.11.22", "maven/mavencentral/net.bytebuddy/byte-buddy-agent/1.11.22", "maven/mavencentral/net.minidev/accessors-smart/2.4.8", "maven/mavencentral/net.minidev/json-smart/2.4.8", "maven/mavencentral/org.apache.httpcomponents/httpclient/4.5.3", "maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.15", "maven/mavencentral/org.apache.logging.log4j/log4j-api/2.17.2", "maven/mavencentral/org.apache.logging.log4j/log4j-to-slf4j/2.17.2", "maven/mavencentral/org.apache.tomcat.embed/tomcat-embed-core/9.0.62", "maven/mavencentral/org.apache.tomcat.embed/tomcat-embed-el/9.0.62", "maven/mavencentral/org.apache.tomcat.embed/tomcat-embed-websocket/9.0.62", "maven/mavencentral/org.apiguardian/apiguardian-api/1.1.2", "maven/mavencentral/org.aspectj/aspectjrt/1.8.13", "maven/mavencentral/org.aspectj/aspectjweaver/1.9.7", "maven/mavencentral/org.assertj/assertj-core/3.21.0", "maven/mavencentral/org.bouncycastle/bcprov-jdk15on/1.55", "maven/mavencentral/org.checkerframework/checker-qual/3.5.0", "maven/mavencentral/org.dbunit/dbunit/2.7.3", "maven/mavencentral/org.freemarker/freemarker/2.3.31", "maven/mavencentral/org.glassfish.jaxb/jaxb-runtime/2.3.6", "maven/mavencentral/org.glassfish.jaxb/txw2/2.3.6", "maven/mavencentral/org.hamcrest/hamcrest/2.2", "maven/mavencentral/org.hamcrest/hamcrest-core/2.2", "maven/mavencentral/org.hibernate/hibernate-core/5.6.8.Final", "maven/mavencentral/org.hibernate.common/hibernate-commons-annotations/5.1.2.Final", "maven/mavencentral/org.javatuples/javatuples/1.2", "maven/mavencentral/org.jboss/jandex/2.4.2.Final", "maven/mavencentral/org.jboss.logging/jboss-logging/3.4.3.Final", "maven/mavencentral/org.junit.jupiter/junit-jupiter/5.8.2", "maven/mavencentral/org.junit.jupiter/junit-jupiter-api/5.8.2", "maven/mavencentral/org.junit.jupiter/junit-jupiter-engine/5.8.2", "maven/mavencentral/org.junit.jupiter/junit-jupiter-params/5.8.2", "maven/mavencentral/org.junit.platform/junit-platform-commons/1.8.2", "maven/mavencentral/org.junit.platform/junit-platform-engine/1.8.2", "maven/mavencentral/org.mockito/mockito-core/4.0.0", "maven/mavencentral/org.mockito/mockito-junit-jupiter/4.0.0", "maven/mavencentral/org.objenesis/objenesis/3.2", "maven/mavencentral/org.opentest4j/opentest4j/1.2.0", "maven/mavencentral/org.ow2.asm/asm/9.1", "maven/mavencentral/org.postgresql/postgresql/42.3.4", "maven/mavencentral/org.skyscreamer/jsonassert/1.5.0", "maven/mavencentral/org.slf4j/jul-to-slf4j/1.7.36", "maven/mavencentral/org.slf4j/slf4j-api/1.7.36", "maven/mavencentral/org.springframework/spring-aop/5.3.19", "maven/mavencentral/org.springframework/spring-aspects/5.3.19", "maven/mavencentral/org.springframework/spring-beans/5.3.19", "maven/mavencentral/org.springframework/spring-context/5.3.19", "maven/mavencentral/org.springframework/spring-context-support/5.3.19", "maven/mavencentral/org.springframework/spring-core/5.3.19", "maven/mavencentral/org.springframework/spring-expression/5.3.19", "maven/mavencentral/org.springframework/spring-jcl/5.3.19", "maven/mavencentral/org.springframework/spring-jdbc/5.3.19", "maven/mavencentral/org.springframework/spring-messaging/5.3.19", "maven/mavencentral/org.springframework/spring-orm/5.3.19", "maven/mavencentral/org.springframework/spring-test/5.3.19", "maven/mavencentral/org.springframework/spring-tx/5.3.19", "maven/mavencentral/org.springframework/spring-web/5.3.19", "maven/mavencentral/org.springframework/spring-webmvc/5.3.19", "maven/mavencentral/org.springframework/spring-websocket/5.3.19", "maven/mavencentral/org.springframework.boot/spring-boot/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-autoconfigure/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-aop/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-data-jpa/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-freemarker/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-jdbc/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-json/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-logging/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-test/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-tomcat/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-web/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-starter-websocket/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-test/2.6.7", "maven/mavencentral/org.springframework.boot/spring-boot-test-autoconfigure/2.6.7", "maven/mavencentral/org.springframework.data/spring-data-commons/2.6.4", "maven/mavencentral/org.springframework.data/spring-data-jpa/2.6.4", "maven/mavencentral/org.xmlunit/xmlunit-core/2.8.4", "maven/mavencentral/org.yaml/snakeyaml/1.29" ],
+  "renderer" : "json",
+  "options" : { }
+}
+[main] WARN eu.europa.ec.leos.notice.remote.NoticeService - Could not find any definition via 'https://api.clearlydefined.io/notices' for following 2 names:
+	eu.europa.ec.leos.annotate:annotate-client:4.1.0-SNAPSHOT,
+	eu.europa.ec.leos.annotate:annotate-server:4.1.0-SNAPSHOT
+[main] WARN eu.europa.ec.leos.notice.remote.NoticeService - Could not find any copyrights via 'https://api.clearlydefined.io/notices' for following 44 names:
+	antlr:antlr:2.7.7,
+	ch.qos.logback:logback-core:1.2.11,
+	com.auth0:java-jwt:3.2.0,
+	com.fasterxml:classmate:1.5.1,
+	com.fasterxml.jackson.core:jackson-annotations:2.13.2,
+	com.fasterxml.jackson.core:jackson-core:2.13.2,
+	com.fasterxml.jackson.core:jackson-databind:2.13.2.1,
+	com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.2,
+	com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2,
+	com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.2,
+	com.github.spotbugs:spotbugs-annotations:3.1.0,
+	com.github.springtestdbunit:spring-test-dbunit:1.3.0,
+	com.google.code.findbugs:jsr305:3.0.2,
+	com.jayway.jsonpath:json-path:2.6.0,
+	com.vaadin.external.google:android-json:0.0.20131108.vaadin1,
+	com.zaxxer:HikariCP:4.0.3,
+	junit:junit:4.13.1,
+	net.minidev:accessors-smart:2.4.8,
+	net.minidev:json-smart:2.4.8,
+	org.apache.httpcomponents:httpclient:4.5.3,
+	org.apiguardian:apiguardian-api:1.1.2,
+	org.dbunit:dbunit:2.7.3,
+	org.assertj:assertj-core:3.21.0,
+	org.hamcrest:hamcrest:2.2,
+	org.hamcrest:hamcrest-core:2.2,
+	org.hibernate.common:hibernate-commons-annotations:5.1.2.Final,
+	org.jboss:jandex:2.4.2.Final,
+	org.jboss.logging:jboss-logging:3.4.3.Final,
+	org.junit.jupiter:junit-jupiter:5.8.2,
+	org.junit.jupiter:junit-jupiter-api:5.8.2,
+	org.junit.jupiter:junit-jupiter-engine:5.8.2,
+	org.junit.jupiter:junit-jupiter-params:5.8.2,
+	org.junit.platform:junit-platform-commons:1.8.2,
+	org.bouncycastle:bcprov-jdk15on:1.55,
+	org.freemarker:freemarker:2.3.31,
+	org.junit.platform:junit-platform-engine:1.8.2,
+	org.opentest4j:opentest4j:1.2.0,
+	org.ow2.asm:asm:9.1,
+	org.skyscreamer:jsonassert:1.5.0,
+	org.slf4j:jul-to-slf4j:1.7.36,
+	org.slf4j:slf4j-api:1.7.36,
+	org.springframework.boot:spring-boot-starter-freemarker:2.6.7,
+	org.xmlunit:xmlunit-core:2.8.4,
+	org.yaml:snakeyaml:1.29
+[main] WARN eu.europa.ec.leos.notice.remote.NoticeService - Could not find any license via 'https://api.clearlydefined.io/notices' for following 4 names:
+	com.auth0:java-jwt:3.2.0,
+	com.oracle.database.jdbc:ojdbc8:21.3.0.0,
+	org.aspectj:aspectjrt:1.8.13,
+	org.dbunit:dbunit:2.7.3
+[main] WARN eu.europa.ec.leos.notice.remote.NoticeService - Total remoteNotices: 104
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'antlr:antlr', version 2.7.7, license: BSD License and website http://www.antlr.org/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'ch.qos.logback:logback-core', version 1.2.11, license: GNU Lesser General Public License and website http://logback.qos.ch/logback-core
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.auth0:java-jwt', version 3.2.0, license: The MIT License (MIT) and website http://www.jwt.io
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml:classmate', version 1.5.1, license: Apache License, Version 2.0 and website https://github.com/FasterXML/java-classmate
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml.jackson.core:jackson-annotations', version 2.13.2, license: The Apache Software License, Version 2.0 and website http://github.com/FasterXML/jackson
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml.jackson.core:jackson-core', version 2.13.2, license: The Apache Software License, Version 2.0 and website https://github.com/FasterXML/jackson-core
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml.jackson.core:jackson-databind', version 2.13.2.1, license: The Apache Software License, Version 2.0 and website http://github.com/FasterXML/jackson
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8', version 2.13.2, license: The Apache Software License, Version 2.0 and website https://github.com/FasterXML/jackson-modules-java8/jackson-datatype-jdk8
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version 2.13.2, license: The Apache Software License, Version 2.0 and website https://github.com/FasterXML/jackson-modules-java8/jackson-datatype-jsr310
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.fasterxml.jackson.module:jackson-module-parameter-names', version 2.13.2, license: The Apache Software License, Version 2.0 and website https://github.com/FasterXML/jackson-modules-java8/jackson-module-parameter-names
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.github.spotbugs:spotbugs-annotations', version 3.1.0, license: GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1 and website https://spotbugs.github.io/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.github.springtestdbunit:spring-test-dbunit', version 1.3.0, license: Apache 2 and website https://springtestdbunit.github.com/spring-test-dbunit
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.google.code.findbugs:jsr305', version 3.0.2, license: The Apache Software License, Version 2.0 and website http://findbugs.sourceforge.net/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.jayway.jsonpath:json-path', version 2.6.0, license: The Apache Software License, Version 2.0 and website https://github.com/jayway/JsonPath
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.oracle.database.jdbc:ojdbc8', version 21.3.0.0, license: Oracle Free Use Terms and Conditions (FUTC) and website https://www.oracle.com/database/technologies/maven-central-guide.html
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.vaadin.external.google:android-json', version 0.0.20131108.vaadin1, license: Apache License 2.0 and website http://developer.android.com/sdk
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'com.zaxxer:HikariCP', version 4.0.3, license: The Apache Software License, Version 2.0 and website https://github.com/brettwooldridge/HikariCP
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'eu.europa.ec.leos.annotate:annotate-client', version 4.1.0-SNAPSHOT, license: European Union Public Licence (EUPL) and website https://joinup.ec.europa.eu/software/leos/annotate-client
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'eu.europa.ec.leos.annotate:annotate-server', version 4.1.0-SNAPSHOT, license: European Union Public Licence (EUPL) and website https://joinup.ec.europa.eu/software/leos/annotate-server
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'junit:junit', version 4.13.1, license: Eclipse Public License 1.0 and website http://junit.org
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'net.minidev:accessors-smart', version 2.4.8, license: The Apache Software License, Version 2.0 and website https://urielch.github.io/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'net.minidev:json-smart', version 2.4.8, license: The Apache Software License, Version 2.0 and website https://urielch.github.io/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.apache.httpcomponents:httpclient', version 4.5.3, license: Apache License, Version 2.0 and website http://hc.apache.org/httpcomponents-client
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.apiguardian:apiguardian-api', version 1.1.2, license: The Apache License, Version 2.0 and website https://github.com/apiguardian-team/apiguardian
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.aspectj:aspectjrt', version 1.8.13, license: Eclipse Public License - v 1.0 and website http://www.aspectj.org
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.assertj:assertj-core', version 3.21.0, license: Apache License, Version 2.0 and website https://assertj.github.io/doc/assertj-core/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.bouncycastle:bcprov-jdk15on', version 1.55, license: Bouncy Castle Licence and website http://www.bouncycastle.org/java.html
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.dbunit:dbunit', version 2.7.3, license: GNU Lesser General Public License, Version 2.1 and website http://dbunit.sourceforge.net
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.freemarker:freemarker', version 2.3.31, license: Apache License, Version 2.0 and website https://freemarker.apache.org/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.hamcrest:hamcrest', version 2.2, license: BSD License 3 and website http://hamcrest.org/JavaHamcrest/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.hamcrest:hamcrest-core', version 2.2, license: BSD License 3 and website http://hamcrest.org/JavaHamcrest/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.hibernate.common:hibernate-commons-annotations', version 5.1.2.Final, license: GNU Library General Public License v2.1 or later and website http://hibernate.org
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.jboss:jandex', version 2.4.2.Final, license: Apache License, Version 2.0 and website http://www.jboss.org/jandex
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.jboss.logging:jboss-logging', version 3.4.3.Final, license: Apache License, version 2.0 and website http://www.jboss.org
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.junit.jupiter:junit-jupiter', version 5.8.2, license: Eclipse Public License v2.0 and website https://junit.org/junit5/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.junit.jupiter:junit-jupiter-api', version 5.8.2, license: Eclipse Public License v2.0 and website https://junit.org/junit5/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.junit.jupiter:junit-jupiter-engine', version 5.8.2, license: Eclipse Public License v2.0 and website https://junit.org/junit5/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.junit.jupiter:junit-jupiter-params', version 5.8.2, license: Eclipse Public License v2.0 and website https://junit.org/junit5/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.junit.platform:junit-platform-commons', version 1.8.2, license: Eclipse Public License v2.0 and website https://junit.org/junit5/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.junit.platform:junit-platform-engine', version 1.8.2, license: Eclipse Public License v2.0 and website https://junit.org/junit5/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.opentest4j:opentest4j', version 1.2.0, license: The Apache License, Version 2.0 and website https://github.com/ota4j-team/opentest4j
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.ow2.asm:asm', version 9.1, license: BSD-3-Clause and website http://asm.ow2.io/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.skyscreamer:jsonassert', version 1.5.0, license: The Apache Software License, Version 2.0 and website https://github.com/skyscreamer/JSONassert
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.slf4j:jul-to-slf4j', version 1.7.36, license: MIT License and website http://www.slf4j.org
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.slf4j:slf4j-api', version 1.7.36, license: MIT License and website http://www.slf4j.org
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.springframework.boot:spring-boot-starter-freemarker', version 2.6.7, license: Apache License, Version 2.0 and website https://spring.io/projects/spring-boot
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.xmlunit:xmlunit-core', version 2.8.4, license: The Apache Software License, Version 2.0 and website https://www.xmlunit.org/
+[main] WARN eu.europa.ec.leos.notice.generator.LibraryNoticeV3 - Got empty copyrights for library with name 'org.yaml:snakeyaml', version 1.29, license: Apache License, Version 2.0 and website http://www.snakeyaml.org
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'GNU Lesser General Public License'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'The MIT License (MIT)'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'MPL 2.0 or EPL 1.0'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'Oracle Free Use Terms and Conditions (FUTC)'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'European Union Public Licence (EUPL)'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'Bouncy Castle Licence'
+[main] WARN eu.europa.ec.leos.notice.generator.NoticeFileGeneratorV3 - Could not find license content for alias 'GNU Lesser General Public License, Version 2.1'
