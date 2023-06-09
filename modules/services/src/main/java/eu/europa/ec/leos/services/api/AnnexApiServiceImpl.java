@@ -174,8 +174,9 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+        populateCloneProposalMetadata(proposal);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
-
         //TODO add splitted content functionality since
         Annex updatedAnnex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
         String newContent = elementProcessor.getElement(updatedAnnex, elementName, elementId);
@@ -567,6 +568,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 versionInfo.getLastModificationInstant()
         );
         return versionInfoString;
+    }
+
+    private boolean isClonedProposal(Annex annex) {
+        return !annex.getClonedFrom().isEmpty();
     }
 
 }

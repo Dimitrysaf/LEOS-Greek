@@ -160,8 +160,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
+        populateCloneProposalMetadata(proposal);
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId, false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
         return new RefreshElementResponse(elementId, elementName, elementProcessor.getElement(memorandum, elementName, elementId));

@@ -130,7 +130,6 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
 
         this.structureContext = structureContext;
         this.context = context;
-
     }
 
     @Override

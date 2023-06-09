@@ -471,6 +471,8 @@ public class BillApiServiceImpl implements BillApiService {
     public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        populateCloneProposalMetadata(proposal);
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
