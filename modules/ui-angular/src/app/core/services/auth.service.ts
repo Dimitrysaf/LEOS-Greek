@@ -4,6 +4,8 @@ import {
   HttpErrorResponse,
 } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { EuiDialogService } from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   filter,
@@ -13,6 +15,8 @@ import {
   takeUntil,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
+
+import { ConfirmReloadDialogComponent } from '@/shared/components/confirm-reload-dialog/confirm-reload-dialog.component';
 
 import { AccessTokenResponse, TokenData } from '../models';
 import { LocalStorageService } from './local-storage.service';
@@ -33,7 +37,11 @@ export class AuthService implements OnDestroy {
   private http: HttpClient; // without interceptors!
   private storage = new LocalStorageService();
 
-  constructor(private handler: HttpBackend) {
+  constructor(
+    private handler: HttpBackend,
+    private dialogService: EuiDialogService,
+    private translateService: TranslateService,
+  ) {
     this.http = new HttpClient(this.handler);
     this.initAccessToken();
     this.accessToken$ = this.accessTokenBS.pipe(
@@ -101,12 +109,28 @@ export class AuthService implements OnDestroy {
           this.setAccessToken(accessToken, expiresIn);
         },
         error: (requestError: HttpErrorResponse) => {
-          console.warn(
-            'stub:',
-            'Unhandled `accessToken` renewal failure.',
-            requestError.message,
-          ); // FIXME
-          throw requestError;
+          if (requestError.status === 403) {
+            setTimeout(() => {
+              this.dialogService.openDialog({
+                title: this.translateService.instant(
+                  'popup.token.expired.title',
+                ),
+                bodyComponent: {
+                  component: ConfirmReloadDialogComponent,
+                },
+                accept: () => {
+                  location.reload();
+                },
+              });
+            });
+          } else {
+            console.warn(
+              'stub:',
+              'Unhandled `accessToken` renewal failure.',
+              requestError.message,
+            ); // FIXME
+            throw requestError;
+          }
         },
       });
   }
