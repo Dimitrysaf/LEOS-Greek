@@ -259,7 +259,7 @@ public class LeosApiController {
             if (!(currentStatus == LeosLegStatus.IN_PREPARATION || currentStatus == LeosLegStatus.FILE_ERROR)) {
                 byte[] file = legDocument.getContent().get().getSource().getBytes();
                 HttpHeaders headers = new HttpHeaders();
-                headers.set("Content-Disposition", "attachment; filename=" + legDocument.getName());
+                headers.set("Content-Disposition", "attachment; filename=\"" + legDocument.getName() + "\"");
                 headers.setContentLength(file.length);
                 LegDocument updatedLegDocument = legService.updateLegDocument(legFileId, LeosLegStatus.EXPORTED);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
@@ -295,7 +295,7 @@ public class LeosApiController {
             byte[] renditionFile = exportService.exportToToolboxCoDe(legFileTemp, exportOptions);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename=" + "TOOLBOX_RESULT_" + System.currentTimeMillis());
+            headers.set("Content-Disposition", "attachment; filename=\"" + "TOOLBOX_RESULT_" + System.currentTimeMillis() + "\"");
             headers.setContentLength(renditionFile.length);
 
             LOG.info("Returning zip file of {} bytes containing renditions to the external caller." + renditionFile.length);
@@ -403,7 +403,7 @@ public class LeosApiController {
             exportDocument = exportPackageService.findExportDocumentById(exportPackageId, false);
             byte[] file = exportDocument.getContent().get().getSource().getBytes();
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename=" + exportDocument.getName());
+            headers.set("Content-Disposition", "attachment; filename=\"" + exportDocument.getName() + "\"");
             headers.setContentLength(file.length);
             return new ResponseEntity<>(file, headers, HttpStatus.OK);
         } catch (Exception ex) {
@@ -589,7 +589,7 @@ public class LeosApiController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=" + response.getFilename());
+            headers.set("Content-Disposition", "attachment; filename=\"" + response.getFilename() + "\"");
             return new ResponseEntity<>(response.getContent(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());

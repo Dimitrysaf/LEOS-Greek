@@ -68,7 +68,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=\"" + response.getJobFileName() + "\"");
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting Annotation filtering", e);
@@ -101,7 +101,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=\"" + response.getJobFileName() + "\"");
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting download of xml comparison files", e);
@@ -137,7 +137,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=" + response.getJobFileName());
+            headers.set("Content-Disposition", "attachment; filename=\"" + response.getJobFileName() + "\"");
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting export to eConsilium", e);

@@ -21,7 +21,6 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
-import eu.europa.ec.leos.services.dto.request.SwitchAnnexStructureTypeRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
@@ -52,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -419,7 +417,7 @@ public class AnnexController {
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename=" + jobFileName);
+            headers.set("Content-Disposition", "attachment; filename=\"" + jobFileName + "\"");
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for annex " + e.getMessage());
