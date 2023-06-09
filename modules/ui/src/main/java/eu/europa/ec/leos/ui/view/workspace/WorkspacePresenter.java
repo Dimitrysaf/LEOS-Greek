@@ -19,8 +19,10 @@ import com.google.common.eventbus.Subscribe;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.filter.QueryFilter;
@@ -29,6 +31,7 @@ import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
@@ -54,6 +57,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -204,8 +208,10 @@ class WorkspacePresenter extends AbstractLeosPresenter {
     void validateUploadedDocument(ValidateProposalEvent event) {
         LOG.trace("Validating uploaded document");
         ValidationVO result = new ValidationVO();
-        result.addErrors(validationService.validateDocument(event.getDocumentVO()));
-        workspaceScreen.showValidationResult(result);
+        if(event.getDocumentVO().getId() != null){
+            result.addErrors(validationService.validateDocument(event.getDocumentVO()));
+            workspaceScreen.showValidationResult(result);
+        }
     }
 
     @Subscribe
@@ -217,7 +223,21 @@ class WorkspacePresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void fetchProposalFromFile(FetchProposalFromFileEvent event) {
-        proposalConverterService.createProposalFromLegFile(event.getFile(), event.getDocument(), true);
+        ValidationVO result = new ValidationVO();
+        final List<ErrorVO> errorList = new ArrayList<>();
+        try {
+            proposalConverterService.createProposalFromLegFile(event.getFile(), event.getDocument(), true);
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
+            errorList.add(new ErrorVO(e.getErrorCode(), e.getMessage()));
+            result.addErrors(errorList);
+            workspaceScreen.showValidationResult(result);
+        } catch (Exception e) {
+            LOG.error("Error error occurred while creating proposal from leg file: {}", e);
+            errorList.add(new ErrorVO(ErrorCode.EXCEPTION, e.getMessage()));
+            result.addErrors(errorList);
+            workspaceScreen.showValidationResult(result);
+        }
     }
 
     private void addTemplateInContext(CollectionContextService context, DocumentVO documentVO) {

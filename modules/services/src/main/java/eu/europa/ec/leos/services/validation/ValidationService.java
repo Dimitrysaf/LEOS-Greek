@@ -19,6 +19,8 @@ import eu.europa.ec.leos.domain.vo.ErrorVO;
 import java.util.List;
 
 public interface ValidationService {
+
     List<ErrorVO> validateDocument(DocumentVO documentVO);
+
     void validateDocumentAsync(DocumentVO documentVO);
 }

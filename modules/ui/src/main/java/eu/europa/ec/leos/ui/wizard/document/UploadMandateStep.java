@@ -13,29 +13,39 @@
  */
 package eu.europa.ec.leos.ui.wizard.document;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.stream.Stream;
-
-import eu.europa.ec.leos.domain.vo.ValidationVO;
-import eu.europa.ec.leos.ui.wizard.ErrorResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.*;
-import eu.europa.ec.leos.domain.common.Result;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.VerticalLayout;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ErrorVO;
-import eu.europa.ec.leos.ui.wizard.WizardStep;
-import eu.europa.ec.leos.web.event.view.repository.*;
+import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.ui.wizard.ErrorResolver;
+import eu.europa.ec.leos.ui.wizard.WizardStep;
+import eu.europa.ec.leos.web.event.view.repository.FetchProposalFromFileEvent;
+import eu.europa.ec.leos.web.event.view.repository.PostProcessingDocumentEvent;
+import eu.europa.ec.leos.web.event.view.repository.ShowProposalValidationEvent;
+import eu.europa.ec.leos.web.event.view.repository.ValidateProposalEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.stream.Stream;
 
 class UploadMandateStep extends CustomComponent implements WizardStep, Upload.StartedListener,
         Upload.FailedListener, Upload.SucceededListener,
@@ -246,14 +256,6 @@ class UploadMandateStep extends CustomComponent implements WizardStep, Upload.St
 
     private void validateProposal(DocumentVO document) {
         eventBus.post(new ValidateProposalEvent(document));
-    }
-
-    @Subscribe
-    void showPostProcessingResult(ShowPostProcessingMandateEvent event) {
-        Result<String> postProcessingResult = event.getResult();
-        if (postProcessingResult.isError()) {
-            fileName.setValue(messageHelper.getMessage("wizard.document.upload.error.post.processing"));
-        }
     }
 
     @Subscribe

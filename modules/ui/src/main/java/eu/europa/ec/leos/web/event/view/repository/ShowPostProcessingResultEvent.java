@@ -16,11 +16,11 @@ package eu.europa.ec.leos.web.event.view.repository;
 
 import eu.europa.ec.leos.domain.common.Result;
 
-public class ShowPostProcessingMandateEvent {
+public class ShowPostProcessingResultEvent {
 
     private Result<String> result;
 
-    public ShowPostProcessingMandateEvent(Result<String> result) {
+    public ShowPostProcessingResultEvent(Result<String> result) {
         this.result = result;
     }
 

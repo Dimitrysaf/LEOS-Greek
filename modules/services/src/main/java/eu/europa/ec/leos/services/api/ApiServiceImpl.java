@@ -58,6 +58,7 @@ import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
+import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
@@ -248,15 +249,24 @@ public class ApiServiceImpl implements ApiService {
     public LegFileValidation validateLegFile(File legDocument) {
         LegFileValidation legFileValidation = new LegFileValidation();
         DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
-        DocumentVO updatedDocumentVO = proposalConverterService.createProposalFromLegFile(legDocument, proposal, true);
-        Result result = postProcessingDocumentService.processDocument(updatedDocumentVO);
-        if (result.isOk()) {
-            legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
-            ValidationVO validation = new ValidationVO();
-            validation.addErrors(validationService.validateDocument(updatedDocumentVO));
-            if (validation.hasErrors()) {
-                legFileValidation.setErrors(validation.getErrors());
+        DocumentVO updatedDocumentVO = null;
+        try {
+            updatedDocumentVO = proposalConverterService.createProposalFromLegFile(legDocument, proposal, true);
+            Result result = postProcessingDocumentService.processDocument(updatedDocumentVO);
+            if (result.isOk()) {
+                legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
+                ValidationVO validation = new ValidationVO();
+                validation.addErrors(validationService.validateDocument(updatedDocumentVO));
+                if (validation.hasErrors()) {
+                    legFileValidation.setErrors(validation.getErrors());
+                }
             }
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
+            legFileValidation.setDocumentToBeCreated(null);
+            final List<ErrorVO> errorList = new ArrayList<>();
+            errorList.add(new ErrorVO(e.getErrorCode(), e.getMessage()));
+            legFileValidation.setErrors(errorList);
         }
         return legFileValidation;
     }

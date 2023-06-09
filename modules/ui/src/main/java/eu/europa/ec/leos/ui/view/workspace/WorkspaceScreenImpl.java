@@ -39,7 +39,7 @@ import eu.europa.ec.leos.ui.wizard.document.CreateDocumentWizard;
 import eu.europa.ec.leos.ui.wizard.document.UploadDocumentWizard;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.web.event.view.repository.RefreshDisplayedListEvent;
-import eu.europa.ec.leos.web.event.view.repository.ShowPostProcessingMandateEvent;
+import eu.europa.ec.leos.web.event.view.repository.ShowPostProcessingResultEvent;
 import eu.europa.ec.leos.web.event.view.repository.ShowProposalValidationEvent;
 import eu.europa.ec.leos.services.user.UserHelper;
 import org.apache.commons.lang3.Validate;
@@ -259,6 +259,6 @@ abstract class WorkspaceScreenImpl extends HorizontalLayout implements Workspace
 
     @Override
     public void showPostProcessingResult(Result result) {
-        eventBus.post(new ShowPostProcessingMandateEvent(result));
+        eventBus.post(new ShowPostProcessingResultEvent(result));
     }
 }
