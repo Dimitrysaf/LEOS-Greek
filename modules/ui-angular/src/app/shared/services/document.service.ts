@@ -382,8 +382,12 @@ export class DocumentService implements OnDestroy {
             ? this.getVersionReferenceString(intermediateVersion)
             : null,
         },
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
       )
-      .subscribe((resp: any) => this.handleDownloadResponse(resp));
+      .subscribe((resp) => this.handleDownloadResponse(resp));
   }
 
   compareDocumentsExportAsPdf(
@@ -424,8 +428,12 @@ export class DocumentService implements OnDestroy {
             ? this.getVersionReferenceString(intermediateVersion)
             : null,
         },
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
       )
-      .subscribe((resp: any) => this.handleDownloadResponse(resp));
+      .subscribe((resp) => this.handleDownloadResponse(resp));
   }
 
   compareDocumentsDownloadPDF(
