@@ -449,7 +449,7 @@
                                     <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_6_6__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_6_6__content">
-                                    <p xml:id="_body__level_17__list__indent_3__list__indent_6_6__content__p">bodies governed by private law with a public service mission to the extent that they provide adequate financial guarantees;</p>
+                                    <p xml:id="_body__level_17__list__indent_3__list__indent_6_6__content__p">bodies governed by private law with a public service mission to the extent that they are provided with adequate financial guarantees;</p>
                                 </content>
                             </indent>
                             <indent leos:editable="false" xml:id="_body__level_17__list__indent_3__list__indent_7_7">
@@ -457,7 +457,7 @@
                                     <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_7_7__num__inline">&#x2610;</inline>
                                 </num>
                                 <content xml:id="_body__level_17__list__indent_3__list__indent_7_7__content">
-                                    <p xml:id="_body__level_17__list__indent_3__list__indent_7_7__content__p">bodies governed by the private law of a Member State that are entrusted with the implementation of a public-private partnership and that provide adequate financial guarantees;</p>
+                                    <p xml:id="_body__level_17__list__indent_3__list__indent_7_7__content__p">bodies governed by the private law of a Member State that are entrusted with the implementation of a public-private partnership and that are provided with adequate financial guarantees;</p>
                                 </content>
                             </indent>
                             <indent leos:editable="false" xml:id="_body__level_17__list__indent_3__list__indent_8">
@@ -2041,7 +2041,7 @@
             <level leos:depth="3" class="landscape" xml:id="_body__level_322" leos:deletable="false">
                 <num xml:id="_body__level_322__num">3.2.2.</num>
                 <heading leos:editable="false" xml:id="_body__level_322__heading">
-                    <i xml:id="_body__level_322__heading__i">Estimated impact on administrative appropriations</i>
+                    <i xml:id="_body__level_322__heading__i">Estimated output funded with operational appropriations</i>
                 </heading>
                 <subparagraph style="text-align: right;padding-right:4%;" xml:id="_body__level_322__subparagraph_3">
                     <content xml:id="_body__level_322__subparagraph_3__content">
@@ -2169,10 +2169,10 @@
                             </tr>
                             <tr xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4">
                                 <td colspan="3" style="border:1px solid black;" xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4__td_1">
-                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4__td_1__p">SPECIFIC OBJECTIVE No 1: [...]
+                                    <p xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4__td_1__p">SPECIFIC OBJECTIVE No 1
                                         <authorialNote marker="11" placement="bottom" xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4__td_1__p__authorialnote">
                                             <p xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4__td_1__p__authorialnote__p">As described in point 1.4.2. ‘Specific objective(s)…’</p>
-                                        </authorialNote>
+                                        </authorialNote>: [...]
                                     </p>
                                 </td>
                                 <td colspan="16" style="border:1px solid black;border-right:none;" xml:id="_body__level_322__subparagraph_4__content__table__tr_4_4__td_2">
@@ -2969,7 +2969,7 @@
                 </list>
                 <subparagraph leos:editable="false" xml:id="_body__level_3231__subparagraph_4" style="text-align: right;padding-right:10%;">
                     <content xml:id="_body__level_3231__subparagraph_4__content">
-                        <p xml:id="_body__level_3231__subparagraph_4__content__p"><i>Estimates to be expressed in full time equivalent units</i></p>
+                        <p xml:id="_body__level_3231__subparagraph_4__content__p"><i>Estimate to be expressed in full time equivalent units</i></p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" xml:id="_body__level_3231__subparagraph_5_5">
@@ -3524,7 +3524,7 @@
                         </subparagraph>
                     </indent>
                 </list>
-                <subparagraph leos:editable="false" xml:id="_body__level_325__subparagraph_4">
+                <subparagraph leos:editable="false" style="text-align: right;padding-right:4%;" xml:id="_body__level_325__subparagraph_4">
                     <content xml:id="_body__level_325__subparagraph_4__content">
                         <p xml:id="_body__level_325__subparagraph_4__content__p">Appropriations in EUR million (to three decimal places)</p>
                     </content>
@@ -3666,7 +3666,7 @@
                                         </content>
                                     </subparagraph>
                                     <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3">
-                                        <num xml:id="_body__level_33__list__indent_2__list__indent_3__num" style="float:right; padding-right:50%;"><inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__content_inline">&#x2610;</inline></num>
+                                        <num xml:id="_body__level_33__list__indent_2__list__indent_3__num" ><inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_3__content_inline">&#x2610;</inline></num>
                                         <content xml:id="_body__level_33__list__indent_2__list__indent_3__content">
                                             <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_3__content__p">please indicate, if the revenue is assigned to expenditure lines  </p>
                                         </content>
