@@ -209,18 +209,17 @@ export class ProposalDetailsService implements OnDestroy {
 
   exportProposal(outputType: string) {
     this.http
-      .get<any>(
+      .get(
         `${apiBaseUrl}/secured/proposal/${this.proposalRef}/export?exportOutput=${outputType}`,
+        { responseType: 'text' },
       )
       .subscribe({
-        next: (res) => {
-          // TODO : service is unvailable
+        next: () => {
           this.uxAppService.growl({
             severity: 'info',
             summary: this.translateService.instant(
               'page.editor.export-email-sent',
             ),
-            detail: res,
             life: 3000,
             isGrowlSticky: false,
             position: 'bottom-right',
@@ -228,7 +227,7 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (err) => {
           // TODO : handle errors
-          // this.uxAppService.growlError(err.error);
+          this.uxAppService.growlError(err.error);
         },
       });
   }
