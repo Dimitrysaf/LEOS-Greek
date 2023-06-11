@@ -134,6 +134,8 @@
   "page.collection.milestones.type.proposal3": "Revision after Interservice Consultation",
   "page.collection.milestones.type.mandate1": "Meeting of the Council",
   "page.collection.milestones.type.other": "Other",
+  "page.collection.milestones.annotation-warning-modal.title": "Create contribution milestone",
+  "page.collection.milestones.annotation-warning-modal.text": "Suggestions will be excluded in the milestone for contribution.Ok to proceed?",
   "page.collection.collaborators.role.author": "Author",
   "page.collection.collaborators.role.reviewer": "Reviewer",
   "page.collection.collaborators.role.contributor": "Contributor",
