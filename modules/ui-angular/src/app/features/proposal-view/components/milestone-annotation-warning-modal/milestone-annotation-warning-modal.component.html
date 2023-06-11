@@ -47,6 +47,16 @@
         {{
           'page.collection.milestones.table.add-milestone-dialog.create'
             | translate
+      <button
+        type="button"
+        euiButton
+        euiPrimary
+        (click)="onAccept()"
+        [disabled]="form.invalid"
+      >
+        {{
+        'page.collection.milestones.table.add-milestone-dialog.create'
+          | translate
         }}
       </button>
     </div>
