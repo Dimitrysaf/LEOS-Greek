@@ -18,9 +18,11 @@ import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -56,11 +58,14 @@ public class DocumentViewService<T extends XmlDocument> {
     MessageHelper messageHelper;
     @Autowired
     Provider<CollectionContextService> proposalContextProvider;
+    @Autowired
+    CloneContext cloneContext;
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public DocumentViewResponse getDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
+        populateCloneProposalMetadata(proposal);
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
         String proposalRef = proposal.getMetadata().getOrNull().getRef();
@@ -111,6 +116,7 @@ public class DocumentViewService<T extends XmlDocument> {
         securityContext.getPermissions(proposal);
         byte[] coverPageContent = new byte[0];
         //handle cover page type
+
         if (document instanceof Proposal) {
             byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
             boolean isCoverPageExists = documentContentService.isCoverPageExists(proposalContent);
@@ -141,6 +147,14 @@ public class DocumentViewService<T extends XmlDocument> {
             proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
         }
         return proposal;
+    }
+
+    private void populateCloneProposalMetadata(Proposal proposal) {
+        if (proposal != null && proposal.isClonedProposal()) {
+            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
+            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+            cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        }
     }
 
     private String getProposalRef(String documentId) {

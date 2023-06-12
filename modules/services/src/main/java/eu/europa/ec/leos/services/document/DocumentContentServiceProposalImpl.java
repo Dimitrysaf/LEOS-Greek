@@ -50,9 +50,9 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
 
     @Override
     public String toEditableContent(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext, byte[] coverPageContent) {
-        if(isCloneProposal()) {
+        if (isCloneProposal()) {
             String[] contentsToCompare = getContentsToCompare(xmlDocument, contextPath, securityContext, coverPageContent);
-            if(contentsToCompare != null) {
+            if (contentsToCompare != null) {
                 switch (contentsToCompare.length) {
                     case 2:
                         String currentDocumentEditableXml = contentsToCompare[0];
