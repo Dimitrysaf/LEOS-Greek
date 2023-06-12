@@ -262,11 +262,9 @@ export class DocumentService implements OnDestroy {
           ? this.getDocumentVersionsComparison(
               option.ref,
               option.category,
-              versionToCompare[1].documentId,
-              versionToCompare[2] !== undefined
-                ? versionToCompare[2].documentId
-                : null,
-              versionToCompare[0].documentId,
+              versionToCompare[1],
+              versionToCompare[2] !== undefined ? versionToCompare[2] : null,
+              versionToCompare[0],
             )
           : of(''),
       ),
@@ -901,34 +899,36 @@ export class DocumentService implements OnDestroy {
   getDocumentVersionsComparison(
     documentRef: string,
     documentType: string,
-    newVersionId: string,
-    intermediateVersionId: string,
-    oldVersionId: string,
+    newVersion: Version,
+    intermediateVersion: Version,
+    oldVersion: Version,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     console.log(
       'newVersionId:',
-      newVersionId,
+      newVersion.documentId,
       ' - oldVersionId:',
-      oldVersionId,
+      oldVersion.documentId,
       ' - intermediateVersionId:',
-      intermediateVersionId,
+      intermediateVersion?.documentId,
     );
+    //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
     if (
       process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
-      intermediateVersionId !== null
+      intermediateVersion !== null
     ) {
       return this.http.post<string>(
         `${apiBaseUrl}/secured/document/double-compare/${documentType}/${documentRef}`,
         {
-          originalProposalId: oldVersionId,
-          intermediateMajorId: intermediateVersionId,
-          currentId: newVersionId,
+          originalProposalId: this.getVersionReferenceString(oldVersion),
+          intermediateMajorId:
+            this.getVersionReferenceString(intermediateVersion) ?? null,
+          currentId: this.getVersionReferenceString(newVersion),
         },
       );
     } else {
       return this.http.get<string>(
-        `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
+        `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
         { responseType: 'text' as 'json' },
       );
     }
@@ -1414,6 +1414,8 @@ export class DocumentService implements OnDestroy {
   }
 
   private getVersionReferenceString(v: Version): string {
-    return `${v.versionNumber.major}.${v.versionNumber.intermediate}.${v.versionNumber.minor}`;
+    return v
+      ? `${v.versionNumber.major}.${v.versionNumber.intermediate}.${v.versionNumber.minor}`
+      : null;
   }
 }
