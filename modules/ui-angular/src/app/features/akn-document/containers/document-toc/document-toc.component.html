@@ -37,6 +37,9 @@
                   ? truncateLabelText(node.label)
                   : null
               }}"
+              [position]="
+                isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
+              "
             ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"
@@ -90,6 +93,9 @@
                   ? truncateLabelText(node.label)
                   : null
               }}"
+              [position]="
+                isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
+              "
             ></div>
             <app-node-toc-actions
               [isEditMode]="isEdit"

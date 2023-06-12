@@ -6,7 +6,10 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, Subject, Subscription, take, takeUntil } from 'rxjs';
 
-import { MAX_TRUNCATION_LIMIT } from '@/shared/constants/toc.constant';
+import {
+  MAX_TRUNCATION_LIMIT,
+  ONE_LINE_NODE_LABEL_LENGTH,
+} from '@/shared/constants/toc.constant';
 
 import {
   CatalogItem,
@@ -90,8 +93,15 @@ export class ProposalsFiltersComponent implements OnInit, OnDestroy {
     return element.offsetWidth < element.scrollWidth;
   }
 
-  truncateLabelText(label: string) {
-    return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
+  truncateLabelText(label: string): string {
+    if (label.length > MAX_TRUNCATION_LIMIT) {
+      return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
+    }
+    return label;
+  }
+
+  isLabelTextMoreThanOneLine(label: string) {
+    return label.length >= ONE_LINE_NODE_LABEL_LENGTH;
   }
 
   private setupFilterGroups(catalog: CatalogItem[]) {

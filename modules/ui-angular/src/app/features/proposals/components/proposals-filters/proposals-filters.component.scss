@@ -10,3 +10,10 @@ input[type='checkbox'].eui-input-checkbox:not(.cdk-visually-hidden) + label {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+::ng-deep
+  .cdk-overlay-container
+  .cdk-overlay-pane.mat-tooltip-panel
+  .mat-tooltip:hover {
+  display: none;
+}
