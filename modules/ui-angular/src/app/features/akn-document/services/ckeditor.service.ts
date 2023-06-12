@@ -23,6 +23,7 @@ import { LeosEditorConnector } from '@/features/akn-document/services/leos-edito
 import { MathJaxConnector } from '@/features/akn-document/services/math-jax-connector';
 import { RefToLinkConnector } from '@/features/akn-document/services/ref-to-link-connector';
 import { SoftActionsConnector } from '@/features/akn-document/services/soft-actions-connector';
+import { TrackChangesConnector } from '@/features/akn-document/services/track-changes-connector';
 import { UserGuidanceConnector } from '@/features/akn-document/services/user-guidance-connector';
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
@@ -42,6 +43,7 @@ export class CKEditorService implements OnDestroy {
   private refToLinkConnector?: RefToLinkConnector;
   private softActionsConnector?: SoftActionsConnector;
   private mathJaxConnector?: MathJaxConnector;
+  private trackChangesConnector?: TrackChangesConnector;
 
   private destroy$ = new Subject<void>();
 
@@ -65,6 +67,7 @@ export class CKEditorService implements OnDestroy {
     this.changeDetailsConnector?.destroy();
     this.refToLinkConnector?.destroy();
     this.mathJaxConnector?.destroy();
+    this.trackChangesConnector?.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -84,26 +87,27 @@ export class CKEditorService implements OnDestroy {
         this.initRefToLink(require, leosState, rootElement);
         this.initSoftActions(require, leosState, rootElement);
         this.initMathJax(require, leosState, rootElement);
+        this.initTrackChanges(require, leosState, rootElement);
       });
 
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.leosEditorConnector?.$triggerStateChange();
-        this.actionManagerConnector?.$triggerStateChange();
-        this.userGuidanceConnector?.$triggerStateChange();
-        this.softActionsConnector?.$triggerStateChange();
-        this.changeDetailsConnector?.$triggerStateChange();
-        this.refToLinkConnector?.$triggerStateChange();
-        this.mathJaxConnector?.$triggerStateChange();
+        this.refreshStateAllAvailableConnectors();
       });
   }
 
-  refreshStateMathJax() {
-    if (this.mathJaxConnector) {
-      this.mathJaxConnector.getState().dirtyTimestamp += 1;
-    }
+  refreshStateAllAvailableConnectors() {
+    this.leosEditorConnector?.$triggerStateChange();
+    this.actionManagerConnector?.$triggerStateChange();
+    this.userGuidanceConnector?.$triggerStateChange();
+    this.softActionsConnector?.$triggerStateChange();
+    this.changeDetailsConnector?.$triggerStateChange();
+    this.refToLinkConnector?.$triggerStateChange();
+    this.mathJaxConnector?.$triggerStateChange();
+    this.trackChangesConnector?.$triggerStateChange();
   }
+
   private initActionManager(
     require: Require,
     leosState: any,
@@ -231,6 +235,21 @@ export class CKEditorService implements OnDestroy {
     require(['extension/mathJaxExtension'], (mathJax) => {
       mathJax.init(this.mathJaxConnector);
       this.mathJaxConnector.jsDepsInited();
+    });
+  }
+
+  private initTrackChanges(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.trackChangesConnector = new TrackChangesConnector(leosState, {
+      rootElement,
+    });
+
+    require(['extension/trackChangesExtension'], (trackChanges) => {
+      trackChanges.init(this.trackChangesConnector);
+      this.trackChangesConnector.jsDepsInited();
     });
   }
 
