@@ -193,3 +193,10 @@ li ul {
 .invalid-node {
   color: var(--eui-base-color-danger);
 }
+
+::ng-deep
+  .cdk-overlay-container
+  .cdk-overlay-pane.mat-tooltip-panel
+  .mat-tooltip:hover {
+  display: none;
+}
