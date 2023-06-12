@@ -62,6 +62,9 @@
                 ? truncateLabelText(filterOption.label | translate)
                 : null
             "
+            [position]="
+              isLabelTextMoreThanOneLine(filterOption.label) ? 'right' : 'above'
+            "
             >{{ filterOption.label | translate }}</label
           >
         </div>

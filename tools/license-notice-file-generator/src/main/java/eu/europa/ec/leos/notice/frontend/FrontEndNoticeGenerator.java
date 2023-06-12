@@ -25,7 +25,6 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,24 +64,22 @@ public class FrontEndNoticeGenerator {
         this.registerExtraLicenses();
     }
 
-    void generateNotice(OutputStream os) throws IOException, InterruptedException {
+    public void generateNotice(OutputStream os) throws IOException, InterruptedException {
         final Collection<CsvLibrary> libraries = keepOneLibraryOccurrence(getLibrariesFromCsv());
         final List<String> namespaceAndNames = libraries.stream()
                                                         .map(CsvLibrary::getFullName)
                                                         .collect(Collectors.toList());
 
-        final List<RemoteNotice> remoteNotices = new NoticeService().retrieveNotices(namespaceAndNames,
-                NoticeService.NoticeProvider.NPMJS);
+        final List<RemoteNotice> remoteNotices = new NoticeService()
+                .retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.NPMJS);
 
         List<LibraryNoticeV3> notices = merge(libraries, remoteNotices);
 
         PrintStream ps = new PrintStream(os, true);
-        final NoticeFileGeneratorV3.NoticeFileBuilder noticeBuilder = NoticeFileGeneratorV3.newInstance(
-                product.getName(), product.getOwner());
-        noticeBuilder.addText("Version: " + product.getVersion());
+        final NoticeFileGeneratorV3.NoticeFileBuilder noticeBuilder = NoticeFileGeneratorV3.newInstance(product.getName(), product.getOwner());
+//        noticeBuilder.addText("Version: " + product.getVersion());
         noticeBuilder.addText(product.getLicenseContent());
-        noticeBuilder.addText(
-                "This product includes dynamically linked software developed by third parties which is provided under their respective licences:");
+        noticeBuilder.addText("This product includes dynamically linked software developed by third parties which is provided under their respective licences:");
 
         notices.forEach(noticeBuilder::addLibrary);
 
@@ -171,15 +168,15 @@ public class FrontEndNoticeGenerator {
     }
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ParserConfigurationException, SAXException {
-        final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-npmjs.xml");
+        final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-annotation-npmjs.xml");
         final NpmJsXmlCopyrightsMapping xmlCopyrightsMapping = new NpmJsXmlCopyrightsMapping(xmlCopyrights);
 
-        Path trustedCsvFile = new PathRetriever().fromClasspath("/THIRD-PARTY-LEOS-npmjs.csv");
+        Path trustedCsvFile = new PathRetriever().fromClasspath("/THIRD-PARTY-annotation-npmjs.csv");
         final Product trustedApp = new Product("LEOS Front-End", "2023 European Union", "1.0",
                 EUPLv1_2Content.content());
         FrontEndNoticeGenerator trustedAppGenerator = new FrontEndNoticeGenerator(trustedApp, trustedCsvFile,
                 xmlCopyrightsMapping);
-        try (PrintStream ps = new PrintStream("NOTICE_Trusted_FE.md")) {
+        try (PrintStream ps = new PrintStream("NOTICE_ANNOTATION_FE.md")) {
             trustedAppGenerator.generateNotice(ps);
         }
     }

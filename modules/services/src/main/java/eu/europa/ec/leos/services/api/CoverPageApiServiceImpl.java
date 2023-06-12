@@ -162,6 +162,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
 
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        this.populateCloneProposalMetadata(proposal);
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent, Arrays.asList("docPurpose"), false);
         // Check if new doc purpose is not empty

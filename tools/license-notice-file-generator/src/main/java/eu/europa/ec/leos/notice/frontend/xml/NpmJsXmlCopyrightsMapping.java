@@ -168,7 +168,7 @@ public class NpmJsXmlCopyrightsMapping extends BaseXmlLoader {
 
     public static void main(String[] args)
             throws URISyntaxException, ParserConfigurationException, IOException, SAXException {
-        final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-npmjs.xml");
+        final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-annotation-npmjs.xml");
         // check loading from XML
         new NpmJsXmlCopyrightsMapping(xmlCopyrights);
     }
