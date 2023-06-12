@@ -1,4 +1,5 @@
 export const MAX_INDENT_LEVEL = 4;
+export const ONE_LINE_NODE_LABEL_LENGTH = 125;
 export const MAX_TRUNCATION_LIMIT = 200;
 export const TIME_TO_CLEAR_INVALID = 10000;
 export const MOVE_TO = 'MOVE_TO';

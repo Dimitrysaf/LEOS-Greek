@@ -42,6 +42,7 @@ import {
   MOVED_LABEL_SIZE,
   MOVED_TITLE_SPAN_START_TAG,
   NUM_HEADING_SEPARATOR,
+  ONE_LINE_NODE_LABEL_LENGTH,
   PARAGRAPH,
   POINT,
   POINT_ROOT_PARENT_ELEMENTS,
@@ -196,8 +197,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     return element.offsetWidth < element.scrollWidth;
   }
 
-  truncateLabelText(label: string) {
-    return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
+  truncateLabelText(label: string): string {
+    if (label.length > MAX_TRUNCATION_LIMIT) {
+      return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
+    }
+    return label;
+  }
+
+  isLabelTextMoreThanOneLine(label: string) {
+    return label.length >= ONE_LINE_NODE_LABEL_LENGTH;
   }
 
   getChildren = (node: TableOfContentItemVO) => node.childItems;
