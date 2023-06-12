@@ -89,6 +89,8 @@ define(function leosPluginUtilsModule(require) {
     var DEL = "del";
     var MOVETO = "move_to";
 
+    var REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
+
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~_ART_DEF";
     var SPAN_ATTRIBUTES = ['tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label'];
@@ -449,6 +451,14 @@ define(function leosPluginUtilsModule(require) {
         for (var i = 0; i < lists.count(); i++) {
             var list = lists.getItem(i);
             var sibling = list.getNext();
+            if (sibling instanceof CKEDITOR.dom.text
+                && (sibling.getText().trim().replace(REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX, '') === "")){
+
+                sibling.remove();
+                sibling = list.getNext();
+            }
+
+
             while (list.is('ol') && !!sibling && !!sibling.is && sibling.is('ol')
             && !_isListEnding(list.getLast()) && !_isListIntro(sibling.getFirst())) {
                 _moveChildren(sibling, list);
