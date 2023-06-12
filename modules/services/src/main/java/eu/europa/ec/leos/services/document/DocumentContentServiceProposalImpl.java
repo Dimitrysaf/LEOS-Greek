@@ -45,8 +45,7 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
                                               MemorandumService memorandumService, ProposalService proposalService, FinancialStatementService financialStatementService,
                                               XmlContentProcessor xmlContentProcessor,
                                               XmlNodeProcessor xmlNodeProcessor,
-                                              CloneContext cloneContext, XPathCatalog xPathCatalog,
-                                              Properties applicationProperties) {
+                                              CloneContext cloneContext, XPathCatalog xPathCatalog) {
         super(transformationService, compareService, annexService, billService, memorandumService, null, financialStatementService, proposalService,
                 xmlContentProcessor, xmlNodeProcessor, xPathCatalog);
         this.cloneContext = cloneContext;
