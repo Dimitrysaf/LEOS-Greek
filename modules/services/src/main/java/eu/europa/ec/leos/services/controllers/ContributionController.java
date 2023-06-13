@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
@@ -10,12 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/secured/contribution")
@@ -47,5 +53,14 @@ public class ContributionController {
         }
         LOG.error("Error occurred while requesting for clone proposal");
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(value = "/list-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("proposalRef") String proposalRef, @PathVariable("documentType") String documentType,
+                                                               @RequestParam Integer annexIndex) {
+        final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
+        List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(proposalRef, annexIndex, documentCategory);
+        return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 }
