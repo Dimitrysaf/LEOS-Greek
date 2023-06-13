@@ -20,6 +20,8 @@ import com.vaadin.server.VaadinServletService;
 import eu.europa.ec.leos.cmis.domain.ContentImpl;
 import eu.europa.ec.leos.cmis.domain.SourceImpl;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
@@ -45,6 +47,7 @@ import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.MemorandumService;
@@ -62,6 +65,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
 import eu.europa.ec.leos.ui.event.CloseScreenRequestEvent;
@@ -90,9 +94,6 @@ import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
 import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
-import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
-import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
@@ -121,12 +122,12 @@ import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
-import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
+import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConvertAkn4euVersionDocument;
-import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.DocumentNavigationRequest;
+import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.EditElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceRequest;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
@@ -152,7 +153,6 @@ import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
@@ -895,17 +895,30 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     }
 
     private void compareAndShowRevision(ContributionVO contributionVO) {
-        final Memorandum revision = memorandumService.findMemorandum(contributionVO.getDocumentId(), false);
-        final String revisionContent = documentContentService.getDocumentForContributionAsHtml(contributionVO.getXmlContent(),
+        final Memorandum contributionVersion = memorandumService.findMemorandumVersion(contributionVO.getDocumentId());
+        //Get clean document cleaning soft, origin and other irrelevant attributes.
+        String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(revision));
+                securityContext.getPermissions(contributionVersion));
+
+        //Get the original version submitted to LS from the metadata of the document
+        final Memorandum originalVersion = (Memorandum)memorandumService.findFirstVersion(contributionVersion.getMetadata().get().getRef());
+        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion,
+                urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(originalVersion));
+
+        //Get the compared content
+        final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, contributionHtml);
+        populateVersionsData(contributionVersion);
+        //Get the merge view xml with wrappers generated using the css and freemarker
+
         cloneContext.setContribution(Boolean.TRUE);
         memorandumScreen.refreshVersions(getVersionVOS(), false);
         Memorandum memorandum = getDocument();
-        List<TocItem>  tocItemList = getTocITems(memorandum);
-        // Storing the revision annotations temporary on the annotate server
+        List<TocItem> tocItemList = getTocITems(memorandum);
+
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
-        memorandumScreen.showRevisionWithSidebar(revisionContent, contributionVO, tocItemList, temporaryAnnotationsId);
+        memorandumScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {

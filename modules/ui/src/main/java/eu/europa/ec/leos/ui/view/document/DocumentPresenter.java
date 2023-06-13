@@ -20,6 +20,8 @@ import com.vaadin.server.VaadinServletService;
 import eu.europa.ec.leos.cmis.domain.ContentImpl;
 import eu.europa.ec.leos.cmis.domain.SourceImpl;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.Content.Source;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
@@ -55,6 +57,7 @@ import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
@@ -76,6 +79,7 @@ import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
@@ -83,6 +87,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
@@ -122,12 +127,8 @@ import eu.europa.ec.leos.ui.event.toc.RefreshTocEvent;
 import eu.europa.ec.leos.ui.event.toc.SaveTocRequestEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
-import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
-import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
-import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
 import eu.europa.ec.leos.ui.view.CommonDelegate;
 import eu.europa.ec.leos.ui.view.ComparisonDelegate;
@@ -155,8 +156,8 @@ import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
-import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
+import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
 import eu.europa.ec.leos.web.event.view.document.ConfirmRenumberingEvent;
@@ -198,7 +199,6 @@ import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.log.LogUtil;
-import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
@@ -1261,10 +1261,22 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private void compareAndShowRevision(ContributionVO contributionVO) {
-        final Bill revision = billService.findBill(contributionVO.getDocumentId(), false);
-        final String revisionContent = documentContentService.getDocumentForContributionAsHtml(
-                contributionVO.getXmlContent(), urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(revision));
+        final Bill contributionVersion = billService.findBillVersion(contributionVO.getDocumentId());
+        //Get clean document cleaning soft, origin and other irrelevant attributes.
+        String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion,
+                urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(contributionVersion));
+
+        //Get the original version submitted to LS from the metadata of the document
+        final Bill originalVersion = billService.findFirstVersion(contributionVersion.getMetadata().get().getRef());
+        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion,
+                urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(originalVersion));
+
+        //Get the compared content
+        final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, contributionHtml);
+        populateVersionAndContributionData(contributionVersion);
+        //Get the merge view xml with wrappers generated using the css and freemarker
 
         cloneContext.setContribution(Boolean.TRUE);
         documentScreen.refreshVersions(getVersionVOS(), false);
@@ -1272,7 +1284,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         List<TocItem> tocItemList = getTocITems(bill);
 
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
-        documentScreen.showRevisionWithSidebar(revisionContent, contributionVO, tocItemList, temporaryAnnotationsId);
+        documentScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {
