@@ -904,14 +904,6 @@ export class DocumentService implements OnDestroy {
     oldVersion: Version,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    console.log(
-      'newVersionId:',
-      newVersion.documentId,
-      ' - oldVersionId:',
-      oldVersion.documentId,
-      ' - intermediateVersionId:',
-      intermediateVersion?.documentId,
-    );
     //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
     if (
       process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
