@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.services.api.ApiService;
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import org.slf4j.Logger;
@@ -23,17 +24,28 @@ public class ContributionController {
     private static final Logger LOG = LoggerFactory.getLogger(ContributionController.class);
 
     @Autowired
-    ApiService apiService;
+    ContributionApiService contributionApiService;
 
     @PostMapping(value = "/create-clone-proposal/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> createCloneProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CloneProposalRequest cloneRequest) {
         try {
-            CreateCollectionResult response = apiService.createCloneProposal(proposalRef, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
+            CreateCollectionResult response = contributionApiService.createCloneProposal(proposalRef, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting for clone proposal", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping(value = "/revision-done/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateClonedProposalRevisionStatus(@PathVariable("proposalRef") String proposalRef, @RequestBody String legFilename) {
+        Result result = contributionApiService.updateClonedProposalRevisionStatus(proposalRef, legFilename);
+        if (result.isOk()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        LOG.error("Error occurred while requesting for clone proposal");
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

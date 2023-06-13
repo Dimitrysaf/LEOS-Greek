@@ -3,6 +3,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 import { ProposalService } from '../proposals/services/proposal.service';
 import { AddMilestoneDialogComponent } from './components/add-milestone-dialog/add-milestone-dialog.component';
+import { MilestoneAnnotationWarningModalComponent } from './components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 import { ProposalActionsDropdownComponent } from './components/proposal-actions-dropdown/proposal-actions-dropdown.component';
 import { ProposalDetailsComponent } from './components/proposal-details/proposal-details.component';
 import { ProposalHeaderComponent } from './components/proposal-header/proposal-header.component';
@@ -15,7 +16,6 @@ import { ProposalMilestoneSendCopyDialogComponent } from './containers/proposal-
 import { ProposalMilestonesComponent } from './containers/proposal-milestones/proposal-milestones.component';
 import { ProposalViewComponent } from './containers/proposal-view/proposal-view.component';
 import { ProposalViewRoutingModule } from './proposal-view-routing.module';
-import { MilestoneAnnotationWarningModalComponent } from './components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 
 @NgModule({
   declarations: [
