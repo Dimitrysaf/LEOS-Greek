@@ -917,6 +917,7 @@ export class DocumentService implements OnDestroy {
             this.getVersionReferenceString(intermediateVersion) ?? null,
           currentId: this.getVersionReferenceString(newVersion),
         },
+        { responseType: 'text' as 'json' },
       );
     } else {
       return this.http.get<string>(
