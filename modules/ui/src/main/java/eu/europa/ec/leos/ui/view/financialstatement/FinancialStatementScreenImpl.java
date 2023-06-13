@@ -96,8 +96,7 @@ import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingChildTypeEvent;
-import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
-import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
+import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
 import eu.europa.ec.leos.web.event.view.document.DocumentUpdatedEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchUserGuidanceResponse;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;
@@ -436,7 +435,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     @Override
-    public void checkElementCoEdition(List<CoEditionVO> coEditionVos, User user, String elementId, String elementTagName, CheckElementCoEditionEvent.Action action, Object actionEvent) {
+    public void checkElementCoEdition(List<CoEditionVO> coEditionVos, User user, String elementId, String elementTagName, Action action, Object actionEvent) {
         StringBuilder coEditorsList = new StringBuilder();
         coEditionVos.stream().filter((x) -> InfoType.ELEMENT_INFO.equals(x.getInfoType()) && x.getElementId().equals(elementId))
                 .sorted(Comparator.comparing(CoEditionVO::getUserName).thenComparingLong(CoEditionVO::getEditionTime)).forEach(x -> {
@@ -457,15 +456,15 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         if (!StringUtils.isEmpty(coEditorsList)) {
             confirmCoEdition(coEditorsList.toString(), elementId, action, actionEvent);
         } else {
-            if (action == CheckElementCoEditionEvent.Action.DELETE) {
-                eventBus.post(new CheckDeleteLastEditingChildTypeEvent(((DeleteElementRequestEvent)actionEvent).getElementId(), actionEvent));
+            if (action == Action.DELETE) {
+                eventBus.post(new CheckDeleteLastEditingChildTypeEvent(elementId, () -> eventBus.post(actionEvent), false));
             } else {
                 eventBus.post(actionEvent);
             }
         }
     }
 
-    private void confirmCoEdition(String coEditorsList, String elementId, CheckElementCoEditionEvent.Action action, Object actionEvent) {
+    private void confirmCoEdition(String coEditorsList, String elementId, Action action, Object actionEvent) {
         ConfirmDialog confirmDialog = ConfirmDialog.getFactory().create(
                 messageHelper.getMessage("coedition." + action.getValue() + ".element.confirmation.title"),
                 messageHelper.getMessage("coedition." + action.getValue() + ".element.confirmation.message", coEditorsList),
@@ -476,8 +475,8 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
         confirmDialog.setHeightUndefined();
         confirmDialog.show(getUI(), dialog -> {
             if (dialog.isConfirmed()) {
-                if (action == CheckElementCoEditionEvent.Action.DELETE) {
-                    eventBus.post(new CheckDeleteLastEditingChildTypeEvent(elementId, actionEvent));
+                if (action == Action.DELETE) {
+                    eventBus.post(new CheckDeleteLastEditingChildTypeEvent(elementId, () -> eventBus.post(actionEvent), true));
                 } else {
                     eventBus.post(actionEvent);
                 }
