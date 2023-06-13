@@ -20,6 +20,8 @@ import com.vaadin.server.VaadinServletService;
 import eu.europa.ec.leos.cmis.domain.ContentImpl;
 import eu.europa.ec.leos.cmis.domain.SourceImpl;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.domain.cmis.Content;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
@@ -77,6 +79,7 @@ import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
@@ -85,6 +88,7 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
@@ -126,11 +130,8 @@ import eu.europa.ec.leos.ui.event.toc.SaveTocRequestEvent;
 import eu.europa.ec.leos.ui.event.view.AnnexStructureChangeEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
 import eu.europa.ec.leos.ui.event.view.ToolBoxExportRequestEvent;
-import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
-import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
 import eu.europa.ec.leos.ui.view.CommonDelegate;
 import eu.europa.ec.leos.ui.view.ComparisonDelegate;
@@ -203,13 +204,11 @@ import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.log.LogUtil;
-import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -1247,12 +1246,23 @@ class AnnexPresenter extends AbstractLeosPresenter {
         compareAndShowRevision(event.getContributionVO());
     }
 
-
     private void compareAndShowRevision(ContributionVO contributionVO) {
-        final Annex revision = annexService.findAnnex(contributionVO.getDocumentId(), false);
-        final String revisionContent = documentContentService.getDocumentForContributionAsHtml(contributionVO.getXmlContent(),
+        final Annex contributionVersion = annexService.findAnnexVersion(contributionVO.getDocumentId());
+        //Get clean document cleaning soft, origin and other irrelevant attributes.
+        String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(revision));
+                securityContext.getPermissions(contributionVersion));
+
+        //Get the original version submitted to LS from the metadata of the document
+        final Annex originalVersion = annexService.findFirstVersion(contributionVersion.getMetadata().get().getRef());
+        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion,
+                urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(originalVersion));
+
+        //Get the compared content
+        final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, contributionHtml);
+        populateVersionsData(contributionVersion);
+        //Get the merge view xml with wrappers generated using the css and freemarker
 
         cloneContext.setContribution(Boolean.TRUE);
         annexScreen.refreshVersions(getVersionVOS(), false);
@@ -1260,7 +1270,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         List<TocItem> tocItemList = getTocITems(annex);
 
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
-        annexScreen.showRevisionWithSidebar(revisionContent, contributionVO, tocItemList, temporaryAnnotationsId);
+        annexScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {
