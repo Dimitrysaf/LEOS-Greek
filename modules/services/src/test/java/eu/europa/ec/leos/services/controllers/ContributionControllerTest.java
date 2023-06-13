@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.services.api.ContributionApiService;
@@ -16,12 +17,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContributionControllerTest {
     private static final String PROPOSAL_REF = "proposal";
+    private static final String DOCUMENT_REF = "DOCUMENT_REF";
+    private static final LeosCategoryClass TEST_CLASS = LeosCategoryClass.ANNEX;
     private static final String USER_LOGIN = "demo";
     private static final String DOCUMENT_LEG_NAME = "document_test";
 
@@ -92,5 +97,17 @@ public class ContributionControllerTest {
         ResponseEntity<Object> response = contributionController.updateClonedProposalRevisionStatus(PROPOSAL_REF, DOCUMENT_LEG_NAME);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void listContributionsForDocument() {
+        when(contributionApiService.listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS)).thenReturn(new ArrayList<>());
+
+        ResponseEntity<Object> response = contributionController.listContributionsForDocument(DOCUMENT_REF, "ANNEX", 0);
+
+        //verify that the service has been called with the correct params
+        verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
