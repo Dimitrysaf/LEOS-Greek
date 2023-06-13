@@ -19,7 +19,7 @@ define(function leosTrackChangesPluginModule(require) {
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var diff_match_patch = require("diff_match_patch");
-    var trackChanges = require("./leosTrackChanges")
+    var trackChanges = require("./leosTrackChanges");
 
     var pluginName = "leosTrackChanges";
 
