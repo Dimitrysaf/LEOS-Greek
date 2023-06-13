@@ -94,7 +94,4 @@ public interface ApiService {
     MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName) throws IOException;
 
     MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName) throws IOException;
-
-    CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName);
-
 }

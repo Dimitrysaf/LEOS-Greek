@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.services.api.ApiService;
+import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.user.UserService;
@@ -28,7 +28,7 @@ public class ContributionControllerTest {
     private UserService userService;
 
     @Mock
-    private ApiService apiService;
+    private ContributionApiService contributionApiService;
 
     @InjectMocks
     private ContributionController contributionController;
@@ -45,12 +45,12 @@ public class ContributionControllerTest {
         cloneRequest.setLegDocumentName(DOCUMENT_LEG_NAME);
 
         CreateCollectionResult expectedResult = new CreateCollectionResult();
-        when(apiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
+        when(contributionApiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
                 .thenReturn(expectedResult);
 
         ResponseEntity<Object> response = contributionController.createCloneProposal(PROPOSAL_REF, cloneRequest);
 
-        verify(apiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
+        verify(contributionApiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedResult, response.getBody());
@@ -63,12 +63,12 @@ public class ContributionControllerTest {
         cloneRequest.setLegDocumentName(DOCUMENT_LEG_NAME);
 
         Exception exception = new RuntimeException("Test exception");
-        when(apiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
+        when(contributionApiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
                 .thenThrow(exception);
 
         ResponseEntity<Object> response = contributionController.createCloneProposal(PROPOSAL_REF, cloneRequest);
 
-        verify(apiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
+        verify(contributionApiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals(exception.getMessage(), response.getBody());

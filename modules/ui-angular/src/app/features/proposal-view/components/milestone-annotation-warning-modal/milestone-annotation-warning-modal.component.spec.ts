@@ -8,9 +8,8 @@ describe('MilestoneAnnotationWarningModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MilestoneAnnotationWarningModalComponent ]
-    })
-    .compileComponents();
+      declarations: [MilestoneAnnotationWarningModalComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MilestoneAnnotationWarningModalComponent);
     component = fixture.componentInstance;
