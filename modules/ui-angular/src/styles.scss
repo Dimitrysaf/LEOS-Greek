@@ -147,7 +147,12 @@ article.leos-content-soft-new[leos\:softaction='add']
   font-weight: bold;
 }
 
-/* stylelint-disable selector-id-pattern */
+/* stylelint-disable-next-line selector-id-pattern */
+#docContainer num.leos-content-soft-new {
+  font-weight: 700 !important;
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer span.leos-soft-move-label {
   background-color: #808080;
   cursor: pointer;
@@ -155,15 +160,18 @@ article.leos-content-soft-new[leos\:softaction='add']
   padding: 2px 5px;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer .leos-soft-move-title {
   margin-left: 0;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer span.leos-transparent-soft-move-label {
   background-color: #fff;
   visibility: hidden;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer span.leos-toc-tree span.leos-soft-move-label {
   font-family: 'Times New Roman', Times, serif;
   font-weight: normal;
@@ -171,6 +179,7 @@ article.leos-content-soft-new[leos\:softaction='add']
   padding: 2px;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer .leos-soft-removed *,
 .leos .leos-soft-num-removed,
 .leos .leos-soft-movedto * {
@@ -178,12 +187,14 @@ article.leos-content-soft-new[leos\:softaction='add']
   text-decoration: line-through;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer .leos-soft-new *,
 .leos .leos-soft-num-new,
 .leos .leos-soft-movedfrom span {
   font-weight: bold;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer span.leos-soft-move-label,
 .leos span.leos-transparent-soft-move-label {
   border-radius: 4px;
