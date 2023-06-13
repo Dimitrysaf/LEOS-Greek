@@ -1,16 +1,20 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
@@ -25,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ContributionApiServiceImpl implements ContributionApiService {
@@ -42,6 +47,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     PackageService packageService;
     @Autowired
     SecurityContext securityContext;
+    @Autowired
+    ContributionService contributionService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -85,6 +92,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.populateCloneProposalMetadata(proposal);
         Result<?> result = createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, legFilename);
         return result;
+    }
+
+    @Override
+    public List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType) {
+        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+        return this.contributionService.getDocumentContributions(documentRef, annexIndex, clazz);
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {
