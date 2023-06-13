@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.common.ErrorCode;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
@@ -72,5 +74,23 @@ public class ContributionControllerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals(exception.getMessage(), response.getBody());
+    }
+
+    @Test
+    public void updateClonedProposalRevisionStatus_Success() {
+        when(contributionApiService.updateClonedProposalRevisionStatus(PROPOSAL_REF, DOCUMENT_LEG_NAME)).thenReturn(new Result("", null));
+
+        ResponseEntity<Object> response = contributionController.updateClonedProposalRevisionStatus(PROPOSAL_REF, DOCUMENT_LEG_NAME);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void updateClonedProposalRevisionStatus_Fail() {
+        when(contributionApiService.updateClonedProposalRevisionStatus(PROPOSAL_REF, DOCUMENT_LEG_NAME)).thenReturn(new Result("", ErrorCode.DOCUMENT_NOT_FOUND));
+
+        ResponseEntity<Object> response = contributionController.updateClonedProposalRevisionStatus(PROPOSAL_REF, DOCUMENT_LEG_NAME);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
