@@ -16,7 +16,6 @@ import { ProposalMilestoneSendCopyDialogComponent } from './containers/proposal-
 import { ProposalMilestonesComponent } from './containers/proposal-milestones/proposal-milestones.component';
 import { ProposalViewComponent } from './containers/proposal-view/proposal-view.component';
 import { ProposalViewRoutingModule } from './proposal-view-routing.module';
-import { MilestoneAnnotationWarningModalComponent } from './components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 
 @NgModule({
   declarations: [
