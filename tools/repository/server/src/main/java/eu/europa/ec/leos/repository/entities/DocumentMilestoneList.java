@@ -59,7 +59,7 @@ public class DocumentMilestoneList implements Serializable {
     private LocalDateTime auditLastMDate;
     @JoinColumn(name = "MILESTONE_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DocumentMilestone milestoneId;
+    private DocumentMilestone milestone;
 
     public DocumentMilestoneList() {
     }
@@ -123,12 +123,12 @@ public class DocumentMilestoneList implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
-    public DocumentMilestone getMilestoneId() {
-        return milestoneId;
+    public DocumentMilestone getMilestone() {
+        return milestone;
     }
 
-    public void setMilestoneId(DocumentMilestone milestoneId) {
-        this.milestoneId = milestoneId;
+    public void setMilestone(DocumentMilestone milestone) {
+        this.milestone = milestone;
     }
 
     @Override

@@ -16,11 +16,15 @@ package eu.europa.ec.leos.repository.repositories;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface DocumentContentRepository extends JpaRepository<DocumentContent, BigDecimal> {
 
-    Optional<DocumentContent> findDocumentContentByVersionId(DocumentVersion version);
+    @Query(value = "SELECT * FROM DOCUMENT_CONTENT c WHERE c.VERSION_ID = ?1", nativeQuery = true)
+    Optional<DocumentContent> findDocumentContentByVersionId(BigDecimal versionId);
+
+    Optional<DocumentContent> findDocumentContentByVersion(DocumentVersion version);
 }

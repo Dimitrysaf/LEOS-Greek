@@ -13,9 +13,13 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentProperties;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 
 public interface DocumentPropertiesRepository extends JpaRepository<DocumentProperties, Long> {
+    List<DocumentProperties> findDocumentPropertiesByDocCategoryId(DocumentCategories docCategoryId);
 }

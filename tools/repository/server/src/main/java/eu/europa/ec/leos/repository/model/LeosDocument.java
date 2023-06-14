@@ -16,8 +16,15 @@ package eu.europa.ec.leos.repository.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.europa.ec.leos.repository.common.VersionType;
-import eu.europa.ec.leos.repository.entities.ConfigurationV;
+import eu.europa.ec.leos.repository.entities.Config;
+import eu.europa.ec.leos.repository.entities.ConfigContent;
+import eu.europa.ec.leos.repository.entities.Document;
+import eu.europa.ec.leos.repository.entities.DocumentMilestone;
+import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
+import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentV;
+import eu.europa.ec.leos.repository.entities.MilestoneV;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
 import eu.europa.ec.leos.repository.utils.DateSerializer;
 import org.slf4j.Logger;
@@ -25,12 +32,16 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LeosDocument {
     private static final Logger LOG = LoggerFactory.getLogger(LeosDocument.class);
 
-    private String id;
     private String name;
     private String createdBy;
     private Date createdOn;
@@ -43,47 +54,135 @@ public class LeosDocument {
     private String versionLabel;
     private String comments;
 
+    private String ref;
+    private String versionId;
+
+    private String packageId;
+
+    private String category;
+
+    private Map<String, Object> metadata = new HashMap<>();
+
     public LeosDocument() {}
 
-    public LeosDocument(DocumentV doc) {
+
+    public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertiesV> otherMetadata) {
         if (doc != null) {
-            this.id = doc.getVersionId().toString();
             this.name = doc.getName();
             this.createdBy = doc.getDocAuditCBy();
             this.createdOn = Date.from(doc.getDocAuditCDate().atZone(ZoneId.systemDefault()).toInstant());
             this.updatedBy = doc.getDocAuditLastMBy();
             this.updatedOn = doc.getDocAuditLastMDate() != null ? Date.from(doc.getDocAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
             this.source = doc.getContent().getBytes(StandardCharsets.UTF_8);
+            this.setRef(doc.getRef());
+            this.setVersionId(doc.getVersionId().toString());
 
             this.isLatestVersion = doc.isLatestVersion();
             this.versionLabel = doc.getVersionLabel();
             this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
             this.comments = doc.getComments();
+
+            this.packageId = doc.getPackageId().toString();
+
+            this.setCategory(doc.getCategoryCode());
+
+            this.metadata.put("documentType", doc.getCategoryCode());
+
+            XmlDocumentMetadata xmlDocumentMetadata = new XmlDocumentMetadata(doc, collaborators);
+            this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
         }
     }
 
-    public LeosDocument(ConfigurationV config) {
-        if (config != null) {
-            this.id = config.getId().toString();
-            this.name = config.getName();
-            this.createdBy = config.getAuditCBy();
-            this.createdOn = Date.from(config.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant());
-            this.updatedBy = config.getAuditLastMBy();
-            this.updatedOn = config.getAuditLastMDate() != null ? Date.from(config.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
-            this.source = config.getContent();
+    public LeosDocument(Config doc, ConfigContent configContent) {
+        if (doc != null) {
+            this.setVersionId(configContent.getVersionId().getId().toString());
+            this.setCreatedBy(doc.getAuditCBy());
+            this.setCreatedOn(Date.from(doc.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(configContent.getVersionId().getAuditLastMBy());
+            this.setUpdatedOn(configContent.getVersionId().getAuditLastMDate() != null ? Date.from(configContent.getVersionId().getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.setSource(configContent.getContent());
+            this.isLatestVersion = configContent.getVersionId().getIsLatestVersion();
+            this.versionType = configContent.getVersionId().getVersionType() != null ? VersionType.fromValue(Integer.parseInt(configContent.getVersionId().getVersionType())) : null;
+            this.name = doc.getName();
+            this.ref = doc.getName();
+            this.category = doc.getConfigCategory().getCategoryCode();
 
-            this.isLatestVersion = config.isLatestVersion();
-            this.versionLabel = config.getVersionLabel();
-            this.versionType = config.getVersionType() != null ? VersionType.fromValue(Integer.parseInt(config.getVersionType())) : null;
+            this.metadata.put("language", doc.getLanguage());
+
+            this.setVersionLabel(configContent.getVersionId().getVersionLabel());
         }
     }
 
-    public String getId() {
-        return id;
+    public LeosDocument(MilestoneV documentMilestone,
+                        String category,
+                        DocumentMilestoneListRepository documentMilestoneListRepository) {
+        if (documentMilestone != null) {
+            this.setName(documentMilestone.getName());
+            this.setCreatedBy(documentMilestone.getAuditCBy());
+            this.setCreatedOn(Date.from(documentMilestone.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(documentMilestone.getAuditLastMBy());
+            this.setUpdatedOn(documentMilestone.getAuditLastMDate() != null ?
+                    Date.from(documentMilestone.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.setSource(documentMilestone.getContent());
+            this.setRef(documentMilestone.getRef());
+            this.setVersionId(documentMilestone.getMilestoneId().toString());
+            this.setPackageId(documentMilestone.getPackageId().toString());
+            this.setCategory(category);
+
+            this.setLatestVersion(true);
+
+            this.metadata.put("status", documentMilestone.getStatus());
+            this.metadata.put("clonedMilestoneId", documentMilestone.getClonedMilestoneId() != null ?
+                    documentMilestone.getClonedMilestoneId().toString()
+                    : null);
+
+            List<String> milestoneComments = Arrays.asList(documentMilestone.getMilestoneComments());
+            this.metadata.put("milestoneComments", milestoneComments);
+
+            List<String> containedDocuments = new ArrayList<>();
+            List<DocumentMilestoneList> milestonesDocuments =
+                    documentMilestoneListRepository.findDocumentMilestoneListsByMilestoneId(documentMilestone.getMilestoneId());
+            for (DocumentMilestoneList milestone : milestonesDocuments) {
+                containedDocuments.add(milestone.getContainedDocuments());
+            }
+            this.metadata.put("containedDocuments", containedDocuments);
+        }
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public LeosDocument(DocumentMilestone milestone,
+                        DocumentMilestoneListRepository documentMilestoneListRepository) {
+        if (milestone != null) {
+            Document document = milestone.getDocumentId();
+            this.setName(document.getName());
+            this.setCreatedBy(document.getAuditCBy());
+            this.setCreatedOn(Date.from(document.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(milestone.getAuditLastMBy());
+            this.setUpdatedOn(milestone.getAuditLastMDate() != null ?
+                    Date.from(milestone.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.setSource(milestone.getContent());
+            this.setRef(document.getRef());
+            this.setVersionId(milestone.getId().toString());
+            this.setPackageId(document.getPackageId().getId().toString());
+            this.setCategory(document.getCategoryId().getCategoryCode());
+
+            this.setLatestVersion(true);
+
+            this.metadata.put("status", milestone.getStatus());
+            this.metadata.put("clonedMilestoneId", milestone.getClonedMilestoneId() != null ?
+                    milestone.getClonedMilestoneId().toString()
+                    : null);
+
+            List<String> milestoneComments = Arrays.asList(milestone.getMilestoneComments());
+            this.metadata.put("milestoneComments", milestoneComments);
+
+            List<String> containedDocuments = new ArrayList<>();
+            List<DocumentMilestoneList> milestonesDocuments =
+                    documentMilestoneListRepository.findDocumentMilestoneListsByMilestoneId(milestone.getId());
+            for (DocumentMilestoneList milestoneList : milestonesDocuments) {
+                containedDocuments.add(milestoneList.getContainedDocuments());
+            }
+            this.metadata.put("containedDocuments", containedDocuments);
+        }
     }
 
     public String getCreatedBy() {
@@ -162,6 +261,46 @@ public class LeosDocument {
         isLatestVersion = latestVersion;
     }
 
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
+
+    public String getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(String packageId) {
+        this.packageId = packageId;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -169,7 +308,7 @@ public class LeosDocument {
 
         LeosDocument that = (LeosDocument) o;
 
-        if (!getId().equals(that.getId())) return false;
+        if (!getName().equals(that.getName())) return false;
         if (getCreatedBy() != null ? !getCreatedBy().equals(that.getCreatedBy()) : that.getCreatedBy() != null) return false;
         if (getCreatedOn() != null ? !getCreatedOn().equals(that.getCreatedOn()) : that.getCreatedOn() != null) return false;
         if (getUpdatedBy() != null ? !getUpdatedBy().equals(that.getUpdatedBy()) : that.getUpdatedBy() != null) return false;
@@ -179,7 +318,7 @@ public class LeosDocument {
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
+        int result = getName().hashCode();
         result = 31 * result + (getCreatedBy() != null ? getCreatedBy().hashCode() : 0);
         result = 31 * result + (getCreatedOn() != null ? getCreatedOn().hashCode() : 0);
         result = 31 * result + (getUpdatedBy() != null ? getUpdatedBy().hashCode() : 0);
@@ -188,7 +327,7 @@ public class LeosDocument {
     }
 
     protected void clean() {
-        this.setId(null);
+        this.setName(null);
         this.setSource(null);
         this.setCreatedBy(null);
         this.setCreatedOn(null);

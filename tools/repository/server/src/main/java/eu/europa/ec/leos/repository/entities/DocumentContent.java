@@ -82,7 +82,7 @@ public class DocumentContent implements Serializable {
     private String auditLastMBy;
     @JoinColumn(name = "VERSION_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DocumentVersion versionId;
+    private DocumentVersion version;
 
     public DocumentContent() {
     }
@@ -207,12 +207,12 @@ public class DocumentContent implements Serializable {
         this.auditLastMBy = lastModifiedBy;
     }
 
-    public DocumentVersion getVersionId() {
-        return versionId;
+    public DocumentVersion getVersion() {
+        return version;
     }
 
-    public void setVersionId(DocumentVersion versionId) {
-        this.versionId = versionId;
+    public void setVersion(DocumentVersion version) {
+        this.version = version;
     }
 
     @Override
