@@ -31,7 +31,7 @@ var config = {
 
 	applications: {
 		ckeditor: {
-			path: '.',
+			path: 'src/main/lib/ckeditor_4.12.1',
 			files: [
 				'ckeditor.js'
 			]
@@ -41,17 +41,17 @@ var config = {
 	framework: 'yui',
 
 	// secure: true,
-	privateKey: 'tests/_benderjs/ssl/key.pem',
-	certificate: 'tests/_benderjs/ssl/cert.pem',
+	privateKey: 'src/test/ckeditor/_benderjs/ssl/key.pem',
+	certificate: 'src/test/ckeditor/_benderjs/ssl/cert.pem',
 
 	coverage: {
 		paths: [
-			'adapters/**/*',
-			'core/**/*',
-			'dev/**/*',
-			'lang/**/*',
-			'plugins/**/*',
-			'samples/**/*',
+			// 'adapters/**/*',
+			// 'core/**/*',
+			// 'dev/**/*',
+			// 'lang/**/*',
+			// 'plugins/**/*',
+			// 'samples/**/*',
 			'*.js'
 		],
 		options: {
@@ -64,87 +64,29 @@ var config = {
 		'benderjs-yui',
 		'benderjs-sinon',
 		'benderjs-jquery',
-		'tests/_benderjs/ckeditor',
+		'src/test/ckeditor/_benderjs/ckeditor',
+        // 'src/main/js/editor/plugins',
+        // 'editor/plugins',
 		'benderjs-yui-beautified'
 	],
 
 	tests: {
-		'Adapters': {
-			applications: [ 'ckeditor' ],
-			basePath: 'tests/',
-			paths: [
-				'adapters/**',
-				'!**/_*/**'
-			],
-			// The first officially supported version (1.7.0)
-			// Latest of the old API (1.8.3)
-			// Latest of the 1.* branch
-			// Latest of the 2.* branch
-			// Latest of the 3.* branch
-			// Latest of the 3.*.slim branch
-			jQuery: [
-				'1.7.0',
-				'1.8.3',
-				'1.12.4',
-				'2.2.4',
-				'3.6.0',
-				'3.6.0.slim'
-			]
-		},
-
-		'Core': {
-			applications: [ 'ckeditor' ],
-			basePath: 'tests/',
-			paths: [
-				'core/**',
-				'!**/_*/**'
-			]
-		},
-
 		'Plugins': {
 			applications: [ 'ckeditor' ],
-			basePath: 'tests/',
-			paths: [
-				'plugins/**',
-				'!**/_*/**'
-			]
+			basePath: 'src/test/ckeditor',
+            paths: [
+                'plugins/**',
+                '!**/_*/**'
+            ]
 		},
-
-		'External Plugins': {
-			applications: [ 'ckeditor' ],
-			basePath: 'plugins/',
-			paths: [
-				'*/tests/**',
-				'!**/_*/**'
-			]
-		},
-
-		// 'Tickets': {
-		// 	applications: [ 'ckeditor' ],
-		// 	basePath: 'tests/',
-		// 	paths: [
-		// 		'tickets/**',
-		// 		'!**/_*/**'
-		// 	]
-		// },
-
-		// 'Utils': {
-		// 	applications: [ 'ckeditor' ],
-		// 	basePath: 'tests/',
-		// 	paths: [
-		// 		'utils/**',
-		// 		'!**/_*/**'
-		// 	]
-		// },
-
-		'Security': {
-			applications: [ 'ckeditor' ],
-			basePath: 'tests/',
-			paths: [
-				'security/**',
-				'!**/_*/**'
-			]
-		}
+        'External Plugins': {
+            applications: [ 'ckeditor' ],
+            basePath: 'src/main/js/editor/plugins/',
+            paths: [
+                '*/tests/**',
+                '!**/_*/**'
+            ]
+        },
 	},
 
 	'yui-beautified': {

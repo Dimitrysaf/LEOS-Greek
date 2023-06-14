@@ -29,6 +29,7 @@ module.exports = {
 			var head = [ '<head>\n', '<title>', data.id, '</title>\n' ];
 
 			files.forEach( function( file ) {
+				debugger
 				head.push(
 					'<script src="',
 					path.join( '/plugins/', file ).split( path.sep ).join( '/' ),

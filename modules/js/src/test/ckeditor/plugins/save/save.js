@@ -6,7 +6,7 @@ function saveTest( editor ) {
 
 	editor.on( 'instanceReady', function() {
 		editor.execCommand( 'save' );
-
+		console.log("save")
 		setTimeout( function() {
 			resume( function() {
 				assert.areSame( 1, count, 'save was fired once' );
