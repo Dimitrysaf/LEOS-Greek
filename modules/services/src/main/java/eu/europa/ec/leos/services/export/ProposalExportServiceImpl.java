@@ -254,7 +254,7 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             } else {
                 legPackage = legService.createLegPackage(proposalId, exportOptions);
             }
-            akn4euService.convert(legPackage.getFile(), user, exportHelper.createJsonOutputDescriptorFile(exportOptions));
+            akn4euService.convert(legPackage.getFile(), user, exportHelper.createJsonOutputDescriptorFile(exportOptions, cloneContext.isClonedProposal()));
         } catch (Exception e) {
             LOG.error("An exception occurred while using the Legiswrite service: ", e);
             throw e;
