@@ -137,7 +137,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
     @Test
     public void generateLabelString_Article_withMultiplePointReferenceAtLevel2_same_article() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",art_1_OrhWbv", ",art_1_Uxo4c1", ",art_1_CY6Nsa"), "bill", "art_1_oxdTif", xmlDocument.getContent().get().getSource().getBytes());
-        String expectedResults = "paragraph (3), points (a)<ref href=\"bill/art_1_OrhWbv\" xml:id=\"\">(i)</ref>"
+        String expectedResults = "paragraph 3, points (a)<ref href=\"bill/art_1_OrhWbv\" xml:id=\"\">(i)</ref>"
                 + ", <ref href=\"bill/art_1_Uxo4c1\" xml:id=\"\">(ii)</ref>"
                 + " and <ref href=\"bill/art_1_CY6Nsa\" xml:id=\"\">(iii)</ref>";
 
@@ -244,9 +244,9 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
     @Test
     public void generateLabelString_sameArticle_sourceParagraph2_targetParagraph234() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_h0qOvb", ",a6_v4ETw1", ",a6_hJc9Yk"), "bill", "a6_hJc9Yk", xmlDocument.getContent().get().getSource().getBytes());
-        String expectedResults ="paragraphs <ref href=\"bill/a6_hJc9Yk\" xml:id=\"\">(2)</ref>"
-                + ", <ref href=\"bill/a6_v4ETw1\" xml:id=\"\">(3)</ref>"
-                + " and <ref href=\"bill/a6_h0qOvb\" xml:id=\"\">(4)</ref>";
+        String expectedResults ="paragraphs <ref href=\"bill/a6_hJc9Yk\" xml:id=\"\">2</ref>"
+                + ", <ref href=\"bill/a6_v4ETw1\" xml:id=\"\">3</ref>"
+                + " and <ref href=\"bill/a6_h0qOvb\" xml:id=\"\">4</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -254,9 +254,9 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
     @Test
     public void generateLabelString_sameArticle_sourceParagraph2_targetParagraph345() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_Dd29LR", ",a6_h0qOvb", ",a6_v4ETw1"), "bill", "a6_hJc9Yk", xmlDocument.getContent().get().getSource().getBytes());
-        String expectedResults = "paragraphs <ref href=\"bill/a6_v4ETw1\" xml:id=\"\">(3)</ref>"
-                + ", <ref href=\"bill/a6_h0qOvb\" xml:id=\"\">(4)</ref>"
-                + " and <ref href=\"bill/a6_Dd29LR\" xml:id=\"\">(5)</ref>";
+        String expectedResults = "paragraphs <ref href=\"bill/a6_v4ETw1\" xml:id=\"\">3</ref>"
+                + ", <ref href=\"bill/a6_h0qOvb\" xml:id=\"\">4</ref>"
+                + " and <ref href=\"bill/a6_Dd29LR\" xml:id=\"\">5</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -559,7 +559,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
     @Test
     public void generateLabelString_sameArticle_sourceParagraph2_targetParagraph1SubParagraph1() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_9CfL6Y"), "bill", "a6_hJc9Yk", xmlDocument.getContent().get().getSource().getBytes());
-        String expectedResults ="paragraph (1)"
+        String expectedResults ="paragraph 1"
                 + ", <ref href=\"bill/a6_9CfL6Y\" xml:id=\"\">first</ref>"
                 + " subparagraph";
 
@@ -569,7 +569,7 @@ public class ReferenceLabelServiceNumberedTest extends ReferenceLabelServiceTest
     @Test
     public void generateLabelString_sameArticle_sourceParagraph2_targetParagraph1PointD3IV_chose3Indent() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabelStringRef(Arrays.asList(",a6_vFs1j9", ",a6_ed2l3M", ",a6_H9BTwE"), "bill", "a6_hJc9Yk", xmlDocument.getContent().get().getSource().getBytes());
-        String expectedResults ="paragraph (1)"
+        String expectedResults ="paragraph 1"
                 + ", point (d)(3)(iv)"
                 + ", <ref href=\"bill/a6_vFs1j9\" xml:id=\"\">first</ref>"
                 + ", <ref href=\"bill/a6_ed2l3M\" xml:id=\"\">second</ref>"
