@@ -23,10 +23,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public interface DocumentVRepository extends JpaRepository<DocumentV, BigDecimal> {
+public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
 
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.document_id = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findAllVersionsByDocumentId(BigDecimal documentId);
+
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.ref = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    List<DocumentV> findAllVersionsByRef(String ref);
 
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE package_id = ?1 AND category_code = ?2 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findAllVersionsByPackageIdAndCategoryCode(BigDecimal packageId, String categoryCode);
@@ -34,11 +37,19 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, BigDecimal
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE version_id = ?1", nativeQuery = true)
     Optional<DocumentV> findVersionByVersionId(BigDecimal versionId);
 
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE version_id = ?1 AND category_code = ?2", nativeQuery = true)
+    Optional<DocumentV> findVersionByVersionIdAndCategory(BigDecimal versionId, String categoryCode);
+
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.DOCUMENT_ID = ?1 AND d.IS_LATEST_VERSION = 1", nativeQuery = true)
     Optional<DocumentV> findLastVersionByDocumentId(BigDecimal documentId);
 
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.CATEGORY_CODE = ?2 AND d.IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findDocumentsByPackageIdAndCategory(BigDecimal packageId, String categoryCode);
+
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID in (SELECT p.ID from PACKAGE p WHERE p.NAME = ?1) AND d.CATEGORY_CODE = ?2 " +
+            "AND d.IS_LATEST_VERSION = 1 AND d.NAME = ?3 ORDER BY d" +
+            ".DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    List<DocumentV> findDocumentsByPackageNameAndCategory(String packageName, String categoryCode, String name);
 
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findDocumentsByPackageId(BigDecimal packageId);
@@ -75,9 +86,7 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, BigDecimal
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.ref = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findDocumentsByRef(String ref);
 
-    @Query(value = "SELECT COUNT(*) FROM DOCUMENT_V d WHERE d.package_id in (SELECT package_id from PACKAGE WHERE d.package_name = ?1) and category_code = " +
-            "nvl(?2, category_code)", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM DOCUMENT_V d WHERE d.PACKAGE_ID in (SELECT p.ID from PACKAGE p WHERE p.NAME = ?1) and d.CATEGORY_CODE =" +
+            " nvl(?2, category_code)", nativeQuery = true)
     Integer getDocumentCountByPackageName(String packageName, String categoryCode);
-
-
 }

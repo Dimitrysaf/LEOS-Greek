@@ -35,7 +35,6 @@ import javax.persistence.Table;
     @NamedQuery(name = "MilestoneV.findByCategoryId", query = "SELECT m FROM MilestoneV m WHERE m.categoryId = :categoryId"),
     @NamedQuery(name = "MilestoneV.findByName", query = "SELECT m FROM MilestoneV m WHERE m.name = :name"),
     @NamedQuery(name = "MilestoneV.findByClonedFrom", query = "SELECT m FROM MilestoneV m WHERE m.clonedFrom = :clonedFrom"),
-    @NamedQuery(name = "MilestoneV.findByCollaborators", query = "SELECT m FROM MilestoneV m WHERE m.collaborators = :collaborators"),
     @NamedQuery(name = "MilestoneV.findByRevisionStatus", query = "SELECT m FROM MilestoneV m WHERE m.revisionStatus = :revisionStatus"),
     @NamedQuery(name = "MilestoneV.findByContributionStatus", query = "SELECT m FROM MilestoneV m WHERE m.contributionStatus = :contributionStatus"),
     @NamedQuery(name = "MilestoneV.findByOriginalRef", query = "SELECT m FROM MilestoneV m WHERE m.originalRef = :originalRef"),
@@ -77,8 +76,6 @@ public class MilestoneV implements Serializable {
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
     private BigDecimal clonedFrom;
-    @Column(name = "COLLABORATORS", updatable = false)
-    private String collaborators;
     @Column(name = "REVISION_STATUS", updatable = false)
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", updatable = false)
@@ -178,14 +175,6 @@ public class MilestoneV implements Serializable {
 
     public void setClonedFrom(BigDecimal clonedFrom) {
         this.clonedFrom = clonedFrom;
-    }
-
-    public String getCollaborators() {
-        return collaborators;
-    }
-
-    public void setCollaborators(String collaborators) {
-        this.collaborators = collaborators;
     }
 
     public String getRevisionStatus() {

@@ -17,7 +17,7 @@ import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.Repository;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.XmlDocument;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertiesVRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
@@ -68,19 +68,17 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public void deletePackage(final String packageId) {
+    public void deletePackage(final String packageId) throws RepositoryException {
         try {
-            Optional<Package> pkg = packageRepository.findById(new BigDecimal(Long.valueOf(packageId)));
-            if (pkg.isPresent()) {
-                packageRepository.delete(pkg.get());
-            }
+            Optional<Package> pkg = packageRepository.findById(new BigDecimal(Long.parseLong(packageId)));
+            pkg.ifPresent(packageRepository::delete);
         } catch (NumberFormatException e) {
-            return;
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
         }
     }
 
-    public List<XmlDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
-                                                    final boolean descendants) throws RepositoryException {
+    public List<LeosDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
+                                                         final boolean descendants) throws RepositoryException {
         List<DocumentV> docs = new ArrayList<>();
         Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, packageName);
         if (!pkg.isPresent()) {
@@ -89,14 +87,14 @@ public class PackageServiceImpl implements PackageService {
         for (String categoryCode : categories) {
             docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(pkg.get().getId(), categoryCode));
         }
-        List<XmlDocument> xmlDocs = new ArrayList<>();
+        List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
         }
         return xmlDocs;
     }
 
-    public List<XmlDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories,
+    public List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories,
                                                       final boolean allVersion) {
         List<DocumentV> docs = new ArrayList<>();
         if (allVersion) {
@@ -108,7 +106,7 @@ public class PackageServiceImpl implements PackageService {
                 docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(Long.parseLong(packageId)), categoryCode));
             }
         }
-        List<XmlDocument> xmlDocs = new ArrayList<>();
+        List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
         }

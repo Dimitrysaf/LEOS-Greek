@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.Collaborators;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
@@ -27,7 +27,7 @@ import static org.springframework.test.util.AssertionErrors.fail;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class CollaboratorTests {
+public class CollaboratorServiceTests {
     @Autowired
     private CollaboratorsService collaboratorsService;
     @Autowired

@@ -17,14 +17,13 @@ import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.ConfigVersion;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.Template;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.ConfigContentRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
+import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class TemplateServiceImpl implements TemplateService {
@@ -33,13 +32,14 @@ public class TemplateServiceImpl implements TemplateService {
     private final ConfigContentRepository configContentRepository;
 
     @Autowired
-    public TemplateServiceImpl(ConfigRepository configRepository, ConfigVersionRepository configVersionRepository, ConfigContentRepository configContentRepository) {
+    public TemplateServiceImpl(ConfigRepository configRepository, ConfigVersionRepository configVersionRepository,
+                               ConfigContentRepository configContentRepository) {
         this.configRepository = configRepository;
         this.configVersionRepository = configVersionRepository;
         this.configContentRepository = configContentRepository;
     }
 
-    public Template findTemplateByName(String name, Map<String, ?> metadata) throws RepositoryException {
+    public LeosDocument findTemplateByName(String name) throws RepositoryException {
         Config doc = configRepository.findConfigByName(name);
         if (doc != null) {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(doc.getId());
@@ -50,7 +50,7 @@ public class TemplateServiceImpl implements TemplateService {
             if (content == null) {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigContent.class.getName());
             }
-            return new Template(doc, version, content, (Map<String, Object>) metadata);
+            return ConversionUtils.buildConfigDocument(doc, content);
         } else {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
         }

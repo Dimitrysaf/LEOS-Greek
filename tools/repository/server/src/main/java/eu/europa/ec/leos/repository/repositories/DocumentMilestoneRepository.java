@@ -16,6 +16,8 @@ package eu.europa.ec.leos.repository.repositories;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.math.BigDecimal;
 
-public interface DocumentMilestoneRepository extends JpaRepository<DocumentMilestone, Long> {
+
+public interface DocumentMilestoneRepository extends JpaRepository<DocumentMilestone, BigDecimal> {
 }

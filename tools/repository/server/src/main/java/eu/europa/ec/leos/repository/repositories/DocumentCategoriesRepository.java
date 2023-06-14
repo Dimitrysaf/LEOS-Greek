@@ -17,8 +17,9 @@ import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 
 public interface DocumentCategoriesRepository extends JpaRepository<DocumentCategories, BigDecimal> {
-    DocumentCategories findDocumentCategoriesByCategoryCode(String categoryCode);
+    Optional<DocumentCategories> findDocumentCategoriesByCategoryCode(String categoryCode);
 }

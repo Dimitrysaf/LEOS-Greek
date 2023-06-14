@@ -11,26 +11,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.TestUtils;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
+import eu.europa.ec.leos.repository.entities.DocumentMilestone;
+import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.Package;
-import eu.europa.ec.leos.repository.model.Template;
-import eu.europa.ec.leos.repository.model.XmlDocument;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVersionRepository;
-import eu.europa.ec.leos.repository.services.DocumentService;
-import eu.europa.ec.leos.repository.services.PackageService;
-import eu.europa.ec.leos.repository.services.TemplateService;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -59,9 +62,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class DocumentTests {
+public class DocumentServiceTests {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DocumentTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceTests.class);
 
     @Autowired
     DocumentService documentService;
@@ -77,10 +80,25 @@ public class DocumentTests {
     DocumentVersionRepository documentVersionRepository;
     @Autowired
     DocumentContentRepository documentContentRepository;
+    @Autowired
+    DocumentMilestoneRepository documentMilestoneRepository;
+    @Autowired
+    DocumentMilestoneListRepository documentMilestoneListRepository;
 
     private final String REPO_ID = "leos_dev";
+    private eu.europa.ec.leos.repository.model.Package pkg;
 
-    private XmlDocument docCreation() throws RepositoryException {
+    @Before
+    public void setup() {
+        pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
+    }
+
+    @After
+    public void clean() throws RepositoryException {
+        packageService.deletePackage(pkg.getId());
+    }
+
+    private LeosDocument docCreation() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"))));
@@ -96,12 +114,12 @@ public class DocumentTests {
             put("template", "SJ-023");
             put("docStage", "Proposal for a");
         }};
-        return documentService.createDocumentFromSource(REPO_ID, "BL-023", "package_ckk8202vl0000n070oin84afg",
+        return documentService.createDocumentFromSource(REPO_ID, "BL-023", "test",
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.0", 1, "First version");
     }
 
-    private void deleteDoc(XmlDocument doc) throws RepositoryException {
-        documentService.deleteDocumentById(doc.getId());
+    private void deleteDoc(LeosDocument doc) throws RepositoryException {
+        documentService.deleteDocumentById(doc.getVersionId());
     }
 
     private Package createPackage(String name, String userId) {
@@ -210,18 +228,18 @@ public class DocumentTests {
                 "            </block></conclusions>\n" +
                 "    </bill>\n" +
                 "</akomaNtoso>";
-        XmlDocument doc = documentService.createDocumentFromContent(REPO_ID, "package_ckk8202vl0000n070oin84afg",
+        LeosDocument doc = documentService.createDocumentFromContent(REPO_ID, "test",
                     "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3,
                     content.getBytes(StandardCharsets.UTF_8), "First version");
         assertNotNull(doc);
-        Optional<Document> docT = documentRepository.findById(new BigDecimal(Long.parseLong(doc.getDocumentId())));
+        Optional<Document> docT = documentRepository.findDocumentByRef(doc.getRef());
         assertTrue(docT.isPresent());
         Optional<DocumentVersion> docV = documentVersionRepository.findDocumentVersionByVersionLabelAndDocumentId(doc.getVersionLabel(),
-                new BigDecimal(Long.parseLong(doc.getDocumentId())));
+                docT.get().getId());
         assertTrue(docV.isPresent());
-        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersionId(docV.get());
+        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersion(docV.get());
         assertTrue(docC.isPresent());
-        XmlDocument lastVersion = documentService.findDocumentById(doc.getId(), true);
+        LeosDocument lastVersion = documentService.findDocumentById(doc.getVersionId(), true);
         assertEquals("jane", lastVersion.getCreatedBy());
         assertEquals("jane", lastVersion.getUpdatedBy());
         assertEquals("0.1.1", lastVersion.getVersionLabel());
@@ -238,8 +256,35 @@ public class DocumentTests {
 
     @Test
     @Transactional
+    public void test_createDocumentMilestoneFromContent() throws RepositoryException {
+        Map<String, ?> properties = new HashMap() {{
+            put("status", "IN_PREPARATION");
+            put("containedDocuments", Arrays.asList("ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z-en.xml",
+                    "EXPL_MEMORANDUM-clfwc8sc60008925620y1bsfl-en.xml", "main-clfwc8rhf00079256x6j3x0t9-en.xml", "STAT_FINANC_LEGIS-clfwcle7j000a9256o4cvc2p6-en.xml"));
+            put("category", "LEG");
+            put("milestoneComments", Arrays.asList("For Interservice Consultation"));
+            put("jobDate", ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
+            put("initialCreationDate", ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
+            put("initialCreatedBy", "jane");
+            put ("name", "PROP_ACT-clilif9gy0000ro28zt8al0yh-en.leg");
+            put("jobId", "230607113102710TBXAVVHGGP");
+        }};
+        byte[] content = TestUtils.getFileContent("/milestone/PROP_ACT-TEST-EN.leg");
+        LeosDocument doc = documentService.createDocumentFromContent(REPO_ID, "test",
+                "PROP_ACT-clilif9gy0000ro28zt8al0yh-en.leg", properties, "0.1.1", 3,
+                content, "First version");
+        assertNotNull(doc);
+        Optional<DocumentMilestone> docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(doc.getVersionId())));
+        assertTrue(docMilestone.isPresent());
+        List<DocumentMilestoneList> milestonesDocuments =
+                documentMilestoneListRepository.findDocumentMilestoneListsByMilestone(docMilestone.get());
+        assertFalse(milestonesDocuments.isEmpty());
+    }
+
+    @Test
+    @Transactional
     public void test_createDocumentFromContentWithNewPackage() throws RepositoryException {
-        Package pkg = createPackage("test", "jane");
+        Package pkg2 = createPackage("test2", "jane");
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"))));
@@ -339,18 +384,18 @@ public class DocumentTests {
                 "            </block></conclusions>\n" +
                 "    </bill>\n" +
                 "</akomaNtoso>";
-        XmlDocument doc = documentService.createDocumentFromContent(REPO_ID, pkg.getName(),
+        LeosDocument doc = documentService.createDocumentFromContent(REPO_ID, pkg2.getName(),
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3,
                 content.getBytes(StandardCharsets.UTF_8), "First version");
         assertNotNull(doc);
-        Optional<Document> docT = documentRepository.findById(new BigDecimal(Long.parseLong(doc.getDocumentId())));
+        Optional<Document> docT = documentRepository.findDocumentByRef(doc.getRef());
         assertTrue(docT.isPresent());
         Optional<DocumentVersion> docV = documentVersionRepository.findDocumentVersionByVersionLabelAndDocumentId(doc.getVersionLabel(),
-                new BigDecimal(Long.parseLong(doc.getDocumentId())));
+                docT.get().getId());
         assertTrue(docV.isPresent());
-        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersionId(docV.get());
+        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersion(docV.get());
         assertTrue(docC.isPresent());
-        XmlDocument lastVersion = documentService.findDocumentById(doc.getId(), true);
+        LeosDocument lastVersion = documentService.findDocumentById(doc.getVersionId(), true);
         assertEquals("jane", lastVersion.getCreatedBy());
         assertEquals("jane", lastVersion.getUpdatedBy());
         assertEquals("0.1.1", lastVersion.getVersionLabel());
@@ -362,7 +407,7 @@ public class DocumentTests {
         assertEquals(collaborators.size(), 1);
         assertEquals(collaborators.get(0).getLogin(), "jane");
         assertEquals(collaborators.get(0).getRole(), "OWNER");
-        assertEquals(doc.getPackageId(), pkg.getId());
+        assertEquals(doc.getPackageId(), pkg2.getId());
         deleteDoc(doc);
     }
 
@@ -385,19 +430,19 @@ public class DocumentTests {
             put("category", "BILL");
             put("docStage", "Proposal for a");
         }};
-        Template t = templateService.findTemplateByName("BL-023", new HashMap<>());
+        LeosDocument t = templateService.findTemplateByName("BL-023");
         assertNotNull(t);
-        XmlDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", "package_ckk8202vl0000n070oin84afg",
+        LeosDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", "test",
                     "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version");
         assertNotNull(doc);
-        Optional<Document> docT = documentRepository.findById(new BigDecimal(Long.parseLong(doc.getDocumentId())));
+        Optional<Document> docT = documentRepository.findDocumentByRef(doc.getRef());
         assertTrue(docT.isPresent());
         Optional<DocumentVersion> docV = documentVersionRepository.findDocumentVersionByVersionLabelAndDocumentId(doc.getVersionLabel(),
-                new BigDecimal(Long.parseLong(doc.getDocumentId())));
+                docT.get().getId());
         assertTrue(docV.isPresent());
-        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersionId(docV.get());
+        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersion(docV.get());
         assertTrue(docC.isPresent());
-        doc = documentService.findDocumentById(doc.getId(), true);
+        doc = documentService.findDocumentById(doc.getVersionId(), true);
         assertEquals("jane", doc.getCreatedBy());
         assertEquals("jane", doc.getUpdatedBy());
         assertEquals("0.1.1", doc.getVersionLabel());
@@ -415,7 +460,7 @@ public class DocumentTests {
     @Test
     @Transactional
     public void test_createDocumentFromSourceWithNewPackage() throws RepositoryException {
-        Package pkg = createPackage("test", "jane");
+        Package pkg2 = createPackage("test2", "jane");
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"),
@@ -432,19 +477,19 @@ public class DocumentTests {
             put("category", "BILL");
             put("docStage", "Proposal for a");
         }};
-        Template t = templateService.findTemplateByName("BL-023", new HashMap<>());
+        LeosDocument t = templateService.findTemplateByName("BL-023");
         assertNotNull(t);
-        XmlDocument doc = documentService.createDocumentFromSource(REPO_ID, "BL-023", pkg.getName(),
+        LeosDocument doc = documentService.createDocumentFromSource(REPO_ID, "BL-023", pkg2.getName(),
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version");
         assertNotNull(doc);
-        Optional<Document> docT = documentRepository.findById(new BigDecimal(Long.parseLong(doc.getDocumentId())));
+        Optional<Document> docT = documentRepository.findDocumentByRef(doc.getRef());
         assertTrue(docT.isPresent());
         Optional<DocumentVersion> docV = documentVersionRepository.findDocumentVersionByVersionLabelAndDocumentId(doc.getVersionLabel(),
-                new BigDecimal(Long.parseLong(doc.getDocumentId())));
+                docT.get().getId());
         assertTrue(docV.isPresent());
-        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersionId(docV.get());
+        Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersion(docV.get());
         assertTrue(docC.isPresent());
-        doc = documentService.findDocumentById(doc.getId(), true);
+        doc = documentService.findDocumentById(doc.getVersionId(), true);
         assertEquals("jane", doc.getCreatedBy());
         assertEquals("jane", doc.getUpdatedBy());
         assertEquals("0.1.1", doc.getVersionLabel());
@@ -456,15 +501,29 @@ public class DocumentTests {
         assertEquals(collaborators.size(), 2);
         assertEquals(collaborators.get(0).getLogin(), "jane");
         assertEquals(collaborators.get(0).getRole(), "OWNER");
-        assertEquals(doc.getPackageId(), pkg.getId());
+        assertEquals(doc.getPackageId(), pkg2.getId());
         deleteDoc(doc);
     }
 
     @Test
     @Transactional
-    public void test_updateDocument() throws RepositoryException {
+    public void test_searchDocument() throws RepositoryException {
+        LeosDocument doc = docCreation();
+        List<LeosDocument> docs = documentService.findDocumentByPackageNameAndFileName(pkg.getName(), doc.getName(), doc.getCategory());
+        assertEquals(docs.size(), 1);
+        assertEquals(docs.get(0).getName(), doc.getName());
+        assertTrue(Arrays.equals(docs.get(0).getSource(), doc.getSource()));
+        assertEquals(docs.get(0).getRef(), doc.getRef());
+        assertEquals(docs.get(0).getCategory(), doc.getCategory());
+        assertEquals(pkg.getId(), docs.get(0).getPackageId());
+        deleteDoc(doc);
+    }
+
+    @Test
+    @Transactional
+    public void test_updateDocument() throws Exception {
         String newTitle = "New Title";
-        XmlDocument doc = docCreation();
+        LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
@@ -554,46 +613,44 @@ public class DocumentTests {
                 "            </block></conclusions>\n" +
                 "    </bill>\n" +
                 "</akomaNtoso>";
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, "0.1.1", 3,
                     content.getBytes(StandardCharsets.UTF_8), "Second Version", "test");
 
         assertNotNull(doc);
-        List<XmlDocument> docVersions = documentService.findDocumentsByRef("REG-clh5v2p720007ng28khrr03h7-en");
+        List<LeosDocument> docVersions = documentService.findDocumentsByRef("REG-clh5v2p720007ng28khrr03h7-en");
         assertEquals(2, docVersions.size());
-        doc = documentService.findDocumentById(doc.getId(), true);
+        doc = documentService.findDocumentById(doc.getVersionId(), true);
         assertEquals("test", doc.getUpdatedBy());
         assertEquals("0.1.1", doc.getVersionLabel());
         assertEquals("Second Version", doc.getComments());
         assertTrue(doc.getUpdatedOn().compareTo(doc.getCreatedOn()) > 0);
         assertTrue(Arrays.equals(doc.getSource(),content.getBytes(StandardCharsets.UTF_8)));
-        assertEquals(doc.getTitle(), newTitle);
+        assertEquals(doc.getMetadata().get("title"), newTitle);
         deleteDoc(doc);
     }
 
     @Test
     @Transactional
-    public void test_updateDocumentWithoutContent() throws RepositoryException {
+    public void test_updateDocumentWithoutContent() throws Exception {
         String newTitle = "New Title";
-        XmlDocument doc = docCreation();
-        XmlDocument docBeforeUpdate = documentService.findDocumentById(doc.getId(), true);
+        LeosDocument doc = docCreation();
+        LeosDocument docBeforeUpdate = documentService.findDocumentById(doc.getVersionId(), true);
         Map<String, Object> properties = new HashMap();
         properties.putAll(doc.getMetadata());
         properties.put("title", newTitle);
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         collaborators.add(new Collaborator("test", "REVIEWER", "DIGIT"));
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.1", 3,
                     "Second Version", "test");
         assertNotNull(doc);
-        List<DocumentVersion> docV = documentVersionRepository.findAllVersionsByDocumentId(new BigDecimal(Long.parseLong(doc.getDocumentId())));
+        List<DocumentV> docV = documentVRepository.findAllVersionsByRef(doc.getRef());
         assertEquals(2, docV.size());
-        List<DocumentV> docC = documentVRepository.findAllVersionsByDocumentId(new BigDecimal(Long.parseLong(doc.getDocumentId())));
-        assertEquals(2, docC.size());
-        doc = documentService.findDocumentById(doc.getId(), true);
+        doc = documentService.findDocumentById(doc.getVersionId(), true);
         assertEquals("test", doc.getUpdatedBy());
         assertEquals("0.1.1", doc.getVersionLabel());
         assertEquals("Second Version", doc.getComments());
-        assertEquals(doc.getTitle(), newTitle);
+        assertEquals(doc.getMetadata().get("title"), newTitle);
         assertNotNull(doc.getMetadata().get("collaborators"));
         collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         assertEquals(collaborators.size(), 2);
@@ -603,7 +660,7 @@ public class DocumentTests {
     }
 
     @Test
-    public void test_deleteDocument() throws RepositoryException {
+    public void test_deleteDocument() throws Exception {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
             put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"),
@@ -620,67 +677,67 @@ public class DocumentTests {
             put("category", "BILL");
             put("docStage", "Proposal for a");
         }};
-        XmlDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", "package_ckk8202vl0000n070oin84afg",
+        LeosDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", "test",
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version");
 
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.2", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.2", 3,
                 "Second Version", "test");
         assertNotNull(doc);
-        List<DocumentVersion> docVersionsBeforeDelete =
-                documentVersionRepository.findAllVersionsByDocumentId(new BigDecimal(Long.parseLong(doc.getDocumentId())));
-        documentService.deleteDocumentById(doc.getId());
+        List<DocumentV> docVersionsBeforeDelete =
+                documentVRepository.findAllVersionsByRef(doc.getRef());
+        documentService.deleteDocumentById(doc.getVersionId());
 
-        List<DocumentVersion> docV = documentVersionRepository.findAllVersionsByDocumentId(new BigDecimal(Long.parseLong(doc.getDocumentId())));
+        List<DocumentV> docV = documentVRepository.findAllVersionsByRef(doc.getRef());
         assertEquals(0, docV.size());
 
-        for (DocumentVersion v : docVersionsBeforeDelete) {
-            Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersionId(v);
+        for (DocumentV v : docVersionsBeforeDelete) {
+            Optional<DocumentContent> docC = documentContentRepository.findDocumentContentByVersionId(v.getVersionId());
             assertFalse(docC.isPresent());
         }
     }
 
     @Test
-    public void test_findDocumentById() throws RepositoryException {
-        XmlDocument doc = docCreation();
+    public void test_findDocumentById() throws Exception {
+        LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
 
-        XmlDocument updatedDoc = documentService.updateDocument(doc.getId(), properties, "0.1.1", 3,
+        LeosDocument updatedDoc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.1", 3,
                 "Second Version", "test");
         assertNotNull(updatedDoc);
-        assertFalse(doc.getId().equals(updatedDoc.getId()));
-        XmlDocument oldVersion = documentService.findDocumentById(doc.getId(), false);
-        assertTrue(doc.getId().equals(oldVersion.getId()));
-        XmlDocument lastVersion = documentService.findDocumentById(doc.getId(), true);
-        assertFalse(doc.getId().equals(lastVersion.getId()));
+        assertFalse(doc.getVersionId().equals(updatedDoc.getVersionId()));
+        LeosDocument oldVersion = documentService.findDocumentById(doc.getVersionId(), false);
+        assertTrue(doc.getVersionId().equals(oldVersion.getVersionId()));
+        LeosDocument lastVersion = documentService.findDocumentById(doc.getVersionId(), true);
+        assertFalse(doc.getVersionId().equals(lastVersion.getVersionId()));
         deleteDoc(doc);
     }
 
     @Test
     @Transactional
-    public void test_findDocumentsByRef() throws RepositoryException {
-        XmlDocument doc = docCreation();
-        String firstVersionId = doc.getId();
+    public void test_findDocumentsByRef() throws Exception {
+        LeosDocument doc = docCreation();
+        String firstVersionId = doc.getVersionId();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.1", 3,
                 "Second Version", "test");
         assertNotNull(doc);
-        List<XmlDocument> docs = documentService.findDocumentsByRef("REG-clh5v2p720007ng28khrr03h7-en");
+        List<LeosDocument> docs = documentService.findDocumentsByRef("REG-clh5v2p720007ng28khrr03h7-en");
         assertEquals(docs.size(), 2);
-        assertTrue(firstVersionId.equals(docs.get(1).getId()));
-        assertTrue(doc.getId().equals(docs.get(0).getId()));
+        assertTrue(firstVersionId.equals(docs.get(1).getVersionId()));
+        assertTrue(doc.getVersionId().equals(docs.get(0).getVersionId()));
         deleteDoc(doc);
     }
 
     @Test
     @Transactional
     public void test_findDocumentByUserId_1() throws RepositoryException {
-        List<XmlDocument> docs = documentService.findDocumentsByUserId("demo", "PROPOSAL", "OWNER");
+        List<LeosDocument> docs = documentService.findDocumentsByUserId("demo", "PROPOSAL", "OWNER");
         assertEquals(docs.size(), 1);
         docs = documentService.findDocumentsByUserId("demo", "BILL", "OWNER");
         assertEquals(docs.size(), 1);
@@ -697,7 +754,7 @@ public class DocumentTests {
     @Test
     @Transactional
     public void test_findLatestMajorVersionById() throws RepositoryException {
-        XmlDocument doc = documentService.findLatestMajorVersionById("1");
+        LeosDocument doc = documentService.findLatestMajorVersionById("1");
         assertNotNull(doc);
         doc = documentService.findLatestMajorVersionById("-1");
         assertNull(doc);
@@ -706,7 +763,7 @@ public class DocumentTests {
     @Test
     @Transactional
     public void test_findFirstVersion() throws RepositoryException {
-        XmlDocument doc = documentService.findFirstVersion("1","annex_ckk820mup0004n070ph1ubpzg");
+        LeosDocument doc = documentService.findFirstVersion("1","annex_ckk820mup0004n070ph1ubpzg");
         assertNotNull(doc);
         doc = documentService.findFirstVersion("-1", "annex_ckk820mup0004n070ph1ubpzg");
         assertNull(doc);
@@ -715,7 +772,7 @@ public class DocumentTests {
     @Test
     @Transactional
     public void test_findDocumentByVersion() throws RepositoryException {
-        XmlDocument doc = documentService.findDocumentByVersion("1","annex_ckk820mup0004n070ph1ubpzg","1.0.0");
+        LeosDocument doc = documentService.findDocumentByVersion("1","annex_ckk820mup0004n070ph1ubpzg","1.0.0");
         assertNotNull(doc);
         doc = documentService.findDocumentByVersion("-1", "annex_ckk820mup0004n070ph1ubpzg","1.0.0");
         assertNull(doc);
@@ -732,17 +789,17 @@ public class DocumentTests {
 
     @Test
     @Transactional
-    public void test_findAllMinorsForIntermediate() throws RepositoryException {
-        XmlDocument doc = docCreation();
+    public void test_findAllMinorsForIntermediate() throws Exception {
+        LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(),"0.1.1", 3,
                 "Second Version", "test");
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.2", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.2", 3,
                 "Third Version", "test");
-        List<XmlDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0",0, 10);
+        List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0",0, 10);
         assertEquals(docs.size(), 2);
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
         assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
@@ -751,15 +808,17 @@ public class DocumentTests {
 
     @Test
     @Transactional
-    public void test_getAllMinorsCountForIntermediate() throws RepositoryException {
-        XmlDocument doc = docCreation();
+    public void test_getAllMinorsCountForIntermediate() throws Exception {
+        LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
-        doc = documentService.updateDocument(doc.getId(), properties, documentService.getNextVersionLabel(VersionType.MINOR, doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), documentService.getNextVersionLabel(VersionType.MINOR,
+                        doc.getVersionLabel()), 3,
                 "Second Version", "test");
-        doc = documentService.updateDocument(doc.getId(), properties, documentService.getNextVersionLabel(VersionType.MINOR, doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), documentService.getNextVersionLabel(VersionType.MINOR,
+                        doc.getVersionLabel()), 3,
                 "Third Version", "test");
         Integer minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
         assertEquals(minorsCount, new Integer(2));
@@ -775,17 +834,17 @@ public class DocumentTests {
 
     @Test
     @Transactional
-    public void test_findRecentMinorVersions() throws RepositoryException {
-        XmlDocument doc = docCreation();
+    public void test_findRecentMinorVersions() throws Exception {
+        LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.1", 3,
                 "Second Version", "test");
-        doc = documentService.updateDocument(doc.getId(), properties, "0.1.2", 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), "0.1.2", 3,
                 "Third Version", "test");
-        List<XmlDocument> docs = documentService.findRecentMinorVersions("REG-clh5v2p720007ng28khrr03h7-en", "0.1.0",0, 10);
+        List<LeosDocument> docs = documentService.findRecentMinorVersions("REG-clh5v2p720007ng28khrr03h7-en", "0.1.0",0, 10);
         assertEquals(docs.size(), 2);
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
         assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
@@ -798,15 +857,17 @@ public class DocumentTests {
 
     @Test
     @Transactional
-    public void test_getRecentMinorVersionsCount() throws RepositoryException {
-        XmlDocument doc = docCreation();
+    public void test_getRecentMinorVersionsCount() throws Exception {
+        LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsString(collaborators));
-        doc = documentService.updateDocument(doc.getId(), properties, documentService.getNextVersionLabel(VersionType.MINOR, doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), documentService.getNextVersionLabel(VersionType.MINOR,
+                        doc.getVersionLabel()), 3,
                 "Second Version", "test");
-        doc = documentService.updateDocument(doc.getId(), properties, documentService.getNextVersionLabel(VersionType.MINOR, doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getVersionId(), properties, doc.getCategory(), documentService.getNextVersionLabel(VersionType.MINOR,
+                        doc.getVersionLabel()), 3,
                 "Third Version", "test");
         Integer recentMinorVersionCount = documentService.getRecentMinorVersionsCount("REG-clh5v2p720007ng28khrr03h7-en","0.1.0");
         assertEquals(recentMinorVersionCount, new Integer(2));
@@ -816,7 +877,7 @@ public class DocumentTests {
     @Test
     @Transactional
     public void test_findAllMajors() throws RepositoryException {
-        List<XmlDocument> docs = documentService.findAllMajors("annex_ckk820mup0004n070ph1ubpzg",0,10);
+        List<LeosDocument> docs = documentService.findAllMajors("annex_ckk820mup0004n070ph1ubpzg",0,10);
         assertEquals(docs.size(), 1);
     }
 }

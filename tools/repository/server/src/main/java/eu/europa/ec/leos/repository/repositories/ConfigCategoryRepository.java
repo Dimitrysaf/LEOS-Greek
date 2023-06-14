@@ -13,8 +13,12 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.ConfigCategories;
+import eu.europa.ec.leos.repository.entities.ConfigCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ConfigCategoriesRepository extends JpaRepository<ConfigCategories, Long> {
+import java.math.BigDecimal;
+import java.util.Optional;
+
+public interface ConfigCategoryRepository extends JpaRepository<ConfigCategory, BigDecimal> {
+    Optional<ConfigCategory> findConfigCategoriesByCategoryCode(String categoryCode);
 }

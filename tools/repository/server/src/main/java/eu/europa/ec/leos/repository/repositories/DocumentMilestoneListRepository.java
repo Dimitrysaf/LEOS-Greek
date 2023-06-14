@@ -13,9 +13,18 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 
-public interface DocumentMilestoneListRepository extends JpaRepository<DocumentMilestoneList, Long> {
+public interface DocumentMilestoneListRepository extends JpaRepository<DocumentMilestoneList, BigDecimal> {
+    List<DocumentMilestoneList> findDocumentMilestoneListsByMilestone(DocumentMilestone documsntMilestone);
+
+    @Query(value = "SELECT * FROM DOCUMENT_MILESTONE_LIST m WHERE m.MILESTONE_ID = ?1", nativeQuery = true)
+    List<DocumentMilestoneList> findDocumentMilestoneListsByMilestoneId(BigDecimal milestoneId);
 }

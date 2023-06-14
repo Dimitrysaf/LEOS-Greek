@@ -1,0 +1,56 @@
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+package eu.europa.ec.leos.repository.services;
+
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.model.LeosDocument;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ActiveProfiles("test")
+public class ConfigServiceTests {
+    @Autowired
+    DocumentService documentService;
+
+    @Test
+    @Transactional
+    public void test_getConfigStructure() throws RepositoryException {
+        List<LeosDocument> structure = documentService.findDocumentByPackageNameAndFileName("templates", "structure_01", "STRUCTURE");
+        assertEquals(structure.size(), 1);
+        assertEquals(structure.get(0).getName(), "structure_01");
+        assertEquals(structure.get(0).getRef(), "structure_01");
+        assertEquals(structure.get(0).getCategory(), "STRUCTURE");
+        List<LeosDocument> config = documentService.findDocumentByPackageNameAndFileName("templates", "BL-019-CONF", "CONFIG");
+        assertEquals(config.size(), 1);
+        assertEquals(config.get(0).getName(), "BL-019-CONF");
+        assertEquals(config.get(0).getRef(), "BL-019-CONF");
+        assertEquals(config.get(0).getCategory(), "CONFIG");
+        List<LeosDocument> template = documentService.findDocumentByPackageNameAndFileName("templates", "BL-019", "TEMPLATE");
+        assertEquals(template.size(), 1);
+        assertEquals(template.get(0).getName(), "BL-019");
+        assertEquals(template.get(0).getRef(), "BL-019");
+        assertEquals(template.get(0).getCategory(), "TEMPLATE");
+    }
+}

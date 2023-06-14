@@ -13,9 +13,17 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.DocumentMilestoneComments;
+import eu.europa.ec.leos.repository.entities.MilestoneV;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
+import java.util.List;
 
-public interface MilestoneCommentsVRepository extends JpaRepository<DocumentMilestoneComments, Long> {
+public interface MilestoneVRepository extends JpaRepository<MilestoneV, String> {
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID IN (SELECT p.ID from PACKAGE p WHERE p.NAME = ?1) AND m.NAME = ?2", nativeQuery = true)
+    List<MilestoneV> findMilestonesByPackageNameAndName(String packageName, String Name);
+
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.STATUS = ?1", nativeQuery = true)
+    List<MilestoneV> findMilestonesByStatus(String Status);
 }
