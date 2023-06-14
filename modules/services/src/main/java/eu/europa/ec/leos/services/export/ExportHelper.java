@@ -95,7 +95,7 @@ class ExportHelper {
         return byteOutputStream;
     }
 
-    public String createJsonOutputDescriptorFile(ExportOptions exportOptions) {
+    public String createJsonOutputDescriptorFile(ExportOptions exportOptions, boolean isClonedProposal) {
         Validate.notNull(exportOptions);
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
@@ -121,7 +121,9 @@ class ExportHelper {
             sb.append("    \"convertAnnotations\":\"no\",\n");
         }
 
-        if (exportOptions.getComparisonType() != null) {
+        if (isClonedProposal) {
+            sb.append("    \"comparisonType\":\"NONE\",\n");
+        } else if (exportOptions.getComparisonType() != null) {
             sb.append("    \"comparisonType\":\"");
             sb.append(exportOptions.getComparisonType());
             sb.append("\",\n");
