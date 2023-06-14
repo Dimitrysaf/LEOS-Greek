@@ -84,9 +84,7 @@ public class DocumentMilestone implements Serializable {
     private LocalDateTime exportDate;
     @Column(name = "MILESTONE_ID", nullable = false, precision = 22, scale = 0)
     private BigDecimal milestoneId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "milestoneId")
-    private Collection<DocumentMilestoneComments> documentMilestoneCommentsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "milestoneId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "milestone")
     private Collection<DocumentMilestoneList> documentMilestoneListCollection;
     @JoinColumn(name = "DOCUMENT_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -210,15 +208,6 @@ public class DocumentMilestone implements Serializable {
 
     public void setExportDate(LocalDateTime exportDate) {
         this.exportDate = exportDate;
-    }
-
-    @XmlTransient
-    public Collection<DocumentMilestoneComments> getDocumentMilestoneCommentsCollection() {
-        return documentMilestoneCommentsCollection;
-    }
-
-    public void setDocumentMilestoneCommentsCollection(Collection<DocumentMilestoneComments> documentMilestoneCommentsCollection) {
-        this.documentMilestoneCommentsCollection = documentMilestoneCommentsCollection;
     }
 
     @XmlTransient

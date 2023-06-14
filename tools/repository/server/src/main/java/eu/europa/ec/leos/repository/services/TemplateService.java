@@ -14,10 +14,8 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.Template;
-
-import java.util.Map;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 
 public interface TemplateService {
-    Template findTemplateByName(String name, Map<String, ?> metadata) throws RepositoryException;
+    LeosDocument findTemplateByName(String name) throws RepositoryException;
 }

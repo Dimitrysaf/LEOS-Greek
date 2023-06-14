@@ -84,7 +84,7 @@ public class DocumentVersion implements Serializable {
     private String comments;
     @Column(name = "DOCUMENT_ID", precision = 22, scale = 0)
     private BigDecimal documentId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "versionId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "version")
     private Collection<DocumentContent> documentContentCollection;
 
     public DocumentVersion() {

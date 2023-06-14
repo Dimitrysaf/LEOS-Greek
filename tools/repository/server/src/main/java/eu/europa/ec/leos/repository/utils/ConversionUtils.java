@@ -1,12 +1,32 @@
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
 package eu.europa.ec.leos.repository.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.repository.entities.Config;
+import eu.europa.ec.leos.repository.entities.ConfigContent;
+import eu.europa.ec.leos.repository.entities.DocumentCategories;
+import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentV;
+import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.model.Collaborator;
-import eu.europa.ec.leos.repository.model.XmlDocument;
+import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertiesVRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
@@ -93,7 +113,7 @@ public class ConversionUtils {
                 .toLocalDateTime();
     }
 
-    public static XmlDocument buildXmlDocument(DocumentVRepository documentVRepository,
+    public static LeosDocument buildXmlDocument(DocumentVRepository documentVRepository,
                                                CollaboratorsService collaboratorsService, DocumentPropertiesVRepository documentPropertiesVRepository,
                                                BigDecimal docId) {
         Optional<DocumentV> docV = documentVRepository.findLastVersionByDocumentId(docId);
@@ -101,15 +121,31 @@ public class ConversionUtils {
                 docV.get()) : null;
     }
 
-    public static XmlDocument buildXmlDocument(DocumentPropertiesVRepository documentPropertiesVRepository, CollaboratorsService collaboratorsService,
-                                               DocumentV doc) {
+    public static LeosDocument buildXmlDocument(DocumentPropertiesVRepository documentPropertiesVRepository, CollaboratorsService collaboratorsService,
+                                                DocumentV doc) {
         if (doc != null) {
             List<DocumentPropertiesV> docProps = documentPropertiesVRepository.findDocumentPropertiesVById(doc.getDocumentId());
             List<Collaborator> collaborators = collaboratorsService.getCollaborators(doc.getPackageId());
-            return new XmlDocument(doc, collaborators, docProps);
+            return new LeosDocument(doc, collaborators, docProps);
         } else {
             return null;
         }
     }
 
+    public static LeosDocument buildLegDocument(DocumentMilestone docMilestone,
+                                                DocumentMilestoneListRepository documentMilestoneListRepository) {
+        return new LeosDocument(docMilestone, documentMilestoneListRepository);
+    }
+
+    public static LeosDocument buildLegDocument(MilestoneV milestoneV,
+                                                DocumentMilestoneListRepository documentMilestoneListRepository,
+                                                DocumentCategoriesRepository documentCategoriesRepository) {
+        Optional<DocumentCategories> category = documentCategoriesRepository.findById(milestoneV.getCategoryId());
+        return new LeosDocument(milestoneV, category.get().getCategoryCode(), documentMilestoneListRepository);
+    }
+
+    public static LeosDocument buildConfigDocument(Config config,
+                                                   ConfigContent configContent) {
+        return new LeosDocument(config, configContent);
+    }
 }

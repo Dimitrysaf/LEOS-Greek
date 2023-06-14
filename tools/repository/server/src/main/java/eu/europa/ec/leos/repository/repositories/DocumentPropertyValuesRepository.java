@@ -13,9 +13,14 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.entities.DocumentProperties;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.math.BigDecimal;
+import java.util.Optional;
 
-public interface DocumentPropertyValuesRepository extends JpaRepository<DocumentPropertyValues, Long> {
+
+public interface DocumentPropertyValuesRepository extends JpaRepository<DocumentPropertyValues, BigDecimal> {
+    Optional<DocumentPropertyValues> findDocumentPropertyValuesByDocumentIdAndPropertyId(BigDecimal documentId, DocumentProperties propertyId);
 }

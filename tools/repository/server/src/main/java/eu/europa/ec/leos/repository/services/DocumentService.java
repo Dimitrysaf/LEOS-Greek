@@ -15,49 +15,53 @@ package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.XmlDocument;
+import eu.europa.ec.leos.repository.model.LeosDocument;
 
 import java.util.List;
 import java.util.Map;
 
 public interface DocumentService {
-    XmlDocument createDocumentFromContent(final String repositoryId, final String packageName, final String name, Map<String, ?> metadata,
-                                          final String labelVersion, int versionType, byte[] contentBytes, String comments) throws RepositoryException;
+    LeosDocument createDocumentFromContent(final String repositoryId, final String packageName, final String name, Map<String, ?> metadata,
+                                           final String labelVersion, int versionType, byte[] contentBytes, String comments) throws RepositoryException;
 
-    XmlDocument createDocumentFromSource(final String repositoryId, final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
+    LeosDocument createDocumentFromSource(final String repositoryId, final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
                                         final String labelVersion, int versionType, String comments) throws RepositoryException;
 
-    XmlDocument updateDocument(final String documentId, Map<String, ?> properties,
-                            final String labelVersion, int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException;
+    LeosDocument updateDocument(final String documentId, Map<String, ?> properties,
+                            final String labelVersion, int versionType, byte[] contentBytes, String comments, String userId) throws Exception;
 
-    XmlDocument updateDocument(final String documentId, Map<String, ?> properties,
-                               final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
+    LeosDocument updateDocument(final String documentId, Map<String, ?> properties, final String category,
+                                final String labelVersion, int versionType, String comments, String userId) throws Exception;
 
     void deleteDocumentById(String id) throws RepositoryException;
 
-    XmlDocument findDocumentById(final String id, final boolean latest);
+    LeosDocument findDocumentById(final String id, final boolean latest);
 
-    XmlDocument findLatestMajorVersionById(final String id);
+    LeosDocument findLatestMajorVersionById(final String id);
 
-    XmlDocument findFirstVersion(final String id, final String docRef);
+    LeosDocument findFirstVersion(final String id, final String docRef);
 
-    XmlDocument findDocumentByVersion(final String id, final String docRef, final String versionLabel);
+    LeosDocument findDocumentByVersion(final String id, final String docRef, final String versionLabel);
 
     String getNextVersionLabel(final VersionType versionType, final String oldVersion);
 
-    List<XmlDocument> findAllMinorsForIntermediate(final String docRef, final String currIntVersion, final int startIndex, final int maxResults);
+    List<LeosDocument> findAllMinorsForIntermediate(final String docRef, final String currIntVersion, final int startIndex, final int maxResults);
 
     Integer getAllMinorsCountForIntermediate(final String docRef, final String currIntVersion);
 
     Integer getAllMajorsCount(final String docRef);
 
-    List<XmlDocument> findAllMajors(final String docRef, final int startIndex, final int maxResult);
+    List<LeosDocument> findAllMajors(final String docRef, final int startIndex, final int maxResult);
 
-    List<XmlDocument> findRecentMinorVersions(final String docRef, String lastMajorVersion, final int startIndex, final int maxResults);
+    List<LeosDocument> findRecentMinorVersions(final String docRef, String lastMajorVersion, final int startIndex, final int maxResults);
 
     Integer getRecentMinorVersionsCount(final String docRef, final String versionLabel);
 
-    List<XmlDocument> findDocumentsByUserId(final String userId, final String primaryType, final String leosAuthority);
+    List<LeosDocument> findDocumentsByUserId(final String userId, final String primaryType, final String leosAuthority);
 
-    List<XmlDocument> findDocumentsByRef(final String ref);
+    List<LeosDocument> findDocumentsByRef(final String ref);
+
+    List<LeosDocument> findDocumentsStatus(final String status);
+
+    List<LeosDocument> findDocumentByPackageNameAndFileName(final String packageName, final String fileName, final String category) throws RepositoryException;
 }

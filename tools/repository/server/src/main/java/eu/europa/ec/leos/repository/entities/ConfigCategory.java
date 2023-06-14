@@ -18,58 +18,52 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "DOCUMENT_MILESTONE_COMMENTS")
+@Table(name = "CONFIG_CATEGORIES")
 @NamedQueries({
-    @NamedQuery(name = "DocumentMilestoneComments.findAll", query = "SELECT d FROM DocumentMilestoneComments d"),
-    @NamedQuery(name = "DocumentMilestoneComments.findById", query = "SELECT d FROM DocumentMilestoneComments d WHERE d.id = :id"),
-    @NamedQuery(name = "DocumentMilestoneComments.findByComments", query = "SELECT d FROM DocumentMilestoneComments d WHERE d.comments = :comments"),
-    @NamedQuery(name = "DocumentMilestoneComments.findByAuditCBy", query = "SELECT d FROM DocumentMilestoneComments d WHERE d.auditCBy = :auditCBy"),
-    @NamedQuery(name = "DocumentMilestoneComments.findByAuditCDate", query = "SELECT d FROM DocumentMilestoneComments d WHERE d.auditCDate = :auditCDate"),
-    @NamedQuery(name = "DocumentMilestoneComments.findByAuditLastMBy", query = "SELECT d FROM DocumentMilestoneComments d WHERE d.auditLastMBy = :auditLastMBy"),
-    @NamedQuery(name = "DocumentMilestoneComments.findByAuditLastMDate", query = "SELECT d FROM DocumentMilestoneComments d WHERE d.auditLastMDate = :auditLastMDate")})
-public class DocumentMilestoneComments implements Serializable {
+    @NamedQuery(name = "ConfigCategories.findAll", query = "SELECT c FROM ConfigCategory c"),
+    @NamedQuery(name = "ConfigCategories.findById", query = "SELECT c FROM ConfigCategory c WHERE c.id = :id"),
+    @NamedQuery(name = "ConfigCategories.findByCategoryCode", query = "SELECT c FROM ConfigCategory c WHERE c.categoryCode = :categoryCode"),
+    @NamedQuery(name = "ConfigCategories.findByCategoryDesc", query = "SELECT c FROM ConfigCategory c WHERE c.categoryDesc = :categoryDesc"),
+    @NamedQuery(name = "ConfigCategories.findByAuditCBy", query = "SELECT c FROM ConfigCategory c WHERE c.auditCBy = :auditCBy"),
+    @NamedQuery(name = "ConfigCategories.findByAuditCDate", query = "SELECT c FROM ConfigCategory c WHERE c.auditCDate = :auditCDate"),
+    @NamedQuery(name = "ConfigCategories.findByAuditLastMBy", query = "SELECT c FROM ConfigCategory c WHERE c.auditLastMBy = :auditLastMBy"),
+    @NamedQuery(name = "ConfigCategories.findByAuditLastMDate", query = "SELECT c FROM ConfigCategory c WHERE c.auditLastMDate = :auditLastMDate")})
+public class ConfigCategory implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
     private BigDecimal id;
-    @Column(name = "COMMENTS")
-    private String comments;
+    @Column(name = "CATEGORY_CODE", nullable = false, length = 30)
+    private String categoryCode;
+    @Column(name = "CATEGORY_DESC", nullable = false, length = 100)
+    private String categoryDesc;
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
     @Column(name = "AUDIT_C_DATE", nullable = false)
     private LocalDateTime auditCDate;
-    @Column(name = "AUDIT_LAST_M_BY")
+    @Column(name = "AUDIT_LAST_M_BY", length = 30)
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
-    @JoinColumn(name = "MILESTONE_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DocumentMilestone milestoneId;
 
-    public DocumentMilestoneComments() {
+    public ConfigCategory() {
     }
 
-    public DocumentMilestoneComments(BigDecimal id) {
+    public ConfigCategory(BigDecimal id) {
         this.id = id;
     }
 
-    public DocumentMilestoneComments(BigDecimal id, String auditCBy, LocalDateTime auditCDate) {
+    public ConfigCategory(BigDecimal id, String categoryCode, String categoryDesc, String auditCBy, LocalDateTime auditCDate) {
         this.id = id;
+        this.categoryCode = categoryCode;
+        this.categoryDesc = categoryDesc;
         this.auditCBy = auditCBy;
         this.auditCDate = auditCDate;
     }
@@ -82,12 +76,20 @@ public class DocumentMilestoneComments implements Serializable {
         this.id = id;
     }
 
-    public String getComments() {
-        return comments;
+    public String getCategoryCode() {
+        return categoryCode;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setCategoryCode(String categoryCode) {
+        this.categoryCode = categoryCode;
+    }
+
+    public String getCategoryDesc() {
+        return categoryDesc;
+    }
+
+    public void setCategoryDesc(String categoryDesc) {
+        this.categoryDesc = categoryDesc;
     }
 
     public String getAuditCBy() {
@@ -122,14 +124,6 @@ public class DocumentMilestoneComments implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
-    public DocumentMilestone getMilestoneId() {
-        return milestoneId;
-    }
-
-    public void setMilestoneId(DocumentMilestone milestoneId) {
-        this.milestoneId = milestoneId;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -140,10 +134,10 @@ public class DocumentMilestoneComments implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DocumentMilestoneComments)) {
+        if (!(object instanceof ConfigCategory)) {
             return false;
         }
-        DocumentMilestoneComments other = (DocumentMilestoneComments) object;
+        ConfigCategory other = (ConfigCategory) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -152,7 +146,7 @@ public class DocumentMilestoneComments implements Serializable {
 
     @Override
     public String toString() {
-        return "eu.europa.ec.leos.repository.entities.DocumentMilestoneComments[ id=" + id + " ]";
+        return "eu.europa.ec.leos.repository.entities.ConfigCategories[ id=" + id + " ]";
     }
     
 }

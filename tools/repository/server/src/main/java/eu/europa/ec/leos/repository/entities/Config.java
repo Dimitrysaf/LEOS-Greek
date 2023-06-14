@@ -21,6 +21,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -38,8 +40,7 @@ import javax.persistence.Table;
         @NamedQuery(name = "Config.findByAuditLastMDate", query = "SELECT c FROM Config c WHERE c.auditLastMDate = :auditLastMDate"),
         @NamedQuery(name = "Config.findByOriginalId", query = "SELECT c FROM Config c WHERE c.originalId = :originalId"),
         @NamedQuery(name = "Config.findByRepositoryId", query = "SELECT c FROM Config c WHERE c.repositoryId = :repositoryId"),
-        @NamedQuery(name = "Config.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language"),
-        @NamedQuery(name = "Config.findByCategoryId", query = "SELECT c FROM Config c WHERE c.categoryId = :categoryId")})
+        @NamedQuery(name = "Config.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language")})
 public class Config implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,8 +68,9 @@ public class Config implements Serializable {
     private BigDecimal repositoryId;
     @Column(name = "LANGUAGE")
     private String language;
-    @Column(name = "CATEGORY_ID", precision = 22, scale = 0)
-    private BigDecimal categoryId;
+    @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private ConfigCategory configCategory;
 
     public Config() {
     }
@@ -149,12 +151,12 @@ public class Config implements Serializable {
         this.language = language;
     }
 
-    public BigDecimal getCategoryId() {
-        return categoryId;
+    public ConfigCategory getConfigCategory() {
+        return configCategory;
     }
 
-    public void setCategoryId(BigDecimal categoryId) {
-        this.categoryId = categoryId;
+    public void setConfigCategory(ConfigCategory categoryId) {
+        this.configCategory = categoryId;
     }
 
     @Override
