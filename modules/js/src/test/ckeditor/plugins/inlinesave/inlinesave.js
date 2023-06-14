@@ -1,12 +1,15 @@
 /* bender-tags: editor */
-/* bender-ckeditor-plugins: toolbar,save,wysiwygarea,sourcearea */
+/* bender-ckeditor-plugins: toolbar,save,wysiwygarea,sourcearea,leosInlineSave */
 
 function saveTest( editor ) {
 	var count = 0;
 
+    // var CMD_NAME = "inlinesave";
+    var CMD_NAME = "leosInlineSave";
+
 	editor.on( 'instanceReady', function() {
-		editor.execCommand( 'save' );
-console.log("save")
+		editor.execCommand( CMD_NAME );
+		console.log("save")
 		setTimeout( function() {
 			resume( function() {
 				assert.areSame( 1, count, 'save was fired once' );
@@ -14,7 +17,7 @@ console.log("save")
 		} );
 	} );
 
-	editor.on( 'save', function() {
+	editor.on( CMD_NAME, function() {
 		count++;
 		return false;
 	} );
