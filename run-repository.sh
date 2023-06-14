@@ -32,5 +32,5 @@ cd ./web || {
 }
 
 echo "---------------------Repository STARTING...-----------------------------------"
-mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
+mvn spring-boot:run -Dspring-boot.run.profiles=h2 -Dspring-boot.run.directories=../config/target/generated-config
 echo "---------------------Repository STOPPED....-----------------------------------"
