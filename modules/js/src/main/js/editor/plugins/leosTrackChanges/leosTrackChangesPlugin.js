@@ -20,6 +20,7 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var diff_match_patch = require("diff_match_patch");
     var trackChanges = require("./leosTrackChanges");
+    var trackChangesStyle = require("./leosTrackChangesStyle");
 
     var pluginName = "leosTrackChanges";
 
@@ -30,7 +31,7 @@ define(function leosTrackChangesPluginModule(require) {
                 return;
             }
 
-            var core = trackChanges.core, actions = trackChanges.actions;
+            var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
 
@@ -258,7 +259,7 @@ define(function leosTrackChangesPluginModule(require) {
                                              */
                                             range.extractContents(true);
                                             var child = childrenFromFragment.getItem(0);
-                                            var tcDeleteItem = core.buildTrackChangeWrapElement(editor, core.DELETE_ACTION, child.$.textContent);
+                                            var tcDeleteItem = core.buildTrackChangeElement(editor, core.DELETE_ACTION, child.$.textContent, false);
                                             editor.insertElement(tcDeleteItem);
                                             event.getInstance().data.domEvent.preventDefault();
                                             event.getInstance().stop();
@@ -416,6 +417,20 @@ define(function leosTrackChangesPluginModule(require) {
                         e.cancel();
                     }
                 });
+            });
+
+            editor.on("beforeCommandExec", function(event) {
+                var styleToBeApplied = style.STYLE_ELEMENTS.find(e => e.event === event.data.name);
+                if (isTrackChangesEnabled && styleToBeApplied) {
+                    if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
+                        style.apply(editor, styleToBeApplied.style);
+                        event.cancel();
+                    } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
+                        //TODO: Check style definition. Custom or default implementation no works with it.
+                        //style.remove(editor, styleToBeApplied.style);
+                        //editor.removeStyle(styleToBeApplied.style);
+                    }
+                }
             });
         }
     }
