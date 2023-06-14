@@ -213,13 +213,13 @@ define(function leosTrackChangesModule(require) {
             return trackChangeElementHasSameUser || parentTrackChangeElementHasSameUser;
         },
 
-        isNewTrackChangeElement: function(element, action) {
+        isSameUserAndNewTrackChangeElement: function(editor, element, action) {
             var elementIsNewTrackchange = (element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
                 (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action) &&
-                (element.getAttribute(this.STATUS_ATTR) === this.NEW_STATUS);
+                (element.getAttribute(this.STATUS_ATTR) === this.NEW_STATUS) && (element.getAttribute(this.UID_ATTR) === core.getUserId(editor));
             var textHasParentElementNewTrackchange = (element != null) && (element.getParent() != null) && (element.$.nodeType === CKEDITOR.NODE_TEXT) &&
                 (element.getParent().getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getParent().getAttribute(this.ACTION_ATTR) === action) &&
-                (element.getParent().getAttribute(this.STATUS_ATTR) === this.NEW_STATUS);
+                (element.getParent().getAttribute(this.STATUS_ATTR) === this.NEW_STATUS) && (element.getAttribute(this.UID_ATTR) === core.getUserId(editor));
             return elementIsNewTrackchange || textHasParentElementNewTrackchange;
         },
 
@@ -335,10 +335,14 @@ define(function leosTrackChangesModule(require) {
             event.getInstance().data.preventDefault(); // Prevent standard insert
         },
 
-        deleteCharacter: function(editor, event, differences, isPreviousInsertedOfSameUserBeforeDelete, isNextInsertedOfSameUserBeforeDelete) {
+        deleteCharacter: function(editor, event, letter, isPreviousInsertOfSameUser, isNextInsertOfSameUser,
+                                  previousNodeToAddText, nextNodeToAddText) {
 
             /*
              * This method add a delete track change for one single character
+             * Rules to join delete track change is:
+             * - If they are new, we can join
+             * - After save (it is not new anymore) we cannot join
              */
 
             var range = editor.getSelection().getRanges()[0], deleteKey = (event.getKeyCode() === 46);
@@ -348,99 +352,41 @@ define(function leosTrackChangesModule(require) {
              * If it is same user, we just return and don't add this character as a new track change.
              * This means it will not be included, which means just deleted.
              */
-            if (deleteKey && isNextInsertedOfSameUserBeforeDelete) {
+            if (deleteKey && isNextInsertOfSameUser) {
                 return;
-            } else if (!deleteKey && isPreviousInsertedOfSameUserBeforeDelete) {
+            } else if (!deleteKey && isPreviousInsertOfSameUser) {
                 return;
             }
 
-            var elementToMoveTo;
-            var previousEditableNodeAfterDelete = editor.getSelection().getRanges()[0].getPreviousEditableNode();
-            var nextEditableNodeAfterDelete = editor.getSelection().getRanges()[0].getNextEditableNode();
+            if (!deleteKey && nextNodeToAddText) {
 
-            /*
-             * Rules to join delete track change is:
-             * - If they are new, we can join
-             * - After save (it is not new anymore) we cannot join
-             */
-
-            if (deleteKey &&
-                (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION) ||
-                    core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION))) {
-
-                /*
-                 * For DELETE key
-                 * If we have a previous or next block that already is a track change
-                 */
-
-                if (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
-                    /*
-                     * Decide to put character in previous block and check if next is also a new delete track change
-                     * to join with it
-                     */
-                    previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + differences);
-                    if (core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
-                        previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
-                        nextEditableNodeAfterDelete.remove();
-                    }
-                    /*
-                     * If we joined with next, the cursor should go to previous, as we deleted next
-                     * If we didn't join with next, the cursor should stay in previous
-                     */
-                    elementToMoveTo = previousEditableNodeAfterDelete;
-                } else {
-                    /*
-                     * Decide to put character in next block, as we don't have a previous one as a new delete track change
-                     * The cursos should move to next block
-                     */
-                    nextEditableNodeAfterDelete.setText(differences + nextEditableNodeAfterDelete.getText());
-                    elementToMoveTo = nextEditableNodeAfterDelete;
-                }
-
-            } else if (!deleteKey &&
-                (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION) ||
-                    core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION))) {
-
-                /*
-                 * For BACKSPACE key
-                 * If we have a previous or next block that already is a track change
-                 */
-
-                if (core.isNewTrackChangeElement(nextEditableNodeAfterDelete, core.DELETE_ACTION)) {
-                    /*
-                     * Decide to put character in next block and check if previous is also a new delete track change
-                     * to join with it
-                     */
-                    nextEditableNodeAfterDelete.setText(differences + nextEditableNodeAfterDelete.getText());
-                    if (core.isNewTrackChangeElement(previousEditableNodeAfterDelete, core.DELETE_ACTION)) {
-                        nextEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + nextEditableNodeAfterDelete.getText());
-                        previousEditableNodeAfterDelete.remove();
-                    }
-                    /*
-                     * If we joined with previous, the cursor should go to next, as we deleted previous
-                     * If we didn't join with previous, the cursor should stay in next
-                     */
-                    elementToMoveTo = nextEditableNodeAfterDelete;
-                } else {
-                    /*
-                     * Decide to put character in previous block, as we don't have a next one as a new delete track change
-                     * The cursor should move to previous block
-                     */
-                    previousEditableNodeAfterDelete.setText(previousEditableNodeAfterDelete.getText() + differences);
-                    elementToMoveTo = previousEditableNodeAfterDelete;
-                }
+                nextNodeToAddText.setText(letter + nextNodeToAddText.getText());
+                this.moveTo(deleteKey, range, editor, nextNodeToAddText);
 
             } else {
 
-                /*
-                 * To add a new delete track change to this character
-                 */
-                var newElement = core.buildTrackChangeElement(editor, core.DELETE_ACTION, differences, true);
+                var newElement = core.buildTrackChangeElement(editor, core.DELETE_ACTION, letter, true);
                 editor.insertElement(newElement);
-                elementToMoveTo = newElement;
+                this.moveTo(deleteKey, range, editor, newElement);
 
             }
 
+            var previousNodeAfterChange = editor.getSelection().getRanges()[0].getPreviousNode();
+            var nextNodeAfterChange = editor.getSelection().getRanges()[0].getNextNode();
+            if (nextNodeAfterChange.$.textContent === '') {
+                nextNodeAfterChange = editor.getSelection().getRanges()[0].getNextEditableNode();
+            }
+            if (deleteKey && core.isSameUserAndNewTrackChangeElement(editor, nextNodeAfterChange, core.DELETE_ACTION)) {
+                previousNodeAfterChange.setText(previousNodeAfterChange.getText() + nextNodeAfterChange.getText());
+                nextNodeAfterChange.remove();
+            } else if (!deleteKey && core.isSameUserAndNewTrackChangeElement(editor, previousNodeAfterChange, core.DELETE_ACTION)) {
+                nextNodeAfterChange.setText(previousNodeAfterChange.getText() + nextNodeAfterChange.getText());
+                previousNodeAfterChange.remove();
+            }
+
+        },
+
+        moveTo: function (deleteKey, range, editor, elementToMoveTo) {
             /*
              * If it is a delete key, we need move forward.
              * If it is a backspace key, we need move backward.
@@ -454,7 +400,7 @@ define(function leosTrackChangesModule(require) {
                 range.moveToPosition(elementToMoveTo, CKEDITOR.POSITION_BEFORE_END);
                 range.select();
             }
-
+            return range;
         },
 
         acceptChange: function(editor, element) {

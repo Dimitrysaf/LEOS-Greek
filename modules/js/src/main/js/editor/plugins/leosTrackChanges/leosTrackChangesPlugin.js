@@ -146,12 +146,12 @@ define(function leosTrackChangesPluginModule(require) {
                 var ctrlXArray;
 
                 /*
-                 * Variables used to store if previous and next blocks are inserts from same user before delete the character.
+                 * Variables used to store information about previous and next before delete the character.
                  * We store it in "key" listener, before delete the character and use it again
                  * in "deleteCharacter" inside "keyup" listener, after character is already deleted
                  *
                  */
-                var isPreviousInsertedOfSameUser, isNextInsertedOfSameUser;
+                var isPreviousInsertOfSameUser, isNextInsertOfSameUser, letter, previousNodeToAddText, nextNodeToAddText, useKeyup;
 
                 // Initialize styles with selected track changes showed option
                 core.updateTrackChangesStyles(core.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
@@ -182,24 +182,106 @@ define(function leosTrackChangesPluginModule(require) {
 
                                 /*
                                  * This if is used when is collapsed, which means that nothing is selected and
-                                 * we are deleting characters isolated, using backspace or delete
+                                 * we are deleting isolated characters, using backspace or delete
                                  */
 
                                 keyCodeLock = true;
+                                useKeyup = true;
 
                                 /*
                                  * To know the blocks before and after the current position
                                  */
-                                var previousEditableNode = editor.getSelection().getRanges()[0].getPreviousEditableNode();
-                                var nextEditableNode = editor.getSelection().getRanges()[0].getNextEditableNode();
+                                var previousNode = editor.getSelection().getRanges()[0].getPreviousNode();
+                                var nextNode = editor.getSelection().getRanges()[0].getNextNode();
+                                if (nextNode.$.textContent === '') {
+                                    nextNode = editor.getSelection().getRanges()[0].getNextEditableNode();
+                                }
+
+                                if (deleteKey) {
+
+                                    if (range.startContainer.type === CKEDITOR.NODE_TEXT && range.startContainer.$.textContent.length === range.startOffset) {
+                                        range = editor.createRange();
+                                        range.moveToPosition(nextNode, CKEDITOR.POSITION_AFTER_START);
+                                        range.select();
+                                    }
+                                    var count = 0;
+                                    while (range.startContainer.type === CKEDITOR.NODE_ELEMENT) {
+                                        range = editor.createRange();
+                                        range.moveToPosition(nextNode, CKEDITOR.POSITION_AFTER_START);
+                                        range.select();
+                                        //TODO: improve to break while in case of possible loop
+                                        if (count >= 30) {
+                                            break;
+                                        }
+                                        nextNode = editor.getSelection().getRanges()[0].getNextNode();
+                                        count++;
+                                    }
+
+                                    previousNodeToAddText = null;
+                                    nextNodeToAddText = null;
+                                    if (range.startContainer.$.previousSibling && range.startOffset === 0) {
+                                        var possibleNodeToAdd = new CKEDITOR.dom.element(range.startContainer.$.previousSibling);
+                                        var isPreviousNewDeleteOfSameUser = core.isSameUserAndNewTrackChangeElement(editor, possibleNodeToAdd, core.DELETE_ACTION);
+                                        if (isPreviousNewDeleteOfSameUser) {
+                                            previousNodeToAddText = possibleNodeToAdd;
+                                        }
+                                    }
+                                    if (range.startOffset === 0) {
+                                        nextNodeToAddText = nextNode;
+                                    }
+
+                                    var position = range.startOffset;
+                                    letter = nextNode.$.textContent.substring(position, position+1);
+
+                                } else {
+
+                                    var count = 0;
+                                    while (range.startContainer.type === CKEDITOR.NODE_ELEMENT) {
+                                        range = editor.createRange();
+                                        range.moveToPosition(previousNode, CKEDITOR.POSITION_BEFORE_END);
+                                        range.select();
+                                        if (count >= 30) {
+                                            break;
+                                        }
+                                        previousNode = editor.getSelection().getRanges()[0].getPreviousNode();
+                                        count++;
+                                    }
+
+                                    previousNodeToAddText = null;
+                                    nextNodeToAddText = null;
+                                    if (range.startContainer.$.nextSibling && range.startOffset === range.startContainer.$.length) {
+                                        var possibleNodeToAdd = new CKEDITOR.dom.element(range.startContainer.$.nextSibling);
+                                        var isNextNewDeleteOfSameUser = core.isSameUserAndNewTrackChangeElement(editor, possibleNodeToAdd, core.DELETE_ACTION);
+                                        if (isNextNewDeleteOfSameUser) {
+                                            nextNodeToAddText = possibleNodeToAdd;
+                                        }
+                                    }
+
+                                    var position = range.startOffset;
+                                    letter = previousNode.$.textContent.substring(position, position-1);
+
+                                }
+
 
                                 /*
-                                 * Get if previous and next blocks are inserts from same user before delete the character.
-                                 * To be used in "deleteCharacter".
+                                 * This block is to add when we integrate ONE key mode to SELECT mode
+                                 * Then we can delete the code after this block, till the end of this if
+                                 * And also delete the logic in "keyup" for ONE key mode
+                                 */
+                                /*if (deleteKey) {
+                                    range.endOffset = range.endOffset + 1;
+                                    range.select();
+                                } else {
+                                    range.endOffset = range.endOffset - 1;
+                                    range.select();
+                                }*/
+
+                                /*
+                                 * Get the situation of insert blocks before delete the character, to be used in "deleteCharacter".
                                  * If we get this information after delete, then we loose the information of the deleted character.
                                  */
-                                isPreviousInsertedOfSameUser = core.isSameUserTrackChangeElement(editor, previousEditableNode, core.INSERT_ACTION);
-                                isNextInsertedOfSameUser = core.isSameUserTrackChangeElement(editor, nextEditableNode, core.INSERT_ACTION);
+                                isPreviousInsertOfSameUser = core.isSameUserTrackChangeElement(editor, previousNode, core.INSERT_ACTION);
+                                isNextInsertOfSameUser = core.isSameUserTrackChangeElement(editor, nextNode, core.INSERT_ACTION);
 
                                 savedSnapshot = core.getCleanData(editor);
 
@@ -209,10 +291,42 @@ define(function leosTrackChangesPluginModule(require) {
                                  * - If we press delete and NEXT is already a deleted block
                                  * - If we press backspace and PREVIOUS is already a deleted block
                                  */
-                                if ((deleteKey && core.isTrackChangeElement(nextEditableNode, core.DELETE_ACTION)) ||
-                                    (!deleteKey && core.isTrackChangeElement(previousEditableNode, core.DELETE_ACTION))) {
+                                if ((deleteKey && core.isTrackChangeElement(nextNode, core.DELETE_ACTION)) ||
+                                    (!deleteKey && core.isTrackChangeElement(previousNode, core.DELETE_ACTION))) {
                                     event.getInstance().data.domEvent.preventDefault();
                                     savedSnapshot = null;
+                                    useKeyup = false;
+                                } else if (deleteKey && isNextInsertOfSameUser) {
+                                    useKeyup = false;
+                                } else if (!deleteKey && isPreviousInsertOfSameUser) {
+                                    useKeyup = false;
+                                } else if (deleteKey && previousNodeToAddText) {
+
+                                    previousNodeToAddText.setText(previousNodeToAddText.getText() + letter);
+                                    actions.moveTo(deleteKey, range, editor, previousNodeToAddText);
+                                    useKeyup = false;
+
+                                } else if (deleteKey && nextNodeToAddText) {
+
+                                    range = editor.createRange();
+                                    range.moveToPosition(nextNodeToAddText, CKEDITOR.POSITION_AFTER_START);
+                                    range.select();
+
+                                    var newElement = core.buildTrackChangeElement(editor, core.DELETE_ACTION, letter, true);
+                                    editor.insertElement(newElement);
+                                    actions.moveTo(deleteKey, range, editor, newElement);
+                                    useKeyup = false;
+
+                                } else if (deleteKey) {
+
+                                    var newElement = core.buildTrackChangeElement(editor, core.DELETE_ACTION, letter, true);
+                                    editor.insertElement(newElement);
+                                    actions.moveTo(deleteKey, range, editor, newElement);
+                                    useKeyup = false;
+                                    if (letter === " ") {
+                                        event.getInstance().data.domEvent.preventDefault();
+                                    }
+
                                 }
 
                             } else if (!range.collapsed) {
@@ -299,32 +413,16 @@ define(function leosTrackChangesPluginModule(require) {
                         // On Delete complete functionality. This part doesn't work without the keydown part.
                         // Because the keydown part is leading to track the changes.
                         try {
-                            if ((event.getKeyCode() === 8 || event.getKeyCode() === 46) && savedSnapshot) {
-
-                                var diff = new diff_match_patch();
-                                var foundDiff = false;
-                                var differences = diff.diff_main(savedSnapshot, core.getCleanData(editor));
-
-                                // The diff functionality of the package has the possibility to find multiple differences.
-                                // Only because we use it on a delete or backspace event, there should be only one change!
-                                // This change should be a -1 which point to a delete.
-                                for (var i = differences.length - 1; i >= 0; i--) {
-                                    if (differences[i][0] === -1) {
-                                        foundDiff = true;
-                                        differences = differences[i][1];
-                                        break;
-                                    }
-                                }
+                            if ((event.getKeyCode() === 8 || event.getKeyCode() === 46) && savedSnapshot && useKeyup) {
 
                                 // Insert deleted contents
-                                if (foundDiff) {
-                                    editor.fire("lockSnapshot");
-                                    actions.deleteCharacter(editor, event, differences, isPreviousInsertedOfSameUser, isNextInsertedOfSameUser);
-                                    if (tcInsert && (tcInsert[0].getText().length === 0)) { // Empty tag check.. if so remove..
-                                        tcInsert[0].remove();
-                                    }
-                                    editor.fire("unlockSnapshot");
+                                editor.fire("lockSnapshot");
+                                actions.deleteCharacter(editor, event, letter, isPreviousInsertOfSameUser, isNextInsertOfSameUser,
+                                    previousNodeToAddText, nextNodeToAddText);
+                                if (tcInsert && (tcInsert[0].getText().length === 0)) { // Empty tag check.. if so remove..
+                                    tcInsert[0].remove();
                                 }
+                                editor.fire("unlockSnapshot");
 
                                 // No prevent because the text needs to be deleted
                                 // event.getInstance().data.preventDefault();
