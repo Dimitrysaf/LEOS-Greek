@@ -46,7 +46,7 @@ public class LabelLevelElementsOnly extends LabelHandler {
                 } else if (i > 0) {
                     sb.push(", ");
                 }
-                sb.push(createAnchor(refs.get(i), locale, withAnchor));
+                sb.push(createAnchor(refs.get(i), mrefCommonNodes, locale, withAnchor));
             }
             sb.addLast(refType + " ");
         }

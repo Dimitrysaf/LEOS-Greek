@@ -27,7 +27,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 class NumFormatter {
     static private final List<String> unNumberedItems = Arrays.asList(CITATION, PARAGRAPH, SUBPARAGRAPH, SUBPOINT_LABEL, POINT, INDENT);
 
-    static String formattedNum(TreeNode node, Locale locale) {
+    static String formattedNum(TreeNode node, List<TreeNode> mrefCommonNodes, Locale locale) {
         switch (node.getType()) {
             case PART:
             case TITLE:
@@ -37,11 +37,14 @@ class NumFormatter {
             case LEVEL:
                 return node.getNum();
             default:
-                return (isUnnumbered(node)) ? formatUnnumbered(node, locale) : formatNumbered(node);
+                return (isUnnumbered(node)) ? formatUnnumbered(node, locale) : formatNumbered(node, mrefCommonNodes);
         }
     }
 
-    private static String formatNumbered(TreeNode node) {
+    private static String formatNumbered(TreeNode node, List<TreeNode> mrefCommonNodes) {
+    	if(PARAGRAPH.equals(node.getType()) && node.getParent() != null && mrefCommonNodes != null && mrefCommonNodes.contains(node.getParent())) {
+    		return Strings.isNullOrEmpty(node.getNum()) ? "" : node.getNum();
+    	}
         return Strings.isNullOrEmpty(node.getNum()) ? "" : String.format("(%s)", node.getNum());
     }
 

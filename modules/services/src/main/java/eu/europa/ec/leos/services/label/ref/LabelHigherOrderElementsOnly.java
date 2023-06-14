@@ -56,9 +56,9 @@ public class LabelHigherOrderElementsOnly extends LabelHandler {
                 TreeNode node = toBeTreatedNodes.get(i);
                 if (!mrefCommonNodes.contains(node) || toBeTreatedNodes.size() > 1) {
                     if (node.getChildren().isEmpty()) {
-                        buffers.get(node).push(createAnchor(node, locale, withAnchor));
+                        buffers.get(node).push(createAnchor(node, mrefCommonNodes, locale, withAnchor));
                     } else if (node.getNum() != null) {
-                        buffers.get(node).push(String.format("%s, ", NumFormatter.formattedNum(node, locale)));
+                        buffers.get(node).push(String.format("%s, ", NumFormatter.formattedNum(node, mrefCommonNodes, locale)));
                     }
                 }
             }

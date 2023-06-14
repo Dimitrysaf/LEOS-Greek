@@ -45,9 +45,9 @@ public class LabelArticlesOrRecitalsOnly extends LabelHandler {
             TreeNode node = toBeTreatedNodes.get(i);
             if (!mrefCommonNodes.contains(node) || toBeTreatedNodes.size() > 1) {
                 if (node.getChildren().isEmpty()) {
-                    buffers.get(node).insert(0, createAnchor(node, locale, withAnchor));
+                    buffers.get(node).insert(0, createAnchor(node, mrefCommonNodes, locale, withAnchor));
                 } else {
-                    buffers.get(node).insert(0, NumFormatter.formattedNum(node, locale));
+                    buffers.get(node).insert(0, NumFormatter.formattedNum(node, mrefCommonNodes, locale));
                 }
             }
         }
