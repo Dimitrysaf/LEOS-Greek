@@ -14,6 +14,10 @@
 package eu.europa.ec.leos.services.dto.response;
 
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.LeosPermission;
+
+import java.util.Map;
+import java.util.Set;
 
 public class AppConfigResponse {
 
@@ -27,7 +31,7 @@ public class AppConfigResponse {
     private boolean coverPageSeparated;
     private String supportDocumentCatalogKey;
     private boolean supportDocumentEnabled;
-    private String[] permissions;
+    private Map<String, Set<LeosPermission>> permissionsMap;
     private User user;
     private String headerTitle;
     private String headerPath;
@@ -122,12 +126,12 @@ public class AppConfigResponse {
         this.supportDocumentEnabled = supportDocumentEnabled;
     }
 
-    public String[] getPermissions() {
-        return permissions;
+    public Map<String, Set<LeosPermission>> getPermissionsMap() {
+        return permissionsMap;
     }
 
-    public void setPermissions(String[] permissions) {
-        this.permissions = permissions;
+    public void setPermissionsMap(Map<String, Set<LeosPermission>> permissionsMap) {
+        this.permissionsMap = permissionsMap;
     }
 
     public User getUser() {

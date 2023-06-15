@@ -8,22 +8,23 @@ import {
 import { Subject } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
-
-import { Permission } from '../models';
+import { Permission } from '@/shared';
 
 @Directive({ selector: '[appUserHasPermission]' })
 export class UserHasPermissionDirective implements OnDestroy {
   private permissionsForUser: Permission[];
   private destroy$: Subject<any> = new Subject();
+
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
     private appConfig: AppConfigService,
   ) {
-    this.appConfig.config.pipe().subscribe((config) => {
-      this.permissionsForUser = config.permissions;
+    this.appConfig.config.subscribe((config) => {
+      this.permissionsForUser = config.userAppPermissions;
     });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(null);
     this.destroy$.complete();

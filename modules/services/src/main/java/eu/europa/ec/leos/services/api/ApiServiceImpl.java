@@ -536,7 +536,6 @@ public class ApiServiceImpl implements ApiService {
                 messageHelper.getMessage("collection.block.export.package.column.status.value." + exportDocument.getStatus().name()));
     }
 
-    //TODO : probably this code should be moved somewhere else
     private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, String proposalVersionSeriesId, Set<String> docVersionSeriesIds) {
         DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
         List<DocumentVO> annexVOList = new ArrayList<>();
@@ -625,7 +624,6 @@ public class ApiServiceImpl implements ApiService {
         return proposalVO;
     }
 
-    // FIXME refine
     private DocumentVO getExplanatroyVO(Explanatory explanatory) {
         DocumentVO explanatoryVO = new DocumentVO(explanatory.getId(),
                 explanatory.getMetadata().exists(e -> e.getLanguage() != null) ? explanatory.getMetadata().get().getLanguage() : "EN",
@@ -641,7 +639,6 @@ public class ApiServiceImpl implements ApiService {
         return explanatoryVO;
     }
 
-    // FIXME refine
     private DocumentVO getMemorandumVO(Memorandum memorandum) {
         return new DocumentVO(memorandum.getId(),
                 memorandum.getMetadata().exists(m -> m.getLanguage() != null) ? memorandum.getMetadata().get().getLanguage() : "EN",
@@ -650,7 +647,6 @@ public class ApiServiceImpl implements ApiService {
                 Date.from(memorandum.getLastModificationInstant()), memorandum.isTrackChangesEnabled());
     }
 
-    // FIXME refine
     private DocumentVO getLegalTextVO(Bill bill) {
         return new DocumentVO(bill.getId(),
                 bill.getMetadata().exists(m -> m.getLanguage() != null) ? bill.getMetadata().get().getLanguage() : "EN",
@@ -659,7 +655,6 @@ public class ApiServiceImpl implements ApiService {
                 Date.from(bill.getLastModificationInstant()), bill.isTrackChangesEnabled());
     }
 
-    // FIXME refine
     private DocumentVO createAnnexVO(Annex annex) {
         DocumentVO annexVO =
                 new DocumentVO(annex.getId(),
@@ -678,7 +673,6 @@ public class ApiServiceImpl implements ApiService {
         return annexVO;
     }
 
-    // FIXME refine
     private DocumentVO getCoverPageVO(DocumentVO proposalVO, String proposalRef) {
         DocumentVO coverPageVO = new DocumentVO(proposalVO.getId(),
                 proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",

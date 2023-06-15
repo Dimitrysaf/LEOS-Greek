@@ -21,8 +21,7 @@ export type LeosConfig = {
   coverPageSeparated: boolean;
   supportDocumentEnabled: boolean;
   supportDocumentCatalogKey: string | null;
-  permissions: Permission[];
-  permissionMap: Record<Role, Permission[]>;
+  permissionsMap: Record<Role, Permission[]>;
   user: User;
   annotateAuthority: string;
   annotateClientUrl: string;
@@ -32,6 +31,7 @@ export type LeosConfig = {
 };
 
 export type LeosAppConfig = LeosConfig & {
+  userAppPermissions: Permission[];
   leosBuildDate: string;
   leosBuildTimestamp: string;
   leosBuildVersion: string;
