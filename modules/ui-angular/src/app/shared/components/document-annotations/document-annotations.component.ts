@@ -8,10 +8,13 @@ import {
   Inject,
   Input,
   OnDestroy,
+  Optional,
   Output,
 } from '@angular/core';
+import { merge, Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { AnnotateOperationMode, Permission } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
@@ -42,6 +45,8 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   private canvasEl?: HTMLCanvasElement;
   private iframeEl?: HTMLIFrameElement;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private elementRef: ElementRef<HTMLElement>,
@@ -49,6 +54,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     private appConfig: AppConfigService,
     private annotateService: AnnotateService,
     private documentService: DocumentService,
+    @Optional() private ckEditorService?: CKEditorService,
   ) {}
 
   ngAfterViewInit() {
@@ -69,13 +75,17 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
       },
       this.annotateService,
       this.documentService,
+      this.ckEditorService,
     );
     this.documentService.setAnnotationGetter(() =>
       this.annotate.getAnnotations(),
     );
-    this.documentService.documentView$.subscribe((view) => {
-      this.annotate.refresh();
-    });
+    merge(
+      this.documentService.documentView$,
+      this.documentService.reloadTrigger$,
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.annotate.refresh());
     this.documentService.setAnnotationsReadOnlySetter(
       (mode: AnnotateOperationMode) => {
         this.annotate.setAnnotationMode(mode);
@@ -84,6 +94,8 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.annotate.destroy();
     this.mutationObserver?.disconnect();
     this.canvasMutationObserver?.disconnect();

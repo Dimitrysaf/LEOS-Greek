@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, filter, take, tap, withLatestFrom } from 'rxjs';
 
 import { EditElementResponse } from '@/features/akn-document/models/ckeditor';
+import type { EditorOpenState } from '@/features/akn-document/services/ckeditor.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
@@ -72,6 +73,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
+    private setEditorOpenState: (state: EditorOpenState) => void,
   ) {
     super(
       {
@@ -137,6 +139,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
               this.getState()['user'] = response.user;
               this.getState()['permissions'] =
                 this.documentService.getUserPermissions();
+              this.setEditorOpenState('OPEN');
               this.editElement(
                 response.elementId,
                 response.elementTagName,
@@ -172,6 +175,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
           this.getState()['user'] = response.user;
           this.getState()['permissions'] =
             this.documentService.getUserPermissions();
+          this.setEditorOpenState('OPEN');
           this.editElement(
             response.elementId,
             response.elementTagName,
@@ -276,6 +280,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       this.documentService.resetDocument();
     }
     this.isElementSaved = false;
+    this.setEditorOpenState('CLOSE');
   }
 
   // leosEditorExtension > actionHandler

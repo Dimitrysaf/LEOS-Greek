@@ -29,6 +29,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   receiveMergeSuggestions?: (...results) => void;
   receiveDocumentMetadata?: (metadata: string) => void;
   receiveSearchMetadata?: (metadatasets: string) => void;
+  stateChangeHandler?: (state: 'OPEN' | 'CLOSE') => void;
   requestFilteredAnnotations?: () => void;
 
   constructor(
