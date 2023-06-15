@@ -1,8 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 
-import { AppConfigService } from '@/core/services/app-config.service';
 import { Permission } from '@/shared';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
@@ -30,17 +28,9 @@ export class ProposalActionsDropdownComponent {
   constructor(
     private proposalDetailsService: ProposalDetailsService,
     private sanitizer: DomSanitizer,
-    private router: Router,
-    private config: AppConfigService,
   ) {
-    this.config.config.subscribe((conf) => {
-      if (conf.user.roles.length) {
-        conf.permissions.map((perm) => {
-          if (perm === 'CAN_EXPORT_LW') {
-            this.canExportLW = true;
-          }
-        });
-      }
+    proposalDetailsService.permissions$.subscribe((permissions) => {
+      this.canExportLW = permissions.includes('CAN_EXPORT_LW');
     });
   }
 

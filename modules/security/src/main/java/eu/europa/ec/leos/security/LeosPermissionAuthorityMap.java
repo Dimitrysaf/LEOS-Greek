@@ -120,4 +120,8 @@ public class LeosPermissionAuthorityMap {
     public Map<String, Role> getRoleMap() {
         return roleMap;
     }
+
+    public Map<String, Set<LeosPermission>> getPermissionsMap() {
+        return permissionMap;
+    }
 }

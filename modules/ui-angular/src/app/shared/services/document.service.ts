@@ -1153,7 +1153,7 @@ export class DocumentService implements OnDestroy {
       .filter((c) => c.login === config.user.login)
       .map((c) => c.role);
     const roles = [...config.user.roles, ...docRoles];
-    const permissions = roles.flatMap((r) => config.permissionMap[r]);
+    const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
   }
 

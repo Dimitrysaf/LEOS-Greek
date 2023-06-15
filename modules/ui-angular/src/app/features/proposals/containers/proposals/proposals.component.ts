@@ -196,7 +196,7 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
   private setPermissions() {
     this.appConfig.config.subscribe((config) => {
       const CN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
-      const CAN_UPLOAD = config.permissions.includes('CAN_UPLOAD');
+      const CAN_UPLOAD = config.userAppPermissions.includes('CAN_UPLOAD');
       this.canCreateDraft = CN && CAN_UPLOAD;
       this.canCreateMandate = CN;
       this.canCreateProposal = !CN;

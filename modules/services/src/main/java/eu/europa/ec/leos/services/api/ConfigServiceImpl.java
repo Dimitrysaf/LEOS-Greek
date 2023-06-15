@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
@@ -22,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 @Service
 public class ConfigServiceImpl implements ConfigService {
@@ -58,7 +61,7 @@ public class ConfigServiceImpl implements ConfigService {
         boolean coverPageSeparated = Boolean.valueOf(applicationProperties.getProperty("leos.coverpage.separated"));
         String supportDocumentCatalogKey = applicationProperties.getProperty("leos.supporting.documents.catalog.key");
         boolean supportDocumentEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.supporting.documents.enable"));
-        String[] permissions = authorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        Map<String, Set<LeosPermission>> permissionsMap = authorityMapHelper.getPermissionsMap();
         String headerTitle = messageHelper.getMessage("leos.ui.header.title");
         String annotateAuthority = applicationProperties.getProperty("annotate.authority");
         String annotateClientUrl = applicationProperties.getProperty("annotate.client.url");
@@ -76,7 +79,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setCoverPageSeparated(coverPageSeparated);
         appConfigResponse.setSupportDocumentCatalogKey(supportDocumentCatalogKey);
         appConfigResponse.setSupportDocumentEnabled(supportDocumentEnabled);
-        appConfigResponse.setPermissions(permissions);
+        appConfigResponse.setPermissionsMap(permissionsMap);
         appConfigResponse.setUser(securityContext.getUser());
         appConfigResponse.setHeaderTitle(headerTitle);
         appConfigResponse.setAnnotateAuthority(annotateAuthority);
