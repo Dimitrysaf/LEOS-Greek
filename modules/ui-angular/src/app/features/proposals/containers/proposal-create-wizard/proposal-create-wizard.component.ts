@@ -106,7 +106,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   onSelectStepRemoteNav(event: any) {
-    if (event.index === 1) this.resetInitials();
     this.currentStepIndex = event.index;
   }
 
