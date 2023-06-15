@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.w3c.dom.Node;
 
 import javax.annotation.PostConstruct;
@@ -54,6 +56,7 @@ import static eu.europa.ec.leos.services.label.TreeHelper.findCommonAncestor;
 import static eu.europa.ec.leos.services.label.TreeHelper.getLeaves;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
 
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     private static final Logger LOG = LoggerFactory.getLogger(ReferenceLabelServiceImpl.class);
     
@@ -72,8 +75,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     @Autowired
     protected PackageService packageService;
 
-    @Autowired
-    protected ReferenceLabelService self;
+    private ReferenceLabelService self;
 
     @Autowired
     protected XPathCatalog xPathCatalog;
@@ -81,6 +83,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     @PostConstruct
     public void postConstructInit() {
         labelHandlers.sort(Comparator.comparingInt(LabelHandler::getOrder));
+        this.self = this;
     }
 
     /**
