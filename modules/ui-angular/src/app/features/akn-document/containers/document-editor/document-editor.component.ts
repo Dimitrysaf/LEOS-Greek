@@ -984,8 +984,18 @@ export class DocumentEditorComponent
     const nodeList = document.querySelectorAll(
       '.leos-content-new, .leos-content-removed',
     );
+    const nodeListCNDoubleCompare = document.querySelectorAll(
+      '.leos-double-compare-removed, .leos-double-compare-added',
+    );
+    console.log('nodeList:', nodeList);
+    console.log('nodeListCN:', nodeListCN);
+    console.log('nodeListCNDoubleCompare:', nodeListCNDoubleCompare);
     this.compareChanges = (
-      nodeList.length > 0 ? nodeList : nodeListCN
+      nodeList && nodeList.length > 0
+        ? nodeList
+        : nodeListCN && nodeListCN.length > 0
+        ? nodeListCN
+        : nodeListCNDoubleCompare
     ) as NodeListOf<HTMLElement>;
     const container = this.document.getElementById(
       'versionComparisonContainer',
@@ -1006,6 +1016,8 @@ export class DocumentEditorComponent
       '.leos-content-removed-cn': 'pin-leos-content-removed',
       '.leos-content-new': 'pin-leos-content-new',
       '.leos-content-new-cn': 'pin-leos-content-new',
+      '.leos-double-compare-removed': 'pin-leos-marker-content-removed',
+      '.leos-double-compare-added': 'pin-leos-marker-content-added',
     };
     this.addPins(container, pinContainer, selectorStyleMap);
   }
