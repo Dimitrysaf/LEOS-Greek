@@ -34,6 +34,8 @@ import { DocumentService } from '@/shared/services/document.service';
 import { TocItem } from '../models/toc.model';
 import { TableOfContentService } from './tableOfContent.service';
 
+export type EditorOpenState = 'OPEN' | 'CLOSE';
+
 @Injectable()
 export class CKEditorService implements OnDestroy {
   private actionManagerConnector?: ActionManagerConnector;
@@ -45,7 +47,10 @@ export class CKEditorService implements OnDestroy {
   private mathJaxConnector?: MathJaxConnector;
   private trackChangesConnector?: TrackChangesConnector;
 
+  private openStateSubj = new Subject<EditorOpenState>();
   private destroy$ = new Subject<void>();
+
+  public openState$ = this.openStateSubj.asObservable();
 
   constructor(
     private leosLegacyService: LeosLegacyService,
@@ -144,6 +149,9 @@ export class CKEditorService implements OnDestroy {
       this.dialogService,
       this.translateService,
       this.tableOfContentService,
+      (state: EditorOpenState) => {
+        this.openStateSubj.next(state);
+      },
     );
     require(['js/editor/leosEditorExtension'], (leosEditor) => {
       leosEditor.init(this.leosEditorConnector);

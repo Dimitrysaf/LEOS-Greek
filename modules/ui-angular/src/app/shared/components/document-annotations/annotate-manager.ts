@@ -9,6 +9,7 @@ import {
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import {
   AnnotateConnectorState,
@@ -40,11 +41,17 @@ export class AnnotateManager {
     private leos: LeosLegacyService,
     private appConfig: AppConfigService,
     private documentId: string,
-    permissions: Permission[],
+    private permissions: Permission[],
     private options: AnnotateConnectorOptions,
     private annotateService: AnnotateService,
     private documentService: DocumentService,
+    private ckEditorService?: CKEditorService,
   ) {
+    this.ckEditorService?.openState$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state) => {
+        this.connector?.stateChangeHandler?.(state);
+      });
     const responseFilteredAnnotations = (annotations: string) => {
       this.annotationsCb.forEach((cb) => cb(annotations));
       this.annotationsCb.clear();
