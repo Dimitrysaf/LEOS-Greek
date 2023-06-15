@@ -222,8 +222,9 @@ define(function leosTrackChangesStyleModule(require) {
                         nodeIsNoStyle = nodeName && currentNode.getAttribute("data-nostyle");
 
                     // Skip bookmarks or comments.
-                    if ((nodeName && currentNode.data("cke-bookmark")) || currentNode.type === CKEDITOR.NODE_COMMENT) {
-                        currentNode = currentNode.getNextSourceNode(true );
+                    if ((nodeName && currentNode.data("cke-bookmark")) || (currentNode.type === CKEDITOR.NODE_COMMENT) ||
+                        core.isTrackChangeElement(currentNode, core.DELETE_ACTION)) {
+                        currentNode = currentNode.getNextSourceNode(true);
                         continue;
                     }
 
