@@ -217,8 +217,9 @@ export class ProposalDetailsService implements OnDestroy {
         next: () => {
           this.appConfig.config.subscribe((c) => {
             const userEmail = c.user.email;
+            const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
             this.translateService
-              .get('page.editor.export-email-sent', { userEmail })
+              .get('page.editor.export-email-sent', { fileType, userEmail })
               .subscribe((message) => {
                 this.uxAppService.growl({
                   severity: 'info',
