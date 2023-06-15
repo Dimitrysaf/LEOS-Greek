@@ -29,6 +29,7 @@ import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TocItemType;
 import eu.europa.ec.leos.vo.toc.TocItemTypeName;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,7 +284,7 @@ public class XmlContentProcessorHelper {
         SoftActionType headingSoftActionAttribute = null;
         Node headingNode = getFirstChild(node, HEADING);
         if (headingNode != null) {
-            heading = trimmedXml(headingNode.getTextContent());
+            heading = StringEscapeUtils.escapeXml10(trimmedXml(headingNode.getTextContent())); //
             originHeadingAttr = getAttributeValue(headingNode, LEOS_ORIGIN_ATTR);
             headingSoftActionAttribute = getAttributeForSoftAction(headingNode, LEOS_SOFT_ACTION_ATTR);
         }
@@ -472,7 +473,7 @@ public class XmlContentProcessorHelper {
     
     public static Node extractOrBuildHeaderElement(Node node, TableOfContentItemVO tocVo, User user) {
         Node headingNode = null;
-        String newHeading = tocVo.getHeading();
+        String newHeading =  StringEscapeUtils.unescapeXml(tocVo.getHeading());
         if ((tocVo.getTocItem().getItemHeading().equals(OptionsType.MANDATORY) ||
                 tocVo.getTocItem().getItemHeading().equals(OptionsType.OPTIONAL)) &&
                         ((newHeading != null) && !StringUtils.isEmpty(newHeading.replaceAll(NBSP, EMPTY_STRING).trim()))) {
