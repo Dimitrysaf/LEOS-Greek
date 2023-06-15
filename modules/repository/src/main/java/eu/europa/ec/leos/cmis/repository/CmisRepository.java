@@ -42,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
@@ -58,6 +60,7 @@ import java.util.stream.Stream;
 import static eu.europa.ec.leos.cmis.support.OperationContextProvider.getMinimalContext;
 
 @Repository
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CmisRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(CmisRepository.class);
@@ -66,9 +69,13 @@ public class CmisRepository {
     private Session cmisSession;
     @Autowired
     private Provider<RepositoryContext> repositoryContextProvider;
-    @Autowired
-    private CmisRepository self;
     private static final Map<String, Long> synchronizedKeys = new ConcurrentHashMap<>();
+
+    private final CmisRepository self;
+    @Autowired
+    public CmisRepository(CmisRepository cmisRepository) {
+        this.self = cmisRepository;
+    }
 
     private SearchStrategy getSearchStrategy() {
         return SearchStrategyProvider.getSearchStrategy(cmisSession);
