@@ -106,6 +106,18 @@
                   <button
                     euiListItem
                     (click)="openMilestoneSendCopyForContributionDialog(row)"
+                    *appIsRecievedForContribution="proposal"
+                  >
+                    {{
+                      'page.collection.milestones.actions.send-copy-for-contribution'
+                        | translate
+                    }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="openMilestoneSendCopyForContributionDialog(row)"
+                    *appIsSentForContribution="proposal"
+                    [disabled]="isRevisionReady"
                   >
                     {{
                       'page.collection.milestones.actions.send-copy-for-contribution'
