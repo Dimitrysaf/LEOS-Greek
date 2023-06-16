@@ -115,12 +115,12 @@
                   </button>
                   <button
                     euiListItem
-                    (click)="openMilestoneSendCopyForContributionDialog(row)"
+                    (click)="openSendContributionForRevision(row)"
                     *appIsSentForContribution="proposal"
-                    [disabled]="isRevisionReady"
+                    [disabled]="row.status !== 'File ready'"
                   >
                     {{
-                      'page.collection.milestones.actions.send-copy-for-contribution'
+                      'page.collection.milestones.actions.send-revision-for-merge'
                         | translate
                     }}
                   </button>

@@ -16,6 +16,7 @@ import { Document } from '@/shared';
 export class IsRecievedForContributionDirective implements OnDestroy {
   private destroy$: Subject<any> = new Subject();
   private userLogin: string;
+
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
@@ -32,10 +33,7 @@ export class IsRecievedForContributionDirective implements OnDestroy {
   }
 
   @Input() set appIsRecievedForContribution(proposal: Document) {
-    if (
-      proposal.cloneProposalMetadataVO.clonedProposal &&
-      proposal.cloneProposalMetadataVO.targetUser !== this.userLogin
-    ) {
+    if (!proposal.cloneProposalMetadataVO.clonedProposal) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainerRef.clear();
