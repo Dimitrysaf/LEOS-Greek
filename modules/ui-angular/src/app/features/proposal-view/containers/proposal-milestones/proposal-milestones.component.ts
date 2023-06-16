@@ -44,7 +44,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   proposalRef: string;
   dataSource: Milestone[] = [];
   permissions: Permission[];
-  isRevisionReady = false;
 
   destroy$: Subject<any> = new Subject();
 
@@ -118,7 +117,9 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.milestoneViewData = null;
   }
 
-  onSendContributionForRevision(proposal: Document) {}
+  openSendContributionForRevision(milestone: MilestoneDescriptor) {
+    this.proposalDetailsService.sendRevisionForMerge(milestone);
+  }
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
     milestones.forEach((milestone) => {
