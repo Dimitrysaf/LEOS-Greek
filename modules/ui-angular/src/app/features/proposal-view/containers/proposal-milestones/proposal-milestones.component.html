@@ -172,6 +172,7 @@
   #addMilestoneDialog
   (closed)="onAddMilestoneDialogClosed()"
   *ngIf="addMilestoneDialogVisible"
+  [isCloneProposal]="proposal.cloneProposalMetadataVO.clonedProposal"
 ></app-add-milestone-dialog>
 
 <app-proposal-milestone-view

@@ -133,6 +133,7 @@
   "page.collection.milestones.table.add-milestone-dialog.title.placeholder": "Please type milestone title here",
   "page.collection.milestones.table.add-milestone-dialog.create": "Create Milestone",
   "page.collection.milestones.type.proposal1": "For Interservice Consultation",
+  "page.collection.milestones.type.cloned-proposal1": "Contribution from Legal Service",
   "page.collection.milestones.type.proposal2": "For Decision",
   "page.collection.milestones.type.proposal3": "Revision after Interservice Consultation",
   "page.collection.milestones.type.mandate1": "Meeting of the Council",
