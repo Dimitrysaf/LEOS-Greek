@@ -26,6 +26,8 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Properties;
+
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
@@ -35,6 +37,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 public class DocumentContentServiceProposalImpl extends DocumentContentServiceImpl {
 
     private CloneContext cloneContext;
+    private Properties applicationProperties;
 
     @Autowired
     public DocumentContentServiceProposalImpl(TransformationService transformationService,
@@ -42,15 +45,18 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
                                               MemorandumService memorandumService, ProposalService proposalService, FinancialStatementService financialStatementService,
                                               XmlContentProcessor xmlContentProcessor,
                                               XmlNodeProcessor xmlNodeProcessor,
-                                              CloneContext cloneContext, XPathCatalog xPathCatalog) {
+                                              CloneContext cloneContext, XPathCatalog xPathCatalog,
+                                              Properties applicationProperties) {
         super(transformationService, compareService, annexService, billService, memorandumService, null, financialStatementService, proposalService,
                 xmlContentProcessor, xmlNodeProcessor, xPathCatalog);
         this.cloneContext = cloneContext;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override
     public String toEditableContent(XmlDocument xmlDocument, String contextPath, SecurityContext securityContext, byte[] coverPageContent) {
-        /*if (isCloneProposal()) {
+        boolean cloneComparisonEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.clone.comparison.enabled"));
+        if (isCloneProposal() && cloneComparisonEnabled) {
             String[] contentsToCompare = getContentsToCompare(xmlDocument, contextPath, securityContext, coverPageContent);
             if (contentsToCompare != null) {
                 switch (contentsToCompare.length) {
@@ -71,7 +77,7 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
                         return null;
                 }
             }
-        }*/
+        }
         return getEditableXml(xmlDocument, contextPath, securityContext, coverPageContent);
     }
 
