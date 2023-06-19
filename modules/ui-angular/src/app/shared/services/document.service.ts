@@ -24,6 +24,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { combineLatestInit } from 'rxjs/internal/observable/combineLatest';
 
@@ -37,6 +38,7 @@ import {
   LeosAppConfig,
   Permission,
 } from '@/shared';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { downloadBlob } from '@/shared/utils';
 
@@ -109,6 +111,7 @@ export class DocumentService implements OnDestroy {
   currentIndex: number;
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
+  contributions$: Observable<ContributionVO[]>;
 
   // private documentCategoryBS = new BehaviorSubject(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
@@ -160,9 +163,16 @@ export class DocumentService implements OnDestroy {
       .pipe(filter(Boolean));
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
+      tap((x) => console.log('xxxxxxxx:', x)),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
+    );
+    this.contributions$ = this.documentView$.pipe(
+      filter(Boolean),
+      switchMap((documentView) =>
+        this.getContributions(documentView.proposalRef),
+      ),
     );
     // this.documentView$ = this.documentReplaceView$.pipe();
 
@@ -900,6 +910,16 @@ export class DocumentService implements OnDestroy {
 
   getUserPermissions() {
     return this.permissionsBS.value;
+  }
+
+  getContributions(proposalRef: string, annexIndex?: number) {
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const queryString = documentType === 'annex' ? '?=' + annexIndex : '';
+
+    return this.http.get<ContributionVO[]>(
+      `${apiBaseUrl}/secured/contribution/list-contributions/${proposalRef}/${documentType}${queryString}`,
+    );
   }
 
   private setSearchResultsCounter(count: number) {
