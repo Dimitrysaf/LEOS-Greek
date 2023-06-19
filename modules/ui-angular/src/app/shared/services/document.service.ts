@@ -1177,7 +1177,7 @@ export class DocumentService implements OnDestroy {
         .get('page.editor.export-email-sent', { userEmail })
         .subscribe((message) => {
           this.appShell.growl({
-            severity: 'success',
+            severity: 'info',
             detail: message,
           });
         });
