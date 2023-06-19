@@ -304,6 +304,7 @@
   "page.editor.versions.restore.modal-text": "Are you sure you want to revert to this version?",
   "page.editor.toc-pane.label": "Table of Content",
   "page.editor.versions-pane.label": "Versions",
+  "page.editor.contribution-pane.label": "Contributions",
   "page.editor.toc.actions.collapseAll": "Collapse All",
   "page.editor.toc.actions.expandAll": "Expand All",
   "page.editor.toc.move-actions.move": "Move",
