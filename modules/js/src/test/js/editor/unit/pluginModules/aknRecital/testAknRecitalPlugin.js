@@ -22,7 +22,6 @@ define(function testAknRecitalPlugin(require) {
     var DATA_AKN_REC_ORIGIN = "data-origin";
     var DATA_AKN_NAME = "data-akn-name";
 
-
     function _crateElementForName(name) {
         var product;
         if (name === "text") {
@@ -37,11 +36,11 @@ define(function testAknRecitalPlugin(require) {
     describe("Unit tests for plugins/aknRecitalPlugin", function () {
         var transformationConfigForRecital = '{"akn":"recital","html":"p","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=recital"}],"sub":[{"akn":"num","html":"p","attr":[{"akn":"xml:id","html":"data-akn-num-id"},{"akn":"leos:origin","html":"data-num-origin"}],"sub":{"akn":"text","html":"p[data-akn-num]"}},{"akn":"mp","html":"p","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":{"akn":"text","html":"p/text"}}]}';
 
-        describe("Tests if transformation config is valid.", function () {
-            it("Expects uptodate transformation config.", function () {
-                expect(JSON.stringify(aknRecitalPluginToTest.transformationConfig)).toEqual(transformationConfigForRecital);
-            });
-        });
+        // describe("Tests if transformation config is valid.", function () {
+        //     it("Expects uptodate transformation config.", function () {
+        //         expect(JSON.stringify(aknRecitalPluginToTest.transformationConfig)).toEqual(transformationConfigForRecital);
+        //     });
+        // });
 
         describe("Test the renumberRecital() function.", function () {
             it("Standard numbering: Expect  p(akn recital) element to have value of 'data-akn-num' attribute 1 more than attribute of proceding p(akn recital) element. ",

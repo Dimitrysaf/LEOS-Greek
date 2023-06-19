@@ -1,8 +1,6 @@
-/* jshint browser: false, node: true */
-
 /**
  * Bender configuration file
- *
+ * 
  * @param {Object}   applications       Applications used in current project
  * @param {Array}    browsers           List of browsers used for testing
  * @param {Number}   captureTimeout     Timeout before which a launched browser should connect to the server
@@ -25,86 +23,8 @@
  * @param {Number}   testTimeout        Timeout after which a test will be fetched again
  */
 
-'use strict';
-
 var config = {
-
-	applications: {
-		ckeditor: {
-			path: 'src/main/lib/ckeditor_4.12.1',
-			files: [
-				'ckeditor.js'
-			]
-		}
-	},
-
-	framework: 'yui',
-
-	// secure: true,
-	privateKey: 'src/test/ckeditor/_benderjs/ssl/key.pem',
-	certificate: 'src/test/ckeditor/_benderjs/ssl/cert.pem',
-
-	coverage: {
-		paths: [
-			// 'adapters/**/*',
-			// 'core/**/*',
-			// 'dev/**/*',
-			// 'lang/**/*',
-			// 'plugins/**/*',
-			// 'samples/**/*',
-			'*.js'
-		],
-		options: {
-			checkTrackerVar: true
-		}
-	},
-
-	plugins: [
-		'benderjs-coverage',
-		'benderjs-yui',
-		'benderjs-sinon',
-		'benderjs-jquery',
-		'src/test/ckeditor/_benderjs/ckeditor',
-    // 'src/main/lib/requirejs_2.3.3',
-    'src/test/ckeditor/leos',
-        // 'src/main/js/editor/plugins',
-        // 'editor/plugins',
-		'benderjs-yui-beautified'
-	],
-
-	tests: {
-		'Plugins': {
-			applications: [ 'ckeditor' ],
-			basePath: 'src',
-            paths: [
-              	'test/ckeditor/plugins/**',
-                // 'main/js/editor/plugins/**',
-                '!**/_*/**'
-            ]
-		},  
-        // 'External Plugins': {
-        //     applications: [ 'ckeditor' ],
-        //     basePath: 'src/main/js/editor/plugins/',
-        //     paths: [
-        //         '*/tests/**',
-        //         '!**/_*/**'
-        //     ]
-        // },
-	},
-
-	'yui-beautified': {
-		indent_with_tabs: true,
-		wrap_line_length: 0,
-		// All tags should be reformatted.
-		unformatted: 'none',
-		indent_inner_html: true,
-		preserve_newlines: true,
-		max_preserve_newlines: 0,
-		indent_handlebars: false,
-		end_with_newline: true,
-		extra_liners: 'head, body, div, p, /html'
-	},
-	mathJaxLibPath: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML'
+	// put your configuration here
 };
 
 module.exports = config;

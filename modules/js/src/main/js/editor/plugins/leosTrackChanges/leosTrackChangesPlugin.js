@@ -402,7 +402,8 @@ define(function leosTrackChangesPluginModule(require) {
     // return plugin module
     var pluginModule = {
         name : pluginName,
-        transformationConfig : transformationConfig
+        transformationConfig : transformationConfig,
+        trackChanges: trackChanges
     };
 
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
