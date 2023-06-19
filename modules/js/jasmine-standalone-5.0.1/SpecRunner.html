@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner v5.0.1</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-5.0.1/jasmine_favicon.png">
+  <link rel="stylesheet" href="lib/jasmine-5.0.1/jasmine.css">
+
+  <script src="lib/jasmine-5.0.1/jasmine.js"></script>
+  <script src="lib/jasmine-5.0.1/jasmine-html.js"></script>
+  <script src="lib/jasmine-5.0.1/boot0.js"></script>
+  <!-- optional: include a file here that configures the Jasmine env -->
+  <script src="lib/jasmine-5.0.1/boot1.js"></script>
+
+  <!-- include source files here... -->
+  <script type="application/javascript" src="../src/main/js/leosBootstrap.js" id="leosBootstrap"></script>
+  <script type="application/javascript" src="../src/main/lib/requirejs_2.3.3/require.js" data-main="js/leosModulesBootstrap.js"></script>
+
+  <!-- include spec files here...-->
+  <script>
+//     require(["../test/js/editor/unit/pluginModules/aknRecital/testAknRecitalPlugin"], function() {
+//     	jasmine.getEnv().execute();
+//     });
+//     require(["../test/js/editor/unit/pluginModules/leosInlineSave/testLeosInlineSave"], function() {
+//         jasmine.getEnv().execute();
+//     });
+//     require(["../test/js/editor/unit/pluginModules/leosInlineSavePlugin/testLeosInlineSavePlugin"], function() {
+//         jasmine.getEnv().execute();
+//     });
+//     require(["../test/js/editor/unit/pluginModules/leosTrackChanges/testLeosTrackChangesPlugin"], function() {
+//         jasmine.getEnv().execute();
+//     });
+
+    // working
+    // require(["../test/js/editor/unit/pluginModules/leosTrackChanges/testLeosTrackChangesPlugin_TC"], function() {
+    //     jasmine.getEnv().execute();
+    // });
+    require(["../test/js/editor/unit/pluginModules/leosTrackChanges/testLeosTrackChangesPlugin_deleteCharacter"], function() {
+        jasmine.getEnv().execute();
+    });
+  </script>
+
+  <!--not working-->
+  <!--<script src="../test/js/editor/unit/pluginModules/leosTrackChanges/testLeosTrackChangesPlugin_TC2"></script>-->
+</head>
+
+<body>
+
+  <div id="leos-placeholder" class="leos-placeholder" data-wrapped-id='123' style='height:10px'><article>hello workd</article></div>
+
+
+</body>
+</html>
