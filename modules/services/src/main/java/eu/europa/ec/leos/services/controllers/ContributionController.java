@@ -55,12 +55,12 @@ public class ContributionController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(value = "/list-contributions/{proposalRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/list-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("proposalRef") String proposalRef, @PathVariable("documentType") String documentType,
+    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String documentRef, @PathVariable("documentType") String documentType,
                                                                @RequestParam Integer annexIndex) {
         final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
-        List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(proposalRef, annexIndex, documentCategory);
+        List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(documentRef, annexIndex, documentCategory);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 }
