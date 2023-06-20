@@ -918,11 +918,20 @@ export class DocumentService implements OnDestroy {
   getContributions(proposalRef: string, annexIndex?: number) {
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const queryString = documentType === 'annex' ? '?=' + annexIndex : '';
+    const queryString =
+      documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
 
     return this.http.get<ContributionVO[]>(
       `${apiBaseUrl}/secured/contribution/list-contributions/${proposalRef}/${documentType}${queryString}`,
     );
+  }
+
+  declineContribution() {
+    //TODO add api call and parameters
+  }
+
+  viewContribution() {
+    //TODO add api call and parameters
   }
 
   private setSearchResultsCounter(count: number) {

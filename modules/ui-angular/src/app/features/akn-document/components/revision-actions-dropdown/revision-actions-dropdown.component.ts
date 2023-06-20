@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 
+import { DocumentService } from '@/shared/services/document.service';
+
 @Component({
   selector: 'app-revision-actions-dropdown',
   templateUrl: './revision-actions-dropdown.component.html',
-  styleUrls: ['./revision-actions-dropdown.component.scss']
+  styleUrls: ['./revision-actions-dropdown.component.scss'],
 })
 export class RevisionActionsDropdownComponent implements OnInit {
+  constructor(private documentService: DocumentService) {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
