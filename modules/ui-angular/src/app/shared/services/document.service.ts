@@ -17,6 +17,8 @@ import {
   mergeMap,
   Observable,
   of,
+  share,
+  shareReplay,
   skip,
   Subject,
   switchMap,
@@ -164,6 +166,7 @@ export class DocumentService implements OnDestroy {
       tap((x) => console.log('xxxxxxxx:', x)),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
+      shareReplay(1),
     );
     this.contributions$ = this.documentView$.pipe(
       filter(Boolean),
