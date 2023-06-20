@@ -167,7 +167,7 @@ define(function leosTrackChangesPluginModule(require) {
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
 
-                    if (isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
 
                         var event = new EventWrapper(e);
 
@@ -405,7 +405,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Delete functionality - keyup
                 editable.attachListener(editor.document, "keyup", function(e) {
-                    if (isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         editor.getSelection().getRanges()[0].optimize();
                         var event = new EventWrapper(e);
                         var tcInsert = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
@@ -440,7 +440,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keypress", function(e) {
                     var event = new EventWrapper(e);
                     var character = event.getChar();
-                    if (character && !e.data.$.ctrlKey && !e.data.$.metaKey
+                    if (!CKEDITOR.dialog.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
                         && (event.getKeyCode() != 8) && (event.getKeyCode() != 46) && (event.getKeyCode() != 29)) { // Do not capture CTRL hotkeys & escape
                         if (isTrackChangesEnabled) {
                             var range = editor.getSelection().getRanges()[0];
@@ -484,7 +484,7 @@ define(function leosTrackChangesPluginModule(require) {
                 });
 
                 editor.on("paste", function(e) {
-                    if (isTrackChangesEnabled) {
+                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled) {
                         var jElement = $("<div/>").html(e.data.dataValue);
                         $(jElement).find(core.TRACKCHANGES_ELEMENT + "[data-akn-action='delete']").remove();
                         var text = jElement.html();
@@ -504,7 +504,7 @@ define(function leosTrackChangesPluginModule(require) {
                     /*
                      * Here it is another point we use addTrackChangesNested to reuse code.
                      */
-                    if (isTrackChangesEnabled) {
+                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled) {
                         var range = editor.getSelection().getRanges()[0];
                         var closedElements = actions.addTrackChangesNested(editor, range, new CKEDITOR.dom.nodeList(ctrlXArray));
                         var outerHTML = "";
@@ -518,15 +518,15 @@ define(function leosTrackChangesPluginModule(require) {
             });
 
             editor.on("beforeCommandExec", function(event) {
-                var styleToBeApplied = style.STYLE_ELEMENTS.find(e => e.event === event.data.name);
-                if (isTrackChangesEnabled && styleToBeApplied) {
+                var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
+                if (isTrackChangesEnabled && formatStyleToBeApplied) {
                     if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
-                        style.apply(editor, styleToBeApplied.style);
-                        event.cancel();
+                        style.apply(editor, formatStyleToBeApplied.style);
+                        return false;
                     } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
                         //TODO: Check style definition. Custom or default implementation no works with it.
-                        //style.remove(editor, styleToBeApplied.style);
-                        //editor.removeStyle(styleToBeApplied.style);
+                        //style.remove(editor, formatStyleToBeApplied.style);
+                        //editor.removeStyle(formatStyleToBeApplied.style);
                     }
                 }
             });
