@@ -392,6 +392,13 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             if (!!range.startContainer && !!range.startContainer.getAscendant('ol') && range.startContainer.getAscendant('ol').getAttribute('data-akn-allow-soft-enter') === 'false') {
                 return false;
             }
+            if(range.collapsed
+                && range.checkEndOfBlock(true)
+                && range.getNextEditableNode() === null
+                && !!range.endContainer && !!range.endContainer.getAttribute
+                && range.endContainer.getAttribute(leosPluginUtils.REFERS_TO) === leosPluginUtils.WRP){
+                return false;
+            }
         }
 
         var allowedElementsForShiftEnter = editor.LEOS.profile.config.allowedElementsForShiftEnter;
