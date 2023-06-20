@@ -5,9 +5,9 @@ import { RouteReuseStrategy } from '@angular/router';
 
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
-import { RevisionActionsDropdownComponent } from '@/features/components/revision-actions-dropdown/revision-actions-dropdown.component';
-import { RevisionPaneGroupComponent } from '@/features/components/revision-pane-group/revision-pane-group.component';
-import { RevisionPaneComponent } from '@/features/containers/revision-pane/revision-pane.component';
+import { RevisionActionsDropdownComponent } from '@/features/akn-document/components/revision-actions-dropdown/revision-actions-dropdown.component';
+import { RevisionPaneGroupComponent } from '@/features/akn-document/components/revision-pane-group/revision-pane-group.component';
+import { RevisionPaneComponent } from '@/features/akn-document/containers/revision-pane/revision-pane.component';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
 import { SharedModule } from '@/shared/shared.module';
 
