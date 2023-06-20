@@ -1536,6 +1536,7 @@ define(function leosPluginUtilsModule(require) {
         COUNCIL_INSTANCE: COUNCIL_INSTANCE,
         INLINE_FROM_MATCH: INLINE_FROM_MATCH,
         BOGUS: BOGUS,
-        TD: TD
+        TD: TD,
+        WRP: WRP
     };
 });
