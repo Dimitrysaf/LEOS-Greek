@@ -1,22 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import * as cluster from "cluster";
+import * as cluster from 'cluster';
 
 @Component({
   selector: 'app-revision-pane-group',
   templateUrl: './revision-pane-group.component.html',
-  styleUrls: ['./revision-pane-group.component.scss']
+  styleUrls: ['./revision-pane-group.component.scss'],
 })
 export class RevisionPaneGroupComponent implements OnInit {
-
-  revisionVersion:string;
-  originatingApplication:string;
-  revisionTitle : string;
+  revisionVersion: string;
+  originatingApplication: string;
+  revisionTitle: string;
   updatedAtBy: string;
-  status:string;
+  status: string;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
