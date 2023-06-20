@@ -20,8 +20,8 @@ define(function leosTrackChangesStyleModule(require) {
 
     var style = {
 
-        // Style element types
-        STYLE_ELEMENTS:  [ { event: "bold", style: new CKEDITOR.style( { element: "strong" } )},
+        // Format styles
+        FORMAT_STYLES:  [ { event: "bold", style: new CKEDITOR.style( { element: "strong" } )},
             { event: "italic", style: new CKEDITOR.style( { element: "em" } )},
             { event: "subscript", style: new CKEDITOR.style( { element: "sub" } )},
             { event: "superscript", style: new CKEDITOR.style( { element: "sup" } )} ],
@@ -346,32 +346,41 @@ define(function leosTrackChangesStyleModule(require) {
                         styleNode = null;
 
                     if (styleNode) {
-                        var content = styleRange.extractContents();
-                        var tcElement = styleRange.getCommonAncestor().$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
-                        var isInsideTcInsert = tcElement && (tcElement.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION);
-                        var deleteTcElement;
+                        if (!this.FORMAT_STYLES.find(s => s.style === style)) {
+                            // Move the contents of the range to the style element.
+                            styleRange.extractContents().appendTo(styleNode);
 
-                        if (!isInsideTcInsert) {
-                            var deleteTcStyle = new CKEDITOR.style({
+                            // Insert it into the range position (it is collapsed after
+                            // extractContents.
+                            styleRange.insertNode(styleNode);
+                        } else {
+                            var content = styleRange.extractContents();
+                            var tcElement = styleRange.getCommonAncestor().$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                            var isInsideTcInsert = tcElement && (tcElement.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION);
+                            var deleteTcElement;
+
+                            if (!isInsideTcInsert) {
+                                var deleteTcStyle = new CKEDITOR.style({
+                                    element: core.TRACKCHANGES_ELEMENT,
+                                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                                });
+                                deleteTcElement = this.getElement(deleteTcStyle, document);
+                                content.clone(true).appendTo(deleteTcElement);
+                            }
+
+                            content.appendTo(styleNode);
+
+                            var insertTcStyle = new CKEDITOR.style({
                                 element: core.TRACKCHANGES_ELEMENT,
-                                attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                                attributes: core.getTrackChangeAttributes(editor, core.INSERT_ACTION)
                             });
-                            deleteTcElement = this.getElement(deleteTcStyle, document);
-                            content.clone(true).appendTo(deleteTcElement);
-                        }
+                            var insertTcElement = this.getElement(insertTcStyle, document);
+                            insertTcElement.append(styleNode);
 
-                        content.appendTo(styleNode);
-
-                        var insertTcStyle = new CKEDITOR.style({
-                            element: core.TRACKCHANGES_ELEMENT,
-                            attributes: core.getTrackChangeAttributes(editor, core.INSERT_ACTION)
-                        });
-                        var insertTcElement = this.getElement(insertTcStyle, document);
-                        insertTcElement.append(styleNode);
-
-                        styleRange.insertNode(insertTcElement);
-                        if (!isInsideTcInsert) {
-                            styleRange.insertNode(deleteTcElement);
+                            styleRange.insertNode(insertTcElement);
+                            if (!isInsideTcInsert) {
+                                styleRange.insertNode(deleteTcElement);
+                            }
                         }
 
                         // Here we do some cleanup, removing all duplicated
