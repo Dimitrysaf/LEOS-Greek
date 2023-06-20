@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as cluster from "cluster";
 
 @Component({
   selector: 'app-revision-pane-group',
@@ -6,6 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./revision-pane-group.component.scss']
 })
 export class RevisionPaneGroupComponent implements OnInit {
+
+  revisionVersion:string;
+  originatingApplication:string;
+  revisionTitle : string;
+  updatedAtBy: string;
+  status:string;
 
   constructor() { }
 
