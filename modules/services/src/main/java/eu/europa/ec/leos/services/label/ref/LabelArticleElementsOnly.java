@@ -108,14 +108,14 @@ public class LabelArticleElementsOnly extends LabelHandler {
         if (showThisLabel(refs, mrefCommonNodes, sourceNode)) {
             bufferLabels.put(ref.getType(), new LabelKey(getPresentationType(ref), THIS_REF, true, documentRef));
         } else {
-            StringBuilder sb = createAllAnchors(refs, locale, withAnchor);
+            StringBuilder sb = createAllAnchors(refs, mrefCommonNodes, locale, withAnchor);
             bufferLabels.put(ref.getType(), new LabelKey(getPresentationType(ref), sb.toString(), isUnnumbered(ref), documentRef));
         }
 
         //2. add rest of nodes, starting from the leaf, going up to parents until it reach Article
         while (!ARTICLE.equals(ref.getType()) && ref.getParent()!= null) {
             ref = ref.getParent();
-            processOtherNodesLabel(bufferLabels, ref, mrefCommonNodes.contains(ref), locale);
+            processOtherNodesLabel(bufferLabels, ref, mrefCommonNodes, mrefCommonNodes.contains(ref), locale);
         }
 
         // 3. build the label based on the bufferLabels
@@ -238,7 +238,7 @@ public class LabelArticleElementsOnly extends LabelHandler {
      * @param withAnchor true if the label should be a html anchor for navigation purpose
      * @return A list with anchors of selected nodes, example: <ref href="1">1</ref>, <ref href="2">2</ref> and <ref href="3">3</ref>.
      */
-    private StringBuilder createAllAnchors(List<TreeNode> refs, Locale locale, boolean withAnchor) {
+    private StringBuilder createAllAnchors(List<TreeNode> refs, List<TreeNode> mrefCommonNodes, Locale locale, boolean withAnchor) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < refs.size(); i++) {
             if (i != 0 && i == refs.size() - 1) {
@@ -246,12 +246,12 @@ public class LabelArticleElementsOnly extends LabelHandler {
             } else if (i > 0) {
                 sb.append(", ");
             }
-            sb.append(createAnchor(refs.get(i), locale, withAnchor));
+            sb.append(createAnchor(refs.get(i), mrefCommonNodes, locale, withAnchor));
         }
         return sb;
     }
 
-    private void processOtherNodesLabel(Map<String, LabelKey> buffers, TreeNode ref, boolean isThis, Locale locale) {
+    private void processOtherNodesLabel(Map<String, LabelKey> buffers, TreeNode ref, List<TreeNode> mrefCommonNodes, boolean isThis, Locale locale) {
         // keep the old value if is sameType as the child. Last iterated parent will add the element name.
         // In the end of iteration will have something like: Point (a)(1)(i)(ii)
         String oldnum = "";
@@ -272,7 +272,7 @@ public class LabelArticleElementsOnly extends LabelHandler {
             } else {
                 labelName = getPresentationType(ref);
             }
-            labelNumber = NumFormatter.formattedNum(ref, locale) + oldnum;
+            labelNumber = NumFormatter.formattedNum(ref, mrefCommonNodes, locale) + oldnum;
         }
 
         buffers.put(ref.getType(), new LabelKey(labelName, labelNumber, isUnnumbered(ref), ref.getDocumentRef()));

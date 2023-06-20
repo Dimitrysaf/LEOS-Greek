@@ -17,7 +17,7 @@ abstract public class LabelHandler {
 
     abstract public int getOrder();
 
-    protected String createAnchor(TreeNode ref, Locale locale, boolean withAnchor) {
+    protected String createAnchor(TreeNode ref, List<TreeNode> mrefCommonNodes, Locale locale, boolean withAnchor) {
         final String rv;
         if(withAnchor) {
             StringBuilder builder = new StringBuilder("<ref");
@@ -26,11 +26,11 @@ abstract public class LabelHandler {
                 builder.append(" leos:origin=\"").append(ref.getOrigin()).append("\"");
             }
             builder.append(" xml:id=\"").append(ref.getRefId()).append("\">");
-            builder.append(NumFormatter.formattedNum(ref, locale));
+            builder.append(NumFormatter.formattedNum(ref, mrefCommonNodes, locale));
             builder.append("</ref>");
             rv = builder.toString();
         } else {
-            rv = NumFormatter.formattedNum(ref, locale);
+            rv = NumFormatter.formattedNum(ref, mrefCommonNodes, locale);
         }
         return rv;
     }
