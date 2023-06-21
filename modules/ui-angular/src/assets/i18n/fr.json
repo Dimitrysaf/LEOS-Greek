@@ -216,6 +216,7 @@
   "page.editor.close-compare-view-button.tooltip": "[FR]Close compare view",
   "page.editor.create-note-button.tooltip": "Nouvelle note de document",
   "page.editor.export-email-sent": "[FR] You will receive an email shortly with {{fileType}} file(s) at {{userEmail}}",
+  "page.editor.export-version-email-sent": "[FR] You will receive an email shortly with file(s) at {{userEmail}}",
   "page.editor.export-econsilium-success": "[FR]The document has been exported. You can find it in the <em>Proposal Viewer</em> page, under the <em>Exports</em> tab.",
   "page.editor.highlights-button.tooltip-enable": "Montrer la surbrillance",
   "page.editor.highlights-button.tooltip-disable": "Cacher la surbrillance",

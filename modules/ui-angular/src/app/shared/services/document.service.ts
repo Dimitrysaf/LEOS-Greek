@@ -1149,7 +1149,7 @@ export class DocumentService implements OnDestroy {
     this.appConfig.config.subscribe((c) => {
       const userEmail = c.user.email;
       this.translate
-        .get('page.editor.export-email-sent', { userEmail })
+        .get('page.editor.export-version-email-sent', { userEmail })
         .subscribe((message) => {
           this.appShell.growl({
             severity: 'info',
