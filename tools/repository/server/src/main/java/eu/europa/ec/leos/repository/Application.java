@@ -27,11 +27,16 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
+        return application
+                .properties("spring.config.name:leos-repository")
+                .sources(Application.class);
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(Application.class, args);
+        new SpringApplicationBuilder(Application.class)
+                .properties("spring.config.name:leos-repository")
+                .build()
+                .run(args);
     }
 
 }
