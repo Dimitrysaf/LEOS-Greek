@@ -228,7 +228,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                 content = value;
             }
             // 3. Inject newly created node in XML
-            Node newNode = XercesUtils.createElementWithAknNS(document, tagName, content);
+            Node newNode = XercesUtils.createElement(document, tagName, content);
             node = XercesUtils.addChild(newNode, node);
             for (Attribute attr : attributes) {
                 XercesUtils.addAttribute(node, attr.name, attr.value);
