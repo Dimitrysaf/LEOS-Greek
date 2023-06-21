@@ -234,6 +234,20 @@
               (exploreMilestone)="exploreMilestone($event)"
             ></app-versions-pane>
           </eui-fieldset>
+          <!-- contributions -->
+          <eui-fieldset
+            class="eui-u-mt-s"
+            label="{{ 'page.editor.contribution-pane.label' | translate }}"
+            isExpandable
+            [isExpanded]="false"
+          >
+            <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
+              <button euiButton euiIconButton euiSecondary euiOutline euiSizeS>
+                <eui-icon-svg icon="search"></eui-icon-svg>
+              </button>
+            </div>
+            <app-revision-pane> </app-revision-pane>
+          </eui-fieldset>
         </eui-page-column-body>
       </eui-page-column>
 
@@ -602,6 +616,7 @@
         (hideSplitter)="onHideAnnotationsSplitter($event)"
       ></app-draggable-splitter>
 
+      <!-- unsaved data dialog -->
       <eui-dialog
         #unSavedDialog
         [title]="

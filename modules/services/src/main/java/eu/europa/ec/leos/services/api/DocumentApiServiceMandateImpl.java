@@ -17,9 +17,7 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -35,7 +33,6 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
-import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
@@ -123,7 +120,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             }
             return packageComparedXmlFiles(original, current, intermediate, leosComparedContent, docuWriteComparedContent, comparedInfo, language,
                     "docuWrite");
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             LOG.error("Error occurred while requesting download of xml comparison files", ex);
             throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid " + ex);
         }

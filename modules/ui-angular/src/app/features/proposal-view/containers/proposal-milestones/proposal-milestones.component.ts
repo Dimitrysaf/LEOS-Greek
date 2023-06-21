@@ -6,9 +6,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
+import { MilestoneAnnotationWarningModalComponent } from '@/features/proposal-view/components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 import { Milestone } from '@/features/proposal-view/models/milestone.model';
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
 import { Document, Permission } from '@/shared';
@@ -31,10 +33,13 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   addMilestoneDialogVisible = false;
   openMilestoneViewDialogVisible = false;
   sendCopyDialogVisible = false;
+  annotationWarningDialogVisible = false;
   @ViewChild('milestoneViewDialog')
   milestoneViewDialog: ProposalMilestoneViewComponent;
   @ViewChild('sendMilestoneCopyForContributionDialog')
   sendMilestoneCopyForContributionDialog: ProposalMilestoneSendCopyDialogComponent;
+  @ViewChild('milestoneAnnotationWarningModal')
+  milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
   proposalRef: string;
   dataSource: Milestone[] = [];
@@ -66,6 +71,21 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
+  openAnnotationWarningModal(): void {
+    this.annotationWarningDialogVisible = true;
+    setTimeout(() => this.milestoneAnnotationWarningModal.open(), 0);
+  }
+
+  acceptAnnotationWarningModal(): void {
+    this.annotationWarningDialogVisible = false;
+    this.openAddMilestoneDialog();
+  }
+
+  dismissAnnotationWarningModal(): void {
+    this.annotationWarningDialogVisible = false;
+    this.milestoneAnnotationWarningModal.close();
+  }
+
   openAddMilestoneDialog(): void {
     this.addMilestoneDialogVisible = true;
     setTimeout(() => this.addMilestoneDialog.open(), 0);
@@ -95,6 +115,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   onMilestoneSendCopyForContributionDialogClosed() {
     this.sendCopyDialogVisible = false;
     this.milestoneViewData = null;
+  }
+
+  openSendContributionForRevision(milestone: MilestoneDescriptor) {
+    this.proposalDetailsService.sendRevisionForMerge(milestone);
   }
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
