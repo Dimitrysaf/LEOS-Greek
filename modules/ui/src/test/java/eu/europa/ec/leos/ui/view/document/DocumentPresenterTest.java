@@ -320,7 +320,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id")), any(), any());
         verify(documentScreen).initTrackChanges(any());
         verify(documentScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
-        verify(contributionService).getDocumentContributions(docId, 0, Bill.class);
+        verify(contributionService).getDocumentContributions(docRef, 0, Bill.class);
         verify(documentScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
         verify(documentScreen).findContributionAndShowTab(docRef);
 
@@ -417,7 +417,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentScreen).initTrackChanges(any());
         verify(documentScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(documentScreen).findContributionAndShowTab(docRef);
-        verify(contributionService).getDocumentContributions(docId, 0, Bill.class);
+        verify(contributionService).getDocumentContributions(docRef, 0, Bill.class);
         verify(documentScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
 
         verify(packageService, Mockito.times(2)).findPackageByDocumentId(document.getId());

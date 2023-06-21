@@ -295,7 +295,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
         verify(annexService).getAllVersions(docId, docRef);
-        verify(contributionService).getDocumentContributions(docId, 1, Annex.class);
+        verify(contributionService).getDocumentContributions(docRef, 1, Annex.class);
         verify(annexScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
         verify(annexScreen).setLiveDiffingRequired(anyBoolean());
         verifyNoMoreInteractions(userHelper, annexService, documentContentService, annexScreen);
@@ -382,7 +382,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(annexScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), any(), any());
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
-        verify(contributionService).getDocumentContributions(docId, 1, Annex.class);
+        verify(contributionService).getDocumentContributions(docRef, 1, Annex.class);
         verify(annexScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
         verify(annexService).getAllVersions(docId, docRef);
         verify(cloneContext, Mockito.times(8)).setCloneProposalMetadataVO(any());
