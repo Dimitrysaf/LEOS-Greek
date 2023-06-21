@@ -38,7 +38,10 @@ import {
   LeosAppConfig,
   Permission,
 } from '@/shared';
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import {
+  ContributionVO,
+  DeclineContributionResponse,
+} from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { downloadBlob } from '@/shared/utils';
 
@@ -923,7 +926,14 @@ export class DocumentService implements OnDestroy {
   }
 
   declineContribution() {
-    //TODO add api call and parameters
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    return this.http.post(
+      `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
+      {},
+    );
   }
 
   viewContribution() {
