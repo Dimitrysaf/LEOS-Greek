@@ -308,6 +308,7 @@
   "page.editor.contribution.actions-button.tooltip": "Actions",
   "page.editor.contribution.actions.view.amd.merge": "View and Merge",
   "page.editor.contribution.actions.decline": "Decline Contribution",
+  "page.editor.contribution-item.updated-by": "Updated on {{ updatedOn }} by {{ updatedBy }}",
   "page.editor.toc.actions.collapseAll": "Collapse All",
   "page.editor.toc.actions.expandAll": "Expand All",
   "page.editor.toc.move-actions.move": "Move",

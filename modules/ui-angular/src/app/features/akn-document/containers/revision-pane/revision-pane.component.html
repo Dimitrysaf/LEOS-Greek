@@ -1,6 +1,8 @@
 <div class="eui-u-flex eui-u-flex-column app-u-gap-m">
   <app-revision-pane-group
     class="eui-u-display-block eui-u-width-100"
+    *ngFor="let contribution of documentService.contributions$ | async"
+    [contribution]="contribution"
   ></app-revision-pane-group>
 </div>
 {{ documentService.contributions$ | async }}
