@@ -38,10 +38,7 @@ import {
   LeosAppConfig,
   Permission,
 } from '@/shared';
-import {
-  ContributionVO,
-  DeclineContributionResponse,
-} from '@/shared/models/contribution-vo.model';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { downloadBlob } from '@/shared/utils';
 
@@ -1186,6 +1183,7 @@ export class DocumentService implements OnDestroy {
   private notifyExportEmailSent() {
     this.appConfig.config.subscribe((c) => {
       const userEmail = c.user.email;
+      // const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
       this.translate
         .get('page.editor.export-email-sent', { userEmail })
         .subscribe((message) => {
