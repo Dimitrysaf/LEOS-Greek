@@ -107,9 +107,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     }
 
     @Override
-    public <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentId, int annexIndex, Class<T> filterType) {
+    public <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentRef, int annexIndex, Class<T> filterType) {
         List<ContributionLegDocumentVO<T>> documentVersions = new ArrayList<>();
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, filterType);
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         final List<String> clonedMilestoneIds = proposal.getClonedMilestoneIds();
         for (String clonedMilestoneId : clonedMilestoneIds) {

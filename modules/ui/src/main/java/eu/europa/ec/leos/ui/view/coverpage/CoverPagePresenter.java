@@ -392,7 +392,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     private void populateVersionsData(Proposal proposal) {
         DocumentVO proposalVO = createProposalVO(proposal);
         final List<VersionVO> allVersions = getVersionVOS();
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, Proposal.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Proposal.class);
         coverPageScreen.setDataFunctions(
                 proposalVO,
                 allVersions,
@@ -915,7 +915,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         proposalService.updateProposal(revision.getId(), properties, false);
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, Proposal.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Proposal.class);
         coverPageScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());
         eventBus.post(new NotificationEvent(Type.INFO, msgKey));

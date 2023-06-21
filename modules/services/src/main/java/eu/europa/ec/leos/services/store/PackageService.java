@@ -32,7 +32,8 @@ public interface PackageService {
 
     LeosPackage findPackageByDocumentId(String documentId);
 
-    // TODO consider using package id instead of path
+    <T extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends T> type);
+
     <T extends LeosDocument> List<T> findDocumentsByPackagePath(String path, Class<T> filterType, Boolean fetchContent);
     
     <T extends LeosDocument> T findDocumentByPackagePathAndName(String path, String name, Class<T> filterType);

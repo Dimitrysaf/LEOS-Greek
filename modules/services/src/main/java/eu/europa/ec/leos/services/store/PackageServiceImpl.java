@@ -79,6 +79,11 @@ class PackageServiceImpl implements PackageService {
     }
 
     @Override
+    public <T extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends T> type) {
+        return packageRepository.findPackageByDocumentRef(documentRef, type);
+    }
+
+    @Override
     public <T extends LeosDocument> List<T> findDocumentsByPackagePath(String path, Class<T> filterType, Boolean fetchContent) {
         return packageRepository.findDocumentsByPackagePath(path, filterType, fetchContent);
     }

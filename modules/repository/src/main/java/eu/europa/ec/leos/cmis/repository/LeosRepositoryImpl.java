@@ -494,6 +494,24 @@ public class LeosRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
+        logger.trace("Finding package by document ref... [documentRef=" + documentRef + ']');
+
+        long startTimeNanos = System.nanoTime();
+        String primaryType = CmisMapper.cmisPrimaryType(type);
+        List<Document> docs = cmisRepository.findDocumentsByRef(documentRef, primaryType);
+        if(docs != null) {
+            Folder folder = docs.get(0).getParents().stream().findFirst().orElse(null);
+            long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
+            logger.trace("CMIS Repository package search took " + time + " milliseconds.");
+            if (folder != null) {
+                return CmisFolderExtensions.toLeosPackage(folder);
+            }
+        }
+        throw new IllegalStateException("Package not found! [documentRef=" + documentRef + ']');
+    }
+
+    @Override
     public <D extends LeosDocument> List<D> findDocumentsByPackageId(String id, Class<? extends D> type, boolean allVersion, boolean fetchContent) {
         logger.trace("Finding documents by parent id... [pkgId=" + id + ", type=" + type.getSimpleName() + ']');
 

@@ -245,6 +245,15 @@ public interface LeosRepository {
     LeosPackage findPackageByDocumentId(String documentId);
 
     /**
+     * Finds a [LeosPackage] with the specified characteristics.
+     *
+     * @param documentRef the doc ref of a document inside the package.
+     * @param type the type class of the document.
+     * @return the found package.
+     */
+    <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type);
+
+    /**
      * Finds leg documents with the specified characteristics.
      *
      * @param id   the path where to find the document.

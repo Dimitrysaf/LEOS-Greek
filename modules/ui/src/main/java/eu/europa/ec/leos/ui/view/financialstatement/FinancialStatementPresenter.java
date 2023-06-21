@@ -841,7 +841,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private void populateVersionsData(FinancialStatement financialStatement) {
         DocumentVO financialStatementVO = createFinancialStatementVO(financialStatement);
         final List<VersionVO> allVersions = getVersionVOS();
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, FinancialStatement.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, FinancialStatement.class);
         financialStatementScreen.setDataFunctions(
                 financialStatementVO,
                 allVersions,

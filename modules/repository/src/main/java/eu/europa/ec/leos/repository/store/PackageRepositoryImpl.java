@@ -98,6 +98,12 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
+    public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
+        logger.debug("Finding Package by document ref... [documentRef=" + documentRef + "]");
+        return leosRepository.findPackageByDocumentRef(documentRef, type);
+    }
+
+    @Override
     public <D extends LeosDocument> List<D> findDocumentsByPackagePath(String path, Class<? extends D> type, boolean fetchContent) {
         logger.debug("Finding document by package path... [path=" + path + ", type=" + type.getSimpleName() + "]");
         return leosRepository.findDocumentsByParentPath(path, type, false, fetchContent);
