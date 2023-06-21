@@ -925,11 +925,11 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  declineContribution() {
+  declineContribution(contribution: ContributionVO) {
     //TODO add api call and parameters
   }
 
-  viewContribution() {
+  viewContribution(contribution: ContributionVO) {
     //TODO add api call and parameters
   }
 
