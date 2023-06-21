@@ -167,9 +167,7 @@ export class DocumentService implements OnDestroy {
     );
     this.contributions$ = this.documentView$.pipe(
       filter(Boolean),
-      switchMap((documentView) =>
-        this.getContributions(documentView.proposalRef),
-      ),
+      switchMap((_documentView) => this.getContributions()),
     );
     // this.documentView$ = this.documentReplaceView$.pipe();
 
@@ -909,14 +907,15 @@ export class DocumentService implements OnDestroy {
     return this.permissionsBS.value;
   }
 
-  getContributions(proposalRef: string, annexIndex?: number) {
+  getContributions(annexIndex?: number) {
+    const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     const queryString =
       documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
 
     return this.http.get<ContributionVO[]>(
-      `${apiBaseUrl}/secured/contribution/list-contributions/${proposalRef}/${documentType}${queryString}`,
+      `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
     );
   }
 

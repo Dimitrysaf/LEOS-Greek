@@ -8,9 +8,8 @@ describe('RevisionActionsDropdownComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RevisionActionsDropdownComponent ]
-    })
-    .compileComponents();
+      declarations: [RevisionActionsDropdownComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(RevisionActionsDropdownComponent);
     component = fixture.componentInstance;
