@@ -6,6 +6,7 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,14 @@ public class ContributionController {
         final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
         List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(documentRef, annexIndex, documentCategory);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/decline-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> declineContribution(@PathVariable("documentRef") String documentRef,
+                                                      @PathVariable("documentType") String documentType,
+                                                      @RequestParam String versionLabel) {
+        this.contributionApiService.declineRevision(documentType, documentRef, versionLabel);
+        return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
     }
 }
