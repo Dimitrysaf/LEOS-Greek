@@ -396,7 +396,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     private void populateVersionsData(Memorandum memorandum) {
         DocumentVO memorandumVO = createMemorandumVO(memorandum);
         final List<VersionVO> allVersions = getVersionVOS();
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, Memorandum.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Memorandum.class);
         memorandumScreen.setDataFunctions(
                 memorandumVO,
                 allVersions,
@@ -958,7 +958,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         memorandumService.updateMemorandum(revision.getId(), properties, false);
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, Memorandum.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Memorandum.class);
         memorandumScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());
         eventBus.post(new NotificationEvent(Type.INFO, msgKey));

@@ -416,7 +416,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private void populateVersionAndContributionData(Bill bill) {
         DocumentVO billVO = createLegalTextVO(bill);
         final List<VersionVO> allVersions = getVersionVOS();
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, Bill.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Bill.class);
         documentScreen.setDataFunctions(
                 billVO,
                 allVersions,
@@ -1323,7 +1323,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         billService.updateBill(revision.getId(), properties, false);
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentId, 0, Bill.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Bill.class);
         documentScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());
         eventBus.post(new NotificationEvent(Type.INFO, msgKey));
