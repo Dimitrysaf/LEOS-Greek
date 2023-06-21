@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { UxAppShellService } from '@eui/core';
@@ -18,7 +24,7 @@ import { TableOfContentService } from '../../services/tableOfContent.service';
   templateUrl: './import-from-journal-dialog.component.html',
   styleUrls: ['./import-from-journal-dialog.component.scss'],
 })
-export class ImportFromJournalDialogComponent implements OnInit {
+export class ImportFromJournalDialogComponent implements OnInit, OnDestroy {
   @ViewChild('dialog') dialog: EuiDialogComponent;
   @ViewChild('docContainer') docContainer: ElementRef<HTMLDivElement>;
   types: DocType[] = ['REGULATION', 'DIRECTIVE', 'DECISION'];
@@ -46,17 +52,23 @@ export class ImportFromJournalDialogComponent implements OnInit {
 
   ngOnInit() {}
 
+  ngOnDestroy() {
+    this.importManager?.destroy();
+  }
+
   open() {
-    this.importManager = new ImportManager(
-      this.leos,
-      this.docContainer.nativeElement,
-    );
-    this.importManager.count$
-      .pipe(filter((count) => count === 0))
-      .subscribe(() => {
-        this.allArticlesSelected = false;
-        this.allRecitalsSelected = false;
-      });
+    if (!this.importManager) {
+      this.importManager = new ImportManager(
+        this.leos,
+        this.docContainer.nativeElement,
+      );
+      this.importManager.count$
+        .pipe(filter((count) => count === 0))
+        .subscribe(() => {
+          this.allArticlesSelected = false;
+          this.allRecitalsSelected = false;
+        });
+    }
     this.searchForm = this.createFormGroup();
     this.dialog.openDialog();
   }
@@ -66,8 +78,6 @@ export class ImportFromJournalDialogComponent implements OnInit {
     this.searchForm = null;
     this.docContainer.nativeElement.innerHTML = '';
     this.docLoaded = false;
-    this.importManager.destroy();
-    this.importManager = null;
     this.dialog.closeDialog();
   }
 
