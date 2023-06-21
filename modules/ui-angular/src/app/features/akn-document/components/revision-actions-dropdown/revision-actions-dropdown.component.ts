@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -8,6 +9,7 @@ import { DocumentService } from '@/shared/services/document.service';
   styleUrls: ['./revision-actions-dropdown.component.scss'],
 })
 export class RevisionActionsDropdownComponent implements OnInit {
+  @Input() contribution: ContributionVO;
   constructor(public documentService: DocumentService) {}
 
   ngOnInit(): void {}

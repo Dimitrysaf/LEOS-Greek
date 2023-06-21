@@ -17,12 +17,12 @@
       <button
         euiListItem
         translate="page.editor.contribution.actions.view.amd.merge"
-        (click)="documentService.viewContribution()"
+        (click)="documentService.viewContribution(contribution)"
       ></button>
       <button
         euiListItem
         translate="page.editor.contribution.actions.decline"
-        (click)="documentService.declineContribution()"
+        (click)="documentService.declineContribution(contribution)"
       ></button>
     </div>
   </eui-dropdown-content>

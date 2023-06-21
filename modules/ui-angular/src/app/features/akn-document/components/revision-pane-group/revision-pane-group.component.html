@@ -12,10 +12,21 @@
     <div class="revision">
       <div class="title"></div>
       <div>
-        <app-revision-actions-dropdown></app-revision-actions-dropdown>
+        <app-revision-actions-dropdown
+          [contribution]="contribution"
+        ></app-revision-actions-dropdown>
       </div>
     </div>
   </eui-card-content>
 
-  <eui-card-footer> </eui-card-footer>
+  <eui-card-footer>
+    {{
+      'page.editor.contribution-item.updated-by'
+        | translate
+          : {
+              updatedOn: contribution.updatedDate | date: 'dd/MM/yyyy h:mm',
+              updatedBy: contribution.contributionCreator
+            }
+    }}
+  </eui-card-footer>
 </eui-card>
