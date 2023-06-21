@@ -8,7 +8,7 @@ import { DocumentService } from '@/shared/services/document.service';
   styleUrls: ['./revision-actions-dropdown.component.scss'],
 })
 export class RevisionActionsDropdownComponent implements OnInit {
-  constructor(private documentService: DocumentService) {}
+  constructor(public documentService: DocumentService) {}
 
   ngOnInit(): void {}
 }
