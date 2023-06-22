@@ -13,4 +13,5 @@ export interface ContributionVO {
   xmlContent: any;
   legFileName: string;
   documentName: string;
+  username: string;
 }

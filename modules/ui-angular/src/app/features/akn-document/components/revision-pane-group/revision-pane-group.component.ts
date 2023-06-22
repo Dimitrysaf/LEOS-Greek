@@ -12,8 +12,7 @@ import { ContributionVO } from '@/shared/models/contribution-vo.model';
 export class RevisionPaneGroupComponent implements OnInit {
   @Input() contribution: ContributionVO;
   revisionVersion: string;
-  //fixme this should not be hardcoded but provided in the contribution
-  originatingApplication = 'LEOS';
+  originatingApplication: string;
   revisionTitle: string;
   updatedAtBy: string;
   status: string;
@@ -23,6 +22,7 @@ export class RevisionPaneGroupComponent implements OnInit {
   ngOnInit(): void {
     this.revisionTitle = this.formatTitle(this.contribution);
     this.revisionVersion = this.formatVersionNumber(this.contribution);
+    this.originatingApplication = this.contribution.contributionCreator;
   }
 
   protected formatVersionNumber(contribution: ContributionVO): string {
