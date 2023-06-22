@@ -57,7 +57,7 @@ public class ContributionController {
 
     @GetMapping(value = "/list-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("proposalRef") String proposalRef, @PathVariable("documentType") String documentType,
+    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String proposalRef, @PathVariable("documentType") String documentType,
                                                                @RequestParam Integer annexIndex) {
         final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
         List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(proposalRef, annexIndex, documentCategory);
