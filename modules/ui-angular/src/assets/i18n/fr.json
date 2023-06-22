@@ -292,6 +292,7 @@
   "page.editor.contribution.decline-contribution-message-success": "[FR] Contribution declined",
   "page.editor.contribution.decline-contribution-message-error": "[FR] Failed to decline contribution",
   "page.workspace.proposal-item.contribution-received": "[FR] Contribution received",
+  "page.workspace.proposal-item.contribution-done": "[FR] Contribution done",
   "page.editor.toc.actions.collapseAll": "Tout réduire",
   "page.editor.toc.actions.expandAll": "Tout afficher",
   "page.editor.toc.move-actions.move": "Déplacer",
