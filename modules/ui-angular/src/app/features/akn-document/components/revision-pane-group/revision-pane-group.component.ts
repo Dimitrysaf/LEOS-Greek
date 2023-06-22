@@ -26,7 +26,7 @@ export class RevisionPaneGroupComponent implements OnInit {
   }
 
   protected formatVersionNumber(contribution: ContributionVO): string {
-    return `${contribution.versionNumber[0]}.${contribution.versionNumber[1]}.${contribution.versionNumber[2]}`;
+    return `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
   }
 
   protected formatTitle(contribution: ContributionVO): string {
