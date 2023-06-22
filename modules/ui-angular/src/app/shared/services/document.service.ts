@@ -930,11 +930,43 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
-    return this.http.post(
-      `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
-      {},
-    );
+    return this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
+        {},
+        { params: { versionLabel } },
+      )
+      .subscribe({
+        next: (res) => {
+          this.appShell.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.decline-contribution-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.getContributions();
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.decline-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   viewContribution(contribution: ContributionVO) {

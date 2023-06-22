@@ -19,7 +19,7 @@ export class RevisionActionsDropdownComponent implements OnInit {
 
   constructor(
     public documentService: DocumentService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {}

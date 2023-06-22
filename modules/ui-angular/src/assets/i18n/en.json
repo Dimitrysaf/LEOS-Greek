@@ -314,6 +314,8 @@
   "page.editor.contribution.decline.modal-text": "Are you sure to decline this contribution?",
   "page.editor.contribution.decline.modal-text-version": "You are about to decline contribution version {{ versionNumber }}.",
   "page.editor.contribution.decline.modal-button": "Revert",
+  "page.editor.contribution.decline-contribution-message-success": "Contribution declined",
+  "page.editor.contribution.decline-contribution-message-error": "Failed to decline contribution",
   "page.editor.toc.actions.collapseAll": "Collapse All",
   "page.editor.toc.actions.expandAll": "Expand All",
   "page.editor.toc.move-actions.move": "Move",
