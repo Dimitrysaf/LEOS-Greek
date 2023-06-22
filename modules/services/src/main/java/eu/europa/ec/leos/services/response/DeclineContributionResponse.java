@@ -7,4 +7,8 @@ public class DeclineContributionResponse {
     public DeclineContributionResponse(String contributionStatus) {
         this.contributionStatus = contributionStatus;
     }
+
+    public String getContributionStatus() {
+        return contributionStatus;
+    }
 }

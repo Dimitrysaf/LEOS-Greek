@@ -67,9 +67,9 @@ public class ContributionController {
 
     @PostMapping(value = "/decline-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> declineContribution(@PathVariable("documentRef") String documentRef,
-                                                      @PathVariable("documentType") String documentType,
-                                                      @RequestParam String versionLabel) {
+    public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentRef") String documentRef,
+                                                                           @PathVariable("documentType") String documentType,
+                                                                           @RequestParam String versionLabel) {
         this.contributionApiService.declineRevision(documentType, documentRef, versionLabel);
         return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
     }
