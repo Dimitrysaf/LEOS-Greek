@@ -117,6 +117,8 @@ export class DocumentEditorComponent
   hideTocSplitter: boolean;
   hideAnnotationsSplitter: boolean;
 
+  showContributionsPane = false;
+
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
@@ -275,6 +277,13 @@ export class DocumentEditorComponent
         if (value && this.isAnnotationsPaneCollapsed) {
           this.onToggleAnnotationsPaneCollapsed();
         }
+      });
+
+    this.documentService.contributions$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((contributions) => {
+        // TODO: Investigate the extra condition(s) needed for contribution pane to show (maybe if the proposal is parent or if the logged-in user is not the contributor)
+        this.showContributionsPane = contributions.length > 0;
       });
     this.hideTocSplitter = this.isTocPaneCollapsed;
     this.hideAnnotationsSplitter = this.isAnnotationsPaneCollapsed;
