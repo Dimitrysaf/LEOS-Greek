@@ -160,7 +160,7 @@ export class DocumentService implements OnDestroy {
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
-      .pipe(filter(Boolean));
+      .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
       tap((x) => console.log('xxxxxxxx:', x)),
@@ -190,6 +190,7 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentVersionsData(option.category, option.ref),
       ),
+      shareReplay(1),
     );
 
     this.documentConfig$ = this.documentRefAndCategory$.pipe(
@@ -197,6 +198,7 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentConfig(option.ref, option.category),
       ),
+      shareReplay(1),
     );
 
     this.recentChanges$ = this.documentRefAndCategory$.pipe(
@@ -204,6 +206,7 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentRecentChangesData(option.category, option.ref),
       ),
+      shareReplay(1),
     );
 
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
