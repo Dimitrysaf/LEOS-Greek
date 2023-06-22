@@ -343,6 +343,45 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  sendRevisionForMerge(milestone: MilestoneDescriptor) {
+    this.loadingService.setLoading(true);
+
+    return this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/revision-done/${this.proposalRef}`,
+        milestone.legDocumentName,
+      )
+      .subscribe({
+        next: (res) => {
+          this.uxAppService.growl({
+            severity: 'success',
+            summary: this.translateService.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.milestones.send-copy-for-contribution-send-revision-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.loadProposalMilestones();
+        },
+        error: (res) => {
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.send-copy-for-contribution-send-revision-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
   updateExplanatoryTitle(docId: string, title: string) {
     this.loadingService.setLoading(true);
     this.http

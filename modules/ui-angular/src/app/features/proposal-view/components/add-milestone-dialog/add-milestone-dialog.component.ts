@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -31,12 +32,13 @@ const OTHER_VALUE = 'other';
   styleUrls: ['./add-milestone-dialog.component.scss'],
 })
 export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
+  @Input() isCloneProposal: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
   form: FormGroup;
-  types = this.getTypeOptions();
+  types: any[];
 
-  private defaultType = this.types[0];
+  private defaultType;
   private destroy$: Subject<any> = new Subject();
 
   constructor(
@@ -46,6 +48,10 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.types = this.isCloneProposal
+      ? this.getTypeOptionsClonedProposal()
+      : this.getTypeOptions();
+    this.defaultType = this.types[0];
     this.buildForm();
     this.handleChanges();
   }
@@ -90,6 +96,19 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
     });
   }
 
+  private getTypeOptionsClonedProposal() {
+    const option = (key: string, value: string): TypeOption => ({
+      label: this.translateService.instant(key),
+      value,
+    });
+    return [
+      option(
+        'page.collection.milestones.type.cloned-proposal1',
+        'Contribution from Legal Service',
+      ),
+      option('page.collection.milestones.type.other', OTHER_VALUE),
+    ];
+  }
   private getTypeOptions() {
     const option = (key: string, value: string): TypeOption => ({
       label: this.translateService.instant(key),
