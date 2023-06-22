@@ -288,7 +288,7 @@
   "page.editor.contribution.decline.modal-title": "[FR] Decline contribution: confirmation",
   "page.editor.contribution.decline.modal-text-version": "[FR] You are about to decline contribution version {{ versionNumber }}.",
   "page.editor.contribution.decline.modal-text": "[FR] Are you sure to decline this contribution?",
-  "page.editor.contribution.decline.modal-button": "[FR] Revert",
+  "page.editor.contribution.decline.modal-button": "[FR] Decline",
   "page.editor.contribution.decline-contribution-message-success": "[FR] Contribution declined",
   "page.editor.contribution.decline-contribution-message-error": "[FR] Failed to decline contribution",
   "page.workspace.proposal-item.contribution-received": "[FR] Contribution received",
