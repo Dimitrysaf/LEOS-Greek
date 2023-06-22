@@ -926,7 +926,7 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  declineContribution() {
+  declineContribution(contribution: ContributionVO) {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
