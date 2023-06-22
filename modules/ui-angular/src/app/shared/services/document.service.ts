@@ -933,7 +933,7 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  viewContribution() {
+  viewContribution(contribution: ContributionVO) {
     //TODO add api call and parameters
   }
 
@@ -1185,7 +1185,7 @@ export class DocumentService implements OnDestroy {
       const userEmail = c.user.email;
       // const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
       this.translate
-        .get('page.editor.export-email-sent', { userEmail })
+        .get('page.editor.export-version-email-sent', { userEmail })
         .subscribe((message) => {
           this.appShell.growl({
             severity: 'info',

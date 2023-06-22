@@ -78,6 +78,7 @@ export class ImportFromJournalDialogComponent implements OnInit, OnDestroy {
     this.searchForm = null;
     this.docContainer.nativeElement.innerHTML = '';
     this.docLoaded = false;
+    this.importManager = null;
     this.dialog.closeDialog();
   }
 
