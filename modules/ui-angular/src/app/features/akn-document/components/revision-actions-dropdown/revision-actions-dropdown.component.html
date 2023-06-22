@@ -22,8 +22,31 @@
       <button
         euiListItem
         translate="page.editor.contribution.actions.decline"
-        (click)="documentService.declineContribution(contribution)"
+        (click)="
+          onContributionDecline(
+            contribution.documentId,
+            contribution.versionNumber
+          )
+        "
       ></button>
     </div>
   </eui-dropdown-content>
 </eui-dropdown>
+
+<eui-dialog
+  #declineContributionDialog
+  [title]="'page.editor.contribution.decline.modal-title' | translate"
+  [acceptLabel]="'page.editor.contribution.decline.modal-button' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancel()"
+  (close)="onCancel()"
+  (accept)="onAccept()"
+  (dismiss)="onCancel()"
+>
+  <p>{{ versionModalText }}</p>
+  <p>{{ 'page.editor.contribution.decline.modal-text' | translate }}</p>
+</eui-dialog>
