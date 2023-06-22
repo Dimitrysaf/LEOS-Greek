@@ -1,4 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
 import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
@@ -18,6 +26,7 @@ export class ProposalMilestoneSendCopyDialogComponent
   implements OnInit, OnDestroy
 {
   @Input() milestone: MilestoneDescriptor;
+  @Output() closed = new EventEmitter();
   targetUserForm: FormGroup;
   userAutocompleteData: EuiAutoCompleteItem[] = [];
   destroy$ = new Subject<any>();
@@ -57,6 +66,7 @@ export class ProposalMilestoneSendCopyDialogComponent
   close() {
     this.sendCopyMilestoneForContributionModal.closeDialog();
     this.resetModal();
+    this.closed.emit();
     this.detailsService.setUserAutocompleteInputChange('');
   }
 

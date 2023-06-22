@@ -4,7 +4,11 @@
       class="eui-u-mb-m eui-u-mt-2xs"
       euiButton
       euiPrimary
-      (click)="openAddMilestoneDialog()"
+      (click)="
+        proposal.cloneProposalMetadataVO.clonedProposal
+          ? openAnnotationWarningModal()
+          : openAddMilestoneDialog()
+      "
     >
       {{ 'global.actions.add' | translate }}
     </button>
@@ -102,9 +106,21 @@
                   <button
                     euiListItem
                     (click)="openMilestoneSendCopyForContributionDialog(row)"
+                    *appIsRecievedForContribution="proposal"
                   >
                     {{
                       'page.collection.milestones.actions.send-copy-for-contribution'
+                        | translate
+                    }}
+                  </button>
+                  <button
+                    euiListItem
+                    (click)="openSendContributionForRevision(row)"
+                    *appIsSentForContribution="proposal"
+                    [disabled]="row.status !== 'File ready'"
+                  >
+                    {{
+                      'page.collection.milestones.actions.send-revision-for-merge'
                         | translate
                     }}
                   </button>
@@ -156,6 +172,7 @@
   #addMilestoneDialog
   (closed)="onAddMilestoneDialogClosed()"
   *ngIf="addMilestoneDialogVisible"
+  [isCloneProposal]="proposal.cloneProposalMetadataVO.clonedProposal"
 ></app-add-milestone-dialog>
 
 <app-proposal-milestone-view
@@ -171,3 +188,10 @@
   (closed)="onMilestoneSendCopyForContributionDialogClosed()"
   *ngIf="sendCopyDialogVisible && milestoneViewData"
 ></app-proposal-milestone-send-copy-dialog>
+
+<app-milestone-annotation-warning-modal
+  #milestoneAnnotationWarningModal
+  (closed)="dismissAnnotationWarningModal()"
+  *ngIf="annotationWarningDialogVisible"
+  (modalAccepted)="acceptAnnotationWarningModal()"
+></app-milestone-annotation-warning-modal>

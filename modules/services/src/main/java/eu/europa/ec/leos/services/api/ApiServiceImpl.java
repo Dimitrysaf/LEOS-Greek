@@ -37,7 +37,6 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
-import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -85,18 +84,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -997,39 +992,6 @@ public class ApiServiceImpl implements ApiService {
             fileName = ((File) entry.getValue()).getName();
         }
         return new MilestonePDFDownloadResponse(content, fileName);
-    }
-
-    @Override
-    public CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        User user = userService.getUser(userLogin);
-        Proposal proposal = proposalService.getProposalByRef(proposalRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
-        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legDocumentName, LegDocument.class);
-        String loggedInUser = securityContext.getUser().getLogin();
-        CreateCollectionResult createCollectionResult = null;
-        Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        try {
-            File content = new File(legDocumentName);
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(legDocument.getContent().get().getSource().getBytes());
-            } catch (IOException ioe) {
-                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-            }
-            userService.switchUser(user.getLogin());
-            createCollectionResult = createCollectionService.cloneCollection(content, cloneOriginRef, user.getLogin(),
-                    user.getDefaultEntity().getName());
-            if (createCollectionResult != null && createCollectionResult.getError() != null) {
-                LOG.error("Error Occurred while cloning proposal from the Leg file: " + createCollectionResult.getError().getMessage());
-            } else {
-            }
-            LOG.info("Proposal id '{}' name '{}' sent for revision to user '{}' in {} milliseconds ({} sec)", proposal.getId(), leosPackage.getName(), user.getLogin(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        } catch (Exception ex) {
-            LOG.error("Error Occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
-        } finally {
-            userService.switchUserWithAuthorities(loggedInUser, loggedInUserAuthorities);
-        }
-        return createCollectionResult;
     }
 
     private static String readFileToString(File file) throws IOException {
