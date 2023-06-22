@@ -240,7 +240,7 @@
             label="{{ 'page.editor.contribution-pane.label' | translate }}"
             isExpandable
             [isExpanded]="false"
-            *ngIf="(documentService.contributions$ | async).length > 0"
+            *ngIf="showContributionsPane"
           >
             <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
               <button euiButton euiIconButton euiSecondary euiOutline euiSizeS>
