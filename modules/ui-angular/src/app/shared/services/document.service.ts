@@ -171,6 +171,7 @@ export class DocumentService implements OnDestroy {
     this.contributions$ = this.documentView$.pipe(
       filter(Boolean),
       switchMap((_documentView) => this.getContributions()),
+      shareReplay(1),
     );
     // this.documentView$ = this.documentReplaceView$.pipe();
 

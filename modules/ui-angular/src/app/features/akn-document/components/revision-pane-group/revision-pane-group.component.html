@@ -1,16 +1,16 @@
 <eui-card class="revisions-pane" euiNoShadow>
   <eui-card-header>
-    <eui-card-header-left-content>
-      <span euiLabel>{{ originatingApplication }}</span>
-    </eui-card-header-left-content>
     <eui-card-header-right-content>
       <span euiLabel>{{ revisionVersion }}</span>
     </eui-card-header-right-content>
+    <eui-card-header-left-content>
+      <span euiLabel>{{ originatingApplication }}</span>
+    </eui-card-header-left-content>
   </eui-card-header>
 
-  <eui-card-content class="eui-u-pb-none">
+  <eui-card-content>
     <div class="revision">
-      <div class="title"></div>
+      <div class="title">{{ revisionTitle }}</div>
       <div>
         <app-revision-actions-dropdown
           [contribution]="contribution"
@@ -20,13 +20,23 @@
   </eui-card-content>
 
   <eui-card-footer>
-    {{
-      'page.editor.contribution-item.updated-by'
-        | translate
-          : {
-              updatedOn: contribution.updatedDate | date: 'dd/MM/yyyy h:mm',
-              updatedBy: contribution.contributionCreator
-            }
-    }}
+    <eui-card-footer-action-buttons>
+      <span class="updatedBy">{{
+        'page.editor.contribution-item.updated-by'
+          | translate
+            : {
+                updatedOn: contribution.updatedDate,
+                updatedBy: contribution.contributionCreator
+              }
+      }}</span>
+    </eui-card-footer-action-buttons>
+    <eui-card-footer-action-icons>
+      <span
+        class="eui-icon eui-icon-checkbox"
+        [title]="
+          'page.workspace.proposal-item.contribution-received' | translate
+        "
+      ></span>
+    </eui-card-footer-action-icons>
   </eui-card-footer>
 </eui-card>
