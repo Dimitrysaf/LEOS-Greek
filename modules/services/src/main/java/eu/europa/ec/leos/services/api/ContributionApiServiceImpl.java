@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
@@ -10,11 +11,15 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
+import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
@@ -26,6 +31,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,6 +57,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     SecurityContext securityContext;
     @Autowired
     ContributionService contributionService;
+    @Autowired
+    LeosRepository leosRepository;
+    @Autowired
+    DocumentContentService documentContentService;
+    @Autowired
+    ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
+    @Autowired
+    BillService billService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -100,6 +114,34 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     public List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType) {
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         return this.contributionService.getDocumentContributions(documentRef, annexIndex, clazz);
+    }
+
+    @Override
+    public String compareAndShowRevision(String contextPath,
+                                        String documentRef,
+                                        String documentType,
+                                        String versionLabel) {
+        final LeosPackage pack = this.leosRepository.findPackageByDocumentId(documentRef);
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
+        this.populateCloneProposalMetadata(proposal);
+
+        final Bill contributionVersion = billService.findBillByRef(documentRef);
+        String contributionHtml = documentContentService.getCleanDocumentAsHtml(
+                contributionVersion,
+                contextPath,
+                securityContext.getPermissions(contributionVersion)
+        );
+
+        //Get the original version submitted to LS from the metadata of the document
+        final Bill originalVersion = billService.findFirstVersion(documentRef);
+        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(
+                originalVersion,
+                contextPath,
+                securityContext.getPermissions(originalVersion)
+        );
+
+        cloneContext.setContribution(Boolean.TRUE);
+        return this.comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {

@@ -12,11 +12,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
@@ -109,5 +111,24 @@ public class ContributionControllerTest {
         verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void test_viewMergePane(){
+        String TEST_CONTEXT_PATH = "/test-content-path";
+        String TEST_DOCUMENT_REF = "documentRef";
+        String TEST_DOCUMENT_TYPE = "documentType";
+        String TEST_VERSION_LABEL = "versionLabel";
+        String TEST_RESPONSE_BODY = "Test Response";
+        HttpServletRequest httpRequestMock = Mockito.mock(HttpServletRequest.class);
+        when(httpRequestMock.getContextPath()).thenReturn(TEST_CONTEXT_PATH);
+        when(contributionApiService.compareAndShowRevision(anyString(),anyString(),anyString(),anyString())).thenReturn(TEST_RESPONSE_BODY);
+
+        ResponseEntity<Object> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF,TEST_DOCUMENT_TYPE,TEST_VERSION_LABEL);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_RESPONSE_BODY, response.getBody());
+
+        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL);
     }
 }

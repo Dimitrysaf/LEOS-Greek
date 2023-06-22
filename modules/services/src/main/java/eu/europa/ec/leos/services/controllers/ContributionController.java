@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -62,5 +63,15 @@ public class ContributionController {
         final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
         List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(documentRef, annexIndex, documentCategory);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/view-merge-pane/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> viewMergePane(HttpServletRequest request,
+                                                @PathVariable("documentRef") String documentRef,
+                                                @PathVariable("documentType") String documentType,
+                                                @RequestParam String versionLabel) {
+        String compareContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentRef, documentType, versionLabel);
+        return ResponseEntity.ok(compareContent);
     }
 }
