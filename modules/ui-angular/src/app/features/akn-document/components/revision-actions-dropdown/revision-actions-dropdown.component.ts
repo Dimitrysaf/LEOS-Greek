@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
-import { TranslateService } from '@ngx-translate/core';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
 @Component({
   selector: 'app-revision-actions-dropdown',
@@ -19,7 +19,7 @@ export class RevisionActionsDropdownComponent implements OnInit {
 
   constructor(
     public documentService: DocumentService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {}
