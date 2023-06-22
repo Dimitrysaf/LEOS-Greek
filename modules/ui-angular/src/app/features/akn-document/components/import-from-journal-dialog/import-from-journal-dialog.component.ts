@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { UxAppShellService } from '@eui/core';
@@ -24,7 +18,7 @@ import { TableOfContentService } from '../../services/tableOfContent.service';
   templateUrl: './import-from-journal-dialog.component.html',
   styleUrls: ['./import-from-journal-dialog.component.scss'],
 })
-export class ImportFromJournalDialogComponent implements OnInit, OnDestroy {
+export class ImportFromJournalDialogComponent implements OnInit {
   @ViewChild('dialog') dialog: EuiDialogComponent;
   @ViewChild('docContainer') docContainer: ElementRef<HTMLDivElement>;
   types: DocType[] = ['REGULATION', 'DIRECTIVE', 'DECISION'];
@@ -51,10 +45,6 @@ export class ImportFromJournalDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {}
-
-  ngOnDestroy() {
-    this.importManager?.destroy();
-  }
 
   open() {
     if (!this.importManager) {
