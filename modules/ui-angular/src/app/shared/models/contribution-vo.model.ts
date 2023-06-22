@@ -3,7 +3,7 @@ import { Collaborator } from '@/shared';
 
 export interface ContributionVO {
   documentId: string;
-  versionNumber: number[];
+  versionNumber: {intermediate: string, major: number, minor: number};
   updatedDate: number;
   versionedReference: string;
   checkinCommentVO: CheckinComment;
