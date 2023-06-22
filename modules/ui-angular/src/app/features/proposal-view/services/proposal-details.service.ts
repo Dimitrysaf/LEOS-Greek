@@ -345,13 +345,11 @@ export class ProposalDetailsService implements OnDestroy {
 
   sendRevisionForMerge(milestone: MilestoneDescriptor) {
     this.loadingService.setLoading(true);
-    const body = {
-      legFilename: milestone.legDocumentName,
-    };
+
     return this.http
       .post(
         `${apiBaseUrl}/secured/contribution/revision-done/${this.proposalRef}`,
-        body,
+        milestone.legDocumentName,
       )
       .subscribe({
         next: (res) => {
@@ -370,34 +368,16 @@ export class ProposalDetailsService implements OnDestroy {
           this.loadProposalMilestones();
         },
         error: (res) => {
-          this.loadingService.setLoading(false);
-          //todo remove if and keep second growl when bad request error is fixed
-          if (res.status === 400) {
-            this.uxAppService.growl({
-              severity: 'success',
-              summary: this.translateService.instant(
-                'global.notifications.title.success',
-              ),
-              detail: this.translateService.instant(
-                'page.collection.milestones.send-copy-for-contribution-send-revision-message-success',
-              ),
-              life: 3000,
-              isGrowlSticky: false,
-              position: 'bottom-right',
-            });
-            this.loadProposalMilestones();
-          } else {
-            this.uxAppService.growl({
-              severity: 'danger',
-              summary: this.translateService.instant(
-                'page.collection.milestones.send-copy-for-contribution-send-revision-message-error',
-              ),
-              detail: res,
-              life: 3000,
-              isGrowlSticky: false,
-              position: 'bottom-right',
-            });
-          }
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.send-copy-for-contribution-send-revision-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
         },
       });
   }
