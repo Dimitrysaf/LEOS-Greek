@@ -34,7 +34,7 @@ const OTHER_VALUE = 'other';
 export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   @Input() isCloneProposal: boolean;
   @Output() closed = new EventEmitter();
-  @ViewChild('addMilestoneDialog') addMilestoneDialog: EuiDialogComponent;
+  @ViewChild('dialog') dialog: EuiDialogComponent;
   form: FormGroup;
   types: any[];
 
