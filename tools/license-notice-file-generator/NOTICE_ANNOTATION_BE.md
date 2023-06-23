@@ -29,12 +29,15 @@ __ch.qos.logback:logback-core 1.2.11__
  * Licenses:
    * GNU Lesser General Public License
    * Eclipse Public License - v 1.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 1999-2010, QOS.ch
+   * Copyright (c) 1999-2012, QOS.ch
 
 __com.auth0:java-jwt 3.2.0__
  * http://www.jwt.io
- * License: The MIT License (MIT)
- * Copyright: (no copyright)
+ * License: MIT
+ * Copyright:
+   * Copyright (c) 2015 Auth0, Inc. support@auth0.com
 
 __com.fasterxml:classmate 1.5.1__
  * https://github.com/FasterXML/java-classmate
@@ -44,17 +47,20 @@ __com.fasterxml:classmate 1.5.1__
 __com.fasterxml.jackson.core:jackson-annotations 2.13.2__
  * http://github.com/FasterXML/jackson
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Tatu Saloranta
 
 __com.fasterxml.jackson.core:jackson-core 2.13.2__
  * https://github.com/FasterXML/jackson-core
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Tatu Saloranta
 
 __com.fasterxml.jackson.core:jackson-databind 2.13.2.1__
  * http://github.com/FasterXML/jackson
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Tatu Saloranta
 
 __com.fasterxml.jackson.datatype:jackson-datatype-jdk8 2.13.2__
  * https://github.com/FasterXML/jackson-modules-java8/jackson-datatype-jdk8
@@ -84,7 +90,8 @@ __com.github.springtestdbunit:spring-test-dbunit 1.3.0__
 __com.google.code.findbugs:jsr305 3.0.2__
  * http://findbugs.sourceforge.net/
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * FindBugs Development Team
 
 __com.h2database:h2 1.4.200__
  * https://h2database.com
@@ -208,21 +215,21 @@ __jakarta.xml.bind:jakarta.xml.bind-api 2.3.3__
 
 __junit:junit 4.13.1__
  * http://junit.org
- * License: Eclipse Public License 1.0
- * Copyright: (no copyright)
+ * License: Eclipse Public License - v 2.0
+ * Copyright:
+   * Copyright © 2022 The JUnit Team
 
 __net.bytebuddy:byte-buddy 1.11.22__
  * https://bytebuddy.net/byte-buddy
- * License: Apache License, Version 2.0
+ * License: The Apache Software License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright 2014 - current.year Rafael Winterhalter
+   * Copyright 2014 - 2023 Rafael Winterhalter
 
 __net.bytebuddy:byte-buddy-agent 1.11.22__
  * https://bytebuddy.net/byte-buddy-agent
- * License: Apache License, Version 2.0
+ * License: The Apache Software License, Version 2.0
  * Copyright:
-   * Copyright 2014 - current.year Rafael Winterhalter
+   * Copyright 2014 - 2023 Rafael Winterhalter
 
 __net.minidev:accessors-smart 2.4.8__
  * https://urielch.github.io/
@@ -236,14 +243,15 @@ __net.minidev:json-smart 2.4.8__
 
 __org.apache.httpcomponents:httpclient 4.5.3__
  * http://hc.apache.org/httpcomponents-client
- * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * License: Apache License 2.0
+ * Copyright:
+   * Copyright 1999-2023 The Apache Software Foundation
 
 __org.apache.httpcomponents:httpcore 4.4.15__
  * http://hc.apache.org/httpcomponents-core-ga
- * License: Apache License, Version 2.0
+ * License: Apache License 2.0
  * Copyright:
-   * Copyright 2005-2021 The Apache Software Foundation
+   * Copyright 1999-2023 The Apache Software Foundation
 
 __org.apache.logging.log4j:log4j-api 2.17.2__
  * https://logging.apache.org/log4j/2.x/log4j-api/
@@ -307,8 +315,9 @@ __org.assertj:assertj-core 3.21.0__
 
 __org.bouncycastle:bcprov-jdk15on 1.55__
  * http://www.bouncycastle.org/java.html
- * License: Bouncy Castle Licence
- * Copyright: (no copyright)
+ * License: MIT
+ * Copyright:
+   * Copyright (c) 2000-2023 The Legion of the Bouncy Castle Inc. (https://www.bouncycastle.org)
 
 __org.checkerframework:checker-qual 3.5.0__
  * https://checkerframework.org
@@ -324,7 +333,8 @@ __org.dbunit:dbunit 2.7.3__
 __org.freemarker:freemarker 2.3.31__
  * https://freemarker.apache.org/
  * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * © 1999–2023 The Apache Software Foundation
 
 __org.glassfish.jaxb:jaxb-runtime 2.3.6__
  * https://eclipse-ee4j.github.io/jaxb-ri/
@@ -344,13 +354,15 @@ __org.glassfish.jaxb:txw2 2.3.6__
 
 __org.hamcrest:hamcrest 2.2__
  * http://hamcrest.org/JavaHamcrest/
- * License: BSD License 3
- * Copyright: (no copyright)
+ * License: BSD License
+ * Copyright:
+   * Copyright (c) 2000-2015 www.hamcrest.org All rights reserved.
 
 __org.hamcrest:hamcrest-core 2.2__
  * http://hamcrest.org/JavaHamcrest/
- * License: BSD License 3
- * Copyright: (no copyright)
+ * License: BSD License
+ * Copyright:
+   * Copyright (c) 2000-2015 www.hamcrest.org All rights reserved.
 
 __org.hibernate:hibernate-core 5.6.8.Final__
  * https://hibernate.org/orm
@@ -413,19 +425,19 @@ __org.mockito:mockito-core 4.0.0__
  * https://github.com/mockito/mockito
  * License: The MIT License
  * Copyright:
-   * Copyright (c) 2007 Mockito
+   * Szczepan Faber, Brice Dutheil, Rafael Winterhalter, Tim van der Lippe
 
 __org.mockito:mockito-junit-jupiter 4.0.0__
  * https://github.com/mockito/mockito
  * License: The MIT License
  * Copyright:
-   * Copyright (c) 2007 Mockito
+   * Szczepan Faber, Brice Dutheil, Rafael Winterhalter, Tim van der Lippe
 
 __org.objenesis:objenesis 3.2__
  * http://objenesis.org/objenesis
- * License: Apache License, Version 2.0
+ * License: Apache 2
  * Copyright:
-   * Copyright 2006-2021 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Joe Walnes, Henri Tremblay, Leonardo Mesquita
 
 __org.opentest4j:opentest4j 1.2.0__
  * https://github.com/ota4j-team/opentest4j
@@ -453,160 +465,115 @@ __org.skyscreamer:jsonassert 1.5.0__
 
 __org.slf4j:jul-to-slf4j 1.7.36__
  * http://www.slf4j.org
- * License: MIT License
- * Copyright: (no copyright)
+ * Licenses:
+   * Apache Software Licenses
+   * MIT License
+ * Copyright:
+   * Copyright © 2004-2023 QOS.ch
 
 __org.slf4j:slf4j-api 1.7.36__
  * http://www.slf4j.org
- * License: MIT License
- * Copyright: (no copyright)
+ * Licenses:
+   * Apache Software Licenses
+   * MIT License
+ * Copyright:
+   * Copyright © 2004-2023 QOS.ch
 
 __org.springframework:spring-aop 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-aspects 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-beans 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-context 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-context-support 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright 2002-2019 the original author or authors
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-core 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright 2002-2020 the original author or authors
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-expression 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-jcl 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-jdbc 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-messaging 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-orm 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-test 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-tx 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-web 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2002-2021 the original author or authors
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-webmvc 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework:spring-websocket 5.3.19__
  * https://github.com/spring-projects/spring-framework
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2000-2011 INRIA, France Telecom
-   * Copyright (c) 1999-2009, OW2 Consortium <https://www.ow2.org/>
-   * Copyright (c) 2002-2022 Pivotal, Inc.
-   * Copyright 2006-2019 Joe Walnes, Henri Tremblay, Leonardo Mesquita
+   * Copyright (c) 2012-2022 Pivotal, Inc.
 
 __org.springframework.boot:spring-boot 2.6.7__
  * https://spring.io/projects/spring-boot
@@ -960,6 +927,19 @@ intellectual property laws of the United States of America. No party to this
 Agreement will bring a legal action under this Agreement more than one year
 after the cause of action arose. Each party waives its rights to a jury trial in
 any resulting litigation.
+```
+______
+
+__MIT License__
+
+```
+Copyright <YEAR> <COPYRIGHT HOLDER>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 ______
 
@@ -1841,36 +1821,6 @@ exception as provided by Oracle in the LICENSE file that accompanied this code."
 ```
 ______
 
-__MIT License__
-
-```
-Copyright <YEAR> <COPYRIGHT HOLDER>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-______
-
-__BSD-3-Clause__
-
-```
-Copyright <YEAR> <COPYRIGHT HOLDER>
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-```
-______
-
 __LGPL-2.1__
 
 ```
@@ -2378,6 +2328,23 @@ necessary.  Here is a sample; alter the names:
   Ty Coon, President of Vice
 
 That's all there is to it!
+```
+______
+
+__BSD-3-Clause__
+
+```
+Copyright <YEAR> <COPYRIGHT HOLDER>
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 ______
 
