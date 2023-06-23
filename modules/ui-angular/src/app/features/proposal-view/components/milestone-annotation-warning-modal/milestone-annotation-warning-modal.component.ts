@@ -36,7 +36,6 @@ export class MilestoneAnnotationWarningModalComponent
   }
 
   close() {
-    console.log('close');
     this.milestoneAnnotationWarningModal.closeDialog();
     this.closed.emit();
   }
