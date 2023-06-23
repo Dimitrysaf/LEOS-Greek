@@ -36,6 +36,7 @@ export class MilestoneAnnotationWarningModalComponent
   }
 
   close() {
+    console.log('close');
     this.milestoneAnnotationWarningModal.closeDialog();
     this.closed.emit();
   }
@@ -44,6 +45,4 @@ export class MilestoneAnnotationWarningModalComponent
     this.modalAccepted.emit();
     this.close();
   }
-
-  onClose() {}
 }

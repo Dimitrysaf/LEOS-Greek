@@ -297,7 +297,36 @@ export class ProposalDetailsService implements OnDestroy {
         `${apiBaseUrl}/secured/proposals/${this.proposalRef}/milestones`,
         milestoneComment,
       )
-      .subscribe(() => this.loadProposalMilestones());
+      .subscribe({
+        next: (res) => {
+          this.uxAppService.growl({
+            severity: 'success',
+            summary: this.translateService.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.milestones.create-milestone-dialog.success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.loadProposalMilestones();
+        },
+        error: (res) => {
+          this.loadingService.setLoading(false);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.create-milestone-dialog.error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   sendMilestoneForContribution(milestone: MilestoneDescriptor, login: string) {
