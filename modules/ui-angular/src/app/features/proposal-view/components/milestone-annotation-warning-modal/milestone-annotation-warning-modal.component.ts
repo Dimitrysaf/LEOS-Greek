@@ -44,6 +44,4 @@ export class MilestoneAnnotationWarningModalComponent
     this.modalAccepted.emit();
     this.close();
   }
-
-  onClose() {}
 }
