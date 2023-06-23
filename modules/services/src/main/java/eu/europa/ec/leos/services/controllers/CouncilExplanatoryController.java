@@ -61,6 +61,9 @@ import java.util.List;
 public class CouncilExplanatoryController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CouncilExplanatoryController.class);
+    private static final String ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT = "Error occured while getting anex element - {}";
+    private static final String OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION = "Error occurred  while getting downloading xml version - ";
+    private static final String ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION = "Error occurred  while  downloading xml version";
     @Autowired
     private CouncilExplanatoryApiService explanatoryApiService;
 
@@ -89,7 +92,7 @@ public class CouncilExplanatoryController {
             DocumentViewResponse explanatory = this.explanatoryApiService.deleteBlock(documentRef, elementName, elementId);
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
-            LOG.error("Error occured while getting anex element - " + e.getMessage());
+            LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
             return new ResponseEntity<>("Unexpcted error occured while getting explanatory element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -107,7 +110,7 @@ public class CouncilExplanatoryController {
             DocumentViewResponse explanatory = this.explanatoryApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
-            LOG.error("Error occured while getting anex element - " + e.getMessage());
+            LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
             return new ResponseEntity<>("Unexpcted error occured while getting explanatory element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -279,7 +282,7 @@ public class CouncilExplanatoryController {
             DocumentViewResponse explanatory = this.explanatoryApiService.restoreToVersion(documentRef, targetVersion);
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
-            LOG.error("Error occured while getting anex element - " + e.getMessage());
+            LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
             return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -320,8 +323,8 @@ public class CouncilExplanatoryController {
             byte[] response = this.explanatoryApiService.downloadXmlVersionFiles(documentRef, versionId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -333,8 +336,8 @@ public class CouncilExplanatoryController {
             byte[] response = this.explanatoryApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -346,8 +349,8 @@ public class CouncilExplanatoryController {
             byte[] response = this.explanatoryApiService.replaceAllTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

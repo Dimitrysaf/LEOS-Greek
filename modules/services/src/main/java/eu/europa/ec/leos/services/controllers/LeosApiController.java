@@ -84,6 +84,11 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 @RequestMapping
 public class LeosApiController {
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiController.class);
+    private static final String ERROR_OCCURRED_WHILE_GETTING_DOCUMENT = "Error occurred while getting document ";
+    private static final String FOR_USER = " for user ";
+    private static final String CONTENT_DISPOSITION = "Content-Disposition";
+    private static final String ATTACHMENT_FILENAME = "attachment; filename=\"";
+    private static final String ERROR_WHILE_CREATING_NEW_BILL_ANNEX = "Error while creating new bill annex - ";
 
     private final LegService legService;
     private final WorkspaceService workspaceService;
@@ -222,15 +227,15 @@ public class LeosApiController {
         try {
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
         } catch (Exception ex) {
-            LOG.error("Error occurred while getting document " + documentRef + " for user " + userId + ". " + ex.getMessage());
-            return new ResponseEntity<>("Error occurred while getting document " + documentRef + " for user " + userId, HttpStatus.NOT_FOUND);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". " + ex.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.NOT_FOUND);
         }
 
         Optional<Collaborator> userAsCollaborator = document.getCollaborators().stream()
                 .filter(x -> x.getLogin().equalsIgnoreCase(userId)).findAny();
         if (!userAsCollaborator.isPresent()) {
-            LOG.error("Error occurred while getting document " + documentRef + " for user " + userId + ". User not allowed to access the document.");
-            return new ResponseEntity<>("Error occurred while getting document " + documentRef + " for user " + userId, HttpStatus.FORBIDDEN);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". User not allowed to access the document.");
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.FORBIDDEN);
         }
 
         switch (document.getCategory()) {
@@ -242,8 +247,8 @@ public class LeosApiController {
                         applicationProperties.getProperty("leos.document.view." + document.getCategory().toString().toLowerCase() + ".uri");
                 return new ResponseEntity<>(Collections.singletonMap("url", MessageFormat.format(documentViewUrl, documentRef)), HttpStatus.OK);
             default:
-                LOG.error("Error occurred while getting document " + documentRef + " for user " + userId + ". Wrong category for document!!!");
-                return new ResponseEntity<>("Error occurred while getting document " + documentRef + " for user " + userId, HttpStatus.NOT_FOUND);
+                LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". Wrong category for document!!!");
+                return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -258,7 +263,7 @@ public class LeosApiController {
             if (!(currentStatus == LeosLegStatus.IN_PREPARATION || currentStatus == LeosLegStatus.FILE_ERROR)) {
                 byte[] file = legDocument.getContent().get().getSource().getBytes();
                 HttpHeaders headers = new HttpHeaders();
-                headers.set("Content-Disposition", "attachment; filename=\"" + legDocument.getName() + "\"");
+                headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
                 headers.setContentLength(file.length);
                 LegDocument updatedLegDocument = legService.updateLegDocument(legFileId, LeosLegStatus.EXPORTED);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
@@ -294,7 +299,7 @@ public class LeosApiController {
             byte[] renditionFile = exportService.exportToToolboxCoDe(legFileTemp, exportOptions);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename=\"" + "TOOLBOX_RESULT_" + System.currentTimeMillis() + "\"");
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "TOOLBOX_RESULT_" + System.currentTimeMillis() + "\"");
             headers.setContentLength(renditionFile.length);
 
             LOG.info("Returning zip file of {} bytes containing renditions to the external caller." + renditionFile.length);
@@ -388,7 +393,7 @@ public class LeosApiController {
             exportDocument = exportPackageService.findExportDocumentById(exportPackageId, false);
             byte[] file = exportDocument.getContent().get().getSource().getBytes();
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Disposition", "attachment; filename=\"" + exportDocument.getName() + "\"");
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + exportDocument.getName() + "\"");
             headers.setContentLength(file.length);
             return new ResponseEntity<>(file, headers, HttpStatus.OK);
         } catch (Exception ex) {
@@ -429,7 +434,7 @@ public class LeosApiController {
             this.apiService.createProposalAnnex(proposalRef);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            LOG.error("Error while creating new bill annex - " + e.getMessage());
+            LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while creating new bill annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -443,7 +448,7 @@ public class LeosApiController {
             this.apiService.updateAnnexTitle(proposalRef, annexId, title);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            LOG.error("Error while creating new bill annex - " + e.getMessage());
+            LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while creating new bill annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -518,7 +523,7 @@ public class LeosApiController {
         try {
             return new ResponseEntity<>(securityContext.getUser(), HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error while creating new bill annex - " + e.getMessage());
+            LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting current user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -574,7 +579,7 @@ public class LeosApiController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=\"" + response.getFilename() + "\"");
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + response.getFilename() + "\"");
             return new ResponseEntity<>(response.getContent(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());

@@ -1,6 +1,22 @@
 package eu.europa.ec.leos.services.collection;
 
+import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
+
+import java.io.File;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Provider;
+
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.google.common.base.Stopwatch;
+
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
@@ -8,7 +24,6 @@ import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
-import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.cloneProposal.ClonedProposalNotification;
 import eu.europa.ec.leos.model.notification.cloneProposal.RevisionDoneNotification;
@@ -20,25 +35,9 @@ import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Provider;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
 
 @Service
 public class CreateCollectionServiceImpl implements CreateCollectionService {
@@ -53,7 +52,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
 
     private CollectionUrlBuilder urlBuilder;
     private MessageHelper messageHelper;
-    private XmlContentProcessor xmlContentProcessor;
     private CloneContext cloneContext;
 
     @Value("${notification.functional.mailbox}")
@@ -67,7 +65,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             ProposalConverterService proposalConverterService,
             NotificationService notificationService,
             SecurityContext securityContext, CollectionUrlBuilder urlBuilder,
-            MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor,
+            MessageHelper messageHelper,
             CloneContext cloneContext) {
         this.proposalContextProvider = proposalContextProvider;
         this.proposalConverterService = proposalConverterService;
@@ -77,13 +75,11 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         this.securityContext = securityContext;
         this.urlBuilder = urlBuilder;
         this.messageHelper = messageHelper;
-        this.xmlContentProcessor = xmlContentProcessor;
         this.cloneContext = cloneContext;
     }
 
     private DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException{
         Validate.notNull(legDocument, "Leg document is required");
-        final List<ErrorVO> errorList = new ArrayList<>();
         DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, new DocumentVO(PROPOSAL),
                 true);
 
@@ -258,7 +254,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             } catch (Exception e) {
                 LOG.error("CNS notification exception. Service is not available at the moment.", e);
             }
-            return new Result<>(new Pair<String, LegDocument>(proposalUrl, (LegDocument) ((Pair) result.get()).right()), null);
+            return new Result<>(new Pair<>(proposalUrl, (LegDocument) ((Pair) result.get()).right()), null);
         }
         return result;
     }

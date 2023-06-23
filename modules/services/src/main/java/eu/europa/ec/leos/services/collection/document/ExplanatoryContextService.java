@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +29,10 @@ import java.util.Map;
 public class ExplanatoryContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExplanatoryContextService.class);
+    private static final String EXPLANATORY_PACKAGE_IS_REQUIRED = "Explanatory package is required!";
+    private static final String EXPLANATORY_PURPOSE_IS_REQUIRED = "Explanatory purpose is required!";
+    private static final String EXPLANATORY_DOCUMENT_IS_REQUIRED = "Explanatory document is required!";
+    private static final String EXPLANATORY_METADATA_IS_REQUIRED = "Explanatory metadata is required!";
 
     private final TemplateService templateService;
     private final ExplanatoryService explanatoryService;
@@ -57,7 +61,7 @@ public class ExplanatoryContextService {
         this.explanatoryService = explanatoryService;
         this.proposalService = proposalService;
         this.securityService = securityService;
-        this.actionMsgMap = new HashMap<>();
+        this.actionMsgMap = new EnumMap<>(ContextActionService.class);
     }
 
     public void useTemplate(String template) {
@@ -76,13 +80,13 @@ public class ExplanatoryContextService {
     }
 
     public void usePackage(LeosPackage leosPackage) {
-        Validate.notNull(leosPackage, "Explanatory package is required!");
+        Validate.notNull(leosPackage, EXPLANATORY_PACKAGE_IS_REQUIRED);
         LOG.trace("Using Explanatory package... [id={}, path={}]", leosPackage.getId(), leosPackage.getPath());
         this.leosPackage = leosPackage;
     }
 
     public void usePurpose(String purpose) {
-        Validate.notNull(purpose, "Explanatory purpose is required!");
+        Validate.notNull(purpose, EXPLANATORY_PURPOSE_IS_REQUIRED);
         LOG.trace("Using Explanatory purpose... [purpose={}]", purpose);
         this.purpose = purpose;
     }
@@ -106,7 +110,7 @@ public class ExplanatoryContextService {
     }
 
     public void useExplanatory(Explanatory explanatory) {
-        Validate.notNull(explanatory, "Explanatory document is required!");
+        Validate.notNull(explanatory, EXPLANATORY_DOCUMENT_IS_REQUIRED);
         LOG.trace("Using Explanatory document'... [explanatoryId={}]", explanatory.getId());
         this.explanatory = explanatory;
     }
@@ -118,7 +122,7 @@ public class ExplanatoryContextService {
     }
 
     public void useDocument(DocumentVO document) {
-        Validate.notNull(document, "Explanatory document is required!");
+        Validate.notNull(document, EXPLANATORY_DOCUMENT_IS_REQUIRED);
         explanatoryDocument = document;
     }
 
@@ -149,14 +153,14 @@ public class ExplanatoryContextService {
     public Explanatory executeCreateExplanatory() {
         LOG.trace("Executing 'Create Explanatory' use case...");
 
-        Validate.notNull(leosPackage, "Explanatory package is required!");
+        Validate.notNull(leosPackage, EXPLANATORY_PACKAGE_IS_REQUIRED);
         Validate.notNull(explanatory, "Explanatory template is required!");
         Validate.notNull(collaborators, "Explanatory collaborators are required!");
 
         Option<ExplanatoryMetadata> metadataOption = explanatory.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Explanatory metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), EXPLANATORY_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "Explanatory purpose is required!");
+        Validate.notNull(purpose, EXPLANATORY_PURPOSE_IS_REQUIRED);
         ExplanatoryMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -173,10 +177,10 @@ public class ExplanatoryContextService {
 
     public Explanatory executeImportExplanatory() {
         LOG.trace("Executing 'Import Explanatory' use case...");
-        Validate.notNull(leosPackage, "Explanatory package is required!");
+        Validate.notNull(leosPackage, EXPLANATORY_PACKAGE_IS_REQUIRED);
         Validate.notNull(explanatory, "Explanatory template is required!");
         Validate.notNull(collaborators, "Explanatory collaborators are required!");
-        Validate.notNull(purpose, "Explanatory purpose is required!");
+        Validate.notNull(purpose, EXPLANATORY_PURPOSE_IS_REQUIRED);
         Validate.notNull(type, "Explanatory type is required!");
 
         final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
@@ -189,11 +193,11 @@ public class ExplanatoryContextService {
 
     public void executeUpdateExplanatory() {
         LOG.trace("Executing 'Update explanatory metadata' use case...");
-        Validate.notNull(purpose, "Explanatory purpose is required!");
-        Validate.notNull(explanatory, "Explanatory document is required!");
+        Validate.notNull(purpose, EXPLANATORY_PURPOSE_IS_REQUIRED);
+        Validate.notNull(explanatory, EXPLANATORY_DOCUMENT_IS_REQUIRED);
 
         Option<ExplanatoryMetadata> metadataOption = explanatory.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Explanatory metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), EXPLANATORY_METADATA_IS_REQUIRED);
 
         // Updating only purpose at this time. other metadata needs to be set, if needed
         ExplanatoryMetadata explanatoryMetadata = metadataOption.get()
@@ -208,7 +212,7 @@ public class ExplanatoryContextService {
         explanatory = explanatoryService.findExplanatory(explanatoryId); //Get the existing explanatory document
 
         Option<ExplanatoryMetadata> metadataOption = explanatory.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Explanatory metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), EXPLANATORY_METADATA_IS_REQUIRED);
         ExplanatoryMetadata metadata = metadataOption.get();
         ExplanatoryMetadata explanatoryMetadata = metadata
                 .builder()

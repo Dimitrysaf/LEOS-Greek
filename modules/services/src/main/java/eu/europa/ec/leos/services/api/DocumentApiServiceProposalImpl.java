@@ -29,7 +29,6 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
-import eu.europa.ec.leos.services.dto.request.ExportComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
@@ -100,7 +99,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
                     "legisWrite");
         } catch(Exception ex) {
             LOG.error("Error occurred while requesting download of xml comparison files", ex);
-            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid " + ex);
+            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid ", ex);
         }
     }
 

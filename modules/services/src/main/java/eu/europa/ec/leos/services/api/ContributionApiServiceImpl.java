@@ -67,17 +67,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         try {
             File content = new File(legDocumentName);
-            try (FileOutputStream fos = new FileOutputStream(content)) {
-                fos.write(legDocument.getContent().get().getSource().getBytes());
-            } catch (IOException ioe) {
-                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-            }
+            writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());
             createCollectionResult = createCollectionService.cloneCollection(content, cloneOriginRef, user.getLogin(),
                     user.getDefaultEntity().getName());
             if (createCollectionResult != null && createCollectionResult.getError() != null) {
                 LOG.error("Error Occurred while cloning proposal from the Leg file: " + createCollectionResult.getError().getMessage());
-            } else {
             }
             LOG.info("Proposal id '{}' name '{}' sent for revision to user '{}' in {} milliseconds ({} sec)", proposal.getId(), leosPackage.getName(), user.getLogin(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception ex) {
@@ -88,12 +83,19 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         return createCollectionResult;
     }
 
+    private static void writeContentToFile(LegDocument legDocument, File content) {
+        try (FileOutputStream fos = new FileOutputStream(content)) {
+            fos.write(legDocument.getContent().get().getSource().getBytes());
+        } catch (IOException ioe) {
+            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+        }
+    }
+
     @Override
     public Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFilename) {
         Proposal proposal = proposalService.getProposalByRef(proposalRef);
         this.populateCloneProposalMetadata(proposal);
-        Result<?> result = createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, legFilename);
-        return result;
+        return createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, legFilename);
     }
 
     @Override

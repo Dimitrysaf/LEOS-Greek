@@ -54,8 +54,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     @Override
     public List<LeosPermission> requestUserPermissions(String documentRef, LeosCategoryClass category) {
         XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
-        List<LeosPermission> userPermissions = securityContext.getPermissions(document);
-        return userPermissions;
+        return securityContext.getPermissions(document);
     }
 
     @Override

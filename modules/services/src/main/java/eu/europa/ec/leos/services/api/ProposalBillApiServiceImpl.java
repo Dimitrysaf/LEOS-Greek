@@ -51,7 +51,7 @@ public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
     }
 
 
-    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
+    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations){
         try {
             final Bill currentDocument = this.billService.findBillByRef(documentRef);
 
@@ -70,17 +70,21 @@ public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
 
             String proposalId = proposal.getId();
             if (proposalId != null) {
-                try {
-                    this.createDocumentPackageForExport(exportOptions);
-                } catch (Exception e) {
-                    LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
-                }
+                createPackageForExport(exportOptions);
             }
             LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName());
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
         }
         return null;
+    }
+
+    private void createPackageForExport(ExportOptions exportOptions) {
+        try {
+            this.createDocumentPackageForExport(exportOptions);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
+        }
     }
 
 }

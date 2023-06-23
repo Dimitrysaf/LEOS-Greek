@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NotificationProviderImplOs implements NotificationProvider {
-    private static Logger LOG = LoggerFactory.getLogger(NotificationProviderImplOs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationProviderImplOs.class);
     
     public void sendNotification(EmailNotification emailNotification) {
         LOG.info("This feature is not available for this distribution");
