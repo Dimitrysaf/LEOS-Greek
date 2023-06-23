@@ -117,6 +117,8 @@
   "page.collection.milestones.table.type": "Type de milestone ",
   "page.collection.milestones.table.add-milestone-dialog.title": "Titre",
   "page.collection.milestones.table.add-milestone-dialog.create": "Créer un milestone",
+  "page.collection.milestones.create-milestone-dialog.success": "[FR] Milestone created",
+  "page.collection.milestones.create-milestone-dialog.error": "[FR] Failed creating milestone",
   "page.collection.milestones.annotation-warning-modal.title": "[FR] Create contribution milestone",
   "page.collection.milestones.annotation-warning-modal.text": "[FR] Suggestions will be excluded in the milestone for contribution. Ok to proceed?",
   "page.collection.milestones.type.proposal1": "Pour Consultation Interservice",

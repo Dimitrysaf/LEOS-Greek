@@ -83,7 +83,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   dismissAnnotationWarningModal(): void {
     this.annotationWarningDialogVisible = false;
-    this.milestoneAnnotationWarningModal.close();
   }
 
   openAddMilestoneDialog(): void {
