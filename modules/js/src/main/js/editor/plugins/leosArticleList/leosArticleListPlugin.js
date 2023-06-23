@@ -901,8 +901,11 @@ define(function leosArticleListPluginModule(require) {
             var sublist = olList.getItem(i);
             if(!!sublist
                 && !!sublist.getFirst()
+                && sublist.getFirst().type == CKEDITOR.NODE_ELEMENT
+                && !!sublist.getFirst().getAttribute
                 && sublist.getFirst().getAttribute(DATA_AKN_ELEMENT) == POINT
                 && !!sublist.getParent()
+                && !!sublist.getParent().getChildCount
                 && sublist.getParent().getChildCount() == 1){
                 // decrement the element position, it is removed.
                 i--;
