@@ -1,5 +1,951 @@
 <?xml version="1.0" encoding="utf-8"?>
 <copyrights-lookup>
+    <!-- Example:
+        <artifact>
+            &lt;!&ndash; Mandatory one entry per <artifact> tag &ndash;&gt;
+            <groupId>org.springframework.security</groupId>
 
+            &lt;!&ndash; Allows multiple entries per <artifact> tag, min is 0 &ndash;&gt;
+            <artifactId>spring-security-config</artifactId>
+
+            &lt;!&ndash; Allows multiple entries per <artifact> tag, min is 0 &ndash;&gt;
+            <version>5.7.2</version>
+
+            &lt;!&ndash; One optional entry per <artifact> tag &ndash;&gt;
+            <url>https://spring.io/projects/spring-security</url>
+
+            &lt;!&ndash; Allows multiple entries per <artifact> tag, min is 0 &ndash;&gt;
+            <license>
+                <name>The Apache Software License, Version 2.0</name>
+                <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            </license>
+            &lt;!&ndash; Allows multiple entries per <artifact> tag, min is 1 &ndash;&gt;
+            <copyright>Copyright (c) 2012-2022 Pivotal, Inc.</copyright>
+        </artifact>
+
+        <artifact>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>5.7.2</version>
+            <url>https://spring.io/projects/spring-security</url>
+            <license>
+                <name>Apache License, Version 2.0</name>
+            </license>
+            <copyright>Copyright (c) 2012-2022 Pivotal, Inc.</copyright>
+        </artifact>
+    -->
+
+    <artifact>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient-cache</artifactId>
+        <version>4.5.2</version>
+        <url>https://github.com/apache/httpcomponents-client/tree/master></url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 1999-2023 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>com.github.andrewoma.dexx</groupId>
+        <artifactId>collection</artifactId>
+        <version>0.6</version>
+        <url>https://github.com/andrewoma/dexx</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2014 Andrew O'Malley</copyright>
+    </artifact>
+    <artifact>
+        <groupId>com.github.jsonld-java</groupId>
+        <artifactId>jsonld-java</artifactId>
+        <version>0.9.0</version>
+        <url>https://github.com/jsonld-java/jsonld-java</url>
+        <license>
+            <name>BSD-3-Clause license</name>
+        </license>
+        <copyright>Copyright (c) 2012, Deutsche Forschungszentrum für Künstliche Intelligenz GmbH, Copyright (c) 2012-2017, JSONLD-Java contributors, All rights reserved.</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.thrift</groupId>
+        <artifactId>:libthrift</artifactId>
+        <version>0.9.3</version>
+        <url>https://github.com/apache/thrift</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright (C) 2006 - 2019, The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>2.11.0</version>
+        <url>https://mvnrepository.com/artifact/xerces/xercesImpl/</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Copyright 1999-2018 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>xml-resolver</groupId>
+        <artifactId>xml-resolver</artifactId>
+        <version>1.2</version>
+        <url>https://xerces.apache.org/xml-commons/components/resolver/</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Copyright © 2001-2009 The Apache Software Foundation.</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-core</artifactId>
+        <version>3.3.0</version>
+        <url>https://github.com/apache/jena/</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2011-2023 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>3.2.0</version>
+        <url>https://github.com/auth0/java-jwt/</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2015 Auth0, Inc. support@auth0.com</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-library</artifactId>
+        <version>1.3</version>
+        <url>https://github.com/hamcrest/JavaHamcrest/tree/master/</url>
+        <license>
+            <name>BSD License</name>
+        </license>
+        <copyright>Copyright (c) 2000-2015 www.hamcrest.org All rights reserved.</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>1.55</version>
+        <url>https://github.com/bcgit/bc-java/tree/master</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2000-2023 The Legion of the Bouncy Castle Inc. (https://www.bouncycastle.org)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-bindings-xml</artifactId>
+        <version>3.0.12</version>
+        <url>https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-xml</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2006-2016 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxw</artifactId>
+        <version>3.0.12</version>
+        <url>https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-frontend-jaxws</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2006-2016 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-simple</artifactId>
+        <version>3.0.12</version>
+        <url>https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-frontend-simple</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2006-2016 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http</artifactId>
+        <version>3.0.12</version>
+        <url>https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2006-2016 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-policy</artifactId>
+        <version>3.0.12</version>
+        <url>https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-ws-policy</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2006-2016 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-wsdl</artifactId>
+        <version>3.0.12</version>
+        <url>https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-wsdl</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2006-2016 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.neethi</groupId>
+        <artifactId>neethi</artifactId>
+        <version>3.0.3</version>
+        <url>https://mvnrepository.com/artifact/org.apache.neethi/neethi</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2004-2014 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.ws.xmlschema</groupId>
+        <artifactId>xmlschema-core</artifactId>
+        <version>2.2.1</version>
+        <url>https://mvnrepository.com/artifact/org.apache.ws.xmlschema/xmlschema-core</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2004-2015 The Apache Software Foundation, Portions Copyright 2006 International Business Machines Corp., Portions Copyright (C) World Wide Web Consortium 2006, 2007 and licensed under the three-part BSD license</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>2.2</version>
+        <url>https://junit.org/</url>
+        <license>
+            <name>Eclipse Public License - v 2.0</name>
+        </license>
+        <copyright>Copyright © 2022 The JUnit Team</copyright>
+    </artifact>
+    <artifact>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <artifactId>byte-buddy-agent</artifactId>
+        <version>1.6.11</version>
+        <url>https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Copyright 2014 - 2023 Rafael Winterhalter</copyright>
+    </artifact>
+    <artifact>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>2.10.9.2</version>
+        <url>http://ehcache.org</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>© Terracotta, Inc., a wholly-owned subsidiary of Software AG USA, Inc.</copyright>
+    </artifact>
+    <artifact>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>Saxon-HE</artifactId>
+        <version>9.8.0-3</version>
+        <url>http://www.saxonica.com/</url>
+        <license>
+            <name>Mozilla Public License Version 2.0</name>
+        </license>
+        <copyright>© 2023 Saxonica</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-configuration2</artifactId>
+        <version>2.7</version>
+        <url>https://commons.apache.org/proper/commons-configuration/</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>Copyright © 2023 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-core</artifactId>
+        <version>0.9.5</version>
+        <url>http://johnzon.apache.org/johnzon-core</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Apache Johnzon, Apache, the Apache feather logo, and the Apache Johnzon project logos are trademarks of The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.apache.santuario</groupId>
+        <artifactId>xmlsec</artifactId>
+        <version>1.5.8</version>
+        <url>http://santuario.apache.org/</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>Copyright © 2023 The Apache Software Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.2</version>
+        <url>http://joda-time.sourceforge.net</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Copyright ©2002-2023 Joda.org</copyright>
+    </artifact>
+    <artifact>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen</artifactId>
+        <version>1.2.0</version>
+        <url>http://www.cafeconleche.org/jaxen</url>
+        <license>
+            <name>BSD License 2.0</name>
+        </license>
+        <copyright>Copyright 2001-2022 The Jaxen Project</copyright>
+    </artifact>
+    <artifact>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>1.1.0.Final</version>
+        <url>http://beanvalidation.org</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Copyright © Red Hat, Inc.</copyright>
+    </artifact>
+    <artifact>
+        <groupId>jakarta.jms</groupId>
+        <artifactId>jakarta.jms-api</artifactId>
+        <version>2.0.3</version>
+        <url>https://mvnrepository.com/artifact/jakarta.jms/jakarta.jms-api/2.0.3</url>
+        <license>
+            <name>Eclipse Public License 2.0</name>
+            <name>GNU General Public License, version 2 with the GNU Classpath Exception</name>
+        </license>
+        <copyright>Eclipse EE4J Developers</copyright>
+    </artifact>
+    <artifact>
+        <groupId>jakarta.json</groupId>
+        <artifactId>jakarta.json-api</artifactId>
+        <version>1.1.6</version>
+        <url>https://mvnrepository.com/artifact/jakarta.json/jakarta.json-api/1.1.6</url>
+        <license>
+            <name>Eclipse Public License 2.0</name>
+            <name>GNU General Public License, version 2 with the GNU Classpath Exception</name>
+        </license>
+        <copyright>Eclipse EE4J Developers</copyright>
+    </artifact>
+    <artifact>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-transport-classes-kqueue</artifactId>
+        <version>4.1.73.Final</version>
+        <url>https://github.com/datenhahn/componentrenderer</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright 2012 The Netty Project</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>5.3.19</version>
+        <url>https://github.com/spring-projects/spring-framework</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>Copyright (c) 2012-2022 Pivotal, Inc.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <artifactId>spring-security-config</artifactId>
+        <artifactId>spring-security-web</artifactId>
+        <version>4.2.20.RELEASE</version>
+        <url>https://mvnrepository.com/artifact/org.springframework.security</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>Copyright (c) 2012-2022 Pivotal, Inc.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>1.0</version>
+        <url>http://aopalliance.sourceforge.net</url>
+        <license>
+            <name>Public Domain</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>1.2.11</version>
+        <url>https://github.com/qos-ch/logback</url>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <name>Eclipse Public License - v 1.0</name>
+        </license>
+        <copyright>Copyright (c) 1999-2010, QOS.ch</copyright>
+        <copyright>Copyright (c) 1999-2012, QOS.ch</copyright>
+    </artifact>
+    <artifact>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.2.11</version>
+        <url>https://github.com/qos-ch/logback</url>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <name>Eclipse Public License - v 1.0</name>
+        </license>
+        <copyright>Copyright (c) 1999-2010, QOS.ch</copyright>
+        <copyright>Copyright (c) 1999-2012, QOS.ch</copyright>
+    </artifact>
+    <artifact>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <artifactId>jackson-core</artifactId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.12.5</version>
+        <url>https://github.com/FasterXML/jackson</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Tatu Saloranta</copyright>
+    </artifact>
+    <artifact>
+        <groupId>com.vaadin.addon</groupId>
+        <artifactId>vaadin-onoffswitch</artifactId>
+        <version>1.1.0</version>
+        <url>https://vaadin.com/directory/component/onoffswitch</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Daesung Kim</copyright>
+    </artifact>
+    <artifact>
+        <groupId>com.vaadin.external</groupId>
+        <artifactId>gentyref</artifactId>
+        <version>1.2.0.vaadin1</version>
+        <url>https://mvnrepository.com/artifact/com.vaadin.external/gentyref/1.2.0.vaadin1</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Wouter Coekaerts</copyright>
+    </artifact>
+    <artifact>
+        <groupId>de.datenhahn.vaadin</groupId>
+        <artifactId>componentrenderer</artifactId>
+        <version>2.0.0</version>
+        <url>https://github.com/datenhahn/componentrenderer</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>datenhahn</copyright>
+    </artifact>
+
+    <!--<artifact>-->
+    <!--<groupId>javax.inject</groupId>-->
+    <!--<artifactId>javax.inject</artifactId>-->
+    <!--<version>1</version>-->
+    <!--<url>http://code.google.com/p/atinject/</url>-->
+    <!--<license>-->
+    <!--<name>Apache License 2.0</name>-->
+    <!--</license>-->
+    <!--<copyright></copyright>-->
+    <!--</artifact>-->
+
+    <artifact>
+        <groupId>org.codehaus.woodstox</groupId>
+        <artifactId>stax2-api</artifactId>
+        <version>3.1.4</version>
+        <url>http://woodstox.codehaus.org</url>
+        <url>https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api/3.1.4</url>
+        <license>
+            <name>The BSD License</name>
+        </license>
+        <copyright>Tatu Saloranta</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.codehaus.woodstox</groupId>
+        <artifactId>woodstox-core-asl</artifactId>
+        <version>4.4.1</version>
+        <url>http://woodstox.codehaus.org</url>
+        <url>https://mvnrepository.com/artifact/org.codehaus.woodstox/woodstox-core-asl/4.4.1</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Tatu Saloranta</copyright>
+    </artifact>
+    <artifact>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>2.3.27-incubating</version>
+        <url>http://freemarker.org/</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>© 1999–2023 The Apache Software Foundation</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.hdrhistogram</groupId>
+        <artifactId>HdrHistogram</artifactId>
+        <version>2.1.12</version>
+        <url>http://hdrhistogram.org/</url>
+        <license>
+            <name>Public Domain, per Creative Commons CC0</name>
+            <name>BSD-2-Clause</name>
+        </license>
+        <copyright>Gil Tene</copyright>
+    </artifact>
+
+    <!--chunk-->
+    <artifact>
+        <groupId>org.jctools</groupId>
+        <artifactId>jctools-core</artifactId>
+        <version>2.1.2</version>
+        <url>https://github.com/JCTools</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>JCTools Team*</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.jgroups</groupId>
+        <artifactId>jgroups</artifactId>
+        <version>3.6.13.Final</version>
+        <url>http://www.jgroups.org</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Copyright © 2002-2035, Red Hat</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.jvnet.jaxb2_commons</groupId>
+        <artifactId>jaxb2-basics</artifactId>
+        <artifactId>jaxb2-basics-runtime</artifactId>
+        <artifactId>jaxb2-basics-tools</artifactId>
+        <version>0.11.1</version>
+        <url>https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-runtime/0.11.1</url>
+        <license>
+            <name>BSD-Style License</name>
+        </license>
+        <copyright>Aleksei Valikov, Kohsuke Kawaguchi</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.latencyutils</groupId>
+        <artifactId>LatencyUtils</artifactId>
+        <version>2.0.3</version>
+        <url>http://latencyutils.github.io/LatencyUtils/</url>
+        <license>
+            <name>Public Domain, per Creative Commons CC0</name>
+        </license>
+        <copyright>Gil Tene</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>2.7.22</version>
+        <url>http://mockito.org</url>
+        <license>
+            <name>The MIT License</name>
+        </license>
+        <copyright>Szczepan Faber, Brice Dutheil, Rafael Winterhalter, Tim van der Lippe</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.objenesis</groupId>
+        <artifactId>objenesis</artifactId>
+        <version>2.5</version>
+        <url>http://objenesis.org</url>
+        <license>
+            <name>Apache 2</name>
+        </license>
+        <copyright>Joe Walnes, Henri Tremblay, Leonardo Mesquita</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.opensaml</groupId>
+        <artifactId>opensaml</artifactId>
+        <version>2.6.6</version>
+        <url>https://shibboleth.atlassian.net/wiki/spaces/OpenSAML/overview</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>The shibboleth team</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.opensaml</groupId>
+        <artifactId>openws</artifactId>
+        <version>1.5.6</version>
+        <url>http://shibboleth.net/openws/</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Scott Cantor, Nate Klingenstein, Chad La Joie, Brent Putman, Rod Widdowson</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.opensaml</groupId>
+        <artifactId>xmltooling</artifactId>
+        <version>1.4.6</version>
+        <url>http://shibboleth.net/xmltooling/</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Scott Cantor, Nate Klingenstein, Chad La Joie, Brent Putman, Rod Widdowson</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-mockito-common</artifactId>
+        <artifactId>powermock-api-mockito2</artifactId>
+        <artifactId>powermock-core</artifactId>
+        <artifactId>powermock-module-junit4-common</artifactId>
+        <artifactId>powermock-reflect</artifactId>
+        <version>1.7.4</version>
+        <url>http://www.powermock.org</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Johan Haleby, Jan Kronquist, Arthur Zagretdinov</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <artifactId>log4j-over-slf4j</artifactId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.36</version>
+        <url>http://www.slf4j.org</url>
+        <license>
+            <name>MIT License</name>
+            <name>Apache Software Licenses</name>
+        </license>
+        <copyright>Copyright © 2004-2023 QOS.ch</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin.addons</groupId>
+        <artifactId>vaadin-sliderpanel</artifactId>
+        <version>2.2.1</version>
+        <url>https://github.com/melistik/vaadin-sliderpanel</url>
+        <license>
+            <name>The MIT License (MIT)</name>
+        </license>
+        <copyright>Copyright (c) 2017 rocketbase.io</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.webjars</groupId>
+        <artifactId>MathJax</artifactId>
+        <version>2.7.0</version>
+        <url>http://webjars.org</url>
+        <license>
+            <name>Apache v2.0</name>
+        </license>
+        <copyright>©2009-2023 info@mathjax.org</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+        <version>1.7R2</version>
+        <url>http://www.mozilla.org/rhino/</url>
+        <license>
+            <name>Mozilla Public License</name>
+        </license>
+        <copyright>©1998–2023 by individual mozilla.org contributors</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>wsdl4j</groupId>
+        <artifactId>wsdl4j</artifactId>
+        <version>1.6.3</version>
+        <url>http://sf.net/projects/wsdl4j</url>
+        <license>
+            <name>CPL</name>
+        </license>
+        <copyright>WSDL4J *</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>xalan</groupId>
+        <artifactId>serializer</artifactId>
+        <version>2.7.2</version>
+        <url>http://xml.apache.org/xalan-j/</url>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+        </license>
+        <copyright>Copyright © 2006 The Apache Software Foundation. All Rights Reserved.</copyright>
+        <!--<copyright>(c) 1999-2002, Lotus Development Corporation., http://www.lotus.com.</copyright>-->
+        <!--<copyright>(c) 2001-2002, Sun Microsystems., http://www.sun.com.</copyright>-->
+        <!--<copyright>(c) 2003, IBM Corporation., http://www.ibm.com.</copyright>-->
+        <!--<copyright>voluntary contributions made by Ovidiu Predescu (ovidiu@cup.hp.com) on behalf of the-->
+        <!--Apache Software Foundation and was originally developed at Hewlett Packard Company.</copyright>-->
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin</groupId>
+        <artifactId>simplefiledownloader</artifactId>
+        <version>2.1</version>
+        <url>https://mvnrepository.com/artifact/org.vaadin/simplefiledownloader/2.1</url>
+        <license>
+            <name>Apache License 2.0</name>
+        </license>
+        <copyright>Vaadin Community</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin.addon</groupId>
+        <artifactId>confirmdialog</artifactId>
+        <version>3.2.0</version>
+        <url>https://github.com/samie/Vaadin-ConfirmDialog/</url>
+        <license>
+            <name>Apache 2</name>
+        </license>
+        <copyright>Sami Ekblad</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin.addons</groupId>
+        <artifactId>autocomplete</artifactId>
+        <version>0.2.4</version>
+        <license>
+            <name>https://github.com/wbadam/autocomplete-extension</name>
+        </license>
+        <copyright>Adam Wagner</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin.anna</groupId>
+        <artifactId>dndscroll</artifactId>
+        <version>2.0.2</version>
+        <url>https://mvnrepository.com/artifact/org.vaadin.anna/dndscroll/2.0.1</url>
+        <license>
+            <name>Apache 2</name>
+        </license>
+        <copyright>Anna Koskinen</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin.olli</groupId>
+        <artifactId>v8-client-storage</artifactId>
+        <version>0.1</version>
+        <url>https://mvnrepository.com/artifact/org.vaadin.olli/v8-client-storage/0.1</url>
+        <license>
+            <name>Apache 2</name>
+        </license>
+        <copyright>Olli Tietäväinen</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>org.vaadin.teemusa</groupId>
+        <artifactId>gridextensionpack</artifactId>
+        <version>2.0.0</version>
+        <url>https://mvnrepository.com/artifact/org.vaadin.teemusa/gridextensionpack/2.0.0</url>
+        <license>
+            <name>Apache 2</name>
+        </license>
+        <copyright>teemusa</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>aopalliance</groupId>
+        <artifactId>aopalliance</artifactId>
+        <version>1.0</version>
+        <url>http://aopalliance.sourceforge.net</url>
+        <license>Public Domain</license>
+        <copyright>(not found)</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>3.0.1</version>
+        <url>The Apache Software License, Version 2.0</url>
+        <license>The Apache Software License, Version 2.0</license>
+        <copyright>FindBugs Development Team</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.google.code.javaparser</groupId>
+        <artifactId>javaparser</artifactId>
+        <version>1.0.11</version>
+        <url>http://code.google.com/p/javaparser/</url>
+        <license>GNU Lesser General Public License</license>
+        <copyright>Júlio Vilmar Gesser</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>20.0</version>
+        <url>https://github.com/google/guava/guava</url>
+        <license>The Apache Software License, Version 2.0</license>
+        <copyright>Kevin Bourrillion</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-elemental</artifactId>
+        <artifactId>gwt-user</artifactId>
+        <version>2.8.2</version>
+        <url>http://www.gwtproject.org/gwt-elemental/</url>
+        <license>GWT Terms</license>
+        <copyright>(not found)</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.google.jsinterop</groupId>
+        <artifactId>jsinterop-annotations</artifactId>
+        <version>1.0.2</version>
+        <url>http://www.gwtproject.org/jsinterop-annotations/</url>
+        <license>GWT Terms</license>
+        <copyright>(not found)</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.googlecode.java-diff-utils</groupId>
+        <artifactId>diffutils</artifactId>
+        <version>1.3.0</version>
+        <url>http://code.google.com/p/java-diff-utils/</url>
+        <license>The Apache Software License, Version 2.0</license>
+        <copyright>(not found)</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icu4j</artifactId>
+        <version>60.2</version>
+        <url>http://icu-project.org/</url>
+        <license>Unicode/ICU License</license>
+        <copyright>Copyright © 2016 and later Unicode, Inc. and others</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>3.7.0</version>
+        <url>https://github.com/square/okhttp/okhttp</url>
+        <license>Apache 2.0</license>
+        <copyright>Copyright 2019 Square, Inc.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio</artifactId>
+        <version>1.12.0</version>
+        <url>https://github.com/square/okio/okio</url>
+        <license>Apache 2.0</license>
+        <copyright>Copyright 2019 Square, Inc.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>2.2.11</version>
+        <url>http://jaxb.java.net/jaxb-bundles/jaxb-impl</url>
+        <license>CDDL+GPL License</license>
+        <copyright>Copyright (c) 2013-2014 Oracle and/or its affiliates.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>1.4.9</version>
+        <url>http://x-stream.github.io/xstream</url>
+        <license>BSD style</license>
+        <copyright>XStream Committers</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-client</artifactId>
+        <artifactId>vaadin-compatibility-client</artifactId>
+        <artifactId>vaadin-compatibility-server</artifactId>
+        <artifactId>vaadin-compatibility-shared</artifactId>
+        <version>8.14.3</version>
+        <url>https://vaadin.com/</url>
+        <license>Apache License Version 2.0</license>
+        <copyright>Vaadin Team, Developer Henri Sara*</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-spring</artifactId>
+        <version>3.2.1</version>
+        <url>https://github.com/vaadin/spring</url>
+        <license>Apache License 2.0</license>
+        <copyright>Copyright 2015-2018 Vaadin Ltd.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.vaadin.external.flute</groupId>
+        <artifactId>flute</artifactId>
+        <version>1.3.0.gg2</version>
+        <url>http://www.w3.org</url>
+        <license>W3C Software Copyright Notice and License</license>
+        <copyright>Copyright © 2023 World Wide Web Consortium.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>com.yahoo.platform.yui</groupId>
+        <artifactId>yuicompressor</artifactId>
+        <version>2.4.8</version>
+        <url>http://developer.yahoo.com/yui/compressor/</url>
+        <license>BSD License</license>
+        <copyright>Julien Lecomte, Isaac Z. Schlueter*</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>1.3</version>
+        <url>http://commons.apache.org/proper/commons-cli/</url>
+        <license>Apache License, Version 2.0</license>
+        <copyright>Copyright © 2002-2021 The Apache Software Foundation.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.2</version>
+        <url>http://commons.apache.org/collections/</url>
+        <license>Apache License, Version 2.0</license>
+        <copyright>Copyright © 2002-2021 The Apache Software Foundation.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>cool.graph</groupId>
+        <artifactId>cuid-java</artifactId>
+        <version>0.1.1</version>
+        <url>https://github.com/graphcool/cuid-java</url>
+        <license>MIT License</license>
+        <copyright>Nilan Marktanner</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>1</version>
+        <url>http://code.google.com/p/atinject/</url>
+        <license>The Apache Software License, Version 2.0</license>
+        <copyright>(not found)</copyright>
+    </artifact>
 
 </copyrights-lookup>
