@@ -701,7 +701,7 @@ export class DocumentEditorComponent
 
   onContributionsPaneExpanded(e: any) {
     this.isContributionsPaneExpanded = !this.isContributionsPaneExpanded;
-    if(this.isVersionsPaneExpanded){
+    if (this.isVersionsPaneExpanded) {
       this.isVersionsPaneExpanded = false;
     }
   }
