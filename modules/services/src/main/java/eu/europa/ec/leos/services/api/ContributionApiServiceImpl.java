@@ -3,8 +3,10 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
@@ -121,19 +123,45 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                         String documentRef,
                                         String documentType,
                                         String versionLabel) {
-        final LeosPackage pack = this.leosRepository.findPackageByDocumentId(documentRef);
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
+        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
         this.populateCloneProposalMetadata(proposal);
 
-        final Bill contributionVersion = billService.findBillByRef(documentRef);
-        String contributionHtml = documentContentService.getCleanDocumentAsHtml(
+        XmlDocument contributionVersion = null;
+        XmlDocument originalVersion = null;
+        switch (documentClass){
+            case ANNEX:{
+                contributionVersion = this.leosRepository.findDocumentByRef(documentRef, Annex.class);
+                originalVersion = this.leosRepository.findFirstVersion(Annex.class, documentRef);
+                break;
+            }
+            case COVERPAGE:{
+                contributionVersion = this.leosRepository.findDocumentByRef(documentRef,Proposal.class);
+                originalVersion = this.leosRepository.findFirstVersion(Proposal.class, documentRef);
+                break;
+            }
+            case BILL:{
+                contributionVersion = this.leosRepository.findDocumentByRef(documentRef,Bill.class);
+                originalVersion = this.leosRepository.findFirstVersion(Bill.class, documentRef);
+                break;
+            }
+            case MEMORANDUM:{
+                contributionVersion = this.leosRepository.findDocumentByRef(documentRef, Memorandum.class);
+                originalVersion = this.leosRepository.findFirstVersion(Memorandum.class, documentRef);
+                break;
+            }
+            default:{
+                throw new RuntimeException("Not supported document type for compare and show revision");
+            }
+        }
+
+        final String contributionHtml = documentContentService.getCleanDocumentAsHtml(
                 contributionVersion,
                 contextPath,
                 securityContext.getPermissions(contributionVersion)
         );
-
-        //Get the original version submitted to LS from the metadata of the document
-        final Bill originalVersion = billService.findFirstVersion(documentRef);
+        // Get the original version submitted to LS from the metadata of the document
         final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(
                 originalVersion,
                 contextPath,
