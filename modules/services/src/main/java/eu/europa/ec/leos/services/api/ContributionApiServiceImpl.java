@@ -114,13 +114,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     public Document declineRevision(String documentType, String documentRef, String versionLabel) {
-        final LeosPackage pack = this.leosRepository.findPackageByDocumentId(documentRef);
-        final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
+        final LeosPackage docPackage = this.leosRepository.findPackageByDocumentRef(documentRef, documentClass.getClazz());
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(docPackage.getPath());
         this.populateCloneProposalMetadata(proposal);
 
-        final LeosDocument document = this.leosRepository.findDocumentByVersion(LeosCategoryClass.valueOf(documentType).getClazz(), documentRef, versionLabel);
+        final LeosDocument document = this.leosRepository.findDocumentByVersion(documentClass.getClazz(), documentRef, versionLabel);
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE);
+        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         return this.cmisRepository.updateDocument(document.getId(), properties, false);
     }
 
