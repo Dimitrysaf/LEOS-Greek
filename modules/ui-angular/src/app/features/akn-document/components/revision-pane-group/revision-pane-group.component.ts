@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 
@@ -16,13 +15,12 @@ export class RevisionPaneGroupComponent implements OnInit {
   updatedAtBy: string;
   status: string;
 
-  constructor(private translate: TranslateService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.revisionTitle = this.formatTitle(this.contribution);
     this.revisionVersion = this.formatVersionNumber(this.contribution);
     this.originatingApplication = this.contribution.contributionCreator;
-    this.status = this.contributionStatusTooltipText(this.contribution);
   }
 
   protected formatVersionNumber(contribution: ContributionVO): string {
@@ -39,17 +37,5 @@ export class RevisionPaneGroupComponent implements OnInit {
     } else {
       return contribution.checkinCommentVO.title;
     }
-  }
-
-  protected contributionStatusTooltipText(
-    contribution: ContributionVO,
-  ): string {
-    return contribution.contributionStatus === 'RECEIVED'
-      ? this.translate.instant(
-          'page.workspace.proposal-item.contribution-received',
-        )
-      : this.translate.instant(
-          'page.workspace.proposal-item.contribution-done',
-        );
   }
 }

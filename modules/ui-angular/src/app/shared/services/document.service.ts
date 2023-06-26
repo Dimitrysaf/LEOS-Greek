@@ -163,7 +163,7 @@ export class DocumentService implements OnDestroy {
       .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((x) => console.log('xxxxxxxx:', x)),
+      tap((x) => {}),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
@@ -173,7 +173,6 @@ export class DocumentService implements OnDestroy {
       switchMap((_documentView) => this.getContributions()),
       shareReplay(1),
     );
-    // this.documentView$ = this.documentReplaceView$.pipe();
 
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();

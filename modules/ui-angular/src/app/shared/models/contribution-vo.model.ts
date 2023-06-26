@@ -10,7 +10,7 @@ export interface ContributionVO {
   contributionCreator: string;
   contributionStatus: string;
   collaborators: Collaborator[];
-  xmlContent: any;
+  xmlContent: string;
   legFileName: string;
   documentName: string;
   username: string;
