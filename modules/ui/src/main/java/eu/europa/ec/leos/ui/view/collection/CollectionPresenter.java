@@ -69,6 +69,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.SendNotificationException;
+import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -1428,7 +1429,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         String jobFileName = getJobFileName();
         File packageFile = null;
         try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposalId);
+            packageFile = exportService.createCollectionPackage(jobFileName, proposalId, new ExportLW(ExportOptions.Output.WORD));
             prepareDownloadPackage(packageFile);
             LOG.info("Proposal {} id {} downloaded, in {} milliseconds ({} sec)", getProposalRef(), proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
@@ -1448,7 +1449,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         String jobFileName = getJobFileName();
         File packageFile = null;
         try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposalId);
+            packageFile = exportService.createCollectionPackage(jobFileName, proposalId, new ExportDW(ExportOptions.Output.WORD));
             prepareDownloadPackage(packageFile);
         } catch (Exception e) {
             LOG.error("Error while creating download proposal package", e);

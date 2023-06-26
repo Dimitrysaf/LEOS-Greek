@@ -11,22 +11,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-
 package eu.europa.ec.leos.services.api;
 
+
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
-import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportVersions;
-import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +33,13 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 
-@Service("mandateBill")
-@Instance(InstanceType.COUNCIL)
-public class MandateBillApiService extends BillApiServiceImpl {
-    private static final Logger LOG = LoggerFactory.getLogger(MandateBillApiService.class);
+@Service("proposalAnnex")
+@Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
+public class ProposalAnnexAPIServiceImpl extends AnnexApiServiceImpl {
+    private static final Logger LOG = LoggerFactory.getLogger(ProposalAnnexAPIServiceImpl.class);
 
-    MandateBillApiService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
-        super(structureContext, cloneContext, context);
+    ProposalAnnexAPIServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
+        super(structureContext, cloneContext, context, annexContext);
     }
 
     @Override
@@ -54,29 +53,30 @@ public class MandateBillApiService extends BillApiServiceImpl {
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
         try {
-            final Bill currentDocument = this.billService.findBillByRef(documentRef);
+            Annex annex = this.annexService.findAnnexByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
             contex.get().usePackage(leosPackage);
-            Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
+            Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+            populateCloneProposalMetadata(proposal);
 
+            XmlDocument original = documentContentService.getOriginalAnnex(annex);
             ExportOptions exportOptions;
-            XmlDocument original = documentContentService.getOriginalBill(currentDocument);
-            exportOptions = new ExportDW(ExportOptions.Output.WORD, Bill.class, false);
-            exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
-
+            exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
+            exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, annex));
+            exportOptions.setWithCoverPage(true);
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
-            exportOptions.setWithCoverPage(false);
 
-            String proposalId = proposal.getId();
-            if (proposalId != null) {
-                final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
-                return exportService.createDocuWritePackage(jobFileName, proposalId, exportOptions);
+            try {
+                this.createDocumentPackageForExport(exportOptions);
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
             }
-            LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName());
+
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
+            throw new Exception("Unexpected error occured while using Export service", e);
         }
         return null;
     }
