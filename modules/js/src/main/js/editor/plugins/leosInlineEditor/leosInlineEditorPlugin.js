@@ -71,10 +71,10 @@ define(function leosInlineEditorPluginModule(require) {
                     const selection = editor.getSelection();
                     if (selection) {
                         let parentElement = selection.getStartElement();
+                        while (parentElement && !parentElement.is(CKEDITOR.dtd.$block)) {
+                            parentElement = parentElement.getParent();
+                        }
                         if (parentElement) {
-                            while (!parentElement.is(CKEDITOR.dtd.$block)) {
-                                parentElement = parentElement.getParent();
-                            }
                             var user = editor.LEOS.user;
                             parentElement.setAttribute(DATA_AKN_SOFTUSER, user.name.concat("(").concat(user.entity).concat(")"));
                             parentElement.setAttribute(DATA_AKN_SOFTDATE, UTILS.toIsoString(new Date()));

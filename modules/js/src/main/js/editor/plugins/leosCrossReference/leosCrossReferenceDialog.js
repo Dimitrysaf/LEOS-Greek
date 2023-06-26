@@ -176,8 +176,8 @@ define(function leosCrossReferenceDialog(require) {
      */
     function centralizeDialog(dialog) {
         window.setTimeout(function () {
-            console.log(document.documentElement.clientHeight);
-            console.log(dialog.getSize().height);
+            //console.log(document.documentElement.clientHeight);
+            //console.log(dialog.getSize().height);
             dialog.move(dialog.getPosition().x, (document.documentElement.clientHeight / 2) - (dialog.getSize().height / 2));
         }, 0)
     }
@@ -375,16 +375,16 @@ define(function leosCrossReferenceDialog(require) {
             return this.elementIds;
         },
         addSelectedElementId: function addSelectedElementId(elementId) {
-            this.getSelectedElementIds().add(elementId);
+            this.getSelectedElementIds().add(elementId.split("/").pop());
         },
         removeSelectedElementId: function removeSelectedElementId(elementId) {
-            this.getSelectedElementIds().delete(elementId);
+            this.getSelectedElementIds().delete(elementId.split("/").pop());
         },
         getSelectedMrefId: function getSelectedMrefId() {
             return this.selectedMrefId;
         },
         setSelectedMrefId: function setSelectedMrefId(elementId) {
-            this.selectedMrefId = elementId;
+            this.selectedMrefId = elementId ? elementId.split("/").pop() : null;
         },
         setTreeNodeIds: function setTreeNodeIds(treeNodes) {
             var that = this;

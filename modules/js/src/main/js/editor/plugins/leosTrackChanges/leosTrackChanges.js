@@ -223,8 +223,9 @@ define(function leosTrackChangesModule(require) {
             return elementIsNewTrackchange || textHasParentElementNewTrackchange;
         },
 
-        isInsideTrackChangeElement: function(editor) {
-            for (var action of [this.INSERT_ACTION, this.DELETE_ACTION]) {
+        isInsideTrackChangeElement: function(editor, action) {
+            var actions = action ? [action] : [this.INSERT_ACTION, this.DELETE_ACTION];
+            for (var action of actions) {
                 var tcElement = this.searchTrackChangeElementCheckingParent(editor, action);
                 if (tcElement && (tcElement[1] === this.CURRENT || tcElement[1] === this.PARENT)) {
                     return tcElement[0];
@@ -309,7 +310,7 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        insertNewData: function(editor, event) {
+        insertNewData: function(editor, data) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
             if (tcElement && core.isEmpty(tcElement[0])) { // TC Element is empty then it should be removed and create a new one
@@ -318,21 +319,21 @@ define(function leosTrackChangesModule(require) {
             }
             if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && (tcElement[0].getAttribute(core.STATUS_ATTR) === core.NEW_STATUS)) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
-                    return;
+                    return false;
                 } else if (tcElement[1] === core.CARET_START) {
                     core.setToEditablePosition(editor, tcElement[0], core.CARET_START);
-                    return;
+                    return false;
                 } else {
-                    var text = (tcElement[1] === core.CARET_END ? tcElement[0].getText() + event.getChar() : event.getChar() + tcElement[0].getText());
-                    tcElement[0].setText(text);
+                    var html = tcElement[1] === core.CARET_END ? tcElement[0].getHtml() + data : data + tcElement[0].getHtml();
+                    tcElement[0].setHtml(html);
                 }
             } else {
-                var newElement = core.insertTrackChangeElement(editor, core.INSERT_ACTION, event.getChar(), core.CARET_END);
+                var newElement = core.insertTrackChangeElement(editor, core.INSERT_ACTION, data, core.CARET_END, true);
                 if (tcElement && tcElement[0] && (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT)) {
                     core.breakParentAndMoveTo(editor, newElement, tcElement[0], core.CARET_END);
                 }
             }
-            event.getInstance().data.preventDefault(); // Prevent standard insert
+            return true;
         },
 
         deleteCharacter: function(editor, event, letter, isPreviousInsertOfSameUser, isNextInsertOfSameUser,
