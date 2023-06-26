@@ -117,6 +117,7 @@ export class DocumentService implements OnDestroy {
   private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
+  private contributionsBS = new BehaviorSubject<ContributionVO[]>([]);
   private searchPaneOpenBS = new BehaviorSubject(false);
   private searchParamsBS = new BehaviorSubject({
     searchText: '',
@@ -163,16 +164,12 @@ export class DocumentService implements OnDestroy {
       .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((x) => {}),
+      tap((res) => this.getContributions()),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
     );
-    this.contributions$ = this.documentView$.pipe(
-      filter(Boolean),
-      switchMap((_documentView) => this.getContributions()),
-      shareReplay(1),
-    );
+    this.contributions$ = this.contributionsBS.asObservable();
 
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
@@ -920,9 +917,13 @@ export class DocumentService implements OnDestroy {
     const queryString =
       documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
 
-    return this.http.get<ContributionVO[]>(
-      `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
-    );
+    return this.http
+      .get<ContributionVO[]>(
+        `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
+      )
+      .subscribe((contributions) => {
+        this.contributionsBS.next(contributions);
+      });
   }
 
   declineContribution(contribution: ContributionVO) {

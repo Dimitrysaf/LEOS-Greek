@@ -40,10 +40,10 @@ export class RevisionActionsDropdownComponent implements OnInit {
   }
 
   onAccept() {
+    this.documentService.declineContribution(this.contribution);
     this.declineContributionDialog.closeDialog();
     this.versionToDecline = '';
     this.versionModalText = '';
-    this.documentService.declineContribution(this.contribution);
   }
 
   onCancel() {
