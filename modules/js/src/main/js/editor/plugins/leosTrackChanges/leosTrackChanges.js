@@ -224,7 +224,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         isInsideTrackChangeElement: function(editor, action) {
-            var actions = action != null ? [action] : [this.INSERT_ACTION, this.DELETE_ACTION];
+            var actions = action ? [action] : [this.INSERT_ACTION, this.DELETE_ACTION];
             for (var action of actions) {
                 var tcElement = this.searchTrackChangeElementCheckingParent(editor, action);
                 if (tcElement && (tcElement[1] === this.CURRENT || tcElement[1] === this.PARENT)) {
