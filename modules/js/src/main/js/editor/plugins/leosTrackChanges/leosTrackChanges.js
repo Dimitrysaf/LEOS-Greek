@@ -371,6 +371,25 @@ define(function leosTrackChangesModule(require) {
 
             }
 
+            if (deleteKey && isNextInsertOfSameUser) {
+                return;
+            } else if (!deleteKey && isPreviousInsertOfSameUser) {
+                return;
+            }
+
+            if (!deleteKey && nextNodeToAddText) {
+
+                nextNodeToAddText.setText(letter + nextNodeToAddText.getText());
+                this.moveTo(deleteKey, range, editor, nextNodeToAddText);
+
+            } else {
+
+                var newElement = core.buildTrackChangeElement(editor, core.DELETE_ACTION, letter, true);
+                editor.insertElement(newElement);
+                this.moveTo(deleteKey, range, editor, newElement);
+
+            }
+
             var previousNodeAfterChange = editor.getSelection().getRanges()[0].getPreviousNode();
             var nextNodeAfterChange = editor.getSelection().getRanges()[0].getNextNode();
             if (nextNodeAfterChange.$.textContent === '') {

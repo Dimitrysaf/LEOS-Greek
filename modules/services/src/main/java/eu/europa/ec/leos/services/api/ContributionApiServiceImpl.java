@@ -1,10 +1,13 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.cmis.repository.CmisRepository;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
@@ -23,6 +26,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +40,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -65,6 +71,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
     @Autowired
     BillService billService;
+    CmisRepository cmisRepository;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -143,6 +150,18 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         cloneContext.setContribution(Boolean.TRUE);
         return this.comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
     }
+    
+    public Document declineRevision(String documentType, String documentRef, String versionLabel) {
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
+        final LeosPackage docPackage = this.leosRepository.findPackageByDocumentRef(documentRef, documentClass.getClazz());
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(docPackage.getPath());
+        this.populateCloneProposalMetadata(proposal);
+
+        final LeosDocument document = this.leosRepository.findDocumentByVersion(documentClass.getClazz(), documentRef, versionLabel);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        return this.cmisRepository.updateDocument(document.getId(), properties, false);
+    }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {
         if (proposal != null && proposal.isClonedProposal()) {
@@ -151,5 +170,4 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }
-
 }

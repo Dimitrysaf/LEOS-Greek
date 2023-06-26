@@ -111,11 +111,13 @@
             (reBuildTocItems)="onRebuildTocItems($event)"
           ></app-document-toc>
           <!-- versions -->
+          <hr />
           <eui-fieldset
             class="eui-u-mt-s"
             label="{{ 'page.editor.versions-pane.label' | translate }}"
             isExpandable
-            [isExpanded]="false"
+            [isExpanded]="isVersionsPaneExpanded"
+            (expanded)="onVersionsPaneExpanded($event)"
           >
             <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
               <button
@@ -235,11 +237,14 @@
             ></app-versions-pane>
           </eui-fieldset>
           <!-- contributions -->
+          <hr />
           <eui-fieldset
             class="eui-u-mt-s"
             label="{{ 'page.editor.contribution-pane.label' | translate }}"
             isExpandable
-            [isExpanded]="false"
+            [isExpanded]="isContributionsPaneExpanded"
+            *ngIf="showContributionsPane"
+            (expanded)="onContributionsPaneExpanded($event)"
           >
             <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
               <button euiButton euiIconButton euiSecondary euiOutline euiSizeS>

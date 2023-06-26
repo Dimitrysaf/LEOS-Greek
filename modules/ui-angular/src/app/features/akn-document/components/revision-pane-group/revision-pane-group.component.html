@@ -1,21 +1,51 @@
 <eui-card class="revisions-pane" euiNoShadow>
   <eui-card-header>
     <eui-card-header-left-content>
-      <span euiLabel>{{ originatingApplication }}</span>
+      <span euiLabel class="top-content">Version: {{ revisionVersion }}</span>
     </eui-card-header-left-content>
     <eui-card-header-right-content>
-      <span euiLabel>{{ revisionVersion }}</span>
+      <span euiLabel class="top-content">{{ originatingApplication }}</span>
     </eui-card-header-right-content>
   </eui-card-header>
 
-  <eui-card-content class="eui-u-pb-none">
+  <eui-card-content>
     <div class="revision">
-      <div class="title"></div>
+      <div class="title col-md-9">{{ revisionTitle }}</div>
       <div>
-        <app-revision-actions-dropdown></app-revision-actions-dropdown>
+        <app-revision-actions-dropdown
+          [contribution]="contribution"
+          class="col-md-3"
+        ></app-revision-actions-dropdown>
       </div>
     </div>
   </eui-card-content>
 
-  <eui-card-footer> </eui-card-footer>
+  <eui-card-footer>
+    <eui-card-footer-action-buttons>
+      <span class="updatedBy">{{
+        'page.editor.contribution-item.updated-by'
+          | translate
+            : {
+                updatedOn: contribution.updatedDate,
+                updatedBy: contribution.username
+              }
+      }}</span>
+    </eui-card-footer-action-buttons>
+    <eui-card-footer-action-icons>
+      <img
+        src="assets/icons/contribution_received.png"
+        *ngIf="contribution.contributionStatus === 'RECEIVED'"
+        [euiTooltip]="
+          'page.workspace.proposal-item.contribution-received' | translate
+        "
+      />
+      <img
+        src="assets/icons/contribution_done.png"
+        *ngIf="contribution.contributionStatus === 'CONTRIBUTION_DONE'"
+        [euiTooltip]="
+          'page.workspace.proposal-item.contribution-done' | translate
+        "
+      />
+    </eui-card-footer-action-icons>
+  </eui-card-footer>
 </eui-card>

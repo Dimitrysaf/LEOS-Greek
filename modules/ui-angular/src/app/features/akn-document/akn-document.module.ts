@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -56,6 +57,7 @@ import { CKEditorService } from './services/ckeditor.service';
     LeosLegacyModule,
     SharedModule,
     MatTreeModule,
+    MatTooltipModule,
   ],
   providers: [
     CKEditorService,

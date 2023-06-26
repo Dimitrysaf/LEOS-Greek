@@ -117,6 +117,7 @@ export class DocumentService implements OnDestroy {
   private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
+  private contributionsBS = new BehaviorSubject<ContributionVO[]>([]);
   private searchPaneOpenBS = new BehaviorSubject(false);
   private searchParamsBS = new BehaviorSubject({
     searchText: '',
@@ -160,19 +161,15 @@ export class DocumentService implements OnDestroy {
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
-      .pipe(filter(Boolean));
+      .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((x) => console.log('xxxxxxxx:', x)),
+      tap((res) => this.getContributions()),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
     );
-    this.contributions$ = this.documentView$.pipe(
-      filter(Boolean),
-      switchMap((_documentView) => this.getContributions()),
-    );
-    // this.documentView$ = this.documentReplaceView$.pipe();
+    this.contributions$ = this.contributionsBS.asObservable();
 
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
@@ -190,6 +187,7 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentVersionsData(option.category, option.ref),
       ),
+      shareReplay(1),
     );
 
     this.documentConfig$ = this.documentRefAndCategory$.pipe(
@@ -197,6 +195,7 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentConfig(option.ref, option.category),
       ),
+      shareReplay(1),
     );
 
     this.recentChanges$ = this.documentRefAndCategory$.pipe(
@@ -204,6 +203,7 @@ export class DocumentService implements OnDestroy {
       switchMap((option) =>
         this.getDocumentRecentChangesData(option.category, option.ref),
       ),
+      shareReplay(1),
     );
 
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
@@ -917,16 +917,59 @@ export class DocumentService implements OnDestroy {
     const queryString =
       documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
 
-    return this.http.get<ContributionVO[]>(
-      `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
-    );
+    return this.http
+      .get<ContributionVO[]>(
+        `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
+      )
+      .subscribe((contributions) => {
+        this.contributionsBS.next(contributions);
+      });
   }
 
-  declineContribution() {
-    //TODO add api call and parameters
+  declineContribution(contribution: ContributionVO) {
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
+
+    return this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
+        {},
+        { params: { versionLabel } },
+      )
+      .subscribe({
+        next: (res) => {
+          this.appShell.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.decline-contribution-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.getContributions();
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.decline-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
-  viewContribution() {
+  viewContribution(contribution: ContributionVO) {
     //TODO add api call and parameters
   }
 
@@ -1176,8 +1219,9 @@ export class DocumentService implements OnDestroy {
   private notifyExportEmailSent() {
     this.appConfig.config.subscribe((c) => {
       const userEmail = c.user.email;
+      // const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
       this.translate
-        .get('page.editor.export-email-sent', { userEmail })
+        .get('page.editor.export-version-email-sent', { userEmail })
         .subscribe((message) => {
           this.appShell.growl({
             severity: 'info',

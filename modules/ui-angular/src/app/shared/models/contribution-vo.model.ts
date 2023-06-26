@@ -3,14 +3,15 @@ import { Collaborator } from '@/shared';
 
 export interface ContributionVO {
   documentId: string;
-  versionNumber: number[];
+  versionNumber: { major: number; intermediate: number; minor: number };
   updatedDate: number;
   versionedReference: string;
   checkinCommentVO: CheckinComment;
   contributionCreator: string;
   contributionStatus: string;
   collaborators: Collaborator[];
-  xmlContent: any;
+  xmlContent: string;
   legFileName: string;
   documentName: string;
+  username: string;
 }
