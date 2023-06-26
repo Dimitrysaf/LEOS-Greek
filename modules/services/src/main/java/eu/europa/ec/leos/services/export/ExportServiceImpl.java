@@ -95,6 +95,25 @@ abstract class ExportServiceImpl implements ExportService {
         return null;
     }
 
+    @Override
+    public File createCollectionPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception {
+        Validate.notNull(jobFileName);
+        Validate.notNull(exportOptions);
+        Validate.notNull(documentId);
+        File legFile = null;
+        try {
+            LegPackage legPackage = legService.createLegPackage(documentId, exportOptions);
+            legFile = legPackage.getFile();
+            return createZipFile(legPackage, jobFileName, exportOptions);
+        } finally {
+            if (legFile != null && legFile.exists()) {
+                if(!legFile.delete()){
+                    LOG.info("File not deleted {}", legFile.toPath());
+                }
+            }
+        }
+    }
+
     protected File createZipFile(LegPackage legPackage, String jobFileName, ExportOptions exportOptions) throws Exception {
         Validate.notNull(legPackage);
         Validate.notNull(jobFileName);

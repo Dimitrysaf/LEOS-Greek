@@ -35,10 +35,10 @@ import javax.inject.Provider;
 
 @Service("mandateAnnex")
 @Instance(InstanceType.COUNCIL)
-public class MandateAnnexApiService extends AnnexApiServiceImpl {
-    private static final Logger LOG = LoggerFactory.getLogger(MandateAnnexApiService.class);
+public class MandateAnnexApiServiceImpl extends AnnexApiServiceImpl {
+    private static final Logger LOG = LoggerFactory.getLogger(MandateAnnexApiServiceImpl.class);
 
-    MandateAnnexApiService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
+    MandateAnnexApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
         super(structureContext, cloneContext, context, annexContext);
     }
 
