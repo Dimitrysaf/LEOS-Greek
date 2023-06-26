@@ -293,6 +293,7 @@
   "page.editor.contribution.decline.modal-button": "[FR] Decline",
   "page.editor.contribution.decline-contribution-message-success": "[FR] Contribution declined",
   "page.editor.contribution.decline-contribution-message-error": "[FR] Failed to decline contribution",
+  "page.editor.contribution.view-contribution-message-error": "[FR] Failed to fetch contribution for view",
   "page.editor.toc.actions.collapseAll": "Tout réduire",
   "page.editor.toc.actions.expandAll": "Tout afficher",
   "page.editor.toc.move-actions.move": "Déplacer",

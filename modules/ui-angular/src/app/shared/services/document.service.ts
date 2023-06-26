@@ -112,8 +112,11 @@ export class DocumentService implements OnDestroy {
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
   contributions$: Observable<ContributionVO[]>;
+  contributionViewAndMerge$: Observable<DocumentViewResponse>;
 
   // private documentCategoryBS = new BehaviorSubject(null);
+  private contributionViewAndMergeBS =
+    new BehaviorSubject<DocumentViewResponse>(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
@@ -289,6 +292,8 @@ export class DocumentService implements OnDestroy {
     this.collapseExpandAnnotation$ =
       this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
+    this.contributionViewAndMerge$ =
+      this.contributionViewAndMergeBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -969,14 +974,33 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  viewAndMergeContribution() {
+  viewAndMergeContribution(contribution: ContributionVO) {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
-    return this.http.get<ContributionVO[]>(
-      `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}`,
-    );
+    this.http
+      .get<any>(
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?versionLabel=${versionLabel}`,
+      )
+      .subscribe({
+        next: (res) => {
+          this.contributionViewAndMergeBS.next(res);
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.view-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   private setSearchResultsCounter(count: number) {

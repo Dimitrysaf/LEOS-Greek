@@ -84,11 +84,13 @@ export class DocumentEditorComponent
   versionsComparisonForView: string;
   versionsComparisonForViewHeaderTitle$: Observable<string>;
   documentConfig: DocumentConfig;
+  contributionForView: string;
 
   isVersionForViewOpen = false;
   isTocPaneCollapsed = true;
   isAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
+  isViewContributionPaneCollapsed = true;
   reloadTrigger: number;
 
   tocItems: Array<TocItem> = [];
@@ -239,6 +241,17 @@ export class DocumentEditorComponent
           );
           this.setVersionForViewHeader(versionView.versionInfoVO);
           this.isVersionForViewOpen = true;
+        }
+      });
+
+    this.documentService.contributionViewAndMerge$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((contributionView) => {
+        if (contributionView) {
+          this.contributionForView = this.cleanupAndSerializeXML(
+            contributionView.editableXml,
+          );
+          this.isContributionsPaneExpanded = true;
         }
       });
 

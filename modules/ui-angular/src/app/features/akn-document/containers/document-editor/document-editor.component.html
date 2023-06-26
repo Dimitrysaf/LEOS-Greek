@@ -621,6 +621,21 @@
         (hideSplitter)="onHideAnnotationsSplitter($event)"
       ></app-draggable-splitter>
 
+      <!-- contribution view and merge pane -->
+      <eui-page-column
+        #contributionViewPane
+        interactiveScrollbars
+        *ngIf="isViewContributionPaneCollapsed"
+        class="contribution-view-merge-pane"
+      >
+        <app-akn-document
+          id="contributionViewContainer"
+          [xml]="contributionForView"
+          class="sync-scroll"
+        >
+        </app-akn-document>
+      </eui-page-column>
+
       <!-- unsaved data dialog -->
       <eui-dialog
         #unSavedDialog

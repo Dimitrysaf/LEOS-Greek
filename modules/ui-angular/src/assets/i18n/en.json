@@ -318,6 +318,7 @@
   "page.editor.contribution.decline.modal-button": "Decline",
   "page.editor.contribution.decline-contribution-message-success": "Contribution declined",
   "page.editor.contribution.decline-contribution-message-error": "Failed to decline contribution",
+  "page.editor.contribution.view-contribution-message-error": "Failed to fetch contribution for view",
   "page.editor.contribution-item.updated-by": "{{ updatedOn }} {{ updatedBy }}",
   "page.editor.toc.actions.collapseAll": "Collapse All",
   "page.editor.toc.actions.expandAll": "Expand All",
