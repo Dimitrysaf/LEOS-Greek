@@ -969,8 +969,14 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  viewContribution(contribution: ContributionVO) {
-    //TODO add api call and parameters
+  viewAndMergeContribution() {
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    return this.http.get<ContributionVO[]>(
+      `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}`,
+    );
   }
 
   private setSearchResultsCounter(count: number) {
