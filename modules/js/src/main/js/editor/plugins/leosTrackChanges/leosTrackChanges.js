@@ -32,7 +32,7 @@ define(function leosTrackChangesModule(require) {
         // TC Locations / where the tc is found
         BEFORE: "before", AFTER: "after", NONE: "none", CURRENT: "current", PARENT: "parent",
 
-        // Style element types
+        // Style elements tags
         STYLE_ELEMENTS:  ["strong", "em", "sub", "sup"],
 
         searchTrackChangeElementCheckingParent: function(editor, action) {
