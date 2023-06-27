@@ -109,13 +109,16 @@ public class XercesUtilsTest extends LeosTest {
         fullScanTags(document);
     }
 
-    @Ignore
     @Test
     public void test_addDivsToFinStmntHtml() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/finstmnt.xml");
         String nsContent = XmlHelper.addDummyNamespace(new String(fileContent));
         Document document = XercesUtils.createXercesDocument(nsContent.getBytes(StandardCharsets.UTF_8));
-        LeosXercesUtils.wrapWithPageOrientationDivs(document);
+        byte[] contentWrappedDiv = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+        String result = squeezeXmlAndRemoveAllNS(new String(contentWrappedDiv));
+        byte[] fileDivWrappedContent = TestUtils.getFileContent(FILE_PREFIX + "/finstmnt_div_wrapped.xml");
+        String expected = squeezeXmlAndRemoveAllNS(new String(fileDivWrappedContent));
+        assertEquals(expected, result);
     }
 
     @Test

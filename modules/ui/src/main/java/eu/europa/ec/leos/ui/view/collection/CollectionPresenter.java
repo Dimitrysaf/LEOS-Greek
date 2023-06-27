@@ -214,7 +214,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
     private final AnnexService annexService;
     private final ExplanatoryService explanatoryService;
     private final BillService billService;
-    private final PackageService packageService;
     private final UserHelper userHelper;
     private final ExportService exportService;
     private final MilestoneService milestoneService;
@@ -285,7 +284,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         this.annexService = annexService;
         this.explanatoryService = explanatoryService;
         this.billService = billService;
-        this.packageService = packageService;
         this.milestoneService = milestoneService;
         this.userHelper = userHelper;
         this.exportService = exportService;
