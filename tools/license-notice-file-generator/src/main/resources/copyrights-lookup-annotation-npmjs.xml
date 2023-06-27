@@ -15318,6 +15318,173 @@
         </license>
         <copyright>Copyright (c) 2016-2018 Google, Inc</copyright>
     </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>angular-multiple-select</artifactId>
+        <version>1.1.3</version>
+        <url>https://github.com/jagdeep-singh/angularMultipleSelect</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2015 Jagdeep Singh</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>annotate-client</artifactId>
+        <version>1.84.0</version>
+        <url>https://github.com/hypothesis/client</url>
+        <license>
+            <name>BSD-2-Clause</name>
+        </license>
+        <copyright>Copyright (c) 2013-2019 Hypothes.is Project and contributors</copyright>
+        <copyright>For the annotator subcomponent: Copyright 2012 Aron Carroll, Rufus Pollock, and Nick Stenning.</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>archy </artifactId>
+        <version>1.0.0
+        </version>
+        <url>https://github.com/substack/node-archy</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>bs-snippet-injector</artifactId>
+        <version>2.0.1</version>
+        <url>https://github.com/shakyShane/bs-snippet-injector</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>buffer-equal</artifactId>
+        <version>1.0.1</version>
+        <url>https://github.com/inspect-js/buffer-equal</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2012 James Halliday and contributors</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>concat-map </artifactId>
+        <version>0.0.1</version>
+        <url>https://github.com/substack/node-concat-map</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>find-index</artifactId>
+        <version>0.1.1</version>
+        <url>https://github.com/jsdf/find-index</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2019 James Friend</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>glyphicons-only-bootstrap </artifactId>
+        <version>1.0.1</version>
+        <url>https://github.com/ohpyupi/glyphicons-only-bootstrap</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>gulp-cssmin</artifactId>
+        <version>0.1.7</version>
+        <url>https://github.com/chilijung/gulp-cssmin></url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>gulp-jsmin </artifactId>
+        <version>0.1.5</version>
+        <url>https://github.com/chilijung/gulp-jsmin</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>gulp-stylus</artifactId>
+        <version>2.7.1</version>
+        <url>https://github.com/stevelacy/gulp-stylus</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2015 Steve Lacy (slacy.me) me@slacy.me</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>jsmin2</artifactId>
+        <version>1.1.9</version>
+        <url>https://github.com/twolfson/node-jsmin2</url>
+        <license>
+            <name>???</name>
+        </license>
+        <copyright>Copyright (c) 2012 Todd Wolfson (todd@twolfson.com)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>json-stable-stringify-without-jsonify</artifactId>
+        <version>1.0.1</version>
+        <url>https://github.com/samn/json-stable-stringify</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>openurl </artifactId>
+        <version>1.1.1</version>
+        <url>https://github.com/rauschma/openurl</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Axel Rauschmayer axe@rauschma.de</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>spdx-license-ids</artifactId>
+        <version>3.0.12</version>
+        <url>https://github.com/jslicense/spdx-license-ids</url>
+        <license>
+            <name>Creative Commons Zero v1.0 Universal</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>vinyl-sourcemaps-apply</artifactId>
+        <version>0.2.1</version>
+        <url>https://github.com/floridoo/vinyl-sourcemaps-apply</url>
+        <license>
+            <name>ISC</name>
+        </license>
+        <copyright>(no copyright)</copyright>
+    </artifact>
+
     <!--<artifact>-->
         <!--<groupId>@socket.io</groupId>-->
         <!--<artifactId>component-emitter</artifactId>-->

@@ -13,7 +13,8 @@ This product includes dynamically linked software developed by third parties whi
 __antlr:antlr 2.7.7__
  * http://www.antlr.org/
  * License: BSD License
- * Copyright: (no copyright)
+ * Copyright:
+   * Terence Parr
 
 __ch.qos.logback:logback-classic 1.2.11__
  * http://logback.qos.ch/logback-classic
@@ -42,7 +43,8 @@ __com.auth0:java-jwt 3.2.0__
 __com.fasterxml:classmate 1.5.1__
  * https://github.com/FasterXML/java-classmate
  * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * 2007-, Tatu Saloranta (tatu.saloranta@iki.fi)
 
 __com.fasterxml.jackson.core:jackson-annotations 2.13.2__
  * http://github.com/FasterXML/jackson
@@ -65,27 +67,32 @@ __com.fasterxml.jackson.core:jackson-databind 2.13.2.1__
 __com.fasterxml.jackson.datatype:jackson-datatype-jdk8 2.13.2__
  * https://github.com/FasterXML/jackson-modules-java8/jackson-datatype-jdk8
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Tatu Saloranta
 
 __com.fasterxml.jackson.datatype:jackson-datatype-jsr310 2.13.2__
  * https://github.com/FasterXML/jackson-modules-java8/jackson-datatype-jsr310
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Tatu Saloranta - tatu@fasterxml.com, Nick Williams - nicholas@nicholaswilliams.net
 
 __com.fasterxml.jackson.module:jackson-module-parameter-names 2.13.2__
  * https://github.com/FasterXML/jackson-modules-java8/jackson-module-parameter-names
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Tatu Saloranta - tatu@fasterxml.com
 
 __com.github.spotbugs:spotbugs-annotations 3.1.0__
  * https://spotbugs.github.io/
  * License: GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
- * Copyright: (no copyright)
+ * Copyright:
+   * Juan Martín Sotuyo Dodero, Dave Brosius - dbrosius@mebigfatguy.com, Kengo TODA - skypencil@gmail.com, Andrey Loskutov - loskutov@gmx.de, Andreas Sewe - andreas.sewe@codetrails.com
 
 __com.github.springtestdbunit:spring-test-dbunit 1.3.0__
  * https://springtestdbunit.github.com/spring-test-dbunit
  * License: Apache 2
- * Copyright: (no copyright)
+ * Copyright:
+   * Phillip Webb, Mario Zagar
 
 __com.google.code.findbugs:jsr305 3.0.2__
  * http://findbugs.sourceforge.net/
@@ -102,12 +109,14 @@ __com.h2database:h2 1.4.200__
 __com.jayway.jsonpath:json-path 2.6.0__
  * https://github.com/jayway/JsonPath
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Kalle Stenflo - kalle.stenflo@gmail.com
 
 __com.oracle.database.jdbc:ojdbc8 21.3.0.0__
  * https://www.oracle.com/database/technologies/maven-central-guide.html
  * License: Oracle Free Use Terms and Conditions (FUTC)
- * Copyright: (no copyright)
+ * Copyright:
+   * Oracle Corporation
 
 __com.sun.activation:jakarta.activation 1.2.2__
  * https://github.com/eclipse-ee4j/jaf/jakarta.activation
@@ -127,12 +136,14 @@ __com.sun.istack:istack-commons-runtime 3.0.12__
 __com.vaadin.external.google:android-json 0.0.20131108.vaadin1__
  * http://developer.android.com/sdk
  * License: Apache License 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Google - Android Dev
 
 __com.zaxxer:HikariCP 4.0.3__
  * https://github.com/brettwooldridge/HikariCP
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Brett Wooldridge - brett.wooldridge@gmail.com
 
 __commons-codec:commons-codec 1.15__
  * https://commons.apache.org/proper/commons-codec/
@@ -153,16 +164,6 @@ __commons-logging:commons-logging 1.2__
  * License: The Apache Software License, Version 2.0
  * Copyright:
    * Copyright 2003-2014 The Apache Software Foundation
-
-__eu.europa.ec.leos.annotate:annotate-client 4.1.0-SNAPSHOT__
- * https://joinup.ec.europa.eu/software/leos/annotate-client
- * License: European Union Public Licence (EUPL)
- * Copyright: (no copyright)
-
-__eu.europa.ec.leos.annotate:annotate-server 4.1.0-SNAPSHOT__
- * https://joinup.ec.europa.eu/software/leos/annotate-server
- * License: European Union Public Licence (EUPL)
- * Copyright: (no copyright)
 
 __jakarta.activation:jakarta.activation-api 1.2.2__
  * https://github.com/eclipse-ee4j/jaf/jakarta.activation-api
@@ -234,12 +235,14 @@ __net.bytebuddy:byte-buddy-agent 1.11.22__
 __net.minidev:accessors-smart 2.4.8__
  * https://urielch.github.io/
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Uriel Chemouni - chemouni@gmail.com, ZhangJian He - shoothzj@gmail.com
 
 __net.minidev:json-smart 2.4.8__
  * https://urielch.github.io/
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Uriel Chemouni - uchemouni@gmail.com, Eitan Raviv - adoneitan@gmail.com, ZhangJian He - shoothzj@gmail.com
 
 __org.apache.httpcomponents:httpclient 4.5.3__
  * http://hc.apache.org/httpcomponents-client
@@ -293,25 +296,26 @@ __org.apache.tomcat.embed:tomcat-embed-websocket 9.0.62__
 __org.apiguardian:apiguardian-api 1.1.2__
  * https://github.com/apiguardian-team/apiguardian
  * License: The Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * API Guardian Team - team@apiguardian.org
 
 __org.aspectj:aspectjrt 1.8.13__
  * http://www.aspectj.org
  * License: Eclipse Public License - v 1.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Andy Clement - aclement@vmware.com
 
 __org.aspectj:aspectjweaver 1.9.7__
  * https://www.eclipse.org/aspectj/
- * License: Eclipse Public License - v 2.0
+ * License: Eclipse Public License - v 1.0
  * Copyright:
-   * (c) Copyright 1999-2001 Xerox Corporation, 2002 Palo A lto Research Center, Incorporated
-   * Copyright (c) 2004 Contributors
-   * Copyright (c) 2005 Contributors
+   * Andy Clement - aclement@vmware.com
 
 __org.assertj:assertj-core 3.21.0__
  * https://assertj.github.io/doc/assertj-core/
  * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Joel Costigliola, Stefano Cordio, Pascal Schumacher, Erhard Pointl, Christian Rösch, Julien Roy, Régis Pouiller, Florent Biville, Patrick Allain
 
 __org.bouncycastle:bcprov-jdk15on 1.55__
  * http://www.bouncycastle.org/java.html
@@ -328,7 +332,8 @@ __org.checkerframework:checker-qual 3.5.0__
 __org.dbunit:dbunit 2.7.3__
  * http://dbunit.sourceforge.net
  * License: GNU Lesser General Public License, Version 2.1
- * Copyright: (no copyright)
+ * Copyright:
+   * Jeff Jensen - jeffjensen@users.sourceforge.net, Andrew Landsverk - quantas@users.sourceforge.net, Matthias Gommeringer - gommma@users.sourceforge.net, John Hurst - jbhurst@users.sourceforge.net, Roberto Lo Giacco - rlogiacco@users.sourceforge.net, Felipe Leme - dbunit@felipeal.net, David Eric Pugh - epugh@opensourceconnections.com, Sebastien Le Callonnec - slecallonnec@users.sourceforge.net, Manuel Laflamme, Benjamin Cox, Federico Spinazzi - f.spinazzi@masterhouse.it, Timothy J. Ruppert
 
 __org.freemarker:freemarker 2.3.31__
  * https://freemarker.apache.org/
@@ -373,7 +378,8 @@ __org.hibernate:hibernate-core 5.6.8.Final__
 __org.hibernate.common:hibernate-commons-annotations 5.1.2.Final__
  * http://hibernate.org
  * License: GNU Library General Public License v2.1 or later
- * Copyright: (no copyright)
+ * Copyright:
+   * The Hibernate Development Team
 
 __org.javatuples:javatuples 1.2__
  * http://www.javatuples.org
@@ -384,42 +390,50 @@ __org.javatuples:javatuples 1.2__
 __org.jboss:jandex 2.4.2.Final__
  * http://www.jboss.org/jandex
  * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * JBoss.org Community
 
 __org.jboss.logging:jboss-logging 3.4.3.Final__
  * http://www.jboss.org
  * License: Apache License, version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * JBoss.org Community
 
 __org.junit.jupiter:junit-jupiter 5.8.2__
  * https://junit.org/junit5/
  * License: Eclipse Public License v2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com, Christian Stein - sormuras@gmail.com, Juliette de Rancourt - derancourt.juliette@gmail.com
 
 __org.junit.jupiter:junit-jupiter-api 5.8.2__
  * https://junit.org/junit5/
  * License: Eclipse Public License v2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com, Christian Stein - sormuras@gmail.com, Juliette de Rancourt - derancourt.juliette@gmail.com
 
 __org.junit.jupiter:junit-jupiter-engine 5.8.2__
  * https://junit.org/junit5/
  * License: Eclipse Public License v2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com, Christian Stein - sormuras@gmail.com, Juliette de Rancourt - derancourt.juliette@gmail.com
 
 __org.junit.jupiter:junit-jupiter-params 5.8.2__
  * https://junit.org/junit5/
  * License: Eclipse Public License v2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com, Christian Stein - sormuras@gmail.com, Juliette de Rancourt - derancourt.juliette@gmail.com
 
 __org.junit.platform:junit-platform-commons 1.8.2__
  * https://junit.org/junit5/
  * License: Eclipse Public License v2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com, Christian Stein - sormuras@gmail.com, Juliette de Rancourt - derancourt.juliette@gmail.com
 
 __org.junit.platform:junit-platform-engine 1.8.2__
  * https://junit.org/junit5/
  * License: Eclipse Public License v2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com, Christian Stein - sormuras@gmail.com, Juliette de Rancourt - derancourt.juliette@gmail.com
 
 __org.mockito:mockito-core 4.0.0__
  * https://github.com/mockito/mockito
@@ -442,12 +456,14 @@ __org.objenesis:objenesis 3.2__
 __org.opentest4j:opentest4j 1.2.0__
  * https://github.com/ota4j-team/opentest4j
  * License: The Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Stefan Bechtold - stefan.bechtold@me.com, Johannes Link - business@johanneslink.net, Marc Philipp - mail@marcphilipp.de, Matthias Merdes - matthias.merdes@heidelpay.com, Sam Brannen - sam@sambrannen.com
 
 __org.ow2.asm:asm 9.1__
  * http://asm.ow2.io/
  * License: BSD-3-Clause
- * Copyright: (no copyright)
+ * Copyright:
+   * Eric Bruneton - ebruneton@free.fr, Eugene Kuleshov - eu@javatx.org, Remi Forax - forax@univ-mlv.fr, Guillaume Sauthier - guillaume.sauthier@ow2.org
 
 __org.postgresql:postgresql 42.3.4__
  * https://jdbc.postgresql.org
@@ -461,7 +477,8 @@ __org.postgresql:postgresql 42.3.4__
 __org.skyscreamer:jsonassert 1.5.0__
  * https://github.com/skyscreamer/JSONassert
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Carter Page - carter@skyscreamer.org, Corby Page - corby@skyscreamer.org, Solomon Duskis - solomon@skyscreamer.org
 
 __org.slf4j:jul-to-slf4j 1.7.36__
  * http://www.slf4j.org
@@ -579,90 +596,91 @@ __org.springframework.boot:spring-boot 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-autoconfigure 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-aop 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-data-jpa 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-freemarker 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-jdbc 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-json 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-logging 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-test 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-tomcat 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-web 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-starter-websocket 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-test 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.boot:spring-boot-test-autoconfigure 2.6.7__
  * https://spring.io/projects/spring-boot
  * License: Apache License, Version 2.0
  * Copyright:
-   * Copyright (c) 2012-2022 Pivotal, Inc.
+   * Pivotal - info@pivotal.io
 
 __org.springframework.data:spring-data-commons 2.6.4__
  * https://www.spring.io/spring-data/spring-data-commons
@@ -679,12 +697,14 @@ __org.springframework.data:spring-data-jpa 2.6.4__
 __org.xmlunit:xmlunit-core 2.8.4__
  * https://www.xmlunit.org/
  * License: The Apache Software License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * XMLUnit Contributors - xmlunit-general@lists.sourceforge.net
 
 __org.yaml:snakeyaml 1.29__
  * http://www.snakeyaml.org
  * License: Apache License, Version 2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Andrey Somov - public.somov@gmail.com, Alexander Maslov - alexander.maslov@gmail.com, Jordan Angold - jordanangold@gmail.com
 
 
 ______
