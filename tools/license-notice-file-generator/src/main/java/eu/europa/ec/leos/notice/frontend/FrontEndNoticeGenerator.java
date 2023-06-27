@@ -49,18 +49,22 @@ import java.util.stream.Collectors;
 public class FrontEndNoticeGenerator {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private final String existingJsonResponse;
+    private final boolean useExistingResponses;
     private final Path csvFile;
     private final Product product;
 
     private final NpmJsXmlCopyrightsMapping xmlCopyrightsMapping;
 
-    public FrontEndNoticeGenerator(Product product, Path csvFile, NpmJsXmlCopyrightsMapping xmlCopyrightsMapping) {
+    public FrontEndNoticeGenerator(Product product, Path csvFile, NpmJsXmlCopyrightsMapping xmlCopyrightsMapping,
+                                   String existingJsonResponse, boolean useExistingResponses) {
         this.xmlCopyrightsMapping = xmlCopyrightsMapping;
         Objects.requireNonNull(product);
         Objects.requireNonNull(csvFile);
         this.product = product;
         this.csvFile = csvFile;
-
+        this.existingJsonResponse = existingJsonResponse;
+        this.useExistingResponses = useExistingResponses;
         this.registerExtraLicenses();
     }
 
@@ -71,7 +75,7 @@ public class FrontEndNoticeGenerator {
                                                         .collect(Collectors.toList());
 
         final List<RemoteNotice> remoteNotices = new NoticeService()
-                .retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.NPMJS);
+                .retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.NPMJS, existingJsonResponse, useExistingResponses);
 
         List<LibraryNoticeV3> notices = merge(libraries, remoteNotices);
 
@@ -170,12 +174,14 @@ public class FrontEndNoticeGenerator {
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ParserConfigurationException, SAXException {
         final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-annotation-npmjs.xml");
         final NpmJsXmlCopyrightsMapping xmlCopyrightsMapping = new NpmJsXmlCopyrightsMapping(xmlCopyrights);
+        final String existingJsonResponse = "/remote/annotation_npmjs_response.json";
+        final boolean useExistingResponses = true;
 
         Path trustedCsvFile = new PathRetriever().fromClasspath("/THIRD-PARTY-annotation-npmjs.csv");
         final Product trustedApp = new Product("LEOS Front-End", "2023 European Union", "1.0",
                 EUPLv1_2Content.content());
         FrontEndNoticeGenerator trustedAppGenerator = new FrontEndNoticeGenerator(trustedApp, trustedCsvFile,
-                xmlCopyrightsMapping);
+                xmlCopyrightsMapping, existingJsonResponse, useExistingResponses);
         try (PrintStream ps = new PrintStream("NOTICE_ANNOTATION_FE.md")) {
             trustedAppGenerator.generateNotice(ps);
         }

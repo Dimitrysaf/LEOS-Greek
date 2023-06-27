@@ -3,6 +3,7 @@ package eu.europa.ec.leos.notice.remote;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.notice.common.NpmJsDependencyNameTxtConverter;
+import eu.europa.ec.leos.notice.common.PathRetriever;
 import eu.europa.ec.leos.notice.common.TxtLinesReader;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -32,36 +32,27 @@ public class NoticeService {
      * of specified full names.
      * File to be loaded depends on specified NoticeProvider.
      */
-    private boolean useExistingResponses = true;
-
+//    private boolean useExistingResponses = true;
+    private String existingJsonResponse;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<RemoteNotice> retrieveNotices(Collection<String> fullNames, NoticeProvider noticeProvider)
-            throws IOException, InterruptedException {
-//        if (useExistingResponses) {
-//            return retriveNoticesFromExistingData(noticeProvider);
-//        }
+    public List<RemoteNotice> retrieveNotices(Collection<String> fullNames, NoticeProvider noticeProvider,
+                                              String existingJsonResponse, boolean useExistingResponses) throws IOException {
+        if (useExistingResponses) {
+            this.existingJsonResponse = existingJsonResponse;
+            return retriveNoticesFromExistingData(noticeProvider);
+        }
 
         return retrieveNoticesFromRemoteService(fullNames, noticeProvider);
     }
 
-    /**
-     * Enable/ disable loading of existing disk data, per specified {@link NoticeProvider}.
-     *
-     * @param useExistingResponses <code>true</code> to load data from disk, <code>false</code> to query HTTP service.
-     */
-    public void setUseExistingResponses(boolean useExistingResponses) {
-        this.useExistingResponses = useExistingResponses;
-    }
-
-    public List<RemoteNotice> retrieveFromJson(Reader reader, NoticeProvider noticeProvider)
-            throws IOException {
+    public List<RemoteNotice> retrieveFromJson(Reader reader, NoticeProvider noticeProvider) throws IOException {
         final String json = readJson(reader);
         final NoticesResponse noticesResponse = deserializeResponse(json);
         return toListOfNotices(noticesResponse, noticeProvider);
     }
 
-    private List<RemoteNotice> retrieveNoticesFromRemoteService(Collection<String> fullNames, NoticeProvider noticeProvider) throws IOException, InterruptedException {
+    private List<RemoteNotice> retrieveNoticesFromRemoteService(Collection<String> fullNames, NoticeProvider noticeProvider) throws IOException {
         NoticesRequest noticesRequest = buildRequest(fullNames, noticeProvider);
         String requestBody = serializeRequest(noticesRequest);
         final String body = executeRequest(requestBody);
@@ -73,9 +64,9 @@ public class NoticeService {
         log.info("Using existing disk data, i.e not querying via {} ...", POST_URL);
         switch (noticeProvider) {
             case MAVENCENTRAL:
-                return retrieveFromJson(getReader("/remote/leos_maven_response.json"), NoticeProvider.MAVENCENTRAL);
+                return retrieveFromJson(getReader(existingJsonResponse), NoticeProvider.MAVENCENTRAL);
             case NPMJS:
-                return retrieveFromJson(getReader("/remote/leos_npmjs_response.json"), NoticeProvider.NPMJS);
+                return retrieveFromJson(getReader(existingJsonResponse), NoticeProvider.NPMJS);
             default:
                 throw new IllegalArgumentException("noticeProvider not found");
         }
@@ -115,8 +106,9 @@ public class NoticeService {
     private Reader getReader(String pathOnClasspath) throws IOException {
         log.info("Loading JSON content from classpath resource: '{}' ...", pathOnClasspath);
         try {
-            final URL url = this.getClass().getResource(pathOnClasspath);
-            final Path path = Paths.get(url.toURI());
+//            final URL url = this.getClass().getResource(pathOnClasspath);
+//            final Path path = Paths.get(url.toURI());
+            final Path path = new PathRetriever().fromClasspath(pathOnClasspath);
             return Files.newBufferedReader(path);
         } catch (URISyntaxException e) {
             throw new IOException(String.format("Could not read content from path: %s", pathOnClasspath), e);

@@ -132,7 +132,7 @@ __archy 1.0.0__
  * https://github.com/substack/node-archy
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * James Halliday (mail@substack.net)
 
 __arr-diff 4.0.0__
  * https://github.com/jonschlinkert/arr-diff
@@ -517,7 +517,7 @@ __bs-snippet-injector 2.0.1__
  * https://github.com/shakyShane/bs-snippet-injector
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * Shane Osbourn
 
 __buffer-equal 1.0.1__
  * https://github.com/inspect-js/buffer-equal
@@ -713,7 +713,7 @@ __concat-map 0.0.1__
  * https://github.com/substack/node-concat-map
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * James Halliday (mail@substack.net)
 
 __concat-with-sourcemaps 1.1.0__
  * https://github.com/floridoo/concat-with-sourcemaps
@@ -1272,7 +1272,7 @@ __glyphicons-only-bootstrap 1.0.1__
  * https://github.com/ohpyupi/glyphicons-only-bootstrap
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * ohpyupi (ohpyupi@gmail.com)
 
 __graceful-fs 4.2.10__
  * https://github.com/isaacs/node-graceful-fs
@@ -1303,7 +1303,7 @@ __gulp-cssmin 0.1.7__
  * https://github.com/chilijung/gulp-cssmin
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * chilijung
 
 __gulp-footer 1.0.5__
  * https://github.com/tracker1/gulp-footer
@@ -1327,7 +1327,7 @@ __gulp-jsmin 0.1.5__
  * https://github.com/chilijung/gulp-jsmin
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * chilijung
 
 __gulp-livereload 3.8.1__
  * https://github.com/vohof/gulp-livereload
@@ -1345,7 +1345,7 @@ __gulp-stylus 2.7.1__
  * https://github.com/stevelacy/gulp-stylus
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 Steve Lacy (slacy.me) me@slacy.me
+   * Copyright (c) 2015 Steve Lacy (slacy.me, me@slacy.me)
 
 __gulp-util 3.0.8__
  * https://github.com/gulpjs/gulp-util
@@ -1686,7 +1686,7 @@ __json-stable-stringify-without-jsonify 1.0.1__
  * https://github.com/samn/json-stable-stringify
  * License: MIT
  * Copyright:
-   * (no copyright)
+   * James Halliday (mail@substack.net)
 
 __jsonfile 3.0.1__
  * https://github.com/jprichardson/node-jsonfile
@@ -2341,7 +2341,7 @@ __openurl 1.1.1__
  * https://github.com/rauschma/openurl
  * License: MIT
  * Copyright:
-   * Axel Rauschmayer axe@rauschma.de
+   * Axel Rauschmayer (axe@rauschma.de)
 
 __opn 5.3.0__
  * https://github.com/sindresorhus/opn
@@ -2935,7 +2935,7 @@ __spdx-license-ids 3.0.12__
  * https://github.com/jslicense/spdx-license-ids
  * License: Creative Commons Zero v1.0 Universal
  * Copyright:
-   * (no copyright)
+   * Shinnosuke Watanabe (https://github.com/shinnn)
 
 __spdx-ranges 2.1.1__
  * https://github.com/kemitchell/spdx-ranges.js
@@ -3312,7 +3312,7 @@ __vinyl-sourcemaps-apply 0.2.1__
  * https://github.com/floridoo/vinyl-sourcemaps-apply
  * License: ISC
  * Copyright:
-   * (no copyright)
+   * Florian Reiterer (me@florianreiterer.com)
 
 __vinyl 2.2.1__
  * https://github.com/gulpjs/vinyl

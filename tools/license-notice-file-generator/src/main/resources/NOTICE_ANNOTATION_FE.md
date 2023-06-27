@@ -32,23 +32,20 @@ __@types/node 18.14.2__
  * https://github.com/DefinitelyTyped/DefinitelyTyped
  * License: MIT
  * Copyright:
-   * Copyright (c) Microsoft Corporation
+   * Copyright (c) Microsoft Corporation.
 
 __abbrev 1.1.1__
  * https://github.com/isaacs/abbrev-js
  * License: ISC
  * Copyright:
-   * Copyright Isaac Z. Schlueter and Contributors
    * Copyright (c) Isaac Z. Schlueter and Contributors
 
 __accepts 1.3.8__
  * https://github.com/jshttp/accepts
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2015 Douglas Christopher Wilson <doug@somethingdoug.com>
    * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2015 Douglas Christopher Wilson
 
 __accord 0.26.4__
  * https://github.com/jenius/accord
@@ -65,42 +62,40 @@ __align-text 0.1.4__
 
 __amdefine 1.0.1__
  * https://github.com/jrburke/amdefine
- * Licenses:
-   * BSD-3-Clause
-   * MIT
+ * License: MIT
  * Copyright:
    * Copyright (c) 2011-2016, The Dojo Foundation
 
 __angular-multiple-select 1.1.3__
  * https://github.com/jagdeep-singh/angularMultipleSelect
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2015 Jagdeep Singh
 
 __annotate-client 1.84.0__
  * https://github.com/hypothesis/client
  * License: BSD-2-Clause
- * Copyright: (no copyright)
+ * Copyright:
+   * For the annotator subcomponent: Copyright 2012 Aron Carroll, Rufus Pollock, and Nick Stenning.
+   * Copyright (c) 2013-2019 Hypothes.is Project and contributors
 
 __ansi-cyan 0.1.1__
  * https://github.com/jonschlinkert/ansi-cyan
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert
 
 __ansi-gray 0.1.1__
  * https://github.com/jonschlinkert/ansi-gray
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert.
 
 __ansi-red 0.1.1__
  * https://github.com/jonschlinkert/ansi-red
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert
 
 __ansi-regex 5.0.1__
  * https://github.com/chalk/ansi-regex
@@ -119,7 +114,6 @@ __ansi-wrap 0.1.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert
 
 __anymatch 3.1.3__
  * https://github.com/micromatch/anymatch
@@ -137,7 +131,8 @@ __append-buffer 1.0.2__
 __archy 1.0.0__
  * https://github.com/substack/node-archy
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * James Halliday (mail@substack.net)
 
 __arr-diff 4.0.0__
  * https://github.com/jonschlinkert/arr-diff
@@ -164,7 +159,7 @@ __array-differ 1.0.0__
  * https://github.com/sindresorhus/array-differ
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
+   * Copyright (c) Sindre Sorhus (http://sindresorhus.com)
 
 __array-each 1.0.1__
  * https://github.com/jonschlinkert/array-each
@@ -177,28 +172,24 @@ __array-find-index 1.0.2__
  * https://github.com/sindresorhus/array-find-index
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __array-slice 1.1.0__
  * https://github.com/jonschlinkert/array-slice
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2017, Jon Schlinkert.
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert).
+   * Copyright (c) 2014-2017, Jon Schlinkert
 
 __array-union 1.0.2__
  * https://github.com/sindresorhus/array-union
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __array-uniq 1.0.3__
  * https://github.com/sindresorhus/array-uniq
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __array-unique 0.3.2__
@@ -206,14 +197,11 @@ __array-unique 0.3.2__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2016, Jon Schlinkert
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2014-2015, Jon Schlinkert
 
 __arrify 1.0.1__
  * https://github.com/sindresorhus/arrify
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __asap 2.0.6__
@@ -221,14 +209,12 @@ __asap 2.0.6__
  * License: MIT
  * Copyright:
    * Copyright 2009-2014 Contributors
-   * Copyright 2009-2014
 
 __assign-symbols 1.0.0__
  * https://github.com/jonschlinkert/assign-symbols
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert
 
 __async-each-series 0.1.1__
  * https://github.com/jb55/async-each-series
@@ -244,18 +230,16 @@ __async 2.6.4__
 
 __atob 2.1.2__
  * git://git.coolaj86.com/coolaj86/atob.js
- * Licenses:
-   * Apache-2.0
-   * MIT
+ * License: Apache-2.0
  * Copyright:
-   * Copyright (c) 2015 AJ ONeal
    * Copyright 2015 AJ ONeal
    * copyright 2012-2018 AJ ONeal
 
 __axios 0.21.4__
  * https://github.com/axios/axios
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2014-present Matt Zabriskie
 
 __balanced-match 1.0.2__
  * https://github.com/juliangruber/balanced-match
@@ -293,16 +277,15 @@ __binary-extensions 2.2.0__
  * https://github.com/sindresorhus/binary-extensions
  * License: MIT
  * Copyright:
-   * Copyright (c) 2019 Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com), Paul Miller (https://paulmillr.com)
+   * Copyright (c) 2019 Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com), Paul
+            Miller (https://paulmillr.com)
 
 __body-parser 1.14.2__
  * https://github.com/expressjs/body-parser
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2014-2015 Douglas Christopher Wilson
 
 __bower 1.8.14__
  * https://github.com/bower/bower
@@ -533,12 +516,14 @@ __bs-recipes 1.3.4__
 __bs-snippet-injector 2.0.1__
  * https://github.com/shakyShane/bs-snippet-injector
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Shane Osbourn
 
 __buffer-equal 1.0.1__
  * https://github.com/inspect-js/buffer-equal
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2012 James Halliday and contributors
 
 __bufferutil 4.0.7__
  * https://github.com/websockets/bufferutil
@@ -550,9 +535,7 @@ __bytes 3.1.2__
  * https://github.com/visionmedia/bytes.js
  * License: MIT
  * Copyright:
-   * Copyright (c) 2012-2014 TJ Holowaychuk
    * Copyright (c) 2015 Jed Watson <jed.watson@me.com>
-   * Copyright (c) 2015 Jed Watson
    * Copyright (c) 2012-2014 TJ Holowaychuk <tj@vision-media.ca>
 
 __cache-base 1.0.1__
@@ -572,14 +555,12 @@ __camelcase-keys 2.1.0__
  * https://github.com/sindresorhus/camelcase-keys
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __camelcase 2.1.1__
  * https://github.com/sindresorhus/camelcase
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __center-align 0.1.3__
@@ -606,7 +587,6 @@ __chokidar 3.5.3__
  * https://github.com/paulmillr/chokidar
  * License: MIT
  * Copyright:
-   * (c) Paul Miller <https://paulmillr.com>
    * Copyright (c) 2012-2019 Paul Miller (https://paulmillr.com), Elan Shanker
 
 __ckeditor4 4.21.0__
@@ -658,13 +638,12 @@ __clean-css 3.4.28__
  * https://github.com/jakubpawlowicz/clean-css
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 JakubPawlowicz.com
+   * Copyright (c) 2017 JakubPawlowicz.com
 
 __cliui 8.0.1__
  * https://github.com/yargs/cliui
  * License: ISC
  * Copyright:
-   * Copyright (c) npm, Inc. and Contributors
    * Copyright (c) 2015, Contributors
 
 __clone-buffer 1.0.0__
@@ -683,8 +662,8 @@ __clone 2.1.2__
  * https://github.com/pvorb/node-clone
  * License: MIT
  * Copyright:
-   * Copyright (c) 2011-2016 Paul Vorbach (https://paul.vorba.ch/) and contributors (https://github.com/pvorb/clone/graphs/contributors)
-   * Copyright (c) 2011-2015 Paul Vorbach <paul@vorba.ch>
+   * Copyright (c) 2011-2016 Paul Vorbach (https://paul.vorba.ch/) and contributors
+            (https://github.com/pvorb/clone/graphs/contributors).
 
 __cloneable-readable 1.1.3__
  * https://github.com/mcollina/cloneable-readable
@@ -703,8 +682,8 @@ __color-convert 2.0.1__
  * https://github.com/Qix-/color-convert
  * License: MIT
  * Copyright:
-   * Copyright (c) 2011-2016, Heather Arthur and Josh Junon
-   * Copyright (c) 2011-2016 Heather Arthur <fayearthur@gmail.com>
+   * Copyright (c) 2011-2016 Heather Arthur <fayearthur@gmail.com>.
+   * Copyright (c) 2016-2021 Josh Junon <josh@junon.me>.
 
 __color-name 1.1.4__
  * https://github.com/colorjs/color-name
@@ -728,12 +707,13 @@ __component-emitter 1.3.0__
  * https://github.com/component/emitter
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Component
+   * Copyright (c) 2014 Component contributors <dev@component.io>
 
 __concat-map 0.0.1__
  * https://github.com/substack/node-concat-map
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * James Halliday (mail@substack.net)
 
 __concat-with-sourcemaps 1.1.0__
  * https://github.com/floridoo/concat-with-sourcemaps
@@ -776,14 +756,11 @@ __cookie 0.4.2__
  * Copyright:
    * Copyright (c) 2012-2014 Roman Shtylman <shtylman@gmail.com>
    * Copyright (c) 2015 Douglas Christopher Wilson <doug@somethingdoug.com>
-   * Copyright (c) 2012-2014 Roman Shtylman
-   * Copyright (c) 2015 Douglas Christopher Wilson
 
 __copy-descriptor 0.1.1__
  * https://github.com/jonschlinkert/copy-descriptor
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015, Jon Schlinkert
    * Copyright (c) 2015-2016, Jon Schlinkert
 
 __core-util-is 1.0.3__
@@ -801,7 +778,8 @@ __cors 2.8.5__
 __css-parse 2.0.0__
  * https://github.com/reworkcss/css-parse
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2013 TJ Holowaychuk <tj@vision-media.ca>
 
 __css 2.2.4__
  * https://github.com/reworkcss/css
@@ -819,21 +797,19 @@ __currently-unhandled 0.4.1__
  * https://github.com/jamestalmage/currently-unhandled
  * License: MIT
  * Copyright:
-   * (c) James Talmage (http://github.com/jamestalmage)
-   * Copyright (c) James Talmage <james@talmage.io>
+   * Copyright (c) James Talmage <james@talmage.io> (github.com/jamestalmage)
 
 __dateformat 2.2.0__
  * https://github.com/felixge/node-dateformat
  * License: MIT
  * Copyright:
-   * (c) 2007-2009 Steven Levithan
+   * Copyright (c) 2014 Charlike Mike Reagent, contributors.
    * (c) 2007-2009 Steven Levithan stevenlevithan.com
 
 __debug 4.3.4__
  * https://github.com/debug-js/debug
  * License: MIT
  * Copyright:
-   * Copyright (c) 2018-2021 Josh Junon
    * Copyright (c) 2014-2017 TJ Holowaychuk <tj@vision-media.ca>
 
 __debuglog 1.0.1__
@@ -846,15 +822,13 @@ __decamelize 1.2.0__
  * https://github.com/sindresorhus/decamelize
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __decode-uri-component 0.2.2__
  * https://github.com/SamVerschueren/decode-uri-component
  * License: MIT
  * Copyright:
-   * (c) Sam Verschueren (https://github.com/SamVerschueren)
-   * Copyright (c) 2017, Sam Verschueren <sam.verschueren@gmail.com>
+   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __defaults 1.0.4__
  * https://github.com/sindresorhus/node-defaults
@@ -880,7 +854,6 @@ __depd 2.0.0__
  * https://github.com/dougwilson/nodejs-depd
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 Douglas Christopher Wilson
    * Copyright (c) 2014-2018 Douglas Christopher Wilson
 
 __deprecated 0.0.1__
@@ -893,8 +866,8 @@ __destroy 1.0.4__
  * https://github.com/stream-utils/destroy
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2014 Jonathan Ong me@jongleberry.com
+   * Copyright (c) 2015-2022 Douglas Christopher Wilson doug@somethingdoug.com
 
 __detect-file 1.0.0__
  * https://github.com/doowb/detect-file
@@ -917,7 +890,7 @@ __dezalgo 1.0.4__
 
 __duplexer2 0.0.2__
  * https://github.com/deoxxa/duplexer2
- * License: BSD*
+ * License: BSD-3-Clause
  * Copyright:
    * Copyright (c) 2013, Deoxxa Development
 
@@ -925,7 +898,7 @@ __duplexer 0.1.2__
  * https://github.com/Raynos/duplexer
  * License: MIT
  * Copyright:
-   * Copyright (c) 2012 Raynos
+   * Copyright (c) 2012 Raynos.
 
 __duplexify 3.7.1__
  * https://github.com/mafintosh/duplexify
@@ -951,7 +924,6 @@ __ee-first 1.1.1__
  * https://github.com/jonathanong/ee-first
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2014 Jonathan Ong me@jongleberry.com
 
 __emoji-regex 8.0.0__
@@ -978,8 +950,7 @@ __engine.io-client 6.4.0__
  * Copyright:
    * Copyright (c) 2014 Automattic, Inc.
    * Copyright (c) 2014-2015 Automattic <dev@cloudup.com>
-   * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
-   * (c) 2014-2023 Guillermo Rauch
+   * Copyright (c) 2012 Niklas von Hertzen
 
 __engine.io-parser 5.0.6__
  * https://github.com/socketio/engine.io-parser
@@ -1003,22 +974,20 @@ __escalade 3.1.1__
  * https://github.com/lukeed/escalade
  * License: MIT
  * Copyright:
-   * (c) Luke Edwards (https://lukeed.com)
    * Copyright (c) Luke Edwards <luke.edwards05@gmail.com> (lukeed.com)
 
 __escape-html 1.0.3__
  * https://github.com/component/escape-html
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 Tiancheng Timothy Gu
    * Copyright (c) 2012-2013 TJ Holowaychuk
+   * Copyright (c) 2015 Tiancheng "Timothy" Gu
    * Copyright (c) 2015 Andreas Lubbe
 
 __escape-string-regexp 1.0.5__
  * https://github.com/sindresorhus/escape-string-regexp
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __etag 1.8.1__
@@ -1043,8 +1012,7 @@ __expand-brackets 2.1.4__
  * https://github.com/jonschlinkert/expand-brackets
  * License: MIT
  * Copyright:
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2015-2016, Jon Schlinkert
+   * Copyright (c) 2015-2018, Jon Schlinkert
 
 __expand-tilde 2.0.2__
  * https://github.com/jonschlinkert/expand-tilde
@@ -1058,8 +1026,7 @@ __extend-shallow 3.0.2__
  * https://github.com/jonschlinkert/extend-shallow
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2015, 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2014-2015, 2017, Jon Schlinkert.
 
 __extend 3.0.2__
  * https://github.com/justmoon/node-extend
@@ -1071,20 +1038,20 @@ __extglob 2.0.4__
  * https://github.com/micromatch/extglob
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2015-2018, Jon Schlinkert.
 
 __fancy-log 1.3.3__
  * https://github.com/gulpjs/fancy-log
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014, 2015, 2018 Blaine Bublitz <blaine.bublitz@gmail.com> and Eric Schoffstall <yo@contra.io>
+   * Copyright (c) 2014, 2015, 2018 Blaine Bublitz <blaine.bublitz@gmail.com> and Eric Schoffstall
+            <yo@contra.io>
 
 __faye-websocket 0.7.3__
  * https://github.com/faye/faye-websocket-node
- * License: MIT
+ * License: Apache-2.0
  * Copyright:
-   * Copyright (c) 2010-2013 James Coglan
+   * Copyright 2010-2019 James Coglan
 
 __filesize 2.0.4__
  * https://github.com/avoidwork/filesize.js
@@ -1098,26 +1065,24 @@ __fill-range 7.0.1__
  * https://github.com/jonschlinkert/fill-range
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-present, Jon Schlinkert
-   * Copyright (c) 2019, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2014-present, Jon Schlinkert.
 
 __finalhandler 1.1.0__
  * https://github.com/pillarjs/finalhandler
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017 Douglas Christopher Wilson <doug@somethingdoug.com>
-   * Copyright (c) 2014-2017 Douglas Christopher Wilson
 
 __find-index 0.1.1__
  * https://github.com/jsdf/find-index
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2019 James Friend
 
 __find-up 1.1.2__
  * https://github.com/sindresorhus/find-up
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __findup-sync 2.0.0__
@@ -1154,37 +1119,32 @@ __follow-redirects 1.15.2__
  * https://github.com/follow-redirects/follow-redirects
  * License: MIT
  * Copyright:
-   * Copyright 2014-present Olivier Lalonde <olalonde@gmail.com> , James Talmage <james@talmage.io> , Ruben Verborgh
+   * Copyright 2014-present Olivier Lalonde <olalonde@gmail.com> , James Talmage <james@talmage.io>
+            , Ruben Verborgh
 
 __for-in 1.0.2__
  * https://github.com/jonschlinkert/for-in
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __for-own 1.0.0__
  * https://github.com/jonschlinkert/for-own
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert.
-   * Copyright (c) 2014-2015, 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert).
 
 __fragment-cache 0.2.1__
  * https://github.com/jonschlinkert/fragment-cache
  * License: MIT
  * Copyright:
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2016-2017, Jon Schlinkert
 
 __fresh 0.5.2__
  * https://github.com/jshttp/fresh
  * License: MIT
  * Copyright:
-   * Copyright (c) 2012 TJ Holowaychuk
    * Copyright (c) 2016-2017 Douglas Christopher Wilson <doug@somethingdoug.com>
-   * Copyright (c) 2016-2017 Douglas Christopher Wilson
    * Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
 
 __from 0.1.7__
@@ -1197,9 +1157,7 @@ __fs-extra 3.0.1__
  * https://github.com/jprichardson/node-fs-extra
  * License: MIT
  * Copyright:
-   * Copyright (c) 2011-2017 JP Richardson (https://github.com/jprichardson)
    * Copyright (c) 2011-2017 JP Richardson
-   * Copyright (c) 2014-2016 Jonathan Ong me@jongleberry.com and Contributors
 
 __fs-mkdirp-stream 1.0.0__
  * https://github.com/gulpjs/fs-mkdirp-stream
@@ -1212,8 +1170,7 @@ __fs.realpath 1.0.0__
  * https://github.com/isaacs/fs.realpath
  * License: ISC
  * Copyright:
-   * Copyright (c) Isaac Z. Schlueter and Contributors
-   * Copyright Joyent, Inc. and other Node contributors
+   * Copyright (c) 2016-2022 Isaac Z. Schlueter and Contributors
 
 __function-bind 1.1.1__
  * https://github.com/Raynos/function-bind
@@ -1225,10 +1182,7 @@ __gaze 0.5.2__
  * https://github.com/shama/gaze
  * License: MIT
  * Copyright:
-   * Copyright (c) 2013 Kyle Robinson Young
-   * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
-   * Copyright (c) 2010 Caolan McMahon
-   * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
+   * Copyright (c) 2018 Kyle Robinson Young
 
 __get-caller-file 2.0.5__
  * https://github.com/stefanpenner/get-caller-file
@@ -1246,14 +1200,13 @@ __get-stdin 4.0.1__
  * https://github.com/sindresorhus/get-stdin
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
+   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __get-value 2.0.6__
  * https://github.com/jonschlinkert/get-value
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2016, Jon Schlinkert
-   * Copyright (c) 2014-2015, Jon Schlinkert
 
 __glob-parent 5.1.2__
  * https://github.com/gulpjs/glob-parent
@@ -1289,30 +1242,25 @@ __global-modules 1.0.0__
  * https://github.com/jonschlinkert/global-modules
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2015-2017 Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2015-present, Jon Schlinkert.
 
 __global-prefix 1.0.2__
  * https://github.com/jonschlinkert/global-prefix
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2015-2017 Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2015-present Jon Schlinkert
 
 __globby 2.1.0__
  * https://github.com/sindresorhus/globby
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __globule 0.1.0__
  * https://github.com/cowboy/node-globule
  * License: MIT
  * Copyright:
-   * Copyright (c) 2013 Cowboy Ben Alman
+   * Copyright (c) 2018 Cowboy Ben Alman
 
 __glogg 1.0.2__
  * https://github.com/gulpjs/glogg
@@ -1323,13 +1271,14 @@ __glogg 1.0.2__
 __glyphicons-only-bootstrap 1.0.1__
  * https://github.com/ohpyupi/glyphicons-only-bootstrap
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * ohpyupi (ohpyupi@gmail.com)
 
 __graceful-fs 4.2.10__
  * https://github.com/isaacs/node-graceful-fs
  * License: ISC
  * Copyright:
-   * Copyright (c) 2011-2022 Isaac Z. Schlueter, Ben Noordhuis, and Contributors
+   * Copyright (c) Isaac Z. Schlueter, Ben Noordhuis, and Contributors
 
 __graceful-readlink 1.0.1__
  * https://github.com/zhiyelee/graceful-readlink
@@ -1353,7 +1302,8 @@ __gulp-concat 2.6.1__
 __gulp-cssmin 0.1.7__
  * https://github.com/chilijung/gulp-cssmin
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * chilijung
 
 __gulp-footer 1.0.5__
  * https://github.com/tracker1/gulp-footer
@@ -1376,7 +1326,8 @@ __gulp-inject 3.0.0__
 __gulp-jsmin 0.1.5__
  * https://github.com/chilijung/gulp-jsmin
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * chilijung
 
 __gulp-livereload 3.8.1__
  * https://github.com/vohof/gulp-livereload
@@ -1393,7 +1344,8 @@ __gulp-rename 1.4.0__
 __gulp-stylus 2.7.1__
  * https://github.com/stevelacy/gulp-stylus
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2015 Steve Lacy (slacy.me, me@slacy.me)
 
 __gulp-util 3.0.8__
  * https://github.com/gulpjs/gulp-util
@@ -1419,14 +1371,12 @@ __has-ansi 2.0.0__
  * https://github.com/sindresorhus/has-ansi
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __has-flag 4.0.0__
  * https://github.com/sindresorhus/has-flag
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __has-gulplog 0.1.0__
@@ -1452,15 +1402,12 @@ __has-value 1.0.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __has-values 1.0.0__
  * https://github.com/jonschlinkert/has-values
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2015, 2017, Jon Schlinkert
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __has 1.0.3__
  * https://github.com/tarruda/has
@@ -1485,9 +1432,7 @@ __http-errors 2.0.0__
  * https://github.com/jshttp/http-errors
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2016 Douglas Christopher Wilson doug@somethingdoug.com
-   * Copyright (c) 2016 Douglas Christopher Wilson
    * Copyright (c) 2014 Jonathan Ong me@jongleberry.com
 
 __http-parser-js 0.5.8__
@@ -1495,21 +1440,17 @@ __http-parser-js 0.5.8__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Tim Caswell (https://github.com/creationix) and other contributors
-   * Copyright Joyent, Inc. and other Node contributors
 
 __http-proxy 1.18.1__
  * https://github.com/http-party/node-http-proxy
  * License: MIT
  * Copyright:
-   * copyright header of example files e592c53 (https://github.com/http-party/node-http-proxy/commit/e592c53d1a23b7920d603a9e9ac294fc0e841f6d)
-   * Copyright (c) 2010 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors
    * Copyright (c) 2010-2016 Charlie Robbins, Jarrett Cruger & the Contributors
 
 __iconv-lite 0.4.24__
  * https://github.com/ashtuchkin/iconv-lite
  * License: MIT
  * Copyright:
-   * Copyright (c) Microsoft Corporation
    * Copyright (c) 2011 Alexander Shtuchkin
 
 __immutable 3.8.2__
@@ -1522,7 +1463,6 @@ __indent-string 2.1.0__
  * https://github.com/sindresorhus/indent-string
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __indx 0.2.3__
@@ -1553,7 +1493,8 @@ __interpret 1.4.0__
  * https://github.com/gulpjs/interpret
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2018 Tyler Kellen <tyler@sleekcode.net> , Blaine Bublitz <blaine.bublitz@gmail.com> , and Eric Schoffstall <yo@contra.io>
+   * Copyright (c) 2014-2018 Tyler Kellen <tyler@sleekcode.net> , Blaine Bublitz <blaine.bublitz@gmail.com>
+            , and Eric Schoffstall <yo@contra.io>
 
 __is-absolute 1.0.0__
  * https://github.com/jonschlinkert/is-absolute
@@ -1561,14 +1502,12 @@ __is-absolute 1.0.0__
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert.
    * Copyright (c) 2009-2014, TJ Holowaychuk
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert).
 
 __is-accessor-descriptor 1.0.0__
  * https://github.com/jonschlinkert/is-accessor-descriptor
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __is-arrayish 0.2.1__
  * https://github.com/qix-/node-is-arrayish
@@ -1580,14 +1519,13 @@ __is-binary-path 2.1.0__
  * https://github.com/sindresorhus/is-binary-path
  * License: MIT
  * Copyright:
-   * Copyright (c) 2019 Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com), Paul Miller (https://paulmillr.com)
-   * (c) Sindre Sorhus (https://sindresorhus.com), Paul Miller (https://paulmillr.com)
+   * Copyright (c) 2019 Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com), Paul
+            Miller (https://paulmillr.com)
 
 __is-buffer 1.1.6__
  * https://github.com/feross/is-buffer
  * License: MIT
  * Copyright:
-   * Copyright (c) Feross Aboukhadijeh
    * Copyright (c) Feross Aboukhadijeh (http://feross.org)
 
 __is-core-module 2.11.0__
@@ -1600,14 +1538,12 @@ __is-data-descriptor 1.0.0__
  * https://github.com/jonschlinkert/is-data-descriptor
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2015-present, Jon Schlinkert.
 
 __is-descriptor 1.0.2__
  * https://github.com/jonschlinkert/is-descriptor
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015-2017, Jon Schlinkert
    * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __is-extendable 1.0.1__
@@ -1615,14 +1551,12 @@ __is-extendable 1.0.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __is-extglob 2.1.1__
  * https://github.com/jonschlinkert/is-extglob
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2016, Jon Schlinkert
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __is-finite 1.1.0__
  * https://github.com/sindresorhus/is-finite
@@ -1634,7 +1568,6 @@ __is-fullwidth-code-point 3.0.0__
  * https://github.com/sindresorhus/is-fullwidth-code-point
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __is-glob 4.0.3__
@@ -1642,13 +1575,11 @@ __is-glob 4.0.3__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2019, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __is-negated-glob 1.0.0__
  * https://github.com/jonschlinkert/is-negated-glob
  * License: MIT
  * Copyright:
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert).
    * Copyright (c) 2016 Jon Schlinkert
 
 __is-number-like 1.0.8__
@@ -1661,7 +1592,6 @@ __is-number 7.0.0__
  * https://github.com/jonschlinkert/is-number
  * License: MIT
  * Copyright:
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2014-present, Jon Schlinkert
 
 __is-plain-object 2.0.4__
@@ -1669,21 +1599,18 @@ __is-plain-object 2.0.4__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __is-relative 1.0.0__
  * https://github.com/jonschlinkert/is-relative
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert.
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert).
 
 __is-unc-path 1.0.0__
  * https://github.com/jonschlinkert/is-unc-path
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert.
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert).
 
 __is-utf8 0.2.1__
  * https://github.com/wayfind/is-utf8
@@ -1702,14 +1629,12 @@ __is-windows 1.0.2__
  * https://github.com/jonschlinkert/is-windows
  * License: MIT
  * Copyright:
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2015-2018, Jon Schlinkert
 
 __is-wsl 1.1.0__
  * https://github.com/sindresorhus/is-wsl
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __isarray 1.0.0__
@@ -1729,7 +1654,6 @@ __isobject 3.0.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __js-string-escape 1.0.1__
  * https://github.com/joliss/js-string-escape
@@ -1747,8 +1671,9 @@ __jsmin-sourcemap 0.16.0__
 
 __jsmin2 1.1.9__
  * https://github.com/twolfson/node-jsmin2
- * License: MIT*
- * Copyright: (no copyright)
+ * License: ???
+ * Copyright:
+   * Copyright (c) 2012 Todd Wolfson (todd@twolfson.com)
 
 __json-parse-even-better-errors 2.3.1__
  * https://github.com/npm/json-parse-even-better-errors
@@ -1760,13 +1685,13 @@ __json-parse-even-better-errors 2.3.1__
 __json-stable-stringify-without-jsonify 1.0.1__
  * https://github.com/samn/json-stable-stringify
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * James Halliday (mail@substack.net)
 
 __jsonfile 3.0.1__
  * https://github.com/jprichardson/node-jsonfile
  * License: MIT
  * Copyright:
-   * Copyright 2012-2016, JP Richardson <jprichardson@gmail.com>
    * Copyright (c) 2012-2015, JP Richardson <jprichardson@gmail.com>
 
 __kind-of 6.0.3__
@@ -1774,7 +1699,6 @@ __kind-of 6.0.3__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2020, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __lazy-cache 1.0.4__
  * https://github.com/jonschlinkert/lazy-cache
@@ -1827,7 +1751,6 @@ __load-json-file 1.1.0__
  * https://github.com/sindresorhus/load-json-file
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __localtunnel 2.0.2__
@@ -2136,9 +2059,7 @@ __lodash 4.17.21__
  * https://github.com/lodash/lodash
  * License: MIT
  * Copyright:
-   * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-   * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
-   * copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
+   * Copyright JS Foundation and other contributors <https://js.foundation/>
 
 __longest 1.0.1__
  * https://github.com/jonschlinkert/longest
@@ -2151,7 +2072,6 @@ __loud-rejection 1.6.0__
  * https://github.com/sindresorhus/loud-rejection
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __lru-cache 2.7.3__
@@ -2178,20 +2098,17 @@ __map-cache 0.2.2__
  * https://github.com/jonschlinkert/map-cache
  * License: MIT
  * Copyright:
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2015, Jon Schlinkert
    * Copyright (c) 2015-2016, Jon Schlinkert
 
 __map-obj 1.0.1__
  * https://github.com/sindresorhus/map-obj
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __map-stream 0.1.0__
  * https://github.com/dominictarr/map-stream
- * License: Custom: https://github.com/dominictarr/event-stream
+ * License: MIT
  * Copyright:
    * Copyright (c) 2011 Dominic Tarr
 
@@ -2200,7 +2117,6 @@ __map-visit 1.0.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __media-typer 0.3.0__
  * https://github.com/jshttp/media-typer
@@ -2212,33 +2128,26 @@ __meow 3.7.0__
  * https://github.com/sindresorhus/meow
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __micromatch 4.0.5__
  * https://github.com/micromatch/micromatch
  * License: MIT
  * Copyright:
-   * Copyright (c) 2022, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2014-present, Jon Schlinkert
 
 __mime-db 1.52.0__
  * https://github.com/jshttp/mime-db
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
-   * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2015-2022 Douglas Christopher Wilson
-   * Copyright (c) 2015-2022 Douglas Christopher Wilson <doug@somethingdoug.com>
+   * Copyright (c) 2014 Jonathan Ong me@jongleberry.com
 
 __mime-types 2.1.35__
  * https://github.com/jshttp/mime-types
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2015 Douglas Christopher Wilson <doug@somethingdoug.com>
    * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2015 Douglas Christopher Wilson
 
 __mime 1.4.1__
  * https://github.com/broofa/node-mime
@@ -2262,7 +2171,8 @@ __minimatch 3.1.2__
 __minimist 1.2.8__
  * https://github.com/minimistjs/minimist
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2020 James Halliday
 
 __mitt 1.2.0__
  * https://github.com/developit/mitt
@@ -2274,8 +2184,7 @@ __mixin-deep 1.3.2__
  * https://github.com/jonschlinkert/mixin-deep
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2015, 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) 2014-present, Jon Schlinkert.
 
 __mkdirp 1.0.4__
  * https://github.com/isaacs/node-mkdirp
@@ -2293,8 +2202,7 @@ __multimatch 2.1.0__
  * https://github.com/sindresorhus/multimatch
  * License: MIT
  * Copyright:
-   * Copyright (c) Sindre Sorhus, Jon Schlinkert, contributors.
-   * (c) Sindre Sorhus (http://sindresorhus.com), Jon Schlinkert (https://github.com/jonschlinkert)
+   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 __multipipe 0.1.2__
  * https://github.com/juliangruber/multipipe
@@ -2308,7 +2216,6 @@ __nanomatch 1.2.13__
  * License: MIT
  * Copyright:
    * Copyright (c) 2016-2018, Jon Schlinkert
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __natives 1.1.6__
  * https://github.com/addaleax/natives
@@ -2320,12 +2227,8 @@ __negotiator 0.6.3__
  * https://github.com/jshttp/negotiator
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Federico Romero
-   * Copyright (c) 2012 Isaac Z. Schlueter
    * Copyright (c) 2012-2014 Federico Romero
-   * Copyright (c) 2015 Douglas Christopher Wilson
    * Copyright (c) 2012-2014 Isaac Z. Schlueter
-   * Copyright (c) 2012 Federico Romero
    * Copyright (c) 2014-2015 Douglas Christopher Wilson
 
 __node-gyp-build 4.6.0__
@@ -2345,14 +2248,12 @@ __normalize-package-data 2.5.0__
  * License: BSD-2-Clause
  * Copyright:
    * Copyright (c) Meryn Stol 'Author
-   * Copyright (c) 2013 Meryn Stol
 
 __normalize-path 3.0.0__
  * https://github.com/jonschlinkert/normalize-path
  * License: MIT
  * Copyright:
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2014-2018, Jon Schlinkert
+   * Copyright (c) 2014-2018, Jon Schlinkert.
 
 __now-and-later 2.0.1__
  * https://github.com/gulpjs/now-and-later
@@ -2370,8 +2271,6 @@ __object-assign 4.1.1__
  * https://github.com/sindresorhus/object-assign
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
-   * (c) Sindre Sorhus
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __object-copy 0.1.0__
@@ -2397,14 +2296,12 @@ __object-visit 1.0.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015, 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __object.assign 4.1.4__
  * https://github.com/ljharb/object.assign
  * License: MIT
  * Copyright:
    * Copyright (c) 2014 Jordan Harband
-   * Copyright Joyent, Inc. and other Node contributors
 
 __object.defaults 1.1.0__
  * https://github.com/jonschlinkert/object.defaults
@@ -2426,15 +2323,11 @@ __object.pick 1.3.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2016, Jon Schlinkert
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2014-2015 Jon Schlinkert
 
 __on-finished 2.3.0__
  * https://github.com/jshttp/on-finished
  * License: MIT
  * Copyright:
-   * Copyright (c) 2013 Jonathan Ong
-   * Copyright (c) 2014 Douglas Christopher Wilson
    * Copyright (c) 2014 Douglas Christopher Wilson <doug@somethingdoug.com>
    * Copyright (c) 2013 Jonathan Ong <me@jongleberry.com>
 
@@ -2447,18 +2340,14 @@ __once 1.4.0__
 __openurl 1.1.1__
  * https://github.com/rauschma/openurl
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Axel Rauschmayer (axe@rauschma.de)
 
 __opn 5.3.0__
  * https://github.com/sindresorhus/opn
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
-   * Copyright 2006, Jeremy White <jwhite@codeweavers.com>
-   * Copyright 2009-2010, Fathi Boudra <fabo@freedesktop.org>
-   * Copyright 2009-2010, Rex Dieter <rdieter@fedoraproject.org>
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
-   * Copyright 2006, Kevin Krammer <kevin.krammer@gmx.at>
 
 __orchestrator 0.3.8__
  * https://github.com/robrich/orchestrator
@@ -2477,14 +2366,12 @@ __os-homedir 1.0.2__
  * https://github.com/sindresorhus/os-homedir
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __os-tmpdir 1.0.2__
  * https://github.com/sindresorhus/os-tmpdir
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __osenv 0.1.5__
@@ -2504,8 +2391,7 @@ __parse-json 2.2.0__
  * https://github.com/sindresorhus/parse-json
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
-   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 __parse-node-version 1.0.1__
  * https://github.com/gulpjs/parse-node-version
@@ -2524,16 +2410,13 @@ __parseurl 1.3.3__
  * https://github.com/pillarjs/parseurl
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2014-2017 Douglas Christopher Wilson <doug@somethingdoug.com>
    * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2014-2017 Douglas Christopher Wilson
 
 __pascalcase 0.1.1__
  * https://github.com/jonschlinkert/pascalcase
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 Jon Schlinkert
    * Copyright (c) 2015, Jon Schlinkert
 
 __path-dirname 1.0.2__
@@ -2546,14 +2429,12 @@ __path-exists 2.1.0__
  * https://github.com/sindresorhus/path-exists
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __path-is-absolute 1.0.1__
  * https://github.com/sindresorhus/path-is-absolute
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __path-parse 1.0.7__
@@ -2561,7 +2442,6 @@ __path-parse 1.0.7__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Javier Blanco
-   * (c) Javier Blanco (http://jbgutierrez.info)
 
 __path-root-regex 0.1.2__
  * https://github.com/regexhq/path-root-regex
@@ -2581,12 +2461,11 @@ __path-type 1.1.0__
  * https://github.com/sindresorhus/path-type
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __pause-stream 0.0.11__
  * Apache2"
- * License: "MIT
+ * License: Apache-2.0
  * Copyright:
    * Copyright (c) 2013 Dominic Tarr
 
@@ -2594,35 +2473,30 @@ __picomatch 2.3.1__
  * https://github.com/micromatch/picomatch
  * License: MIT
  * Copyright:
-   * Copyright (c) 2017-present, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2017-present, Jon Schlinkert
+   * Copyright (c) 2017-present, Jon Schlinkert.
 
 __pify 2.3.0__
  * https://github.com/sindresorhus/pify
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __pinkie-promise 2.0.1__
  * https://github.com/floatdrop/pinkie-promise
  * License: MIT
  * Copyright:
-   * (c) Vsevolod Strukchinsky (http://github.com/floatdrop)
    * Copyright (c) Vsevolod Strukchinsky <floatdrop@gmail.com>
 
 __pinkie 2.0.4__
  * https://github.com/floatdrop/pinkie
  * License: MIT
  * Copyright:
-   * (c) Vsevolod Strukchinsky (http://github.com/floatdrop)
    * Copyright (c) Vsevolod Strukchinsky <floatdrop@gmail.com>
 
 __plugin-error 0.1.2__
  * https://github.com/jonschlinkert/plugin-error
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 Jon Schlinkert
    * Copyright (c) 2015, Jon Schlinkert
 
 __portscanner 2.2.0__
@@ -2636,7 +2510,6 @@ __posix-character-classes 0.1.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2016-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __pretty-hrtime 1.0.3__
  * https://github.com/robrich/pretty-hrtime
@@ -2666,14 +2539,12 @@ __qs 6.11.0__
  * https://github.com/ljharb/qs
  * License: BSD-3-Clause
  * Copyright:
-   * Copyright (c) 2014, Nathan LaFreniere and other contributors (https://github.com/ljharb/qs/graphs/contributors)
+   * Copyright (c) 2014 Nathan LaFreniere and other contributors.
 
 __range-parser 1.2.1__
  * https://github.com/jshttp/range-parser
  * License: MIT
  * Copyright:
-   * Copyright (c) 2012-2014 TJ Holowaychuk
-   * Copyright (c) 2015-2016 Douglas Christopher Wilson
    * Copyright (c) 2015-2016 Douglas Christopher Wilson doug@somethingdoug.com
    * Copyright (c) 2012-2014 TJ Holowaychuk <tj@vision-media.ca>
 
@@ -2681,9 +2552,7 @@ __raw-body 2.5.2__
  * https://github.com/stream-utils/raw-body
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2022 Douglas Christopher Wilson
-   * Copyright (c) 2013-2014 Jonathan Ong
-   * Copyright (c) 2014-2022 Douglas Christopher Wilson <doug@somethingdoug.com>
+   * Copyright (c) 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
    * Copyright (c) 2013-2014 Jonathan Ong <me@jongleberry.com>
 
 __read-installed 4.0.3__
@@ -2702,14 +2571,12 @@ __read-pkg-up 1.0.1__
  * https://github.com/sindresorhus/read-pkg-up
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __read-pkg 1.1.0__
  * https://github.com/sindresorhus/read-pkg
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __readable-stream 2.3.8__
@@ -2729,7 +2596,6 @@ __readdirp 3.6.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2012-2019 Thorsten Lorenz, Paul Miller (https://paulmillr.com)
-   * Copyright (c) 2012-2019 Thorsten Lorenz, Paul Miller <https://paulmillr.com>
 
 __rechoir 0.6.2__
  * https://github.com/tkellen/node-rechoir
@@ -2741,14 +2607,12 @@ __redent 1.0.0__
  * https://github.com/sindresorhus/redent
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __regex-not 1.0.2__
  * https://github.com/jonschlinkert/regex-not
  * License: MIT
  * Copyright:
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2016, 2018, Jon Schlinkert
 
 __remove-bom-buffer 3.0.0__
@@ -2767,13 +2631,13 @@ __remove-bom-stream 1.2.0__
 __remove-trailing-separator 1.1.0__
  * https://github.com/darsain/remove-trailing-separator
  * License: ISC
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2017 Tomas Sardyha <darsain@gmail.com>
 
 __repeat-element 1.1.4__
  * https://github.com/jonschlinkert/repeat-element
  * License: MIT
  * Copyright:
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2015-present, Jon Schlinkert
 
 __repeat-string 1.6.1__
@@ -2781,21 +2645,19 @@ __repeat-string 1.6.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2016, Jon Schlinkert
-   * Copyright (c) 2016, Jon Schlinkert (http://github.com/jonschlinkert)
-   * Copyright (c) 2014-2015, Jon Schlinkert
 
 __repeating 2.0.1__
  * https://github.com/sindresorhus/repeating
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __replace-ext 1.0.1__
  * https://github.com/gulpjs/replace-ext
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Blaine Bublitz <blaine.bublitz@gmail.com> , Eric Schoffstall <yo@contra.io> and other contributors
+   * Copyright (c) 2014 Blaine Bublitz <blaine.bublitz@gmail.com> , Eric Schoffstall <yo@contra.io>
+            and other contributors
 
 __require-directory 2.1.1__
  * https://github.com/troygoode/node-require-directory
@@ -2827,8 +2689,7 @@ __resolve-url 0.2.1__
  * https://github.com/lydell/resolve-url
  * License: MIT
  * Copyright:
-   * Copyright (c) 2013 Simon Lydell
-   * Copyright 2014 Simon Lydell X11
+   * Copyright (c) 2014 Simon Lydell
 
 __resolve 1.22.1__
  * https://github.com/browserify/resolve
@@ -2859,30 +2720,27 @@ __rx 4.1.0__
  * https://github.com/Reactive-Extensions/RxJS
  * License: Apache-2.0
  * Copyright:
-   * Copyright (c) Microsoft Open Technologies, Inc.
    * Copyright (c) Microsoft.
+   * Microsoft Open Technologies would like to thank its contributors, a list of whom are at
+            http://rx.codeplex.com/wikipage?title=Contributors.
 
 __rxjs 5.5.12__
  * https://github.com/ReactiveX/RxJS
  * License: Apache-2.0
  * Copyright:
-   * (c) this.destination.next
-   * Copyright Google Inc.
-   * Copyright (c) 2015-2017 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors
-   * (c) this.destination.error
-   * Copyright (c) Microsoft Corporation.
+   * Copyright (c) 2015-2018 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors
 
 __safe-buffer 5.2.1__
  * https://github.com/feross/safe-buffer
  * License: MIT
  * Copyright:
    * Copyright (c) Feross Aboukhadijeh
-   * Copyright (c) Feross Aboukhadijeh (http://feross.org)
 
 __safe-regex 1.1.0__
  * https://github.com/substack/safe-regex
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright 2019-present is held by the authors of the safe-regex module
 
 __safer-buffer 2.1.2__
  * https://github.com/ChALkeR/safer-buffer
@@ -2901,16 +2759,14 @@ __semver 6.3.0__
  * https://github.com/npm/node-semver
  * License: ISC
  * Copyright:
-   * Copyright Isaac Z.
    * Copyright (c) Isaac Z. Schlueter and Contributors
-   * Copyright Isaac Z. Schlueter
 
 __send 0.16.2__
  * https://github.com/pillarjs/send
  * License: MIT
  * Copyright:
    * Copyright (c) 2012 TJ Holowaychuk
-   * Copyright (c) 2014-2016 Douglas Christopher Wilson
+   * Copyright (c) 2014-2022 Douglas Christopher Wilson
 
 __sequencify 0.0.7__
  * https://github.com/robrich/sequencify
@@ -2924,7 +2780,6 @@ __serve-index 1.9.1__
  * Copyright:
    * Copyright (c) 2010 Sencha Inc.
    * Copyright (c) 2011 TJ Holowaychuk
-   * Copyright (c) 2011 Sencha Inc.
    * Copyright (c) 2014-2015 Douglas Christopher Wilson
    * Copyright (c) 2011 LearnBoost
 
@@ -2947,9 +2802,7 @@ __set-value 2.0.1__
  * https://github.com/jonschlinkert/set-value
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014-2015, 2017, Jon Schlinkert
    * Copyright (c) 2014-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __setprototypeof 1.2.0__
  * https://github.com/wesleytodd/setprototypeof
@@ -2986,22 +2839,18 @@ __snapdragon-node 2.1.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __snapdragon-util 3.0.1__
  * https://github.com/jonschlinkert/snapdragon-util
  * License: MIT
  * Copyright:
    * Copyright (c) 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __snapdragon 0.8.2__
  * https://github.com/jonschlinkert/snapdragon
  * License: MIT
  * Copyright:
-   * Copyright (c) 2016, Jon Schlinkert (https://github.com/jonschlinkert)
-   * Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
-   * Copyright (c) 2015-2016, Jon Schlinkert
+   * Copyright (c) 2015-2018, Jon Schlinkert
 
 __socket.io-adapter 2.5.2__
  * https://github.com/socketio/socket.io-adapter
@@ -3014,7 +2863,6 @@ __socket.io-client 4.6.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014 Guillermo Rauch
-   * (c) 2014-2023 Guillermo Rauch
 
 __socket.io-parser 4.2.2__
  * https://github.com/socketio/socket.io-parser
@@ -3027,7 +2875,6 @@ __socket.io 4.6.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2018 Automattic <dev@cloudup.com>
-   * (c) 2014-2023 Guillermo Rauch
 
 __source-map-index-generator 0.1.2__
  * https://github.com/twolfson/source-map-index-generator
@@ -3047,17 +2894,12 @@ __source-map-url 0.4.1__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014 Simon Lydell
-   * Copyright 2014 Simon Lydell X11
 
 __source-map 0.7.4__
  * https://github.com/mozilla/source-map
  * License: BSD-3-Clause
  * Copyright:
-   * Copyright 2011 Mozilla Foundation and contributors
    * Copyright (c) 2009-2011, Mozilla Foundation and contributors
-   * Copyright 2014 Mozilla Foundation and contributors
-   * Copyright 2009-2011 Mozilla Foundation and contributors
-   * Copyright 2011 The Closure Compiler Authors
 
 __sparkles 1.0.1__
  * https://github.com/gulpjs/sparkles
@@ -3074,7 +2916,8 @@ __spdx-compare 1.0.0__
 __spdx-correct 3.1.1__
  * https://github.com/jslicense/spdx-correct.js
  * License: Apache-2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright spdx-correct.js contributors
 
 __spdx-exceptions 2.3.0__
  * https://github.com/kemitchell/spdx-exceptions.json
@@ -3090,8 +2933,9 @@ __spdx-expression-parse 3.0.1__
 
 __spdx-license-ids 3.0.12__
  * https://github.com/jslicense/spdx-license-ids
- * License: CC0-1.0
- * Copyright: (no copyright)
+ * License: Creative Commons Zero v1.0 Universal
+ * Copyright:
+   * Shinnosuke Watanabe (https://github.com/shinnn)
 
 __spdx-ranges 2.1.1__
  * https://github.com/kemitchell/spdx-ranges.js
@@ -3112,7 +2956,6 @@ __split-string 3.1.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __split 1.0.1__
  * https://github.com/dominictarr/split
@@ -3130,9 +2973,7 @@ __statuses 2.0.1__
  * https://github.com/jshttp/statuses
  * License: MIT
  * Copyright:
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2016 Douglas Christopher Wilson
    * Copyright (c) 2016 Douglas Christopher Wilson <doug@somethingdoug.com>
 
 __stream-combiner 0.2.2__
@@ -3181,28 +3022,25 @@ __strip-bom 2.0.0__
  * https://github.com/sindresorhus/strip-bom
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __strip-indent 1.0.1__
  * https://github.com/sindresorhus/strip-indent
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __strip-json-comments 1.0.4__
  * https://github.com/sindresorhus/strip-json-comments
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __stylus 0.54.8__
  * https://github.com/stylus/stylus
  * License: MIT
  * Copyright:
-   * Copyright (c) Automattic
+   * Copyright (c) Automattic <developer.wordpress.com>
 
 __supports-color 7.2.0__
  * https://github.com/chalk/supports-color
@@ -3220,7 +3058,6 @@ __symbol-observable 1.0.1__
  * https://github.com/blesh/symbol-observable
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (https://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
    * Copyright (c) Ben Lesh <ben@benlesh.com>
 
@@ -3246,8 +3083,7 @@ __through2 2.0.5__
  * https://github.com/rvagg/through2
  * License: MIT
  * Copyright:
-   * Copyright (c) Rod Vagg rvagg (https://twitter.com/rvagg) and additional contributors
-   * Copyright (c) Rod Vagg
+   * Copyright (c) Rod Vagg (the "Original Author") and additional contributors
 
 __through 2.3.8__
  * https://github.com/dominictarr/through
@@ -3267,7 +3103,6 @@ __time-stamp 1.1.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert.
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert).
 
 __to-absolute-glob 2.0.2__
  * https://github.com/jonschlinkert/to-absolute-glob
@@ -3280,8 +3115,6 @@ __to-object-path 0.3.0__
  * https://github.com/jonschlinkert/to-object-path
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert
    * Copyright (c) 2015-2016, Jon Schlinkert
 
 __to-regex-range 5.0.1__
@@ -3296,7 +3129,6 @@ __to-regex 3.0.2__
  * License: MIT
  * Copyright:
    * Copyright (c) 2016-2018, Jon Schlinkert
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __to-through 2.0.0__
  * https://github.com/gulpjs/to-through
@@ -3308,7 +3140,6 @@ __toidentifier 1.0.1__
  * https://github.com/component/toidentifier
  * License: MIT
  * Copyright:
-   * Copyright (c) 2016 Douglas Christopher Wilson
    * Copyright (c) 2016 Douglas Christopher Wilson <doug@somethingdoug.com>
 
 __treeify 1.1.0__
@@ -3321,7 +3152,6 @@ __trim-newlines 1.0.0__
  * https://github.com/sindresorhus/trim-newlines
  * License: MIT
  * Copyright:
-   * (c) Sindre Sorhus (http://sindresorhus.com)
    * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __type-is 1.6.18__
@@ -3329,20 +3159,13 @@ __type-is 1.6.18__
  * License: MIT
  * Copyright:
    * Copyright (c) 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
-   * Copyright (c) 2014 Jonathan Ong
    * Copyright (c) 2014 Jonathan Ong <me@jongleberry.com>
-   * Copyright (c) 2014-2015 Douglas Christopher Wilson
 
 __typescript 4.9.5__
  * https://github.com/Microsoft/TypeScript
  * License: Apache-2.0
  * Copyright:
-   * Copyright (c) Microsoft Corporation
-   * Copyright (c) 2018 The Khronos Group Inc.
-   * Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
-   * Copyright (c) 1991-2017 Unicode, Inc.
-   * (c) by W3C
-   * Copyright (c) 2018 WHATWG
+   * Copyright (c) Microsoft Corporation.
 
 __ua-parser-js 1.0.33__
  * https://github.com/faisalman/ua-parser-js
@@ -3355,8 +3178,7 @@ __uglify-js 2.8.29__
  * https://github.com/mishoo/UglifyJS2
  * License: BSD-2-Clause
  * Copyright:
-   * Copyright 2012-2013 (c) Mihai Bazon <mihai.bazon@gmail.com>
-   * Copyright 2012 (c) Mihai Bazon <mihai.bazon@gmail.com>
+   * Copyright 2012-2019 (c) Mihai Bazon <mihai.bazon@gmail.com>
 
 __uglify-to-browserify 1.0.2__
  * https://github.com/ForbesLindesay/uglify-to-browserify
@@ -3369,14 +3191,12 @@ __unc-path-regex 0.1.2__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Jon Schlinkert
-   * Copyright (c) 2015, Jon Schlinkert.
 
 __union-value 1.0.1__
  * https://github.com/jonschlinkert/union-value
  * License: MIT
  * Copyright:
    * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __unique-stream 2.3.1__
  * https://github.com/eugeneware/unique-stream
@@ -3395,28 +3215,23 @@ __unpipe 1.0.0__
  * License: MIT
  * Copyright:
    * Copyright (c) 2015 Douglas Christopher Wilson <doug@somethingdoug.com>
-   * Copyright (c) 2015 Douglas Christopher Wilson
 
 __unset-value 1.0.0__
  * https://github.com/jonschlinkert/unset-value
  * License: MIT
  * Copyright:
    * Copyright (c) 2015, 2017, Jon Schlinkert
-   * Copyright (c) 2017, Jon Schlinkert (https://github.com/jonschlinkert)
 
 __urix 0.1.0__
  * https://github.com/lydell/urix
  * License: MIT
  * Copyright:
    * Copyright (c) 2013 Simon Lydell
-   * Copyright 2014 Simon Lydell X11
 
 __use 3.1.1__
  * https://github.com/jonschlinkert/use
  * License: MIT
  * Copyright:
-   * Copyright (c) 2015-2017, Jon Schlinkert
-   * Copyright (c) 2018, Jon Schlinkert (https://github.com/jonschlinkert)
    * Copyright (c) 2015-present, Jon Schlinkert
 
 __user-home 1.1.1__
@@ -3448,15 +3263,13 @@ __utils-merge 1.0.1__
  * https://github.com/jaredhanson/utils-merge
  * License: MIT
  * Copyright:
-   * Copyright (c) 2013-2017 Jared Hanson
    * Copyright (c) 2013-2017 Jared Hanson < http://jaredhanson.net/ (http://jaredhanson.net/)>
 
 __uuid 1.4.2__
  * https://github.com/shtylman/node-uuid
- * License: Custom: https://secure.travis-ci.org/defunctzombie/node-uuid.png
+ * License: MIT
  * Copyright:
-   * Copyright (c) 2010-2012 Robert Kieffer
-   * Copyright (c) 1986-1993, 1998, 2004, 2007-2010 Thomas Williams, Colin Kelley
+   * Copyright (c) 2010-2016 Robert Kieffer and other contributors
 
 __v8flags 2.1.1__
  * https://github.com/tkellen/node-v8flags
@@ -3467,7 +3280,8 @@ __v8flags 2.1.1__
 __validate-npm-package-license 3.0.4__
  * https://github.com/kemitchell/validate-npm-package-license.js
  * License: Apache-2.0
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright 2019 Kyle Mitchell <kyle@kemitchell.com>
 
 __value-or-function 3.0.0__
  * https://github.com/gulpjs/value-or-function
@@ -3497,7 +3311,8 @@ __vinyl-sourcemap 1.1.0__
 __vinyl-sourcemaps-apply 0.2.1__
  * https://github.com/floridoo/vinyl-sourcemaps-apply
  * License: ISC
- * Copyright: (no copyright)
+ * Copyright:
+   * Florian Reiterer (me@florianreiterer.com)
 
 __vinyl 2.2.1__
  * https://github.com/gulpjs/vinyl
@@ -3522,7 +3337,6 @@ __when 3.7.8__
  * License: MIT
  * Copyright:
    * Copyright (c) 2011 Brian Cavalier
-   * (c) copyright 2010-2014
 
 __which 1.3.1__
  * https://github.com/isaacs/node-which
@@ -3538,14 +3352,15 @@ __window-size 0.1.0__
 
 __wordwrap 0.0.2__
  * https://github.com/substack/node-wordwrap
- * License: MIT*
- * Copyright: (no copyright)
+ * License: MIT
+ * Copyright:
+   * Copyright (C) 2020 James Halliday
 
 __wrap-ansi 7.0.0__
  * https://github.com/chalk/wrap-ansi
  * License: MIT
  * Copyright:
-   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+   * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 
 __wrappy 1.0.2__
  * https://github.com/npm/wrappy
@@ -3587,8 +3402,8 @@ __yargs 3.10.0__
  * https://github.com/bcoe/yargs
  * License: MIT
  * Copyright:
-   * copyright 2015
-   * Copyright 2010 James Halliday (mail@substack.net)
+   * Copyright 2010 James Halliday (mail@substack.net); Modified work Copyright 2014 Contributors
+            (ben@npmjs.com)
 
 
 ______
@@ -3614,23 +3429,6 @@ Copyright <YEAR> <OWNER>
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-```
-______
-
-__BSD-3-Clause__
-
-```
-Copyright <YEAR> <COPYRIGHT HOLDER>
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 ______
 
@@ -5183,6 +4981,23 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
+```
+______
+
+__BSD-3-Clause__
+
+```
+Copyright <YEAR> <COPYRIGHT HOLDER>
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 ______
 
