@@ -384,7 +384,7 @@ define(function leosCrossReferenceDialog(require) {
             return this.selectedMrefId;
         },
         setSelectedMrefId: function setSelectedMrefId(elementId) {
-            this.selectedMrefId = elementId ? elementId.split("/").pop() : null;
+            this.selectedMrefId = elementId;
         },
         setTreeNodeIds: function setTreeNodeIds(treeNodes) {
             var that = this;

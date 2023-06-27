@@ -526,27 +526,35 @@ define(function leosTrackChangesPluginModule(require) {
                     var range = editor.getSelection().getRanges()[0];
                     if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
                         return false;
-                    } else if (!range.collapsed) {
-                        var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
-                        if (formatStyleToBeApplied) {
-                            if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
-                                style.apply(editor, formatStyleToBeApplied.style);
-                                return false;
-                            } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
-                                //TODO: Check style definition. Custom or default implementation no works with it.
-                                //style.remove(editor, formatStyleToBeApplied.style);
-                                //editor.removeStyle(formatStyleToBeApplied.style);
+                    }
+                    switch (event.data.name) {
+                        case "bold":
+                        case "italic":
+                        case "subscript":
+                        case "superscript":
+                            if (editor.LEOS.isTrackChangesStyleFormattingEnabled) {
+                                var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
+                                if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
+                                    style.apply(editor, formatStyleToBeApplied.style);
+                                    return false;
+                                } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
+                                    //TODO: Check style definition. Custom or default implementation no works with it.
+                                    //style.remove(editor, formatStyleToBeApplied.style);
+                                    //editor.removeStyle(formatStyleToBeApplied.style);
+                                }
                             }
-                        } else {
-                            return false;
-                        }
+                            break;
+                        case "authorialNoteWidget":
+                        case "leosCrossReferenceWidget":
+                        case "mathjax":
+                            if (!range.collapsed) return false;
+                            break;
                     }
                 }
             });
 
             // Add observer to CKEditor when data is received
             editor.on("receiveData", function() {
-
                 function processMutations(mutations) {
                     for (var mutation of mutations) {
                         if (mutation.type === "childList") {
@@ -563,12 +571,11 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 }
-
                 if (isTrackChangesEnabled) {
-                    var rootElement = editor.editable().$;
+                    var rootElement = editor.editable().$.firstChild;
                     if (rootElement && !rootElement.mutationObserver) {
                         rootElement.mutationObserver = new MutationObserver(processMutations);
-                        rootElement.mutationObserver.observe(rootElement, {childList: true, subtree: true});
+                        rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true });
                     }
                 }
             });
