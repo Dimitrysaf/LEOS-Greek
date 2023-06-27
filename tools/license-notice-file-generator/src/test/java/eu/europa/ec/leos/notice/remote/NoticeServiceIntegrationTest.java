@@ -18,7 +18,7 @@ class NoticeServiceIntegrationTest {
         NoticeService service = new NoticeService();
         final List<RemoteNotice> notices = service.retrieveNotices(
                 Collections.singleton("org.springframework.boot:spring-boot-starter-test:2.7.3"),
-                NoticeService.NoticeProvider.MAVENCENTRAL);
+                NoticeService.NoticeProvider.MAVENCENTRAL, "/remote/annotation_maven_response.json", true);
 
         assertNotNull(notices);
         System.out.println("Got: " + notices);
@@ -35,7 +35,7 @@ class NoticeServiceIntegrationTest {
                         "@angular-devkit/build-angular@0.1001.5",
                         "@foliojs-fork/linebreak@1.1.1"
                 ),
-                NoticeService.NoticeProvider.NPMJS);
+                NoticeService.NoticeProvider.NPMJS, "/remote/annotation_npmjs_response.json", true);
 
         assertNotNull(notices);
         System.out.println("Got: " + notices);

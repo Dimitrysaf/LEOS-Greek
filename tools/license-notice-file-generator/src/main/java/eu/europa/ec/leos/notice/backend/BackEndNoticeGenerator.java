@@ -41,17 +41,20 @@ public class BackEndNoticeGenerator {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Product product;
     private final Path thirdPartyTxtFile;
+    private final String existingJsonResponse;
+    private final boolean useExistingResponses;
     private final MavenXmlCopyrightsMapping xmlCopyrightsMapping;
 
-    public BackEndNoticeGenerator(Product product, Path thirdPartyTxtFile, MavenXmlCopyrightsMapping xmlCopyrightsMapping) {
+    public BackEndNoticeGenerator(Product product, Path thirdPartyTxtFile, MavenXmlCopyrightsMapping xmlCopyrightsMapping,
+                                  String existingJsonResponse, boolean useExistingResponses) {
         Objects.requireNonNull(product);
         Objects.requireNonNull(thirdPartyTxtFile);
         Objects.requireNonNull(xmlCopyrightsMapping);
-
         this.product = product;
         this.thirdPartyTxtFile = thirdPartyTxtFile;
         this.xmlCopyrightsMapping = xmlCopyrightsMapping;
-
+        this.existingJsonResponse = existingJsonResponse;
+        this.useExistingResponses = useExistingResponses;
         registerExtraLicenses();
     }
 
@@ -80,14 +83,13 @@ public class BackEndNoticeGenerator {
 
     private static List<String> extractNamespaceAndNes(List<ThirdPartyLibrary> thirdPartyLibraries) {
         return thirdPartyLibraries.stream()
-                                  .map(ThirdPartyLibrary::fullDependencyPath)
-                                  .collect(Collectors.toList());
+                .map(ThirdPartyLibrary::fullDependencyPath)
+                .collect(Collectors.toList());
     }
 
-    private static List<RemoteNotice> retrieveMavenNotices(List<String> namespaceAndNames) throws IOException, InterruptedException {
+    private List<RemoteNotice> retrieveMavenNotices(List<String> namespaceAndNames) throws IOException, InterruptedException {
         final NoticeService noticeService = new NoticeService();
-        noticeService.setUseExistingResponses(true);
-        return noticeService.retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.MAVENCENTRAL);
+        return noticeService.retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.MAVENCENTRAL, existingJsonResponse, useExistingResponses);
     }
 
     private void registerExtraLicenses() {
@@ -142,11 +144,13 @@ public class BackEndNoticeGenerator {
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ParserConfigurationException, SAXException {
         final Path xmlCopyrights = new PathRetriever().fromClasspath("/copyrights-lookup-leos-maven.xml");
         MavenXmlCopyrightsMapping mappings = new MavenXmlCopyrightsMapping(xmlCopyrights);
+        final String existingJsonResponse = "/remote/leos_maven_response.json";
+        final boolean useExistingResponses = true;
 
         final Path trustedAppTxtFile = Paths.get("target/generated-sources/license/THIRD-PARTY.txt");
         final Product trustedApp = new Product("LEOS", "2022 European Union", "1.0", EUPLv1_2Content.content());
 
-        final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings);
+        final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings, existingJsonResponse, useExistingResponses);
         try (PrintStream ps = new PrintStream("NOTICE_BE.md")) {
             trustedAppNoticeGenerator.generateNotice(ps);
         }

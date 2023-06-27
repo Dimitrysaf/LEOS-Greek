@@ -20,6 +20,8 @@ class GenerateNoticeFileForAnnotationBE extends BaseTest {
     void generateNotice() throws IOException, InterruptedException, URISyntaxException, ParserConfigurationException, SAXException {
         Path trustedAppTxtFile = getPathFromClasspath("/THIRD-PARTY-annotation-maven.txt");
         String lookUpFileFile = "/copyrights-lookup-annotation-maven.xml";
+        String existingJsonResponse = "/remote/annotation_npmjs_response.json";
+        boolean useExistingResponses = false;
         String outputFile = "NOTICE_ANNOTATION_BE.md";
 
         final Path xmlCopyrights = new PathRetriever().fromClasspath(lookUpFileFile);
@@ -27,7 +29,7 @@ class GenerateNoticeFileForAnnotationBE extends BaseTest {
 
         final Product trustedApp = new Product("ANNOTATION", "2022 European Union", "1.0", EUPLv1_2Content.content());
 
-        final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings);
+        final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings, existingJsonResponse, useExistingResponses);
         try (PrintStream ps = new PrintStream(outputFile)) {
             trustedAppNoticeGenerator.generateNotice(ps);
         }
