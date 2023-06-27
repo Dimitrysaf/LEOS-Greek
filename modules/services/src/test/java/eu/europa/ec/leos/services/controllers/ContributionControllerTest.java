@@ -8,6 +8,7 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
 import org.junit.Before;
@@ -124,13 +125,15 @@ public class ContributionControllerTest {
         String TEST_VERSION_LABEL = "versionLabel";
         String TEST_RESPONSE_BODY = "Test Response";
         HttpServletRequest httpRequestMock = Mockito.mock(HttpServletRequest.class);
+        DocumentViewResponse testResponse = new DocumentViewResponse(TEST_DOCUMENT_REF, TEST_RESPONSE_BODY, null);
         when(httpRequestMock.getContextPath()).thenReturn(TEST_CONTEXT_PATH);
-        when(contributionApiService.compareAndShowRevision(anyString(),anyString(),anyString(),anyString())).thenReturn(TEST_RESPONSE_BODY);
+        when(contributionApiService.compareAndShowRevision(anyString(),anyString(),anyString(),anyString())).thenReturn(testResponse);
 
-        ResponseEntity<Object> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF,TEST_DOCUMENT_TYPE,TEST_VERSION_LABEL);
+        ResponseEntity<DocumentViewResponse> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF,TEST_DOCUMENT_TYPE,TEST_VERSION_LABEL);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(TEST_RESPONSE_BODY, response.getBody());
+        assertNotNull(response.getBody());
+        assertEquals(TEST_RESPONSE_BODY, response.getBody().getEditableXml());
 
         verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL);
     }

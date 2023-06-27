@@ -25,6 +25,9 @@ import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
 import org.slf4j.Logger;
@@ -71,7 +74,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
     @Autowired
     BillService billService;
-    CmisRepository cmisRepository;
+    @Autowired
+    DocumentViewService<XmlDocument> documentViewService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -124,10 +128,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public String compareAndShowRevision(String contextPath,
-                                        String documentRef,
-                                        String documentType,
-                                        String versionLabel) {
+    public DocumentViewResponse compareAndShowRevision(String contextPath,
+                                                       String documentRef,
+                                                       String documentType,
+                                                       String versionLabel) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
         final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
@@ -174,7 +178,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         );
 
         cloneContext.setContribution(Boolean.TRUE);
-        return this.comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
+        String mergedContent = this.comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
+        return new DocumentViewResponse(
+                proposal.getOriginRef(),
+                mergedContent,
+                this.documentViewService.getVersionInfo(contributionVersion)
+        );
     }
     
     public LeosDocument declineRevision(String documentType, String documentRef, String versionLabel) {

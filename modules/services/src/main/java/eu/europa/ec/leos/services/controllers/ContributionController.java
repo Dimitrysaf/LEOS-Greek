@@ -6,6 +6,7 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +69,12 @@ public class ContributionController {
 
     @GetMapping(value = "/view-merge-pane/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> viewMergePane(HttpServletRequest request,
-                                                @PathVariable("documentRef") String documentRef,
-                                                @PathVariable("documentType") String documentType,
-                                                @RequestParam String versionLabel) {
-        String compareContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentRef, documentType, versionLabel);
-        return ResponseEntity.ok(compareContent);
+    public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request,
+                                                              @PathVariable("documentRef") String documentRef,
+                                                              @PathVariable("documentType") String documentType,
+                                                              @RequestParam String versionLabel) {
+        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentRef, documentType, versionLabel);
+        return ResponseEntity.ok(mergedContent);
     }
     
     @PostMapping(value = "/decline-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
