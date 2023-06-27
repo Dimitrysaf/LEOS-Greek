@@ -123,6 +123,7 @@ export class DocumentEditorComponent
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
   isContributionsPaneExpanded = false;
+  contributionActionSelected = 'accept_selected';
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -720,6 +721,18 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
+  }
+
+  handleNextChangeContribution() {}
+
+  handlePrevChangeContribution() {}
+
+  onSelectAction(e: any) {
+    //TODO add selection handler
+  }
+
+  handleProceed() {
+    //TODO create handler
   }
 
   protected exploreMilestone(version: Version) {
