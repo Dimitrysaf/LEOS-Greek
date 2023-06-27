@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
@@ -9,7 +10,6 @@ import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,7 +119,7 @@ public class ContributionControllerTest {
         String TEST_DOCUMENT_REF = "documentRef";
         String TEST_DOCUMENT_TYPE = "documentType";
         String TEST_VERSION_LABEL = "versionLabel";
-        Document documentMock = mock(Document.class);
+        LeosDocument documentMock = mock(LeosDocument.class);
 
         when(this.contributionApiService.declineRevision(anyString(),anyString(),anyString())).thenReturn(documentMock);
 
