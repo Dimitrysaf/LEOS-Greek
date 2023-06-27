@@ -2,7 +2,6 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.cmis.repository.CmisRepository;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.Annex;
@@ -28,7 +27,6 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,16 +177,17 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         return this.comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
     }
     
-    public Document declineRevision(String documentType, String documentRef, String versionLabel) {
+    public LeosDocument declineRevision(String documentType, String documentRef, String versionLabel) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
         final LeosPackage docPackage = this.leosRepository.findPackageByDocumentRef(documentRef, documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(docPackage.getPath());
         this.populateCloneProposalMetadata(proposal);
 
-        final LeosDocument document = this.leosRepository.findDocumentByVersion(documentClass.getClazz(), documentRef, versionLabel);
+        LeosDocument document = this.leosRepository.findDocumentByVersion(documentClass.getClazz(), documentRef, versionLabel);
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-        return this.cmisRepository.updateDocument(document.getId(), properties, false);
+        document = this.leosRepository.updateDocument(document.getId(), properties, documentClass.getClazz(), false);
+        return document;
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {
