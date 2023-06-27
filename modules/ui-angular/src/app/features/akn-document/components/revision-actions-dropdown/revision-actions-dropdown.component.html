@@ -24,7 +24,7 @@
         euiListItem
         *ngIf="contribution.contributionStatus === 'CONTRIBUTION_DONE'"
         translate="page.collection.milestones.actions.view-milestone"
-        (click)="documentService.viewContribution(contribution)"
+        (click)="documentService.viewAndMergeContribution(contribution)"
       ></button>
       <button
         euiListItem
