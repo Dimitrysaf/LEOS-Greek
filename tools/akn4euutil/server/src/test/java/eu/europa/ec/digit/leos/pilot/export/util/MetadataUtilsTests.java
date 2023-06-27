@@ -86,4 +86,51 @@ public class MetadataUtilsTests {
         Assertions.assertEquals("SEC(2016) 248 final", refField.getDisplayValue());
         Assertions.assertEquals("http://data.europa.eu/eli/swd/2016/248", refField.getHref());
     }
+    
+    //---------------------------
+    // verify space tolerance for parsing the "cote"
+    //---------------------------
+    @Test
+    public void testParseCote_spaceLeft() throws MetadataUtilsException {
+        
+        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456");
+        
+        Assertions.assertNotNull(actual);
+        
+        final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
+        Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
+    }
+    
+    @Test
+    public void testParseCote_noSpaceLeft() throws MetadataUtilsException {
+        
+        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456");
+        
+        Assertions.assertNotNull(actual);
+        
+        final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
+        Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
+    }
+    
+    @Test
+    public void testParseCote_spaceLeftWithSuffix() throws MetadataUtilsException {
+        
+        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013) 2456 final");
+        
+        Assertions.assertNotNull(actual);
+        
+        final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
+        Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
+    }
+    
+    @Test
+    public void testParseCote_noSpaceLeftWithSuffix() throws MetadataUtilsException {
+        
+        final MetadataFieldInfo actual = MetadataUtil.parseInsertCote("COM(2013)2456 final");
+        
+        Assertions.assertNotNull(actual);
+        
+        final ReferenceFieldInfo typedResult = (ReferenceFieldInfo) actual;
+        Assertions.assertEquals("COM/2013/2456", typedResult.getShortValue());
+    }
 }

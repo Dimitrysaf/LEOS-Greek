@@ -205,7 +205,7 @@ class MetadataServiceImpl implements MetadataService {
             return MetadataUtil.getLookupFieldInfoSuccessResult(field);
         } catch(MetadataUtilsException e) {
             LOG.error("Lookup field info failed: {}", e);
-            return MetadataUtil.getLookupFieldInfoErrorResult(field);
+            return MetadataUtil.getLookupFieldInfoErrorResult(field, e);
         }
     }
 
