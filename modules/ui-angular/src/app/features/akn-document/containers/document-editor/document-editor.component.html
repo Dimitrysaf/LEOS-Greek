@@ -607,7 +607,7 @@
       </eui-page-column>
 
       <app-draggable-splitter
-        *ngIf="!hideAnnotationsSplitter"
+        *ngIf="!isContributionForViewOpen"
         [isLeftAreaCollapsed]="false"
         [leftArea]="
           (documentService.compareModeEnabled$ | async)
@@ -616,16 +616,15 @@
             ? versionForViewPaneElement
             : documentPaneElement
         "
-        [rightArea]="annotationsPaneElement"
-        [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
-        (hideSplitter)="onHideAnnotationsSplitter($event)"
+        [rightArea]="contributionViewPaneElement"
+        [isRightAreaCollapsed]="isViewContributionPaneCollapsed"
       ></app-draggable-splitter>
 
       <!-- contribution view and merge pane -->
       <eui-page-column
         #contributionViewPane
         interactiveScrollbars
-        *ngIf="isViewContributionPaneCollapsed"
+        *ngIf="isContributionForViewOpen"
         class="contribution-view-merge-pane"
       >
         <app-akn-document
@@ -635,6 +634,25 @@
         >
         </app-akn-document>
       </eui-page-column>
+
+      <app-draggable-splitter
+        *ngIf="!hideAnnotationsSplitter"
+        [isLeftAreaCollapsed]="
+          isContributionForViewOpen ? isViewContributionPaneCollapsed : false
+        "
+        [leftArea]="
+          (documentService.compareModeEnabled$ | async)
+            ? compareModePaneElement
+            : isVersionForViewOpen
+            ? versionForViewPaneElement
+            : isContributionForViewOpen
+            ? contributionViewPaneElement
+            : documentPaneElement
+        "
+        [rightArea]="annotationsPaneElement"
+        [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
+        (hideSplitter)="onHideAnnotationsSplitter($event)"
+      ></app-draggable-splitter>
 
       <!-- unsaved data dialog -->
       <eui-dialog

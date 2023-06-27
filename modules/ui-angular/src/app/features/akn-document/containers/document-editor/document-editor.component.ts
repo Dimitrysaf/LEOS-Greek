@@ -90,6 +90,7 @@ export class DocumentEditorComponent
   isTocPaneCollapsed = true;
   isAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
+  isContributionForViewOpen = false;
   isViewContributionPaneCollapsed = true;
   reloadTrigger: number;
 
@@ -147,6 +148,8 @@ export class DocumentEditorComponent
   versionForViewPaneElement: ElementRef;
   @ViewChild('compareModePane', { read: ElementRef })
   compareModePaneElement: ElementRef;
+  @ViewChild('contributionViewPane', { read: ElementRef })
+  contributionViewPaneElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -251,7 +254,8 @@ export class DocumentEditorComponent
           this.contributionForView = this.cleanupAndSerializeXML(
             contributionView.editableXml,
           );
-          this.isContributionsPaneExpanded = true;
+          this.isContributionForViewOpen = true;
+          this.isViewContributionPaneCollapsed = false;
         }
       });
 
@@ -391,6 +395,7 @@ export class DocumentEditorComponent
     this.reloadTrigger = 0;
     this.closeVersionView();
     this.closeVersionComparisonView();
+    this.closeContributionsView();
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
@@ -448,12 +453,6 @@ export class DocumentEditorComponent
     hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
   ) {
     this.hideAnnotationsSplitter = hideAnnotationsSplitter;
-  }
-
-  onToggleVersionsPane(
-    isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed,
-  ) {
-    this.isVersionsPaneCollapsed = isVersionsPaneCollapsed;
   }
 
   handleEdit() {
@@ -717,6 +716,10 @@ export class DocumentEditorComponent
     if (this.isVersionsPaneExpanded) {
       this.isVersionsPaneExpanded = false;
     }
+  }
+
+  closeContributionsView() {
+    this.isContributionForViewOpen = false;
   }
 
   protected exploreMilestone(version: Version) {
