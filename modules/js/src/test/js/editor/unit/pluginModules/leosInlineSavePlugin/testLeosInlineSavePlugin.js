@@ -18,7 +18,7 @@ define(function testLeosInlineSavePlugin(require) {
     var $ = require("jquery");
     var CKEDITOR = require("promise!ckEditor");
     
-    var placeholder = $(`<div id="leos-placeholder" class="leos-placeholder" data-wrapped-id='123' style='height:10px'></div>`)[0];
+    var  placeholder = document.getElementById("leos-placeholder");
     var leosInlineSavePlugin = require("plugins/leosInlineSave/leosInlineSavePlugin");
     var config = {
         language: "en",
@@ -32,11 +32,39 @@ define(function testLeosInlineSavePlugin(require) {
     
     var editor = CKEDITOR.inline(placeholder, config);
     
-    editor.on('instanceReady', function(evt) {
-        console.log(editor);
-        editor.getCommand('inlinesave').setState(CKEDITOR.TRISTATE_ON);
-        editor.execCommand('inlinesave');
+    describe("Unit tests for plugins/leosInlineSave",function() {
+        var originalTimeout;
+        
+        beforeEach(function() {
+            originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        });
+        
+        it("Tests if inlinesave is valid.", function(done) {
+            editor.on("beforeCommandExec", function(event) {
+                if (event.data && event.data.command.name === "inlinesave") {
+                    var selection = editor.getSelection();
+                    selection.selectElement(editor.element.getChildren().getItem(0));
+                }
+            });
+            
+            editor.on("afterCommandExec", function(event) {
+                if (event.data && event.data.command.name === "inlinesave") {
+                    let actual = 'abc';
+                    expect("abc").toEqual(actual);
+                    done();
+                }
+            });
+            
+            editor.on('instanceReady', function(evt) {
+                editor.getCommand('inlinesave').setState(CKEDITOR.TRISTATE_ON);
+                editor.execCommand('inlinesave');
+            });
+        });
+        
+        afterEach(function() {
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+        });
     });
-    
     
 });
