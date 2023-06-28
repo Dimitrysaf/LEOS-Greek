@@ -26,7 +26,7 @@ public interface ExportService {
 
     String exportLegPackage(String proposalId, LegPackage legPackage) throws Exception;
 
-    File createCollectionPackage(String jobFileName, String documentId) throws Exception;
+    File createCollectionPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception;
     
     byte[] createDocuWritePackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception;
 

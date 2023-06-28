@@ -22,7 +22,7 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
-import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.toc.StructureContext;
@@ -32,12 +32,12 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 
-@Service("proposalBill")
-@Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
-public class ProposalBillApiService extends BillApiServiceImpl {
-    private static final Logger LOG = LoggerFactory.getLogger(ProposalBillApiService.class);
+@Service("mandateBill")
+@Instance(InstanceType.COUNCIL)
+public class MandateBillApiServiceImpl extends BillApiServiceImpl {
+    private static final Logger LOG = LoggerFactory.getLogger(MandateBillApiServiceImpl.class);
 
-    ProposalBillApiService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
+    MandateBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
         super(structureContext, cloneContext, context);
     }
 
@@ -50,7 +50,6 @@ public class ProposalBillApiService extends BillApiServiceImpl {
         return this.doDownloadVersion(documentRef, false, null);
     }
 
-
     private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
         try {
             final Bill currentDocument = this.billService.findBillByRef(documentRef);
@@ -58,23 +57,20 @@ public class ProposalBillApiService extends BillApiServiceImpl {
             LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
             contex.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
-            populateCloneProposalMetadata(proposal);
 
             ExportOptions exportOptions;
             XmlDocument original = documentContentService.getOriginalBill(currentDocument);
-            exportOptions = new ExportLW(ExportOptions.Output.PDF, Bill.class, false);
-            exportOptions.setExportVersions(new ExportVersions(isClonedProposal() ? original : null, currentDocument));
+            exportOptions = new ExportDW(ExportOptions.Output.WORD, Bill.class, false);
+            exportOptions.setExportVersions(new ExportVersions(original, currentDocument));
+
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
             exportOptions.setWithCoverPage(false);
 
             String proposalId = proposal.getId();
             if (proposalId != null) {
-                try {
-                    this.createDocumentPackageForExport(exportOptions);
-                } catch (Exception e) {
-                    LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
-                }
+                final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+                return exportService.createDocuWritePackage(jobFileName, proposalId, exportOptions);
             }
             LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName());
         } catch (Exception e) {

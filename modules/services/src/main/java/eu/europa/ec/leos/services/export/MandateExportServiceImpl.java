@@ -164,23 +164,4 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
                 (byte[]) docuwriteResponse.getValue());
         return exportPackageContent;
     }
-
-    @Override
-    public File createCollectionPackage(String jobFileName, String documentId) throws Exception {
-        Validate.notNull(jobFileName);
-        Validate.notNull(documentId);
-        File legFile = null;
-        try {
-            ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD);
-            LegPackage legPackage = legService.createLegPackage(documentId, exportOptions);
-            legFile = legPackage.getFile();
-            return createZipFile(legPackage, jobFileName, exportOptions);
-        } finally {
-            if (legFile != null && legFile.exists()) {
-                if(!legFile.delete()){
-                    LOG.info("File not deleted {}", legFile.toPath());
-                }
-            }
-        }
-    }
 }

@@ -171,7 +171,8 @@ define(function elementEditorModule(require) {
                 isClonedProposal: params.isClonedProposal,
                 proposalRef: connector.getState().proposalRef,
                 isTrackChangesEnabled: connector.getState().isTrackChangesEnabled,
-                isTrackChangesShowed: connector.getState().isTrackChangesShowed
+                isTrackChangesShowed: connector.getState().isTrackChangesShowed,
+                isTrackChangesStyleFormattingEnabled: connector.getState().isTrackChangesStyleFormattingEnabled
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));

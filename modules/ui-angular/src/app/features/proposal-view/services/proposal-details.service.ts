@@ -290,8 +290,15 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  createMilestone(milestoneComment: string) {
+  createMilestone(milestoneComment: string, isClonedProposal = false) {
     this.loadingService.setLoading(true);
+    const successMessage = isClonedProposal
+      ? this.translateService.instant(
+          'page.collection.milestones.create-milestone-dialog.success-clone',
+        )
+      : this.translateService.instant(
+          'page.collection.milestones.create-milestone-dialog.success',
+        );
     return this.http
       .post(
         `${apiBaseUrl}/secured/proposals/${this.proposalRef}/milestones`,
@@ -304,9 +311,7 @@ export class ProposalDetailsService implements OnDestroy {
             summary: this.translateService.instant(
               'global.notifications.title.success',
             ),
-            detail: this.translateService.instant(
-              'page.collection.milestones.create-milestone-dialog.success',
-            ),
+            detail: successMessage,
             life: 3000,
             isGrowlSticky: false,
             position: 'bottom-right',

@@ -1,7 +1,13 @@
 <eui-card class="revisions-pane" euiNoShadow>
   <eui-card-header>
     <eui-card-header-left-content>
-      <span euiLabel class="top-content">Version: {{ revisionVersion }}</span>
+      <span euiLabel class="top-content">{{
+        'page.editor.contribution-item.version'
+          | translate
+            : {
+                version: revisionVersion
+              }
+      }}</span>
     </eui-card-header-left-content>
     <eui-card-header-right-content>
       <span euiLabel class="top-content">{{ originatingApplication }}</span>

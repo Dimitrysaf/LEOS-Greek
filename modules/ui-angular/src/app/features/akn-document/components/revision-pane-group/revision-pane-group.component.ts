@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 
 @Component({

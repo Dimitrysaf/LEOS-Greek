@@ -69,12 +69,15 @@ __amdefine 1.0.1__
 __angular-multiple-select 1.1.3__
  * https://github.com/jagdeep-singh/angularMultipleSelect
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2015 Jagdeep Singh
 
 __annotate-client 1.84.0__
  * https://github.com/hypothesis/client
  * License: BSD-2-Clause
- * Copyright: (no copyright)
+ * Copyright:
+   * For the annotator subcomponent: Copyright 2012 Aron Carroll, Rufus Pollock, and Nick Stenning.
+   * Copyright (c) 2013-2019 Hypothes.is Project and contributors
 
 __ansi-cyan 0.1.1__
  * https://github.com/jonschlinkert/ansi-cyan
@@ -128,7 +131,8 @@ __append-buffer 1.0.2__
 __archy 1.0.0__
  * https://github.com/substack/node-archy
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * James Halliday (mail@substack.net)
 
 __arr-diff 4.0.0__
  * https://github.com/jonschlinkert/arr-diff
@@ -512,12 +516,14 @@ __bs-recipes 1.3.4__
 __bs-snippet-injector 2.0.1__
  * https://github.com/shakyShane/bs-snippet-injector
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Shane Osbourn
 
 __buffer-equal 1.0.1__
  * https://github.com/inspect-js/buffer-equal
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2012 James Halliday and contributors
 
 __bufferutil 4.0.7__
  * https://github.com/websockets/bufferutil
@@ -706,7 +712,8 @@ __component-emitter 1.3.0__
 __concat-map 0.0.1__
  * https://github.com/substack/node-concat-map
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * James Halliday (mail@substack.net)
 
 __concat-with-sourcemaps 1.1.0__
  * https://github.com/floridoo/concat-with-sourcemaps
@@ -1069,7 +1076,8 @@ __finalhandler 1.1.0__
 __find-index 0.1.1__
  * https://github.com/jsdf/find-index
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2019 James Friend
 
 __find-up 1.1.2__
  * https://github.com/sindresorhus/find-up
@@ -1263,7 +1271,8 @@ __glogg 1.0.2__
 __glyphicons-only-bootstrap 1.0.1__
  * https://github.com/ohpyupi/glyphicons-only-bootstrap
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * ohpyupi (ohpyupi@gmail.com)
 
 __graceful-fs 4.2.10__
  * https://github.com/isaacs/node-graceful-fs
@@ -1293,7 +1302,8 @@ __gulp-concat 2.6.1__
 __gulp-cssmin 0.1.7__
  * https://github.com/chilijung/gulp-cssmin
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * chilijung
 
 __gulp-footer 1.0.5__
  * https://github.com/tracker1/gulp-footer
@@ -1316,7 +1326,8 @@ __gulp-inject 3.0.0__
 __gulp-jsmin 0.1.5__
  * https://github.com/chilijung/gulp-jsmin
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * chilijung
 
 __gulp-livereload 3.8.1__
  * https://github.com/vohof/gulp-livereload
@@ -1333,7 +1344,8 @@ __gulp-rename 1.4.0__
 __gulp-stylus 2.7.1__
  * https://github.com/stevelacy/gulp-stylus
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Copyright (c) 2015 Steve Lacy (slacy.me, me@slacy.me)
 
 __gulp-util 3.0.8__
  * https://github.com/gulpjs/gulp-util
@@ -1659,8 +1671,9 @@ __jsmin-sourcemap 0.16.0__
 
 __jsmin2 1.1.9__
  * https://github.com/twolfson/node-jsmin2
- * License: MIT*
- * Copyright: (no copyright)
+ * License: ???
+ * Copyright:
+   * Copyright (c) 2012 Todd Wolfson (todd@twolfson.com)
 
 __json-parse-even-better-errors 2.3.1__
  * https://github.com/npm/json-parse-even-better-errors
@@ -1672,7 +1685,8 @@ __json-parse-even-better-errors 2.3.1__
 __json-stable-stringify-without-jsonify 1.0.1__
  * https://github.com/samn/json-stable-stringify
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * James Halliday (mail@substack.net)
 
 __jsonfile 3.0.1__
  * https://github.com/jprichardson/node-jsonfile
@@ -2326,7 +2340,8 @@ __once 1.4.0__
 __openurl 1.1.1__
  * https://github.com/rauschma/openurl
  * License: MIT
- * Copyright: (no copyright)
+ * Copyright:
+   * Axel Rauschmayer (axe@rauschma.de)
 
 __opn 5.3.0__
  * https://github.com/sindresorhus/opn
@@ -2918,8 +2933,9 @@ __spdx-expression-parse 3.0.1__
 
 __spdx-license-ids 3.0.12__
  * https://github.com/jslicense/spdx-license-ids
- * License: CC0-1.0
- * Copyright: (no copyright)
+ * License: Creative Commons Zero v1.0 Universal
+ * Copyright:
+   * Shinnosuke Watanabe (https://github.com/shinnn)
 
 __spdx-ranges 2.1.1__
  * https://github.com/kemitchell/spdx-ranges.js
@@ -3295,7 +3311,8 @@ __vinyl-sourcemap 1.1.0__
 __vinyl-sourcemaps-apply 0.2.1__
  * https://github.com/floridoo/vinyl-sourcemaps-apply
  * License: ISC
- * Copyright: (no copyright)
+ * Copyright:
+   * Florian Reiterer (me@florianreiterer.com)
 
 __vinyl 2.2.1__
  * https://github.com/gulpjs/vinyl
