@@ -1,0 +1,29 @@
+<eui-dropdown isDropDownRightAligned>
+  <button
+    euiButton
+    euiBasicButton
+    euiRounded
+    euiIconButton
+    euiSizeS
+    [title]="'page.editor.contribution.actions-button.tooltip' | translate"
+    [attr.aria-label]="
+      'page.editor.contribution.actions-button.tooltip' | translate
+    "
+  >
+    <span euiIcon iconClass="eui-icon-more-vertical"></span>
+  </button>
+  <eui-dropdown-content>
+    <div euiList>
+      <button
+        euiListItem
+        translate="page.editor.contribution.actions.view.amd.merge"
+        (click)="documentService.viewContribution(contribution)"
+      ></button>
+      <button
+        euiListItem
+        translate="page.editor.contribution.actions.decline"
+        (click)="documentService.declineContribution(contribution)"
+      ></button>
+    </div>
+  </eui-dropdown-content>
+</eui-dropdown>
