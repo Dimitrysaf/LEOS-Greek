@@ -774,7 +774,6 @@ public abstract class ApiServiceImpl implements ApiService {
         try {
             String finalProposalId = proposalId;
             legDocuments.forEach(document -> milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef)));
-            milestonesVOS.forEach(milestone -> milestone.setStatus(messageHelper.getMessage("milestones.column.status.value." + LeosLegStatus.FILE_READY.name())));
         } catch (Exception e) {
             LOG.error("Error while getting milestones for proposal " + e);
             throw e;
