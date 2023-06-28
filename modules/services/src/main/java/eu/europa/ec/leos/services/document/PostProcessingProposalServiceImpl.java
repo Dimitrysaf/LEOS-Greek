@@ -2,7 +2,9 @@ package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
@@ -40,6 +42,10 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     private static final Logger LOG = LoggerFactory.getLogger(PostProcessingProposalServiceImpl.class);
 
     private ProposalService proposalService;
+    private BillService billService;
+    private AnnexService annexService;
+    private MemorandumService memorandumService;
+    private DocumentContentService documentContentService;
     private UserService userService;
     private SecurityContext securityContext;
     private MessageHelper messageHelper;
@@ -49,10 +55,16 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
 
     @Autowired
     PostProcessingProposalServiceImpl(XmlContentProcessor xmlContentProcessor, ProposalService proposalService,
-                                      UserService userService, XPathCatalog xPathCatalog,
-                                      SecurityContext securityContext, MessageHelper messageHelper) {
+            BillService billService, AnnexService annexService, MemorandumService memorandumService,
+            DocumentContentService documentContentService,
+            UserService userService, XPathCatalog xPathCatalog,
+            SecurityContext securityContext, MessageHelper messageHelper) {
         super(xmlContentProcessor, xPathCatalog);
         this.proposalService = proposalService;
+        this.billService = billService;
+        this.annexService = annexService;
+        this.memorandumService = memorandumService;
+        this.documentContentService = documentContentService;
         this.userService = userService;
         this.securityContext = securityContext;
         this.messageHelper = messageHelper;
@@ -147,6 +159,43 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                 documentVO.setSource(updatedProposalContent);
                 //update original proposal with cloned metadata properties
                 proposalService.updateProposal(originalProposal.getId(), updatedProposalContent);
+
+                //Update child documents
+                for(DocumentVO child : documentVO.getChildDocuments()) {
+                    LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(child.getCategory().name());
+                    XmlDocument xmlDocument = documentContentService.getDocumentById(child.getId(), documentCategory);
+                    xmlContent = xmlDocument.getContent().getOrThrow(() ->
+                            new IllegalArgumentException("Document not found")).getSource().getBytes();
+                    byte[] updatedContent = new byte[0];
+                    switch (child.getCategory()) {
+                        case BILL:
+                            updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getBillId(),
+                                    cloneProposalMetadataVO);
+                            child.setSource(updatedContent);
+                            billService.updateBill(child.getId(), updatedContent);
+                            break;
+                        case MEMORANDUM:
+                            updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getMemorandumId(),
+                                    cloneProposalMetadataVO);
+                            child.setSource(updatedContent);
+                            memorandumService.updateMemorandum(child.getId(), updatedContent);
+                            break;
+                        case ANNEX:
+                            String clonedAnnexId = idsAndUrlsHolder.getDocCloneAndOriginIdMap().entrySet()
+                                    .stream()
+                                    .filter(entry -> child.getRef().equals(entry.getValue()))
+                                    .map(Map.Entry::getKey)
+                                    .findFirst()
+                                    .orElse(null);
+                            updatedContent = preserveClonedDocumentProperties(xmlContent, clonedAnnexId,
+                                    cloneProposalMetadataVO);
+                            child.setSource(updatedContent);
+                            annexService.updateAnnex(child.getId(), updatedContent);
+                            break;
+                        default:
+                            throw new RuntimeException("Invalid document category");
+                    }
+                }
             } catch (Exception e) {
                 LOG.error("Error occurred while saving cloned metadata to original proposal", e);
                 return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);

@@ -18,5 +18,5 @@ public interface ContributionApiService {
     List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType);
 
     DocumentViewResponse compareAndShowRevision(String contextPath, String documentType, String documentRef, String versionLabel);
-    LeosDocument declineRevision(String documentType, String documentRef, String versionLabel);
+    LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel);
 }

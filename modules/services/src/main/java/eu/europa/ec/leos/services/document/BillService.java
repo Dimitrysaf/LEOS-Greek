@@ -38,6 +38,8 @@ public interface BillService {
     // FIXME temporary workaround
     Bill findBillByPackagePath(String path);
 
+    Bill updateBill(String id, byte[] updatedContent);
+
     Bill updateBill(Bill bill, BillMetadata metadata, VersionType versionType, String actionMsg);
 
     Bill updateBill(Bill bill, byte[] updatedBillContent, String comments);

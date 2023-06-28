@@ -64,6 +64,16 @@ public interface BillRepository {
     Bill updateBill(String id, BillMetadata metadata, byte[] content, VersionType versionType, String comment);
 
     /**
+     * Updates a [Bill] document with the given content.
+     *
+     * @param id      the ID of the bill document to update.
+     * @param content the updated content of the bill.
+     * @return the updated bill document.
+     */
+    Bill updateBill(String id, byte[] content);
+
+
+    /**
      * Updates a [Bill] document with the given metadata.
      *
      * @param id       the ID of the bill document to update.

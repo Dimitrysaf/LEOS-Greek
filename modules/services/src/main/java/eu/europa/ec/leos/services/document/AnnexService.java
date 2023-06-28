@@ -41,6 +41,8 @@ public interface AnnexService {
 
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, String comment);
 
+    Annex updateAnnex(String id, byte[] updatedAnnexContent);
+
     Annex updateAnnex(String id, Map<String, Object> properties, boolean latest);
     
     Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment);
