@@ -41,6 +41,7 @@ export class RevisionActionsDropdownComponent implements OnInit {
 
   onAccept() {
     this.documentService.declineContribution(this.contribution);
+    this.documentService.updateProcessedStatus(true);
     this.declineContributionDialog.closeDialog();
     this.versionToDecline = '';
     this.versionModalText = '';

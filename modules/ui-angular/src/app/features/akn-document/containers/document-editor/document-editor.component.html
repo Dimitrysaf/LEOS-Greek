@@ -727,10 +727,13 @@
                 {{ 'page.editor.contribution.view.actions.apply' | translate }}
               </button>
               <div class="eui-u-flex eui-u-mr-s">
-                <eui-slide-toggle></eui-slide-toggle>
                 <span class="eui-u-ml-s">{{
                   'page.editor.contribution.view.actions.processed' | translate
                 }}</span>
+                <eui-slide-toggle
+                  (changed)="onChangeProcessedToggle($event)"
+                  [isChecked]="processed"
+                ></eui-slide-toggle>
               </div>
 
               <button

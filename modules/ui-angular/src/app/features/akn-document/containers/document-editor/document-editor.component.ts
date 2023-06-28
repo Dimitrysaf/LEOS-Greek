@@ -124,6 +124,7 @@ export class DocumentEditorComponent
   isVersionsPaneExpanded = false;
   isContributionsPaneExpanded = false;
   contributionActionSelected = 'accept_selected';
+  processed = false;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -305,6 +306,13 @@ export class DocumentEditorComponent
         // TODO: Investigate the extra condition(s) needed for contribution pane to show (maybe if the proposal is parent or if the logged-in user is not the contributor)
         this.showContributionsPane = contributions.length > 0;
       });
+
+    this.documentService.processed$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((processed) => {
+        this.processed = processed;
+      });
+
     this.hideTocSplitter = this.isTocPaneCollapsed;
     this.hideAnnotationsSplitter = this.isAnnotationsPaneCollapsed;
   }
@@ -733,6 +741,10 @@ export class DocumentEditorComponent
 
   handleProceed() {
     //TODO create handler
+  }
+
+  onChangeProcessedToggle(_e: boolean) {
+    this.processed = !this.processed;
   }
 
   protected exploreMilestone(version: Version) {

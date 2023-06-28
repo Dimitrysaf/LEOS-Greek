@@ -112,9 +112,10 @@ export class DocumentService implements OnDestroy {
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
   contributions$: Observable<ContributionVO[]>;
+  processed$: Observable<boolean>;
   contributionViewAndMerge$: Observable<DocumentViewResponse>;
 
-  // private documentCategoryBS = new BehaviorSubject(null);
+  private processedBS = new BehaviorSubject<boolean>(false);
   private contributionViewAndMergeBS =
     new BehaviorSubject<DocumentViewResponse>(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
@@ -292,6 +293,7 @@ export class DocumentService implements OnDestroy {
     this.collapseExpandAnnotation$ =
       this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
+    this.processed$ = this.processedBS.asObservable();
     this.contributionViewAndMerge$ =
       this.contributionViewAndMergeBS.asObservable();
   }
@@ -938,13 +940,14 @@ export class DocumentService implements OnDestroy {
     const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
     return this.http
-      .post(
+      .post<{ contributionStatus: string }>(
         `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
         {},
         { params: { versionLabel } },
       )
       .subscribe({
         next: (res) => {
+          this.updateProcessedStatus(false);
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(
@@ -974,6 +977,10 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  updateProcessedStatus(process: boolean) {
+    this.processedBS.next(process);
+  }
+
   viewAndMergeContribution(contribution: ContributionVO) {
     const documentRef = this.documentRef;
     const documentType =
@@ -981,7 +988,7 @@ export class DocumentService implements OnDestroy {
     const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
     this.http
-      .get<any>(
+      .get<DocumentViewResponse>(
         `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?versionLabel=${versionLabel}`,
       )
       .subscribe({
