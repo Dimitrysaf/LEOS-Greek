@@ -37,6 +37,7 @@ import {
   LeosAppConfig,
   Permission,
 } from '@/shared';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { downloadBlob } from '@/shared/utils';
 
@@ -109,6 +110,7 @@ export class DocumentService implements OnDestroy {
   currentIndex: number;
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
+  contributions$: Observable<ContributionVO[]>;
 
   // private documentCategoryBS = new BehaviorSubject(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
@@ -164,7 +166,11 @@ export class DocumentService implements OnDestroy {
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
     );
-    // this.documentView$ = this.documentReplaceView$.pipe();
+    this.contributions$ = this.documentView$.pipe(
+      filter(Boolean),
+      switchMap((_documentView) => this.getContributions()),
+      shareReplay(1),
+    );
 
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
@@ -903,6 +909,26 @@ export class DocumentService implements OnDestroy {
 
   getUserPermissions() {
     return this.permissionsBS.value;
+  }
+
+  getContributions(annexIndex?: number) {
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const queryString =
+      documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
+
+    return this.http.get<ContributionVO[]>(
+      `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
+    );
+  }
+
+  declineContribution(contribution: ContributionVO) {
+    //TODO add api call and parameters
+  }
+
+  viewContribution(contribution: ContributionVO) {
+    //TODO add api call and parameters
   }
 
   private setSearchResultsCounter(count: number) {

@@ -111,11 +111,13 @@
             (reBuildTocItems)="onRebuildTocItems($event)"
           ></app-document-toc>
           <!-- versions -->
+          <hr />
           <eui-fieldset
             class="eui-u-mt-s"
             label="{{ 'page.editor.versions-pane.label' | translate }}"
             isExpandable
-            [isExpanded]="false"
+            [isExpanded]="isVersionsPaneExpanded"
+            (expanded)="onVersionsPaneExpanded($event)"
           >
             <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
               <button
@@ -233,6 +235,23 @@
             <app-versions-pane
               (exploreMilestone)="exploreMilestone($event)"
             ></app-versions-pane>
+          </eui-fieldset>
+          <!-- contributions -->
+          <hr />
+          <eui-fieldset
+            class="eui-u-mt-s"
+            label="{{ 'page.editor.contribution-pane.label' | translate }}"
+            isExpandable
+            [isExpanded]="isContributionsPaneExpanded"
+            *ngIf="showContributionsPane"
+            (expanded)="onContributionsPaneExpanded($event)"
+          >
+            <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
+              <button euiButton euiIconButton euiSecondary euiOutline euiSizeS>
+                <eui-icon-svg icon="search"></eui-icon-svg>
+              </button>
+            </div>
+            <app-revision-pane> </app-revision-pane>
           </eui-fieldset>
         </eui-page-column-body>
       </eui-page-column>
@@ -602,6 +621,7 @@
         (hideSplitter)="onHideAnnotationsSplitter($event)"
       ></app-draggable-splitter>
 
+      <!-- unsaved data dialog -->
       <eui-dialog
         #unSavedDialog
         [title]="
