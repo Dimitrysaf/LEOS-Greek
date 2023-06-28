@@ -135,11 +135,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
-                                                       String documentRef,
+                                                       String documentVersionedRef,
                                                        String documentType,
                                                        String versionLabel) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
-        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, documentClass.getClazz());
+        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentVersionedRef, documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
         this.populateCloneProposalMetadata(proposal);
 
@@ -147,23 +147,23 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         XmlDocument originalVersion = null;
         switch (documentClass){
             case ANNEX:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentRef, Annex.class);
-                originalVersion = this.leosRepository.findFirstVersion(Annex.class, documentRef);
+                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef, Annex.class);
+                originalVersion = this.leosRepository.findFirstVersion(Annex.class, documentVersionedRef);
                 break;
             }
             case COVERPAGE:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentRef,Proposal.class);
-                originalVersion = this.leosRepository.findFirstVersion(Proposal.class, documentRef);
+                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef,Proposal.class);
+                originalVersion = this.leosRepository.findFirstVersion(Proposal.class, documentVersionedRef);
                 break;
             }
             case BILL:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentRef,Bill.class);
-                originalVersion = this.leosRepository.findFirstVersion(Bill.class, documentRef);
+                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef,Bill.class);
+                originalVersion = this.leosRepository.findFirstVersion(Bill.class, documentVersionedRef);
                 break;
             }
             case MEMORANDUM:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentRef, Memorandum.class);
-                originalVersion = this.leosRepository.findFirstVersion(Memorandum.class, documentRef);
+                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef, Memorandum.class);
+                originalVersion = this.leosRepository.findFirstVersion(Memorandum.class, documentVersionedRef);
                 break;
             }
             default:{
