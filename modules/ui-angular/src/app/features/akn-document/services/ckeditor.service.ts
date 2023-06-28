@@ -33,6 +33,7 @@ import { DocumentService } from '@/shared/services/document.service';
 
 import { TocItem } from '../models/toc.model';
 import { TableOfContentService } from './tableOfContent.service';
+import { MergeContributionConnector } from './merge-contribution-connector';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -46,6 +47,7 @@ export class CKEditorService implements OnDestroy {
   private softActionsConnector?: SoftActionsConnector;
   private mathJaxConnector?: MathJaxConnector;
   private trackChangesConnector?: TrackChangesConnector;
+  private mergeContributionConnector?: MergeContributionConnector;
 
   private openStateSubj = new Subject<EditorOpenState>();
   private destroy$ = new Subject<void>();
@@ -93,6 +95,7 @@ export class CKEditorService implements OnDestroy {
         this.initSoftActions(require, leosState, rootElement);
         this.initMathJax(require, leosState, rootElement);
         this.initTrackChanges(require, leosState, rootElement);
+        this.initMergeContribution(require, leosState, rootElement);
       });
 
     this.documentService.documentView$
@@ -258,6 +261,21 @@ export class CKEditorService implements OnDestroy {
     require(['extension/trackChangesExtension'], (trackChanges) => {
       trackChanges.init(this.trackChangesConnector);
       this.trackChangesConnector.jsDepsInited();
+    });
+  }
+
+  private initMergeContribution(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.mergeContributionConnector = new MergeContributionConnector(leosState, {
+      rootElement,
+    });
+
+    require(['extension/mergeContributionExtension'], (mergeContribution) => {
+      mergeContribution.init(this.mergeContributionConnector);
+      this.mergeContributionConnector.jsDepsInited();
     });
   }
 
