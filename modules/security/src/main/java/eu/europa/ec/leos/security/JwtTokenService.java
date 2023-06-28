@@ -75,8 +75,7 @@ class JwtTokenService implements TokenService {
         String keyPrefix = "leos.api.jwt.auth.client.";
         for (String clientName : clientsNames) {
             String clientId = applicationProperties.getProperty(keyPrefix + clientName + ".id");
-            char[] decryptedSecret = passwordConfigurator.getProperty(keyPrefix + clientName + ".secret");
-            String clientSecret = decryptedSecret != null ? new String(decryptedSecret) : null;
+            String clientSecret = passwordConfigurator.getProperty(keyPrefix + clientName + ".secret");
             if (clientId == null || clientSecret == null) {
                 LOG.error("the key 'leos.api.jwt.auth.clients' and its corresponding clientId/secret is not configured correctly for each single client");
                 // for now we do not block the deployment of the application throwing an Exception

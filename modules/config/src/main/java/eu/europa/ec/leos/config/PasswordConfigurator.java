@@ -15,38 +15,41 @@ package eu.europa.ec.leos.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
-public class PasswordConfigurator extends PropertyPlaceholderConfigurer {
+public class PasswordConfigurator extends PropertySourcesPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
-    private static final String propFileName = "config.properties";
-    private static final InputStream inputStream = PasswordConfigurator.class.getClassLoader().getResourceAsStream(propFileName);
-    private static final Properties properties = new Properties();
-    private static final Logger log = LoggerFactory.getLogger(PasswordConfigurator.class);
+    private static final Properties PROPERTIES = new Properties();
+    private static final Logger LOG = LoggerFactory.getLogger(PasswordConfigurator.class);
 
-    public char[] getProperty(String propertyName) {
-        String encryptedValue = getPropertyValue(propertyName);
-        return encryptedValue != null ? encryptedValue.toCharArray() : null;
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        try {
+            this.loadProperties(PROPERTIES);
+        } catch (IOException e) {
+            LOG.error("Could not load property file. Error: {}", e.getMessage());
+            throw new BeanInitializationException("Could not load property file", e);
+        }
+        this.convertProperties(PROPERTIES);
+        this.setProperties(PROPERTIES);
+        this.setLocalOverride(true);
+
+        super.postProcessBeanFactory(beanFactory);
     }
 
     @Override
-    protected String convertProperty(String propertyName, String originalValue) {
-        return originalValue;
+    protected String convertProperty(String propertyName, String propertyValue) {
+        return propertyValue;
     }
 
-    private String getPropertyValue(String propertyName) {
-        if (properties.isEmpty()) {
-            try {
-                properties.load(inputStream);
-            } catch (IOException e) {
-                log.error("Please check with the app administrator. Error: {}",
-                        e.getMessage());
-            }
-        }
-        return properties.getProperty(propertyName);
+    public String getProperty(String propertyName) {
+        return PROPERTIES.getProperty(propertyName);
     }
 }
