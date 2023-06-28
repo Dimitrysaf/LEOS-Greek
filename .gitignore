@@ -230,3 +230,6 @@ styles.css
 /modules/ui/src/main/assets/css
 /modules/web/activemq-data
 /modules/web/logs
+
+node_modules
+package-lock.json
