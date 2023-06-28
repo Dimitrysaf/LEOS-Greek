@@ -214,6 +214,10 @@
   user-select: none;
 }
 
+.processed-span {
+  white-space: pre;
+}
+
 .splitter {
   background-color: #ccc;
   cursor: ew-resize;
