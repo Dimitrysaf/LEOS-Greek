@@ -458,7 +458,10 @@ define(function leosTrackChangesPluginModule(require) {
                                 event.getInstance().data.preventDefault(); // Prevent standard insert
                             } else {
                                 actions.preventInsertInDelete(editor); // Moves the caret if needed
-                                actions.insertNewData(editor, event);  // Inserts the new data
+                                var cancelEvent = actions.insertNewData(editor, event.getChar()); // Inserts the new data
+                                if (cancelEvent) {
+                                    event.getInstance().data.preventDefault(); // Prevent standard insert
+                                }
                             }
                         } else {
                             var tcElement = core.isInsideTrackChangeElement(editor);
@@ -517,16 +520,62 @@ define(function leosTrackChangesPluginModule(require) {
                 });
             });
 
+            // Catch toolbar buttons commands before execution
             editor.on("beforeCommandExec", function(event) {
-                var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
-                if (isTrackChangesEnabled && formatStyleToBeApplied) {
-                    if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
-                        style.apply(editor, formatStyleToBeApplied.style);
+                if (isTrackChangesEnabled) {
+                    var range = editor.getSelection().getRanges()[0];
+                    if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
                         return false;
-                    } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
-                        //TODO: Check style definition. Custom or default implementation no works with it.
-                        //style.remove(editor, formatStyleToBeApplied.style);
-                        //editor.removeStyle(formatStyleToBeApplied.style);
+                    }
+                    switch (event.data.name) {
+                        case "bold":
+                        case "italic":
+                        case "subscript":
+                        case "superscript":
+                            if (editor.LEOS.isTrackChangesStyleFormattingEnabled) {
+                                var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
+                                if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
+                                    style.apply(editor, formatStyleToBeApplied.style);
+                                    return false;
+                                } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
+                                    //TODO: Check style definition. Custom or default implementation no works with it.
+                                    //style.remove(editor, formatStyleToBeApplied.style);
+                                    //editor.removeStyle(formatStyleToBeApplied.style);
+                                }
+                            }
+                            break;
+                        case "authorialNoteWidget":
+                        case "leosCrossReferenceWidget":
+                        case "mathjax":
+                            if (!range.collapsed) return false;
+                            break;
+                    }
+                }
+            });
+
+            // Add observer to CKEditor when data is received
+            editor.on("receiveData", function() {
+                function processMutations(mutations) {
+                    for (var mutation of mutations) {
+                        if (mutation.type === "childList") {
+                            for (var node of mutation.addedNodes) {
+                                if (!(node instanceof HTMLElement)) continue;
+                                if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
+                                        node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
+                                    core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
+                                    actions.preventInsertInDelete(editor);
+                                    actions.insertNewData(editor, node.outerHTML);
+                                    node.remove();
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isTrackChangesEnabled) {
+                    var rootElement = editor.editable().$.firstChild;
+                    if (rootElement && !rootElement.mutationObserver) {
+                        rootElement.mutationObserver = new MutationObserver(processMutations);
+                        rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true });
                     }
                 }
             });

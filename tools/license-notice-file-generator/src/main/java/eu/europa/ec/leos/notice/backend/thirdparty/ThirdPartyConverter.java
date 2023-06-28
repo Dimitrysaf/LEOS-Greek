@@ -24,7 +24,7 @@ public class ThirdPartyConverter {
     }
 
     private boolean filterLeosJars(ThirdPartyLibrary thirdPartyLibrary) {
-        return !thirdPartyLibrary.getGroupId().equals("eu.europa.ec.leos.pilot");
+        return !thirdPartyLibrary.getGroupId().contains("eu.europa.ec.leos");
     }
 
     private static Stream<String> readLines(Path txtFile) throws IOException {

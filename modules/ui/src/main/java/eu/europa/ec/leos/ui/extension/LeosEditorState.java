@@ -37,6 +37,7 @@ public class LeosEditorState extends LeosJavaScriptExtensionState {
     public String documentRef;
     public boolean isTrackChangesEnabled;
     public boolean isTrackChangesShowed;
+    public boolean isTrackChangesStyleFormattingEnabled;
     public String proposalRef;
 
 }

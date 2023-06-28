@@ -95,6 +95,7 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         getState().documentRef = documentVO.getMetadata().getInternalRef();
         getState().isTrackChangesEnabled = documentVO.isTrackChangesEnabled();
         getState().isTrackChangesShowed = true;
+        getState().isTrackChangesStyleFormattingEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.trackchanges.style.formatting.enabled"));
         getState().proposalRef = documentVO.getProposalRef();
 
         registerServerSideAPI();

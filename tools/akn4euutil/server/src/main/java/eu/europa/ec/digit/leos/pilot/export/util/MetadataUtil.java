@@ -41,7 +41,7 @@ public class MetadataUtil {
 
     private static final String EMISSION_DATE_PARSE_PATTERN = "yyyy-MM-dd";
 
-    private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\) ([0-9]+)([\" \"]{0,1})([A-Za-z]{0,5})";
+    private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\)(\\s{0,1})([0-9]+)(\\s{0,1})([A-Za-z]{0,5})";
 
     private static final String INSERT_COTE_HREF = "http://publications.europa.eu/resource/authority/identifier/COMnumber";
 
@@ -404,7 +404,15 @@ public class MetadataUtil {
         return new ApplyMetadataResponse.ValidationResultNode(key, ONE);
     }
 
-    public static ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(ApplyMetadataRequest.FieldNode field) {
+    public static ApplyMetadataResponse.FieldNode getLookupFieldInfoErrorResult(
+            ApplyMetadataRequest.FieldNode field,
+            MetadataUtilsException e) {
+        
+        if(e.getMessage().equals(INVALID_FIELD_VALUE_MESSAGE)) {
+            return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE, 
+                    String.format(INVALID_FIELD_VALUE_MESSAGE + " \"%s\"", field.getValue(), FIELD));
+        }
+        
         return new ApplyMetadataResponse.FieldNode(field.getKey(), ONE,
                 String.format("tag not found (field=\"%s\", tag=\"%s\")", field.getKey(), FIELD));
     }
@@ -932,7 +940,8 @@ public class MetadataUtil {
     }
 
     private static boolean isMetaReferenceXmlNode(Node xmlNode) {
-        return XmlUtil.parentNodeNameEquals(xmlNode, "references")
+        return xmlNode != null 
+                && XmlUtil.parentNodeNameEquals(xmlNode, "references")
                 && XmlUtil.parentNodeNameEquals(xmlNode.getParentNode(), "meta");
     }
 }

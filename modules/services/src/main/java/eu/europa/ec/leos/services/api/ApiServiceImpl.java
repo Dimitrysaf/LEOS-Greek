@@ -109,7 +109,7 @@ import java.util.regex.Pattern;
 
 
 @Service
-public class ApiServiceImpl implements ApiService {
+public abstract class ApiServiceImpl implements ApiService {
     private static final String DOC = "doc";
     private static final String HTML = ".html";
     private static final String TOC_JS = "_toc.js";
@@ -130,9 +130,9 @@ public class ApiServiceImpl implements ApiService {
     private final CreateCollectionService createCollectionService;
     private final SecurityContext securityContext;
     private final LeosPermissionAuthorityMap authorityMap;
-    private final ProposalService proposalService;
+    protected final ProposalService proposalService;
     private final PackageService packageService;
-    private final ExportService exportService;
+    protected final ExportService exportService;
     private final Provider<CollectionContextService> collectionContextProvider;
     private final MessageHelper messageHelper;
     private final Provider<BillContextService> billContextProvider;
@@ -293,26 +293,12 @@ public class ApiServiceImpl implements ApiService {
         }
     }
 
-    private String getJobFileName(String proposalRef) {
+    protected String getJobFileName(String proposalRef) {
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("Proposal_");
         strBuilder.append(proposalRef);
         strBuilder.append(".zip");
         return strBuilder.toString();
-    }
-
-    @Override
-    public byte[] downloadProposal(String proposalRef) throws Exception {
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        String jobFileName = getJobFileName(proposalRef);
-        File packageFile;
-        try {
-            packageFile = exportService.createCollectionPackage(jobFileName, proposal.getId());
-            return FileUtils.readFileToByteArray(packageFile);
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
-            throw e;
-        }
     }
 
     @Override
@@ -458,7 +444,6 @@ public class ApiServiceImpl implements ApiService {
         }
         if (result == null) throw new Exception("Error when download export document with id");
         return result;
-
     }
 
     @Override
@@ -789,7 +774,6 @@ public class ApiServiceImpl implements ApiService {
         try {
             String finalProposalId = proposalId;
             legDocuments.forEach(document -> milestonesVOS.add(getMilestonesVO(document, finalProposalId, proposalRef)));
-            milestonesVOS.forEach(milestone -> milestone.setStatus(messageHelper.getMessage("milestones.column.status.value." + LeosLegStatus.FILE_READY.name())));
         } catch (Exception e) {
             LOG.error("Error while getting milestones for proposal " + e);
             throw e;

@@ -80,7 +80,7 @@
           'page.collection.milestones.table.status' | translate
         "
       >
-        {{ row.status }}
+        {{ getStatus(row.status) }}
       </td>
       <td
         [attr.data-col-label]="
@@ -117,7 +117,7 @@
                     euiListItem
                     (click)="openSendContributionForRevision(row)"
                     *appIsSentForContribution="proposal"
-                    [disabled]="row.status !== 'File ready'"
+                    [disabled]="row.status !== milestoneStatus.Ready"
                   >
                     {{
                       'page.collection.milestones.actions.send-revision-for-merge'

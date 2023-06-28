@@ -1,12 +1,5 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
@@ -20,6 +13,12 @@ import {
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
+
+enum MilestoneStatus {
+  Ready = 'FILE_READY',
+  ContributionSent = 'CONTRIBUTION_SENT',
+  InPreparation = 'IN_PREPARATION',
+}
 
 @Component({
   selector: 'app-proposal-milestones',
@@ -44,10 +43,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   proposalRef: string;
   dataSource: Milestone[] = [];
   permissions: Permission[];
+  milestoneStatus = MilestoneStatus;
 
   destroy$: Subject<any> = new Subject();
 
-  constructor(protected proposalDetailsService: ProposalDetailsService) {}
+  constructor(
+    protected proposalDetailsService: ProposalDetailsService,
+    private translateService: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.proposalDetailsService.milestones$
@@ -118,6 +121,25 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   openSendContributionForRevision(milestone: MilestoneDescriptor) {
     this.proposalDetailsService.sendRevisionForMerge(milestone);
+  }
+
+  getStatus(status: MilestoneStatus) {
+    switch (status) {
+      case MilestoneStatus.Ready:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.file-ready',
+        );
+      case MilestoneStatus.ContributionSent:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.contribution-sent',
+        );
+      case MilestoneStatus.InPreparation:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.in-preparation',
+        );
+      default:
+        return status;
+    }
   }
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {

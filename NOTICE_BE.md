@@ -14,7 +14,9 @@ __aopalliance:aopalliance 1.0__
  * http://aopalliance.sourceforge.net
  * License: Public Domain
  * Copyright:
-   * (not found)
+   * Cédric Beust, Jonas Bonér, Shigeru Chiba, Laurence Duchien,
+            Rod Jonhson, Bob Lee, Laurent Martelli, Renaud Pawlak, Andrei Popovici,
+            Jon Tirsen, Lionel Seinturier, Bruce Snyder, Shi YiYing
 
 __ch.qos.logback:logback-classic 1.2.11__
  * http://logback.qos.ch/logback-classic
@@ -92,25 +94,25 @@ __com.google.gwt:gwt-elemental 2.8.2__
  * http://www.gwtproject.org/gwt-elemental/
  * License: GWT Terms
  * Copyright:
-   * (not found)
+   * Copyright Google Inc
 
 __com.google.gwt:gwt-user 2.8.2__
  * http://www.gwtproject.org/gwt-user/
  * License: GWT Terms
  * Copyright:
-   * (not found)
+   * Copyright Google Inc
 
 __com.google.jsinterop:jsinterop-annotations 1.0.2__
  * http://www.gwtproject.org/jsinterop-annotations/
  * License: GWT Terms
  * Copyright:
-   * (not found)
+   * Copyright Google Inc.
 
 __com.googlecode.java-diff-utils:diffutils 1.3.0__
  * http://code.google.com/p/java-diff-utils/
  * License: The Apache Software License, Version 2.0
  * Copyright:
-   * (not found)
+   * Copyright 2009 Dmitry Naumenko (dm.naumenko@gmail.com)
 
 __com.ibm.icu:icu4j 60.2__
  * http://icu-project.org/

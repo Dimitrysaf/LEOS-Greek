@@ -11,17 +11,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
+
 package eu.europa.ec.leos.services.api;
 
-
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
-import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -33,13 +32,13 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 
-@Service("proposalAnnex")
+@Service("proposalBill")
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
-public class ProposalAnnexAPIService extends AnnexApiServiceImpl {
-    private static final Logger LOG = LoggerFactory.getLogger(ProposalAnnexAPIService.class);
+public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
+    private static final Logger LOG = LoggerFactory.getLogger(ProposalBillApiServiceImpl.class);
 
-    ProposalAnnexAPIService(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
-        super(structureContext, cloneContext, context, annexContext);
+    ProposalBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
+        super(structureContext, cloneContext, context);
     }
 
     @Override
@@ -51,32 +50,35 @@ public class ProposalAnnexAPIService extends AnnexApiServiceImpl {
         return this.doDownloadVersion(documentRef, false, null);
     }
 
+
     private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
         try {
-            Annex annex = this.annexService.findAnnexByRef(documentRef);
+            final Bill currentDocument = this.billService.findBillByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
             contex.get().usePackage(leosPackage);
-            Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+            Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
             populateCloneProposalMetadata(proposal);
 
-            XmlDocument original = documentContentService.getOriginalAnnex(annex);
             ExportOptions exportOptions;
-            exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false);
-            exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal() ? original : null, annex));
-            exportOptions.setWithCoverPage(true);
+            XmlDocument original = documentContentService.getOriginalBill(currentDocument);
+            exportOptions = new ExportLW(ExportOptions.Output.PDF, Bill.class, false);
+            exportOptions.setExportVersions(new ExportVersions(isClonedProposal() ? original : null, currentDocument));
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
+            exportOptions.setWithCoverPage(false);
 
-            try {
-                this.createDocumentPackageForExport(exportOptions);
-            } catch (Exception e) {
-                LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
+            String proposalId = proposal.getId();
+            if (proposalId != null) {
+                try {
+                    this.createDocumentPackageForExport(exportOptions);
+                } catch (Exception e) {
+                    LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
+                }
             }
-
+            LOG.info("The actual version of Bill {} downloaded in {} milliseconds ({} sec)", currentDocument.getName());
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
-            throw new Exception("Unexpected error occured while using Export service", e);
         }
         return null;
     }

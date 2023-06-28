@@ -42,21 +42,24 @@ public class LookupCleaner {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Product product;
     private final Path thirdPartyTxtFile;
+    private final String existingJsonResponse;
+    private final boolean useExistingResponses;
     private final MavenXmlCopyrightsMapping xmlCopyrightsMapping;
 
-    public LookupCleaner(Product product, Path thirdPartyTxtFile, MavenXmlCopyrightsMapping xmlCopyrightsMapping) {
+    public LookupCleaner(Product product, Path thirdPartyTxtFile, MavenXmlCopyrightsMapping xmlCopyrightsMapping,
+                         String existingJsonResponse, boolean useExistingResponses) {
         Objects.requireNonNull(product);
         Objects.requireNonNull(thirdPartyTxtFile);
         Objects.requireNonNull(xmlCopyrightsMapping);
-
         this.product = product;
         this.thirdPartyTxtFile = thirdPartyTxtFile;
         this.xmlCopyrightsMapping = xmlCopyrightsMapping;
-
+        this.existingJsonResponse = existingJsonResponse;
+        this.useExistingResponses = useExistingResponses;
         registerExtraLicenses();
     }
 
-    public void generateNotice(OutputStream os) throws IOException, InterruptedException {
+    public void generateNotice(OutputStream os) throws IOException {
         final PrintStream ps = new PrintStream(os, true);
         final NoticeFileGeneratorV3.NoticeFileBuilder noticeBuilder = NoticeFileGeneratorV3.newInstance(product.getName(), product.getOwner());
 //        noticeBuilder.addText("Version: " + product.getVersion());
@@ -85,10 +88,9 @@ public class LookupCleaner {
                                   .collect(Collectors.toList());
     }
 
-    private static List<RemoteNotice> retrieveMavenNotices(List<String> namespaceAndNames) throws IOException, InterruptedException {
+    private List<RemoteNotice> retrieveMavenNotices(List<String> namespaceAndNames) throws IOException {
         final NoticeService noticeService = new NoticeService();
-        noticeService.setUseExistingResponses(true);
-        return noticeService.retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.MAVENCENTRAL);
+        return noticeService.retrieveNotices(namespaceAndNames, NoticeService.NoticeProvider.MAVENCENTRAL, existingJsonResponse, useExistingResponses);
     }
 
     private void registerExtraLicenses() {

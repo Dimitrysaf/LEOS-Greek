@@ -85,8 +85,8 @@ import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 
 @Service("mandateExplanatoryService")
 @Instance(InstanceType.COUNCIL)
-public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryApiService {
-    private static final Logger LOG = LoggerFactory.getLogger(MandateCouncilExplanatoryApiService.class);
+public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanatoryApiService {
+    private static final Logger LOG = LoggerFactory.getLogger(MandateCouncilExplanatoryApiServiceImpl.class);
 
     @Autowired
     MessageHelper messageHelper;
@@ -126,7 +126,7 @@ public class MandateCouncilExplanatoryApiService implements CouncilExplanatoryAp
     private Provider<StructureContext> structureContext;
     private Provider<BillContextService> context;
 
-    MandateCouncilExplanatoryApiService(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
+    MandateCouncilExplanatoryApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
 
         this.structureContext = structureContext;
         this.context = context;
