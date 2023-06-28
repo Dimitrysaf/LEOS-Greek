@@ -13,6 +13,7 @@ export type MergeContributionConnectorOptions = {
 };
 
 export class MergeContributionConnector extends AbstractJavaScriptComponent<MergeContributionConnectorState> {
+  //TODO these function should be defined and implemented only if they need to be called from the angular application. If not the must be removed
   refreshContributions?: (...args: any[]) => void;
   populateMergeActionList?: (...args: any[]) => void;
   populateTocItemList?: (...args: any[]) => void;

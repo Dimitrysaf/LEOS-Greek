@@ -75,6 +75,7 @@ export class CKEditorService implements OnDestroy {
     this.refToLinkConnector?.destroy();
     this.mathJaxConnector?.destroy();
     this.trackChangesConnector?.destroy();
+    this.mergeContributionConnector?.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -114,6 +115,7 @@ export class CKEditorService implements OnDestroy {
     this.refToLinkConnector?.$triggerStateChange();
     this.mathJaxConnector?.$triggerStateChange();
     this.trackChangesConnector?.$triggerStateChange();
+    this.mergeContributionConnector?.$triggerStateChange()
   }
 
   private initActionManager(
