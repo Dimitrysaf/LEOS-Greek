@@ -47,6 +47,8 @@ public interface MemorandumService {
 
     Memorandum updateMemorandum(Memorandum memorandum, byte[] updatedMemorandumContent, String comment);
 
+    Memorandum updateMemorandum(String id, byte[] updatedMemorandumContent);
+
     Memorandum updateMemorandumWithMilestoneComments(Memorandum memorandum, List<String> milestoneComments, VersionType versionType, String comment);
 
     Memorandum updateMemorandumWithMilestoneComments(String memorandumId, List<String> milestoneComments);

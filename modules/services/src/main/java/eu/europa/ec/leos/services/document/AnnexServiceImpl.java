@@ -152,6 +152,12 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
+    public Annex updateAnnex(String id, byte[] updatedAnnexContent) {
+        LOG.trace("Updating Annex content ... [id={}]", id);
+        return annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
+    }
+
+    @Override
     public Annex updateAnnex(String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
         return annexRepository.updateAnnex(id, properties, latest);

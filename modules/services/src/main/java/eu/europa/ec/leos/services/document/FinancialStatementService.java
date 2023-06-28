@@ -22,6 +22,8 @@ public interface FinancialStatementService {
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, FinancialStatementMetadata metadata, VersionType versionType, String comment);
 
+    FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent);
+
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, VersionType versionType, String comment);
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, FinancialStatementMetadata metadata, VersionType versionType, String comment);
