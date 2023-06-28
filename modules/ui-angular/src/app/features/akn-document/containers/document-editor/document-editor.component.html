@@ -607,7 +607,7 @@
       </eui-page-column>
 
       <app-draggable-splitter
-        *ngIf="!isContributionForViewOpen"
+        *ngIf="isContributionForViewOpen"
         [isLeftAreaCollapsed]="false"
         [leftArea]="
           (documentService.compareModeEnabled$ | async)
