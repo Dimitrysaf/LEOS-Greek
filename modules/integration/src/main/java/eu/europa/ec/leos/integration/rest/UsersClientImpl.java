@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.leos.integration.UsersProvider;
-import eu.europa.ec.leos.model.user.User;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 class UsersClientImpl implements UsersProvider {
-    private static Logger LOG = LoggerFactory.getLogger(UsersClientImpl.class);
+    private static final String SEARCH_KEY_MUST_NOT_BE_NULL = "Search Key must not be null!";
+    private static final String SEARCH_KEY = "searchKey";
+    private static final Logger LOG = LoggerFactory.getLogger(UsersClientImpl.class);
 
     @Value("#{integrationProperties['leos.user.repository.url']}")
     private String repositoryUrl;
@@ -53,32 +54,31 @@ class UsersClientImpl implements UsersProvider {
     @Override
     public List<UserJSON> searchUsers(String searchKey)
     {
-        Validate.notNull(searchKey, "Search Key must not be null!");
+        Validate.notNull(searchKey, SEARCH_KEY_MUST_NOT_BE_NULL);
 
         final String uri = repositoryUrl +  searchByKeyUri;
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("searchKey", searchKey);
+        Map<String, String> params = new HashMap<>();
+        params.put(SEARCH_KEY, searchKey);
 
         List<UserJSON> results = null;
         try {
             ResponseEntity<List<UserJSON>> entity = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<UserJSON>>() {}, params);
             results = entity.getBody();
         } catch (RestClientException e) {
-            LOG.warn("Exception while getting searching user. Failed calling: {}, Exception: () ",  uri, e.getMessage());
-            throw new RuntimeException("Unable to search for user", e);
+            throw new RuntimeException("Unable to search for user. Failed calling:" + uri, e);
         }
         return results;
     }
 
     @Override
     public List<UserJSON> searchUsersInContext(String searchKey, String searchContext, String searchReference) {
-        Validate.notNull(searchKey, "Search Key must not be null!");
+        Validate.notNull(searchKey, SEARCH_KEY_MUST_NOT_BE_NULL);
 
         final String uri = repositoryUrl +  "/users";
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("searchKey", searchKey)
-                .queryParam("searchContext", searchContext.replaceAll(" ",""))
+                .queryParam(SEARCH_KEY, searchKey)
+                .queryParam("searchContext", searchContext.replace(" ",""))
                 .queryParam("searchReference", searchReference);
 
         List<UserJSON> results;
@@ -86,8 +86,7 @@ class UsersClientImpl implements UsersProvider {
             ResponseEntity<List<UserJSON>> entity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<UserJSON>>() {});
             results = entity.getBody();
         } catch (RestClientException e) {
-            LOG.warn("Exception while getting searching user. Failed calling: {}, Exception: () ",  uri, e.getMessage());
-            throw new RuntimeException("Unable to search for user", e);
+            throw new RuntimeException("Unable to search for user. Failed calling: " + uri, e);
         }
         return results;
     }
@@ -97,15 +96,14 @@ class UsersClientImpl implements UsersProvider {
     public UserJSON getUserByLogin(String userId) {
         final String uri = repositoryUrl + findByLoginUri;
         Validate.notNull(userId, "User ID must not be null!");
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("userId", userId);
         UserJSON result = null;
         try {
             LOG.debug("Searching for user: {}", userId);
             result = restTemplate.getForObject(uri, UserJSON.class, params);
         } catch (RestClientException e) {
-            LOG.warn("Exception while getting user by login. Failed calling: {}, Exception: () ",  uri, e.getMessage());
-            throw new RuntimeException("Unable to look at user with login ", e);
+            throw new RuntimeException("Unable to look at user with login Failed calling: " + uri, e);
         }
         return result;
     }
@@ -116,18 +114,17 @@ class UsersClientImpl implements UsersProvider {
         final String uri = repositoryUrl + findByEntityKeyUri;
 
         Validate.notNull(entity, "Entity must not be null!");
-        Validate.notNull(searchKey, "Search Key must not be null!");
+        Validate.notNull(searchKey, SEARCH_KEY_MUST_NOT_BE_NULL);
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("entity", entity);
-        params.put("searchKey", searchKey);
+        params.put(SEARCH_KEY, searchKey);
 
         List<String> results = null;
         try {
             results = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {}).getBody();
         } catch (RestClientException e) {
-            LOG.warn("Exception while searching for users in an entity. Failed calling: {}, Exception: () ",  uri, e.getMessage());
-            throw new RuntimeException("Unable to search for users in an entity ", e);
+            throw new RuntimeException("Unable to search for users in an entity. Failed calling: " + uri, e);
         }
 
         return results;

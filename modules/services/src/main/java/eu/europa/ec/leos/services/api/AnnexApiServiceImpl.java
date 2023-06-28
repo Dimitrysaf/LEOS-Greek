@@ -80,6 +80,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,9 @@ import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
 public class AnnexApiServiceImpl implements AnnexApiService {
-    private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnnexApiServiceImpl.class);
+    private static final String ANNEX_METADATA_IS_REQUIRED = "Annex metadata is required!";
+    private static final String PROPOSAL = "Proposal_";
     private Provider<StructureContext> structureContext;
     @Autowired
     AnnexService annexService;
@@ -142,7 +145,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     private Provider<CloneContext> cloneContext;
     private Provider<AnnexContextService> annexContext;
     protected Provider<BillContextService> contex;
-    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
 
     AnnexApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
@@ -155,17 +158,16 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public String getElement(String documentRef, String elementName, String elementId) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        String element = this.elementProcessor.getElement(annex, elementName, elementId);
-        return element;
+        return  this.elementProcessor.getElement(annex, elementName, elementId);
     }
 
     @Override
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = this.annexProcessor.deleteAnnexBlock(annex, elementId, elementName);
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.deleted"));
-        // TODO : to be added  DocumentUpdatedByCoEditorEvent
+        // TO DO : to be added  DocumentUpdatedByCoEditorEvent
         return documentViewService.updateDocumentView(annex);
 
     }
@@ -173,11 +175,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         populateCloneProposalMetadata(proposal);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
-        //TODO add splitted content functionality since
+        //TO DO add splitted content functionality since
         Annex updatedAnnex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
         String newContent = elementProcessor.getElement(updatedAnnex, elementName, elementId);
         return new RefreshElementResponse(elementId, elementName, newContent);
@@ -186,18 +188,18 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = this.annexProcessor.insertAnnexBlock(annex, elementId, elementName, position.equals(Position.BEFORE));
         annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.inserted"));
 
-        // TODO : to be added  DocumentUpdatedByCoEditorEvent
+        // TO DO : to be added  DocumentUpdatedByCoEditorEvent
         return documentViewService.updateDocumentView(annex);
     }
 
     @Override
     public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         Element mergeOnElement = annexProcessor.getMergeOnElement(annex, elementContent, elementTag, elementId);
         byte[] updatedXmlContent = null;
         if (mergeOnElement != null) {
@@ -213,8 +215,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
         List<Annex> annexes = this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
-        List<VersionVO> recentChanges = VersionsUtil.buildVersionResponse(annexes, messageHelper, userHelper);
-        return recentChanges;
+        return  VersionsUtil.buildVersionResponse(annexes, messageHelper, userHelper);
 
     }
 
@@ -239,14 +240,14 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext context = this.structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         return context.getTocItems();
     }
 
     @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         return this.annexService.getTableOfContent(annex, mode);
     }
 
@@ -259,7 +260,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        Annex newVersion = this.annexService.createVersion(annex.getId(), versionType, checkInComment);
+        this.annexService.createVersion(annex.getId(), versionType, checkInComment);
         return this.getVersionsData(documentRef);
     }
 
@@ -267,7 +268,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         AnnexStructureType structureType = getStructureType(structureContext1);
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.annexService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
@@ -299,8 +300,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public String compare(String newVersionId, String oldVersionId) {
         Annex oldVersion = annexService.findAnnexVersion(oldVersionId);
         Annex newVersion = annexService.findAnnexVersion(newVersionId);
-        String comparedContent = comparisonDelegate.getMarkedContent(oldVersion, newVersion);
-        return comparedContent;
+        return comparisonDelegate.getMarkedContent(oldVersion, newVersion);
     }
 
     @Override
@@ -327,8 +327,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             boolean isClonedProposal = !annex.getClonedFrom().isEmpty();
             return new EditElementResponse(user, permissions, elementId, elementTagName, element, levelItemVO, isClonedProposal);
         } catch (Exception ex) {
-            LOG.error("Exception while edit element operation for ", ex);
-            throw new RuntimeException(ex);
+            throw new RuntimeException("Exception while edit element operation for ", ex);
         }
     }
 
@@ -349,7 +348,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         String proposalId = proposal.getId();
         if (isClonedProposal()) {
             try {
-                final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                final String jobFileName = PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
                 ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Annex.class, false, true);
                 exportOptions.setExportVersions(new ExportVersions(null, annex));
                 exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
@@ -358,7 +357,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             }
         } else {
             try {
-                final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                final String jobFileName = PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
                 ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Annex.class, false, true);
                 exportOptions.setExportVersions(new ExportVersions<Annex>(null, annex));
                 cleanVersion = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
@@ -391,25 +390,23 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Annex annex = annexService.findAnnexByRef(event.getDocumentRef());
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(annex), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
-        byte[] updatedContent = searchService.replaceText(
+        return searchService.replaceText(
                 getContent(annex),
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS);
-        return updatedContent;
     }
 
     @Override
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(annex), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
-        byte[] updatedContent = searchService.replaceText(
+        return searchService.replaceText(
                 getContent(annex),
                 event.getSearchText(),
                 event.getReplaceText(),
                 Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
 
-        return updatedContent;
     }
 
     @Override
@@ -425,7 +422,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext context = structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         List<TocItem> tocItems = context.getTocItems();
         List<NumberingConfig> numberConfigs = context.getNumberingConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
@@ -442,7 +439,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public DocumentViewResponse changeAnnexStructureType(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         AnnexStructureType currAnnexStructureType = getStructureType(structureContext1);
         AnnexStructureType newAnnexStructureType = (currAnnexStructureType.equals(AnnexStructureType.LEVEL))
                 ? AnnexStructureType.ARTICLE
@@ -465,7 +462,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext context = structureContext.get();
 
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
 
         AnnexStructureType structureType = getStructureType(context);
         final byte[] newXmlContent = annexProcessor.renumberDocument(annex, structureType);
@@ -494,7 +491,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
 
         List<String> elementAncestorsIds = null;
-        if (elementIds != null && elementIds.size() > 0) {
+        if (CollectionUtils.isNotEmpty(elementIds)) {
             try {
                 elementAncestorsIds = annexService.getAncestorsIdsForElementId(annex, elementIds);
             } catch (Exception e) {
@@ -534,7 +531,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     protected void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
         final String proposalId = this.getContextProposalId();
         if (proposalId != null) {
-            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
+            final String jobFileName = PROPOSAL + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
             exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
         }
     }
@@ -560,18 +557,13 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     private String getVersionInfoAsString(XmlDocument document) {
         final VersionInfoVO versionInfo = getVersionInfo(document);
-        final String versionInfoString = messageHelper.getMessage(
+        return messageHelper.getMessage(
                 "document.version.caption",
                 versionInfo.getDocumentVersion(),
                 versionInfo.getLastModifiedBy(),
                 versionInfo.getEntity(),
                 versionInfo.getLastModificationInstant()
         );
-        return versionInfoString;
-    }
-
-    private boolean isClonedProposal(Annex annex) {
-        return !annex.getClonedFrom().isEmpty();
     }
 
 }

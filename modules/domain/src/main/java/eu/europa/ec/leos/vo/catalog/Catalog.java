@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Catalog {
 
-    private List<CatalogItem> itemList = new ArrayList<CatalogItem>();
+    private List<CatalogItem> itemList = new ArrayList<>();
 
     private String defaultLanguage;
 

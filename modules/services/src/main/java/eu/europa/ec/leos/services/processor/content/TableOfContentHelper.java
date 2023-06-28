@@ -108,15 +108,15 @@ public class TableOfContentHelper {
             if(softAction != null){
                 if (PARAGRAPH.equals(tocItem.getTocItem().getAknTag().value()) && (DELETE.equals(softAction))
                         && !MOVE_TO.equals(tocItem.getSoftActionAttr())) {
-                    itemDescription.append("<span class=\"leos-soft-num-removed\">" + tocItem.getNumber() + "</span>");
+                    itemDescription.append("<span class=\"leos-soft-num-removed\">" + tocItem.getNumber() + SPAN_END_TAG);
                 } else if (PARAGRAPH.equals(tocItem.getTocItem().getAknTag().value())
                         && SoftActionType.ADD.equals(softAction) && !MOVE_TO.equals(tocItem.getSoftActionAttr())) {
-                    itemDescription.append("<span class=\"leos-soft-num-new\">" + tocItem.getNumber() + "</span>");
+                    itemDescription.append("<span class=\"leos-soft-num-new\">" + tocItem.getNumber() + SPAN_END_TAG);
                 }
                 captionMaxSize = captionMaxSize+itemDescription.length();
             } else {
                 if (tocItem.isIndented() && !tocItem.getNumber().equals(tocItem.getIndentOriginNumValue())) {
-                    itemDescription.append("<span class=\"leos-soft-num-new\">" + tocItem.getNumber() + "</span>");
+                    itemDescription.append("<span class=\"leos-soft-num-new\">" + tocItem.getNumber() + SPAN_END_TAG);
                     captionMaxSize = captionMaxSize+itemDescription.length();
                 } else {
                     itemDescription.append(tocItem.getNumber());
@@ -285,7 +285,7 @@ public class TableOfContentHelper {
         List<TableOfContentItemVO> siblings = new ArrayList<>();
         TableOfContentItemVO parent = item.getParentItem();
         int index = parent != null ? parent.getChildItemsView().indexOf(item) : -1;
-        if (index > -1) {
+        if (index > -1 && parent != null) {
             for (int i = 0; i < parent.getChildItemsView().size(); i++) {
                 TableOfContentItemVO sibling = parent.getChildItemsView().get(i);
                 if (i != index && getTagValueFromTocItemVo(sibling).equalsIgnoreCase(tagName)) {
@@ -336,7 +336,7 @@ public class TableOfContentHelper {
     }
 
     private static void checkSiblingList(TableOfContentItemVO item) {
-        if (hasTocItemSoftOrigin(item, EC) || item.getSoftActionAttr() != null) {
+        if (item != null && (hasTocItemSoftOrigin(item, EC) || item.getSoftActionAttr() != null)) {
             List<TableOfContentItemVO> siblings = TableOfContentHelper.getSiblings(item, LIST);
             for (TableOfContentItemVO sibling : siblings) {
                 if (hasTocItemSoftOrigin(sibling, CN) && sibling.getSoftActionAttr() == null) {

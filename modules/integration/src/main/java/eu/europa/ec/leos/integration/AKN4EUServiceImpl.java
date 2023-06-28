@@ -13,7 +13,7 @@ public class AKN4EUServiceImpl implements AKN4EUService {
 
     @Override
     public void convert(File legFile, User user, String outputDescriptor) throws Exception {
-        return;
+        // do nothing
     }
 
 }

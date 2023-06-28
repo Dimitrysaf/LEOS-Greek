@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 public class BillContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BillContextService.class);
+    private static final String BILL_PACKAGE_IS_REQUIRED = "Bill package is required!";
+    private static final String BILL_TEMPLATE_IS_REQUIRED = "Bill template is required!";
+    private static final String BILL_PURPOSE_IS_REQUIRED = "Bill purpose is required!";
+    private static final String BILL_METADATA_IS_REQUIRED = "Bill metadata is required!";
 
     private final BillService billService;
     private final ProposalService proposalService;
@@ -114,18 +119,18 @@ public class BillContextService {
         this.messageHelper = messageHelper;
         this.urlBuilder = urlBuilder;
         this.annexContextProvider = annexContextProvider;
-        this.actionMsgMap = new HashMap<>();
+        this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xPathCatalog = xPathCatalog;
     }
 
     public void usePackage(LeosPackage leosPackage) {
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         LOG.trace("Using Bill package... [id={}, path={}]", leosPackage.getId(), leosPackage.getPath());
         this.leosPackage = leosPackage;
     }
 
     public void useTemplate(Bill bill) {
-        Validate.notNull(bill, "Bill template is required!");
+        Validate.notNull(bill, BILL_TEMPLATE_IS_REQUIRED);
         LOG.trace("Using Bill template... [id={}, name={}]", bill.getId(), bill.getName());
         this.bill = bill;
     }
@@ -145,7 +150,7 @@ public class BillContextService {
     }
 
     public void usePurpose(String purpose) {
-        Validate.notNull(purpose, "Bill purpose is required!");
+        Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
         LOG.trace("Using Bill purpose... [purpose={}]", purpose);
         this.purpose = purpose;
     }
@@ -209,13 +214,13 @@ public class BillContextService {
 
     public Bill executeCreateBill() {
         LOG.trace("Executing 'Create Bill' use case...");
-        Validate.notNull(leosPackage, "Bill package is required!");
-        Validate.notNull(bill, "Bill template is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(bill, BILL_TEMPLATE_IS_REQUIRED);
 
         Option<BillMetadata> metadataOption = bill.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "Bill purpose is required!");
+        Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
         BillMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -227,11 +232,11 @@ public class BillContextService {
 
     public Bill executeImportBill() {
         LOG.trace("Executing 'Create Bill' use case...");
-        Validate.notNull(leosPackage, "Bill package is required!");
-        Validate.notNull(bill, "Bill template is required!");
-        Validate.notNull(purpose, "Bill purpose is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(bill, BILL_TEMPLATE_IS_REQUIRED);
+        Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
         Validate.notNull(billDocument.getSource(), "Bill xml is required!");
-        Validate.isTrue(bill.getMetadata().isDefined(), "Bill metadata is required!");
+        Validate.isTrue(bill.getMetadata().isDefined(), BILL_METADATA_IS_REQUIRED);
 
         final String newRef = createRefForBillAndUpdateContext();
         BillMetadata metadata = getBillMetadata();
@@ -298,10 +303,8 @@ public class BillContextService {
                 updateBillRefsWithNewValue(newRef, oldRef);
                 docChild.setSource(xmlContentProcessor.updateRefsWithRefOrigin(updatedAnnexBytes, newRef, oldRef));
                 for (DocumentVO docChild_ : billDocument.getChildDocuments()) {
-                    if (docChild_.getCategory() == ANNEX) {
-                        if (!docChild_.getId().equals(docChild.getId())) {
-                            docChild_.setSource(xmlContentProcessor.updateRefsWithRefOrigin(docChild_.getSource(), newRef, oldRef));
-                        }
+                    if (docChild_.getCategory() == ANNEX && !docChild_.getId().equals(docChild.getId())) {
+                        docChild_.setSource(xmlContentProcessor.updateRefsWithRefOrigin(docChild_.getSource(), newRef, oldRef));
                     }
                 }
             }
@@ -319,7 +322,7 @@ public class BillContextService {
 
     private String createRefForBillAndUpdateContext() {
         Validate.notNull(billDocument.getSource(), "Bill xml is required!");
-        Validate.isTrue(bill.getMetadata().isDefined(), "Bill metadata is required!");
+        Validate.isTrue(bill.getMetadata().isDefined(), BILL_METADATA_IS_REQUIRED);
 
         final String ref = billService.generateBillReference(bill.getContent().get().getSource().getBytes(), bill.getMetadata().get().getLanguage());
         final BillMetadata updatedBillMetadata = bill.getMetadata().get()
@@ -348,19 +351,19 @@ public class BillContextService {
 
     public void executeUpdateBill() {
         LOG.trace("Executing 'Update Bill' use case...");
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         
-        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
-        if(bill != null) {
-            Option<BillMetadata> metadataOption = bill.getMetadata();
-            Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
-            Validate.notNull(purpose, "Bill purpose is required!");
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        if(billByPackagePath != null) {
+            Option<BillMetadata> metadataOption = billByPackagePath.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
+            Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
             BillMetadata metadata = metadataOption.get()
                     .builder()
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(bill, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
+            billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
             // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
             List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
             annexes.forEach(annex -> {
@@ -377,9 +380,9 @@ public class BillContextService {
     public void executeRemoveBillAnnex() {
         LOG.trace("Executing 'Remove Bill Annex' use case...");
 
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
 
-        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
 
         Annex deletedAnnex = annexService.findAnnex(annexId, true);
         int currentIndex = deletedAnnex.getMetadata().get().getIndex();
@@ -387,7 +390,7 @@ public class BillContextService {
         annexService.deleteAnnex(deletedAnnex);
 
         String href = deletedAnnex.getName();
-        bill = billService.removeAttachment(bill, href, actionMsgMap.get(ContextActionService.ANNEX_DELETED));
+        billByPackagePath = billService.removeAttachment(billByPackagePath, href, actionMsgMap.get(ContextActionService.ANNEX_DELETED));
 
         // Renumber remaining annexes
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
@@ -406,13 +409,13 @@ public class BillContextService {
             }
         });
 
-        billService.updateAttachments(bill, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
+        billService.updateAttachments(billByPackagePath, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
     }
 
     public void executeCreateBillAnnex() {
         LOG.trace("Executing 'Create Bill Annex' use case...");
 
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         Validate.notNull(bill, "Bill is required!");
         Validate.notNull(purpose, "Purpose is required!");
         AnnexContextService annexContext = annexContextProvider.get();
@@ -421,13 +424,13 @@ public class BillContextService {
         annexContext.useTemplate(annexTemplate);
         // we are using the same template for the annexes for sj-23 and sj19, the only change is this type. that's why we get it form the bill.
         Option<BillMetadata> metadataOption = bill.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
         BillMetadata metadata = metadataOption.get();
         annexContext.useType(metadata.getType());
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int annexIndex = annexes.size() + 1;
-        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexes.size() == 0 ? annexes.size() : annexIndex);
+        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexes.isEmpty() ? annexes.size() : annexIndex);
         annexContext.useIndex(annexIndex);
         annexContext.useCollaborators(bill.getCollaborators());
         annexContext.useActionMessageMap(actionMsgMap);
@@ -458,14 +461,14 @@ public class BillContextService {
 
     public Annex executeImportBillAnnex() {
         LOG.trace("Executing 'Import Bill Annex' use case...");
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         AnnexContextService annexContext = annexContextProvider.get();
         annexContext.usePackage(leosPackage);
 
         bill = billService.findBillByPackagePath(leosPackage.getPath());
 
         Option<BillMetadata> metadataOption = bill.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Bill metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
         BillMetadata metadata = metadataOption.get();
         annexContext.usePurpose(metadata.getPurpose());
         annexContext.useType(metadata.getType());
@@ -480,10 +483,10 @@ public class BillContextService {
         annexContext.useAnnexNumber(annexMeta.getNumber());
         annexContext.useCloneProposal(cloneProposal);
         Annex annex = annexContext.executeImportAnnex();
-        String annexRef = annex.getMetadata().get().getRef();
-        idsAndUrlsHolder.addAnnexIdAndUrl(annexRef, urlBuilder.buildAnnexViewUrl(annexRef));
+        String ref = annex.getMetadata().get().getRef();
+        idsAndUrlsHolder.addAnnexIdAndUrl(ref, urlBuilder.buildAnnexViewUrl(ref));
         if(cloneProposal) {
-            idsAndUrlsHolder.addDocCloneAndOriginIdMap(annexRef, annexDocument.getRef());
+            idsAndUrlsHolder.addDocCloneAndOriginIdMap(ref, annexDocument.getRef());
         }
 
         String href = annex.getName();
@@ -495,7 +498,7 @@ public class BillContextService {
     public void createRefForAnnex(BillMetadata billMetadata) {
         LOG.trace("Executing 'Import Bill Annex' use case...");
         Validate.notNull(billMetadata.getType(), "Bill type is required!");
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         Validate.notNull(purpose, "Annex purpose is required!");
         
         MetadataVO annexMetadataVO = annexDocument.getMetadata();
@@ -531,9 +534,9 @@ public class BillContextService {
     public void executeMoveAnnex() {
         LOG.trace("Executing 'Update Bill Move Annex' use case...");
 
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         Validate.notNull(moveDirection, "Bill moveDirection is required");
-        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
         Annex operatedAnnex = annexService.findAnnex(annexRef, true);
         int currentIndex = operatedAnnex.getMetadata().get().getIndex();
         Annex affectedAnnex = findAffectedAnnex(moveDirection.equalsIgnoreCase("UP"), currentIndex);
@@ -559,11 +562,11 @@ public class BillContextService {
         attachments.put(operatedAnnex.getName(), operatedAnnexNumber);
         attachments.put(affectedAnnex.getName(), affectedAnnexNumber);
 
-        billService.updateAttachments(bill, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
+        billService.updateAttachments(billByPackagePath, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
     }
 
     private Annex findAffectedAnnex(boolean before, int index) {
-        Validate.notNull(leosPackage, "Bill package is required!");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int targetIndex = index + (before ? -1 : 1); //index start with 0
@@ -596,15 +599,15 @@ public class BillContextService {
     }
 
     public void executeCreateMilestone() {
-        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
-        List<String> milestoneComments = bill.getMilestoneComments();
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        List<String> milestoneComments = billByPackagePath.getMilestoneComments();
         milestoneComments.add(milestoneComment);
-        if (bill.getVersionType().equals(VersionType.MAJOR)) {
-            bill = billService.updateBillWithMilestoneComments(bill.getId(), milestoneComments);
-            LOG.info("Major version {} already present. Updated only milestoneComment for [bill={}]", bill.getVersionLabel(), bill.getId());
+        if (billByPackagePath.getVersionType().equals(VersionType.MAJOR)) {
+            billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath.getId(), milestoneComments);
+            LOG.info("Major version {} already present. Updated only milestoneComment for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
         } else {
-            bill = billService.updateBillWithMilestoneComments(bill, milestoneComments, VersionType.MAJOR, versionComment);
-            LOG.info("Created major version {} for [bill={}]", bill.getVersionLabel(), bill.getId());
+            billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath, milestoneComments, VersionType.MAJOR, versionComment);
+            LOG.info("Created major version {} for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
         }
 
         final List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);

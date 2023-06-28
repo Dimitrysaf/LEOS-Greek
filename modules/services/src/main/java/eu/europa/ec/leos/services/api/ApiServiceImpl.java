@@ -117,12 +117,13 @@ public abstract class ApiServiceImpl implements ApiService {
     private static final String PDF = ".pdf";
     private static final String MAIN_DOCUMENT_FILE_NAME = "main";
     private static final String COVER_PAGE_CONTENT_FILE_NAME = "coverPage";
-    private static final String COVER_PAGE_TAB_TITLE_KEY = "collection.block.caption.coverpage";
     private static final String DOC_VERSION_START_TAG_REG = "<leos:docVersion\\b[^>]*>";
     private static final String DOC_VERSION_END_TAG = "</leos:docVersion>";
     private static final String DOC_NUMBER_START_TAG_REG = "<leos:annexIndex\\b[^>]*>";
     private static final String DOC_NUMBER_END_TAG = "</leos:annexIndex>";
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
+    private static final String COLLECTION_BLOCK_ANNEX_METADATA_UPDATED = "collection.block.annex.metadata.updated";
+    private static final String MILESTONE = "milestone";
 
     private final TemplateService templateService;
     private final WorkspaceService workspaceService;
@@ -337,7 +338,7 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public ProposalMetadata createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY.toString());
+        if(LOG.isDebugEnabled()) LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY.toString());
         String[] templates = (templateId != null) ? templateId.split(";") : new String[0];
 
         CollectionContextService context = collectionContextProvider.get();
@@ -348,9 +349,12 @@ public abstract class ApiServiceImpl implements ApiService {
         context.useEeaRelevance(eeaRelevance);
         context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
         context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
-        LOG.info("New document of type {} created in {} milliseconds ({} sec)", LeosCategory.PROPOSAL.toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         Proposal proposal = context.executeCreateExplanatoryDocument();
-        return proposal.getMetadata().getOrNull();
+        ProposalMetadata result =  proposal.getMetadata().getOrNull();
+        if(LOG.isInfoEnabled()) {
+            LOG.info("New document of type {} created in {} milliseconds ({} sec)", LeosCategory.PROPOSAL.toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        }
+        return result;
     }
 
     @Override
@@ -365,7 +369,7 @@ public abstract class ApiServiceImpl implements ApiService {
         collectionContext.useActionMessage(ContextActionService.EXPLANATORY_METADATA_UPDATED, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
         collectionContext.useActionMessage(ContextActionService.EXPLANATORY_DELETED, messageHelper.getMessage("collection.block.explanatory.removed"));
         collectionContext.executeRemoveExplanatory();
-//        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposal.getId(), explanatory.getMetadata().get().getRef(), id));
+//        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposal.getId(), explanatory.getMetadata().get().getRef(), id))
         LOG.info("Deleted explanatory {} id {}, in {} milliseconds ({} sec)", explanatory.getMetadata().get().getRef(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
@@ -461,8 +465,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 throw new RuntimeException("Invalid output type provided");
         }
         ExportOptions exportOptions = new ExportLW(output);
-        String jobId = exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
-        return jobId;
+        return exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
     }
 
     @Override
@@ -477,7 +480,8 @@ public abstract class ApiServiceImpl implements ApiService {
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
         if (proposalRef != null) {
             proposal = this.proposalService.findProposalByRef(proposalRef);
-            LOG.trace(proposal.toString());
+            if(LOG.isTraceEnabled())
+                LOG.trace(proposal.toString());
         }
         if (proposal != null) {
             String proposalId = proposal.getId();
@@ -519,7 +523,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, String proposalVersionSeriesId, Set<String> docVersionSeriesIds) {
         DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
         List<DocumentVO> annexVOList = new ArrayList<>();
-        docVersionSeriesIds = new HashSet<>();
+        Set<String> docVerSeriesIds = new HashSet<>();
         //We have the latest version of the document, no need to search for them again
         for (XmlDocument document : documents) {
             switch (document.getCategory()) {
@@ -548,7 +552,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     explanatoryVO.setUpdatedBy(userHelper.convertToPresentation(explanatoryVO.getUpdatedBy()));
                     explanatoryVO.setCreatedBy(userHelper.convertToPresentation(explanatoryVO.getCreatedBy()));
                     proposalVO.addChildDocument(explanatoryVO);
-                    docVersionSeriesIds.add(explanatory.getVersionSeriesId());
+                    docVerSeriesIds.add(explanatory.getVersionSeriesId());
                     break;
                 }
                 case MEMORANDUM: {
@@ -560,7 +564,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
                     memorandumVO.setUpdatedBy(userHelper.convertToPresentation(memorandumVO.getUpdatedBy()));
                     memorandumVO.setCreatedBy(userHelper.convertToPresentation(memorandumVO.getCreatedBy()));
-                    docVersionSeriesIds.add(memorandum.getVersionSeriesId());
+                    docVerSeriesIds.add(memorandum.getVersionSeriesId());
                     break;
                 }
                 case BILL: {
@@ -572,7 +576,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     billVO.setVersionSeriesId(bill.getVersionSeriesId());
                     billVO.setUpdatedBy(userHelper.convertToPresentation(billVO.getUpdatedBy()));
                     billVO.setCreatedBy(userHelper.convertToPresentation(billVO.getCreatedBy()));
-                    docVersionSeriesIds.add(bill.getVersionSeriesId());
+                    docVerSeriesIds.add(bill.getVersionSeriesId());
                     break;
                 }
                 case ANNEX: {
@@ -584,7 +588,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     annexVO.setVersionSeriesId(annex.getVersionSeriesId());
                     annexVO.setUpdatedBy(userHelper.convertToPresentation(annexVO.getUpdatedBy()));
                     annexVO.setCreatedBy(userHelper.convertToPresentation(annexVO.getCreatedBy()));
-                    docVersionSeriesIds.add(annex.getVersionSeriesId());
+                    docVerSeriesIds.add(annex.getVersionSeriesId());
                     break;
                 }
                 default:
@@ -691,7 +695,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.usePackage(leosPackage);
                 billContext.useTemplate(bill);
                 billContext.usePurpose(metadata.getPurpose());
-                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
                 billContext.useActionMessage(ContextActionService.ANNEX_ADDED, messageHelper.getMessage("collection.block.annex.added"));
                 billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
 
@@ -717,9 +721,10 @@ public abstract class ApiServiceImpl implements ApiService {
         LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
         boolean contributionChanged = false;
         if (clonedLegDocument != null && originalLegDocument != null) {
-            File legFileTemp = null, originalLegFileTemp = null;
+            File legFileTemp = null;
+            File originalLegFileTemp = null;
             try {
-                legFileTemp = File.createTempFile("milestone", ".leg");
+                legFileTemp = File.createTempFile(MILESTONE, ".leg");
                 Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, clonedLegDocument);
                 Map<String, Object> annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, clonedLegDocument, getAnnexes(originalLeosPackage),
                         xmlContentProcessor);
@@ -826,7 +831,7 @@ public abstract class ApiServiceImpl implements ApiService {
             billContext.useAnnexwithRef(annexRef);
             billContext.useAnnex(annex.getId());
             billContext.usePackage(leosPackage);
-            billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+            billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
             billContext.useActionMessage(ContextActionService.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
             try {
                 archiveService.archiveDocument(annexVO, Annex.class, leosPackage.getPath());
@@ -848,7 +853,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useAnnexwithRef(annexRef);
                 billContext.usePackage(leosPackage);
                 billContext.useMoveDirection(moveDirection);
-                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
                 billContext.executeMoveAnnex();
             }
 
@@ -860,7 +865,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
     }
 
     @Override
@@ -907,7 +912,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
         LegDocument legDocument = getLegDocument(legFileName, leosPackage);
-        File legFileTemp = File.createTempFile("milestone", ".leg");
+        File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
         Map<String, Object> annexAddedMap = new HashMap<>();
@@ -966,7 +971,7 @@ public abstract class ApiServiceImpl implements ApiService {
         byte[] content = null;
         LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
         LegDocument legDocument = getLegDocument(legFileName, leosPackage);
-        File legFileTemp = File.createTempFile("milestone", ".leg");
+        File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
         String fileName = null;
@@ -979,7 +984,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private static String readFileToString(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()), "UTF-8");
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     private Map<String, Map> populateVersionAndAnnexNumberMap(Map<String, Object> files) {

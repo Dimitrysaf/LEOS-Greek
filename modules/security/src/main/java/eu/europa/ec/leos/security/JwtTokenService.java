@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
 
 /**
  * Default class to generate and validate tokens.
@@ -33,6 +33,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Component
 class JwtTokenService implements TokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
+    private static final String VALIDATION_ERROR = "Error occurred while token validation. Error: {}";
 
     // Authority should be made parameter if we need tokens for more than one systems
     @Value("${annotate.authority}")
@@ -138,18 +139,16 @@ class JwtTokenService implements TokenService {
                     .withNotBefore(notBefore)
                     .withExpiresAt(expiresAt);
 
-            if(!isEmpty(user)){
+            if(hasLength(user)){
                 builder.withClaim("user", user);
             }
 
             token = builder.sign(algorithm);
 
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | JWTCreationException e) {
             //UTF-8 encoding not supported
-            LOG.error("Error occurred while token validation. Error: {}", e.getMessage());
-        } catch (JWTCreationException e) {
             //Invalid Signing configuration / Couldn't convert Claims.
-            LOG.error("Error occurred while token validation. Error: {}", e.getMessage());
+            LOG.error(VALIDATION_ERROR, e.getMessage());
         }
         return token;
     }
@@ -202,7 +201,7 @@ class JwtTokenService implements TokenService {
         } catch (SignatureVerificationException e) {
             return false; //wrong token
         } catch (Exception e) {
-            LOG.error("Error occurred while token validation. Error: {}", e.getMessage());
+            LOG.error(VALIDATION_ERROR, e.getMessage());
             return false;
         }
     }

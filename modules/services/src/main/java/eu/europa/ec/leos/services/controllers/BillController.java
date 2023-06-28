@@ -59,6 +59,8 @@ import java.util.List;
 public class BillController {
 
     private static final Logger LOG = LoggerFactory.getLogger(BillController.class);
+    private static final String ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION = "Error occurred  while getting downloading xml version - {}";
+    private static final String ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION = "Error occurred  while  downloading xml version";
     @Autowired
     private BillApiService billApiService;
 
@@ -316,8 +318,8 @@ public class BillController {
             byte[] response = this.billApiService.downloadXmlVersionFiles(documentRef, versionId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION, e.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -329,8 +331,8 @@ public class BillController {
             byte[] response = this.billApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION,  e.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -342,8 +344,8 @@ public class BillController {
             byte[] response = this.billApiService.replaceAllTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION, e.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

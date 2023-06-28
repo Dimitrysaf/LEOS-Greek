@@ -41,8 +41,6 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -50,7 +48,7 @@ import java.io.IOException;
 @Instance(InstanceType.OS)
 @Service
 public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
-    private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceOSImpl.class);
+    private static final String NOT_AVAILABLE_FOR_THIS_INSTANCE = "External system to export documents not available for this instance";
 
 
     protected DocumentApiServiceOSImpl(DocumentContentService documentContentService, PackageService packageService,
@@ -83,14 +81,13 @@ public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
             return packageComparedXmlFiles(original, current, null, leosComparedContent, null, comparedInfo, language,
                     null);
         } catch(Exception ex) {
-            LOG.error("Error occurred while requesting download of xml comparison files", ex);
-            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid " + ex);
+            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid ", ex);
         }
     }
 
     @Override
     public LeosExportStatus exportComparedVersionAsPDF(LeosCategoryClass documentType, String documentRef, DownloadComparedVersionRequest downloadComparedVersionRequest) {
-        throw new ExportException("External system to export documents not available for this instance");
+        throw new ExportException(NOT_AVAILABLE_FOR_THIS_INSTANCE);
     }
 
     @Override
@@ -100,11 +97,11 @@ public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
 
     @Override
     public LeosExportStatus exportToConsilium(LeosCategoryClass documentType, String documentRef, ExportToConsiliumRequest exportToConsiliumRequest) {
-        throw new ExportException("External system to export documents not available for this instance");
+        throw new ExportException(NOT_AVAILABLE_FOR_THIS_INSTANCE);
     }
 
     @Override
     protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
-        throw new ExportException("External system to export documents not available for this instance");
+        throw new ExportException(NOT_AVAILABLE_FOR_THIS_INSTANCE);
     }
 }

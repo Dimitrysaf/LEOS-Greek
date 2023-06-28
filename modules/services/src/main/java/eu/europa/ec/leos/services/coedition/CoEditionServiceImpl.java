@@ -28,6 +28,7 @@ import java.util.concurrent.locks.StampedLock;
 @Service
 public class CoEditionServiceImpl implements CoEditionService {
 
+    private static final String SESSION_ID_MUST_NOT_BE_NULL = "sessionId must not be null";
     @Autowired
     private InfoHandler infoHandler;
 
@@ -35,7 +36,7 @@ public class CoEditionServiceImpl implements CoEditionService {
 
     @Override
     public CoEditionActionInfo storeUserEditInfo(String sessionId, String presenterId, User user, String documentId, String elementId, InfoType infoType) {
-        Validate.notNull(sessionId, "sessionId must not be null");
+        Validate.notNull(sessionId, SESSION_ID_MUST_NOT_BE_NULL);
         Validate.notNull(presenterId, "presenterId must not be null");
         Validate.notNull(user, "user must not be null");
         Validate.notNull(documentId, "documentId must not be null");
@@ -74,7 +75,7 @@ public class CoEditionServiceImpl implements CoEditionService {
 
     @Override
     public CoEditionActionInfo removeUserEditInfo(String sessionId) {
-        Validate.notNull(sessionId, "sessionId must not be null");
+        Validate.notNull(sessionId, SESSION_ID_MUST_NOT_BE_NULL);
 
         long stamp = infoHandlerLock.writeLock();
         try {
@@ -90,7 +91,7 @@ public class CoEditionServiceImpl implements CoEditionService {
 
     @Override
     public List<CoEditionVO> getCoEditionsFromSession(String sessionId) {
-        Validate.notNull(sessionId, "sessionId must not be null");
+        Validate.notNull(sessionId, SESSION_ID_MUST_NOT_BE_NULL);
 
         long stamp = infoHandlerLock.readLock();
         try {

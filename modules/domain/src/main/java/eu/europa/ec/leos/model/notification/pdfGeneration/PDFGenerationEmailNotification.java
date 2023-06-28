@@ -3,11 +3,12 @@ package eu.europa.ec.leos.model.notification.pdfGeneration;
 import eu.europa.ec.leos.model.notification.EmailNotification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-abstract public class PDFGenerationEmailNotification implements EmailNotification {
+public abstract class PDFGenerationEmailNotification implements EmailNotification {
 
-    private List<String> recipients = new ArrayList<String>();
+    private List<String> recipients = new ArrayList<>();
     private String recipient;
     private String emailBody;
     private String emailSubject;
@@ -15,7 +16,7 @@ abstract public class PDFGenerationEmailNotification implements EmailNotificatio
     private byte[] attachmentContent;
     private String legFileName;
 
-    public PDFGenerationEmailNotification(String recipient, String title, byte[] attachmentContent, String legFileName) {
+    protected PDFGenerationEmailNotification(String recipient, String title, byte[] attachmentContent, String legFileName) {
         this.recipient = recipient;
         addRecipients(recipient);
         this.title = title;
@@ -26,9 +27,7 @@ abstract public class PDFGenerationEmailNotification implements EmailNotificatio
     private void addRecipients(String recipient) {
         if(recipient.indexOf(";") != -1) {
            String[] recipientsList = recipient.split(";");
-           for(String r : recipientsList) {
-               recipients.add(r);
-           }
+            Collections.addAll(recipients, recipientsList);
         } else {
             recipients.add(recipient);
         }
@@ -98,5 +97,5 @@ abstract public class PDFGenerationEmailNotification implements EmailNotificatio
         this.legFileName = legFileName;
     }
 
-    abstract public String getEmailSubjectKey();
+    public abstract String getEmailSubjectKey();
 }

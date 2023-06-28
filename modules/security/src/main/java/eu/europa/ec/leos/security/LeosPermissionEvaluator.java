@@ -49,7 +49,7 @@ public class LeosPermissionEvaluator implements PermissionEvaluator {
                 // As of now, only voters with single ConfigAttributes are supported.
 
                 int result = voter.vote(authentication, targetDomainObject, configAttributes);
-                LOG.debug("Voter: " + voter + ", returned: " + result);
+                LOG.debug("Voter: {}, returned: {}", voter, result);
 
                 // can abstain, grant or deny
                 // if deterministic answer is given by any voter, use it and return

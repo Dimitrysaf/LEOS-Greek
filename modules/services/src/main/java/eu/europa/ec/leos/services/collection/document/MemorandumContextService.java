@@ -20,7 +20,6 @@ import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.document.MemorandumService;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import io.atlassian.fugue.Option;
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +43,12 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 public class MemorandumContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemorandumContextService.class);
+    private static final String MEMORANDUM_PACKAGE_IS_REQUIRED = "Memorandum package is required!";
+    private static final String MEMORANDUM_TEMPLATE_IS_REQUIRED = "Memorandum template is required!";
+    private static final String MEMORANDUM_PURPOSE_IS_REQUIRED = "Memorandum purpose is required!";
+    private static final String MEMORANDUM_METADATA_IS_REQUIRED = "Memorandum metadata is required!";
 
     private final MemorandumService memorandumService;
-    private final XmlContentProcessor xmlContentProcessor;
-
     private final XmlNodeProcessor xmlNodeProcessor;
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
 
@@ -65,23 +67,22 @@ public class MemorandumContextService {
     private final Map<ContextActionService, String> actionMsgMap;
 
     @Autowired
-    MemorandumContextService(MemorandumService memorandumService, XmlContentProcessor xmlContentProcessor, XmlNodeProcessor xmlNodeProcessor,
+    MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
             XmlNodeConfigProcessor xmlNodeConfigProcessor) {
         this.memorandumService = memorandumService;
-        this.actionMsgMap = new HashMap<>();
-        this.xmlContentProcessor = xmlContentProcessor;
+        this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
     }
 
     public void usePackage(LeosPackage leosPackage) {
-        Validate.notNull(leosPackage, "Memorandum package is required!");
+        Validate.notNull(leosPackage, MEMORANDUM_PACKAGE_IS_REQUIRED);
         LOG.trace("Using Memorandum package... [id={}, path={}]", leosPackage.getId(), leosPackage.getPath());
         this.leosPackage = leosPackage;
     }
 
     public void useTemplate(Memorandum memorandum) {
-        Validate.notNull(memorandum, "Memorandum template is required!");
+        Validate.notNull(memorandum, MEMORANDUM_TEMPLATE_IS_REQUIRED);
         LOG.trace("Using Memorandum template... [id={}, name={}]", memorandum.getId(), memorandum.getName());
         this.memorandum = memorandum;
     }
@@ -93,7 +94,7 @@ public class MemorandumContextService {
     }
 
     public void usePurpose(String purpose) {
-        Validate.notNull(purpose, "Memorandum purpose is required!");
+        Validate.notNull(purpose, MEMORANDUM_PURPOSE_IS_REQUIRED);
         LOG.trace("Using Memorandum purpose: {}", purpose);
         this.purpose = purpose;
     }
@@ -136,13 +137,13 @@ public class MemorandumContextService {
 
     public Memorandum executeCreateMemorandum() {
         LOG.trace("Executing 'Create Memorandum' use case...");
-        Validate.notNull(leosPackage, "Memorandum package is required!");
-        Validate.notNull(memorandum, "Memorandum template is required!");
+        Validate.notNull(leosPackage, MEMORANDUM_PACKAGE_IS_REQUIRED);
+        Validate.notNull(memorandum, MEMORANDUM_TEMPLATE_IS_REQUIRED);
 
         Option<MemorandumMetadata> metadataOption = memorandum.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Memorandum metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "Memorandum purpose is required!");
+        Validate.notNull(purpose, MEMORANDUM_PURPOSE_IS_REQUIRED);
         MemorandumMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -157,30 +158,30 @@ public class MemorandumContextService {
     public void executeUpdateMemorandum() {
         LOG.trace("Executing 'Update Memorandum' use case...");
 
-        Validate.notNull(leosPackage, "Memorandum package is required!");
-        Memorandum memorandum = memorandumService.findMemorandumByPackagePath(leosPackage.getPath());
-        if (memorandum != null) {
-            Option<MemorandumMetadata> metadataOption = memorandum.getMetadata();
-            Validate.isTrue(metadataOption.isDefined(), "Memorandum metadata is required!");
+        Validate.notNull(leosPackage, MEMORANDUM_PACKAGE_IS_REQUIRED);
+        Memorandum memoByPath = memorandumService.findMemorandumByPackagePath(leosPackage.getPath());
+        if (memoByPath != null) {
+            Option<MemorandumMetadata> metadataOption = memoByPath.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
 
-            Validate.notNull(purpose, "Memorandum purpose is required!");
+            Validate.notNull(purpose, MEMORANDUM_PURPOSE_IS_REQUIRED);
             MemorandumMetadata metadata = metadataOption.get()
                     .builder()
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
 
-            memorandumService.updateMemorandum(memorandum, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
+            memorandumService.updateMemorandum(memoByPath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
         }
     }
 
     public Memorandum executeImportMemorandum() {
         LOG.trace("Executing 'Import Memorandum' use case...");
-        Validate.notNull(leosPackage, "Memorandum package is required!");
-        Validate.notNull(memorandum, "Memorandum template is required!");
-        Validate.notNull(purpose, "Memorandum purpose is required!");
+        Validate.notNull(leosPackage, MEMORANDUM_PACKAGE_IS_REQUIRED);
+        Validate.notNull(memorandum, MEMORANDUM_TEMPLATE_IS_REQUIRED);
+        Validate.notNull(purpose, MEMORANDUM_PURPOSE_IS_REQUIRED);
         Option<MemorandumMetadata> metadataOption = memorandum.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Memorandum metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
 
         String ref = createRefForMemorandum();
         MemorandumMetadata metadata = metadataOption.get()
@@ -208,7 +209,7 @@ public class MemorandumContextService {
 
     private String createRefForMemorandum() {
         Validate.notNull(memoDocument.getSource(), "Memorandum xml is required!");
-        Validate.isTrue(memorandum.getMetadata().isDefined(), "Memorandum metadata is required!");
+        Validate.isTrue(memorandum.getMetadata().isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
 
         final String ref = memorandumService.generateMemorandumReference(memorandum.getContent().get().getSource().getBytes(), memorandum.getMetadata().get().getLanguage());
         final MemorandumMetadata updatedMemorandumMetadata = memorandum.getMetadata().get()
@@ -225,16 +226,16 @@ public class MemorandumContextService {
 
 
     public void executeCreateMilestone() {
-        Memorandum memorandum = memorandumService.findMemorandumByPackagePath(leosPackage.getPath());
-        if (memorandum != null) {
-            List<String> milestoneComments = memorandum.getMilestoneComments();
+        Memorandum memobyPath = memorandumService.findMemorandumByPackagePath(leosPackage.getPath());
+        if (memobyPath != null) {
+            List<String> milestoneComments = memobyPath.getMilestoneComments();
             milestoneComments.add(milestoneComment);
-            if (memorandum.getVersionType().equals(VersionType.MAJOR)) {
-                memorandum = memorandumService.updateMemorandumWithMilestoneComments(memorandum.getId(), milestoneComments);
-                LOG.info("Major version {} already present. Updated only milestoneComment for [memorandum={}]", memorandum.getVersionLabel(), memorandum.getId());
+            if (memobyPath.getVersionType().equals(VersionType.MAJOR)) {
+                memobyPath = memorandumService.updateMemorandumWithMilestoneComments(memobyPath.getId(), milestoneComments);
+                LOG.info("Major version {} already present. Updated only milestoneComment for [memorandum={}]", memobyPath.getVersionLabel(), memobyPath.getId());
             } else {
-                memorandum = memorandumService.updateMemorandumWithMilestoneComments(memorandum, milestoneComments, VersionType.MAJOR, versionComment);
-                LOG.info("Created major version {} for [memorandum={}]", memorandum.getVersionLabel(), memorandum.getId());
+                memobyPath = memorandumService.updateMemorandumWithMilestoneComments(memobyPath, milestoneComments, VersionType.MAJOR, versionComment);
+                LOG.info("Created major version {} for [memorandum={}]", memobyPath.getVersionLabel(), memobyPath.getId());
             }
         }
     }

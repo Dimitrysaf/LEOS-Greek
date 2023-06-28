@@ -8,6 +8,8 @@ import org.apache.jena.sparql.util.RomanNumeral;
  */
 public class AnnexNumberGenerator {
 
+	private AnnexNumberGenerator(){
+	}
 	private static final String ANNEX_TITLE_PREFIX = "Annex";
 
 	/**
