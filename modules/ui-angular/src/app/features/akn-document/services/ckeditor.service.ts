@@ -32,8 +32,8 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocItem } from '../models/toc.model';
-import { TableOfContentService } from './tableOfContent.service';
 import { MergeContributionConnector } from './merge-contribution-connector';
+import { TableOfContentService } from './tableOfContent.service';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -115,7 +115,7 @@ export class CKEditorService implements OnDestroy {
     this.refToLinkConnector?.$triggerStateChange();
     this.mathJaxConnector?.$triggerStateChange();
     this.trackChangesConnector?.$triggerStateChange();
-    this.mergeContributionConnector?.$triggerStateChange()
+    this.mergeContributionConnector?.$triggerStateChange();
   }
 
   private initActionManager(
@@ -271,9 +271,12 @@ export class CKEditorService implements OnDestroy {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.mergeContributionConnector = new MergeContributionConnector(leosState, {
-      rootElement,
-    });
+    this.mergeContributionConnector = new MergeContributionConnector(
+      leosState,
+      {
+        rootElement,
+      },
+    );
 
     require(['extension/mergeContributionExtension'], (mergeContribution) => {
       mergeContribution.init(this.mergeContributionConnector);
