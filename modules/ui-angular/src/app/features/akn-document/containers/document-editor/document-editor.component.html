@@ -757,6 +757,7 @@
             id="contributionViewContainer"
             [xml]="contributionForView"
             class="sync-scroll"
+            [ngClass]="{ 'contribution-disabled-mode': processed }"
           >
           </app-annex-document>
         </eui-page-column-body>
