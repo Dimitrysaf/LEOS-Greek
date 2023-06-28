@@ -92,7 +92,14 @@ export class DocumentEditorComponent
   isVersionsPaneCollapsed = true;
   isContributionForViewOpen = false;
   isViewContributionPaneCollapsed = true;
+  isContributionAnnotationPaneCollapsed = true;
   reloadTrigger: number;
+
+  contributionDocumentRef: string;
+  contributionContainerId: 'contributionViewContainer';
+  contributionsConnectedEntity: string;
+  contributionProposalRef: string;
+  contributionShowStatusFilter: boolean;
 
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
@@ -213,6 +220,7 @@ export class DocumentEditorComponent
           config.user.connectedEntity ?? config.user.defaultEntity
         ).name;
         this.showStatusFilter = config.annotateAuthority === 'LEOS';
+        this.contributionShowStatusFilter = config.annotateAuthority === 'LEOS';
         this.documentService.setDocumentRefAndCategory(
           this.documentRef,
           this.documentType,
@@ -256,6 +264,9 @@ export class DocumentEditorComponent
           this.contributionForView = this.cleanupAndSerializeXML(
             contributionView.editableXml,
           );
+          this.contributionsConnectedEntity = this.connectedEntity;
+          this.contributionDocumentRef = this.documentRef;
+          this.contributionProposalRef = contributionView.proposalRef;
           this.isContributionForViewOpen = true;
           this.isViewContributionPaneCollapsed = false;
         }
@@ -462,6 +473,20 @@ export class DocumentEditorComponent
     hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
   ) {
     this.hideAnnotationsSplitter = hideAnnotationsSplitter;
+  }
+
+  onToggleContributionAnnotationsPaneCollapsed(
+    isContributionAnnotationPaneCollapsed = !this
+      .isContributionAnnotationPaneCollapsed,
+  ) {
+    (
+      document.querySelector(
+        'button.annotator-frame-button--sidebar_toggle',
+      ) as HTMLButtonElement
+    )?.click();
+    this.isContributionAnnotationPaneCollapsed =
+      isContributionAnnotationPaneCollapsed;
+    // if (!this.isContributionAnnotationPaneCollapsed) this.onHideAnnotationsSplitter(false);
   }
 
   handleEdit() {
@@ -710,6 +735,12 @@ export class DocumentEditorComponent
   onSidebarShown() {
     if (this.isAnnotationsPaneCollapsed) {
       this.onToggleAnnotationsPaneCollapsed();
+    }
+  }
+
+  onContributionSidebarShown() {
+    if (this.isContributionAnnotationPaneCollapsed) {
+      this.onToggleContributionAnnotationsPaneCollapsed();
     }
   }
 

@@ -627,141 +627,177 @@
         *ngIf="isContributionForViewOpen"
         class="contribution-view-merge-pane"
       >
-        <eui-page-column-header-body>
-          <div
-            class="eui-u-flex eui-u-flex-row justify-content-between w-100 app-u-gap-xs"
-            style="min-height: 35.99px"
+        <eui-page-columns>
+          <!--view Contribution Pane-->
+          <eui-page-column
+            #contributionViewPaneInternal
+            interactiveScrollbars
+            *ngIf="isContributionForViewOpen"
+            class="contribution-view-merge-pane-internal"
           >
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
-              <button
-                euiButton
-                euiIconButton
-                euiSizeS
-                [euiPrimary]="isAsyncScrollEnabled"
-                [euiSecondary]="!isAsyncScrollEnabled"
-                *ngIf="contributionForView"
-                (click)="handleAsyncScroll()"
-                [euiTooltip]="
-                  (isAsyncScrollEnabled
-                    ? 'page.editor.contribution.view.actions.synchronous-scrolling.disable'
-                    : 'page.editor.contribution.view.actions.synchronous-scrolling.enable'
-                  ) | translate
-                "
-                [showDelay]="tooltipsDelay"
+            <eui-page-column-header-body>
+              <div
+                class="eui-u-flex eui-u-flex-row justify-content-between w-100 app-u-gap-xs"
+                style="min-height: 35.99px"
               >
-                <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
-              </button>
-              <button
-                id="prev-change-contribution"
-                euiButton
-                euiIconButton
-                euiBasicButton
-                euiPrimary
-                euiSizeS
-                *ngIf="contributionForView"
-                (click)="handlePrevChangeContribution()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.next-change'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span class="eui-icon eui-icon-sort-asc"></span>
-              </button>
+                <div
+                  class="eui-u-flex eui-u-flex-row app-u-gap-xs"
+                  style="max-width: fit-content"
+                >
+                  <button
+                    euiButton
+                    euiIconButton
+                    euiSizeS
+                    [euiPrimary]="isAsyncScrollEnabled"
+                    [euiSecondary]="!isAsyncScrollEnabled"
+                    *ngIf="contributionForView"
+                    (click)="handleAsyncScroll()"
+                    [euiTooltip]="
+                      (isAsyncScrollEnabled
+                        ? 'page.editor.contribution.view.actions.synchronous-scrolling.disable'
+                        : 'page.editor.contribution.view.actions.synchronous-scrolling.enable'
+                      ) | translate
+                    "
+                    [showDelay]="tooltipsDelay"
+                  >
+                    <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
+                  </button>
+                  <button
+                    id="prev-change-contribution"
+                    euiButton
+                    euiIconButton
+                    euiBasicButton
+                    euiPrimary
+                    euiSizeS
+                    *ngIf="contributionForView"
+                    (click)="handlePrevChangeContribution()"
+                    [euiTooltip]="
+                      'page.editor.contribution.view.actions.next-change'
+                        | translate
+                    "
+                    [showDelay]="tooltipsDelay"
+                  >
+                    <span class="eui-icon eui-icon-sort-asc"></span>
+                  </button>
 
-              <button
-                id="next-change-contribution"
-                euiButton
-                euiIconButton
-                euiBasicButton
-                euiPrimary
-                euiSizeS
-                *ngIf="contributionForView"
-                (click)="handleNextChangeContribution()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.prev-change'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span class="eui-icon eui-icon-sort-desc"></span>
-              </button>
-            </div>
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
-              <select
-                euiSelect
-                name="action_nolabel"
-                aria-label="action nolabel"
-                (select)="onSelectAction($event)"
-              >
-                <option value="accept_selected" selected>
-                  {{
-                    'page.editor.contribution.view.actions.accept.selected'
-                      | translate
-                  }}
-                </option>
-                <option value="accept_proposed_version">
-                  {{
-                    'page.editor.contribution.view.actions.accept.proposed.version'
-                      | translate
-                  }}
-                </option>
-              </select>
-              <button
-                euiButton
-                euiPrimary
-                euiSizeS
-                *ngIf="contributionForView"
-                (click)="handleProceed()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply' | translate
-                "
-                [showDelay]="tooltipsDelay"
-                [disabled]="true"
-              >
-                {{ 'page.editor.contribution.view.actions.apply' | translate }}
-              </button>
-              <div class="eui-u-flex eui-u-mr-s">
-                <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
-                  'page.editor.contribution.view.actions.processed' | translate
-                }}</span>
-                <eui-slide-toggle
-                  (changed)="onChangeProcessedToggle($event)"
-                  [isChecked]="processed"
-                ></eui-slide-toggle>
+                  <button
+                    id="next-change-contribution"
+                    euiButton
+                    euiIconButton
+                    euiBasicButton
+                    euiPrimary
+                    euiSizeS
+                    *ngIf="contributionForView"
+                    (click)="handleNextChangeContribution()"
+                    [euiTooltip]="
+                      'page.editor.contribution.view.actions.prev-change'
+                        | translate
+                    "
+                    [showDelay]="tooltipsDelay"
+                  >
+                    <span class="eui-icon eui-icon-sort-desc"></span>
+                  </button>
+                </div>
+                <div
+                  class="eui-u-flex eui-u-flex-row app-u-gap-xs"
+                  style="max-width: fit-content"
+                >
+                  <select
+                    euiSelect
+                    name="action_nolabel"
+                    aria-label="action nolabel"
+                    (select)="onSelectAction($event)"
+                  >
+                    <option value="accept_selected" selected>
+                      {{
+                        'page.editor.contribution.view.actions.accept.selected'
+                          | translate
+                      }}
+                    </option>
+                    <option value="accept_proposed_version">
+                      {{
+                        'page.editor.contribution.view.actions.accept.proposed.version'
+                          | translate
+                      }}
+                    </option>
+                  </select>
+                  <button
+                    euiButton
+                    euiPrimary
+                    euiSizeS
+                    *ngIf="contributionForView"
+                    (click)="handleProceed()"
+                    [euiTooltip]="
+                      'page.editor.contribution.view.actions.apply' | translate
+                    "
+                    [showDelay]="tooltipsDelay"
+                    [disabled]="true"
+                  >
+                    {{
+                      'page.editor.contribution.view.actions.apply' | translate
+                    }}
+                  </button>
+                  <div class="eui-u-flex eui-u-mr-s">
+                    <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
+                      'page.editor.contribution.view.actions.processed'
+                        | translate
+                    }}</span>
+                    <eui-slide-toggle
+                      (changed)="onChangeProcessedToggle($event)"
+                      [isChecked]="processed"
+                    ></eui-slide-toggle>
+                  </div>
+
+                  <button
+                    euiButton
+                    euiIconButton
+                    euiSecondary
+                    euiSizeS
+                    euiOutline
+                    (click)="closeContributionsView()"
+                  >
+                    <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
+                  </button>
+                </div>
               </div>
-
-              <button
-                euiButton
-                euiIconButton
-                euiSecondary
-                euiSizeS
-                euiOutline
-                (click)="closeContributionsView()"
+            </eui-page-column-header-body>
+            <eui-page-column-body
+              class="eui-u-flex eui-u-flex-column align-items-center"
+              style="position: relative; overflow: auto"
+            >
+              <app-annex-document
+                id="contributionViewContainer"
+                [xml]="contributionForView"
+                class="sync-scroll"
+                [ngClass]="{ 'contribution-disabled-mode': processed }"
               >
-                <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
-              </button>
-            </div>
-          </div>
-        </eui-page-column-header-body>
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center"
-          style="position: relative; overflow: auto"
-        >
-          <app-annex-document
-            id="contributionViewContainer"
-            [xml]="contributionForView"
-            class="sync-scroll"
-            [ngClass]="{ 'contribution-disabled-mode': processed }"
+              </app-annex-document>
+            </eui-page-column-body>
+          </eui-page-column>
+          <!--          Contribution Annotations-->
+          <eui-page-column
+            #annotationsPaneInteral
+            class="eui-page-column--right-column annotations-pane"
+            [label]="'page.editor.annotations-pane.label' | translate"
+            isCollapsible
+            [isCollapsed]="isContributionAnnotationPaneCollapsed"
+            (collapsed)="onToggleContributionAnnotationsPaneCollapsed()"
+            style="flex-basis: 580px"
           >
-          </app-annex-document>
-        </eui-page-column-body>
+            <eui-page-column-body class="flex-grow-1">
+              <app-document-annotations
+                [documentId]="contributionDocumentRef"
+                [containerId]="contributionContainerId"
+                [connectedEntity]="contributionsConnectedEntity"
+                [proposalRef]="contributionProposalRef"
+                [permissions]="documentService.permissions$ | async"
+                [showStatusFilter]="contributionShowStatusFilter"
+                (sidebarShown)="onContributionSidebarShown()"
+                *ngIf="!milestoneViewData"
+              ></app-document-annotations>
+            </eui-page-column-body>
+          </eui-page-column>
+        </eui-page-columns>
       </eui-page-column>
 
       <app-draggable-splitter
