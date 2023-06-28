@@ -30,7 +30,7 @@ import eu.europa.ec.leos.model.user.User;
 @Service
 public class LeosSecuritySAMLUserService implements SAMLUserDetailsService {
 
-    final private SecurityUserProvider userProvider;
+    private final SecurityUserProvider userProvider;
 
     @Autowired
     public LeosSecuritySAMLUserService(SecurityUserProvider userProvider) {
@@ -42,12 +42,10 @@ public class LeosSecuritySAMLUserService implements SAMLUserDetailsService {
         try {
             User user = userProvider.getUserByLogin(credential.getNameID().getValue());
             AuthenticatedUser authenticatedUser = new AuthenticatedUser(user);
-            List<GrantedAuthority> allRoles = new ArrayList<GrantedAuthority>();
+            List<GrantedAuthority> allRoles = new ArrayList<>();
             if (user instanceof SecurityUser) {
                 List<String> leosRoles = ((SecurityUser) user).getRoles();
-                leosRoles.forEach(auth -> {
-                 allRoles.add(new SimpleGrantedAuthority(auth));
-                });
+                leosRoles.forEach(auth -> allRoles.add(new SimpleGrantedAuthority(auth)));
             }
             authenticatedUser.setAuthorities(allRoles);
             return authenticatedUser;

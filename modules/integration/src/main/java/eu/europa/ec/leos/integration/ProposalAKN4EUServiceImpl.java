@@ -59,8 +59,7 @@ public class ProposalAKN4EUServiceImpl implements AKN4EUService {
             throw new IllegalStateException("Not successfull conversion using the external service Akn4EU");
 
         } catch(Exception e){
-            LOG.error("Exception while calling external service Akn4EU", e);
-            throw e;
+            throw new Exception("Exception while calling external service Akn4EU", e);
         }
     }
 }

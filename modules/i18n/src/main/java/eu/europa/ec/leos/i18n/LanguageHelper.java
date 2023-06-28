@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.i18n;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -89,18 +89,19 @@ public class LanguageHelper {
 
     private @Nonnull Optional<Locale> resolveLocale(@Nullable String languageTag) {
         LOG.trace("Resolving locale from language tag... [langTag={}]", languageTag);
-        Optional<Locale> localeOptional = Optional.absent();
+        Optional<Locale> localeOptional = Optional.empty();
 
         try {
             if (StringUtils.isNotBlank(languageTag)) {
                 Locale locale = Locale.forLanguageTag(languageTag);
                 if ((locale != null) && StringUtils.isNotEmpty(locale.getLanguage())) {
                     localeOptional = Optional.of(locale);
-                    LOG.trace("Resolved locale: {} => {}", locale.toLanguageTag(), locale.getDisplayName(Locale.ENGLISH));
-                } else {
+                    if(LOG.isTraceEnabled())
+                        LOG.trace("Resolved locale: {} => {}", locale.toLanguageTag(), locale.getDisplayName(Locale.ENGLISH));
+                } else if(LOG.isDebugEnabled()){
                     LOG.debug("Discarding invalid locale resolved from language tag!");
                 }
-            } else {
+            } else if(LOG.isDebugEnabled()){
                 LOG.debug("Skipping locale resolution from blank language tag!");
             }
         } catch (Exception ex) {
@@ -125,7 +126,7 @@ public class LanguageHelper {
     }
 
     public Locale getCurrentLocale() {
-        // FIXME dynamically obtain the current locale
+        // FIX ME dynamically obtain the current locale
         return getDefaultLocale();
     }
 
@@ -161,8 +162,7 @@ public class LanguageHelper {
 
     public String getLanguageCode(String languageDescription) {
         String languageCode = null;
-        Locale currentLocale = getCurrentLocale();
-        for (Locale loc : currentLocale.getAvailableLocales()) {
+        for (Locale loc : Locale.getAvailableLocales()) {
             if (loc.getDisplayLanguage().equals(languageDescription)) {
                 languageCode = loc.getISO3Language();
                 break;

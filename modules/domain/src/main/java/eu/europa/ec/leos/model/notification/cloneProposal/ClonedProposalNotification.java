@@ -3,11 +3,12 @@ package eu.europa.ec.leos.model.notification.cloneProposal;
 import eu.europa.ec.leos.model.notification.EmailNotification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ClonedProposalNotification implements EmailNotification {
 
-    private List<String> recipients = new ArrayList<String>();
+    private List<String> recipients = new ArrayList<>();
     private String recipient;
     private String emailBody;
     private String emailSubject;
@@ -28,9 +29,7 @@ public class ClonedProposalNotification implements EmailNotification {
     private void addRecipients(String recipient) {
         if(recipient.indexOf(";") != -1) {
            String[] recipientsList = recipient.split(";");
-           for(String r : recipientsList) {
-               recipients.add(r);
-           }
+           Collections.addAll(recipients, recipientsList);
         } else {
             recipients.add(recipient);
         }
@@ -104,7 +103,7 @@ public class ClonedProposalNotification implements EmailNotification {
         this.legFileName = legFileName;
     }
 
-    public String getEmailSubjectKey() { return "notification.clone.proposal.subject"; };
+    public String getEmailSubjectKey() { return "notification.clone.proposal.subject"; }
 
     public String getProposalUrl() { return proposalUrl; }
 

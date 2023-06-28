@@ -21,6 +21,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
 
 public class MilestoneHelper {
 
+    private MilestoneHelper(){
+    }
     private static final Logger LOG = LoggerFactory.getLogger(MilestoneHelper.class);
 
     private static final String TOC_HTML = "_toc.html";
@@ -33,7 +35,7 @@ public class MilestoneHelper {
     public static Map<String, Object> filterAndSortFiles(Map<String, Object> files, String fileFilter) {
         final List<String> tabOrder = Arrays.asList(XmlHelper.ANNEX_FILE_PREFIX, XmlHelper.REG_FILE_PREFIX, XmlHelper.DIR_FILE_PREFIX, XmlHelper.DEC_FILE_PREFIX,
                 XmlHelper.MEMORANDUM_FILE_PREFIX);
-        Map<String, Object> sortedFiles = files.entrySet().stream().
+        return files.entrySet().stream().
                 filter(e -> (!e.getKey().contains(TOC_HTML) && e.getKey().endsWith(fileFilter))).
                 sorted(Collections.reverseOrder(Comparator.comparing((Map.Entry e) -> {
                     String key = e.getKey().toString();
@@ -46,15 +48,13 @@ public class MilestoneHelper {
                 }))).
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (e1, e2) -> e2, LinkedHashMap::new));
-        return sortedFiles;
     }
 
     public static Map<String, Object> getMilestoneFiles(File legFileTemp, LegDocument legDocument) throws IOException {
         Content content = legDocument.getContent().getOrError(() -> "Document content is required!");
         InputStream is = content.getSource().getInputStream();
         FileUtils.copyInputStreamToFile(is, legFileTemp);
-        Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(legFileTemp, MILESTONE_DIR);
-        return unzippedFiles;
+        return  ZipPackageUtil.unzipFiles(legFileTemp, MILESTONE_DIR);
     }
 
     public static Map<String, Object> populateAnnexAddedMap(Map<String, Object> files, LegDocument legDocument,
@@ -164,12 +164,12 @@ public class MilestoneHelper {
             if (file.isDirectory()) {
                 recursiveDelete(file);
             } else {
-                if (!file.delete()) {
+                if (!Files.deleteIfExists(file.toPath())) {
                     throw new IOException("Could not delete: " + file.getAbsolutePath());
                 }
             }
         }
-        if (!rootDir.delete()) {
+        if (!Files.deleteIfExists(rootDir.toPath())) {
             throw new IOException("Could not delete: " + rootDir.getAbsolutePath());
         }
     }

@@ -13,8 +13,6 @@
  */
 package eu.europa.ec.leos.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.vote.RoleVoter;
@@ -26,7 +24,6 @@ import java.util.*;
 
 @Component
 class LeosRolePermissionVoter extends RoleVoter {
-    private static final Logger LOG = LoggerFactory.getLogger(LeosRolePermissionVoter.class);
 
     @Autowired
     LeosPermissionAuthorityMap authorityMap;

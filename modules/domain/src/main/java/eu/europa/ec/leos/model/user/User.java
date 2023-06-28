@@ -78,11 +78,6 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    //Ideally it should not be possible to change the login once created.
-    private void setLogin(String login) {
-        this.login = login;
-    }
-
     protected void setName(String name) {
         this.name = name;
     }

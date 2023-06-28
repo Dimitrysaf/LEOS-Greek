@@ -31,10 +31,13 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftAction;
 
 class IndentContentComparatorHelper {
-    public static final List<String> ID_PREFIXES = Arrays.asList(XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
+    protected static final List<String> ID_PREFIXES = Arrays.asList(XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
             XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
             XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX,
             IndentConversionHelper.INDENT_PLACEHOLDER_ID_PREFIX);
+
+    private IndentContentComparatorHelper() {
+    }
 
     public static Element findElementInOtherContext(Element element, Map<String, Element> otherContentElements) {
         StringBuilder elementId = new StringBuilder(element.getTagId());
@@ -70,7 +73,7 @@ class IndentContentComparatorHelper {
         return tocTags;
     }
 
-    public static Boolean isElementRemovedInOtherContext(Map<String, Element> otherContentElements, Element element) {
+    public static boolean isElementRemovedInOtherContext(Map<String, Element> otherContentElements, Element element) {
         Element oldElementInNewContent = otherContentElements.get(XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX + element.getTagId());
 
         if (oldElementInNewContent != null) {
@@ -90,7 +93,7 @@ class IndentContentComparatorHelper {
         return false;
     }
 
-    private static Boolean isElementSoftMoveToOrSoftDeletedInOtherContext(Map<String, Element> otherContentElements, Element element) {
+    private static boolean isElementSoftMoveToOrSoftDeletedInOtherContext(Map<String, Element> otherContentElements, Element element) {
         Element oldElementInNewContent = otherContentElements.get(XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX + element.getTagId());
 
         if (oldElementInNewContent != null) {
@@ -101,9 +104,9 @@ class IndentContentComparatorHelper {
         }
     }
 
-    public static Boolean containsNotDeletedElementsInOtherContext(Map<String, Element> otherContentElements, Element element) {
+    public static boolean containsNotDeletedElementsInOtherContext(Map<String, Element> otherContentElements, Element element) {
         return (!isECOrigin(element) || (element.getTagName().equals(LIST) && !isElementSoftMoveToOrSoftDeletedInOtherContext(otherContentElements,
-                element))) && getNotDeletedElementsFromContent(otherContentElements, element).size() > 0;
+                element))) && !getNotDeletedElementsFromContent(otherContentElements, element).isEmpty();
     }
 
     public static boolean wasChildOfPreviousSibling(Element newElement, ContentComparatorContext context, int currentIndex) {
@@ -212,7 +215,7 @@ class IndentContentComparatorHelper {
         }
     }
 
-    public static Boolean isElementIndentedInOtherContext(Map<String, Element> otherContextElements, Element element) {
+    public static boolean isElementIndentedInOtherContext(Map<String, Element> otherContextElements, Element element) {
         if (element.getTagName().equals(LIST)) {
             return (containsOnlyIndentedElements(otherContextElements, element));
         }
@@ -237,7 +240,7 @@ class IndentContentComparatorHelper {
                 || (!hasIndentedParent(oldElementInOtherContent) && hasIndentedParent(element)))));
     }
 
-    public static Boolean isRemovedElementIndentedInNewContext(ContentComparatorContext context, Element element) {
+    public static boolean isRemovedElementIndentedInNewContext(ContentComparatorContext context, Element element) {
         Element oldElementInNewContent = context.getNewContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + element.getTagId());
 
         if (oldElementInNewContent != null && isIndentAction(oldElementInNewContent.getNode())) {
@@ -317,12 +320,11 @@ class IndentContentComparatorHelper {
                     && !isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
                 return false;
             }
-        } else if (attrValue != null && attrValue.equalsIgnoreCase(CONTENT_ADDED_CLASS)) {
-            if ((Arrays.asList(SUBPOINT, SUBPARAGRAPH).contains(element.getTagName())
-                    && isSoftAction(element.getNode(), SoftActionType.TRANSFORM)) ||
-                    (LIST.equalsIgnoreCase(element.getTagName()) && isElementIndented(element.getChildren().get(0)))) {
-                return false;
-            }
+        } else if (attrValue != null && attrValue.equalsIgnoreCase(CONTENT_ADDED_CLASS)
+            && (Arrays.asList(SUBPOINT, SUBPARAGRAPH).contains(element.getTagName())
+                && isSoftAction(element.getNode(), SoftActionType.TRANSFORM)) ||
+                (LIST.equalsIgnoreCase(element.getTagName()) && isElementIndented(element.getChildren().get(0)))) {
+            return false;
         }
         return true;
     }
@@ -356,12 +358,9 @@ class IndentContentComparatorHelper {
         return true;
     }
 
-    private static Boolean hasIndentedParent(Element element) {
+    private static boolean hasIndentedParent(Element element) {
         Element parent = element.getParent();
-        if (parent != null && (isElementIndented(parent) || hasIndentedParent(parent))) {
-            return true;
-        }
-        return false;
+        return  (parent != null && (isElementIndented(parent) || hasIndentedParent(parent)));
     }
 
     private static boolean isChildOf(Element parent, Element element) {
@@ -405,23 +404,18 @@ class IndentContentComparatorHelper {
         if (!isPartOfList) {
             return false;
         }
-        Element grandParent = parent != null ? parent.getParent() : null;
+        Element grandParent = parent.getParent();
         boolean isFirstElementIndented = grandParent != null
                 && isElementIndentedInOtherContext(contentElements, grandParent);
         if (!isFirstElementIndented) {
             return false;
         }
-        Element grandParentInOtherContext = grandParent != null ? contentElements.get(grandParent.getTagId()) : null;
+        Element grandParentInOtherContext = contentElements.get(grandParent.getTagId());
         if (grandParentInOtherContext == null) {
-            grandParentInOtherContext = grandParent != null ? contentElements.get(XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + grandParent.getTagId()) :
-                    null;
+            grandParentInOtherContext = contentElements.get(XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + grandParent.getTagId());
         }
         String softTransAttr = grandParentInOtherContext != null && grandParentInOtherContext.getNode() != null
                 ? XercesUtils.getAttributeValue(grandParentInOtherContext.getNode(), XmlHelper.LEOS_SOFT_TRANS_FROM) : null;
-        boolean isFirstElementTransformed = softTransAttr != null && softTransAttr.equals(element.getTagId());
-        if (!isFirstElementTransformed) {
-            return false;
-        }
-        return true;
+        return  softTransAttr != null && softTransAttr.equals(element.getTagId());
     }
 }

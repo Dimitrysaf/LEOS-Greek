@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-abstract public class ValidationEmailNotification implements EmailNotification {
+public abstract class ValidationEmailNotification implements EmailNotification {
 
-    private List<String> recipients = new ArrayList<String>();
+    private List<String> recipients = new ArrayList<>();
     private List<String> errors;
     private String title;
     private String updatedBy;
@@ -17,7 +17,7 @@ abstract public class ValidationEmailNotification implements EmailNotification {
     private String emailBody;
     private String emailSubject;
 
-    public ValidationEmailNotification(String recipient, List<String> errors, String updatedBy, Date updatedOn, String title) {
+    protected ValidationEmailNotification(String recipient, List<String> errors, String updatedBy, Date updatedOn, String title) {
         this.errors = errors;
         this.updatedBy = updatedBy;
         this.updatedOn = updatedOn;
@@ -83,6 +83,6 @@ abstract public class ValidationEmailNotification implements EmailNotification {
         return updatedOn;
     }
 
-    abstract public String getEmailSubjectKey();
+    public abstract String getEmailSubjectKey();
 
 }

@@ -62,6 +62,9 @@ import java.util.concurrent.TimeUnit;
 public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceMandateImpl.class);
+    private static final String PROPOSAL = "Proposal_";
+    private static final String AKN_2_DW = "_AKN2DW_";
+    private static final String DOCX = ".docx";
 
     public DocumentApiServiceMandateImpl(DocumentContentService documentContentService, PackageService packageService,
                                          ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
@@ -82,7 +85,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     @Override
     protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
         try {
-            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+            final String jobFileName = PROPOSAL + proposalId + AKN_2_DW + System.currentTimeMillis() + DOCX;
             byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             LOG.info("Downloaded DocuWrite Document: {}", jobFileName);
             return new DownloadVersionResponse(jobFileName, exportedBytes);
@@ -122,7 +125,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
                     "docuWrite");
         } catch (Exception ex) {
             LOG.error("Error occurred while requesting download of xml comparison files", ex);
-            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid " + ex);
+            throw new IOException("Unexpected error occurred please make sure the compared versions provided are valid ", ex);
         }
     }
 
@@ -145,7 +148,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
             final Proposal proposal = getProposal(currentDocument.getId());
             if (proposal != null) {
-                final String jobFileName = "Proposal_" + proposal.getId() + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+                final String jobFileName = PROPOSAL + proposal.getId() + AKN_2_DW + System.currentTimeMillis() + DOCX;
                 final byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"),
                         proposal.getId(), exportOptions);
 
@@ -209,8 +212,8 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         Proposal proposal = getProposal(currentDocumentId);
         String proposalId = proposal.getId();
         String proposalRef = proposal.getMetadata().get().getRef();
-        final String jobFileName = isExportCleanVersion ? "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx"
-                : "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
+        final String jobFileName = Boolean.TRUE.equals(isExportCleanVersion) ? PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + DOCX
+                : PROPOSAL + proposalId + AKN_2_DW + System.currentTimeMillis() + DOCX;
 
         ExportDocument exportDocument = null;
         LeosExportStatus processedStatus = LeosExportStatus.PROCESSED_ERROR;
@@ -233,10 +236,12 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             LOG.error("Unexpected error occurred while using ExportService", e);
             throw new ExportException(messageHelper.getMessage("export.package.error.message", e.getMessage()));
         } finally {
-            exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+            if ((exportDocument != null)){
+                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+            }
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
                 exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
-                //TODO: Send notification to the client
+                //TO DO: Send notification to the client
             }
         }
     }

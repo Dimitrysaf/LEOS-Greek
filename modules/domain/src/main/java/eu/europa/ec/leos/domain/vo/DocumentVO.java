@@ -66,7 +66,7 @@ public class DocumentVO {
             this.documentType = xmlDocument.getCategory();
 
             populateMetadataValues(xmlDocument);
-            // FIXME set remaining properties
+            // FIX ME set remaining properties
         }
     }
 
@@ -147,11 +147,11 @@ public class DocumentVO {
                 this.setRef(metadataP.getRef());
                 Proposal proposal = ((Proposal) xmlDocument);
                 if(proposal.isClonedProposal()) {
-                    CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
-                    cloneProposalMetadataVO.setClonedProposal(proposal.isClonedProposal());
-                    cloneProposalMetadataVO.setOriginRef(proposal.getOriginRef());
-                    cloneProposalMetadataVO.setRevisionStatus(proposal.getRevisionStatus());
-                    this.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+                    CloneProposalMetadataVO cloneProposalMetaVO = new CloneProposalMetadataVO();
+                    cloneProposalMetaVO.setClonedProposal(proposal.isClonedProposal());
+                    cloneProposalMetaVO.setOriginRef(proposal.getOriginRef());
+                    cloneProposalMetaVO.setRevisionStatus(proposal.getRevisionStatus());
+                    this.setCloneProposalMetadataVO(cloneProposalMetaVO);
                 }
                 break;
             case MEMORANDUM:
@@ -166,6 +166,8 @@ public class DocumentVO {
                 this.getMetadata().setEeaRelevance(metadataM.getEeaRelevance());
                 this.setRef(metadataM.getRef());
 
+                break;
+            default:
                 break;
         }
     }
@@ -251,12 +253,10 @@ public class DocumentVO {
     }
 
     public LeosCategory getCategory() {
-        return documentType;
+        return getDocumentType();
     }
 
-    public void setCategory(LeosCategory documentType) {
-        this.documentType = documentType;
-    }
+    public void setCategory(LeosCategory documentType) { setDocumentType(documentType); }
 
     public int getDocNumber() {
         return docNumber;
@@ -391,8 +391,7 @@ public class DocumentVO {
         if (getUpdatedBy() != null ? !getUpdatedBy().equals(that.getUpdatedBy()) : that.getUpdatedBy() != null) return false;
         if (getUpdatedOn() != null ? !getUpdatedOn().equals(that.getUpdatedOn()) : that.getUpdatedOn() != null) return false;
         if (getLanguage() != null ? !getLanguage().equals(that.getLanguage()) : that.getLanguage() != null) return false;
-        if (getTemplate() != null ? !getTemplate().equals(that.getTemplate()) : that.getTemplate() != null) return false;
-        return true;
+        return (getTemplate() != null ? getTemplate().equals(that.getTemplate()) : that.getTemplate() == null);
     }
 
     @Override

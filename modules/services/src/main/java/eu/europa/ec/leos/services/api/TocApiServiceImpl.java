@@ -32,6 +32,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,18 +58,16 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 public abstract class TocApiServiceImpl implements TocApiService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TocApiServiceImpl.class);
+    private static final String DOCUMENT_CONTENT_IS_REQUIRED = "Document content is required!";
 
     private Provider<StructureContext> structureContextProvider;
     private BillService billService;
     private AnnexService annexService;
-
-    private String docTemplate;
-
     private MessageHelper messageHelper;
     private ExplanatoryService explanatoryService;
 
     @Autowired
-    public TocApiServiceImpl(Provider<StructureContext> structureContextProvider, BillService billService, AnnexService annexService,
+    protected TocApiServiceImpl(Provider<StructureContext> structureContextProvider, BillService billService, AnnexService annexService,
                              MessageHelper messageHelper, ExplanatoryService explanatoryService) {
         this.structureContextProvider = structureContextProvider;
         this.billService = billService;
@@ -85,17 +84,17 @@ public abstract class TocApiServiceImpl implements TocApiService {
         switch (category) {
             case BILL:
                 Bill bill = billService.findBillByRef(documentRef);
-                xmlContent = bill.getContent().getOrError(() -> "Document content is required!").getSource().getBytes();
+                xmlContent = bill.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(bill.getMetadata().getOrError(() -> "BIll metadata is required!").getDocTemplate());
                 break;
             case ANNEX:
                 Annex annex = annexService.findAnnexByRef(documentRef);
-                xmlContent = annex.getContent().getOrError(() -> "Document content is required!").getSource().getBytes();
+                xmlContent = annex.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
                 break;
             case COUNCIL_EXPLANATORY:
                 Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
-                xmlContent = explanatory.getContent().getOrError(() -> "Document content is required!").getSource().getBytes();
+                xmlContent = explanatory.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
                 break;
             default:
@@ -127,7 +126,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         TocDropResult result = new TocDropResult(true, "toc.edit.window.drop.success.message",
                 draggedTocItemVO, targetTocItemVO);
 
-        if (!isItemDroppedOnSameTarget(result, draggedTocItemVO, targetTocItemVO)) {
+        if (draggedTocItemVO != null && !isItemDroppedOnSameTarget(result, draggedTocItemVO, targetTocItemVO)) {
             validateAddingItemAsChildOrSibling(result, draggedTocItemVO, targetTocItemVO, tableOfContentRules,
                     parentTocItemVO, request.getPosition());
         }
@@ -173,7 +172,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 equals(getTagValueFromTocItemVo(targetItem))) {
             TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
             return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position);
-        } else if (targetTocItems != null && targetTocItems.size() > 0 && targetTocItems.contains(sourceItem.getTocItem())) {
+        } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceItem.getTocItem())) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
             TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, false);
             return targetTocItem.isRoot() || validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position);
@@ -244,7 +243,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
                                                              final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
-        if (parentTocItems == null || parentTocItems.size() == 0 || !parentTocItems.contains(sourceItem.getTocItem())
+        if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.contains(sourceItem.getTocItem())
                 || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");

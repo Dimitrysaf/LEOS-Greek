@@ -30,7 +30,7 @@ import java.util.List;
 @Service
 public class LeosSecurityUserService extends PreAuthenticatedGrantedAuthoritiesUserDetailsService {
 
-    final private SecurityUserProvider userProvider;
+    private final SecurityUserProvider userProvider;
 
     @Autowired
     public LeosSecurityUserService(SecurityUserProvider userProvider) {
@@ -47,15 +47,12 @@ public class LeosSecurityUserService extends PreAuthenticatedGrantedAuthoritiesU
         try {
             User user = userProvider.getUserByLogin(token.getName());
             AuthenticatedUser authenticatedUser = new AuthenticatedUser(user);
-            List<GrantedAuthority> allRoles = new ArrayList<GrantedAuthority>();
-            /*Add all the authorities {application specific + ecas specific} to the AuthenticatedUser object
-             *as a collection of {GrantedAuthority}
-            */
+            List<GrantedAuthority> allRoles = new ArrayList<>();
+            // Add all the authorities (application specific + ecas specific) to the AuthenticatedUser object
+            // as a collection of  GrantedAuthority
             if(user instanceof SecurityUser) {
                 List<String> leosRoles = ((SecurityUser) user).getRoles();
-                leosRoles.forEach(auth -> {
-                	allRoles.add(new SimpleGrantedAuthority(auth));
-                });
+                leosRoles.forEach(auth -> allRoles.add(new SimpleGrantedAuthority(auth)));
             }
             allRoles.addAll(roles);
             authenticatedUser.setAuthorities(allRoles);

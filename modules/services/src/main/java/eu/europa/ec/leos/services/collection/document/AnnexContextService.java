@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,11 @@ import java.util.Map;
 public class AnnexContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnexContextService.class);
+    private static final String ANNEX_PACKAGE_IS_REQUIRED = "Annex package is required!";
+    private static final String ANNEX_PURPOSE_IS_REQUIRED = "Annex purpose is required!";
+    private static final String ANNEX_TYPE_IS_REQUIRED = "Annex type is required!";
+    private static final String ANNEX_NUMBER_IS_REQUIRED = "Annex number is required";
+    private static final String ANNEX_METADATA_IS_REQUIRED = "Annex metadata is required!";
 
     private final TemplateService templateService;
     private final AnnexService annexService;
@@ -74,7 +80,7 @@ public class AnnexContextService {
         this.annexService = annexService;
         this.proposalService = proposalService;
         this.securityService = securityService;
-        this.actionMsgMap = new HashMap<>();
+        this.actionMsgMap = new EnumMap<>(ContextActionService.class);
     }
 
     public void useTemplate(String template) {
@@ -93,19 +99,19 @@ public class AnnexContextService {
     }
 
     public void usePackage(LeosPackage leosPackage) {
-        Validate.notNull(leosPackage, "Annex package is required!");
+        Validate.notNull(leosPackage, ANNEX_PACKAGE_IS_REQUIRED);
         LOG.trace("Using Annex package... [id={}, path={}]", leosPackage.getId(), leosPackage.getPath());
         this.leosPackage = leosPackage;
     }
 
     public void usePurpose(String purpose) {
-        Validate.notNull(purpose, "Annex purpose is required!");
+        Validate.notNull(purpose, ANNEX_PURPOSE_IS_REQUIRED);
         LOG.trace("Using Annex purpose... [purpose={}]", purpose);
         this.purpose = purpose;
     }
     
     public void useType(String type) {
-        Validate.notNull(type, "Annex type is required!");
+        Validate.notNull(type, ANNEX_TYPE_IS_REQUIRED);
         LOG.trace("Using Annex type... [type={}]", type);
         this.type = type;
     }
@@ -168,16 +174,16 @@ public class AnnexContextService {
     public Annex executeCreateAnnex() {
         LOG.trace("Executing 'Create Annex' use case...");
 
-        Validate.notNull(leosPackage, "Annex package is required!");
+        Validate.notNull(leosPackage, ANNEX_PACKAGE_IS_REQUIRED);
         Validate.notNull(annex, "Annex template is required!");
         Validate.notNull(collaborators, "Annex collaborators are required!");
-        Validate.notNull(annexNumber, "Annex number is required");
+        Validate.notNull(annexNumber, ANNEX_NUMBER_IS_REQUIRED);
 
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), ANNEX_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "Annex purpose is required!");
-        Validate.notNull(type, "Annex type is required!");
+        Validate.notNull(purpose, ANNEX_PURPOSE_IS_REQUIRED);
+        Validate.notNull(type, ANNEX_TYPE_IS_REQUIRED);
         
         AnnexMetadata metadata = metadataOption.get()
                 .builder()
@@ -196,12 +202,12 @@ public class AnnexContextService {
 
     public Annex executeImportAnnex() {
         LOG.trace("Executing 'Import Annex' use case...");
-        Validate.notNull(leosPackage, "Annex package is required!");
+        Validate.notNull(leosPackage, ANNEX_PACKAGE_IS_REQUIRED);
         Validate.notNull(annex, "Annex template is required!");
         Validate.notNull(collaborators, "Annex collaborators are required!");
-        Validate.notNull(annexNumber, "Annex number is required");
-        Validate.notNull(purpose, "Annex purpose is required!");
-        Validate.notNull(type, "Annex type is required!");
+        Validate.notNull(annexNumber, ANNEX_NUMBER_IS_REQUIRED);
+        Validate.notNull(purpose, ANNEX_PURPOSE_IS_REQUIRED);
+        Validate.notNull(type, ANNEX_TYPE_IS_REQUIRED);
         
         final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
         AnnexMetadata metadataDocument = (AnnexMetadata) annexDocument.getMetadataDocument();
@@ -223,12 +229,12 @@ public class AnnexContextService {
 
     public void executeUpdateAnnexMetadata() {
         LOG.trace("Executing 'Update annex metadata' use case...");
-        Validate.notNull(purpose, "Annex purpose is required!");
+        Validate.notNull(purpose, ANNEX_PURPOSE_IS_REQUIRED);
         Validate.notNull(annexId, "Annex id is required!");
 
         annex = annexService.findAnnex(annexId, true);
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), ANNEX_METADATA_IS_REQUIRED);
 
         // Updating only purpose at this time. other metadata needs to be set, if needed
         AnnexMetadata annexMetadata = metadataOption.get()
@@ -243,11 +249,11 @@ public class AnnexContextService {
         LOG.trace("Executing 'Update annex index' use case...");
         Validate.notNull(annexId, "Annex id is required!");
         Validate.notNull(index, "Annex index is required!");
-        Validate.notNull(annexNumber, "Annex number is required");
+        Validate.notNull(annexNumber, ANNEX_NUMBER_IS_REQUIRED);
         Validate.notNull(actionMsgMap, "Action Map is required");
         annex = annexService.findAnnex(annexId, true);
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), ANNEX_METADATA_IS_REQUIRED);
         AnnexMetadata metadata = metadataOption.get();
         AnnexMetadata annexMetadata = metadata
                 .builder()
@@ -262,7 +268,7 @@ public class AnnexContextService {
         annex = annexService.findAnnex(annexId, true); //Get the existing annex document
         
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Annex metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), ANNEX_METADATA_IS_REQUIRED);
         AnnexMetadata metadata = metadataOption.get();
         AnnexMetadata annexMetadata = metadata
                 .builder()

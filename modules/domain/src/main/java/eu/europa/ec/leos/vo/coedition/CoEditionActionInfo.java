@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CoEditionActionInfo {
 
-    public static enum Operation {
+    public enum Operation {
         STORE("store"),
         REMOVE("remove"),
         EXISTS("exists");

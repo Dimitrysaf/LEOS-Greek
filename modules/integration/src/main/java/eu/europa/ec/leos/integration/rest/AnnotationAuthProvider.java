@@ -27,7 +27,7 @@ class AnnotationAuthProvider {
      */
     public TokenJson getToken(String jwtToken, String proposalRef) {
         String tokenURI = annotationHost + "token";
-        MultiValueMap<String, String> requestPayload = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> requestPayload = new LinkedMultiValueMap<>();
         requestPayload.add("grant_type", "jwt-bearer");
         requestPayload.add("assertion", jwtToken);
         requestPayload.add("context", proposalRef);

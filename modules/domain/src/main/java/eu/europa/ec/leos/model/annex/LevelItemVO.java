@@ -13,7 +13,7 @@ public class LevelItemVO implements Serializable {
     private int levelDepth;
     private String origin;
     
-    private List<LevelItemVO> children = new ArrayList<LevelItemVO>();
+    private List<LevelItemVO> children = new ArrayList<>();
     
     public String getId() {
         return id;

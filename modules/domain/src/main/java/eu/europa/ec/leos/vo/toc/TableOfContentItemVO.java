@@ -436,8 +436,8 @@ public class TableOfContentItemVO implements Serializable {
     }
 
     public boolean containsItem(String aknTag) {
-        List<TableOfContentItemVO> childItems = this.childItems;
-        for(TableOfContentItemVO child : childItems) {
+        List<TableOfContentItemVO> chldItms = this.childItems;
+        for(TableOfContentItemVO child : chldItms) {
             if(child.getTocItem().getAknTag().value().equals(aknTag)) {
                 return true;
             }
@@ -446,8 +446,8 @@ public class TableOfContentItemVO implements Serializable {
     }
 
     public boolean containsOnlySameIndentType(NumberingType numberingType) {
-        List<TableOfContentItemVO> childItems = this.childItems;
-        for(TableOfContentItemVO child : childItems) {
+        List<TableOfContentItemVO> chldItms = this.childItems;
+        for(TableOfContentItemVO child : chldItms) {
             if(child.getTocItem().getAknTag().value().equals("indent") &&
                     child.getTocItem().getNumberingType() != numberingType) {
                 return false;
@@ -564,9 +564,8 @@ public class TableOfContentItemVO implements Serializable {
         TableOfContentItemVO that = (TableOfContentItemVO) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (node != null ? !node.equals(that.node) : that.node != null) return false;
+        return  node != null ? node.equals(that.node) : that.node == null;
 
-        return true;
     }
 
     @Override
@@ -586,49 +585,49 @@ public class TableOfContentItemVO implements Serializable {
         final String RIGHT_CHAR = "\n";
         final String LEFT_CHAR = "\t";
 
-        String LEFT_PAD_CLASSNAME = calculateLeftPadd(deep, LEFT_CHAR);
-        String LEFT_PAD = calculateLeftPadd(deep + 1, LEFT_CHAR);
+        String leftPadClassname = calculateLeftPadd(deep, LEFT_CHAR);
+        String leftPad = calculateLeftPadd(deep + 1, LEFT_CHAR);
 
         final StringBuilder sb = new StringBuilder(RIGHT_CHAR);
-        sb.append(LEFT_PAD_CLASSNAME).append( "TableOfContentItemVO[").append(RIGHT_CHAR);
-        addFieldIfNotNull("id", item.id, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("tocItem", item.tocItem != null ? item.tocItem.getAknTag() : null, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("node", item.node, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("originAttr", item.originAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("number", item.number, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("initialNum", item.initialNum, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("originNumAttr", item.originNumAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("heading", item.heading, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("originHeadingAttr", item.originHeadingAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("list", item.list, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("movedOnEmptyParent", item.movedOnEmptyParent, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("undeleted", item.undeleted, LEFT_PAD, RIGHT_CHAR, sb);
-        sb.append(LEFT_PAD + "parentItem=").append(getParentString(item.parentItem)).append(RIGHT_CHAR);
-        addFieldIfNotNull("softActionAttr", item.softActionAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("isSoftActionRoot", item.isSoftActionRoot, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("softMoveTo", item.softMoveTo, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("softMoveFrom", item.softMoveFrom, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("softUserAttr", item.softUserAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addDateIfNotNull("softDateAttr", item.softDateAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addListFieldIfNotNull("coEditionVos", item.coEditionVos, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("isAffected", item.isAffected, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("isNumberingToggled", item.isNumberingToggled, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("numSoftActionAttr", item.numSoftActionAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("headingSoftActionAttr", item.headingSoftActionAttr, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("restored", item.restored, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("itemDepth", item.itemDepth, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("originalIndentLevel", item.originalIndentLevel, LEFT_PAD, RIGHT_CHAR, sb);
-        addFieldIfNotNull("elementNumberId", item.elementNumberId, LEFT_PAD, RIGHT_CHAR, sb);
+        sb.append(leftPadClassname).append( "TableOfContentItemVO[").append(RIGHT_CHAR);
+        addFieldIfNotNull("id", item.id, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("tocItem", item.tocItem != null ? item.tocItem.getAknTag() : null, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("node", item.node, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("originAttr", item.originAttr, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("number", item.number, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("initialNum", item.initialNum, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("originNumAttr", item.originNumAttr, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("heading", item.heading, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("originHeadingAttr", item.originHeadingAttr, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("list", item.list, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("movedOnEmptyParent", item.movedOnEmptyParent, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("undeleted", item.undeleted, leftPad, RIGHT_CHAR, sb);
+        sb.append(leftPad + "parentItem=").append(getParentString(item.parentItem)).append(RIGHT_CHAR);
+        addFieldIfNotNull("softActionAttr", item.softActionAttr, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("isSoftActionRoot", item.isSoftActionRoot, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("softMoveTo", item.softMoveTo, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("softMoveFrom", item.softMoveFrom, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("softUserAttr", item.softUserAttr, leftPad, RIGHT_CHAR, sb);
+        addDateIfNotNull("softDateAttr", item.softDateAttr, leftPad, RIGHT_CHAR, sb);
+        addListFieldIfNotNull("coEditionVos", item.coEditionVos, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("isAffected", item.isAffected, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("isNumberingToggled", item.isNumberingToggled, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("numSoftActionAttr", item.numSoftActionAttr, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("headingSoftActionAttr", item.headingSoftActionAttr, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("restored", item.restored, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("itemDepth", item.itemDepth, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("originalIndentLevel", item.originalIndentLevel, leftPad, RIGHT_CHAR, sb);
+        addFieldIfNotNull("elementNumberId", item.elementNumberId, leftPad, RIGHT_CHAR, sb);
 
-        if(item.childItems.size() > 0) {
+        if(!item.childItems.isEmpty()) {
             final StringBuilder sbChildren = new StringBuilder();
             for (TableOfContentItemVO child : item.childItems){
                 sbChildren.append(printTocAsTree(child, deep + 2));
             }
-            sb.append(LEFT_PAD).append("childItems=[").append(sbChildren).append(RIGHT_CHAR);
+            sb.append(leftPad).append("childItems=[").append(sbChildren).append(RIGHT_CHAR);
         }
 
-        sb.append(LEFT_PAD_CLASSNAME).append("]");
+        sb.append(leftPadClassname).append("]");
         return sb.toString();
     }
 

@@ -63,6 +63,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
@@ -87,6 +88,7 @@ import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 @Instance(InstanceType.COUNCIL)
 public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanatoryApiService {
     private static final Logger LOG = LoggerFactory.getLogger(MandateCouncilExplanatoryApiServiceImpl.class);
+    private static final String EXPLANATORY_METADATA_IS_REQUIRED = "Explanatory metadata is required!";
 
     @Autowired
     MessageHelper messageHelper;
@@ -142,7 +144,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.deleteElement(explanatory, elementId, elementName);
 
         final String updatedLabel = generateLabel(elementId, explanatory);
@@ -155,7 +157,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName, elementFragment);
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
@@ -172,7 +174,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = this.explanatoryProcessor.insertNewElement(explanatory, elementId, elementName, position.equals(Position.BEFORE));
 
         final String title = messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(elementName));
@@ -183,14 +185,14 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
 
-        // TODO : to be added  DocumentUpdatedByCoEditorEvent
+        // TO DO : to be added  DocumentUpdatedByCoEditorEvent
         return documentViewService.updateDocumentView(explanatory);
     }
 
     @Override
     public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         Element mergeOnElement = explanatoryProcessor.getMergeOnElement(explanatory, elementContent, elementTag, elementId);
         byte[] updatedXmlContent = null;
         if (mergeOnElement != null) {
@@ -206,8 +208,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         Integer recentCount = this.explanatoryService.findRecentMinorVersionsCount(explanatory.getId(), documentRef);
         List<Explanatory> explanatories = this.explanatoryService.findRecentMinorVersions(explanatory.getId(), documentRef, 0, recentCount);
-        List<VersionVO> recentChanges = VersionsUtil.buildVersionResponse(explanatories, messageHelper, userHelper);
-        return recentChanges;
+        return  VersionsUtil.buildVersionResponse(explanatories, messageHelper, userHelper);
     }
 
     @Override
@@ -230,7 +231,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
         Explanatory memorandum = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(memorandum.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        this.setStructureContext(memorandum.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         return this.explanatoryService.getTableOfContent(memorandum, mode);
     }
 
@@ -238,7 +239,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         return structureContext1.getTocItems();
     }
 
@@ -251,7 +252,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        Explanatory newVersion = this.explanatoryService.createVersion(explanatory.getId(), versionType, checkInComment);
+        this.explanatoryService.createVersion(explanatory.getId(), versionType, checkInComment);
         return this.getVersionsData(documentRef);
     }
 
@@ -259,7 +260,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         ExplanatoryStructureType structureType = getStructureType(structureContext1);
         Explanatory updatedAnnex = explanatoryService.saveTableOfContent(explanatory, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.explanatoryService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
@@ -291,8 +292,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public String compare(String newVersionId, String oldVersionId) {
         Explanatory oldVersion = explanatoryService.findExplanatoryVersion(oldVersionId);
         Explanatory newVersion = explanatoryService.findExplanatoryVersion(newVersionId);
-        String comparedContent = comparisonDelegate.getMarkedContent(oldVersion, newVersion);
-        return comparedContent;
+        return comparisonDelegate.getMarkedContent(oldVersion, newVersion);
     }
 
     @Override
@@ -326,7 +326,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception {
         if (isWithAnnotations) {
-
+            // do nothing for the moment
         }
         return this.doDownloadVersion(documentRef, false, null);
     }
@@ -368,25 +368,22 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(event.getDocumentRef());
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(explanatory), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
-        byte[] updatedContent = searchService.replaceText(
+        return searchService.replaceText(
                 getContent(explanatory),
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS);
-        return updatedContent;
     }
 
     @Override
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(event.getDocumentRef());
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(explanatory), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
-        byte[] updatedContent = searchService.replaceText(
+        return searchService.replaceText(
                 getContent(explanatory),
                 event.getSearchText(),
                 event.getReplaceText(),
                 Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
-
-        return updatedContent;
     }
 
     @Override
@@ -403,7 +400,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
 
-        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         List<TocItem> tocItems = structureContext1.getTocItems();
         List<NumberingConfig> numberConfigs = structureContext1.getNumberingConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(explanatory.getId());
@@ -478,9 +475,9 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
         List<String> elementAncestorsIds = null;
-        StructureContext context = structureContext.get();
-        context.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
-        if (elementIds != null && elementIds.size() > 0) {
+        StructureContext ctxt = structureContext.get();
+        ctxt.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        if (CollectionUtils.isNotEmpty(elementIds)) {
             try {
                 elementAncestorsIds = explanatoryService.getAncestorsIdsForElementId(explanatory, elementIds);
             } catch (Exception e) {
@@ -489,6 +486,6 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         }
         // we are combining two operations (get toc + get selected element ancestors)
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory.getId(), TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
+        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs());
     }
 }

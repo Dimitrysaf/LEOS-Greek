@@ -45,6 +45,7 @@ public class UserJSON extends User implements SecurityUser {
         return firstName;
     }
 
+    @Override
     public List<String> getRoles() {
         return roles;
     }

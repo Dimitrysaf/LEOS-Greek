@@ -31,7 +31,6 @@ import java.util.Map;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isElementTransformedFrom;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftAction;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.withPlaceholderPrefix;
-import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isElementIndented;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.elementImpactedByIndentation;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isElementIndentedInOtherContext;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
@@ -163,7 +162,7 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
 
     private void appendAddedElement(ContentComparatorContext context) {
         String newElementTagId = context.getNewElement().getTagId();
-        if (context.getDisplayRemovedContentAsReadOnly() && !shouldIgnoreElement(context.getNewElement())) {
+        if (Boolean.TRUE.equals(context.getDisplayRemovedContentAsReadOnly()) && !shouldIgnoreElement(context.getNewElement())) {
             if (newElementTagId != null) {
                 if (context.getOldContentElements().containsKey(newElementTagId.replace(
                         SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
@@ -295,7 +294,7 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
             return;
         }
 
-        if (context.getDisplayRemovedContentAsReadOnly() && !shouldIgnoreElement(context.getOldElement())) {
+        if (Boolean.TRUE.equals(context.getDisplayRemovedContentAsReadOnly()) && !shouldIgnoreElement(context.getOldElement())) {
             if (context.getOldElement().getTagId() != null) {
                 if (containsSoftMoveToTransformedElement(context.getNewContentElements(), context.getOldElement())) {
                     //append the soft movedTo element content
@@ -386,6 +385,7 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
         }
     }
 
+    @Override
     protected String getStartTagValueForRemovedElement(Element newElement, ContentComparatorContext context) {
         if(isClonedProposalOrContribution()) {
             super.getStartTagValueForRemovedElement(newElement, context);
@@ -405,6 +405,7 @@ public class XMLContentComparatorServiceImplProposal extends XMLContentComparato
 
     @Override
     protected void appendIndentedDeletedOrMovedToContent(ContentComparatorContext context, Element element) {
+        // do nothing
     }
 
     @Override

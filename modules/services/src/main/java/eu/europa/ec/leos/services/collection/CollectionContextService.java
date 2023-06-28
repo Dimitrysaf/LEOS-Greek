@@ -46,12 +46,9 @@ import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import javax.inject.Provider;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +61,8 @@ import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
 public abstract class CollectionContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextService.class);
+    private static final String PROPOSAL_PURPOSE_IS_REQUIRED = "Proposal purpose is required!";
+    private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
 
     protected final MessageHelper messageHelper;
     private final ExplanatoryService explanatoryService;
@@ -108,8 +107,8 @@ public abstract class CollectionContextService {
         this.explanatoryContextProvider = explanatoryContextProvider;
         this.financialStatementContextProvider = financialStatementContextProvider;
         this.securityContext = securityContext;
-        this.categoryTemplateMap = new HashMap<>();
-        this.actionMsgMap = new HashMap<>();
+        this.categoryTemplateMap = new EnumMap<>(LeosCategory.class);
+        this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.messageHelper = messageHelper;
     }
 
@@ -148,7 +147,7 @@ public abstract class CollectionContextService {
     }
 
     public void usePurpose(String purpose) {
-        Validate.notNull(purpose, "Proposal purpose is required!");
+        Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
         LOG.trace("Using Proposal purpose... [purpose={}]", purpose);
         this.purpose = purpose;
     }
@@ -223,19 +222,19 @@ public abstract class CollectionContextService {
 
         LOG.trace("Executing 'Import Proposal' use case...");
         MetadataVO propMeta = propDocument.getMetadata();
-        Validate.notNull(propMeta, "Proposal metadata is required!");
+        Validate.notNull(propMeta, PROPOSAL_METADATA_IS_REQUIRED);
         Validate.notNull(propDocument.getChildDocuments(), "Proposal must contain child documents to import!");
         // create package
-        LeosPackage leosPackage = packageService.createPackage();
+        LeosPackage leosPckg = packageService.createPackage();
         // use template
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
 
         // get metadata from template
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         purpose = propMeta.getDocPurpose();
-        Validate.notNull(purpose, "Proposal purpose is required!");
+        Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
         eeaRelevance = propMeta.getEeaRelevance();
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
@@ -244,17 +243,17 @@ public abstract class CollectionContextService {
                 .build();
         if (cloneProposal) {
             setConnectedEntity();
-            proposal = proposalService.createClonedProposalFromContent(leosPackage.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
+            proposal = proposalService.createClonedProposalFromContent(leosPckg.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
         } else {
             Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
-            proposal = proposalService.createProposalFromContent(leosPackage.getPath(), metadata, propDocument.getSource());
+            proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument.getSource());
         }
 
         // create child element
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
             if ((docChild.getCategory() == MEMORANDUM) && (cast(categoryTemplateMap.get(MEMORANDUM)) != null)) {
                 MemorandumContextService memorandumContext = memorandumContextProvider.get();
-                memorandumContext.usePackage(leosPackage);
+                memorandumContext.usePackage(leosPckg);
                 // use template
                 memorandumContext.useTemplate(cast(categoryTemplateMap.get(MEMORANDUM)));
                 // We want to use the same purpose that was set in the wizard for all the documents.
@@ -275,7 +274,7 @@ public abstract class CollectionContextService {
                 }
             } else if (docChild.getCategory() == BILL) {
                 BillContextService billContext = billContextProvider.get();
-                billContext.usePackage(leosPackage);
+                billContext.usePackage(leosPckg);
                 // use template
                 billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
                 billContext.usePurpose(purpose);
@@ -309,15 +308,15 @@ public abstract class CollectionContextService {
     }
 
     public void executeCreateFinancialStatement() {
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
-        financialStatementContext.usePackage(leosPackage);
+        financialStatementContext.usePackage(leosPckg);
         String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
         financialStatementContext.useTemplate(template);
         financialStatementContext.usePurpose(purpose);
         financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         ProposalMetadata metadata = metadataOption.get();
         financialStatementContext.useType(metadata.getType());
         financialStatementContext.useActionMessageMap(actionMsgMap);
@@ -331,44 +330,44 @@ public abstract class CollectionContextService {
     public Proposal executeCreateProposal() {
         LOG.trace("Executing 'Create Proposal' use case...");
 
-        LeosPackage leosPackage = packageService.createPackage();
+        LeosPackage leosPckg = packageService.createPackage();
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
 
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "Proposal purpose is required!");
+        Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
-        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
+        Proposal prpsl = proposalService.createProposal(proposalTemplate.getId(), leosPckg.getPath(), metadata, null);
 
-        // TODO: To have other structure proposal
+        // TO DO: To have other structure proposal
         if (cast(categoryTemplateMap.get(MEMORANDUM)) != null) {
             MemorandumContextService memorandumContext = memorandumContextProvider.get();
-            memorandumContext.usePackage(leosPackage);
+            memorandumContext.usePackage(leosPckg);
             memorandumContext.useTemplate(cast(categoryTemplateMap.get(MEMORANDUM)));
             memorandumContext.usePurpose(purpose);
             memorandumContext.useActionMessageMap(actionMsgMap);
             memorandumContext.useType(metadata.getType());
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             Memorandum memorandum = memorandumContext.executeCreateMemorandum();
-            proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
+            prpsl = proposalService.addComponentRef(prpsl, memorandum.getName(), LeosCategory.MEMORANDUM);
         }
 
         BillContextService billContext = billContextProvider.get();
-        billContext.usePackage(leosPackage);
+        billContext.usePackage(leosPckg);
         billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
         billContext.usePurpose(purpose);
         billContext.useActionMessageMap(actionMsgMap);
         Bill bill = billContext.executeCreateBill();
-        proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
-        return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+        proposalService.addComponentRef(prpsl, bill.getName(), LeosCategory.BILL);
+        return proposalService.createVersion(prpsl.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
     public Proposal executeUpdateProposal() {
@@ -378,9 +377,9 @@ public abstract class CollectionContextService {
         Validate.notNull(proposalComment, "Proposal comment is required!");
 
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "Proposal purpose is required!");
+        Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -389,17 +388,17 @@ public abstract class CollectionContextService {
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
 
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
 
         MemorandumContextService memorandumContext = memorandumContextProvider.get();
-        memorandumContext.usePackage(leosPackage);
+        memorandumContext.usePackage(leosPckg);
         memorandumContext.usePurpose(purpose);
         memorandumContext.useActionMessageMap(actionMsgMap);
         memorandumContext.useEeaRelevance(eeaRelevance);
         memorandumContext.executeUpdateMemorandum();
 
         BillContextService billContext = billContextProvider.get();
-        billContext.usePackage(leosPackage);
+        billContext.usePackage(leosPckg);
         billContext.usePurpose(purpose);
         billContext.useActionMessageMap(actionMsgMap);
         billContext.useEeaRelevance(eeaRelevance);
@@ -411,8 +410,8 @@ public abstract class CollectionContextService {
     public void executeDeleteProposal() {
         LOG.trace("Executing 'Delete Proposal' use case...");
         if (proposal != null && proposal.getId() != null) {
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
-            packageService.deletePackage(leosPackage);
+            LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
+            packageService.deletePackage(leosPckg);
         }
     }
 
@@ -440,25 +439,25 @@ public abstract class CollectionContextService {
         }
 
         // Update the last structure
-        final LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        final LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
 
         //Memorandum
         final MemorandumContextService memorandumContext = memorandumContextProvider.get();
-        memorandumContext.usePackage(leosPackage);
+        memorandumContext.usePackage(leosPckg);
         memorandumContext.useVersionComment(versionComment);
         memorandumContext.useMilestoneComment(milestoneComment);
         memorandumContext.executeCreateMilestone();
 
         //Bill + Annexes
         final BillContextService billContext = billContextProvider.get();
-        billContext.usePackage(leosPackage);
+        billContext.usePackage(leosPckg);
         billContext.useVersionComment(versionComment);
         billContext.useMilestoneComment(milestoneComment);
         billContext.executeCreateMilestone();
 
         //FS
         final FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
-        financialStatementContext.usePackage(leosPackage);
+        financialStatementContext.usePackage(leosPckg);
         financialStatementContext.useVersionComment(versionComment);
         financialStatementContext.useMilestoneComment(milestoneComment);
         financialStatementContext.executeCreateMilestone();
@@ -469,15 +468,15 @@ public abstract class CollectionContextService {
     }
 
     public void executeCreateExplanatory() {
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
         ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();
-        explanatoryContext.usePackage(leosPackage);
+        explanatoryContext.usePackage(leosPckg);
         String template = categoryTemplateMap.get(COUNCIL_EXPLANATORY).getName();
         explanatoryContext.useTemplate(template);
         explanatoryContext.usePurpose(purpose);
         explanatoryContext.useTitle(messageHelper.getMessage("document.default.explanatory.title.default." + template));
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         ProposalMetadata metadata = metadataOption.get();
         explanatoryContext.useType(metadata.getType());
         explanatoryContext.useActionMessageMap(actionMsgMap);
@@ -492,9 +491,9 @@ public abstract class CollectionContextService {
         Validate.notNull(leosPackage, "Leos package is required!");
         Explanatory explanatory = explanatoryService.findExplanatory(explanatoryId);
         explanatoryService.deleteExplanatory(explanatory);
-        Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
-        proposal = proposalService.removeComponentRef(proposal, explanatory.getName());
-        proposalService.updateProposal(proposal.getId(), proposal.getContent().get().getSource().getBytes());
+        Proposal prpsl = proposalService.findProposalByPackagePath(leosPackage.getPath());
+        prpsl = proposalService.removeComponentRef(prpsl, explanatory.getName());
+        proposalService.updateProposal(prpsl.getId(), prpsl.getContent().get().getSource().getBytes());
     }
 
     @SuppressWarnings("unchecked")

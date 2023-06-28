@@ -2,7 +2,7 @@ package eu.europa.ec.leos.vo.toc;
 /*
  * Copyright 2019 European Commission
  *
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence")
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
@@ -16,7 +16,7 @@ package eu.europa.ec.leos.vo.toc;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,10 +26,13 @@ import java.util.stream.Collectors;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class StructureConfigUtils {
-    
+    private StructureConfigUtils() {
+    }
+
     public static final String NUM_HEADING_SEPARATOR = " - ";
     public static final String HASH_NUM_VALUE = "#";
     public static final String CONTENT_SEPARATOR = " ";
+    private static final String NUMBERING_TYPE = "NumberingType '";
 
     public static List<TocItemType> getTocItemTypesByTagName(List<TocItem> tocItems, String tagName) {
         TocItem tocItem = getTocItemByName(tocItems, tagName);
@@ -51,7 +54,7 @@ public class StructureConfigUtils {
                     }
                 }
             }
-        } else if (subElementTocItems.size() >= 1) {
+        } else if (!subElementTocItems.isEmpty()) {
             return subElementTocItems.get(0).getNumberingType();
         }
         return null;
@@ -71,7 +74,7 @@ public class StructureConfigUtils {
                     }
                 }
             }
-        } else if (subElementTocItems.size() >= 1) {
+        } else if (!subElementTocItems.isEmpty()) {
             return subElementTocItems.get(0);
         }
         return null;
@@ -92,7 +95,7 @@ public class StructureConfigUtils {
     public static Map<TocItemTypeName, List<Level>> getNumberingConfigsFromTocItem(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems,
                                                                                 String tagName) {
         List<TocItem> foundTocItems = getTocItemsByName(tocItems, tagName);
-        Map<TocItemTypeName, List<Level>> foundNumberingConfigs = new HashMap<>();
+        Map<TocItemTypeName, List<Level>> foundNumberingConfigs = new EnumMap<>(TocItemTypeName.class);
         if (foundTocItems.size() == 1) {
             NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs, foundTocItems.get(0).getNumberingType());
             foundNumberingConfigs.put(TocItemTypeName.REGULAR, numberingConfig != null ? numberingConfig.getLevels().getLevels() : null);
@@ -176,7 +179,7 @@ public class StructureConfigUtils {
     public static TocItem getTocItemByNumberingType(List<TocItem> tocItems, NumberingType numType, String tagName) {
         return tocItems.stream()
                 .filter(tocItem -> tocItem.getAknTag().name().equalsIgnoreCase(tagName) && tocItem.getNumberingType().equals(numType)).findFirst()
-                .orElseThrow(() -> new IllegalStateException("NumberingType '" + numType + "' not present in the list of TocItems [" + tocItems + "]"));
+                .orElseThrow(() -> new IllegalStateException(NUMBERING_TYPE + numType + "' not present in the list of TocItems [" + tocItems + "]"));
     }
 
     public static TocItem getTocItemByNumValue(List<NumberingConfig> numberingConfigs, List<TocItem> foundTocItems, String numValue, int depth) {
@@ -201,7 +204,7 @@ public class StructureConfigUtils {
     public static NumberingConfig getNumberingByName(List<NumberingConfig> numberingConfigs, NumberingType numType) {
         return numberingConfigs.stream()
                 .filter(config -> config.getType().equals(numType)).findFirst()
-                .orElseThrow(() -> new IllegalStateException("NumberingType '" + numType + "' not present in the list of NumberingConfigs [" + numberingConfigs + "]"));
+                .orElseThrow(() -> new IllegalStateException(NUMBERING_TYPE + numType + "' not present in the list of NumberingConfigs [" + numberingConfigs + "]"));
     }
 
     public static NumberingType getNumberingTypeByDepth(NumberingConfig numberingConfig, int depth) {
@@ -210,7 +213,7 @@ public class StructureConfigUtils {
         } else {
             return numberingConfig.getLevels().getLevels().stream()
                     .filter(level -> level.getDepth() == depth).findFirst()
-                    .map(level -> level.getNumberingType())
+                    .map(Level::getNumberingType)
                     .orElseThrow(() -> new IllegalStateException("Depth '" + depth + "' not defined in the NumberingConfig [" + numberingConfig + "]"));
         }
     }
@@ -219,12 +222,11 @@ public class StructureConfigUtils {
         final NumberingConfig pointNumberingConfig = numberingConfigs.stream()
                 .filter(config -> config.getType() == NumberingType.POINT_NUM)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("NumberingType '" + NumberingType.POINT_NUM + "' not defined in the NumberingConfigs [" + numberingConfigs + "]"));
-        final int depth = pointNumberingConfig.getLevels().getLevels().stream().filter(level -> level.getNumberingType() == numberingType)
+                .orElseThrow(() -> new IllegalStateException(NUMBERING_TYPE + NumberingType.POINT_NUM + "' not defined in the NumberingConfigs [" + numberingConfigs + "]"));
+        return pointNumberingConfig.getLevels().getLevels().stream().filter(level -> level.getNumberingType() == numberingType)
                 .findFirst()
-                .map(level -> level.getDepth())
-                .orElseThrow(() -> new IllegalStateException("NumberingType '" + numberingType + "' not defined in the NumberingConfig [" + pointNumberingConfig + "]"));
-        return depth;
+                .map(Level::getDepth)
+                .orElseThrow(() -> new IllegalStateException(NUMBERING_TYPE + numberingType + "' not defined in the NumberingConfig [" + pointNumberingConfig + "]"));
     }
 
     public static NumberingConfig getNumberingConfig(List<NumberingConfig> numberConfigs, NumberingType numType) {
@@ -319,8 +321,7 @@ public class StructureConfigUtils {
 
     public static boolean isAutoNumberingEnabled(List<TocItem> tocItems, String elementName) {
         TocItem tocItem = getTocItemByName(tocItems, elementName);
-        Boolean isAutoNumEnabled = tocItem != null ? tocItem.isAutoNumbering() == null ? true : tocItem.isAutoNumbering() : false;
-        return isAutoNumEnabled;
+        return tocItem != null && (tocItem.isAutoNumbering() == null || tocItem.isAutoNumbering().booleanValue());
     }
 
 }
