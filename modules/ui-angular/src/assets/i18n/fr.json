@@ -302,7 +302,7 @@
   "page.editor.contribution.view.actions.synchronous-scrolling.enable": "[FR] Enable synchronous scrolling",
   "page.editor.contribution.view.actions.synchronous-scrolling.disable": "[FR] Disable synchronous scrolling",
   "page.editor.contribution.view.actions.next-change": "[FR] Next change",
-  "page.editor.contribution.view.actions.prev-change": "[FR] Prev change",
+  "page.editor.contribution.view.actions.prev-change": "[FR] Previous change",
   "page.editor.contribution.view.actions.accept.selected": "[FR] Accept selected",
   "page.editor.contribution.view.actions.accept.proposed.version": "[FR] Accept proposed version",
   "page.editor.contribution.view.actions.apply": "[FR] Apply",
