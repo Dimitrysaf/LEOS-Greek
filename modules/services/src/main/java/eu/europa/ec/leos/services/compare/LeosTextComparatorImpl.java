@@ -40,7 +40,6 @@ import java.util.List;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 
 @Service
 public class LeosTextComparatorImpl implements TextComparator {
@@ -73,7 +72,6 @@ public class LeosTextComparatorImpl implements TextComparator {
             if (listOfBrokenInternalReferences != null) {
                 result = internalReferenceProcessor.addOriginalBrokenAttributeInInternalReferences(listOfBrokenInternalReferences, result);
             }
-            //result = parseXml(result);
         } catch (Exception e) {
             LOG.error("Failure during text comparison. Exception thrown from text diffing library ", e);
             result = messageHelper.getMessage("leos.version.compare.error.message");
@@ -102,6 +100,7 @@ public class LeosTextComparatorImpl implements TextComparator {
                 // handle equal lines
                 writeUnchangedLine(diffBuilder, line);
             }
+            boolean doContinue = false;
             // handle Inserted rows
             if (delta.getClass().equals(InsertDelta.class)) {
                 endPos = orig.last() + 1;
@@ -109,16 +108,16 @@ public class LeosTextComparatorImpl implements TextComparator {
                     // handle insert line
                     writeChangedLine(diffBuilder, line, context.getAttrName(), context.getAddedValue());
                 }
-                continue;
-            }
-    
-            // Deleted DiffRow
-            if (delta.getClass().equals(DeleteDelta.class)) {
+                doContinue = true;
+            } else  if (delta.getClass().equals(DeleteDelta.class)) { // Deleted DiffRow
                 endPos = orig.last() + 1;
                 for (String line : (List<String>) orig.getLines()) {
                     // handle delete lines
                     writeChangedLine(diffBuilder, line, context.getAttrName(), context.getRemovedValue());
                 }
+                doContinue = true;
+            }
+            if(doContinue){
                 continue;
             }
     
@@ -203,11 +202,10 @@ public class LeosTextComparatorImpl implements TextComparator {
             // catch the equal prefix for each chunk
             for (String line : originalList.subList(endPos, orig.getPosition())) {
                 // handle equal lines
-                // System.out.println("EQUAL detected..");
                 writeUnchangedLine(trackChangesOriginalBuilder, line);
                 writeUnchangedLine(trackChangesAmendmentBuilder, line);
             }
-
+            boolean doContinue = false;
             // handle Inserted rows
             if (delta.getClass().equals(InsertDelta.class)) {
                 endPos = orig.last() + 1;
@@ -217,13 +215,10 @@ public class LeosTextComparatorImpl implements TextComparator {
                     writeChangedLine(trackChangesAmendmentBuilder, line, ATTR_NAME, CONTENT_ADDED_CLASS);
 
                     // in the left side, write empty spaces corresponding to the content of the previous line
-                    // writeEmptySpacesForLine(trackChangesOriginalBuilder, line);
+                    // writeEmptySpacesForLine(trackChangesOriginalBuilder, line)
                 }
-                continue;
-            }
-
-            // Deleted Diff row
-            if (delta.getClass().equals(DeleteDelta.class)) {
+                doContinue = true;
+            } else if (delta.getClass().equals(DeleteDelta.class)) {  // Deleted Diff row
                 endPos = orig.last() + 1;
                 for (String line : (List<String>) orig.getLines()) {
                     // handle delete lines
@@ -231,11 +226,13 @@ public class LeosTextComparatorImpl implements TextComparator {
                     writeChangedLine(trackChangesOriginalBuilder, line, ATTR_NAME, CONTENT_REMOVED_CLASS);
 
                     // in the right side, write empty spaces corresponding to the content of the previous line
-                    // writeEmptySpacesForLine(trackChangesAmendmentBuilder, line);
+                    // writeEmptySpacesForLine(trackChangesAmendmentBuilder, line)
                 }
+                doContinue = true;
+            }
+            if(doContinue){
                 continue;
             }
-
             // catch now changed line
             catchChangedLine(orig, rev, trackChangesOriginalBuilder, trackChangesAmendmentBuilder, ATTR_NAME, CONTENT_REMOVED_CLASS, CONTENT_ADDED_CLASS);
             endPos = orig.last() + 1;
@@ -349,11 +346,11 @@ public class LeosTextComparatorImpl implements TextComparator {
         // write in the left side the removed line
         writeChangedLine(trackChangesOriginalBuilder, oldLine, attrName, removedValue);
         // in the right side, write empty spaces corresponding to the content of the previous line
-        // writeEmptySpacesForLine(trackChangesAmendmentBuilder, oldLine);
+        // writeEmptySpacesForLine(trackChangesAmendmentBuilder, oldLine)
 
         // write in the right side the new line
         writeChangedLine(trackChangesAmendmentBuilder, newLine, attrName, addedValue);
         // in the left side, write empty spaces corresponding to the content of the previous line
-        // writeEmptySpacesForLine(trackChangesOriginalBuilder, newLine);
+        // writeEmptySpacesForLine(trackChangesOriginalBuilder, newLine)
     }
 }

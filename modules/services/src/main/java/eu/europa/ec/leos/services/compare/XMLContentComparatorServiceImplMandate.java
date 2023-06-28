@@ -180,7 +180,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
 
     @Override
     protected void appendAddedElementContent(ContentComparatorContext context) {
-        if (context.getDisplayRemovedContentAsReadOnly() && !shouldIgnoreElement(context.getNewElement())) {
+        if (Boolean.TRUE.equals(context.getDisplayRemovedContentAsReadOnly()) && !shouldIgnoreElement(context.getNewElement())) {
             if (context.getNewElement().getTagId() != null) {
                 if (context.getOldContentElements().containsKey(context.getNewElement().getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))
                         || context.getOldContentElements().containsKey(context.getNewElement().getTagId().replace(IndentConversionHelper.INDENT_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
@@ -191,7 +191,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                         originalMovedElementInOldContent = context.getOldContentElements().get(context.getNewElement().getTagId().replace(IndentConversionHelper.INDENT_PLACEHOLDER_ID_PREFIX, EMPTY_STRING));
                     }
                     Element originalMovedElementInIntermediateContent;
-                    if(context.getThreeWayDiff() && context.getIntermediateElement() != null) {
+                    if(Boolean.TRUE.equals(context.getThreeWayDiff()) && context.getIntermediateElement() != null) {
                         originalMovedElementInIntermediateContent = (!context.getNewElement().getTagId().equalsIgnoreCase(context.getIntermediateElement().getTagId()) && context.getIntermediateContentElements().containsKey(context.getNewElement().getTagId().
                                 replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) ?
                                 context.getIntermediateContentElements().get(context.getNewElement().getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING)) : context.getIntermediateElement();
@@ -225,7 +225,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
 
                     Element intermediateElement;
                     Boolean ignoreRenumbering;
-                    if(context.getThreeWayDiff()) {
+                    if(Boolean.TRUE.equals(context.getThreeWayDiff())) {
                         intermediateElement = context.getIntermediateContentElements().containsKey(context.getNewElement().getTagId()) ? context.getIntermediateContentElements().get(context.getNewElement().getTagId()) : null;
                         ignoreRenumbering = Boolean.FALSE;
                     } else {
@@ -257,7 +257,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
 
     private String getStartTagValueForAddedElementFromAncestor(Element element, ContentComparatorContext context) {
         String attrValue;
-        if (context.getThreeWayDiff()) {
+        if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
             Element ancestor = getFirstAncestorWithId(element);
             if (ancestor != null && context.getIntermediateContentElements() != null
                     && !context.getIntermediateContentElements().containsKey(ancestor.getTagId().replace(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, EMPTY_STRING))) {
@@ -303,7 +303,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                 context.getNewContentElements())) {
             return;
         }
-        if (context.getDisplayRemovedContentAsReadOnly() && !shouldIgnoreElement(context.getOldElement())) {
+        if (Boolean.TRUE.equals(context.getDisplayRemovedContentAsReadOnly()) && !shouldIgnoreElement(context.getOldElement())) {
             if (context.getOldElement().getTagId() != null) {
                 if (containsSoftMoveToTransformedElement(context.getNewContentElements(), context.getOldElement())) {
                     //append the soft movedTo element content
@@ -317,7 +317,6 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                     appendMovedOrTransformedContent(context, context.getNewElement());
                 } else if (isMovedElementIndentedToNewElement(context)) {
                     // Old element was a point or paragraph with children: indented, then moved
-                    return;
                 } else if (SoftActionType.DELETE_TRANSFORM.equals(getSoftAction(context.getNewElement().getNode()))) {
                     getChangedElementContent(context.getNewElement().getNode(), context.getNewElement(), context.getAttrName(), context.getRemovedValue());
                     addToResultNode(context, context.getNewElement().getNode());
@@ -328,7 +327,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
 
                     Element softDeletedOrMovedIntermediateElement = context.getIntermediateElement();
                     Node intermediateContentNode = context.getIntermediateContentNode();
-                    if (context.getThreeWayDiff()) {
+                    if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
                         ContentComparatorContext newContext = findIntermediateElement(context);
                         softDeletedOrMovedIntermediateElement = newContext.getIntermediateElement();
                         intermediateContentNode = newContext.getIntermediateContentNode();
@@ -353,7 +352,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                             softDeletedTransformedElement);
 
                     Element softDeletedTransformedIntermediateElement;
-                    if(context.getThreeWayDiff()) {
+                    if(Boolean.TRUE.equals(context.getThreeWayDiff())) {
                         //element was soft deleted transformed in intermediate, and it's ID was prepended with SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX
                         softDeletedTransformedIntermediateElement = context.getIntermediateContentElements().containsKey(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX
                                 + context.getOldElement().getTagId()) ? context.getIntermediateContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX
@@ -460,7 +459,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
 
     private String getStartTagValueForRemovedElementFromAncestor(Element element, ContentComparatorContext context) {
         String attrValue;
-        if (context.getThreeWayDiff()) {
+        if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
             Element ancestor = getFirstAncestorWithId(element);
             if (ancestor != null && context.getIntermediateContentElements() != null
                     && context.getIntermediateContentElements().containsKey(ancestor.getTagId())) {
@@ -524,16 +523,15 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                 context.getIntermediateContentElements().containsKey(context.getOldElement().getTagId())) {
             intermediateElement = context.getIntermediateContentElements().get(context.getOldElement().getTagId());
         }
-        ContentComparatorContext newContext = new ContentComparatorContext.Builder(context)
+        return new ContentComparatorContext.Builder(context)
                 .withIntermediateElement(intermediateElement)
                 .withIntermediateContentNode(intermediateNode)
                 .build();
-        return newContext;
     }
 
     private void appendMovedOrTransformedContent(ContentComparatorContext context, Element element) {
         String attrValue;
-        if (context.getThreeWayDiff()) {
+        if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
             attrValue = containsSoftMoveToTransformedElement(context.getIntermediateContentElements(), context.getOldElement()) ?
                     context.getRemovedOriginalValue() : context.getRemovedIntermediateValue();
         } else {
@@ -550,7 +548,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
         Node removedNode = softMovedToElement == null ? null : XercesUtils.getElementById(context.getResultNode(), softMovedToElement.getTagId());
         if (softMovedToElement != null && removedNode == null) {
             String attrValue;
-            if (context.getThreeWayDiff()) {
+            if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
                 attrValue = containsSoftMoveToElement(context.getIntermediateContentElements(), context.getOldElement()) ?
                         context.getRemovedOriginalValue() : context.getRemovedIntermediateValue();
             } else {
@@ -612,7 +610,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                 Node node = parentInOtherContext.getNode();
                 addReadOnlyAttributes(node);
                 removeNotDeletedElementsFromContent(context, notDeletedElements, parentInOtherContext, node);
-                XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getThreeWayDiff() ? context.getRemovedOriginalValue() : context.getRemovedValue());
+                XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), Boolean.TRUE.equals(context.getThreeWayDiff()) ? context.getRemovedOriginalValue() : context.getRemovedValue());
                 addToResultNode(context, node);
             }
         }
@@ -646,7 +644,7 @@ public class XMLContentComparatorServiceImplMandate extends XMLContentComparator
                         || isSoftAction(childNode, SoftActionType.DELETE)
                         || isSoftAction(childNode, SoftActionType.DELETE_TRANSFORM)) {
                     addReadOnlyAttributes(childNode);
-                    XercesUtils.insertOrUpdateAttributeValue(childNode, context.getAttrName(), context.getThreeWayDiff() ? context.getRemovedOriginalValue() : context.getRemovedValue());
+                    XercesUtils.insertOrUpdateAttributeValue(childNode, context.getAttrName(), Boolean.TRUE.equals(context.getThreeWayDiff()) ? context.getRemovedOriginalValue() : context.getRemovedValue());
                     removeNotDeletedElementsFromContent(context, notDeletedElements, child, childNode);
                 } else {
                     try {

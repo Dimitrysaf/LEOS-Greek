@@ -9,13 +9,10 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
-import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})

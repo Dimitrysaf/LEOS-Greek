@@ -28,7 +28,12 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLD
 
 public class LeosPostDiffingProcessor {
 
-    private final String CLASS_ATTR = "class";
+    private static final String CLASS_ATTR = "class";
+    private static final String SPAN_CLASS = "<span class=\"";
+    private static final String NOTE_CLASS_LEOS_CONTENT_SOFT_REMOVED = "\"><authorialNote class=\"leos-content-soft-removed\"";
+    private static final String CLASS_LEOS_CONTENT_SOFT_REMOVED = "<span><authorialNote class=\"leos-content-soft-removed\"";
+    private static final String MARKER = " marker=\"";
+    private static final String SPAN_CLASS_LEOS_AUTHNOTE = "<span class=\"leos-authnote ";
 
     private Set<String> xmlIds;
 
@@ -39,8 +44,8 @@ public class LeosPostDiffingProcessor {
      */
     public String adjustSoftActionDiffing(String content) {
 
-        content = content.replaceAll("-removed\" leos:softaction=\"add\"","-removed\" leos:softaction=\"del\"");
-        content = content.replaceAll( "<span class=\"" + DOUBLE_COMPARE_ADDED_CLASS + "\"><authorialNote class=\"leos-content-soft-removed\"", "<span><authorialNote class=\"leos-content-soft-removed\"");
+        content = content.replace("-removed\" leos:softaction=\"add\"","-removed\" leos:softaction=\"del\"");
+        content = content.replace( SPAN_CLASS + DOUBLE_COMPARE_ADDED_CLASS + NOTE_CLASS_LEOS_CONTENT_SOFT_REMOVED, CLASS_LEOS_CONTENT_SOFT_REMOVED);
 
         Pattern pattern = Pattern.compile("-removed\" (.*?) leos:softaction=\"add\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
@@ -67,8 +72,8 @@ public class LeosPostDiffingProcessor {
         content = content.replaceAll(DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_INTERMEDIATE_STYLE + "\" leos:softaction=\"add\"",DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_INTERMEDIATE_STYLE + "\" leos:softaction=\"del\"");
         content = content.replaceAll(DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_ORIGINAL_STYLE + "\" leos:softaction=\"add\"",DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_ORIGINAL_STYLE + "\" leos:softaction=\"del\"");
 
-        content = content.replaceAll( "<span class=\"" + DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_INTERMEDIATE_STYLE + "\"><authorialNote class=\"leos-content-soft-removed\"", "<span><authorialNote class=\"leos-content-soft-removed\"");
-        content = content.replaceAll( "<span class=\"" + DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_ORIGINAL_STYLE + "\"><authorialNote class=\"leos-content-soft-removed\"", "<span><authorialNote class=\"leos-content-soft-removed\"");
+        content = content.replaceAll( SPAN_CLASS + DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_INTERMEDIATE_STYLE + NOTE_CLASS_LEOS_CONTENT_SOFT_REMOVED, CLASS_LEOS_CONTENT_SOFT_REMOVED);
+        content = content.replaceAll( SPAN_CLASS + DOUBLE_COMPARE_REMOVED_CLASS + DOUBLE_COMPARE_ORIGINAL_STYLE + NOTE_CLASS_LEOS_CONTENT_SOFT_REMOVED, CLASS_LEOS_CONTENT_SOFT_REMOVED);
 
         Pattern pattern = Pattern.compile("-removed-(.*?)\" (.*?) leos:softaction=\"add\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
@@ -93,9 +98,9 @@ public class LeosPostDiffingProcessor {
      */
     public static String adjustTagsDiffing(String content) {
 
-        content = content.replaceAll("<ins=\"\">", "");
-        content = content.replaceAll("<ins=\"\" class=\"revised\">", "");
-        content = content.replaceAll("<ins=\"\" class=\"verification\">", "");
+        content = content.replace("<ins=\"\">", "");
+        content = content.replace("<ins=\"\" class=\"revised\">", "");
+        content = content.replace("<ins=\"\" class=\"verification\">", "");
 
         Pattern p = Pattern.compile("<del[^>]*>(.*?)</del>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         content = p.matcher(content).replaceAll("");
@@ -112,7 +117,7 @@ public class LeosPostDiffingProcessor {
             }
 
         }
-        content = content.replaceAll("&gt;", ">");
+        content = content.replace("&gt;", ">");
         return content;
 
     }
@@ -154,10 +159,10 @@ public class LeosPostDiffingProcessor {
 
             //Adjust endNote style for live diffing
             if(regex.contains(CONTENT_SOFT_REMOVED_CLASS)) {
-                content = content.replace("<span class=\"leos-authnote\" id=\"endNote_" +id,"<span class=\"" + CONTENT_SOFT_REMOVED_CLASS + " leos-authnote\" id=\"endNote_" +id);
-                content = content.replace("<span class=\"leos-authnote\" id=\"doubleCompare-endNote_" +id,"<span class=\"" + CONTENT_SOFT_REMOVED_CLASS+ " leos-authnote\" id=\"doubleCompare-endNote_" +id);
-                content = content.replace("<span class=\"leos-authnote " + CONTENT_SOFT_ADDED_CLASS + "\" id=\"endNote_" +id,"<span class=\"" + CONTENT_SOFT_REMOVED_CLASS + " leos-authnote\" id=\"endNote_" +id);
-                content = content.replace("<span class=\"leos-authnote " + CONTENT_SOFT_ADDED_CLASS + "\" id=\"doubleCompare-endNote_" +id,"<span class=\"" + CONTENT_SOFT_REMOVED_CLASS+ " leos-authnote\" id=\"doubleCompare-endNote_" +id);
+                content = content.replace("<span class=\"leos-authnote\" id=\"endNote_" +id, SPAN_CLASS + CONTENT_SOFT_REMOVED_CLASS + " leos-authnote\" id=\"endNote_" +id);
+                content = content.replace("<span class=\"leos-authnote\" id=\"doubleCompare-endNote_" +id, SPAN_CLASS + CONTENT_SOFT_REMOVED_CLASS+ " leos-authnote\" id=\"doubleCompare-endNote_" +id);
+                content = content.replace(SPAN_CLASS_LEOS_AUTHNOTE + CONTENT_SOFT_ADDED_CLASS + "\" id=\"endNote_" +id, SPAN_CLASS + CONTENT_SOFT_REMOVED_CLASS + " leos-authnote\" id=\"endNote_" +id);
+                content = content.replace(SPAN_CLASS_LEOS_AUTHNOTE + CONTENT_SOFT_ADDED_CLASS + "\" id=\"doubleCompare-endNote_" +id, SPAN_CLASS + CONTENT_SOFT_REMOVED_CLASS+ " leos-authnote\" id=\"doubleCompare-endNote_" +id);
             }
         }
 
@@ -171,14 +176,14 @@ public class LeosPostDiffingProcessor {
      * - if previous without softactionroot true, update false to true on softactionroot
      * @param xmlContent
      * @return diffing result adjusted
-     * TODO generic function to check parent of child nodes instead of only SUBPARAGRAPH
+     * TO DO generic function to check parent of child nodes instead of only SUBPARAGRAPH
      */
     public String adjustSoftRootSubParagraph(String xmlContent) {
         Document document = createXercesDocument(xmlContent.getBytes(UTF_8));
         NodeList elements = document.getElementsByTagName(SUBPARAGRAPH);
         List<org.w3c.dom.Node> nodeList = XercesUtils.getNodesAsList(elements);
 
-        if (nodeList.size() > 0) {
+        if (!nodeList.isEmpty()) {
             for (int nodeIter = 0; nodeIter < nodeList.size(); nodeIter++) {
                 final org.w3c.dom.Node node = nodeList.get(nodeIter);
                 org.w3c.dom.Node previous = XercesUtils.getPrevSibling(node);
@@ -186,15 +191,13 @@ public class LeosPostDiffingProcessor {
                     previous = XercesUtils.getPrevSibling(previous);
                 }
                 org.w3c.dom.Node softActionRootAttr = node.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ROOT_ATTR);
-                if (softActionRootAttr != null) {
-                    if(softActionRootAttr.getNodeValue().equals("false")) {
-                        if (previous != null) {
-                            org.w3c.dom.Node softActionRootAttrPrevious = previous.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ROOT_ATTR);
-                            if (softActionRootAttrPrevious == null) {
-                                XercesUtils.insertOrUpdateAttributeValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, "true");
-                            }
+                if (softActionRootAttr != null
+                    && softActionRootAttr.getNodeValue().equals("false")
+                    && previous != null) {
+                        org.w3c.dom.Node softActionRootAttrPrevious = previous.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ROOT_ATTR);
+                        if (softActionRootAttrPrevious == null) {
+                            XercesUtils.insertOrUpdateAttributeValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, "true");
                         }
-                    }
                 }
             }
         }
@@ -214,14 +217,14 @@ public class LeosPostDiffingProcessor {
         NodeList elements = document.getElementsByTagName("span");
         List<org.w3c.dom.Node> nodeList = XercesUtils.getNodesAsList(elements);
 
-        if (nodeList.size() > 0) {
+        if (!nodeList.isEmpty()) {
             for (int nodeIter = 0; nodeIter < nodeList.size(); nodeIter++) {
                 final org.w3c.dom.Node node = nodeList.get(nodeIter);
                 if(node.getAttributes().getNamedItem(CLASS_ATTR).getTextContent().equals(classAdded)) {
                     String textNode = node.getTextContent();
                     String parentId = XercesUtils.getParentId(node);
                     if(parentId != null && parentId.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)) {
-                        xmlContent = xmlContent.replace("<span class=\"" + classAdded + "\">" + textNode, "<span class=\"" + classAdded + "\"><span class=\"" + classRemoved + "\">" + textNode + "</span>");
+                        xmlContent = xmlContent.replace(SPAN_CLASS + classAdded + "\">" + textNode, SPAN_CLASS + classAdded + "\"><span class=\"" + classRemoved + "\">" + textNode + "</span>");
                     }
                 }
             }
@@ -231,13 +234,13 @@ public class LeosPostDiffingProcessor {
 
     private String adjustMovedFootnotes(String content) {
 
-        String markerMovedAuthNotes = "<span class=\"leos-authnote " + CONTENT_SOFT_ADDED_CLASS + "\" id=\"endNote_moved";
+        String markerMovedAuthNotes = SPAN_CLASS_LEOS_AUTHNOTE + CONTENT_SOFT_ADDED_CLASS + "\" id=\"endNote_moved";
         String markerAuthNoteTable = "<span class=\"leos-authnote-table\" id=\"leos-authnote-table-id\">";
         String closingSpan = "</span>";
 
         //LEOS-5168 replace for version compare
-        content = content.replace("<span class=\"leos-authnote leos-content-new-cn\" id=\"endNote_moved", "<span class=\"leos-authnote " + CONTENT_REMOVED_CLASS_CN + "\" id=\"endNote_moved");
-        content = content.replace("<span class=\"leos-authnote\" id=\"doubleCompare-endNote_moved", "<span class=\"leos-authnote " + CONTENT_REMOVED_CLASS_CN + "\" id=\"doubleCompare-endNote_moved");
+        content = content.replace("<span class=\"leos-authnote leos-content-new-cn\" id=\"endNote_moved", SPAN_CLASS_LEOS_AUTHNOTE + CONTENT_REMOVED_CLASS_CN + "\" id=\"endNote_moved");
+        content = content.replace("<span class=\"leos-authnote\" id=\"doubleCompare-endNote_moved", SPAN_CLASS_LEOS_AUTHNOTE + CONTENT_REMOVED_CLASS_CN + "\" id=\"doubleCompare-endNote_moved");
 
         if(!content.contains(markerMovedAuthNotes) ) {
             return content;
@@ -278,12 +281,12 @@ public class LeosPostDiffingProcessor {
         } else {
             origin = "";
         }
-        String search = "id=\"" + id + "\" " + origin + " marker=\"" + marker +"\"";
-        String replace =  "id=\"" + id + "\" " + origin + " marker=\"" +"\"";
+        String search = "id=\"" + id + "\" " + origin + MARKER + marker +"\"";
+        String replace =  "id=\"" + id + "\" " + origin + MARKER +"\"";
         content = content.replaceFirst(search, replace);
 
         search = "id=\"doubleCompare-" + id + "\" " + origin + " marker=\"doubleCompare-" + id +"\"";
-        replace =  "id=\"doubleCompare-" + id + "\" " + origin + " marker=\"" +"\"";
+        replace =  "id=\"doubleCompare-" + id + "\" " + origin + MARKER +"\"";
         content = content.replaceFirst(search, replace);
         return content;
     }

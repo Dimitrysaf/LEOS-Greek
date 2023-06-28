@@ -47,7 +47,7 @@
                         <list refersTo="~_CHECK" id="_akn_cphVo9">
                             <indent id="_akn_Hel39C">
                                 <num id="_akn_jNdPHn">
-                                    <inline name="checked" id="_akn_J5xckc">☑</inline>
+                                    <inline name="checked" id="_akn_J5xckc">CHECKED</inline>
                                 </num>
                                 <content id="_akn_KctpGQ">
                                     <aknP id="_akn_td5ohp">a new action</aknP>
@@ -55,7 +55,7 @@
                             </indent>
                             <indent id="_akn_W8z9Fg">
                                 <num id="_akn_mIvCM4">
-                                    <inline name="unchecked" id="_akn_Zk9yz4">☐</inline>
+                                    <inline name="unchecked" id="_akn_Zk9yz4">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_ehz1uD">
                                     <aknP id="_akn_JWFXEA">a new action following a pilot project/preparatory action
@@ -70,7 +70,7 @@
                             </indent>
                             <indent id="_akn_BHaEl5">
                                 <num id="_akn_Fl80OO">
-                                    <inline name="unchecked" id="_akn_7nDTwp">☐</inline>
+                                    <inline name="unchecked" id="_akn_7nDTwp">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_ucCX7I">
                                     <aknP id="_akn_mvVjJe">the extension of an existing action</aknP>
@@ -78,7 +78,7 @@
                             </indent>
                             <indent id="_akn_hFRa2p">
                                 <num id="_akn_ctBX5B">
-                                    <inline name="unchecked" id="_akn_QrBw70">☐</inline>
+                                    <inline name="unchecked" id="_akn_QrBw70">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_81pO7K">
                                     <aknP id="_akn_5SlefM">a merger of one or more actions towards another/a new
@@ -178,12 +178,12 @@
                         </heading>
                         <subparagraph leos:editable="true" id="_akn_8ApJSN">
                             <content id="_akn_OhQM34">
-                                <aknP id="_akn_End7HC">Reasons for action at European level (ex-ante) […]</aknP>
+                                <aknP id="_akn_End7HC">Reasons for action at European level (ex-ante) [...]</aknP>
                             </content>
                         </subparagraph>
                         <subparagraph leos:editable="true" id="_akn_HMER19">
                             <content id="_akn_E2hvSU">
-                                <aknP id="_akn_g8g0Nt">Expected generated Union added value (ex-post) […]</aknP>
+                                <aknP id="_akn_g8g0Nt">Expected generated Union added value (ex-post) [...]</aknP>
                             </content>
                         </subparagraph>
                     </level>
@@ -225,7 +225,7 @@
                         <list refersTo="~_CHECK" id="_akn_0zv282">
                             <indent id="_akn_IlhN7g">
                                 <num id="_akn_2dkosM">
-                                    <inline name="unchecked" id="_akn_JLIibW">☐</inline>
+                                    <inline name="unchecked" id="_akn_JLIibW">UNCHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_u9yPen">
                                     <content id="_akn_jOVngb">
@@ -235,7 +235,7 @@
                                 <list refersTo="~_CHECK" id="_akn_udZelT">
                                     <indent id="_akn_H2Mr1s">
                                         <num id="_akn_8r93TK">
-                                            <inline name="unchecked" id="_akn_ZwUGn8">☐</inline>
+                                            <inline name="unchecked" id="_akn_ZwUGn8">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_PcXeV8">
                                             <aknP id="_akn_Qu2ZoV">in effect from [DD/MM]YYYY to [DD/MM]YYYY</aknP>
@@ -243,7 +243,7 @@
                                     </indent>
                                     <indent id="_akn_YAsI1L">
                                         <num id="_akn_6ZHycs">
-                                            <inline name="unchecked" id="_akn_CxdHzx">☐</inline>
+                                            <inline name="unchecked" id="_akn_CxdHzx">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_qpAjfW">
                                             <aknP id="_akn_WE8RRc">Financial impact from YYYY to YYYY for commitment
@@ -256,7 +256,7 @@
                             </indent>
                             <indent id="_akn_SFyICf">
                                 <num id="_akn_AJzhUY">
-                                    <inline name="unchecked" id="_akn_LYa2ML">☐</inline>
+                                    <inline name="unchecked" id="_akn_LYa2ML">UNCHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_lrWvLr">
                                     <content id="_akn_l5Z3pU">
@@ -266,7 +266,7 @@
                                 <list refersTo="~_CHECK" id="_akn_lk15Vm">
                                     <indent id="_akn_5LpDr9">
                                         <num id="_akn_TwqDfZ">
-                                            <inline name="unchecked" id="_akn_oUnJxS">☐</inline>
+                                            <inline name="unchecked" id="_akn_oUnJxS">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_WWCsfH">
                                             <aknP id="_akn_UN3O91">Implementation with a start-up period from YYYY to
@@ -276,7 +276,7 @@
                                     </indent>
                                     <indent id="_akn_BYfOPX">
                                         <num id="_akn_Hz3s0C">
-                                            <inline name="unchecked" id="_akn_Dqp1OE">☐</inline>
+                                            <inline name="unchecked" id="_akn_Dqp1OE">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_xgMoAF">
                                             <aknP id="_akn_QLAxQj">followed by full-scale operation.</aknP>
@@ -306,7 +306,7 @@
                         <list refersTo="~_CHECK" id="_akn_4JUrND">
                             <indent id="_akn_9fiYGc">
                                 <num id="_akn_NVUPi8">
-                                    <inline name="unchecked" id="_akn_e5flUx">☐</inline>
+                                    <inline name="unchecked" id="_akn_e5flUx">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_LgpWeD">
                                     <aknP id="_akn_eXRKCE">
@@ -318,7 +318,7 @@
                             <list refersTo="~_CHECK" id="_akn_vZAT7v">
                                 <indent id="_akn_UqeVTH">
                                     <num id="_akn_9wsnus">
-                                        <inline name="unchecked" id="_akn_h4hc64">☐</inline>
+                                        <inline name="unchecked" id="_akn_h4hc64">UNCHECKED</inline>
                                     </num>
                                     <content id="_akn_usnQZT">
                                         <aknP id="_akn_J7mlGr">by its departments, including by its staff in the Union
@@ -328,7 +328,7 @@
                                 </indent>
                                 <indent id="_akn_G3oSwz">
                                     <num id="_akn_Hb8WDn">
-                                        <inline name="unchecked" id="_akn_CV6VE3">☐</inline>
+                                        <inline name="unchecked" id="_akn_CV6VE3">UNCHECKED</inline>
                                     </num>
                                     <content id="_akn_7YaOWm">
                                         <aknP id="_akn_yDqTG7">by the executive agencies</aknP>
@@ -337,7 +337,7 @@
                             </list>
                             <indent id="_akn_frYebO">
                                 <num id="_akn_SaeyPI">
-                                    <inline name="unchecked" id="_akn_LyarD1">☐</inline>
+                                    <inline name="unchecked" id="_akn_LyarD1">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_KsIuIm">
                                     <aknP id="_akn_qWOUZX">
@@ -348,7 +348,7 @@
                             </indent>
                             <indent id="_akn_dLiXDZ">
                                 <num id="_akn_ggRq5P">
-                                    <inline name="checked" id="_akn_LRnJVp">☑</inline>
+                                    <inline name="checked" id="_akn_LRnJVp">CHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_xGA22L">
                                     <content id="_akn_yN5YE4">
@@ -361,7 +361,7 @@
                                 <list refersTo="~_CHECK" id="_akn_3ZlAUj">
                                     <indent id="_akn_554qY9">
                                         <num id="_akn_kKfEgF">
-                                            <inline name="unchecked" id="_akn_b6R5J4">☐</inline>
+                                            <inline name="unchecked" id="_akn_b6R5J4">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_L0ewx1">
                                             <aknP id="_akn_pe0TPF">third countries or the bodies they have designated;
@@ -370,7 +370,7 @@
                                     </indent>
                                     <indent id="_akn_sZ2673">
                                         <num id="_akn_kxZpYA">
-                                            <inline name="unchecked" id="_akn_To9yOm">☐</inline>
+                                            <inline name="unchecked" id="_akn_To9yOm">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_qXH6zc">
                                             <aknP id="_akn_Qv2KDp">international organisations and their agencies (to be
@@ -380,7 +380,7 @@
                                     </indent>
                                     <indent id="_akn_PYtkdJ">
                                         <num id="_akn_gqAf6M">
-                                            <inline name="unchecked" id="_akn_15Dl5n">☐</inline>
+                                            <inline name="unchecked" id="_akn_15Dl5n">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_6EWsew">
                                             <aknP id="_akn_2CYHWh">the EIB and the European Investment Fund;</aknP>
@@ -388,7 +388,7 @@
                                     </indent>
                                     <indent id="_akn_FZaj5q">
                                         <num id="_akn_c1ReEr">
-                                            <inline name="checked" id="_akn_rxlLZA">☑</inline>
+                                            <inline name="checked" id="_akn_rxlLZA">CHECKED</inline>
                                         </num>
                                         <content id="_akn_g8TXwO">
                                             <aknP id="_akn_z46Hx3">bodies referred to in Articles 70 and 71 of the
@@ -398,7 +398,7 @@
                                     </indent>
                                     <indent id="_akn_MR3hvd">
                                         <num id="_akn_yGavWY">
-                                            <inline name="unchecked" id="_akn_bOsh0F">☐</inline>
+                                            <inline name="unchecked" id="_akn_bOsh0F">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_uaygbW">
                                             <aknP id="_akn_4MsLSO">public law bodies;</aknP>
@@ -406,7 +406,7 @@
                                     </indent>
                                     <indent id="_akn_rJlqPO">
                                         <num id="_akn_BoGpiN">
-                                            <inline name="unchecked" id="_akn_yDXeHT">☐</inline>
+                                            <inline name="unchecked" id="_akn_yDXeHT">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_UfGyxu">
                                             <aknP id="_akn_HiNUER">bodies governed by private law with a public service
@@ -417,7 +417,7 @@
                                     </indent>
                                     <indent id="_akn_G5NzeO">
                                         <num id="_akn_0gewUI">
-                                            <inline name="unchecked" id="_akn_Ov2S3y">☐</inline>
+                                            <inline name="unchecked" id="_akn_Ov2S3y">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_mDfEZp">
                                             <aknP id="_akn_6oGH4o">bodies governed by the private law of a Member State
@@ -429,7 +429,7 @@
                                     </indent>
                                     <indent id="_akn_nZ0SbP">
                                         <num id="_akn_7ecaNd">
-                                            <inline name="unchecked" id="_akn_3B4nRY">☐</inline>
+                                            <inline name="unchecked" id="_akn_3B4nRY">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_xQh06Z">
                                             <aknP id="_akn_KpAHaQ">bodies or persons entrusted with the implementation
@@ -501,7 +501,7 @@
                         <num id="_akn_tWZeVG">2.2.3.</num>
                         <heading id="_akn_p5B3I6">Estimation and justification of the cost-effectiveness of the controls
                             (ratio of &quot;control costs
-                            ÷ value of the related funds managed&quot;), and assessment of the expected levels of risk
+                            / value of the related funds managed&quot;), and assessment of the expected levels of risk
                             of error (at
                             payment &amp; at closure)
                         </heading>
@@ -737,7 +737,7 @@
                         <list refersTo="~_CHECK" id="_akn_vPDBEv">
                             <indent id="_akn_8tlqUU">
                                 <num id="_akn_2slVZL">
-                                    <inline name="unchecked" id="_akn_9EagWj">☐</inline>
+                                    <inline name="unchecked" id="_akn_9EagWj">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_4iwKzP">
                                     <aknP id="_akn_6YbjCB">The proposal/initiative does not require the use of
@@ -747,7 +747,7 @@
                             </indent>
                             <indent id="_akn_z0FVbD">
                                 <num id="_akn_FKviSL">
-                                    <inline name="unchecked" id="_akn_VAES1P">☐</inline>
+                                    <inline name="unchecked" id="_akn_VAES1P">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_gUbBaH">
                                     <aknP id="_akn_Jk6ssX">The proposal/initiative requires the use of operational
@@ -786,16 +786,16 @@
                                     <tr id="_akn_ZXwesl">
                                         <td style="width: 198.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_IitaPo">
-                                            <aknP style="text-align: center;" id="_akn_l766oR">DG: &lt;…….&gt;</aknP>
+                                            <aknP style="text-align: center;" id="_akn_l766oR">DG: &lt;.......&gt;</aknP>
                                         </td>
                                         <td colspan="2"
                                             style="width: 78.0pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_eBGc6c">
-                                            <aknP id="_akn_3fpfYQ"> </aknP>
+                                            <aknP id="_akn_3fpfYQ">NBSP</aknP>
                                         </td>
                                         <td style="width: 26.7pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_DsBShh">
-                                            <aknP style="text-align: center;" id="_akn_kobJhk"> </aknP>
+                                            <aknP style="text-align: center;" id="_akn_kobJhk">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_oda5cx">
@@ -848,44 +848,44 @@
                                         <td colspan="4"
                                             style="width: 302.7pt; border: solid windowtext 1.0pt; border-top: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_03SHcD">
-                                            <aknP style="margin: 1.0pt 0cm 1.0pt 0cm;" id="_akn_jP0j4a">Ÿ Operational
+                                            <aknP style="margin: 1.0pt 0cm 1.0pt 0cm;" id="_akn_jP0j4a">Operational
                                                 appropriations
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_bL2jQV">
-                                            <aknP id="_akn_TxWI9K"> </aknP>
+                                            <aknP id="_akn_TxWI9K">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_Wo4hcd">
-                                            <aknP id="_akn_XlNbc4"> </aknP>
+                                            <aknP id="_akn_XlNbc4">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_0hkAbl">
-                                            <aknP id="_akn_OcK1Kp"> </aknP>
+                                            <aknP id="_akn_OcK1Kp">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_xeB0tg">
-                                            <aknP id="_akn_cuukjG"> </aknP>
+                                            <aknP id="_akn_cuukjG">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_lVguOp">
-                                            <aknP id="_akn_kOkIo9"> </aknP>
+                                            <aknP id="_akn_kOkIo9">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_bvAAxt">
-                                            <aknP id="_akn_XaYA3t"> </aknP>
+                                            <aknP id="_akn_XaYA3t">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_pXxwFR">
                                             <aknP id="_akn_aYvTh6">
-                                                <b id="_akn_chneuU"> </b>
+                                                <b id="_akn_chneuU">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 10.65pt;"
                                             id="_akn_MJndMO">
                                             <aknP id="_akn_1AXJ2g">
-                                                <b id="_akn_8HgWJs"> </b>
+                                                <b id="_akn_8HgWJs">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -912,51 +912,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_kFAmRF">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_2giARl"> 
+                                                  id="_akn_2giARl">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_pzHbNG">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_XKKTaP"> 
+                                                  id="_akn_XKKTaP">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_AsPJn7">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_mOGTuT"> 
+                                                  id="_akn_mOGTuT">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_QlddKu">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_r49g1I"> 
+                                                  id="_akn_r49g1I">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_sbDnAs">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_HQ8PzW"> 
+                                                  id="_akn_HQ8PzW">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_jXFjOa">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_74uazt"> 
+                                                  id="_akn_74uazt">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_JYDwvj">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_Z0avll">
-                                                <b id="_akn_VBXJUr"> </b>
+                                                <b id="_akn_VBXJUr">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_JIXZHs">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_nSsrUj">
-                                                <b id="_akn_dOFMjL"> </b>
+                                                <b id="_akn_dOFMjL">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -975,51 +975,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_nEhY8e">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_adTlVb"> 
+                                                  id="_akn_adTlVb">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_XP2vNd">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_5AhYgQ"> 
+                                                  id="_akn_5AhYgQ">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_I83JuN">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_AuN3qw"> 
+                                                  id="_akn_AuN3qw">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_3j2hpC">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_ocu5sP"> 
+                                                  id="_akn_ocu5sP">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_RkCA0G">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_HE5bfL"> 
+                                                  id="_akn_HE5bfL">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_JAwMsl">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_c4YMSn"> 
+                                                  id="_akn_c4YMSn">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_2N7hhb">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_79qm1u">
-                                                <b id="_akn_B7Ln3x"> </b>
+                                                <b id="_akn_B7Ln3x">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_N6lug2">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_nUkPvR">
-                                                <b id="_akn_HvmsTT"> </b>
+                                                <b id="_akn_HvmsTT">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1044,51 +1044,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_jYWfSd">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_BnUDdl"> 
+                                                  id="_akn_BnUDdl">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_A2ynPX">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_QxO5u3"> 
+                                                  id="_akn_QxO5u3">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_pr3thB">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_qn9Vbk"> 
+                                                  id="_akn_qn9Vbk">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_K3WDv4">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_6Qhdc6"> 
+                                                  id="_akn_6Qhdc6">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_Vd8331">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_z134oo"> 
+                                                  id="_akn_z134oo">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_yxl0rs">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_6dNs97"> 
+                                                  id="_akn_6dNs97">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_X3ZmRk">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_X6eOH0">
-                                                <b id="_akn_ADQFzi"> </b>
+                                                <b id="_akn_ADQFzi">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_x0qebq">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_5eTbei">
-                                                <b id="_akn_PopFaK"> </b>
+                                                <b id="_akn_PopFaK">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1107,51 +1107,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_6obYr6">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_HpRTY2"> 
+                                                  id="_akn_HpRTY2">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_obd6K7">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_TiwVRm"> 
+                                                  id="_akn_TiwVRm">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_IosKFm">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_RiLg3d"> 
+                                                  id="_akn_RiLg3d">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_q7aEKe">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_G7qzgr"> 
+                                                  id="_akn_G7qzgr">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_eZ4y6a">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_PTQ3TM"> 
+                                                  id="_akn_PTQ3TM">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_WLw9Bd">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_LEDWqw"> 
+                                                  id="_akn_LEDWqw">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_6CGach">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_CuTklZ">
-                                                <b id="_akn_V6pYkd"> </b>
+                                                <b id="_akn_V6pYkd">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_aFVImR">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_Vw90Fj">
-                                                <b id="_akn_RRnUrn"> </b>
+                                                <b id="_akn_RRnUrn">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1164,54 +1164,54 @@
                                                 financed from the envelope of specific programmes
                                                 <a href="#_ftn3" aknTitle="" id="_akn_oOS07n">[3]</a>
                                             </aknP>
-                                            <aknP style="margin: 0cm;" id="_akn_sbdyn6"> </aknP>
+                                            <aknP style="margin: 0cm;" id="_akn_sbdyn6">NBSP</aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_GVPVjd">
                                             <aknP id="_akn_iAdDbo">
-                                                <b id="_akn_LaRsV1"> </b>
+                                                <b id="_akn_LaRsV1">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_y4hSyg">
                                             <aknP id="_akn_0YfTcM">
-                                                <b id="_akn_SwuSOR"> </b>
+                                                <b id="_akn_SwuSOR">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_reYjkR">
                                             <aknP id="_akn_d3Pfpm">
-                                                <b id="_akn_qAtI92"> </b>
+                                                <b id="_akn_qAtI92">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_CPKk94">
                                             <aknP id="_akn_cidOvh">
-                                                <b id="_akn_o8SAeK"> </b>
+                                                <b id="_akn_o8SAeK">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_vncAHo">
                                             <aknP id="_akn_bQdd4X">
-                                                <b id="_akn_7hiaTn"> </b>
+                                                <b id="_akn_7hiaTn">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_Hv0pZX">
                                             <aknP id="_akn_eN81TF">
-                                                <b id="_akn_966O1j"> </b>
+                                                <b id="_akn_966O1j">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_y4Gj3w">
                                             <aknP id="_akn_xXFLWS">
-                                                <b id="_akn_KZqySO"> </b>
+                                                <b id="_akn_KZqySO">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 11.55pt;"
                                             id="_akn_zNOyt4">
                                             <aknP id="_akn_bSwqb7">
-                                                <b id="_akn_bZECFh"> </b>
+                                                <b id="_akn_bZECFh">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1224,7 +1224,7 @@
                                         <td style="width: 72.0pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_fJ9trU">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
-                                                  id="_akn_D5p2Sn"> 
+                                                  id="_akn_D5p2Sn">NBSP
                                             </aknP>
                                         </td>
                                         <td colspan="2"
@@ -1238,56 +1238,56 @@
                                             id="_akn_uqOAyA">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_16h92F">
-                                                <b id="_akn_1cG6Xt"> </b>
+                                                <b id="_akn_1cG6Xt">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_H34QQd">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_UqufLV">
-                                                <b id="_akn_8OfWBz"> </b>
+                                                <b id="_akn_8OfWBz">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_3Tg6pn">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_72JEhr">
-                                                <b id="_akn_VfM9TD"> </b>
+                                                <b id="_akn_VfM9TD">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_OFEUFK">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_9X9h9b">
-                                                <b id="_akn_9naJl1"> </b>
+                                                <b id="_akn_9naJl1">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_z5Huys">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_cQevUa">
-                                                <b id="_akn_k6CLFG"> </b>
+                                                <b id="_akn_k6CLFG">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_KtmisI">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_Hyokz7">
-                                                <b id="_akn_r4KFi1"> </b>
+                                                <b id="_akn_r4KFi1">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_GJ3Hqx">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_PB1FLu">
-                                                <b id="_akn_7HEV8T"> </b>
+                                                <b id="_akn_7HEV8T">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.95pt;"
                                             id="_akn_buaI2V">
                                             <aknP style="text-align: right; margin: 2.0pt 0cm 2.0pt 0cm;"
                                                   id="_akn_p7Gpn7">
-                                                <b id="_akn_RZExUl"> </b>
+                                                <b id="_akn_RZExUl">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1299,7 +1299,7 @@
                                                 <b id="_akn_yFt2eQ">TOTAL appropriations</b>
                                                 <br id="_akn_V7MIvZ"></br>
                                                 <b id="_akn_1Y17TR">for DG</b>
-                                                &lt;…….&gt;
+                                                &lt;.......&gt;
                                             </aknP>
                                         </td>
                                         <td style="width: 72.0pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
@@ -1314,51 +1314,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_mGFPj1">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_cZN317"> 
+                                                  id="_akn_cZN317">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_QxRZm9">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_W1gg5F"> 
+                                                  id="_akn_W1gg5F">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_8Lh0N4">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_Sifn6P"> 
+                                                  id="_akn_Sifn6P">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_K93jx0">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_88vowV"> 
+                                                  id="_akn_88vowV">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_tUgRx8">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_lEBZfo"> 
+                                                  id="_akn_lEBZfo">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_zs34MB">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_4cqrOn"> 
+                                                  id="_akn_4cqrOn">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_I5KSDt">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_aQZgxj">
-                                                <b id="_akn_VoDnFh"> </b>
+                                                <b id="_akn_VoDnFh">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_PrHqxX">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_nCOFZt">
-                                                <b id="_akn_EYm9G9"> </b>
+                                                <b id="_akn_EYm9G9">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1376,90 +1376,90 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_8VCTtw">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_BNOn99"> 
+                                                  id="_akn_BNOn99">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_IfLKU9">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_6P42Va"> 
+                                                  id="_akn_6P42Va">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_1EfjTo">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_0riraW"> 
+                                                  id="_akn_0riraW">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_zTS6vC">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_g0Uell"> 
+                                                  id="_akn_g0Uell">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_SNF3iH">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_nqIG7T"> 
+                                                  id="_akn_nqIG7T">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_9leRVY">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_1DgmyM"> 
+                                                  id="_akn_1DgmyM">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_dCthtE">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_9e2Ez6">
-                                                <b id="_akn_bLr6QZ"> </b>
+                                                <b id="_akn_bLr6QZ">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_uFSg51">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_95sF6R">
-                                                <b id="_akn_n5Kv0B"> </b>
+                                                <b id="_akn_n5Kv0B">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_dRwIzf">
                                         <td style="border: none;" id="_akn_3ojmUt">
-                                            <aknP id="_akn_f7z3lS"> </aknP>
+                                            <aknP id="_akn_f7z3lS">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_DQpIF2">
-                                            <aknP id="_akn_q36CNX"> </aknP>
+                                            <aknP id="_akn_q36CNX">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_tfN87e">
-                                            <aknP id="_akn_Xx5OHG"> </aknP>
+                                            <aknP id="_akn_Xx5OHG">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_pa0WsE">
-                                            <aknP id="_akn_LmjgIj"> </aknP>
+                                            <aknP id="_akn_LmjgIj">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_5kN6Ld">
-                                            <aknP id="_akn_rjxba5"> </aknP>
+                                            <aknP id="_akn_rjxba5">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_M2sEiE">
-                                            <aknP id="_akn_tsdy8f"> </aknP>
+                                            <aknP id="_akn_tsdy8f">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_gZSzZc">
-                                            <aknP id="_akn_lXVbzH"> </aknP>
+                                            <aknP id="_akn_lXVbzH">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_HL9Dec">
-                                            <aknP id="_akn_tNVBAB"> </aknP>
+                                            <aknP id="_akn_tNVBAB">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_oSZKF5">
-                                            <aknP id="_akn_MEceLY"> </aknP>
+                                            <aknP id="_akn_MEceLY">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_t2AanE">
-                                            <aknP id="_akn_1RHWSp"> </aknP>
+                                            <aknP id="_akn_1RHWSp">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_fzoVT5">
-                                            <aknP id="_akn_4mllEi"> </aknP>
+                                            <aknP id="_akn_4mllEi">NBSP</aknP>
                                         </td>
                                         <td style="border: none;" id="_akn_sQDrJU">
-                                            <aknP id="_akn_HX7c1g"> </aknP>
+                                            <aknP id="_akn_HX7c1g">NBSP</aknP>
                                         </td>
                                     </tr>
                                 </table>
@@ -1471,8 +1471,7 @@
                                         <td rowspan="2"
                                             style="width: 198.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_bNATkB">
-                                            <aknP style="margin: 1.0pt 0cm 1.0pt 0cm;" id="_akn_pSMKSe">• TOTAL
-                                                operational appropriations
+                                            <aknP style="margin: 1.0pt 0cm 1.0pt 0cm;" id="_akn_pSMKSe">TOTAL operational appropriations
                                             </aknP>
                                         </td>
                                         <td style="width: 72.0pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
@@ -1489,51 +1488,51 @@
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_bCG6AE">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_M3vAq3"> 
+                                                  id="_akn_M3vAq3">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_5OUxr0">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_fU1Z0b"> 
+                                                  id="_akn_fU1Z0b">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_RhiOwa">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_iB9U2G"> 
+                                                  id="_akn_iB9U2G">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_DG5W5J">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_Tn9KlB"> 
+                                                  id="_akn_Tn9KlB">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_B2aNV2">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_hVcNPW"> 
+                                                  id="_akn_hVcNPW">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_pQesn1">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_o63CJk"> 
+                                                  id="_akn_o63CJk">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_Tu0xt2">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_WSZvkl">
-                                                <b id="_akn_YPjeCp"> </b>
+                                                <b id="_akn_YPjeCp">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border: solid windowtext 1.0pt; border-left: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;"
                                             id="_akn_YSKGLt">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_NYQAwZ">
-                                                <b id="_akn_htMKTX"> </b>
+                                                <b id="_akn_htMKTX">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1551,51 +1550,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_8zZMUR">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_aK42fk"> 
+                                                  id="_akn_aK42fk">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_HQoCCA">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_Vq1Tvw"> 
+                                                  id="_akn_Vq1Tvw">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_RXmjRD">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_tGLZbi"> 
+                                                  id="_akn_tGLZbi">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_VB28rF">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_9mDMcY"> 
+                                                  id="_akn_9mDMcY">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_3eBpqX">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_TkyNzf"> 
+                                                  id="_akn_TkyNzf">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_DaoDC9">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_hfjv52"> 
+                                                  id="_akn_hfjv52">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_9KCLAF">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_G5w8Ry">
-                                                <b id="_akn_19oONx"> </b>
+                                                <b id="_akn_19oONx">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_QjTqlK">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_oozsrh">
-                                                <b id="_akn_wrh7TG"> </b>
+                                                <b id="_akn_wrh7TG">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1603,7 +1602,7 @@
                                         <td colspan="2"
                                             style="width: 270.0pt; border: solid windowtext 1.0pt; border-top: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_F7ZT42">
-                                            <aknP style="margin: 2.4pt 0cm 2.4pt 0cm;" id="_akn_Hlyme0">• TOTAL
+                                            <aknP style="margin: 2.4pt 0cm 2.4pt 0cm;" id="_akn_Hlyme0">TOTAL
                                                 appropriations of an administrative
                                                 nature financed from the envelope for specific programmes
                                             </aknP>
@@ -1618,56 +1617,56 @@
                                             id="_akn_zz786l">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_WDuQiZ">
-                                                <b id="_akn_PLJ1pF"> </b>
+                                                <b id="_akn_PLJ1pF">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_CD3xWS">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_xu3msI">
-                                                <b id="_akn_dWBk2m"> </b>
+                                                <b id="_akn_dWBk2m">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_wIrTYm">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_Y1nT8z">
-                                                <b id="_akn_LkeUpM"> </b>
+                                                <b id="_akn_LkeUpM">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_BatuDu">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_1NP2UD">
-                                                <b id="_akn_VI7LNL"> </b>
+                                                <b id="_akn_VI7LNL">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_DgjJb6">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_7IPfob">
-                                                <b id="_akn_uX4g82"> </b>
+                                                <b id="_akn_uX4g82">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_7opOoW">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_9BDcGi">
-                                                <b id="_akn_Iht8yM"> </b>
+                                                <b id="_akn_Iht8yM">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_qOB8xs">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_Sbuy4c">
-                                                <b id="_akn_1jpDdj"> </b>
+                                                <b id="_akn_1jpDdj">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.65pt;"
                                             id="_akn_lRePJg">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_VKgvTV">
-                                                <b id="_akn_8SUswy"> </b>
+                                                <b id="_akn_8SUswy">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1678,7 +1677,7 @@
                                             <aknP style="text-align: center;" id="_akn_fSigXF">
                                                 <b id="_akn_JthmMH">TOTAL appropriations</b>
                                                 <br id="_akn_I4Vfmp"></br>
-                                                <b id="_akn_PPAhtY">under HEADING &lt;….&gt;</b>
+                                                <b id="_akn_PPAhtY">under HEADING &lt;....&gt;</b>
                                                 <br id="_akn_S7cJok"></br>
                                                 of the multiannual financial framework
                                             </aknP>
@@ -1694,51 +1693,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_IIZ23E">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_ro2Fmu"> 
+                                                  id="_akn_ro2Fmu">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_e2x0yi">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_WM7VaS"> 
+                                                  id="_akn_WM7VaS">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_WQbrHX">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_2p50T0"> 
+                                                  id="_akn_2p50T0">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_5QSgqn">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_5Jy1Yi"> 
+                                                  id="_akn_5Jy1Yi">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_iVajyV">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_scB56R"> 
+                                                  id="_akn_scB56R">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_cCG3pe">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_Kyw45A"> 
+                                                  id="_akn_Kyw45A">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_jxOsIF">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_vlP4xI">
-                                                <b id="_akn_RnfYCH"> </b>
+                                                <b id="_akn_RnfYCH">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_hom7AU">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_XzWseH">
-                                                <b id="_akn_wvAsCx"> </b>
+                                                <b id="_akn_wvAsCx">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1754,51 +1753,51 @@
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_xlHqaM">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_Y90EOc"> 
+                                                  id="_akn_Y90EOc">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_kFiTT4">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_2vM4YI"> 
+                                                  id="_akn_2vM4YI">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_NvJTkq">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_7WEKrf"> 
+                                                  id="_akn_7WEKrf">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_tnA05s">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_SrY2Az"> 
+                                                  id="_akn_SrY2Az">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_mD8tBE">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_ny2AGk"> 
+                                                  id="_akn_ny2AGk">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_4uO577">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
-                                                  id="_akn_YYYY4m"> 
+                                                  id="_akn_YYYY4m">NBSP
                                             </aknP>
                                         </td>
                                         <td style="width: 43.4pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_pQUROZ">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_7anwgE">
-                                                <b id="_akn_boY06F"> </b>
+                                                <b id="_akn_boY06F">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="width: 88.85pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt;"
                                             id="_akn_kH2FSM">
                                             <aknP style="text-align: right; margin: 1.0pt 0cm 1.0pt 0cm;"
                                                   id="_akn_B33GtR">
-                                                <b id="_akn_i9NFvI"> </b>
+                                                <b id="_akn_i9NFvI">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -1823,7 +1822,7 @@
                                     <tr id="_akn_P3FMdd">
                                         <td rowspan="2" style="border:1px solid black;text-align:left;"
                                             id="_akn_dIHSbg">
-                                            <aknP id="_akn_YxfiVw">• TOTAL operational appropriations (all operational
+                                            <aknP id="_akn_YxfiVw">TOTAL operational appropriations (all operational
                                                 headings)
                                             </aknP>
                                         </td>
@@ -2030,7 +2029,7 @@
                                             </aknP>
                                         </td>
                                         <td style="border:1px solid black;text-align:left;width:79%" id="_akn_hTgWa2">
-                                            <aknP id="_akn_oqu3Uo">‘Administrative expenditure’</aknP>
+                                            <aknP id="_akn_oqu3Uo">Administrative expenditure</aknP>
                                         </td>
                                     </tr>
                                 </table>
@@ -2101,7 +2100,7 @@
                                     </tr>
                                     <tr style="border:1px solid black;" id="_akn_jSgjqh">
                                         <td style="border:1px solid black;text-align:center;" id="_akn_qH6b8H">
-                                            <aknP id="_akn_w0QiFc">DG: &lt;…….&gt;</aknP>
+                                            <aknP id="_akn_w0QiFc">DG: &lt;.......&gt;</aknP>
                                         </td>
                                         <td colspan="8" style=";border:none;" id="_akn_eJWj3w">
                                             <aknP id="_akn_e6SLJM"></aknP>
@@ -2110,7 +2109,7 @@
                                     <tr id="_akn_Fpswdk">
                                         <td colspan="2" style="border:1px solid black;text-align:left;"
                                             id="_akn_6cOhWS">
-                                            <aknP id="_akn_at6skY">• Human Resources</aknP>
+                                            <aknP id="_akn_at6skY">Human Resources</aknP>
                                         </td>
                                         <td style="border:1px solid black;text-align:right;" id="_akn_K02Mks">
                                             <aknP id="_akn_7lYNs3">[...]</aknP>
@@ -2137,7 +2136,7 @@
                                     <tr id="_akn_GfdLAx">
                                         <td colspan="2" style="border:1px solid black;text-align:left;"
                                             id="_akn_UAFWRt">
-                                            <aknP id="_akn_rlICSs">• Other administrative expenditure</aknP>
+                                            <aknP id="_akn_rlICSs">Other administrative expenditure</aknP>
                                         </td>
                                         <td style="border:1px solid black;text-align:right;" id="_akn_K7tZDV">
                                             <aknP id="_akn_PH5xor">[...]</aknP>
@@ -2164,7 +2163,7 @@
                                     <tr id="_akn_MDfOZ3">
                                         <td style="border:1px solid black;text-align:center;" id="_akn_A2I4C5">
                                             <aknP id="_akn_PJu4Ao">
-                                                <b id="_akn_AwhieZ">TOTAL DG &lt;…….&gt;</b>
+                                                <b id="_akn_AwhieZ">TOTAL DG &lt;.......&gt;</b>
                                             </aknP>
                                         </td>
                                         <td style="border:1px solid black;text-align:left" id="_akn_qJ41Zd">
@@ -2204,10 +2203,10 @@
                                             <aknP id="_akn_iO8bqL">
                                                 <b id="_akn_nplT9A">TOTAL appropriations
                                                     <br id="_akn_FJzT43"></br>
-                                                    under HEADING 7
+                                                    under HEADINGNBSP7
                                                 </b>
                                                 <br id="_akn_y4uJqA"></br>
-                                                of the multiannual financial framework 
+                                                of the multiannual financial frameworkNBSP
                                             </aknP>
                                         </td>
                                         <td style="border:1px solid black;text-align:left;" id="_akn_cqtJFy">
@@ -2302,7 +2301,7 @@
                                                     under HEADINGS 1 to 7
                                                 </b>
                                                 <br id="_akn_JJIKdh"></br>
-                                                of the multiannual financial framework 
+                                                of the multiannual financial frameworkNBSP
                                             </aknP>
                                         </td>
                                         <td style="border:1px solid          black;text-align:left;" id="_akn_YHGbaN">
@@ -2388,7 +2387,7 @@
                                                     outputs
                                                 </b>
                                             </aknP>
-                                            <aknP id="_akn_XiymaH">⇩</aknP>
+                                            <aknP id="_akn_XiymaH">Q</aknP>
                                         </td>
                                         <td style="border:1px solid black;" id="_akn_85D2Lv">
                                             <aknP id="_akn_CmnisA"></aknP>
@@ -2432,7 +2431,7 @@
                                             <aknP id="_akn_Pdpy8y">Type
                                                 <authorialNote marker="8" placement="bottom" id="_akn_AAgEGZ"
                                                                onClick="LEOS.scrollTo('endNote__akn_AAgEGZ')">
-                                                    <aknP id="_akn_jKlCMn">   Outputs are products and services to be
+                                                    <aknP id="_akn_jKlCMn">NBSPNBSPNBSPOutputs are products and services to be
                                                         supplied (e.g.: number of
                                                         student exchanges financed, number of km of roads built, etc.).
                                                     </aknP>
@@ -2514,8 +2513,8 @@
                                             <aknP id="_akn_wMyX93">SPECIFIC OBJECTIVE No 1: [...]
                                                 <authorialNote marker="9" placement="bottom" id="_akn_YaPxar"
                                                                onClick="LEOS.scrollTo('endNote__akn_YaPxar')">
-                                                    <aknP id="_akn_87p49O">   As described in point 1.4.2. ‘Specific
-                                                        objective(s)…’
+                                                    <aknP id="_akn_87p49O">NBSPNBSPNBSPAs described in point 1.4.2. Specific
+                                                        objective(s)...
                                                     </aknP>
                                                 </authorialNote>
                                             </aknP>
@@ -2883,7 +2882,7 @@
                         <list refersTo="~_CHECK" id="_akn_DJaPjS">
                             <indent id="_akn_3d9UX5">
                                 <num id="_akn_m63zKN">
-                                    <inline name="unchecked" id="_akn_rJ6kzB">☐</inline>
+                                    <inline name="unchecked" id="_akn_rJ6kzB">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_8jSwq4">
                                     <aknP id="_akn_Qhbz42">The proposal/initiative does not require the use of
@@ -2893,7 +2892,7 @@
                             </indent>
                             <indent id="_akn_QQWKLI">
                                 <num id="_akn_u5HbSL">
-                                    <inline name="checked" id="_akn_698E3i">☑</inline>
+                                    <inline name="checked" id="_akn_698E3i">CHECKED</inline>
                                 </num>
                                 <content id="_akn_j9uOzb">
                                     <aknP id="_akn_YLrXVJ">The proposal/initiative requires the use of operational
@@ -2984,22 +2983,22 @@
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_1dcJyh">
-                                            <aknP id="_akn_eDA5wp"> </aknP>
+                                            <aknP id="_akn_eDA5wp">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_mr6nVv">
-                                            <aknP id="_akn_lhXTDD"> </aknP>
+                                            <aknP id="_akn_lhXTDD">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_hCRWIe">
-                                            <aknP id="_akn_Cfe8PM"> </aknP>
+                                            <aknP id="_akn_Cfe8PM">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_7gh1j0">
-                                            <aknP id="_akn_cBlHyy"> </aknP>
+                                            <aknP id="_akn_cBlHyy">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_0YvVY8">
-                                            <aknP id="_akn_RrDLGW"> </aknP>
+                                            <aknP id="_akn_RrDLGW">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_Y5KOQg">
-                                            <aknP id="_akn_6D3ZAV"> </aknP>
+                                            <aknP id="_akn_6D3ZAV">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_AXP46R">
@@ -3007,22 +3006,22 @@
                                             <aknP id="_akn_Zz9vf0">Human resources</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_l54R48">
-                                            <aknP id="_akn_kOBeTy"> </aknP>
+                                            <aknP id="_akn_kOBeTy">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_rmO1GA">
-                                            <aknP id="_akn_XPz2KU"> </aknP>
+                                            <aknP id="_akn_XPz2KU">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_9eh1OV">
-                                            <aknP id="_akn_VJ6WML"> </aknP>
+                                            <aknP id="_akn_VJ6WML">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_k3SSul">
-                                            <aknP id="_akn_Vl5iAA"> </aknP>
+                                            <aknP id="_akn_Vl5iAA">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_Myaa5q">
-                                            <aknP id="_akn_s7E9id"> </aknP>
+                                            <aknP id="_akn_s7E9id">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_0DryaW">
-                                            <aknP id="_akn_PZxAom"> </aknP>
+                                            <aknP id="_akn_PZxAom">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr style="height: 29.25pt;" id="_akn_ebwwqu">
@@ -3030,22 +3029,22 @@
                                             <aknP id="_akn_ZkD7eN">Other administrative expenditure</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_tJyF41">
-                                            <aknP id="_akn_00Jf39"> </aknP>
+                                            <aknP id="_akn_00Jf39">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_Do3Ejs">
-                                            <aknP id="_akn_1P5awO"> </aknP>
+                                            <aknP id="_akn_1P5awO">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_qf3gEu">
-                                            <aknP id="_akn_yg9Ct7"> </aknP>
+                                            <aknP id="_akn_yg9Ct7">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_9wwW5b">
-                                            <aknP id="_akn_6ZbEDZ"> </aknP>
+                                            <aknP id="_akn_6ZbEDZ">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_ote7Tx">
-                                            <aknP id="_akn_lKCXzm"> </aknP>
+                                            <aknP id="_akn_lKCXzm">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_b726A7">
-                                            <aknP id="_akn_3zZPBr"> </aknP>
+                                            <aknP id="_akn_3zZPBr">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr style="height: 29.25pt;" id="_akn_5oJuNw">
@@ -3058,22 +3057,22 @@
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_wVFF55">
-                                            <aknP id="_akn_kBxlTK"> </aknP>
+                                            <aknP id="_akn_kBxlTK">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_iwvdf1">
-                                            <aknP id="_akn_66c9kW"> </aknP>
+                                            <aknP id="_akn_66c9kW">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_86VdRQ">
-                                            <aknP id="_akn_jhylqW"> </aknP>
+                                            <aknP id="_akn_jhylqW">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_wv6i3X">
-                                            <aknP id="_akn_Xpwa20"> </aknP>
+                                            <aknP id="_akn_Xpwa20">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_es4YY3">
-                                            <aknP id="_akn_UlApHM"> </aknP>
+                                            <aknP id="_akn_UlApHM">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; " id="_akn_hpb2l5">
-                                            <aknP id="_akn_Kc4NnK"> </aknP>
+                                            <aknP id="_akn_Kc4NnK">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_4hdTto">
@@ -3085,7 +3084,7 @@
                                                         <aknP id="_akn_rQBf4F">Technical and/or administrative
                                                             assistance and expenditure in support
                                                             of the implementation of EU programmes and/or actions
-                                                            (former ‘BA’
+                                                            (former BA
                                                             lines), indirect research, direct research.
                                                         </aknP>
                                                     </authorialNote>
@@ -3094,7 +3093,7 @@
                                                 </b>
                                             </aknP>
                                             <aknP id="_akn_FaBmzx">
-                                                <b id="_akn_ZTmqsg"> </b>
+                                                <b id="_akn_ZTmqsg">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_KBEjNE">
@@ -3210,19 +3209,19 @@
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_IWeYOR">
-                                            <aknP id="_akn_Q4DAvQ"> </aknP>
+                                            <aknP id="_akn_Q4DAvQ">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_SoLEPn">
-                                            <aknP id="_akn_f3gAkI"> </aknP>
+                                            <aknP id="_akn_f3gAkI">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_Dd6BC9">
-                                            <aknP id="_akn_NUDxbw"> </aknP>
+                                            <aknP id="_akn_NUDxbw">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_3XaTZO">
-                                            <aknP id="_akn_61lNLX"> </aknP>
+                                            <aknP id="_akn_61lNLX">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_rlxR7O">
-                                            <aknP id="_akn_ijSaBs"> </aknP>
+                                            <aknP id="_akn_ijSaBs">NBSP</aknP>
                                         </td>
                                     </tr>
                                 </table>
@@ -3235,7 +3234,7 @@
                         <list refersTo="~_CHECK" id="_akn_e1PgyZ">
                             <indent id="_akn_Wpz1zD">
                                 <num id="_akn_AY40Z6">
-                                    <inline name="unchecked" id="_akn_BkkP9n">☐</inline>
+                                    <inline name="unchecked" id="_akn_BkkP9n">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_d49GlW">
                                     <aknP id="_akn_XdjlFt">The proposal/initiative does not require the use of human
@@ -3245,7 +3244,7 @@
                             </indent>
                             <indent id="_akn_uDIISG">
                                 <num id="_akn_MmnHNz">
-                                    <inline name="checked" id="_akn_toJVZT">☑</inline>
+                                    <inline name="checked" id="_akn_toJVZT">CHECKED</inline>
                                 </num>
                                 <content id="_akn_AFDG5W">
                                     <aknP id="_akn_rJeXrE">The proposal/initiative requires the use of human resources,
@@ -3265,7 +3264,7 @@
                                        id="_akn_zlyZJa">
                                     <tr id="_akn_Rj6bVn">
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_BST4aS">
-                                            <aknP id="_akn_p3ZXdN"> </aknP>
+                                            <aknP id="_akn_p3ZXdN">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_1JdJaS">
                                             <aknP id="_akn_lBoLLY">Year
@@ -3301,7 +3300,7 @@
                                         <td colspan="8" style="border: solid windowtext 1.0pt;text-align:left;"
                                             id="_akn_0TcPXy">
                                             <aknP id="_akn_lawNVq">
-                                                <b id="_akn_yodOoQ">• Establishment plan posts (officials and temporary
+                                                <b id="_akn_yodOoQ">Establishment plan posts (officials and temporary
                                                     staff)
                                                 </b>
                                             </aknP>
@@ -3309,37 +3308,37 @@
                                     </tr>
                                     <tr id="_akn_rjWWqH">
                                         <td style="border: solid windowtext 1.0pt;text-align:left" id="_akn_ZmO9Hb">
-                                            <aknP id="_akn_X9YsIq">20 01 02 01 (Headquarters and Commission’s
+                                            <aknP id="_akn_X9YsIq">20 01 02 01 (Headquarters and Commissions
                                                 Representation Offices)
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_5nikWA">
-                                            <aknP id="_akn_O9YELk"> </aknP>
+                                            <aknP id="_akn_O9YELk">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_UVPQ1N">
-                                            <aknP id="_akn_nrzQuH"> </aknP>
+                                            <aknP id="_akn_nrzQuH">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_FycGs9">
-                                            <aknP id="_akn_CFJiBq"> </aknP>
+                                            <aknP id="_akn_CFJiBq">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_ADIheX">
-                                            <aknP id="_akn_FFzvHd"> </aknP>
+                                            <aknP id="_akn_FFzvHd">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_K5xYpy">
-                                            <aknP id="_akn_v2HwRl"> </aknP>
+                                            <aknP id="_akn_v2HwRl">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_iwl1UJ">
-                                            <aknP id="_akn_GHXXlv"> </aknP>
+                                            <aknP id="_akn_GHXXlv">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_mtgLYO">
-                                            <aknP id="_akn_OAjRm4"> </aknP>
+                                            <aknP id="_akn_OAjRm4">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_6KdDqY">
@@ -3348,84 +3347,84 @@
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_6Xr4bz">
-                                            <aknP id="_akn_3Fo2N8"> </aknP>
+                                            <aknP id="_akn_3Fo2N8">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_TWaPkN">
-                                            <aknP id="_akn_G0CDF6"> </aknP>
+                                            <aknP id="_akn_G0CDF6">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_e008Ec">
-                                            <aknP id="_akn_4WHlZ6"> </aknP>
+                                            <aknP id="_akn_4WHlZ6">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_kw3Hyn">
-                                            <aknP id="_akn_srrQjm"> </aknP>
+                                            <aknP id="_akn_srrQjm">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_466sNg">
-                                            <aknP id="_akn_Zdr0Tx"> </aknP>
+                                            <aknP id="_akn_Zdr0Tx">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_StqvGL">
-                                            <aknP id="_akn_zsnh7t"> </aknP>
+                                            <aknP id="_akn_zsnh7t">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_grggX7">
-                                            <aknP id="_akn_LQSgoA"> </aknP>
+                                            <aknP id="_akn_LQSgoA">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_hbSpil">
                                         <td style="border: solid windowtext 1.0pt;text-align:left" id="_akn_NhvcZ1">
-                                            <aknP id="_akn_P0VZAz">01 01 01 01  (Indirect research)</aknP>
+                                            <aknP id="_akn_P0VZAz">01 01 01 01 NBSP(Indirect research)</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_qjHvTb">
-                                            <aknP id="_akn_COcr97"> </aknP>
+                                            <aknP id="_akn_COcr97">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_xhKynw">
-                                            <aknP id="_akn_QiNRjV"> </aknP>
+                                            <aknP id="_akn_QiNRjV">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_XkXWZg">
-                                            <aknP id="_akn_vLebIA"> </aknP>
+                                            <aknP id="_akn_vLebIA">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_xAgJXB">
-                                            <aknP id="_akn_3jJi7I"> </aknP>
+                                            <aknP id="_akn_3jJi7I">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_kT0qO4">
-                                            <aknP id="_akn_uksEvq"> </aknP>
+                                            <aknP id="_akn_uksEvq">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_xody0M">
-                                            <aknP id="_akn_3oQKHJ"> </aknP>
+                                            <aknP id="_akn_3oQKHJ">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_Ewg1UB">
-                                            <aknP id="_akn_o5LwiH"> </aknP>
+                                            <aknP id="_akn_o5LwiH">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_0hO6we">
                                         <td style="border: solid windowtext 1.0pt; border-top:none;text-align:left"
                                             id="_akn_c3t1v7">
-                                            <aknP id="_akn_Gr0n9Z"> 01 01 01 11 (Direct research)</aknP>
+                                            <aknP id="_akn_Gr0n9Z">NBSP01 01 01 11 (Direct research)</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_eiTuU0">
-                                            <aknP id="_akn_Pa4eUg"> </aknP>
+                                            <aknP id="_akn_Pa4eUg">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_w1gPvn">
-                                            <aknP id="_akn_EKYBv2"> </aknP>
+                                            <aknP id="_akn_EKYBv2">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_hGsn6S">
-                                            <aknP id="_akn_vqc32f"> </aknP>
+                                            <aknP id="_akn_vqc32f">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_2lzOg2">
-                                            <aknP id="_akn_rHrxNE"> </aknP>
+                                            <aknP id="_akn_rHrxNE">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_u3XkLj">
-                                            <aknP id="_akn_StPo1H"> </aknP>
+                                            <aknP id="_akn_StPo1H">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_no84J2">
-                                            <aknP id="_akn_Vawf3N"> </aknP>
+                                            <aknP id="_akn_Vawf3N">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_uBIoUK">
-                                            <aknP id="_akn_IfcKx8"> </aknP>
+                                            <aknP id="_akn_IfcKx8">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_Kc5Q6l">
@@ -3434,32 +3433,32 @@
                                             <aknP id="_akn_Y4vEBg">Other budget lines (specify)</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_y3l5KW">
-                                            <aknP id="_akn_O4LQpl"> </aknP>
+                                            <aknP id="_akn_O4LQpl">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_5PR0TP">
-                                            <aknP id="_akn_VsnyJf"> </aknP>
+                                            <aknP id="_akn_VsnyJf">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_kmJRie">
-                                            <aknP id="_akn_Np0bcO"> </aknP>
+                                            <aknP id="_akn_Np0bcO">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_qPYpET">
-                                            <aknP id="_akn_pzDQBk"> </aknP>
+                                            <aknP id="_akn_pzDQBk">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_e0JfWm">
-                                            <aknP id="_akn_tHk7G4"> </aknP>
+                                            <aknP id="_akn_tHk7G4">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_ErwiCK">
-                                            <aknP id="_akn_25EOgT"> </aknP>
+                                            <aknP id="_akn_25EOgT">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_v0Xefp">
-                                            <aknP id="_akn_MjWUVX"> </aknP>
+                                            <aknP id="_akn_MjWUVX">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_G0LK8w">
                                         <td colspan="8" style="border: solid windowtext 1.0pt;text-align:left"
                                             id="_akn_ZBqlLn">
                                             <aknP id="_akn_Wrwhmx">
-                                                <b id="_akn_X1xQxm">• External staff (in Full Time Equivalent unit: FTE)
+                                                <b id="_akn_X1xQxm">External staff (in Full Time Equivalent unit: FTE)
                                                     <authorialNote marker="12" placement="bottom" id="_akn_6Pakb5"
                                                                    onClick="LEOS.scrollTo('endNote__akn_6Pakb5')">
                                                         <aknP id="_akn_2HULe1">AC= Contract Staff; AL = Local Staff;
@@ -3475,7 +3474,7 @@
                                     <tr id="_akn_dyUWtG">
                                         <td colspan="2" style="border: solid windowtext 1.0pt; border-top: none;"
                                             id="_akn_VqeeXS">
-                                            <aknP id="_akn_HxERjE">20 02 01 (AC, END, INT from the ‘global envelope’)
+                                            <aknP id="_akn_HxERjE">20 02 01 (AC, END, INT from the global envelope)
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
@@ -3540,13 +3539,13 @@
                                             id="_akn_WC548Z">
                                             <aknP id="_akn_xJcw5J">
                                                 <b id="_akn_CU8RMq">XX</b>
-                                                01  xx
+                                                01NBSP xx
                                                 <b id="_akn_0H1YcP">yy zz
                                                     <authorialNote marker="13" placement="bottom" id="_akn_fG07uC"
                                                                    onClick="LEOS.scrollTo('endNote__akn_fG07uC')">
                                                         <aknP id="_akn_EZR4Qf">Sub-ceiling for external staff covered by
                                                             operational appropriations
-                                                            (former ‘BA’ lines).
+                                                            (former BA lines).
                                                         </aknP>
                                                     </authorialNote>
                                                 </b>
@@ -3557,7 +3556,7 @@
                                             id="_akn_47kUtw">
                                             <aknP id="_akn_uwPR37">- at Headquarters</aknP>
                                             <aknP id="_akn_ymZHLd">
-                                                <b id="_akn_y3JudX"> </b>
+                                                <b id="_akn_y3JudX">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt;" id="_akn_m6UuRb">
@@ -3616,57 +3615,57 @@
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_HrQSe4">
-                                            <aknP id="_akn_GXgLbM"> </aknP>
+                                            <aknP id="_akn_GXgLbM">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_8WeoU2">
-                                            <aknP id="_akn_gXEINi"> </aknP>
+                                            <aknP id="_akn_gXEINi">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_rDUIto">
-                                            <aknP id="_akn_WA79cH"> </aknP>
+                                            <aknP id="_akn_WA79cH">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_CBRtnJ">
-                                            <aknP id="_akn_7akC96"> </aknP>
+                                            <aknP id="_akn_7akC96">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_IgpLLz">
-                                            <aknP id="_akn_gZkIHS"> </aknP>
+                                            <aknP id="_akn_gZkIHS">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_09w5gt">
-                                            <aknP id="_akn_gPDw7A"> </aknP>
+                                            <aknP id="_akn_gPDw7A">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_o04qLO">
                                         <td colspan="2" style="border: solid windowtext 1.0pt; border-top: none; "
                                             id="_akn_l67Yxj">
-                                            <aknP id="_akn_Gu04Dj"> 01 01 01 12 (AC, END, INT - Direct research)</aknP>
+                                            <aknP id="_akn_Gu04Dj">NBSP01 01 01 12 (AC, END, INT - Direct research)</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_VSbYPA">
-                                            <aknP id="_akn_rjA6vv"> </aknP>
+                                            <aknP id="_akn_rjA6vv">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_8S1kcE">
-                                            <aknP id="_akn_Av4dKN"> </aknP>
+                                            <aknP id="_akn_Av4dKN">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_5jLfp3">
-                                            <aknP id="_akn_cm6Rgq"> </aknP>
+                                            <aknP id="_akn_cm6Rgq">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_JfcnU3">
-                                            <aknP id="_akn_sKvqjp"> </aknP>
+                                            <aknP id="_akn_sKvqjp">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_E6FxWg">
-                                            <aknP id="_akn_PUF4kf"> </aknP>
+                                            <aknP id="_akn_PUF4kf">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_XxxiCC">
-                                            <aknP id="_akn_Ih5tR4"> </aknP>
+                                            <aknP id="_akn_Ih5tR4">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_XmAr4E">
@@ -3676,27 +3675,27 @@
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_VSAqCr">
-                                            <aknP id="_akn_WqDNMS"> </aknP>
+                                            <aknP id="_akn_WqDNMS">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_NJbN8Q">
-                                            <aknP id="_akn_622uTi"> </aknP>
+                                            <aknP id="_akn_622uTi">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_fmdbK6">
-                                            <aknP id="_akn_MV9kuK"> </aknP>
+                                            <aknP id="_akn_MV9kuK">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_hVYWqy">
-                                            <aknP id="_akn_1v6UPn"> </aknP>
+                                            <aknP id="_akn_1v6UPn">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_ynkkv4">
-                                            <aknP id="_akn_TVbNKb"> </aknP>
+                                            <aknP id="_akn_TVbNKb">NBSP</aknP>
                                         </td>
                                         <td style="border: solid windowtext 1.0pt; border-left: none; "
                                             id="_akn_dMqhqA">
-                                            <aknP id="_akn_twJ4rv"> </aknP>
+                                            <aknP id="_akn_twJ4rv">NBSP</aknP>
                                         </td>
                                     </tr>
                                     <tr id="_akn_RK6IkC">
@@ -3709,37 +3708,37 @@
                                         <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; "
                                             id="_akn_Wugx5O">
                                             <aknP id="_akn_W6Ym05">
-                                                <b id="_akn_3zhMft"> </b>
+                                                <b id="_akn_3zhMft">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; "
                                             id="_akn_wQ4y5A">
                                             <aknP id="_akn_44mJPA">
-                                                <b id="_akn_1e2VPq"> </b>
+                                                <b id="_akn_1e2VPq">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; "
                                             id="_akn_2Jh1On">
                                             <aknP id="_akn_uwtjxo">
-                                                <b id="_akn_4kot7W"> </b>
+                                                <b id="_akn_4kot7W">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; "
                                             id="_akn_tFSRlk">
                                             <aknP id="_akn_rGhnKa">
-                                                <b id="_akn_d9d87y"> </b>
+                                                <b id="_akn_d9d87y">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; "
                                             id="_akn_t7SCJe">
                                             <aknP id="_akn_iK7y43">
-                                                <b id="_akn_vkgcKy"> </b>
+                                                <b id="_akn_vkgcKy">NBSP</b>
                                             </aknP>
                                         </td>
                                         <td style="border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; "
                                             id="_akn_jf16O7">
                                             <aknP id="_akn_fBohO5">
-                                                <b id="_akn_Jt5gjP"> </b>
+                                                <b id="_akn_Jt5gjP">NBSP</b>
                                             </aknP>
                                         </td>
                                     </tr>
@@ -3795,7 +3794,7 @@
                         <list refersTo="~_CHECK" id="_akn_EMp2eK">
                             <indent id="_akn_U0oBUu">
                                 <num id="_akn_3ura8w">
-                                    <inline name="unchecked" id="_akn_qm7DnN">☐</inline>
+                                    <inline name="unchecked" id="_akn_qm7DnN">UNCHECKED</inline>
                                 </num>
                                 <content id="_akn_sOgbI9">
                                     <aknP id="_akn_wDBROk">The proposal/initiative :</aknP>
@@ -3803,7 +3802,7 @@
                             </indent>
                             <indent id="_akn_tkiojb">
                                 <num id="_akn_uqoXDJ">
-                                    <inline name="checked" id="_akn_5AdkzW">☑</inline>
+                                    <inline name="checked" id="_akn_5AdkzW">CHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_ApUYVY">
                                     <content id="_akn_FY0iQ7">
@@ -3825,7 +3824,7 @@
                             </indent>
                             <indent id="_akn_kEqbGa">
                                 <num id="_akn_HV5CZ0">
-                                    <inline name="checked" id="_akn_7gvKFR">☑</inline>
+                                    <inline name="checked" id="_akn_7gvKFR">CHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_HV8YKs">
                                     <content id="_akn_fg1hjC">
@@ -3846,7 +3845,7 @@
                             </indent>
                             <indent id="_akn_0Zgnha">
                                 <num id="_akn_xKoYdq">
-                                    <inline name="checked" id="_akn_vy3cgG">☑</inline>
+                                    <inline name="checked" id="_akn_vy3cgG">CHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_6YOEYu">
                                     <content id="_akn_vi6mDN">
@@ -3870,7 +3869,7 @@
                         <list refersTo="~_CHECK" id="_akn_4rkXQH">
                             <indent id="_akn_NwUhOK">
                                 <num id="_akn_oXLVxQ">
-                                    <inline name="checked" id="_akn_9ptMuZ">☑</inline>
+                                    <inline name="checked" id="_akn_9ptMuZ">CHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_O5lkz2">
                                     <content id="_akn_ddysYO">
@@ -3880,7 +3879,7 @@
                             </indent>
                             <indent id="_akn_rnCTbQ">
                                 <num id="_akn_fDcaOh">
-                                    <inline name="checked" id="_akn_wBCq6v">☑</inline>
+                                    <inline name="checked" id="_akn_wBCq6v">CHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_aqvPIb">
                                     <content id="_akn_YthQxl">
@@ -4009,7 +4008,7 @@
                         <list refersTo="~_CHECK" id="_akn_Kbv0vV">
                             <indent id="_akn_GQS3Bo">
                                 <num id="_akn_7ohThS">
-                                    <inline name="checked" id="_akn_x3YSzM">☑</inline>
+                                    <inline name="checked" id="_akn_x3YSzM">CHECKED</inline>
                                 </num>
                                 <content id="_akn_XqDSOO">
                                     <aknP id="_akn_ZLSCCX">The proposal/initiative has no financial impact on revenue.
@@ -4018,7 +4017,7 @@
                             </indent>
                             <indent id="_akn_RP4N3O">
                                 <num id="_akn_ofEBIk">
-                                    <inline name="unchecked" id="_akn_afh47J">☐</inline>
+                                    <inline name="unchecked" id="_akn_afh47J">UNCHECKED</inline>
                                 </num>
                                 <subparagraph id="_akn_6eG3OU">
                                     <content id="_akn_PyxvKx">
@@ -4030,7 +4029,7 @@
                                 <list refersTo="~_CHECK" id="_akn_GqkXxJ">
                                     <indent id="_akn_gEEyOh">
                                         <num id="_akn_5A8gmj">
-                                            <inline name="unchecked" id="_akn_Z3bcQE">☐</inline>
+                                            <inline name="unchecked" id="_akn_Z3bcQE">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_uQ1pYy">
                                             <aknP id="_akn_2lcOBy">on own resources</aknP>
@@ -4038,7 +4037,7 @@
                                     </indent>
                                     <indent id="_akn_oOGsWI">
                                         <num id="_akn_OFovJj">
-                                            <inline name="unchecked" id="_akn_JuDlrq">☐</inline>
+                                            <inline name="unchecked" id="_akn_JuDlrq">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_MmeghX">
                                             <aknP id="_akn_QSlsmN">on other revenue</aknP>
@@ -4046,7 +4045,7 @@
                                     </indent>
                                     <indent id="_akn_sAO4ot">
                                         <num id="_akn_3uYotl">
-                                            <inline name="unchecked" id="_akn_mvUiEs">☐</inline>
+                                            <inline name="unchecked" id="_akn_mvUiEs">UNCHECKED</inline>
                                         </num>
                                         <content id="_akn_DLRkRs">
                                             <aknP id="_akn_Eun9Qu">please indicate, if the revenue is assigned to
@@ -4079,11 +4078,11 @@
                                             <aknP id="_akn_fcKJlg">Impact of the proposal/initiative
                                                 <authorialNote marker="15" placement="bottom" id="_akn_idpfcR"
                                                                onClick="LEOS.scrollTo('endNote__akn_idpfcR')">
-                                                    <aknP id="_akn_MUWNCl">   As regards traditional own resources
+                                                    <aknP id="_akn_MUWNCl">NBSPNBSPNBSPAs regards traditional own resources
                                                         (customs duties, sugar levies),
                                                         the amounts indicated must be net amounts, i.e. gross amounts
                                                         after
-                                                        deduction of 20 % for collection costs.
+                                                        deduction of 20NBSP% for collection costs.
                                                     </aknP>
                                                 </authorialNote>
                                             </aknP>
@@ -4123,7 +4122,7 @@
                                     </tr>
                                     <tr id="_akn_howyll">
                                         <td style="border:1px solid black;" id="_akn_xKzGp3">
-                                            <aknP id="_akn_MHKckq">Article ………….</aknP>
+                                            <aknP id="_akn_MHKckq">Article .............</aknP>
                                         </td>
                                         <td style="border:1px solid black;" id="_akn_huvmRo">
                                             <aknP id="_akn_2QnLWy"></aknP>
@@ -4233,13 +4232,13 @@
                     </span>
                     <span id="endNote__akn_AAgEGZ" class="leos-authnote" onClick="LEOS.scrollTo('_akn_AAgEGZ')">
                         <marker id="marker__akn_AAgEGZ">8</marker>
-                        <text id="text__akn_AAgEGZ">   Outputs are products and services to be supplied (e.g.: number of
+                        <text id="text__akn_AAgEGZ">NBSPNBSPNBSPOutputs are products and services to be supplied (e.g.: number of
                             student exchanges financed, number of km of roads built, etc.).
                         </text>
                     </span>
                     <span id="endNote__akn_YaPxar" class="leos-authnote" onClick="LEOS.scrollTo('_akn_YaPxar')">
                         <marker id="marker__akn_YaPxar">9</marker>
-                        <text id="text__akn_YaPxar">   As described in point 1.4.2. ‘Specific objective(s)…’</text>
+                        <text id="text__akn_YaPxar">NBSPNBSPNBSPAs described in point 1.4.2. Specific objective(s)...</text>
                     </span>
                     <span id="endNote__akn_cpDl0z" class="leos-authnote" onClick="LEOS.scrollTo('_akn_cpDl0z')">
                         <marker id="marker__akn_cpDl0z">10</marker>
@@ -4253,7 +4252,7 @@
                         <marker id="marker__akn_GzOoT7">11</marker>
                         <text id="text__akn_GzOoT7">Technical and/or administrative assistance and expenditure in
                             support
-                            of the implementation of EU programmes and/or actions (former ‘BA’
+                            of the implementation of EU programmes and/or actions (former BA
                             lines), indirect research, direct research.
                         </text>
                     </span>
@@ -4266,7 +4265,7 @@
                     <span id="endNote__akn_fG07uC" class="leos-authnote" onClick="LEOS.scrollTo('_akn_fG07uC')">
                         <marker id="marker__akn_fG07uC">13</marker>
                         <text id="text__akn_fG07uC">Sub-ceiling for external staff covered by operational appropriations
-                            (former ‘BA’ lines).
+                            (former BA lines).
                         </text>
                     </span>
                     <span id="endNote__akn_0TTqFJ" class="leos-authnote" onClick="LEOS.scrollTo('_akn_0TTqFJ')">
@@ -4280,10 +4279,10 @@
                     </span>
                     <span id="endNote__akn_idpfcR" class="leos-authnote" onClick="LEOS.scrollTo('_akn_idpfcR')">
                         <marker id="marker__akn_idpfcR">15</marker>
-                        <text id="text__akn_idpfcR">   As regards traditional own resources (customs duties, sugar
+                        <text id="text__akn_idpfcR">NBSPNBSPNBSPAs regards traditional own resources (customs duties, sugar
                             levies),
                             the amounts indicated must be net amounts, i.e. gross amounts after
-                            deduction of 20 % for collection costs.
+                            deduction of 20NBSP% for collection costs.
                         </text>
                     </span>
                 </span>

@@ -60,7 +60,7 @@ class SearchStrategyNavigationServices extends SearchStrategyImpl {
         ItemIterable<CmisObject> children = folder.getChildren(context);
         return StreamSupport.stream(children.spliterator(), false)
                 .filter(cmisObject -> cmisObject.getType().getId().equals(primaryType))
-                .map(cmisObject -> (Document) cmisObject)
+                .map(Document.class::cast)
                 .collect(Collectors.toList());
     }
 

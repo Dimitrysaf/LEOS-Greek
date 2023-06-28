@@ -46,6 +46,10 @@ import java.util.List;
 public class DocumentController {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
+    private static final String CONTENT_DISPOSITION = "Content-Disposition";
+    private static final String ATTACHMENT_FILENAME = "attachment; filename=\"";
+    private static final String ERROR_OCCURRED_WHILE_REQUESTING_DOUBLE_COMPARE = "Error occurred while requesting double compare";
+    private static final String ERROR_OCCURRED_WHILE_REQUESTING_EXPORT_TO_E_CONSILIUM = "Error occurred while requesting export to eConsilium";
 
     private final DocumentApiService documentApiService;
 
@@ -68,7 +72,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=\"" + response.getJobFileName() + "\"");
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + response.getJobFileName() + "\"");
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting Annotation filtering", e);
@@ -85,7 +89,7 @@ public class DocumentController {
             LeosExportStatus processedStatus = documentApiService.exportToConsilium(documentCategory, documentRef, exportToConsiliumRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting export to eConsilium", e);
+            LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_EXPORT_TO_E_CONSILIUM, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -101,7 +105,7 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=\"" + response.getJobFileName() + "\"");
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + response.getJobFileName() + "\"");
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting download of xml comparison files", e);
@@ -118,7 +122,7 @@ public class DocumentController {
             LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting export to eConsilium", e);
+            LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_EXPORT_TO_E_CONSILIUM, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -137,10 +141,10 @@ public class DocumentController {
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set("Content-Disposition", "attachment; filename=\"" + response.getJobFileName() + "\"");
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + response.getJobFileName() + "\"");
             return new ResponseEntity<>(response.getResponseData(), headers, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting export to eConsilium", e);
+            LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_EXPORT_TO_E_CONSILIUM, e);
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -157,7 +161,7 @@ public class DocumentController {
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting double compare", e);
+            LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_DOUBLE_COMPARE, e);
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -171,7 +175,7 @@ public class DocumentController {
             String response = documentApiService.fetchReferenceLabel(documentRef, references, currentElementId, capital);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting double compare", e);
+            LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_DOUBLE_COMPARE, e);
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -184,7 +188,7 @@ public class DocumentController {
             FetchElementResponse response = documentApiService.fetchElement(elementId, elementTagName, documentRef);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred while requesting double compare", e);
+            LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_DOUBLE_COMPARE, e);
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

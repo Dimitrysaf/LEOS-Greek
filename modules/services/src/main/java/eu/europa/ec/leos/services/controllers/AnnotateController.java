@@ -44,7 +44,7 @@ public class AnnotateController {
         this.annotateApiService = annotateApiService;
     }
 
-    @RequestMapping(value = "/requestUserPermissions/{documentType}/{documentRef}", method = RequestMethod.GET)
+    @GetMapping(value = "/requestUserPermissions/{documentType}/{documentRef}")
     @ResponseBody
     public ResponseEntity<Object> requestUserPermissions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {
@@ -59,7 +59,7 @@ public class AnnotateController {
         }
     }
 
-    @RequestMapping(value = "/requestSecurityToken", method = RequestMethod.GET)
+    @GetMapping(value = "/requestSecurityToken")
     @ResponseBody
     public ResponseEntity<Object> requestSecurityToken() {
         try {
@@ -72,7 +72,7 @@ public class AnnotateController {
         }
     }
 
-    @RequestMapping(value = "/requestDocumentMetadata/{documentType}/{documentRef}", method = RequestMethod.GET)
+    @GetMapping(value = "/requestDocumentMetadata/{documentType}/{documentRef}")
     @ResponseBody
     public ResponseEntity<Object> requestDocumentMetadata(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {
@@ -87,7 +87,7 @@ public class AnnotateController {
         }
     }
 
-    @RequestMapping(value = "/requestSearchMetadata", method = RequestMethod.GET)
+    @GetMapping(value = "/requestSearchMetadata")
     @ResponseBody
     public ResponseEntity<Object> requestSearchMetadata() {
         try {
@@ -100,7 +100,7 @@ public class AnnotateController {
         }
     }
 
-    @RequestMapping(value = "/requestMergeSuggestion/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @PostMapping(value = "/requestMergeSuggestion/{documentType}/{documentRef}")
     @ResponseBody
     public ResponseEntity<Object> requestMergeSuggestion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                          @RequestBody AnnotateMergeSuggestionRequest mergeSuggestionRequest) {
@@ -123,7 +123,7 @@ public class AnnotateController {
         }
     }
 
-    @RequestMapping(value = "/requestMergeSuggestions/{documentType}/{documentRef}", method = RequestMethod.POST)
+    @PostMapping(value = "/requestMergeSuggestions/{documentType}/{documentRef}")
     @ResponseBody
     public ResponseEntity<Object> requestMergeSuggestions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                           @RequestBody AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
@@ -131,27 +131,31 @@ public class AnnotateController {
         List<AnnotateMergeSuggestionsResponse> results = new ArrayList<>();
         try {
             for (AnnotateMergeSuggestionRequest suggestionRequest : mergeSuggestionRequests.getMergeSuggestionRequests()) {
-                try {
-                    final String origText = suggestionRequest.getOrigText();
-                    final String newText = suggestionRequest.getNewText();
-                    final String elementId = suggestionRequest.getElementId();
-                    final int startOffset = suggestionRequest.getStartOffset();
-                    final int endOffset = suggestionRequest.getEndOffset();
-                    if (origText == null || newText == null || elementId == null || startOffset < 0 || endOffset < 0 || startOffset == endOffset) {
-                        throw new Exception("Invalid request parameters");
-                    }
-                    annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
-                    results.add(new AnnotateMergeSuggestionsResponse(origText, newText, elementId, startOffset, endOffset, "SUCCESS"));
-                } catch (Exception e) {
-                    LOG.error("Error in for suggestion: {}", suggestionRequest);
-                    throw e;
-                }
+                this.mergeSuggestion(documentRef, documentCategory, results, suggestionRequest);
             }
             return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
             String msg = "Error occurred while requesting Annotation Merge Suggestion";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void mergeSuggestion(String documentRef, LeosCategoryClass documentCategory, List<AnnotateMergeSuggestionsResponse> results, AnnotateMergeSuggestionRequest suggestionRequest) throws Exception {
+        try {
+            final String origText = suggestionRequest.getOrigText();
+            final String newText = suggestionRequest.getNewText();
+            final String elementId = suggestionRequest.getElementId();
+            final int startOffset = suggestionRequest.getStartOffset();
+            final int endOffset = suggestionRequest.getEndOffset();
+            if (origText == null || newText == null || elementId == null || startOffset < 0 || endOffset < 0 || startOffset == endOffset) {
+                throw new Exception("Invalid request parameters");
+            }
+            annotateApiService.mergeSuggestion(documentCategory, documentRef, origText, newText, elementId, startOffset, endOffset);
+            results.add(new AnnotateMergeSuggestionsResponse(origText, newText, elementId, startOffset, endOffset, "SUCCESS"));
+        } catch (Exception e) {
+            LOG.error("Error in for suggestion: {}", suggestionRequest);
+            throw e;
         }
     }
 

@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 class OJDocumentProviderImpl implements ExternalDocumentProvider {
-    private static Logger LOG = LoggerFactory.getLogger(OJDocumentProviderImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OJDocumentProviderImpl.class);
 
     @Value("#{integrationProperties['leos.import.oj.url']}")
     private String ojUrl;
@@ -67,8 +67,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
     @Override
     public String getFormexDocument(String type, int year, int number) {
         final String uriDocument = getOJFormexDocumentUrl(type, year, number);
-        final String formexDocument = uriDocument != null ? getOJFormexDocumentByUrl(uriDocument) : null;
-        return formexDocument;
+        return uriDocument != null ? getOJFormexDocumentByUrl(uriDocument) : null;
     }
 
     String getOJFormexDocumentUrl(String type, int year, int number) {
@@ -100,18 +99,19 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             queryStr.append("}");
             Query query = queryStr.asQuery();
             QueryEngineHTTP qexec = QueryExecutionFactory.createServiceRequest(uri, query);
-            try {
+            try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
             	String uuid = UUID.randomUUID().toString();
-                LOG.info("Calling OJ with Sparql query at URL: "+ uri + " with uuid: " + uuid);
+                LOG.info("Calling OJ with Sparql query at URL: {} with uuid: {}", uri, uuid);
                 qexec.addDefaultGraph("");
                 qexec.addParam("debug", PARAM_DEBUG_VALUE);
                 qexec.addParam("timeout", String.valueOf(PARAM_TIMEOUT_VALUE));
                 qexec.addParam("format", PARAM_FORMAT_VALUE);
                 qexec.addParam("uuid", uuid);
                 qexec.setTimeout(PARAM_TIMEOUT_VALUE, PARAM_TIMEOUT_VALUE);
-                LOG.debug("OJ Sparql Query: {}", qexec.getQuery().toString(qexec.getQuery().getSyntax()));
+                if(LOG.isDebugEnabled()){
+                    LOG.debug("OJ Sparql Query: {}", qexec.getQuery().toString(qexec.getQuery().getSyntax()));
+                }
                 ResultSet results = qexec.execSelect();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 ResultSetFormatter.outputAsJSON(outputStream, results);
                 String json = new String(outputStream.toByteArray());
                 LOG.debug("OJ Sparql Response: {}", json);                
@@ -148,7 +148,9 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
         try {
             setProxy();
             uriDocument = uriDocument + DOC_TYPE;
-            LOG.debug("OJ Formex document url: " + uriDocument);
+            if(LOG.isDebugEnabled()){
+                LOG.debug("OJ Formex document url: {}", uriDocument);
+            }
             formexDocument = restTemplate.getForObject(uriDocument, String.class);
             unsetProxy();
         } catch (Exception e) {
@@ -165,6 +167,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             System.setProperty("http.proxyHost", proxyHost);
             System.setProperty("http.proxyPort", proxyPort);
             Authenticator.setDefault(new Authenticator() {
+                @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(proxyUsername, proxyPassword.toCharArray());
                 }

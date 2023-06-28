@@ -28,7 +28,7 @@ public class VersionVO {
     private String legFileName;
     private String createdBy;
 
-    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public VersionType getVersionType() {
         return versionType;

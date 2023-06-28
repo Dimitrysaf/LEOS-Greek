@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,8 +104,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         final XmlDocument original = this.getDocumentByVersion(documentRef, originalProposalId, clazz);
         final XmlDocument intermediate = this.getDocumentByVersion(documentRef, intermediateMajorId, clazz);
         final XmlDocument current = this.getDocumentByVersion(documentRef, currentId, clazz);
-        String resultContent = comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
-        return resultContent;
+        return comparisonDelegate.doubleCompareHtmlContents(original, intermediate, current, true);
     }
 
     @Override
@@ -124,9 +124,9 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         return doDownloadVersion(proposalId, exportOptions);
     }
 
-    abstract protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions);
+    protected abstract DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions);
 
-    abstract protected ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations);
+    protected abstract ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations);
 
     protected Proposal getProposal(String documentId) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
@@ -158,13 +158,10 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
             final byte[] zipBytes = FileUtils.readFileToByteArray(zipFile);
             return new DownloadVersionResponse(zipFileName, zipBytes);
         } catch (Exception e) {
-            LOG.error("Unexpected error occurred while packaging compared xml files", e);
-            throw e;
+            throw new IOException("Unexpected error occurred while packaging compared xml files", e);
         } finally {
-            if (zipFile != null) {
-                if (!zipFile.delete()) {
-                    LOG.info("File was not deleted {}", zipFile.toPath());
-                }
+            if (zipFile != null && !Files.deleteIfExists(zipFile.toPath())) {
+                LOG.info("File was not deleted {}", zipFile.toPath());
             }
         }
     }

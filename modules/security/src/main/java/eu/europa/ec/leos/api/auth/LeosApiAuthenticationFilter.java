@@ -89,9 +89,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         List<GrantedAuthority> allRoles = new ArrayList<>();
         if(user instanceof SecurityUser) {
             List<String> leosRoles = ((SecurityUser) user).getRoles();
-            leosRoles.forEach(auth -> {
-                allRoles.add(new SimpleGrantedAuthority(auth));
-            });
+            leosRoles.forEach(auth -> allRoles.add(new SimpleGrantedAuthority(auth)));
         }
         return allRoles;
     }

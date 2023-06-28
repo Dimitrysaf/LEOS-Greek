@@ -18,8 +18,6 @@ import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -32,8 +30,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.hasChildTextNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 public class ComparisonHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ComparisonHelper.class);
+    private ComparisonHelper() {
+    }
 
     public static Element buildElement(Node node, Map<String, Integer> hmIndex, Map<String, Element> elementsMap) {
         String tagName = node.getNodeName();
@@ -44,8 +42,7 @@ public class ComparisonHelper {
         Integer nodeIndex = hmIndex.get(tagName);
 
         boolean hasText = hasChildTextNode(node);
-//        String innerText = getTextForSimilarityMatch(tagId, tagName, node);
-        String innerText = "";  // TODO: This value is not used. TODO check if getTextForSimilarityMatch() is really needed
+        String innerText = "";  // TO DO: This value is not used. TO DO check if getTextForSimilarityMatch() is really needed
         List<Element> children = new ArrayList<>();
         List<Node> childrenNodes = XercesUtils.getChildren(node);
         for (int i = 0; i < childrenNodes.size(); i++) {
@@ -67,13 +64,13 @@ public class ComparisonHelper {
         boolean isElementContentEqual = false;
         if ((context.getOldElement() != null) && (context.getNewElement() != null)) {
             isElementContentEqual = (context.getOldElement().getNode()).isEqualNode(context.getNewElement().getNode());
-            if (context.getThreeWayDiff() && (context.getIntermediateElement() != null)) {
+            if (Boolean.TRUE.equals(context.getThreeWayDiff()) && (context.getIntermediateElement() != null)) {
                 isElementContentEqual = isElementContentEqual && (context.getIntermediateElement().getNode()).isEqualNode(context.getNewElement().getNode());
             }
             if (isElementContentEqual
                     && (isListIntroAndFirstSubpoint(context.getOldElement()) && isListIntroAndFirstSubpoint(context.getNewElement()))) {
                 isElementContentEqual = (context.getOldElement().getParent().getParent().getNode()).isEqualNode(context.getNewElement().getParent().getParent().getNode());
-                if (context.getThreeWayDiff() && (context.getIntermediateElement() != null)) {
+                if (Boolean.TRUE.equals(context.getThreeWayDiff()) && (context.getIntermediateElement() != null)) {
                     isElementContentEqual = isElementContentEqual && (context.getIntermediateElement().getParent().getParent().getNode()).isEqualNode(context.getNewElement().getParent().getParent().getNode());
                 }
             }
@@ -116,18 +113,16 @@ public class ComparisonHelper {
     }
 
     public static boolean isListWrapper(Element element) {
-        if (element != null) {
-            if (is(element, SUBPARAGRAPH) && is(element.getParent(), LIST)) {
-                return (element.getParent().getChildren().indexOf(element) == element.getParent().getChildren().size()-1);
-            }
-        }
-        return false;
+        return element != null
+            && is(element, SUBPARAGRAPH)
+            && is(element.getParent(), LIST)
+            && element.getParent().getChildren().indexOf(element) == element.getParent().getChildren().size() - 1;
     }
 
     public static Element getListWrapper(Element element) {
         if (is(element, LIST)) {
             List<Element> children = element.getChildren();
-            return children.size()>0 && is(children.get(children.size()-1), SUBPARAGRAPH) ? children.get(children.size()-1) : null;
+            return !children.isEmpty() && is(children.get(children.size()-1), SUBPARAGRAPH) ? children.get(children.size()-1) : null;
         }
         return null;
     }
@@ -135,7 +130,7 @@ public class ComparisonHelper {
     public static Element getListIntro(Element element) {
         if (is(element, LIST)) {
             List<Element> children = element.getChildren();
-            return children.size()>0 && is(children.get(0), SUBPARAGRAPH) ? children.get(0) : null;
+            return !children.isEmpty() && is(children.get(0), SUBPARAGRAPH) ? children.get(0) : null;
         }
         return null;
     }

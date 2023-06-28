@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class CatalogItem {
 
-    public static enum ItemType {
+    public enum ItemType {
         CATEGORY,
         TEMPLATE
     }
@@ -35,7 +35,7 @@ public class CatalogItem {
     private Map<String, String> descMap;
     private Map<String, String> langMap;
 
-    private List<CatalogItem> itemList = new ArrayList<CatalogItem>();
+    private List<CatalogItem> itemList = new ArrayList<>();
 
     public ItemType getType() {
         return type;
@@ -66,19 +66,19 @@ public class CatalogItem {
     }
 
     public Map<String, String> getLanguages() {
-        return (langMap != null) ? langMap : new HashMap<String, String>(0);
+        return (langMap != null) ? langMap : new HashMap<>(0);
     }
 
     public Map<String, String> getNames() {
-        return (nameMap != null) ? nameMap : new HashMap<String, String>(0);
+        return (nameMap != null) ? nameMap : new HashMap<>(0);
     }
 
     public Map<String, String> getDescriptions() {
-        return (descMap != null) ? descMap : new HashMap<String, String>(0);
+        return (descMap != null) ? descMap : new HashMap<>(0);
     }
 
     public List<CatalogItem> getItems() {
-        return (itemList != null) ? itemList : new ArrayList<CatalogItem>(0);
+        return (itemList != null) ? itemList : new ArrayList<>(0);
     }
 
     public Boolean isHidden() {
