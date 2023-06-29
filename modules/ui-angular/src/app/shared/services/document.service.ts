@@ -982,14 +982,15 @@ export class DocumentService implements OnDestroy {
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
+    const contributionVersionRef = contribution.versionedReference;
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
+    //const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
     this.http
       .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?versionLabel=${versionLabel}`,
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
       )
       .subscribe({
         next: (res) => {

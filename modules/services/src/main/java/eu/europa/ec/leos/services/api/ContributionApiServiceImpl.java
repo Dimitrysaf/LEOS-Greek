@@ -64,7 +64,6 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private LeosRepository leosRepository;
     private DocumentContentService documentContentService;
     private ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
-    private BillService billService;
     private DocumentViewService<XmlDocument> documentViewService;
 
 
@@ -74,7 +73,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Autowired
     public ContributionApiServiceImpl(CreateCollectionService createCollectionService, CloneContext cloneContext,
             ProposalService proposalService, UserService userService, PackageService packageService, SecurityContext securityContext,
-            ContributionService contributionService, LeosRepository leosRepository) {
+            ContributionService contributionService, LeosRepository leosRepository, DocumentContentService documentContentService,
+            ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI, DocumentViewService<XmlDocument> documentViewService) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
@@ -83,6 +83,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.securityContext = securityContext;
         this.contributionService = contributionService;
         this.leosRepository = leosRepository;
+        this.documentContentService = documentContentService;
+        this.comparisonDelegateAPI = comparisonDelegateAPI;
+        this.documentViewService = documentViewService;
     }
 
     @Override
@@ -136,67 +139,32 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
-                                                       String documentVersionedRef,
+                                                       String documentRef,
                                                        String documentType,
-                                                       String versionLabel) {
+                                                       String contributionVersionRef) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
-        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentVersionedRef, documentClass.getClazz());
-        final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
-        this.populateCloneProposalMetadata(proposal);
+        XmlDocument contributionVersion = (XmlDocument)contributionService.findVersionByVersionedReference(contributionVersionRef, documentClass.getClazz());
+        XmlDocument originalVersion = (XmlDocument)leosRepository.findFirstVersion(documentClass.getClazz(), documentRef);
 
-        XmlDocument contributionVersion = null;
-        XmlDocument originalVersion = null;
-        switch (documentClass){
-            case ANNEX:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef, Annex.class);
-                originalVersion = this.leosRepository.findFirstVersion(Annex.class, documentVersionedRef);
-                break;
-            }
-            case COVERPAGE:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef,Proposal.class);
-                originalVersion = this.leosRepository.findFirstVersion(Proposal.class, documentVersionedRef);
-                break;
-            }
-            case BILL:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef,Bill.class);
-                originalVersion = this.leosRepository.findFirstVersion(Bill.class, documentVersionedRef);
-                break;
-            }
-            case MEMORANDUM:{
-                contributionVersion = this.leosRepository.findDocumentByRef(documentVersionedRef, Memorandum.class);
-                originalVersion = this.leosRepository.findFirstVersion(Memorandum.class, documentVersionedRef);
-                break;
-            }
-            default:{
-                throw new RuntimeException("Not supported document type for compare and show revision");
-            }
-        }
         if(Objects.isNull(contributionVersion)){
-            throw new RuntimeException(String.format("Contribution version not found for %s", documentVersionedRef));
+            throw new RuntimeException(String.format("Contribution version not found for %s", contributionVersionRef));
         }
         if(Objects.isNull(originalVersion)){
-            throw new RuntimeException(String.format("Original version not found for %s", documentVersionedRef));
+            throw new RuntimeException(String.format("Original version not found for %s", documentRef));
         }
 
-        final String contributionHtml = documentContentService.getCleanDocumentAsHtml(
-                contributionVersion,
-                contextPath,
-                securityContext.getPermissions(contributionVersion)
-        );
+        final String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion, contextPath,
+                securityContext.getPermissions(contributionVersion));
+
         // Get the original version submitted to LS from the metadata of the document
-        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(
-                originalVersion,
-                contextPath,
-                securityContext.getPermissions(originalVersion)
-        );
+        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion, contextPath,
+                securityContext.getPermissions(originalVersion));
 
         cloneContext.setContribution(Boolean.TRUE);
-        String mergedContent = this.comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
-        return new DocumentViewResponse(
-                proposal.getOriginRef(),
-                mergedContent,
-                this.documentViewService.getVersionInfo(contributionVersion)
-        );
+        String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
+
+        return new DocumentViewResponse(contributionVersionRef, comparedContent,
+                documentViewService.getVersionInfo(contributionVersion));
     }
     
     public LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel) {
