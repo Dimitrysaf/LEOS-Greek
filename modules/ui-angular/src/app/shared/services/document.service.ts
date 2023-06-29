@@ -982,7 +982,7 @@ export class DocumentService implements OnDestroy {
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
-    const documentRef = contribution.versionedReference;
+    const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
