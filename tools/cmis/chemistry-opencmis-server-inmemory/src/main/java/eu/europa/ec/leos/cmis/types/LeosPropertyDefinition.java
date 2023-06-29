@@ -117,4 +117,7 @@ class LeosPropertyDefinition {
     static final PropertyDefinition<Boolean> LEOS_TRACK_CHANGES_ENABLED =
             PropertyCreationHelper.createBooleanDefinition("leos:trackChangesEnabled", "LEOS Track Changes Enabled", Updatability.READWRITE);
 
+    static final PropertyDefinition<String> LEOS_CALLBACK_ADDRESS =
+            PropertyCreationHelper.createStringDefinition("leos:callbackAddress", "LEOS document callback address", Updatability.READWRITE);
+
 }

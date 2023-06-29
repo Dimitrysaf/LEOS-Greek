@@ -112,6 +112,7 @@ public class LeosMetadataExtensions {
         cmisProperties.put(DOCUMENT_TEMPLATE.getId(), leosMetadata.getTemplate());
         cmisProperties.put(DOCUMENT_LANGUAGE.getId(), leosMetadata.getLanguage());
         cmisProperties.put(METADATA_DOCTEMPLATE.getId(), leosMetadata.getDocTemplate());
+        cmisProperties.put(CALLBACK_ADDRESS.getId(), leosMetadata.getCallbackAddress());
 
         String ref = leosMetadata.getRef();
         cmisProperties.put(METADATA_REF.getId(), ref != null ? ref : "");

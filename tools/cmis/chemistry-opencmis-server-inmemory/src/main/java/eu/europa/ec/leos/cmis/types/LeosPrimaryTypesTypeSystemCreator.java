@@ -60,7 +60,8 @@ public class LeosPrimaryTypesTypeSystemCreator implements TypeCreator {
                         LeosPropertyDefinition.LEOS_ANNEX_DOC_TITLE,
                         LeosPropertyDefinition.LEOS_ANNEX_CLONED_REF,
                         LeosPropertyDefinition.LEOS_LIVE_DIFFING_REQUIRED,
-                        LeosPropertyDefinition.LEOS_TRACK_CHANGES_ENABLED);
+                        LeosPropertyDefinition.LEOS_TRACK_CHANGES_ENABLED,
+                        LeosPropertyDefinition.LEOS_CALLBACK_ADDRESS);
         typesList.add(leosXmlDocType);
 
         // create LEOS Media File document type

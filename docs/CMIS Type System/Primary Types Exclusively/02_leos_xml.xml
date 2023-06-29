@@ -895,6 +895,21 @@
         <cmis:orderable>false</cmis:orderable>
         <cmis:defaultValue>false</cmis:defaultValue>
     </cmis:propertyBooleanDefinition>
+    <cmis:propertyStringDefinition>
+        <cmis:id>leos:callbackAddress</cmis:id>
+        <cmis:localName>leos:callbackAddress</cmis:localName>
+        <cmis:displayName>LEOS document callback address</cmis:displayName>
+        <cmis:queryName>leos:callbackAddress</cmis:queryName>
+        <cmis:description>callback address of a document</cmis:description>
+        <cmis:propertyType>string</cmis:propertyType>
+        <cmis:cardinality>single</cmis:cardinality>
+        <cmis:updatability>readwrite</cmis:updatability>
+        <cmis:inherited>false</cmis:inherited>
+        <cmis:required>false</cmis:required>
+        <cmis:queryable>true</cmis:queryable>
+        <cmis:orderable>false</cmis:orderable>
+        <cmis:defaultValue/>
+    </cmis:propertyStringDefinition>
     <cmis:versionable>true</cmis:versionable>
     <cmis:contentStreamAllowed>allowed</cmis:contentStreamAllowed>
 </cmis:type>

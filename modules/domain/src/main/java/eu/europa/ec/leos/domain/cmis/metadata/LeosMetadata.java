@@ -17,6 +17,7 @@ public abstract class LeosMetadata {
     protected final String objectId;
     protected final String docVersion;
     protected final boolean eeaRelevance;
+    private String callbackAddress;
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String objectId, String docVersion,
@@ -78,7 +79,14 @@ public abstract class LeosMetadata {
         return eeaRelevance;
     }
 
-    
+    public String getCallbackAddress() {
+        return callbackAddress;
+    }
+
+    public void setCallbackAddress(String callbackAddress) {
+        this.callbackAddress = callbackAddress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
