@@ -37,6 +37,11 @@ define(function leosUtilsModule(require) {
     var SUP_TEXT_TAG = "SUP";
     var HEADING_TAG = "H2";
     var NUM = "num";
+    var KEYS = {
+        "KEY_DELETE": 8,
+        "KEY_BACKSPACE": 46,
+        "KEY_CTRL_X": 88
+    }
 
     function _getParentElement(connector) {
         var element = null;
@@ -241,6 +246,7 @@ define(function leosUtilsModule(require) {
         getParentWrapper : _getParentWrapper,
         toIsoString : _toIsoString,
         generateTrackChangesStyles : _generateTrackChangesStyles,
-        COUNCIL_INSTANCE : COUNCIL_INSTANCE
+        COUNCIL_INSTANCE : COUNCIL_INSTANCE,
+        KEYS: KEYS
     };
 });

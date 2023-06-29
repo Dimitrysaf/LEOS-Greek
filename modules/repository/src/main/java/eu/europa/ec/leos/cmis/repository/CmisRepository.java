@@ -141,7 +141,7 @@ public class CmisRepository {
         return this.updateDocument(id, properties, true);
     }
 
-    public Document updateDocument(final String id, Map<String, ?> properties, boolean latest) {
+    private Document updateDocument(final String id, Map<String, ?> properties, boolean latest) {
         logger.trace("Updating document properties... [id=" + id + "]");
         OperationContext context = getMinimalContext(cmisSession);
         Document document = findDocumentById(id, latest, context);
