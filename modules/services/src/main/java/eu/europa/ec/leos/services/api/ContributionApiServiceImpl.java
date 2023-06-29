@@ -145,6 +145,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
         XmlDocument contributionVersion = (XmlDocument)contributionService.findVersionByVersionedReference(contributionVersionRef, documentClass.getClazz());
         XmlDocument originalVersion = (XmlDocument)leosRepository.findFirstVersion(documentClass.getClazz(), documentRef);
+        final LeosPackage leosPackage = this.leosRepository.findPackageByDocumentRef(contributionVersion.getMetadata().get().getRef(), documentClass.getClazz());
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
 
         if(Objects.isNull(contributionVersion)){
             throw new RuntimeException(String.format("Contribution version not found for %s", contributionVersionRef));
@@ -163,7 +165,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         cloneContext.setContribution(Boolean.TRUE);
         String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
 
-        return new DocumentViewResponse(contributionVersionRef, comparedContent,
+        return new DocumentViewResponse(proposal.getOriginRef(), comparedContent,
                 documentViewService.getVersionInfo(contributionVersion));
     }
     
