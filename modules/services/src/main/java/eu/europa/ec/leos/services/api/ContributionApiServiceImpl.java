@@ -1,22 +1,27 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.document.ContributionService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,30 +35,41 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ContributionApiServiceImpl.class);
 
-    @Autowired
-    CreateCollectionService createCollectionService;
-    @Autowired
-    CloneContext cloneContext;
-    @Autowired
-    ProposalService proposalService;
-    @Autowired
-    UserService userService;
-    @Autowired
-    PackageService packageService;
-    @Autowired
-    SecurityContext securityContext;
-    @Autowired
-    ContributionService contributionService;
+    private CreateCollectionService createCollectionService;
+    private CloneContext cloneContext;
+    private ProposalService proposalService;
+    private UserService userService;
+    private PackageService packageService;
+    private SecurityContext securityContext;
+    private ContributionService contributionService;
+    private LeosRepository leosRepository;
+
+
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
+    @Autowired
+    public ContributionApiServiceImpl(CreateCollectionService createCollectionService, CloneContext cloneContext,
+            ProposalService proposalService, UserService userService, PackageService packageService, SecurityContext securityContext,
+            ContributionService contributionService, LeosRepository leosRepository) {
+        this.createCollectionService = createCollectionService;
+        this.cloneContext = cloneContext;
+        this.proposalService = proposalService;
+        this.userService = userService;
+        this.packageService = packageService;
+        this.securityContext = securityContext;
+        this.contributionService = contributionService;
+        this.leosRepository = leosRepository;
+    }
 
     @Override
     public CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName) {
@@ -104,6 +120,15 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         return this.contributionService.getDocumentContributions(documentRef, annexIndex, clazz);
     }
 
+    @Override
+    public LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel) {
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
+        LeosDocument document = contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        return this.leosRepository.updateDocument(document.getId(), properties, documentClass.getClazz(), true);
+    }
+
     protected void populateCloneProposalMetadata(Proposal proposal) {
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
@@ -111,5 +136,4 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }
-
 }

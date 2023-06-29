@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.document;
 
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
@@ -29,5 +30,10 @@ public class ContributionServiceMandateImpl implements ContributionService {
 
     @Override
     public void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName, byte[] xmlContent) {
+    }
+
+    @Override
+    public <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType) {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
@@ -15,4 +16,5 @@ public interface ContributionApiService {
 
     List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType);
 
+    LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel);
 }

@@ -84,7 +84,8 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         this.xmlContentProcessor = xmlContentProcessor;
     }
 
-    private <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType) {
+    @Override
+    public <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType) {
         return this.findVersionByVersionedReference(versionedReference, filterType, true);
     }
 

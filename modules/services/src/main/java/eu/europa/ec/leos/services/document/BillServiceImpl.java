@@ -133,6 +133,12 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
+    public Bill updateBill(String id, byte[] updatedContent) {
+        LOG.trace("Updating Bill content... [id={}]", id);
+        return billRepository.updateBill(id, updatedContent);
+    }
+
+    @Override
     public Bill updateBill(Bill bill, BillMetadata updatedMetadata, VersionType versionType, String comment) {
         LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();

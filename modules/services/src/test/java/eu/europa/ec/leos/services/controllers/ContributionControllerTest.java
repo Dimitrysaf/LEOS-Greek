@@ -1,11 +1,14 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,5 +112,23 @@ public class ContributionControllerTest {
         verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void test_declineContribution(){
+        String TEST_DOCUMENT_REF = "documentRef";
+        String TEST_DOCUMENT_TYPE = "documentType";
+        String TEST_VERSION_LABEL = "versionLabel";
+        LeosDocument documentMock = mock(LeosDocument.class);
+
+        when(this.contributionApiService.declineRevision(anyString(),anyString(),anyString())).thenReturn(documentMock);
+
+        ResponseEntity<DeclineContributionResponse> response = contributionController.declineContribution(TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL);
+        DeclineContributionResponse responseData = response.getBody();
+
+        verify(this.contributionApiService).declineRevision(TEST_DOCUMENT_TYPE, TEST_DOCUMENT_REF, TEST_VERSION_LABEL);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(responseData);
+        assertEquals(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue(), responseData.getContributionStatus());
     }
 }
