@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.document;
 
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -17,4 +18,6 @@ public interface ContributionService {
 
     void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName,
                                         byte[] xmlContent) throws IOException;
+
+    <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType);
 }

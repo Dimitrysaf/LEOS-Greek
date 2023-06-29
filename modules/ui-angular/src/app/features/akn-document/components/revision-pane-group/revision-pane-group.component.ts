@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import * as cluster from 'cluster';
 
-import { Version } from '@/features/akn-document/models';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 
 @Component({

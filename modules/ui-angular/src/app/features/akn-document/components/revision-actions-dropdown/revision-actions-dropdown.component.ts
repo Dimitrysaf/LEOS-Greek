@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
@@ -10,7 +12,43 @@ import { DocumentService } from '@/shared/services/document.service';
 })
 export class RevisionActionsDropdownComponent implements OnInit {
   @Input() contribution: ContributionVO;
-  constructor(public documentService: DocumentService) {}
+  @ViewChild('declineContributionDialog')
+  declineContributionDialog: EuiDialogComponent;
+  versionModalText: string;
+  versionToDecline = '';
+
+  constructor(
+    public documentService: DocumentService,
+    private translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {}
+
+  onContributionDecline(
+    version: string,
+    versionNumber: { major: number; intermediate: number; minor: number },
+  ) {
+    this.translate
+      .get('page.editor.contribution.decline.modal-text-version', {
+        versionNumber: `${versionNumber.major}.${versionNumber.intermediate}.${versionNumber.minor}`,
+      })
+      .subscribe((res) => {
+        this.versionModalText = res;
+      });
+    this.versionToDecline = version;
+    this.declineContributionDialog.openDialog();
+  }
+
+  onAccept() {
+    this.documentService.declineContribution(this.contribution);
+    this.declineContributionDialog.closeDialog();
+    this.versionToDecline = '';
+    this.versionModalText = '';
+  }
+
+  onCancel() {
+    this.declineContributionDialog.closeDialog();
+    this.versionToDecline = '';
+    this.versionModalText = '';
+  }
 }

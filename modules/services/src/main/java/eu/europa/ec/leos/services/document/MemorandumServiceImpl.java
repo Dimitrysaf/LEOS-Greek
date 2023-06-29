@@ -140,6 +140,12 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     }
 
     @Override
+    public Memorandum updateMemorandum(String id, byte[] updatedMemorandumContent) {
+        LOG.trace("Updating Memorandum Xml Content... [id={}]", id);
+        return memorandumRepository.updateMemorandum(id, updatedMemorandumContent, VersionType.MINOR, "Content updated");
+    }
+
+    @Override
     public Memorandum updateMemorandum(Memorandum memorandum, MemorandumMetadata updatedMetadata, VersionType versionType, String comment) {
         LOG.trace("Updating Memorandum... [id={}, metadata={}]", memorandum.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();
