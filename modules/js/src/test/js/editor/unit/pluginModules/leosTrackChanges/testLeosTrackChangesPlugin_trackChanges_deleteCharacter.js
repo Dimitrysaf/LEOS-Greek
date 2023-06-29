@@ -12,7 +12,7 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-define(function testLeosTrackChangesPlugin_deleteCharacter(require) {
+define(function testLeosTrackChangesPlugin_trackChanges_deleteCharacter(require) {
     "use strict";
 
     var $ = require("jquery");
@@ -34,6 +34,7 @@ define(function testLeosTrackChangesPlugin_deleteCharacter(require) {
             items: ['trackChanges']
         }]
     };
+
     var editor = CKEDITOR.inline(placeholder, config);
     editor.LEOS = {
         isClonedProposal: true,
@@ -69,25 +70,13 @@ define(function testLeosTrackChangesPlugin_deleteCharacter(require) {
         targetRange.startOffset = 3
         targetRange.endOffset = 3
         targetRange.select();
-        // leosKeyHandler.selectTextInsideElement(editor, selectedElement, 3, 3)
 
         var deleteKey = 46;
+        var letter = "h";
+        var isPreviousInsertedOfSameUserBeforeDelete = "";
+        var isNextInsertedOfSameUserBeforeDelete = "";
 
-        var ckEditorEvent = new CKEDITOR.dom.event(
-            new KeyboardEvent('key', {
-                keyCode: deleteKey,
-                ctrlKey: false,
-                shiftKey: false
-            })
-        )
-        ckEditorEvent.getKey = function () {
-            return false;
-        }
-        var event = {
-            name: "key",
-            domEvent: ckEditorEvent
-        }
-        editor.fire( 'key', event );
+        pluginToTest.trackChanges.actions.deleteCharacter(editor, deleteKey, letter, isPreviousInsertedOfSameUserBeforeDelete, isNextInsertedOfSameUserBeforeDelete)
 
         var childrenCountEnd = selectedElement.$.childNodes.length;//should be 3
         var elementContentEnd = selectedElement.$
