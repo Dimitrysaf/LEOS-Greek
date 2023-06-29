@@ -277,11 +277,6 @@ define(function leosTrackChangesPluginModule(require) {
                         case "italic":
                         case "subscript":
                         case "superscript":
-                            var range = editor.getSelection().getRanges()[0];
-                            if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION) ||
-                                (!range.collapsed)) {
-                                return false;
-                            }
                             if (editor.LEOS.isTrackChangesStyleFormattingEnabled) {
                                 var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
                                 if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
@@ -300,8 +295,8 @@ define(function leosTrackChangesPluginModule(require) {
                         case "mathjax":
                         case "table":
                             var range = editor.getSelection().getRanges()[0];
-                            if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION) ||
-                                (!range.collapsed)) {
+                            if ( (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) ||
+                                !range.collapsed) {
                                 return false;
                             }
                             break;
