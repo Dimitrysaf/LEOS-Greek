@@ -48,7 +48,7 @@ public class AnnotationClientImpl implements AnnotationProvider {
 	private HttpHeaders getDefaultHttpHeaders(final String jwtToken, final String proposalRef) {
 		HttpHeaders headers = new HttpHeaders();
 		TokenJson tokenJson = authenticationProvider.getToken(jwtToken, proposalRef);
-		// FIXME In ticket LEOS-2862 Annotations: improve authentication provider
+		// FIX ME In ticket LEOS-2862 Annotations: improve authentication provider
 		headers.set("Authorization", "Bearer " + tokenJson.getAccessToken());
 		headers.set("Accept", "application/json");
 		return headers;

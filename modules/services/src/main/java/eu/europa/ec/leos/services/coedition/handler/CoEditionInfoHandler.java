@@ -71,7 +71,7 @@ public class CoEditionInfoHandler implements InfoHandler {
     @Override
     public CoEditionActionInfo checkIfInfoExists(String sessionId) {
         Optional<CoEditionVO> existingInfo = editionInfoRepository.getAllEditInfo().stream()
-                .filter((x) -> x.getSessionId().equals(sessionId)).findFirst();
+                .filter(x -> x.getSessionId().equals(sessionId)).findFirst();
         if (existingInfo.isPresent()) {
             return new CoEditionActionInfo(true, Operation.EXISTS, existingInfo.get(),
                     editionInfoRepository.getCurrentEditInfo(existingInfo.get().getDocumentId()));

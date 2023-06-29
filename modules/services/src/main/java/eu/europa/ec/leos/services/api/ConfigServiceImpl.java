@@ -33,8 +33,6 @@ public class ConfigServiceImpl implements ConfigService {
     private final Properties applicationProperties;
     private final SecurityContext securityContext;
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
-    private final Provider<StructureContext> structureContextProvider;
-
     private final MessageHelper messageHelper;
 
     @Autowired
@@ -43,7 +41,6 @@ public class ConfigServiceImpl implements ConfigService {
         this.applicationProperties = applicationProperties;
         this.securityContext = securityContext;
         this.authorityMapHelper = authorityMapHelper;
-        this.structureContextProvider = structureContextProvider;
         this.messageHelper = messageHelper;
     }
 
@@ -52,15 +49,15 @@ public class ConfigServiceImpl implements ConfigService {
         AppConfigResponse appConfigResponse = new AppConfigResponse();
 
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
-        boolean implicitSaveEnabled = Boolean.valueOf(applicationProperties.getProperty("implicitSaveAndClose.enabled"));
-        boolean isSpellCheckerEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.spell.checker.enabled"));
+        boolean implicitSaveEnabled = Boolean.parseBoolean(applicationProperties.getProperty("implicitSaveAndClose.enabled"));
+        boolean isSpellCheckerEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.spell.checker.enabled"));
         String spellCheckServiceUrl = applicationProperties.getProperty("leos.spell.checker.service.url");
         String spellCheckSourceUrl = applicationProperties.getProperty("leos.spell.checker.source.url");
-        boolean searchAndReplaceEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.searchAndReplace.enabled"));
-        boolean sendForRevisionEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.sendForRevision.enabled"));
-        boolean coverPageSeparated = Boolean.valueOf(applicationProperties.getProperty("leos.coverpage.separated"));
+        boolean searchAndReplaceEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.searchAndReplace.enabled"));
+        boolean sendForRevisionEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.sendForRevision.enabled"));
+        boolean coverPageSeparated = Boolean.parseBoolean(applicationProperties.getProperty("leos.coverpage.separated"));
         String supportDocumentCatalogKey = applicationProperties.getProperty("leos.supporting.documents.catalog.key");
-        boolean supportDocumentEnabled = Boolean.valueOf(applicationProperties.getProperty("leos.supporting.documents.enable"));
+        boolean supportDocumentEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.supporting.documents.enable"));
         Map<String, Set<LeosPermission>> permissionsMap = authorityMapHelper.getPermissionsMap();
         String headerTitle = messageHelper.getMessage("leos.ui.header.title");
         String annotateAuthority = applicationProperties.getProperty("annotate.authority");

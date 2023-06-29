@@ -68,17 +68,21 @@ public class ProposalAnnexAPIServiceImpl extends AnnexApiServiceImpl {
             exportOptions.setWithFilteredAnnotations(isWithAnnotations);
             exportOptions.setFilteredAnnotations(annotations);
 
-            try {
-                this.createDocumentPackageForExport(exportOptions);
-            } catch (Exception e) {
-                LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
-            }
+            createPackageForExport(exportOptions);
 
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
             throw new Exception("Unexpected error occured while using Export service", e);
         }
         return null;
+    }
+
+    private void createPackageForExport(ExportOptions exportOptions) {
+        try {
+            this.createDocumentPackageForExport(exportOptions);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while using LegisWriteExportService", e);
+        }
     }
 
 }

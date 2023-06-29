@@ -43,6 +43,8 @@ import java.util.List;
 public class CollaboratorController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollaboratorController.class);
+    private static final String TO_PROPOSAL = "' to proposal '";
+    private static final String FROM_PROPOSAL = "' from proposal '";
 
     private final CollaboratorService collaboratorService;
     private final ProposalService proposalService;
@@ -89,7 +91,7 @@ public class CollaboratorController {
             addCollaborator(proposalRef, collaboratorRequest);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while adding User '" + collaboratorRequest + "' to proposal '" + proposalRef + "'";
+            String msg = "Error occurred while adding User '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'";
             LOG.error(msg);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -108,11 +110,11 @@ public class CollaboratorController {
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while adding BULK Users '" + collaboratorsRequest + "' to proposal '" + proposalRef + "'";
+            String msg = "Error occurred while adding BULK Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
             LOG.error(msg);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while adding BULK Users '" + collaboratorsRequest + "' to proposal '" + proposalRef + "'";
+            String msg = "General Error occurred while adding BULK Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -134,7 +136,7 @@ public class CollaboratorController {
             editCollaborator(proposalRef, collaboratorRequest);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while updating new Roles '" + collaboratorRequest + "' to proposal '" + proposalRef + "'";
+            String msg = "Error occurred while updating new Roles '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'";
             LOG.error(msg);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -153,11 +155,11 @@ public class CollaboratorController {
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while updating Bulk Users '" + collaboratorsRequest + "' to proposal '" + proposalRef + "'";
+            String msg = "Error occurred while updating Bulk Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
             LOG.error(msg);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while updating Bulk Users '" + collaboratorsRequest + "' to proposal '" + proposalRef + "'";
+            String msg = "General Error occurred while updating Bulk Users '" + collaboratorsRequest + TO_PROPOSAL + proposalRef + "'";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -179,11 +181,11 @@ public class CollaboratorController {
             removeCollaborator(proposalRef, collaboratorRequest);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while removing Collaborator '" + collaboratorRequest + "' from proposal '" + proposalRef + "'";
+            String msg = "Error occurred while removing Collaborator '" + collaboratorRequest + FROM_PROPOSAL + proposalRef + "'";
             LOG.error(msg);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while removing Collaborator '" + collaboratorRequest + "' from proposal '" + proposalRef + "'";
+            String msg = "General Error occurred while removing Collaborator '" + collaboratorRequest + FROM_PROPOSAL + proposalRef + "'";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -198,11 +200,11 @@ public class CollaboratorController {
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
-            String msg = "Error occurred while removing BULK Collaborators '" + collaboratorsRequest + "' from proposal '" + proposalRef + "'";
+            String msg = "Error occurred while removing BULK Collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'";
             LOG.error(msg);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            String msg = "General Error occurred while removing BULK Collaborators '" + collaboratorsRequest + "' from proposal '" + proposalRef + "'";
+            String msg = "General Error occurred while removing BULK Collaborators '" + collaboratorsRequest + FROM_PROPOSAL + proposalRef + "'";
             LOG.error(msg, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

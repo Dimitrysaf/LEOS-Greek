@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,10 @@ import java.util.Map;
 public class FinancialStatementContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementContextService.class);
+    private static final String FINANCIAL_STATEMENT_PACKAGE_IS_REQUIRED = "FinancialStatement package is required!";
+    private static final String FINANCIAL_STATEMENT_PURPOSE_IS_REQUIRED = "FinancialStatement purpose is required!";
+    private static final String FINANCIAL_STATEMENT_DOCUMENT_IS_REQUIRED = "FinancialStatement document is required!";
+    private static final String FINANCIAL_STATEMENT_METADATA_IS_REQUIRED = "FinancialStatement metadata is required!";
 
     private final TemplateService templateService;
     private final FinancialStatementService financialStatementService;
@@ -44,7 +49,7 @@ public class FinancialStatementContextService {
     private String template = null;
     private List<Collaborator> collaborators = null;
 
-    private DocumentVO FinancialStatementDocument;
+    private DocumentVO financialStatementDocument;
     private final Map<ContextActionService, String> actionMsgMap;
     private String versionComment;
     private String milestoneComment;
@@ -60,7 +65,7 @@ public class FinancialStatementContextService {
         this.financialStatementService = financialStatementService;
         this.proposalService = proposalService;
         this.securityService = securityService;
-        this.actionMsgMap = new HashMap<>();
+        this.actionMsgMap = new EnumMap<>(ContextActionService.class);
     }
 
     public void useTemplate(String template) {
@@ -79,13 +84,13 @@ public class FinancialStatementContextService {
     }
 
     public void usePackage(LeosPackage leosPackage) {
-        Validate.notNull(leosPackage, "FinancialStatement package is required!");
+        Validate.notNull(leosPackage, FINANCIAL_STATEMENT_PACKAGE_IS_REQUIRED);
         LOG.trace("Using FinancialStatement package... [id={}, path={}]", leosPackage.getId(), leosPackage.getPath());
         this.leosPackage = leosPackage;
     }
 
     public void usePurpose(String purpose) {
-        Validate.notNull(purpose, "FinancialStatement purpose is required!");
+        Validate.notNull(purpose, FINANCIAL_STATEMENT_PURPOSE_IS_REQUIRED);
         LOG.trace("Using FinancialStatement purpose... [purpose={}]", purpose);
         this.purpose = purpose;
     }
@@ -109,14 +114,14 @@ public class FinancialStatementContextService {
     }
 
     public void useFinancialStatement(FinancialStatement financialStatement) {
-        Validate.notNull(financialStatement, "FinancialStatement document is required!");
+        Validate.notNull(financialStatement, FINANCIAL_STATEMENT_DOCUMENT_IS_REQUIRED);
         LOG.trace("Using FinancialStatement document'... [FinancialStatementId={}]", financialStatement.getId());
         this.financialStatement = financialStatement;
     }
 
     public void useDocument(DocumentVO document) {
-        Validate.notNull(document, "FinancialStatement document is required!");
-        FinancialStatementDocument = document;
+        Validate.notNull(document, FINANCIAL_STATEMENT_DOCUMENT_IS_REQUIRED);
+        financialStatementDocument = document;
     }
 
     public void useCollaborators(List<Collaborator> collaborators) {
@@ -156,14 +161,14 @@ public class FinancialStatementContextService {
     public FinancialStatement executeCreateFinancialStatement() {
         LOG.trace("Executing 'Create FinancialStatement' use case...");
 
-        Validate.notNull(leosPackage, "FinancialStatement package is required!");
+        Validate.notNull(leosPackage, FINANCIAL_STATEMENT_PACKAGE_IS_REQUIRED);
         Validate.notNull(financialStatement, "FinancialStatement template is required!");
         Validate.notNull(collaborators, "FinancialStatement collaborators are required!");
 
         Option<FinancialStatementMetadata> metadataOption = financialStatement.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), FINANCIAL_STATEMENT_METADATA_IS_REQUIRED);
 
-        Validate.notNull(purpose, "FinancialStatement purpose is required!");
+        Validate.notNull(purpose, FINANCIAL_STATEMENT_PURPOSE_IS_REQUIRED);
         FinancialStatementMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -184,15 +189,15 @@ public class FinancialStatementContextService {
 
     public FinancialStatement executeImportFinancialStatement() {
         LOG.trace("Executing 'Import FinancialStatement' use case...");
-        Validate.notNull(leosPackage, "FinancialStatement package is required!");
+        Validate.notNull(leosPackage, FINANCIAL_STATEMENT_PACKAGE_IS_REQUIRED);
         Validate.notNull(financialStatement, "FinancialStatement template is required!");
         Validate.notNull(collaborators, "FinancialStatement collaborators are required!");
-        Validate.notNull(purpose, "FinancialStatement purpose is required!");
+        Validate.notNull(purpose, FINANCIAL_STATEMENT_PURPOSE_IS_REQUIRED);
         Validate.notNull(type, "FinancialStatement type is required!");
 
         final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
-        final FinancialStatementMetadata metadataDocument = (FinancialStatementMetadata) FinancialStatementDocument.getMetadataDocument();
-        financialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadataDocument, actionMessage, FinancialStatementDocument.getSource(), FinancialStatementDocument.getName());
+        final FinancialStatementMetadata metadataDocument = (FinancialStatementMetadata) financialStatementDocument.getMetadataDocument();
+        financialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadataDocument, actionMessage, financialStatementDocument.getSource(), financialStatementDocument.getName());
         financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
 
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
@@ -200,18 +205,18 @@ public class FinancialStatementContextService {
 
     public void executeUpdateFinancialStatement() {
         LOG.trace("Executing 'Update FinancialStatement metadata' use case...");
-        Validate.notNull(purpose, "FinancialStatement purpose is required!");
-        Validate.notNull(financialStatement, "FinancialStatement document is required!");
+        Validate.notNull(purpose, FINANCIAL_STATEMENT_PURPOSE_IS_REQUIRED);
+        Validate.notNull(financialStatement, FINANCIAL_STATEMENT_DOCUMENT_IS_REQUIRED);
 
         Option<FinancialStatementMetadata> metadataOption = financialStatement.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), FINANCIAL_STATEMENT_METADATA_IS_REQUIRED);
 
         // Updating only purpose at this time. other metadata needs to be set, if needed
-        FinancialStatementMetadata FinancialStatementMetadata = metadataOption.get()
+        FinancialStatementMetadata financialStatementMetadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
                 .build();
-        financialStatementService.updateFinancialStatement(financialStatement, FinancialStatementMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
+        financialStatementService.updateFinancialStatement(financialStatement, financialStatementMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED));
     }
 
     public void executeUpdateFinancialStatementStructure() {
@@ -219,7 +224,7 @@ public class FinancialStatementContextService {
         financialStatement = financialStatementService.findFinancialStatement(financialStatementId); //Get the existing FinancialStatement document
 
         Option<FinancialStatementMetadata> metadataOption = financialStatement.getMetadata();
-        Validate.isTrue(metadataOption.isDefined(), "FinancialStatement metadata is required!");
+        Validate.isTrue(metadataOption.isDefined(), FINANCIAL_STATEMENT_METADATA_IS_REQUIRED);
         FinancialStatementMetadata metadata = metadataOption.get();
         FinancialStatementMetadata financialStatementMetadata = metadata
                 .builder()
@@ -233,8 +238,8 @@ public class FinancialStatementContextService {
         financialStatement = financialStatementService.updateFinancialStatement(financialStatement, xmlContent, financialStatementMetadata, VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.ANNEX_STRUCTURE_UPDATED));
     }
 
-    private byte[] getContent(FinancialStatement FinancialStatement) {
-        final Content content = FinancialStatement.getContent().getOrError(() -> "FinancialStatement content is required!");
+    private byte[] getContent(FinancialStatement financialStatement) {
+        final Content content = financialStatement.getContent().getOrError(() -> "FinancialStatement content is required!");
         return content.getSource().getBytes();
     }
 
@@ -261,10 +266,10 @@ public class FinancialStatementContextService {
     public void executeDeleteFinancialStatement() {
         LOG.trace("Executing 'FinancialStatement' use case...");
         Validate.notNull(leosPackage, "Leos package is required!");
-        FinancialStatement financialStatement = financialStatementService.findFinancialStatement(financialStatementId);
-        financialStatementService.deleteFinancialStatement(financialStatement);
+        FinancialStatement finStat = financialStatementService.findFinancialStatement(financialStatementId);
+        financialStatementService.deleteFinancialStatement(finStat);
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
-        proposal = proposalService.removeComponentRef(proposal, financialStatement.getName());
+        proposal = proposalService.removeComponentRef(proposal, finStat.getName());
         proposalService.updateProposal(proposal.getId(), proposal.getContent().get().getSource().getBytes());
     }
 

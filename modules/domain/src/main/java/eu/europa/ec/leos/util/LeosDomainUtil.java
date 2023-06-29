@@ -16,23 +16,25 @@ package eu.europa.ec.leos.util;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
 public class LeosDomainUtil {
-
-    public final static DateTimeFormatter LEOS_REPO_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+    private LeosDomainUtil(){
+    }
+    public static final DateTimeFormatter LEOS_REPO_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 
     public static final String CMIS_PROPERTY_SPLITTER = "::";
 
-    private final static String WRAP_FRAGMENT_START = "<aknFragment xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" " +
+    private static final String WRAP_FRAGMENT_START = "<aknFragment xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" " +
             "xmlns:leos=\"urn:eu:europa:ec:leos\" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\">";
 
-    private final static String WRAP_FRAGMENT_END = "</aknFragment>";
+    private static final String WRAP_FRAGMENT_END = "</aknFragment>";
 
-    private final static String WRAP_FRAGMENT_START_REGEX =  "<aknFragment(.*?)>";
+    private static final String WRAP_FRAGMENT_START_REGEX =  "<aknFragment(.*?)>";
 
     public static Date getLeosDateFromString(String dateStr) {
         return getDateFromString(dateStr, LEOS_REPO_DATE_FORMAT);
@@ -64,35 +66,31 @@ public class LeosDomainUtil {
     }
 
     public static String unWrapXmlFragment(String xmlFragment) {
-     return xmlFragment.replaceAll(WRAP_FRAGMENT_START_REGEX, "").replaceAll(WRAP_FRAGMENT_END, "");
+     return xmlFragment.replaceAll(WRAP_FRAGMENT_START_REGEX, "").replace(WRAP_FRAGMENT_END, "");
     }
 
-    public static void addDateIfNotNull(String fieldName, GregorianCalendar calendar, String LEFT_PAD, String RIGHT_CHAR, StringBuilder sb) {
+    public static void addDateIfNotNull(String fieldName, GregorianCalendar calendar, String leftPad, String rightChar, StringBuilder sb) {
         if(calendar != null) {
             SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
             Date date = calendar.getTime();
             String dateAsString = dfDate.format(date);
-            sb.append(LEFT_PAD).append(fieldName).append("=").append(dateAsString).append(RIGHT_CHAR);
+            sb.append(leftPad).append(fieldName).append("=").append(dateAsString).append(rightChar);
         }
     }
 
-    public static void addFieldIfNotNull(String fieldName, Object value, String LEFT_PAD, String RIGHT_CHAR, StringBuilder sb) {
+    public static void addFieldIfNotNull(String fieldName, Object value, String leftPad, String rightChar, StringBuilder sb) {
         if(value != null) {
-            sb.append(LEFT_PAD).append(fieldName).append("=").append(value).append(RIGHT_CHAR);
+            sb.append(leftPad).append(fieldName).append("=").append(value).append(rightChar);
         }
     }
 
-    public static void addListFieldIfNotNull(String fieldName, List<?> value, String LEFT_PAD, String RIGHT_CHAR, StringBuilder sb) {
-        if(value != null && value.size() > 0) {
-            sb.append(LEFT_PAD).append(fieldName).append("=").append(value).append(RIGHT_CHAR);
+    public static void addListFieldIfNotNull(String fieldName, List<?> value, String leftPad, String rightChar, StringBuilder sb) {
+        if(value != null && !value.isEmpty()) {
+            sb.append(leftPad).append(fieldName).append("=").append(value).append(rightChar);
         }
     }
 
-    public static String calculateLeftPadd(int deep, String LEFT_CHAR) {
-        String calc = "";
-        for (int i = 0; i < deep; i++) {
-            calc = calc + LEFT_CHAR;
-        }
-        return calc;
+    public static String calculateLeftPadd(int deep, String leftChar) {
+        return String.join("", Collections.nCopies(deep, leftChar));
     }
 }

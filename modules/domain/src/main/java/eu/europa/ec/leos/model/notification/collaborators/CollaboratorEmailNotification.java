@@ -5,7 +5,7 @@ import java.util.*;
 import eu.europa.ec.leos.model.notification.EmailNotification;
 import eu.europa.ec.leos.model.user.User;
 
-abstract public class CollaboratorEmailNotification implements EmailNotification {
+public abstract class CollaboratorEmailNotification implements EmailNotification {
     private List<String> recipients = new ArrayList<>();
     private String leosAuthority;
     private String leosAuthorityName;
@@ -20,7 +20,7 @@ abstract public class CollaboratorEmailNotification implements EmailNotification
     private Map<String, String> collaboratorNoteMap = new HashMap<>();
     private String selectedEntity;
 
-    public CollaboratorEmailNotification(User recipient, String selectedEntity, String leosAuthority, String documentId, String link) {
+    protected CollaboratorEmailNotification(User recipient, String selectedEntity, String leosAuthority, String documentId, String link) {
         this.documentId = documentId;
         this.link = link;
         this.leosAuthority = leosAuthority;
@@ -102,7 +102,7 @@ abstract public class CollaboratorEmailNotification implements EmailNotification
         this.collaboratorPlural = collaboratorPlural;
     }
 
-    abstract public String getEmailSubjectKey();
+    public abstract String getEmailSubjectKey();
 
     public String getSelectedEntity() {
         return selectedEntity;

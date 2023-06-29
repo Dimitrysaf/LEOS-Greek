@@ -57,8 +57,7 @@ public class ProposalLegisWriteServiceImpl implements LegisWriteService {
             throw new IllegalStateException("Empty response from the external service LegisWrite");
 
         } catch(Exception e){
-            LOG.error("Exception while calling external service LegisWrite", e);
-            throw e;
+            throw new Exception("Exception while calling external service LegisWrite", e);
         }
     }
 

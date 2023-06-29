@@ -135,7 +135,9 @@ define(function leosTrackChangesModule(require) {
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
-            if (this.isEmpty(selectedElement) && this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
+            if (!this.isEmpty(selectedElement)) {
+                tcElement.insertAfter(selectedElement);
+            } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
                 editor.insertElement(tcElement);

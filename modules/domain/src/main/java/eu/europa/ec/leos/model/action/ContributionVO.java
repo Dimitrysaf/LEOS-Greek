@@ -29,19 +29,19 @@ public class ContributionVO implements Comparable<ContributionVO> {
         RECEIVED("Contribution received"),
         CONTRIBUTION_DONE("Contribution done");
 
-        String contributionStatus;
+        String contribStatus;
 
-        ContributionStatus(String contributionStatus) {
-            this.contributionStatus = contributionStatus;
+        ContributionStatus(String contribStatus) {
+            this.contribStatus = contribStatus;
         }
 
         public String getValue() {
-            return contributionStatus;
+            return contribStatus;
         }
 
         public static ContributionStatus of(String contributionStatus) {
             return Arrays.asList(ContributionStatus.values()).stream()
-                    .filter(x -> x.contributionStatus.equals(contributionStatus)).findFirst().orElse(RECEIVED);
+                    .filter(x -> x.contribStatus.equals(contributionStatus)).findFirst().orElse(RECEIVED);
         }
     }
 
@@ -53,7 +53,7 @@ public class ContributionVO implements Comparable<ContributionVO> {
         this.contributionStatus = ContributionStatus.of(contributionStatus);
     }
 
-    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
     public ContributionVO.VersionNumber getVersionNumber() {
         return versionNumber;

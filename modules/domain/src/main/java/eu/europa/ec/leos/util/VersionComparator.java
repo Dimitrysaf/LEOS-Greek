@@ -26,8 +26,9 @@ public class VersionComparator implements Comparator<String> {
     @Override
     public int compare(String version1, String version2) {
         if (version1 == null || version2 == null) {
+            int version2Value = version2 == null ? 0 : -1;
             return (version1 == null)
-                    ? ((version2 == null) ? 0 : -1)
+                    ? version2Value
                     : 1; // version1 greater
         }
         version1 = version1.replaceAll("[a-zA-Z]*", ""); //remove all Chars such as V etc

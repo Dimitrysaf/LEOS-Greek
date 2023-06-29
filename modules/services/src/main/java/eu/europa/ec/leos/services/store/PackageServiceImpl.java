@@ -143,7 +143,7 @@ class PackageServiceImpl implements PackageService {
         });
         return documents.stream()
                 .filter(p -> p.getCategory() != LeosCategory.PROPOSAL)
-                .sorted(Comparator.<XmlDocument, String>comparing(o -> o.getCategory().name() == "ANNEX"  ? "1" + o.getCategory().name() : "0" + o.getCategory().name())
+                .sorted(Comparator.<XmlDocument, String>comparing(o -> "ANNEX".equals(o.getCategory().name())  ? "1" + o.getCategory().name() : "0" + o.getCategory().name())
                         .thenComparing(annexIndexComparator))
                 .map(p -> p.getMetadata().get()).collect(Collectors.toList());
     }

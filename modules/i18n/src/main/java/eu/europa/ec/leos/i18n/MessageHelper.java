@@ -21,8 +21,6 @@ import org.springframework.context.MessageSource;
 
 public abstract class MessageHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MessageHelper.class);
-
     @Autowired
     private LanguageHelper languageHelper;
 
