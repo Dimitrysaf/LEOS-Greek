@@ -210,6 +210,7 @@ define(function leosTrackChangesStyleModule(require) {
             if (currentNode.getPosition(lastNode) == CKEDITOR.POSITION_FOLLOWING)
                 currentNode = 0;
 
+            var isFormatStyles = this.FORMAT_STYLES.find(s => s.style === style);
             while (currentNode) {
                 var applyStyle = false;
 
@@ -223,7 +224,7 @@ define(function leosTrackChangesStyleModule(require) {
 
                     // Skip bookmarks or comments.
                     if ((nodeName && currentNode.data("cke-bookmark")) || (currentNode.type === CKEDITOR.NODE_COMMENT) ||
-                        core.isTrackChangeElement(currentNode, core.DELETE_ACTION)) {
+                        (core.isTrackChangeElement(currentNode, core.DELETE_ACTION) && isFormatStyles)) {
                         currentNode = currentNode.getNextSourceNode(true);
                         continue;
                     }
@@ -346,13 +347,19 @@ define(function leosTrackChangesStyleModule(require) {
                         styleNode = null;
 
                     if (styleNode) {
-                        if (!this.FORMAT_STYLES.find(s => s.style === style)) {
-                            // Move the contents of the range to the style element.
-                            styleRange.extractContents().appendTo(styleNode);
+                        if (!isFormatStyles) {
+                            if (styleRange.startContainer.$.getAttribute(core.NAME_ATTR) === core.NAME_VALUE
+                                && styleRange.startContainer.$.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
+                                && styleRange.startContainer.$.getAttribute(core.UID_ATTR) === core.getUserAndId(editor)[1]) {
+                                styleRange.extractContents();
+                            } else {
+                                // Move the contents of the range to the style element.
+                                styleRange.extractContents().appendTo(styleNode);
 
-                            // Insert it into the range position (it is collapsed after
-                            // extractContents.
-                            styleRange.insertNode(styleNode);
+                                // Insert it into the range position (it is collapsed after
+                                // extractContents.
+                                styleRange.insertNode(styleNode);
+                            }
                         } else {
                             var content = styleRange.extractContents();
                             var tcElement = styleRange.getCommonAncestor().$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
@@ -385,7 +392,7 @@ define(function leosTrackChangesStyleModule(require) {
 
                         // Here we do some cleanup, removing all duplicated
                         // elements from the style element.
-                        this.removeFromInsideElement(style, styleNode);
+                        this.removeFromInsideElement(editor, style, styleNode);
 
                         // Let's merge our new style with its neighbors, if possible.
                         styleNode.mergeSiblings();
@@ -404,7 +411,7 @@ define(function leosTrackChangesStyleModule(require) {
                         styleNode = new CKEDITOR.dom.element("span");
                         styleRange.extractContents().appendTo(styleNode);
                         styleRange.insertNode(styleNode);
-                        this.removeFromInsideElement(style, styleNode);
+                        this.removeFromInsideElement(editor, style, styleNode);
                         styleNode.remove(true);
                     }
 
@@ -467,7 +474,7 @@ define(function leosTrackChangesStyleModule(require) {
                             // them before removal.
                             element.mergeSiblings();
                             if (element.is(style.element)) {
-                                this.removeFromElement(style, element);
+                                this.removeFromElement(editor, style, element);
                             } else {
                                 this.removeOverrides(element, this.getOverrides(style)[element.getName()]);
                             }
@@ -511,7 +518,7 @@ define(function leosTrackChangesStyleModule(require) {
                     if (currentNode.type == CKEDITOR.NODE_ELEMENT && this.checkElementRemovable(currentNode, false, style)) {
                         // Remove style from element or overriding element.
                         if (currentNode.getName() == style.element)
-                            this.removeFromElement(style, currentNode);
+                            this.removeFromElement(editor, style, currentNode);
                         else
                             this.removeOverrides(currentNode, this.getOverrides(style)[currentNode.getName()]);
 
@@ -788,7 +795,7 @@ define(function leosTrackChangesStyleModule(require) {
         },
 
         // Removes a style from an element itself, don't care about its subtree.
-        removeFromElement: function(style, element, keepDataAttrs) {
+        removeFromElement: function(editor, style, element, keepDataAttrs) {
             var def = style._.definition,
                 attributes = def.attributes,
                 styles = def.styles,
@@ -803,7 +810,7 @@ define(function leosTrackChangesStyleModule(require) {
                     continue;
 
                 // Do not touch data-* attributes (https://dev.ckeditor.com/ticket/11011) (https://dev.ckeditor.com/ticket/11258).
-                if (keepDataAttrs && attName.slice(0, 5) == "data-")
+                if (keepDataAttrs && (attName.slice(0, 5) == "data-" || attName === "title"))
                     continue;
 
                 removeEmpty = element.hasAttribute(attName);
@@ -832,12 +839,19 @@ define(function leosTrackChangesStyleModule(require) {
                         element.renameNode(style._.enterMode == CKEDITOR.ENTER_P ? "p" : "div");
                 }
             }
+
+            if (element.getAttribute(core.NAME_ATTR) === core.NAME_VALUE
+                && element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
+                && element.getAttribute(core.UID_ATTR) === core.getUserAndId(editor)[1]) {
+                element.remove(false);
+            }
+
         },
 
         // Removes a style from inside an element. Called on applyStyle to make cleanup
         // before apply. During clean up this function keep data-* attribute in contrast
         // to removeFromElement.
-        removeFromInsideElement: function(style, element) {
+        removeFromInsideElement: function(editor, style, element) {
             var overrides = this.getOverrides(style),
                 innerElements = element.getElementsByTag(style.element),
                 innerElement;
@@ -847,7 +861,7 @@ define(function leosTrackChangesStyleModule(require) {
 
                 // Do not remove elements which are read only (e.g. duplicates inside widgets).
                 if (!innerElement.isReadOnly())
-                    this.removeFromElement(style, innerElement, true);
+                    this.removeFromElement(editor, style, innerElement, true);
             }
 
             // Now remove any other element with different name that is
@@ -903,7 +917,9 @@ define(function leosTrackChangesStyleModule(require) {
         removeNoAttribsElement: function(element, forceRemove) {
             // If no more attributes remained in the element, remove it,
             // leaving its children.
-            if (!element.hasAttributes() || forceRemove) {
+            if (!element.hasAttributes() || forceRemove
+                || (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION
+                    && element.getAttribute(core.STATUS_ATTR) === core.NEW_STATUS)) {
                 if (CKEDITOR.dtd.$block[element.getName()]) {
                     var previous = element.getPrevious(this.nonWhitespaces),
                         next = element.getNext(this.nonWhitespaces);
