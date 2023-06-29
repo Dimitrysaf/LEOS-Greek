@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -169,6 +170,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             default:{
                 throw new RuntimeException("Not supported document type for compare and show revision");
             }
+        }
+        if(Objects.isNull(contributionVersion)){
+            throw new RuntimeException(String.format("Contribution version not found for %s", documentVersionedRef));
+        }
+        if(Objects.isNull(originalVersion)){
+            throw new RuntimeException(String.format("Original version not found for %s", documentVersionedRef));
         }
 
         final String contributionHtml = documentContentService.getCleanDocumentAsHtml(
