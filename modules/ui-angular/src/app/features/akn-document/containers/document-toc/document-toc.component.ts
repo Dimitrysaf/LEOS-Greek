@@ -1251,7 +1251,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       if (this.isNumSoftDeleted(droppedElement.numSoftActionAttr)) {
         droppedElement.numSoftActionAttr = null;
       } else {
-        droppedElement.number = null;
+        droppedElement.number = HASH_NUM_VALUE;
       }
     }
   }
