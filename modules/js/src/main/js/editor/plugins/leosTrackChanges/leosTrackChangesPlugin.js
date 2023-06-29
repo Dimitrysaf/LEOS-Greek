@@ -300,6 +300,9 @@ define(function leosTrackChangesPluginModule(require) {
                                 return false;
                             }
                             break;
+                        case "inlinesaveclose":
+                            editor.setData(editor.getData().replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\""));
+                            break;
                     }
                 }
             });
