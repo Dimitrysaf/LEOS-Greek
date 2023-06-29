@@ -1,7 +1,10 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 
-export type MergeContributionConnectorState = LeosJavaScriptExtensionState;
+export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
+  tocItemsJsonArray: string; // json
+  isAngularUI?: boolean;
+};
 
 export type MergeContributionConnectorInitialState = Omit<
   MergeContributionConnectorState,
@@ -13,7 +16,7 @@ export type MergeContributionConnectorOptions = {
 };
 
 export class MergeContributionConnector extends AbstractJavaScriptComponent<MergeContributionConnectorState> {
-  //TODO these function should be defined and implemented only if they need to be called from the angular application. If not the must be removed
+  //functions defined in mergeContributionExtension.js
   refreshContributions?: (...args: any[]) => void;
   populateMergeActionList?: (...args: any[]) => void;
   populateTocItemList?: (...args: any[]) => void;
@@ -22,7 +25,13 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     state: MergeContributionConnectorInitialState,
     private options: MergeContributionConnectorOptions,
   ) {
-    super({ ...staticExtensionState, ...state }, options.rootElement);
+    super(
+      { ...staticExtensionState, isAngularUI: true, ...state },
+      options.rootElement,
+    );
+  }
+  requestTocItemList() {
+    this.populateTocItemList();
   }
 }
 

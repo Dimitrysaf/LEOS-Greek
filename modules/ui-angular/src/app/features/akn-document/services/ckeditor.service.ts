@@ -118,6 +118,10 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector?.$triggerStateChange();
   }
 
+  triggerMergeContributionConnectorStateChange() {
+    this.mergeContributionConnector.$triggerStateChange();
+  }
+
   private initActionManager(
     require: Require,
     leosState: any,

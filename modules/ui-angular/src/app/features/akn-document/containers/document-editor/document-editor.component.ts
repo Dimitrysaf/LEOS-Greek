@@ -258,6 +258,7 @@ export class DocumentEditorComponent
           );
           this.isContributionForViewOpen = true;
           this.isViewContributionPaneCollapsed = false;
+          this.cdkEditor.triggerMergeContributionConnectorStateChange();
         }
       });
 
