@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -500,7 +501,7 @@ public class LeosRepositoryImpl implements LeosRepository {
         long startTimeNanos = System.nanoTime();
         String primaryType = CmisMapper.cmisPrimaryType(type);
         List<Document> docs = cmisRepository.findDocumentsByRef(documentRef, primaryType);
-        if(docs != null) {
+        if(Objects.nonNull(docs) && Boolean.FALSE.equals(docs.isEmpty())) {
             Folder folder = docs.get(0).getParents().stream().findFirst().orElse(null);
             long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
             logger.trace("CMIS Repository package search took " + time + " milliseconds.");
