@@ -12,12 +12,12 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-define(function testLeosTrackChangesPlugin_TC(require) {
+define(function deleteCharacter(require) {
     "use strict";
 
     var KEYS = {
         delete: 46,
-        backspace: 46
+        backspace: 8
     };
 
     var $ = require("jquery");
@@ -40,34 +40,30 @@ define(function testLeosTrackChangesPlugin_TC(require) {
         editor.setReadOnly(false);
 
         var selectedElement = getSelectedElement(editor);
+        printOffsetsWithinSelection(editor)
+
         selectTextWithinSelection(editor, 3, 3);
         // leosKeyHandler.selectTextInsideElement(editor, selectedElement, 3, 3)
+        fireKeyEvent(editor, KEYS.backspace);
+        checkTrackChanges(selectedElement);
+        printOffsetsWithinSelection(editor)
 
-        var event = createEditorEvent(KEYS.delete);
-        editor.fire( 'key', event );
-
-        var childrenCountEnd = selectedElement.$.childNodes.length;//should be 3
-        var elementContentEnd = selectedElement.$
-        console.log("childrenCountEnd: ",childrenCountEnd, ",elementContentEnd:", elementContentEnd);
-
-        var trackChangeEl = selectedElement.$.childNodes[1]
-        var attrName = trackChangeEl.getAttribute("data-akn-name")
-        var attrStatus =  trackChangeEl.getAttribute("data-akn-status")
-        var attrUid =  trackChangeEl.getAttribute("data-akn-uid")
-        var attrTitle =  trackChangeEl.getAttribute("title")
-        console.info("TrackChanges: ", trackChangeEl, "attrName:", attrName, "attrStatus:", attrStatus, "attrUid:", attrUid, "attrTitle:", attrTitle)
-        console.log("trackChangeEl.$: ", trackChangeEl.$, "trackChangeEl.getInnerHTML:", trackChangeEl.getInnerHTML())
+        selectTextWithinSelection(editor, 1, 1);
+        printOffsetsWithinSelection(editor)
+        fireKeyEvent(editor, KEYS.backspace);
+        checkTrackChanges(selectedElement);
+        printOffsetsWithinSelection(editor)
     });
 
     function getSelectedElement(editor) {
         var selectedElement = editor.element.find("p")
-        console.log("selectedElement: ", selectedElement.getItem(0), ", content: ", selectedElement.getItem(0).$);
+        console.log("editorElement: ", selectedElement.getItem(0), ", CONTENT: ", selectedElement.getItem(0).$);
         selectedElement = selectedElement.getItem(0)
         leosPluginUtils.setFocus(selectedElement, editor);
         // var startElement = leosKeyHandler.getSelectedElement(selection);
         var childrenCountStart = selectedElement.$.childNodes.length;
         var elementContentStart = selectedElement.$
-        console.log("childrenCountStart: ", childrenCountStart, ",elementContentStart:", elementContentStart);
+        // console.log("childrenCountStart: ", childrenCountStart, ", Editor CONTENT:", elementContentStart);
         return selectedElement;
     }
 
@@ -80,7 +76,13 @@ define(function testLeosTrackChangesPlugin_TC(require) {
         targetRange.select();
     }
 
-    function createEditorEvent(keyCode) {
+    function printOffsetsWithinSelection(editor) {
+        var ranges = editor.getSelection().getRanges()
+        var range = editor.getSelection().getRanges()[0]
+        console.log("Selection: Nr. Ranges:", ranges.length, ", startOffset:", range.startOffset, ", endOffset:",  range.endOffset);
+    }
+
+    function fireKeyEvent(editor, keyCode) {
         var ckEditorEvent = new CKEDITOR.dom.event(
             new KeyboardEvent('key', {
                 keyCode: keyCode,
@@ -95,7 +97,22 @@ define(function testLeosTrackChangesPlugin_TC(require) {
             name: "key",
             domEvent: ckEditorEvent
         }
+        editor.fire( 'key', event );
         return event;
+    }
+
+    function checkTrackChanges(selectedElement) {
+        var childrenCountEnd = selectedElement.$.childNodes.length;//should be 3
+        var elementContentEnd = selectedElement.$
+        console.log("childrenCountEnd: ", childrenCountEnd, ", elementContentEnd:", elementContentEnd, ", new CONTENT:", elementContentEnd.outerHTML);
+
+        var trackChangeEl = selectedElement.$.childNodes[1]
+        var attrName = trackChangeEl.getAttribute("data-akn-name")
+        var attrStatus = trackChangeEl.getAttribute("data-akn-status")
+        var attrUid = trackChangeEl.getAttribute("data-akn-uid")
+        var attrTitle = trackChangeEl.getAttribute("title")
+        // console.info("TrackChanges: ", trackChangeEl, "attrName:", attrName, "attrStatus:", attrStatus, "attrUid:", attrUid, "attrTitle:", attrTitle)
+        console.log("trackChangeElement.getInnerHTML:", trackChangeEl.getInnerHTML())
     }
 
     function initializeEditor(extraPluginsName, placeholder) {
