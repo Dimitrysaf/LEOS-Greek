@@ -295,7 +295,7 @@ define(function leosTrackChangesPluginModule(require) {
                         case "mathjax":
                         case "table":
                             var range = editor.getSelection().getRanges()[0];
-                            if ( (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) ||
+                            if ((range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) ||
                                 !range.collapsed) {
                                 return false;
                             }
