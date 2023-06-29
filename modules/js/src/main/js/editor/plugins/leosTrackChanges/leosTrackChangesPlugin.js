@@ -172,7 +172,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                             editor.getSelection().getRanges()[0].optimize();
                             var range = editor.getSelection().getRanges()[0];
-                            var deleteKey = (event.getKeyCode() === 46);
+                            var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
                             var allow = true;
                             if (range.collapsed) {
@@ -272,15 +272,16 @@ define(function leosTrackChangesPluginModule(require) {
             // Catch toolbar buttons commands before execution
             editor.on("beforeCommandExec", function(event) {
                 if (isTrackChangesEnabled) {
-                    var range = editor.getSelection().getRanges()[0];
-                    if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
-                        return false;
-                    }
                     switch (event.data.name) {
                         case "bold":
                         case "italic":
                         case "subscript":
                         case "superscript":
+                            var range = editor.getSelection().getRanges()[0];
+                            if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION) ||
+                                (!range.collapsed)) {
+                                return false;
+                            }
                             if (editor.LEOS.isTrackChangesStyleFormattingEnabled) {
                                 var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
                                 if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
@@ -298,7 +299,11 @@ define(function leosTrackChangesPluginModule(require) {
                         case "leosCrossReferenceWidget":
                         case "mathjax":
                         case "table":
-                            if (!range.collapsed) return false;
+                            var range = editor.getSelection().getRanges()[0];
+                            if (range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION) ||
+                                (!range.collapsed)) {
+                                return false;
+                            }
                             break;
                     }
                 }

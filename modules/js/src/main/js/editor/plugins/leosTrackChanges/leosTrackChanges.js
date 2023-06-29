@@ -214,18 +214,6 @@ define(function leosTrackChangesModule(require) {
             return null;
         },
 
-        isTextInsideTrackChangeElement: function(element, action) {
-            var isInside = false;
-            while (element && !isInside) {
-                if (this.isTrackChangeElement(element, action)) {
-                    isInside = true;
-                } else {
-                    element = element.getParent();
-                }
-            }
-            return isInside;
-        },
-
         breakParentAndMoveTo: function(editor, element, parent, moveTo) {
             element.breakParent(parent);
             if (this.isEmpty(element.getPrevious()) && (this.isTrackChangeElement(element.getPrevious(), this.INSERT_ACTION) || this.isTrackChangeElement(element.getPrevious(), this.DELETE_ACTION))) {
@@ -356,10 +344,6 @@ define(function leosTrackChangesModule(require) {
                 var returnArray = this.enterTextNode(deleteKey, range, editor, previousNode);
                 range = returnArray[0];
                 previousNode = returnArray[1];
-            }
-            if ((deleteKey && core.isTextInsideTrackChangeElement(nextNode, core.DELETE_ACTION)) ||
-                (!deleteKey && core.isTextInsideTrackChangeElement(previousNode, core.DELETE_ACTION))) {
-                return false;
             }
             this.doCharSelection(deleteKey, range, nextNode, previousNode);
             return true;
