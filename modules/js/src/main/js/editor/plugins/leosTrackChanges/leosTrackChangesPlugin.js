@@ -458,8 +458,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 event.getInstance().data.preventDefault(); // Prevent standard insert
                             } else {
                                 actions.preventInsertInDelete(editor); // Moves the caret if needed
-                                var cancelEvent = actions.insertNewData(editor, event.getChar()); // Inserts the new data
-                                if (cancelEvent) {
+                                if (actions.insertNewData(editor, event.getChar())) { // Inserts the new data
                                     event.getInstance().data.preventDefault(); // Prevent standard insert
                                 }
                             }
@@ -536,6 +535,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
                                 if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
                                     style.apply(editor, formatStyleToBeApplied.style);
+                                    editor.fire("change");
                                     return false;
                                 } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
                                     //TODO: Check style definition. Custom or default implementation no works with it.
@@ -547,6 +547,7 @@ define(function leosTrackChangesPluginModule(require) {
                         case "authorialNoteWidget":
                         case "leosCrossReferenceWidget":
                         case "mathjax":
+                        case "table":
                             if (!range.collapsed) return false;
                             break;
                     }
@@ -561,12 +562,22 @@ define(function leosTrackChangesPluginModule(require) {
                             for (var node of mutation.addedNodes) {
                                 if (!(node instanceof HTMLElement)) continue;
                                 if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
-                                        node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
+                                    node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
                                     core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
-                                    actions.preventInsertInDelete(editor);
-                                    actions.insertNewData(editor, node.outerHTML);
-                                    node.remove();
+                                    if (actions.insertNewData(editor, node.outerHTML))
+                                        node.remove();
+                                /*} else if ((node.tagName === "TABLE") || (node.tagName === "TR") || (node.tagName === "TD")) {
+                                    if ((node.tagName === "TR") || (node.tagName === "TD"))
+                                        node = node.closest("table");
+                                    var tcAttributes = core.getTrackChangeAttributes(editor, core.INSERT_ACTION);
+                                    for (var attrName in tcAttributes) {
+                                        if (attrName !== "data-akn-name")
+                                            node.setAttribute(attrName, tcAttributes[attrName]);
+                                    }*/
+                                } else {
+                                    continue;
                                 }
+                                break;
                             }
                         }
                     }
