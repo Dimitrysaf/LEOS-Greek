@@ -303,6 +303,7 @@ export class DocumentEditorComponent
       .subscribe((contributions) => {
         this.contributions = contributions;
         this.showContributionsPane = this.contributions.length > 0;
+        this.greyContributions();
       });
 
     this.documentService.processed$
@@ -727,10 +728,6 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
-    this.contributions = this.contributions.map((c) => {
-      c.selected = false;
-      return c;
-    });
   }
 
   handleNextChangeContribution() {}
@@ -777,20 +774,31 @@ export class DocumentEditorComponent
       this.isDeclinedContribution =
         contribution.contributionStatus === 'CONTRIBUTION_DONE';
       if (this.isDeclinedContribution) {
-        this.handleSelectContribution(contribution, true);
+        this.handleGreyedContribution(contribution, true);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
       }
     }
   }
 
-  private handleSelectContribution(
+  private handleGreyedContribution(
     contribution: ContributionVO,
-    selected: boolean,
+    greyed: boolean,
   ) {
     this.contributions = this.contributions.map((c) => {
       if (contribution.updatedDate === c.updatedDate) {
-        c.selected = selected;
+        c.greyed = greyed;
+      }
+      return c;
+    });
+  }
+
+  private greyContributions() {
+    this.contributions = this.contributions.map((c) => {
+      if (c.contributionStatus === 'CONTRIBUTION_DONE') {
+        c.greyed = true;
+      } else {
+        c.greyed = false;
       }
       return c;
     });

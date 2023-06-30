@@ -1,9 +1,7 @@
 import {
   Component,
-  EventEmitter,
   Input,
   OnInit,
-  Output,
   ViewChild,
 } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
@@ -19,7 +17,6 @@ import { DocumentService } from '@/shared/services/document.service';
 })
 export class RevisionActionsDropdownComponent implements OnInit {
   @Input() contribution: ContributionVO;
-  @Output() markAsSelected = new EventEmitter<boolean>();
   @ViewChild('declineContributionDialog')
   declineContributionDialog: EuiDialogComponent;
   versionModalText: string;
@@ -50,15 +47,11 @@ export class RevisionActionsDropdownComponent implements OnInit {
   onClickViewAndMerge(contribution: ContributionVO) {
     this.documentService.viewAndMergeContribution(contribution);
     this.documentService.updateProcessedStatus(false);
-    contribution.selected = false;
-    this.markAsSelected.emit(false);
   }
 
   onClickView(contribution: ContributionVO) {
     this.documentService.viewAndMergeContribution(contribution);
     this.documentService.updateProcessedStatus(true);
-    contribution.selected = true;
-    this.markAsSelected.emit(true);
   }
 
   onAccept() {
