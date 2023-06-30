@@ -30,8 +30,9 @@ const getFilesRecursively = (pathDir) => {
 };
 
 const filterSpecs = (specs) => {
-    if (argv.hasOwnProperty("specName")) {
-        specs = specs.filter((spec) => spec.includes(argv["specName"]));
+    var specName = argv.hasOwnProperty("specName") ? argv["specName"] : config["specName"];
+    if (specName && specName.length > 0) {
+        specs = specs.filter((spec) => spec.includes(specName));
     }
 
     var excludes = argv.hasOwnProperty("excludes") ? argv["excludes"] : config["excludes"];
