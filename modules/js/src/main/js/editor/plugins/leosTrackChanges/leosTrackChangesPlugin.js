@@ -154,7 +154,7 @@ define(function leosTrackChangesPluginModule(require) {
                             var range = editor.getSelection().getRanges()[0];
                             range.collapse(false);
                             range.select();
-                            event.getInstance().data.domEvent.preventDefault();
+                            event.getInstance().data.preventDefault();
                             event.getInstance().stop();
                         }
                     }
@@ -222,7 +222,6 @@ define(function leosTrackChangesPluginModule(require) {
 
                                 event.getInstance().data.preventDefault(); // Prevent standard insert
                             } else {
-                                actions.preventInsertInDelete(editor); // Moves the caret if needed
                                 if (actions.insertNewData(editor, event.getChar())) { // Inserts the new data
                                     event.getInstance().data.preventDefault(); // Prevent standard insert
                                 }

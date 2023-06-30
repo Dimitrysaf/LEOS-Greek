@@ -132,7 +132,10 @@ define(function leosTrackChangesModule(require) {
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
-            if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
+            if (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                tcElement.insertAfter(selectedElement);
+                tcElement.mergeSiblings();
+            } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
                 editor.insertElement(tcElement);
@@ -296,8 +299,11 @@ define(function leosTrackChangesModule(require) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {
-                    core.setToEditablePosition(editor, tcElement[0], core.CARET_START);
-                    return false;
+                    var range = editor.createRange();
+                    range.moveToPosition(tcElement[0], CKEDITOR.POSITION_BEFORE_START);
+                    range.select();
+                    var elementAdded = core.insertTrackChangeElement(editor, core.INSERT_ACTION, data, core.CARET_END, true);
+                    elementAdded.mergeSiblings();
                 } else {
                     var html = tcElement[1] === core.CARET_END ? tcElement[0].getHtml() + data : data + tcElement[0].getHtml();
                     tcElement[0].setHtml(html);
