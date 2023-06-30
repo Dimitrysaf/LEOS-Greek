@@ -651,6 +651,7 @@
                   ) | translate
                 "
                 [showDelay]="tooltipsDelay"
+                [disabled]="isDeclinedContribution"
               >
                 <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
               </button>
@@ -668,6 +669,7 @@
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
+                [disabled]="isDeclinedContribution"
               >
                 <span class="eui-icon eui-icon-sort-asc"></span>
               </button>
@@ -686,6 +688,7 @@
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
+                [disabled]="isDeclinedContribution"
               >
                 <span class="eui-icon eui-icon-sort-desc"></span>
               </button>
@@ -699,6 +702,7 @@
                 name="action_nolabel"
                 aria-label="action nolabel"
                 (select)="onSelectAction($event)"
+                [disabled]="isDeclinedContribution"
               >
                 <option value="accept_selected" selected>
                   {{

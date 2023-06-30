@@ -58,6 +58,8 @@ import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/tableOfContent.service';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 
 @Component({
   selector: 'app-document-editor',
@@ -125,6 +127,7 @@ export class DocumentEditorComponent
   isContributionsPaneExpanded = false;
   contributionActionSelected = 'accept_selected';
   processed = false;
+  isDeclinedContribution = false;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -156,6 +159,7 @@ export class DocumentEditorComponent
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private scrollables: NodeListOf<Element>;
+  private contributions: ContributionVO[] = [];
 
   constructor(
     private domService: DomService,
@@ -252,14 +256,7 @@ export class DocumentEditorComponent
     this.documentService.contributionViewAndMerge$
       .pipe(takeUntil(this.destroy$))
       .subscribe((contributionView) => {
-        if (contributionView) {
-          this.contributionForView = this.cleanupAndSerializeXML(
-            contributionView.editableXml,
-          );
-          this.isContributionForViewOpen = true;
-          this.isViewContributionPaneCollapsed = false;
-          this.cdkEditor.triggerMergeContributionConnectorStateChange();
-        }
+        this.handleContributionView(contributionView);
       });
 
     this.versionsComparisonForViewHeaderTitle$ =
@@ -304,8 +301,8 @@ export class DocumentEditorComponent
     this.documentService.contributions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((contributions) => {
-        // TODO: Investigate the extra condition(s) needed for contribution pane to show (maybe if the proposal is parent or if the logged-in user is not the contributor)
-        this.showContributionsPane = contributions.length > 0;
+        this.contributions = contributions;
+        this.showContributionsPane = this.contributions.length > 0;
       });
 
     this.documentService.processed$
@@ -761,6 +758,24 @@ export class DocumentEditorComponent
 
   protected onMilestoneViewDialogClosed() {
     this.milestoneViewData = null;
+  }
+
+  private handleContributionView(contributionView: DocumentViewResponse) {
+    if (contributionView) {
+      this.contributionForView = this.cleanupAndSerializeXML(
+        contributionView.editableXml,
+      );
+      this.isContributionForViewOpen = true;
+      this.isViewContributionPaneCollapsed = false;
+      const contrVersionInfo = contributionView.versionInfoVO.documentVersion;
+      for (const contribution of this.contributions) {
+        const version = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
+        if (version === contrVersionInfo) {
+          this.isDeclinedContribution =
+            contribution.contributionStatus === 'CONTRIBUTION_DONE';
+        }
+      }
+    }
   }
 
   private handleSyncScroll(event: Event) {

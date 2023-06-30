@@ -18,13 +18,13 @@
         euiListItem
         *ngIf="contribution.contributionStatus === 'RECEIVED'"
         translate="page.editor.contribution.actions.view.amd.merge"
-        (click)="documentService.viewAndMergeContribution(contribution)"
+        (click)="onClickViewAndMerge(contribution)"
       ></button>
       <button
         euiListItem
         *ngIf="contribution.contributionStatus === 'CONTRIBUTION_DONE'"
         translate="page.collection.milestones.actions.view-milestone"
-        (click)="documentService.viewAndMergeContribution(contribution)"
+        (click)="onClickView(contribution)"
       ></button>
       <button
         euiListItem
