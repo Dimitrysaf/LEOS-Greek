@@ -44,6 +44,8 @@ import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
@@ -58,8 +60,6 @@ import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/tableOfContent.service';
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 
 @Component({
   selector: 'app-document-editor',
