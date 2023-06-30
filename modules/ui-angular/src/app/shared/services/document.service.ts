@@ -113,11 +113,11 @@ export class DocumentService implements OnDestroy {
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
   contributions$: Observable<ContributionVO[]>;
   processed$: Observable<boolean>;
-  contributionViewAndMerge$: Observable<[DocumentViewResponse, string]>;
+  contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
 
   private processedBS = new BehaviorSubject<boolean>(false);
   private contributionViewAndMergeBS = new BehaviorSubject<
-    [DocumentViewResponse, string]
+    [DocumentViewResponse, ContributionVO]
   >(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
@@ -997,7 +997,7 @@ export class DocumentService implements OnDestroy {
         next: (res) => {
           this.contributionViewAndMergeBS.next([
             res,
-            contribution.contributionStatus,
+            contribution,
           ]);
         },
         error: (res) => {

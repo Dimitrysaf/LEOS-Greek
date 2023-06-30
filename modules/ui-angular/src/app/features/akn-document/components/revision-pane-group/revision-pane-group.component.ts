@@ -23,6 +23,10 @@ export class RevisionPaneGroupComponent implements OnInit {
     this.originatingApplication = this.contribution.contributionCreator;
   }
 
+  onMarkContributionAsSelected(e: boolean) {
+    this.contribution.selected = e;
+  }
+
   protected formatVersionNumber(contribution: ContributionVO): string {
     return `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
   }

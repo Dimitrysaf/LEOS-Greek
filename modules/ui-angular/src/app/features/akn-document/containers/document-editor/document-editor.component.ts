@@ -128,6 +128,7 @@ export class DocumentEditorComponent
   contributionActionSelected = 'accept_selected';
   processed = false;
   isDeclinedContribution = false;
+  contributions: ContributionVO[] = [];
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -159,7 +160,6 @@ export class DocumentEditorComponent
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private scrollables: NodeListOf<Element>;
-  private contributions: ContributionVO[] = [];
 
   constructor(
     private domService: DomService,
@@ -255,8 +255,8 @@ export class DocumentEditorComponent
 
     this.documentService.contributionViewAndMerge$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([contributionView, contributionStatus]) => {
-        this.handleContributionView(contributionView, contributionStatus);
+      .subscribe(([contributionView, contribution]) => {
+        this.handleContributionView(contributionView, contribution);
       });
 
     this.versionsComparisonForViewHeaderTitle$ =
@@ -727,6 +727,10 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
+    this.contributions = this.contributions.map((c) => {
+      c.selected = false;
+      return c;
+    });
   }
 
   handleNextChangeContribution() {}
@@ -762,7 +766,7 @@ export class DocumentEditorComponent
 
   private handleContributionView(
     contributionView: DocumentViewResponse,
-    contributionStatus: string,
+    contribution: ContributionVO,
   ) {
     if (contributionView) {
       this.contributionForView = this.cleanupAndSerializeXML(
@@ -770,10 +774,26 @@ export class DocumentEditorComponent
       );
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
-      this.isDeclinedContribution = contributionStatus === 'CONTRIBUTION_DONE';
-      if (!this.isDeclinedContribution)
+      this.isDeclinedContribution =
+        contribution.contributionStatus === 'CONTRIBUTION_DONE';
+      if (this.isDeclinedContribution) {
+        this.handleSelectContribution(contribution, true);
+      } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
+      }
     }
+  }
+
+  private handleSelectContribution(
+    contribution: ContributionVO,
+    selected: boolean,
+  ) {
+    this.contributions = this.contributions.map((c) => {
+      if (contribution.updatedDate === c.updatedDate) {
+        c.selected = selected;
+      }
+      return c;
+    });
   }
 
   private handleSyncScroll(event: Event) {
