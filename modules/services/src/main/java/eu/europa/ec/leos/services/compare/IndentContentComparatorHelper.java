@@ -5,6 +5,7 @@ import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.w3c.dom.Node;
 
@@ -31,13 +32,13 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.compare.ComparisonHelper.isSoftAction;
 
 class IndentContentComparatorHelper {
+
+    private IndentContentComparatorHelper(){
+    }
     protected static final List<String> ID_PREFIXES = Arrays.asList(XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
             XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
             XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX,
             IndentConversionHelper.INDENT_PLACEHOLDER_ID_PREFIX);
-
-    private IndentContentComparatorHelper() {
-    }
 
     public static Element findElementInOtherContext(Element element, Map<String, Element> otherContentElements) {
         StringBuilder elementId = new StringBuilder(element.getTagId());
@@ -106,7 +107,7 @@ class IndentContentComparatorHelper {
 
     public static boolean containsNotDeletedElementsInOtherContext(Map<String, Element> otherContentElements, Element element) {
         return (!isECOrigin(element) || (element.getTagName().equals(LIST) && !isElementSoftMoveToOrSoftDeletedInOtherContext(otherContentElements,
-                element))) && !getNotDeletedElementsFromContent(otherContentElements, element).isEmpty();
+                element))) && CollectionUtils.isNotEmpty(getNotDeletedElementsFromContent(otherContentElements, element));
     }
 
     public static boolean wasChildOfPreviousSibling(Element newElement, ContentComparatorContext context, int currentIndex) {
@@ -320,10 +321,10 @@ class IndentContentComparatorHelper {
                     && !isSoftAction(element.getNode(), SoftActionType.MOVE_FROM))) {
                 return false;
             }
-        } else if (attrValue != null && attrValue.equalsIgnoreCase(CONTENT_ADDED_CLASS)
-            && (Arrays.asList(SUBPOINT, SUBPARAGRAPH).contains(element.getTagName())
+        } else if (attrValue != null && attrValue.equalsIgnoreCase(CONTENT_ADDED_CLASS) &&
+            ((Arrays.asList(SUBPOINT, SUBPARAGRAPH).contains(element.getTagName())
                 && isSoftAction(element.getNode(), SoftActionType.TRANSFORM)) ||
-                (LIST.equalsIgnoreCase(element.getTagName()) && isElementIndented(element.getChildren().get(0)))) {
+                (LIST.equalsIgnoreCase(element.getTagName()) && isElementIndented(element.getChildren().get(0))))) {
             return false;
         }
         return true;
