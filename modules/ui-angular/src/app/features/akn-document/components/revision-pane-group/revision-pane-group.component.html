@@ -1,5 +1,9 @@
-<eui-card class="revisions-pane" euiNoShadow [ngClass]="{ 'greyed': contribution.selected }">
-  <eui-card-header [ngClass]="{ 'greyed': contribution.selected }">
+<eui-card
+  class="revisions-pane"
+  euiNoShadow
+  [ngClass]="{ greyed: contribution.selected }"
+>
+  <eui-card-header [ngClass]="{ greyed: contribution.selected }">
     <eui-card-header-left-content>
       <span euiLabel class="top-content">{{
         'page.editor.contribution-item.version'

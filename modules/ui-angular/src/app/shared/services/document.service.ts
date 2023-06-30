@@ -995,10 +995,7 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.contributionViewAndMergeBS.next([
-            res,
-            contribution,
-          ]);
+          this.contributionViewAndMergeBS.next([res, contribution]);
         },
         error: (res) => {
           this.appShell.growl({
