@@ -331,6 +331,7 @@
   "page.editor.contribution.view.actions.accept.proposed.version": "Accept proposed version",
   "page.editor.contribution.view.actions.apply": "Apply",
   "page.editor.contribution.view.actions.processed": "Processed ?",
+  "page.editor.contribution.view.actions.close-view": "Close merge view",
   "page.editor.contribution-item.updated-by": "{{ updatedOn }} {{ updatedBy }}",
   "page.editor.contribution-item.version": "Version: {{ version }}",
   "page.editor.toc.actions.collapseAll": "Collapse All",

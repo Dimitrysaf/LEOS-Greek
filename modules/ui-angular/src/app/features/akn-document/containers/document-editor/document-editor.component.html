@@ -744,6 +744,11 @@
                 euiSizeS
                 euiOutline
                 (click)="closeContributionsView()"
+                [euiTooltip]="
+                  'page.editor.contribution.view.actions.close-view'
+                    | translate
+                "
+                [showDelay]="tooltipsDelay"
               >
                 <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
               </button>
