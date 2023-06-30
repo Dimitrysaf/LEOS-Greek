@@ -771,6 +771,8 @@ export class DocumentEditorComponent
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
       this.isDeclinedContribution = contributionStatus === 'CONTRIBUTION_DONE';
+      if (!this.isDeclinedContribution)
+        this.cdkEditor.triggerMergeContributionConnectorStateChange();
     }
   }
 
