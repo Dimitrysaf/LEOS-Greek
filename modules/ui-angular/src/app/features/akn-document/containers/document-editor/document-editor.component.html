@@ -738,6 +738,7 @@
                 <eui-slide-toggle
                   (changed)="onChangeProcessedToggle($event)"
                   [isChecked]="processed"
+                  [disabled]="isDeclinedContribution"
                 ></eui-slide-toggle>
               </div>
 
