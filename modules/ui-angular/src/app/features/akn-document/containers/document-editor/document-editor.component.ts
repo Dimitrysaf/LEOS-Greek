@@ -255,8 +255,8 @@ export class DocumentEditorComponent
 
     this.documentService.contributionViewAndMerge$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((contributionView) => {
-        this.handleContributionView(contributionView);
+      .subscribe(([contributionView, contributionStatus]) => {
+        this.handleContributionView(contributionView, contributionStatus);
       });
 
     this.versionsComparisonForViewHeaderTitle$ =
@@ -760,21 +760,17 @@ export class DocumentEditorComponent
     this.milestoneViewData = null;
   }
 
-  private handleContributionView(contributionView: DocumentViewResponse) {
+  private handleContributionView(
+    contributionView: DocumentViewResponse,
+    contributionStatus: string,
+  ) {
     if (contributionView) {
       this.contributionForView = this.cleanupAndSerializeXML(
         contributionView.editableXml,
       );
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
-      const contrVersionInfo = contributionView.versionInfoVO.documentVersion;
-      for (const contribution of this.contributions) {
-        const version = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
-        if (version === contrVersionInfo) {
-          this.isDeclinedContribution =
-            contribution.contributionStatus === 'CONTRIBUTION_DONE';
-        }
-      }
+      this.isDeclinedContribution = contributionStatus === 'CONTRIBUTION_DONE';
     }
   }
 
