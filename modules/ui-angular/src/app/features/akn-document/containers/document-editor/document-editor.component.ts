@@ -21,6 +21,7 @@ import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
+  BehaviorSubject,
   combineLatest,
   combineLatestWith,
   map,
@@ -95,7 +96,7 @@ export class DocumentEditorComponent
   isContributionForViewOpen = false;
   isViewContributionPaneCollapsed = true;
   reloadTrigger: number;
-
+  applyActionDisabled$: Observable<boolean>;
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
 
@@ -127,6 +128,7 @@ export class DocumentEditorComponent
   isContributionsPaneExpanded = false;
   contributionActionSelected = 'accept_selected';
   processed = false;
+  acceptedSelectedEnabled = false;
   isDeclinedContribution = false;
   contributions: ContributionVO[] = [];
 
@@ -160,6 +162,7 @@ export class DocumentEditorComponent
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private scrollables: NodeListOf<Element>;
+  private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
 
   constructor(
     private domService: DomService,
@@ -205,6 +208,7 @@ export class DocumentEditorComponent
         this.reloadTrigger = trigger;
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
+    this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
   }
 
   ngOnInit(): void {
@@ -735,7 +739,10 @@ export class DocumentEditorComponent
   handlePrevChangeContribution() {}
 
   onSelectAction(e: any) {
-    //TODO add selection handler
+    //TODO add selection handler and enable apply button
+    console.log('onSelectAction', e);
+    this.contributionActionSelected = e.target.value;
+    this.applyActionDisabledBS.next(false);
   }
 
   handleProceed() {

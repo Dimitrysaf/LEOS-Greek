@@ -710,10 +710,14 @@
                 euiSelect
                 name="action_nolabel"
                 aria-label="action nolabel"
-                (select)="onSelectAction($event)"
                 [disabled]="isDeclinedContribution"
+                (change)="onSelectAction($event)"
               >
-                <option value="accept_selected" selected>
+                <option
+                  value="accept_selected"
+                  selected
+                  [disabled]="!acceptedSelectedEnabled"
+                >
                   {{
                     'page.editor.contribution.view.actions.accept.selected'
                       | translate
@@ -736,7 +740,7 @@
                   'page.editor.contribution.view.actions.apply' | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="true"
+                [disabled]="applyActionDisabled$ | async"
               >
                 {{ 'page.editor.contribution.view.actions.apply' | translate }}
               </button>
