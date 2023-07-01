@@ -1,5 +1,6 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import { DocumentService } from '@/shared/services/document.service';
 
 export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
   tocItemsJsonArray: string; // json
@@ -23,6 +24,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
 
   constructor(
     state: MergeContributionConnectorInitialState,
+    private documentService: DocumentService,
     private options: MergeContributionConnectorOptions,
   ) {
     super(
@@ -32,6 +34,10 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
   }
   requestTocItemList() {
     this.populateTocItemList();
+  }
+
+  handleContributionSelection(selectionData: any) {
+    this.documentService.handleContributionSelectCount(selectionData.selected);
   }
 }
 

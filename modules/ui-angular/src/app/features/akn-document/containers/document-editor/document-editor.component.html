@@ -701,9 +701,23 @@
             >
               <span
                 class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s select-revisions-span"
+                *ngIf="(documentService.contributionSelections$ | async) === 0"
                 >{{
                   'page.editor.contribution.view.text.select-revisions'
                     | translate
+                }}</span
+              >
+              <span
+                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s select-revisions-span"
+                *ngIf="(documentService.contributionSelections$ | async) > 0"
+                >{{
+                  'page.editor.contribution.view.text.revisions-selected'
+                    | translate
+                      : {
+                          selected:
+                            documentService.contributionSelections$ | async,
+                          all: contributions.length
+                        }
                 }}</span
               >
               <select
@@ -716,7 +730,9 @@
                 <option
                   value="accept_selected"
                   selected
-                  [disabled]="!acceptedSelectedEnabled"
+                  [disabled]="
+                    (documentService.contributionSelections$ | async) === 0
+                  "
                 >
                   {{
                     'page.editor.contribution.view.actions.accept.selected'
@@ -740,7 +756,9 @@
                   'page.editor.contribution.view.actions.apply' | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="applyActionDisabled$ | async"
+                [disabled]="
+                  (documentService.contributionSelections$ | async) > 0
+                "
               >
                 {{ 'page.editor.contribution.view.actions.apply' | translate }}
               </button>

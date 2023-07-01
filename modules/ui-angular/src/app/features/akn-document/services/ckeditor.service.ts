@@ -277,6 +277,7 @@ export class CKEditorService implements OnDestroy {
   ) {
     this.mergeContributionConnector = new MergeContributionConnector(
       leosState,
+      this.documentService,
       {
         rootElement,
       },

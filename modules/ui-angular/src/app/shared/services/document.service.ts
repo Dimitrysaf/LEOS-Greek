@@ -114,6 +114,7 @@ export class DocumentService implements OnDestroy {
   contributions$: Observable<ContributionVO[]>;
   processed$: Observable<boolean>;
   contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
+  contributionSelections$: Observable<number>;
 
   private processedBS = new BehaviorSubject<boolean>(false);
   private contributionViewAndMergeBS = new BehaviorSubject<
@@ -150,6 +151,7 @@ export class DocumentService implements OnDestroy {
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
+  private contributionSelectionsBS = new BehaviorSubject<number>(0);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -297,6 +299,7 @@ export class DocumentService implements OnDestroy {
     this.processed$ = this.processedBS.asObservable();
     this.contributionViewAndMerge$ =
       this.contributionViewAndMergeBS.asObservable();
+    this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -760,6 +763,25 @@ export class DocumentService implements OnDestroy {
 
   toggleVersionsSearchPane(open?: boolean) {
     this.toggleSubject(this.versionSearchOpenBS, open);
+  }
+
+  handleContributionSelectCount(selected: boolean, reset?:boolean) {
+    if(reset){
+      this.contributionSelectionsBS.next(0);
+    }
+    else if (selected) {
+      this.contributionSelectionsBS.next(
+        this.contributionSelectionsBS.value + 1,
+      );
+    } else {
+      if (this.contributionSelectionsBS.value - 1 >= 0) {
+        this.contributionSelectionsBS.next(
+          this.contributionSelectionsBS.value - 1,
+        );
+      } else {
+        this.contributionSelectionsBS.next(0);
+      }
+    }
   }
 
   versionRevert(versionNumber: string) {

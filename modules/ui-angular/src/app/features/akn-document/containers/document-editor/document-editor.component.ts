@@ -732,6 +732,7 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
+    this.documentService.handleContributionSelectCount(false,true)
   }
 
   handleNextChangeContribution() {}
@@ -740,9 +741,12 @@ export class DocumentEditorComponent
 
   onSelectAction(e: any) {
     //TODO add selection handler and enable apply button
-    console.log('onSelectAction', e);
-    this.contributionActionSelected = e.target.value;
-    this.applyActionDisabledBS.next(false);
+    this.documentService.contributionSelections$.subscribe((selections) => {
+      if (selections > 0) {
+        this.contributionActionSelected = e.target.value;
+        this.applyActionDisabledBS.next(false);
+      }
+    });
   }
 
   handleProceed() {
