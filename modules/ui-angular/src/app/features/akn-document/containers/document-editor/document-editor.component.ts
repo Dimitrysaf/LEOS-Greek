@@ -263,6 +263,9 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe(([contributionView, contribution]) => {
         this.handleContributionView(contributionView, contribution);
+        setTimeout(() => {
+          this.handleContributionsChanges();
+        }, 5000);
       });
 
     this.versionsComparisonForViewHeaderTitle$ =
@@ -800,7 +803,6 @@ export class DocumentEditorComponent
       this.contributionForView = this.cleanupAndSerializeXML(
         contributionView.editableXml,
       );
-      this.handleContributionsChanges();
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
       this.isDeclinedContribution =
@@ -857,11 +859,12 @@ export class DocumentEditorComponent
   }
 
   private handleContributionsChanges() {
-    const contributionContainer = document.getElementById(
+    const contributionContainer = this.document.getElementById(
       'contributionViewContainer',
     );
+
     this.contributionChanges = contributionContainer.querySelectorAll(
-      '.leos-content-new,.leos-content-removed',
+      '.merge-contribution-wrapper',
     );
 
     if (this.contributionChanges.length > 0) {
