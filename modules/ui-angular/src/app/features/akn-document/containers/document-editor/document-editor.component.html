@@ -757,7 +757,7 @@
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="
-                  (documentService.contributionSelections$ | async) > 0
+                  (documentService.contributionSelections$ | async) === 0
                 "
               >
                 {{ 'page.editor.contribution.view.actions.apply' | translate }}
