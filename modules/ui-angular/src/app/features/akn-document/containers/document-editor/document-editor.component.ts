@@ -131,6 +131,8 @@ export class DocumentEditorComponent
   acceptedSelectedEnabled = false;
   isDeclinedContribution = false;
   contributions: ContributionVO[] = [];
+  contributionChanges: NodeListOf<HTMLElement>;
+  contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -732,12 +734,30 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
-    this.documentService.handleContributionSelectCount(false,true)
+    this.documentService.handleContributionSelectCount(false, true);
   }
 
-  handleNextChangeContribution() {}
+  handleNextChangeContribution() {
+    if (this.contributionIndex !== this.contributionChanges.length - 1) {
+      const nextChange = this.contributionIndex + 1;
+      this.contributionChanges
+        .item(nextChange)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.contributionIndex++;
+    }
+  }
 
-  handlePrevChangeContribution() {}
+  handlePrevChangeContribution() {
+    if (this.contributionIndex > 0) {
+      {
+        const prevChange = this.contributionIndex - 1;
+        this.contributionChanges
+          .item(prevChange)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contributionIndex--;
+      }
+    }
+  }
 
   onSelectAction(e: any) {
     //TODO add selection handler and enable apply button
@@ -780,6 +800,7 @@ export class DocumentEditorComponent
       this.contributionForView = this.cleanupAndSerializeXML(
         contributionView.editableXml,
       );
+      this.handleContributionsChanges();
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
       this.isDeclinedContribution =
@@ -832,6 +853,21 @@ export class DocumentEditorComponent
         });
         this.arrowClicked = false;
       }, 100);
+    }
+  }
+
+  private handleContributionsChanges() {
+    const contributionContainer = document.getElementById(
+      'contributionViewContainer',
+    );
+    this.contributionChanges = contributionContainer.querySelectorAll(
+      '.leos-content-new,.leos-content-removed',
+    );
+
+    if (this.contributionChanges.length > 0) {
+      this.contributionChanges
+        .item(this.contributionIndex)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 

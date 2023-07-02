@@ -765,11 +765,10 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
-  handleContributionSelectCount(selected: boolean, reset?:boolean) {
-    if(reset){
+  handleContributionSelectCount(selected: boolean, reset?: boolean) {
+    if (reset) {
       this.contributionSelectionsBS.next(0);
-    }
-    else if (selected) {
+    } else if (selected) {
       this.contributionSelectionsBS.next(
         this.contributionSelectionsBS.value + 1,
       );
