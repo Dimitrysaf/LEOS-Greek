@@ -1,5 +1,6 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import { MergeActionVO } from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
 
 export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
@@ -19,8 +20,10 @@ export type MergeContributionConnectorOptions = {
 export class MergeContributionConnector extends AbstractJavaScriptComponent<MergeContributionConnectorState> {
   //functions defined in mergeContributionExtension.js
   refreshContributions?: (...args: any[]) => void;
-  populateMergeActionList?: (...args: any[]) => void;
+  populateMergeActionList?: (selectAll: boolean) => void;
   populateTocItemList?: (...args: any[]) => void;
+
+  private acceptAllContributions: boolean;
 
   constructor(
     state: MergeContributionConnectorInitialState,
@@ -36,12 +39,44 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     this.populateTocItemList();
   }
 
-  handleMergeAction() {
-    this.populateMergeActionList();
+  handleMergeAction(mergeActionList: any[]) {
+    const mergeActionVOs: MergeActionVO[] | null = null;
+    this.documentService.contributions$.subscribe((contributions) => {
+      if (contributions.length > 0) {
+        for (const contribution of contributions) {
+          mergeActionList.forEach((item) => {
+            if (
+              item.elementId ===
+              contribution.checkinCommentVO.checkinElement.elementId
+            ) {
+              const tmp = {
+                action: item.action,
+                elementState: item.elementState,
+                elementId: item.elementId,
+                elementTagName: item.elementTagName,
+                contributionVO: contribution,
+              };
+              mergeActionVOs.push(tmp);
+            }
+          });
+        }
+      }
+    });
+
+    if (mergeActionVOs) {
+      this.documentService.mergeContributions(
+        mergeActionVOs,
+        this.acceptAllContributions,
+      );
+    }
   }
 
   handleContributionSelection(selectionData: { selected: boolean }) {
     this.documentService.handleContributionSelectCount(selectionData.selected);
+  }
+
+  setAcceptAllContributions(acceptAllContributions: boolean) {
+    this.acceptAllContributions = acceptAllContributions;
   }
 }
 

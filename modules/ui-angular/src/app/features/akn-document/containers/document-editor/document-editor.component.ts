@@ -781,7 +781,7 @@ export class DocumentEditorComponent
 
   handleProceed() {
     if (this.contributionActionSelected === 'accept_selected') {
-      // call this.documentService.mergeContributions();
+      this.cdkEditor.handleMergeContributionsActions(false);
     } else {
       this.mergeAllContributionsChangesDialog.openDialog();
     }
@@ -793,7 +793,7 @@ export class DocumentEditorComponent
   }
 
   onAcceptMergeAllContributions() {
-    // call this.documentService.mergeContributions();
+    this.cdkEditor.handleMergeContributionsActions(true);
     this.mergeAllContributionsChangesDialog.closeDialog();
     this.onChangeProcessedToggle(true);
     this.isContributionDeclinedOrProcessed = true;
