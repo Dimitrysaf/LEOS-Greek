@@ -5,7 +5,9 @@ import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ContributionApiService {
@@ -17,4 +19,6 @@ public interface ContributionApiService {
     List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType);
 
     LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel);
+
+    byte[] mergeContribution(String documentType, String documentRef, ApplyContributionsRequest request) throws IOException;
 }

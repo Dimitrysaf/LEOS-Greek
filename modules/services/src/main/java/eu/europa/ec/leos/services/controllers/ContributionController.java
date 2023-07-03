@@ -1,11 +1,14 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -72,5 +77,14 @@ public class ContributionController {
                                                                            @RequestParam String versionLabel) {
         this.contributionApiService.declineRevision(documentType, documentVersionedRef, versionLabel);
         return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
+    }
+
+    @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<byte[]> mergeContribution(@PathVariable("documentRef") String documentRef,
+                                                    @PathVariable("documentType") String documentType,
+                                                    @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
+        byte[] mergedContent = this.contributionApiService.mergeContribution(documentType, documentRef, applyContributionsRequest);
+        return ResponseEntity.ok(mergedContent);
     }
 }
