@@ -8,6 +8,7 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
 import org.junit.Before;
@@ -15,11 +16,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
@@ -112,6 +115,27 @@ public class ContributionControllerTest {
         verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void test_viewMergePane(){
+        String TEST_CONTEXT_PATH = "/test-content-path";
+        String TEST_DOCUMENT_REF = "documentRef";
+        String TEST_DOCUMENT_TYPE = "documentType";
+        String TEST_VERSION_LABEL = "versionLabel";
+        String TEST_RESPONSE_BODY = "Test Response";
+        HttpServletRequest httpRequestMock = Mockito.mock(HttpServletRequest.class);
+        DocumentViewResponse testResponse = new DocumentViewResponse(TEST_DOCUMENT_REF, TEST_RESPONSE_BODY, null);
+        when(httpRequestMock.getContextPath()).thenReturn(TEST_CONTEXT_PATH);
+        when(contributionApiService.compareAndShowRevision(anyString(),anyString(),anyString(),anyString())).thenReturn(testResponse);
+
+        ResponseEntity<DocumentViewResponse> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF,TEST_DOCUMENT_TYPE,TEST_VERSION_LABEL);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(TEST_RESPONSE_BODY, response.getBody().getEditableXml());
+
+        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL);
     }
 
     @Test

@@ -4,8 +4,11 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.cmis.document.Annex;
+import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
+import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
@@ -17,9 +20,14 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
+import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.user.UserService;
@@ -31,6 +39,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -52,6 +62,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private SecurityContext securityContext;
     private ContributionService contributionService;
     private LeosRepository leosRepository;
+    private DocumentContentService documentContentService;
+    private ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
+    private DocumentViewService<XmlDocument> documentViewService;
 
 
     @Value("${leos.clone.originRef}")
@@ -60,7 +73,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Autowired
     public ContributionApiServiceImpl(CreateCollectionService createCollectionService, CloneContext cloneContext,
             ProposalService proposalService, UserService userService, PackageService packageService, SecurityContext securityContext,
-            ContributionService contributionService, LeosRepository leosRepository) {
+            ContributionService contributionService, LeosRepository leosRepository, DocumentContentService documentContentService,
+            ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI, DocumentViewService<XmlDocument> documentViewService) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
@@ -69,6 +83,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.securityContext = securityContext;
         this.contributionService = contributionService;
         this.leosRepository = leosRepository;
+        this.documentContentService = documentContentService;
+        this.comparisonDelegateAPI = comparisonDelegateAPI;
+        this.documentViewService = documentViewService;
     }
 
     @Override
@@ -121,6 +138,37 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
+    public DocumentViewResponse compareAndShowRevision(String contextPath,
+                                                       String documentRef,
+                                                       String documentType,
+                                                       String contributionVersionRef) {
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
+        XmlDocument contributionVersion = (XmlDocument)contributionService.findVersionByVersionedReference(contributionVersionRef, documentClass.getClazz());
+        XmlDocument originalVersion = (XmlDocument)leosRepository.findFirstVersion(documentClass.getClazz(), documentRef);
+        final LeosPackage leosPackage = this.leosRepository.findPackageByDocumentRef(contributionVersion.getMetadata().get().getRef(), documentClass.getClazz());
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+
+        if(Objects.isNull(contributionVersion)){
+            throw new RuntimeException(String.format("Contribution version not found for %s", contributionVersionRef));
+        }
+        if(Objects.isNull(originalVersion)){
+            throw new RuntimeException(String.format("Original version not found for %s", documentRef));
+        }
+
+        final String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion, contextPath,
+                securityContext.getPermissions(contributionVersion));
+
+        // Get the original version submitted to LS from the metadata of the document
+        final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion, contextPath,
+                securityContext.getPermissions(originalVersion));
+
+        cloneContext.setContribution(Boolean.TRUE);
+        String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
+
+        return new DocumentViewResponse(proposal.getOriginRef(), comparedContent,
+                documentViewService.getVersionInfo(contributionVersion));
+    }
+    
     public LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
         LeosDocument document = contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());

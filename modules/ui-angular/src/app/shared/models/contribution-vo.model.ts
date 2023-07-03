@@ -14,4 +14,5 @@ export interface ContributionVO {
   legFileName: string;
   documentName: string;
   username: string;
+  greyed?: boolean;
 }

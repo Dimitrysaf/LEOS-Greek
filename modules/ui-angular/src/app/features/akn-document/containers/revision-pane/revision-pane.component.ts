@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
-import { DocumentService } from '@/shared/services/document.service';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 
 @Component({
   selector: 'app-revision-pane',
@@ -8,7 +8,8 @@ import { DocumentService } from '@/shared/services/document.service';
   styleUrls: ['./revision-pane.component.scss'],
 })
 export class RevisionPaneComponent implements OnInit {
-  constructor(public documentService: DocumentService) {}
+  @Input() contributions: ContributionVO[];
+  constructor() {}
 
   ngOnInit(): void {}
 }
