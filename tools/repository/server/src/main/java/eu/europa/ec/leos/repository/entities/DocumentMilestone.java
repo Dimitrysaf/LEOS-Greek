@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
         @NamedQuery(name = "DocumentMilestone.findAll", query = "SELECT d FROM DocumentMilestone d"),
         @NamedQuery(name = "DocumentMilestone.findById", query = "SELECT d FROM DocumentMilestone d WHERE d.id = :id"),
-        @NamedQuery(name = "DocumentMilestone.findByDocumentId", query = "SELECT d FROM DocumentMilestone d WHERE d.documentId = :documentId"),
+        @NamedQuery(name = "DocumentMilestone.findByDocument", query = "SELECT d FROM DocumentMilestone d WHERE d.document = :document"),
         @NamedQuery(name = "DocumentMilestone.findByJobDate", query = "SELECT d FROM DocumentMilestone d WHERE d.jobDate = :jobDate"),
         @NamedQuery(name = "DocumentMilestone.findByClonedMilestoneId", query = "SELECT d FROM DocumentMilestone d WHERE d.clonedMilestoneId = :clonedMilestoneId"),
         @NamedQuery(name = "DocumentMilestone.findByMilestoneComments", query = "SELECT d FROM DocumentMilestone d WHERE d.milestoneComments = :milestoneComments"),
@@ -88,7 +88,7 @@ public class DocumentMilestone implements Serializable {
     private Collection<DocumentMilestoneList> documentMilestoneListCollection;
     @JoinColumn(name = "DOCUMENT_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Document documentId;
+    private Document document;
 
     public DocumentMilestone() {
     }
@@ -219,12 +219,12 @@ public class DocumentMilestone implements Serializable {
         this.documentMilestoneListCollection = documentMilestoneListCollection;
     }
 
-    public Document getDocumentId() {
-        return documentId;
+    public Document getDocument() {
+        return document;
     }
 
-    public void setDocumentId(Document documentId) {
-        this.documentId = documentId;
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     @Override

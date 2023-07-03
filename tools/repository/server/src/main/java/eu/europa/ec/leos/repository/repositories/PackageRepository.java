@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
-    @Query(value = "SELECT * FROM PACKAGE p WHERE p.repository_id in (SELECT r.id from REPOSITORY r WHERE r.CMIS_ID = ?1) and p.name = ?2", nativeQuery =
+    @Query(value = "SELECT * FROM PACKAGE p WHERE p.REPOSITORY_ID in (SELECT ID from REPOSITORY WHERE CMIS_ID = ?1) and p.NAME = ?2", nativeQuery =
             true)
-    Optional<Package> findPackageByName(String reporitoryId, String name);
+    Optional<Package> findPackageByName(String repositoryId, String name);
 }

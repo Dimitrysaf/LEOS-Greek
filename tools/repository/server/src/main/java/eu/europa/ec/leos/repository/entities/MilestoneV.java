@@ -45,10 +45,10 @@ import javax.persistence.Table;
     @NamedQuery(name = "MilestoneV.findByDocTemplate", query = "SELECT m FROM MilestoneV m WHERE m.docTemplate = :docTemplate"),
     @NamedQuery(name = "MilestoneV.findByLanguage", query = "SELECT m FROM MilestoneV m WHERE m.language = :language"),
     @NamedQuery(name = "MilestoneV.findByDocStage", query = "SELECT m FROM MilestoneV m WHERE m.docStage = :docStage"),
-    @NamedQuery(name = "MilestoneV.findByDocAuditCBy", query = "SELECT m FROM MilestoneV m WHERE m.docAuditCBy = :docAuditCBy"),
-    @NamedQuery(name = "MilestoneV.findByDocAuditCDate", query = "SELECT m FROM MilestoneV m WHERE m.docAuditCDate = :docAuditCDate"),
-    @NamedQuery(name = "MilestoneV.findByDocAuditLastMDate", query = "SELECT m FROM MilestoneV m WHERE m.docAuditLastMDate = :docAuditLastMDate"),
-    @NamedQuery(name = "MilestoneV.findByDocAuditLastMBy", query = "SELECT m FROM MilestoneV m WHERE m.docAuditLastMBy = :docAuditLastMBy"),
+    @NamedQuery(name = "MilestoneV.findByCreatedBy", query = "SELECT m FROM MilestoneV m WHERE m.createdBy = :createdBy"),
+    @NamedQuery(name = "MilestoneV.findByCreatedOn", query = "SELECT m FROM MilestoneV m WHERE m.createdOn = :createdOn"),
+    @NamedQuery(name = "MilestoneV.findByUpdatedOn", query = "SELECT m FROM MilestoneV m WHERE m.updatedOn = :updatedOn"),
+    @NamedQuery(name = "MilestoneV.findByUpdatedBy", query = "SELECT m FROM MilestoneV m WHERE m.updatedBy = :updatedBy"),
     @NamedQuery(name = "MilestoneV.findByMilestoneId", query = "SELECT m FROM MilestoneV m WHERE m.milestoneId = :milestoneId"),
     @NamedQuery(name = "MilestoneV.findByJobDate", query = "SELECT m FROM MilestoneV m WHERE m.jobDate = :jobDate"),
     @NamedQuery(name = "MilestoneV.findByClonedMilestoneId", query = "SELECT m FROM MilestoneV m WHERE m.clonedMilestoneId = :clonedMilestoneId"),
@@ -97,13 +97,13 @@ public class MilestoneV implements Serializable {
     @Column(name = "DOC_STAGE", updatable = false)
     private String docStage;
     @Column(name = "DOC_AUDIT_C_BY", updatable = false)
-    private String docAuditCBy;
+    private String createdBy;
     @Column(name = "DOC_AUDIT_C_DATE", updatable = false)
-    private LocalDateTime docAuditCDate;
+    private LocalDateTime createdOn;
     @Column(name = "DOC_AUDIT_LAST_M_DATE", updatable = false)
-    private LocalDateTime docAuditLastMDate;
+    private LocalDateTime updatedOn;
     @Column(name = "DOC_AUDIT_LAST_M_BY", updatable = false)
-    private String docAuditLastMBy;
+    private String updatedBy;
     @Column(name = "MILESTONE_ID", updatable = false)
     private BigDecimal milestoneId;
     @Column(name = "JOB_DATE", updatable = false)
@@ -257,36 +257,36 @@ public class MilestoneV implements Serializable {
         this.docStage = docStage;
     }
 
-    public String getDocAuditCBy() {
-        return docAuditCBy;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setDocAuditCBy(String docAuditCBy) {
-        this.docAuditCBy = docAuditCBy;
+    public void setCreatedBy(String docAuditCBy) {
+        this.createdBy = docAuditCBy;
     }
 
-    public LocalDateTime getDocAuditCDate() {
-        return docAuditCDate;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
-    public void setDocAuditCDate(LocalDateTime  docAuditCDate) {
-        this.docAuditCDate = docAuditCDate;
+    public void setCreatedOn(LocalDateTime  docAuditCDate) {
+        this.createdOn = docAuditCDate;
     }
 
-    public LocalDateTime getDocAuditLastMDate() {
-        return docAuditLastMDate;
+    public LocalDateTime getUpdatedOn() {
+        return updatedOn;
     }
 
-    public void setDocAuditLastMDate(LocalDateTime  docAuditLastMDate) {
-        this.docAuditLastMDate = docAuditLastMDate;
+    public void setUpdatedOn(LocalDateTime  docAuditLastMDate) {
+        this.updatedOn = docAuditLastMDate;
     }
 
-    public String getDocAuditLastMBy() {
-        return docAuditLastMBy;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setDocAuditLastMBy(String docAuditLastMBy) {
-        this.docAuditLastMBy = docAuditLastMBy;
+    public void setUpdatedBy(String docAuditLastMBy) {
+        this.updatedBy = docAuditLastMBy;
     }
 
     public BigDecimal getMilestoneId() {

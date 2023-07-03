@@ -23,7 +23,11 @@ public interface PackageService {
     eu.europa.ec.leos.repository.model.Package createPackage(final String name, final String repository, final Boolean isCloned, final String clonedPackageName
             , final String userId);
 
-    void deletePackage(final String packageId) throws RepositoryException;
+    void deletePackage(final String repositoryId, final String packageName) throws RepositoryException;
+
+    eu.europa.ec.leos.repository.model.Package getPackageByName(final String repositoryId, final String name) throws RepositoryException;
+
+    eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException;
 
     List<LeosDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
                                                   final boolean descendants) throws RepositoryException;

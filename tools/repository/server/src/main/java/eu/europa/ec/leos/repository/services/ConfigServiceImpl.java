@@ -10,6 +10,7 @@ import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,10 +27,13 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ConfigContentRepository configContentRepository;
 
+    @Value("${repository.default.id}")
+    private String repositoryId;
+
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
-        Config doc = configRepository.findConfigByName(name);
-        if (doc != null) {
-            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(doc.getId());
+        Optional<Config> hasDoc = configRepository.findConfigByNameAndRepositoryId(repositoryId, name);
+        if (hasDoc.isPresent()) {
+            ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(hasDoc.get().getId());
             if (version == null) {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigVersion.class.getName());
             }
@@ -37,9 +41,9 @@ public class ConfigServiceImpl implements ConfigService {
             if (content == null) {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigContent.class.getName());
             }
-            return Arrays.asList(ConversionUtils.buildConfigDocument(doc, content));
+            return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content));
         } else {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
+            return Arrays.asList();
         }
     }
 

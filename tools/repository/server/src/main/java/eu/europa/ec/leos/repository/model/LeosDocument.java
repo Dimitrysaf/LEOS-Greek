@@ -69,10 +69,10 @@ public class LeosDocument {
     public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertiesV> otherMetadata) {
         if (doc != null) {
             this.name = doc.getName();
-            this.createdBy = doc.getDocAuditCBy();
-            this.createdOn = Date.from(doc.getDocAuditCDate().atZone(ZoneId.systemDefault()).toInstant());
-            this.updatedBy = doc.getDocAuditLastMBy();
-            this.updatedOn = doc.getDocAuditLastMDate() != null ? Date.from(doc.getDocAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
+            this.createdBy = doc.getCreatedBy();
+            this.createdOn = Date.from(doc.getCreatedOn().atZone(ZoneId.systemDefault()).toInstant());
+            this.updatedBy = doc.getUpdatedBy();
+            this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
             this.source = doc.getContent().getBytes(StandardCharsets.UTF_8);
             this.setRef(doc.getRef());
             this.setVersionId(doc.getVersionId().toString());
@@ -152,7 +152,7 @@ public class LeosDocument {
     public LeosDocument(DocumentMilestone milestone,
                         DocumentMilestoneListRepository documentMilestoneListRepository) {
         if (milestone != null) {
-            Document document = milestone.getDocumentId();
+            Document document = milestone.getDocument();
             this.setName(document.getName());
             this.setCreatedBy(document.getAuditCBy());
             this.setCreatedOn(Date.from(document.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
