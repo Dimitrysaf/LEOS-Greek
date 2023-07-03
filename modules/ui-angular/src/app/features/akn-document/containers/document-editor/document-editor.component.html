@@ -699,6 +699,27 @@
               class="eui-u-flex eui-u-flex-row app-u-gap-xs"
               style="max-width: fit-content"
             >
+              <span
+                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s select-revisions-span"
+                *ngIf="(documentService.contributionSelections$ | async) === 0"
+                >{{
+                  'page.editor.contribution.view.text.select-revisions'
+                    | translate
+                }}</span
+              >
+              <span
+                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s select-revisions-span"
+                *ngIf="(documentService.contributionSelections$ | async) > 0"
+                >{{
+                  'page.editor.contribution.view.text.revisions-selected'
+                    | translate
+                      : {
+                          selected:
+                            documentService.contributionSelections$ | async,
+                          all: contributionChanges.length
+                        }
+                }}</span
+              >
               <select
                 euiSelect
                 name="action_nolabel"
@@ -709,7 +730,9 @@
                 <option
                   value="accept_selected"
                   selected
-                  [disabled]="!acceptedSelectedEnabled"
+                  [disabled]="
+                    (documentService.contributionSelections$ | async) === 0
+                  "
                 >
                   {{
                     'page.editor.contribution.view.actions.accept.selected'
@@ -730,12 +753,14 @@
                 *ngIf="contributionForView"
                 (click)="handleProceed()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply' | translate
+                  'page.editor.contribution.view.actions.apply-selected' | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="applyActionDisabled$ | async"
+                [disabled]="
+                  (documentService.contributionSelections$ | async) === 0
+                "
               >
-                {{ 'page.editor.contribution.view.actions.apply' | translate }}
+                {{ 'page.editor.contribution.view.actions.apply-selected' | translate }}
               </button>
               <div class="eui-u-flex eui-u-mr-s">
                 <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
@@ -770,6 +795,7 @@
           style="position: relative; overflow: auto"
         >
           <app-annex-document
+            #contributionViewContainer
             id="contributionViewContainer"
             [xml]="contributionForView"
             class="sync-scroll"

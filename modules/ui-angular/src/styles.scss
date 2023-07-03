@@ -211,6 +211,18 @@ article.leos-content-soft-new[leos\:softaction='add']
   text-decoration: none !important;
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
+#contributionViewContainer longtitle {
+  .leos-content-new {
+    color: black;
+    text-decoration: none;
+  }
+
+  .leos-content-removed {
+    display: none;
+  }
+}
+
 a.cke_dialog_tab {
   height: 25px !important;
 }

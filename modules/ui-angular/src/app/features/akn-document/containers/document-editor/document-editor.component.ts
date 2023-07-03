@@ -131,6 +131,8 @@ export class DocumentEditorComponent
   acceptedSelectedEnabled = false;
   isDeclinedContribution = false;
   contributions: ContributionVO[] = [];
+  contributionChanges: NodeListOf<HTMLElement>;
+  contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -158,6 +160,8 @@ export class DocumentEditorComponent
   compareModePaneElement: ElementRef;
   @ViewChild('contributionViewPane', { read: ElementRef })
   contributionViewPaneElement: ElementRef;
+  @ViewChild('contributionViewContainer', { read: ElementRef })
+  contributionViewContainerElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -732,17 +736,39 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
+    this.documentService.handleContributionSelectCount(false, true);
   }
 
-  handleNextChangeContribution() {}
+  handleNextChangeContribution() {
+    if (this.contributionIndex !== this.contributionChanges.length - 1) {
+      const nextChange = this.contributionIndex + 1;
+      this.contributionChanges
+        .item(nextChange)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.contributionIndex++;
+    }
+  }
 
-  handlePrevChangeContribution() {}
+  handlePrevChangeContribution() {
+    if (this.contributionIndex > 0) {
+      {
+        const prevChange = this.contributionIndex - 1;
+        this.contributionChanges
+          .item(prevChange)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contributionIndex--;
+      }
+    }
+  }
 
   onSelectAction(e: any) {
     //TODO add selection handler and enable apply button
-    console.log('onSelectAction', e);
-    this.contributionActionSelected = e.target.value;
-    this.applyActionDisabledBS.next(false);
+    this.documentService.contributionSelections$.subscribe((selections) => {
+      if (selections > 0) {
+        this.contributionActionSelected = e.target.value;
+        this.applyActionDisabledBS.next(false);
+      }
+    });
   }
 
   handleProceed() {
@@ -782,6 +808,13 @@ export class DocumentEditorComponent
         contribution.contributionStatus === 'CONTRIBUTION_DONE';
       if (this.isDeclinedContribution) {
         this.handleGreyedContribution(contribution, true);
+      } else {
+        this.cdkEditor.triggerMergeContributionConnectorStateChange();
+        setTimeout(() => {
+          this.handleContributionsChanges();
+          this.isAsyncScrollEnabled = false;
+          this.handleAsyncScroll();
+        }, 100);
       }
     }
   }
@@ -826,6 +859,19 @@ export class DocumentEditorComponent
         });
         this.arrowClicked = false;
       }, 100);
+    }
+  }
+
+  private handleContributionsChanges() {
+    this.contributionChanges =
+      this.contributionViewContainerElement.nativeElement.querySelectorAll(
+        '.merge-contribution-wrapper',
+      );
+
+    if (this.contributionChanges.length > 0) {
+      this.contributionChanges
+        .item(this.contributionIndex)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
