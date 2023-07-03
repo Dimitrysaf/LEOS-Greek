@@ -183,7 +183,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
-                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
                             style.apply(editor, deleteTcStyle);
@@ -199,7 +199,7 @@ define(function leosTrackChangesPluginModule(require) {
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
 
-                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
 
                         var event = new EventWrapper(e);
 
@@ -241,7 +241,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keypress", function(e) {
                     var event = new EventWrapper(e);
                     var character = event.getChar();
-                    if (!CKEDITOR.dialog.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
+                    if (!CKEDITOR.dialog?.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
                         && (event.getKeyCode() != UTILS.KEYS.KEY_DELETE) && (event.getKeyCode() != UTILS.KEYS.KEY_BACKSPACE) && (event.getKeyCode() != 29)) { // Do not capture CTRL hotkeys & escape
                         if (isTrackChangesEnabled) {
                             var range = editor.getSelection().getRanges()[0];
@@ -286,7 +286,7 @@ define(function leosTrackChangesPluginModule(require) {
                 });
 
                 editor.on("paste", function(e) {
-                    if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled) {
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled) {
                         var jElement = $("<div/>").html(e.data.dataValue);
                         $(jElement).find(core.TRACKCHANGES_ELEMENT + "[data-akn-action='delete']").remove();
                         var text = jElement.html();

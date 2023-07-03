@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-const config = require("./test-server-config");
+const config = require('./test-server-config.json');
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
@@ -32,7 +32,11 @@ const getFilesRecursively = (pathDir) => {
 const filterSpecs = (specs) => {
     var specName = argv.hasOwnProperty("specName") ? argv["specName"] : config["specName"];
     if (specName && specName.length > 0) {
-        specs = specs.filter((spec) => spec.includes(specName));
+        specs = specs.filter((spec) => {
+            var partsOfPath = spec.split("/");
+            var lastPart = partsOfPath[partsOfPath.length - 1].length > 0 ? partsOfPath[partsOfPath.length - 1] : partsOfPath[partsOfPath.length - 2];
+            return lastPart === specName;
+        });
     }
 
     var excludes = argv.hasOwnProperty("excludes") ? argv["excludes"] : config["excludes"];
