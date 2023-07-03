@@ -653,7 +653,7 @@
                   ) | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="isDeclinedContribution"
+                [disabled]="isContributionDeclinedOrProcessed"
               >
                 <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
               </button>
@@ -671,7 +671,7 @@
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="isDeclinedContribution"
+                [disabled]="isContributionDeclinedOrProcessed"
               >
                 <span class="eui-icon eui-icon-sort-asc"></span>
               </button>
@@ -690,7 +690,7 @@
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="isDeclinedContribution"
+                [disabled]="isContributionDeclinedOrProcessed"
               >
                 <span class="eui-icon eui-icon-sort-desc"></span>
               </button>
@@ -724,7 +724,7 @@
                 euiSelect
                 name="action_nolabel"
                 aria-label="action nolabel"
-                [disabled]="isDeclinedContribution"
+                [disabled]="isContributionDeclinedOrProcessed"
                 (change)="onSelectAction($event)"
               >
                 <option
@@ -753,14 +753,19 @@
                 *ngIf="contributionForView"
                 (click)="handleProceed()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply-selected' | translate
+                  'page.editor.contribution.view.actions.apply-selected'
+                    | translate
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="
-                  (documentService.contributionSelections$ | async) === 0
+                  (documentService.contributionSelections$ | async) === 0 &&
+                  contributionActionSelected === 'accept_selected'
                 "
               >
-                {{ 'page.editor.contribution.view.actions.apply-selected' | translate }}
+                {{
+                  'page.editor.contribution.view.actions.apply-selected'
+                    | translate
+                }}
               </button>
               <div class="eui-u-flex eui-u-mr-s">
                 <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
@@ -904,6 +909,30 @@
   (dismiss)="onCancelClose()"
 >
   <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
+</eui-dialog>
+<eui-dialog
+  #mergeAllContributionsChangesDialog
+  [title]="
+    'page.editor.contribution.view.merge-contributions.accept-all.modal-title'
+      | translate
+  "
+  [acceptLabel]="'global.actions.continue' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelMergeAllContributions()"
+  (close)="onCancelMergeAllContributions()"
+  (accept)="onAcceptMergeAllContributions()"
+  (dismiss)="onCancelMergeAllContributions()"
+>
+  <p>
+    {{
+      'page.editor.contribution.view.merge-contributions.accept-all.modal-text'
+        | translate
+    }}
+  </p>
 </eui-dialog>
 
 <!-- <app-confirm-delete-dialog

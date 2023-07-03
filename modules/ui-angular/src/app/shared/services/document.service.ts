@@ -51,6 +51,7 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import { LoadingService } from './loading.service';
+import { MergeActionVO } from '../models/merge-action-vo.model';
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -112,11 +113,11 @@ export class DocumentService implements OnDestroy {
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
   contributions$: Observable<ContributionVO[]>;
-  processed$: Observable<boolean>;
+  processed$: Observable<[boolean, ContributionVO]>;
   contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
   contributionSelections$: Observable<number>;
 
-  private processedBS = new BehaviorSubject<boolean>(false);
+  private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([false, undefined]);
   private contributionViewAndMergeBS = new BehaviorSubject<
     [DocumentViewResponse, ContributionVO]
   >(null);
@@ -969,7 +970,7 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.updateProcessedStatus(false);
+          this.updateProcessedStatus(false, contribution);
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(
@@ -999,8 +1000,8 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  updateProcessedStatus(process: boolean) {
-    this.processedBS.next(process);
+  updateProcessedStatus(process: boolean, contribution: ContributionVO) {
+    this.processedBS.next([process, contribution]);
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
@@ -1012,6 +1013,7 @@ export class DocumentService implements OnDestroy {
     this.http
       .get<DocumentViewResponse>(
         `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
+        {},
       )
       .subscribe({
         next: (res) => {
@@ -1022,6 +1024,52 @@ export class DocumentService implements OnDestroy {
             severity: 'danger',
             summary: this.translate.instant(
               'page.editor.contribution.view-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  mergeContributions(
+    mergeActions: MergeActionVO[],
+    acceptAllContributions: boolean,
+  ) {
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
+        {
+          ...mergeActions,
+          acceptAllContributions,
+        },
+      )
+      .subscribe({
+        next: (res) => {
+          this.appShell.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.merge-contribution-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.merge-contribution-message-error',
             ),
             detail: res,
             life: 3000,

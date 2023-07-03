@@ -129,14 +129,17 @@ export class DocumentEditorComponent
   contributionActionSelected = 'accept_selected';
   processed = false;
   acceptedSelectedEnabled = false;
-  isDeclinedContribution = false;
+  isContributionDeclinedOrProcessed = false;
   contributions: ContributionVO[] = [];
+  contribution: ContributionVO;
   contributionChanges: NodeListOf<HTMLElement>;
   contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
+  @ViewChild('mergeAllContributionsChangesDialog')
+  mergeAllContributionsChangesDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -265,6 +268,7 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe(([contributionView, contribution]) => {
         this.handleContributionView(contributionView, contribution);
+        this.contribution = contribution;
       });
 
     this.versionsComparisonForViewHeaderTitle$ =
@@ -316,8 +320,11 @@ export class DocumentEditorComponent
 
     this.documentService.processed$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((processed) => {
+      .subscribe(([processed, contribution]) => {
         this.processed = processed;
+        if (contribution) {
+          this.handleGreyedContribution(contribution, processed);
+        }
       });
 
     this.hideTocSplitter = this.isTocPaneCollapsed;
@@ -735,6 +742,9 @@ export class DocumentEditorComponent
   }
 
   closeContributionsView() {
+    if (!this.isContributionDeclinedOrProcessed) {
+      this.handleGreyedContribution(this.contribution, false);
+    }
     this.isContributionForViewOpen = false;
     this.documentService.handleContributionSelectCount(false, true);
   }
@@ -762,21 +772,35 @@ export class DocumentEditorComponent
   }
 
   onSelectAction(e: any) {
-    //TODO add selection handler and enable apply button
+    this.contributionActionSelected = e.target.value;
     this.documentService.contributionSelections$.subscribe((selections) => {
       if (selections > 0) {
-        this.contributionActionSelected = e.target.value;
         this.applyActionDisabledBS.next(false);
       }
     });
   }
 
   handleProceed() {
-    //TODO create handler
+    if (this.contributionActionSelected === 'accept_selected') {
+      // this.documentService.mergeContributions();
+    } else {
+      this.mergeAllContributionsChangesDialog.openDialog();
+    }
   }
 
-  onChangeProcessedToggle(_e: boolean) {
-    this.processed = !this.processed;
+  onChangeProcessedToggle(e: boolean) {
+    this.documentService.updateProcessedStatus(e, this.contribution);
+    // call markRevisionAsProcessed API
+  }
+
+  onAcceptMergeAllContributions() {
+    // this.documentService.mergeContributions();
+    this.mergeAllContributionsChangesDialog.closeDialog();
+    this.onChangeProcessedToggle(true);
+  }
+
+  onCancelMergeAllContributions() {
+    this.mergeAllContributionsChangesDialog.closeDialog();
   }
 
   protected exploreMilestone(version: Version) {
@@ -804,9 +828,9 @@ export class DocumentEditorComponent
       );
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
-      this.isDeclinedContribution =
+      this.isContributionDeclinedOrProcessed =
         contribution.contributionStatus === 'CONTRIBUTION_DONE';
-      if (this.isDeclinedContribution) {
+      if (this.isContributionDeclinedOrProcessed) {
         this.handleGreyedContribution(contribution, true);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
@@ -823,12 +847,8 @@ export class DocumentEditorComponent
     contribution: ContributionVO,
     greyed: boolean,
   ) {
-    this.contributions = this.contributions.map((c) => {
-      if (contribution.updatedDate === c.updatedDate) {
-        c.greyed = greyed;
-      }
-      return c;
-    });
+    contribution.greyed = greyed;
+    return contribution;
   }
 
   private greyContributions() {
