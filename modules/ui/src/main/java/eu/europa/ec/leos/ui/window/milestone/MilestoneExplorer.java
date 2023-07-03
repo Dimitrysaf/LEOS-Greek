@@ -561,11 +561,6 @@ public class MilestoneExplorer extends AbstractWindow {
                 } catch (IOException e) {
                     throw new RuntimeException("Unexpected error occurred while reading content file", e);
                 }
-                if (selectedDocument.startsWith(STAT_FINANC_LEGIS)) {
-                    String nsContent = XmlHelper.addDummyNamespace(content);
-                    Document document = XercesUtils.createXercesDocument(nsContent.getBytes(UTF_8));
-                    content = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
-                }
                 if (!selectedDocument.startsWith(COVER_PAGE_CONTENT_FILE_NAME)) {
                     int annexNumber = 0;
                     if (annexKeyMap.get(selectedDocument) != null) {

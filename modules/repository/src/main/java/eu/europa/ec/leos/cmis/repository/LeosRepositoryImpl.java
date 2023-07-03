@@ -501,7 +501,7 @@ public class LeosRepositoryImpl implements LeosRepository {
         long startTimeNanos = System.nanoTime();
         String primaryType = CmisMapper.cmisPrimaryType(type);
         List<Document> docs = cmisRepository.findDocumentsByRef(documentRef, primaryType);
-        if(Objects.nonNull(docs) && Boolean.FALSE.equals(docs.isEmpty())) {
+        if(!docs.isEmpty()) {
             Folder folder = docs.get(0).getParents().stream().findFirst().orElse(null);
             long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
             logger.trace("CMIS Repository package search took " + time + " milliseconds.");

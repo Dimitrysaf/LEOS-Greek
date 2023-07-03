@@ -149,12 +149,12 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keydown", function(e) {
                     if (!CKEDITOR.dialog.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
-                        if (event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
+                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
                             style.apply(editor, deleteTcStyle);
                             var range = editor.getSelection().getRanges()[0];
                             range.collapse(false);
                             range.select();
-                            event.getInstance().data.domEvent.preventDefault();
+                            event.getInstance().data.preventDefault();
                             event.getInstance().stop();
                         }
                     }
@@ -222,7 +222,6 @@ define(function leosTrackChangesPluginModule(require) {
 
                                 event.getInstance().data.preventDefault(); // Prevent standard insert
                             } else {
-                                actions.preventInsertInDelete(editor); // Moves the caret if needed
                                 if (actions.insertNewData(editor, event.getChar())) { // Inserts the new data
                                     event.getInstance().data.preventDefault(); // Prevent standard insert
                                 }
