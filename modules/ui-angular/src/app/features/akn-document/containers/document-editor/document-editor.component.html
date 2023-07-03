@@ -911,6 +911,30 @@
   <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
 </eui-dialog>
 <eui-dialog
+  #markContributionAsProcessedDialog
+  [title]="
+    'page.editor.contribution.view.mark-contribution-as-processed.modal-title'
+      | translate
+  "
+  [acceptLabel]="'global.actions.continue' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelMarkContributionAsProcessed()"
+  (close)="onCancelMarkContributionAsProcessed()"
+  (accept)="onAcceptMarkContributionAsProcessed()"
+  (dismiss)="onCancelMarkContributionAsProcessed()"
+>
+  <p>
+    {{
+      'page.editor.contribution.view.mark-contribution-as-processed.modal-text'
+        | translate
+    }}
+  </p>
+</eui-dialog>
+<eui-dialog
   #mergeAllContributionsChangesDialog
   [title]="
     'page.editor.contribution.view.merge-contributions.accept-all.modal-title'

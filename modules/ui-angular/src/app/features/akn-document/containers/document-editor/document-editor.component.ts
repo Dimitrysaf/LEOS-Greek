@@ -140,6 +140,8 @@ export class DocumentEditorComponent
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
   @ViewChild('mergeAllContributionsChangesDialog')
   mergeAllContributionsChangesDialog: EuiDialogComponent;
+  @ViewChild('markContributionAsProcessedDialog')
+  markContributionAsProcessedDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -742,9 +744,6 @@ export class DocumentEditorComponent
   }
 
   closeContributionsView() {
-    if (!this.isContributionDeclinedOrProcessed) {
-      this.handleGreyedContribution(this.contribution, false);
-    }
     this.isContributionForViewOpen = false;
     this.documentService.handleContributionSelectCount(false, true);
   }
@@ -782,25 +781,36 @@ export class DocumentEditorComponent
 
   handleProceed() {
     if (this.contributionActionSelected === 'accept_selected') {
-      // this.documentService.mergeContributions();
+      // call this.documentService.mergeContributions();
     } else {
       this.mergeAllContributionsChangesDialog.openDialog();
     }
   }
 
-  onChangeProcessedToggle(e: boolean) {
-    this.documentService.updateProcessedStatus(e, this.contribution);
-    // call markRevisionAsProcessed API
+  onChangeProcessedToggle(_e: boolean) {
+    this.processed = !this.processed;
+    this.markContributionAsProcessedDialog.openDialog();
   }
 
   onAcceptMergeAllContributions() {
-    // this.documentService.mergeContributions();
+    // call this.documentService.mergeContributions();
     this.mergeAllContributionsChangesDialog.closeDialog();
     this.onChangeProcessedToggle(true);
   }
 
   onCancelMergeAllContributions() {
     this.mergeAllContributionsChangesDialog.closeDialog();
+  }
+
+  onAcceptMarkContributionAsProcessed() {
+    // call markRevisionAsProcessd API
+    this.markContributionAsProcessedDialog.closeDialog();
+    this.onChangeProcessedToggle(true);
+  }
+
+  onCancelMarkContributionAsProcessed() {
+    this.processed = !this.processed;
+    this.markContributionAsProcessedDialog.closeDialog();
   }
 
   protected exploreMilestone(version: Version) {
