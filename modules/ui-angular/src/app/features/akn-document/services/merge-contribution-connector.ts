@@ -36,7 +36,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     this.populateTocItemList();
   }
 
-  handleContributionSelection(selectionData: any) {
+  handleContributionSelection(selectionData: { selected: boolean }) {
     this.documentService.handleContributionSelectCount(selectionData.selected);
   }
 }
