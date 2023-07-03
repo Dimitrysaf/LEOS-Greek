@@ -48,7 +48,8 @@ public enum CmisProperties {
     CLONED_MILESTONE_ID("leos:clonedMilestoneId"),
     BASE_REVISION_ID("leos:baseRevisionId"),
     LIVE_DIFFING_REQUIRED("leos:liveDiffingRequired"),
-    TRACK_CHANGES_ENABLED("leos:trackChangesEnabled");
+    TRACK_CHANGES_ENABLED("leos:trackChangesEnabled"),
+    CALLBACK_ADDRESS("leos:callbackAddress");
 
     private String id;
 
