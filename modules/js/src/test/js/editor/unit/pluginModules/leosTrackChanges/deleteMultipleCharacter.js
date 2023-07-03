@@ -24,7 +24,7 @@ define(function deleteMultipleCharacter(require) {
         backspace: 8
     };
 
-    var div = '<div id="leos-placeholder" class="leos-placeholder" data-wrapped-id="123" style="height:10px"></div>'
+    var div = '<article>hello world</article>'
     var placeholder = createPlaceHolder(div);
         
     describe("Unit tests for TrackChanges/deleteMultipleCharacter", function() {
@@ -84,10 +84,8 @@ define(function deleteMultipleCharacter(require) {
     });
 
     function createPlaceHolder(div) {
-        var leosPlaceholderDiv = document.createElement("div");
-        leosPlaceholderDiv.innerHTML = div;
-        document.body.appendChild(leosPlaceholderDiv);
         var placeholder = document.getElementById("leos-placeholder")
+        placeholder.innerHTML = div;
         return placeholder;
     }
 

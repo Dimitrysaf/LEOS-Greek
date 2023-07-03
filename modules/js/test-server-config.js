@@ -1,8 +1,0 @@
-module.exports = {
-    indexFile: "/index.html",
-    jsSrcDir: "/src/main/js",
-    jsTestSrcDir: "/src/test/js",
-    specDir: "/src/test/js/editor/unit/pluginModules/leosTrackChanges",
-    specName: "deleteMultipleCharacter",
-    excludes: [],
-};
