@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static eu.europa.ec.leos.repository.utils.ConversionUtils.LEOS_REPO_DATE_FORMAT;

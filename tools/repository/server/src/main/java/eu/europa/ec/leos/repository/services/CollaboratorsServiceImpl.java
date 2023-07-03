@@ -174,4 +174,12 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
     }
 
+    public void removeCollaborators(final Package pkg) throws RepositoryException {
+        try {
+            List<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg);
+            packageCollaboratorsRepository.deleteAll(pkgCollaborators);
+        } catch(Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Such Collaborator doesn't exist");
+        }
+    }
 }

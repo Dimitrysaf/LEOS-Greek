@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -155,8 +156,8 @@ public class Config implements Serializable {
         return configCategory;
     }
 
-    public void setConfigCategory(ConfigCategory categoryId) {
-        this.configCategory = categoryId;
+    public void setConfigCategory(ConfigCategory category) {
+        this.configCategory = category;
     }
 
     @Override

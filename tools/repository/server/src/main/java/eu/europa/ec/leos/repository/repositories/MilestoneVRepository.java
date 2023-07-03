@@ -21,8 +21,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface MilestoneVRepository extends JpaRepository<MilestoneV, String> {
-    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID IN (SELECT p.ID from PACKAGE p WHERE p.NAME = ?1) AND m.NAME = ?2", nativeQuery = true)
-    List<MilestoneV> findMilestonesByPackageNameAndName(String packageName, String Name);
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.NAME = ?1", nativeQuery = true)
+    List<MilestoneV> findMilestonesByName(String Name);
+
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID = ?1", nativeQuery = true)
+    List<MilestoneV> findMilestonesByPackageId(BigDecimal packageId);
+
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID = ?1 AND m.CATEGORY_ID IN (SELECT id FROM DOCUMENT_CATEGORIES c WHERE c.CATEGORY_CODE = ?2)",
+            nativeQuery = true)
+    List<MilestoneV> findMilestonesByPackageIdAndCategory(BigDecimal packageId, String category);
 
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.STATUS = ?1", nativeQuery = true)
     List<MilestoneV> findMilestonesByStatus(String Status);

@@ -13,11 +13,14 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 public interface DocumentMilestoneRepository extends JpaRepository<DocumentMilestone, BigDecimal> {
+    List<DocumentMilestone> findDocumentMilestonesByDocument(Document document);
 }

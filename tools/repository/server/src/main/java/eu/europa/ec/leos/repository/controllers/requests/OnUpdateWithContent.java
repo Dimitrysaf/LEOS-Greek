@@ -11,11 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository.services;
+package eu.europa.ec.leos.repository.controllers.requests;
 
-import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.LeosDocument;
-
-public interface TemplateService {
-    LeosDocument findTemplateByName(String name) throws RepositoryException;
+public interface OnUpdateWithContent {
 }

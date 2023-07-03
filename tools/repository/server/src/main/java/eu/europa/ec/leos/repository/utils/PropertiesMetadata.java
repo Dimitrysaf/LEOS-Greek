@@ -15,6 +15,7 @@ public enum PropertiesMetadata {
     REF("ref", false),
     NAME("name", false),
     TITLE("title", false),
+    PROCEDURE_TYPE("procedureType", false),
     CLONED_PROPOSAL("clonedProposal", false),
     ORIGIN_REF("originRef", false),
     CLONED_FROM("clonedFrom", false),

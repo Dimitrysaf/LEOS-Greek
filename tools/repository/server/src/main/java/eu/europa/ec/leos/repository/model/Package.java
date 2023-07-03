@@ -15,8 +15,6 @@ package eu.europa.ec.leos.repository.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import eu.europa.ec.leos.repository.utils.CollaboratorDesSerializer;
-import eu.europa.ec.leos.repository.utils.CollaboratorSerializer;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
 import eu.europa.ec.leos.repository.utils.DateSerializer;
 import org.slf4j.Logger;
@@ -118,8 +116,6 @@ public class Package {
         this.clonedPackageName = clonedPackageName;
     }
 
-    @JsonSerialize(using = CollaboratorSerializer.class)
-    @JsonDeserialize(using = CollaboratorDesSerializer.class)
     public List<Collaborator> getCollaborators() {
         return this.collaboratorList;
     }

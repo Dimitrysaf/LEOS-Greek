@@ -13,18 +13,26 @@
  */
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentV;
+import eu.europa.ec.leos.repository.entities.MilestoneV;
+import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.entities.Repository;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertiesVRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
+import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.repositories.RepositoryRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,20 +44,32 @@ import java.util.Set;
 @Service
 public class PackageServiceImpl implements PackageService {
     private final DocumentVRepository documentVRepository;
+    private final MilestoneVRepository milestoneVRepository;
     private final PackageRepository packageRepository;
     private final RepositoryRepository repositoryRepository;
     private final DocumentPropertiesVRepository documentPropertiesVRepository;
     private final CollaboratorsService collaboratorsService;
+    private final DocumentMilestoneListRepository documentMilestoneListRepository;
+    private final DocumentCategoriesRepository documentCategoriesRepository;
+    private final DocumentService documentService;
 
     @Autowired
-    public PackageServiceImpl(DocumentVRepository documentVRepository, PackageRepository packageRepository, RepositoryRepository repositoryRepository, DocumentPropertiesVRepository documentPropertiesVRepository, CollaboratorsService collaboratorsService) {
+    public PackageServiceImpl(DocumentVRepository documentVRepository, MilestoneVRepository milestoneVRepository, PackageRepository packageRepository,
+                              RepositoryRepository repositoryRepository, DocumentPropertiesVRepository documentPropertiesVRepository, CollaboratorsService collaboratorsService,
+                              DocumentMilestoneListRepository documentMilestoneListRepository, DocumentCategoriesRepository documentCategoriesRepository,
+                              @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
+        this.milestoneVRepository = milestoneVRepository;
         this.packageRepository = packageRepository;
         this.repositoryRepository = repositoryRepository;
         this.documentPropertiesVRepository = documentPropertiesVRepository;
         this.collaboratorsService = collaboratorsService;
+        this.documentMilestoneListRepository = documentMilestoneListRepository;
+        this.documentCategoriesRepository = documentCategoriesRepository;
+        this.documentService = documentService;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final String repository, final Boolean isCloned, final String clonedPackageName
             , final String userId) {
         Repository repo = repositoryRepository.findRepositoryByCmisId(repository);
@@ -62,15 +82,51 @@ public class PackageServiceImpl implements PackageService {
             pkg.setClonedPackageName(clonedPackageName);
             pkg.setAuditCBy(userId);
             pkg.setAuditCDate(LocalDateTime.now());
+            pkg.setAuditLastMBy(userId);
+            pkg.setAuditLastMDate(LocalDateTime.now());
             return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
         } else {
             return null;
         }
     }
 
-    public void deletePackage(final String packageId) throws RepositoryException {
+
+    public eu.europa.ec.leos.repository.model.Package getPackageByName(final String repositoryId, final String name) throws RepositoryException {
+        Package pkg =
+                packageRepository.findPackageByName(repositoryId, name).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
+        return ConversionUtils.buildPackage(pkg, collaboratorsService);
+    }
+
+    public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
-            Optional<Package> pkg = packageRepository.findById(new BigDecimal(Long.parseLong(packageId)));
+            Package pkg =
+                    packageRepository.getById(new BigDecimal(Long.parseLong(id)));
+            return ConversionUtils.buildPackage(pkg, collaboratorsService);
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
+        }
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deletePackage(final String repositoryId, final String packageName) throws RepositoryException {
+        try {
+            Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, packageName);
+            if (pkg.isPresent()) {
+                // Remove all docs inside package
+                List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.get().getId().toString());
+                for (LeosDocument d : docs) {
+                    try {
+                        documentService.deleteDocumentByRef(d.getRef());
+                    } catch (RepositoryException e) {
+                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Error while deleting a document with" +
+                                " id : " + d.getVersionId());
+                    }
+                }
+                // Remove all links to collaborators
+                collaboratorsService.removeCollaborators(pkg.get());
+            }
+
             pkg.ifPresent(packageRepository::delete);
         } catch (NumberFormatException e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
@@ -80,16 +136,21 @@ public class PackageServiceImpl implements PackageService {
     public List<LeosDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
                                                          final boolean descendants) throws RepositoryException {
         List<DocumentV> docs = new ArrayList<>();
+        List<MilestoneV> milestones = new ArrayList<>();
         Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, packageName);
         if (!pkg.isPresent()) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
         }
         for (String categoryCode : categories) {
             docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(pkg.get().getId(), categoryCode));
+            milestones.addAll(milestoneVRepository.findMilestonesByPackageIdAndCategory(pkg.get().getId(), categoryCode));
         }
         List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
+        }
+        for (MilestoneV m : milestones) {
+            xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
         }
         return xmlDocs;
     }
@@ -97,18 +158,30 @@ public class PackageServiceImpl implements PackageService {
     public List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories,
                                                       final boolean allVersion) {
         List<DocumentV> docs = new ArrayList<>();
-        if (allVersion) {
-            for (String categoryCode : categories) {
-                docs.addAll(documentVRepository.findAllVersionsByPackageIdAndCategoryCode(new BigDecimal(Long.parseLong(packageId)), categoryCode));
-            }
+        List<MilestoneV> milestones = new ArrayList<>();
+        if (categories == null) {
+            docs.addAll(documentVRepository.findDocumentsByPackageId(new BigDecimal(Long.parseLong(packageId))));
+            milestones.addAll(milestoneVRepository.findMilestonesByPackageId(new BigDecimal(Long.parseLong(packageId))));
         } else {
+            if (allVersion) {
+                for (String categoryCode : categories) {
+                    docs.addAll(documentVRepository.findAllVersionsByPackageIdAndCategoryCode(new BigDecimal(Long.parseLong(packageId)), categoryCode));
+                }
+            } else {
+                for (String categoryCode : categories) {
+                    docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(Long.parseLong(packageId)), categoryCode));
+                }
+            }
             for (String categoryCode : categories) {
-                docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(Long.parseLong(packageId)), categoryCode));
+                milestones.addAll(milestoneVRepository.findMilestonesByPackageIdAndCategory(new BigDecimal(Long.parseLong(packageId)), categoryCode));
             }
         }
         List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
+        }
+        for (MilestoneV m : milestones) {
+            xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
         }
         return xmlDocs;
     }
