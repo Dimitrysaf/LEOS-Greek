@@ -89,10 +89,23 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private String cloneOriginRef;
 
     @Autowired
-    public ContributionApiServiceImpl(CreateCollectionService createCollectionService, CloneContext cloneContext,
-            ProposalService proposalService, UserService userService, PackageService packageService, SecurityContext securityContext,
-            ContributionService contributionService, LeosRepository leosRepository, DocumentContentService documentContentService,
-            ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI, DocumentViewService<XmlDocument> documentViewService) {
+    public ContributionApiServiceImpl(CreateCollectionService createCollectionService,
+                                      CloneContext cloneContext,
+                                      ProposalService proposalService,
+                                      UserService userService,
+                                      PackageService packageService,
+                                      SecurityContext securityContext,
+                                      ContributionService contributionService,
+                                      LeosRepository leosRepository,
+                                      Provider<StructureContext> structureContext,
+                                      AttachmentProcessor attachmentProcessor,
+                                      MergeContributionHelper mergeContributionHelper,
+                                      XmlContentProcessor xmlContentProcessor,
+                                      NumberService numberService,
+                                      MessageHelper messageHelper,
+                                      DocumentContentService documentContentService,
+                                      ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI,
+                                      DocumentViewService<XmlDocument> documentViewService) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
