@@ -796,6 +796,7 @@ export class DocumentEditorComponent
     // call this.documentService.mergeContributions();
     this.mergeAllContributionsChangesDialog.closeDialog();
     this.onChangeProcessedToggle(true);
+    this.isContributionDeclinedOrProcessed = true;
   }
 
   onCancelMergeAllContributions() {
@@ -806,6 +807,7 @@ export class DocumentEditorComponent
     // call markRevisionAsProcessd API
     this.markContributionAsProcessedDialog.closeDialog();
     this.onChangeProcessedToggle(true);
+    this.isContributionDeclinedOrProcessed = true;
   }
 
   onCancelMarkContributionAsProcessed() {
