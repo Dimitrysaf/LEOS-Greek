@@ -8,6 +8,7 @@ define(function specRunner(require) {
         success: function(specs) {
             if (specs && specs.length > 0) {
                 require(specs, function() {
+                    jasmine.getEnv().configure({ random: false });
                     jasmine.getEnv().execute();
                 });
             }
