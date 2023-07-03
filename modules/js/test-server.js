@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 European Commission
+ * Copyright 2023 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -30,12 +30,13 @@ const getFilesRecursively = (pathDir) => {
 };
 
 const filterSpecs = (specs) => {
-    var specName = argv.hasOwnProperty("specName") ? argv["specName"] : config["specName"];
-    if (specName && specName.length > 0) {
+    var specNames = argv.hasOwnProperty("specNames") ? argv["specNames"] : config["specNames"];
+    if (specNames && specNames.length > 0) {
+        specNames = Array.isArray(specNames) ? specNames : [specNames];
         specs = specs.filter((spec) => {
             var partsOfPath = spec.split("/");
-            var lastPart = partsOfPath[partsOfPath.length - 1].length > 0 ? partsOfPath[partsOfPath.length - 1] : partsOfPath[partsOfPath.length - 2];
-            return lastPart === specName;
+            var specName = partsOfPath[partsOfPath.length - 1].length > 0 ? partsOfPath[partsOfPath.length - 1] : partsOfPath[partsOfPath.length - 2];
+            return specNames.includes(specName);
         });
     }
 

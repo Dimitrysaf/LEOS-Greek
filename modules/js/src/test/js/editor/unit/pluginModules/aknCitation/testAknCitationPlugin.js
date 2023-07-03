@@ -12,7 +12,7 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-define( function testAknCitationPlugin(require) {
+define(function testAknCitationPlugin(require) {
     "use strict";
     var aknCitationPluginToTest = require("plugins/aknCitation/aknCitationPlugin");
     
@@ -20,7 +20,6 @@ define( function testAknCitationPlugin(require) {
         var transformationConfigForCitation = '{"akn":"citation","html":"p","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"refersTo","html":"data-refersto"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=citation"}],"sub":{"akn":"mp","html":"p","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":{"akn":"text","html":"p/text"}}}';
 
         it("Tests if transformation config is valid.", function() {
-            console.log("egr")
             expect(JSON.stringify(aknCitationPluginToTest.transformationConfig)).toEqual(transformationConfigForCitation);
 
         });
