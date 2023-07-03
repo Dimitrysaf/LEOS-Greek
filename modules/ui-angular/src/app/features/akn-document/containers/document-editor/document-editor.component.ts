@@ -804,7 +804,7 @@ export class DocumentEditorComponent
   }
 
   onAcceptMarkContributionAsProcessed() {
-    // call markRevisionAsProcessd API
+    // call this.markContributionAsProcessed(this.contribution);
     this.markContributionAsProcessedDialog.closeDialog();
     this.onChangeProcessedToggle(true);
     this.isContributionDeclinedOrProcessed = true;

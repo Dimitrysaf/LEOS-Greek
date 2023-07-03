@@ -1037,6 +1037,48 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  markContributionAsProcessed(contribution: ContributionVO) {
+    const contributionVersionRef = contribution.versionedReference;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/mark-as-processed/${contributionVersionRef}/${documentType}`,
+        {},
+      )
+      .subscribe({
+        next: (res) => {
+          this.updateProcessedStatus(false, contribution);
+          this.appShell.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.getContributions();
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
   mergeContributions(
     mergeActions: MergeActionVO[],
     acceptAllContributions: boolean,
@@ -1067,6 +1109,7 @@ export class DocumentService implements OnDestroy {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          this.getContributions();
         },
         error: (res) => {
           this.appShell.growl({
