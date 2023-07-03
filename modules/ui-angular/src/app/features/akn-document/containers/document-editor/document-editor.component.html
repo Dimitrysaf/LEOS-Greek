@@ -753,14 +753,14 @@
                 *ngIf="contributionForView"
                 (click)="handleProceed()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply' | translate
+                  'page.editor.contribution.view.actions.apply-selected' | translate
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="
                   (documentService.contributionSelections$ | async) === 0
                 "
               >
-                {{ 'page.editor.contribution.view.actions.apply' | translate }}
+                {{ 'page.editor.contribution.view.actions.apply-selected' | translate }}
               </button>
               <div class="eui-u-flex eui-u-mr-s">
                 <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
