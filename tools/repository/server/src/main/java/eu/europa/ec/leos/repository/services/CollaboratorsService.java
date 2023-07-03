@@ -34,4 +34,6 @@ public interface CollaboratorsService {
     void removeCollaborator(final String userId, final String entity, final String role) throws RepositoryException;
 
     void removeCollaborator(final String id) throws RepositoryException;
+
+    void removeCollaborators(Package pkg) throws RepositoryException;
 }

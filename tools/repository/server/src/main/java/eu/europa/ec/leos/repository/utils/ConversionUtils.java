@@ -25,6 +25,7 @@ import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.model.Package;
 import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertiesVRepository;
@@ -39,6 +40,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -64,26 +67,28 @@ public class ConversionUtils {
         return date;
     }
 
-    public static String getLeosCollaboratorsAsString(List<Collaborator> collaborators) {
+    public static ArrayList<LinkedHashMap<String, Object>> getLeosCollaboratorsAsLinkedHashMap(List<Collaborator> collaborators) {
         ObjectMapper mapper = new ObjectMapper();
-        String collaboratorsAsStr = null;
+        ArrayList<LinkedHashMap<String, Object>> collaboratorsAsLinkedHashMap = null;
         if (collaborators != null) {
             try {
-                collaboratorsAsStr = mapper.writeValueAsString(collaborators);
-            } catch (JsonProcessingException e) {
+                collaboratorsAsLinkedHashMap = mapper.convertValue(collaborators,
+                        new TypeReference<ArrayList<LinkedHashMap<String, Object>>>() { });
+            } catch (Exception e) {
                 LOG.debug("Exception occured while converting collaborators to string : " + e.getMessage());
             }
         }
-        return collaboratorsAsStr;
+        return collaboratorsAsLinkedHashMap;
     }
 
-    public static List<Collaborator> getLeosCollaboratorsFromString(String collaboratorsStr) {
+    public static List<Collaborator> getLeosCollaboratorsFromLinkedHashMap(ArrayList<LinkedHashMap<String, Object>> collaboratorsLinkedHashMap) {
         ObjectMapper mapper = new ObjectMapper();
         List<Collaborator> collaborators = null;
-        if (collaboratorsStr != null) {
+        if (collaboratorsLinkedHashMap != null) {
             try {
-                collaborators = mapper.readValue(collaboratorsStr, new TypeReference<List<Collaborator>>(){});
-            } catch (JsonProcessingException e) {
+                collaborators = mapper.convertValue(collaboratorsLinkedHashMap,
+                        new TypeReference<List<Collaborator>>() { });
+            } catch (Exception e) {
                 LOG.debug("Exception occured while converting string to collaborators: " + e.getMessage());
             }
         }
@@ -147,5 +152,23 @@ public class ConversionUtils {
     public static LeosDocument buildConfigDocument(Config config,
                                                    ConfigContent configContent) {
         return new LeosDocument(config, configContent);
+    }
+
+    public static Package buildPackage(eu.europa.ec.leos.repository.entities.Package pkg,
+                                              CollaboratorsService collaboratorsService) {
+        if (pkg != null) {
+            List<Collaborator> collaborators = collaboratorsService.getCollaborators(pkg.getId());
+            Package pkgFound = new Package(pkg);
+            pkgFound.setCollaborators(collaborators);
+            return pkgFound;
+        } else {
+            return null;
+        }
+    }
+
+    public static LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
     }
 }

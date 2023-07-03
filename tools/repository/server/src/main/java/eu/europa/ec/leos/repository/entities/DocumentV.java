@@ -50,10 +50,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DocumentV.findByDocTemplate", query = "SELECT d FROM DocumentV d WHERE d.docTemplate = :docTemplate"),
     @NamedQuery(name = "DocumentV.findByLanguage", query = "SELECT d FROM DocumentV d WHERE d.language = :language"),
     @NamedQuery(name = "DocumentV.findByDocStage", query = "SELECT d FROM DocumentV d WHERE d.docStage = :docStage"),
-    @NamedQuery(name = "DocumentV.findByDocAuditCBy", query = "SELECT d FROM DocumentV d WHERE d.docAuditCBy = :docAuditCBy"),
-    @NamedQuery(name = "DocumentV.findByDocAuditCDate", query = "SELECT d FROM DocumentV d WHERE d.docAuditCDate = :docAuditCDate"),
-    @NamedQuery(name = "DocumentV.findByDocAuditLastMDate", query = "SELECT d FROM DocumentV d WHERE d.docAuditLastMDate = :docAuditLastMDate"),
-    @NamedQuery(name = "DocumentV.findByDocAuditLastMBy", query = "SELECT d FROM DocumentV d WHERE d.docAuditLastMBy = :docAuditLastMBy"),
+    @NamedQuery(name = "DocumentV.findByCreatedBy", query = "SELECT d FROM DocumentV d WHERE d.createdBy = :createdBy"),
+    @NamedQuery(name = "DocumentV.findByCreatedOn", query = "SELECT d FROM DocumentV d WHERE d.createdOn = :createdOn"),
+    @NamedQuery(name = "DocumentV.findByUpdatedOn", query = "SELECT d FROM DocumentV d WHERE d.updatedOn = :updatedOn"),
+    @NamedQuery(name = "DocumentV.findByUpdatedBy", query = "SELECT d FROM DocumentV d WHERE d.updatedBy = :updatedBy"),
     @NamedQuery(name = "DocumentV.findByVersionLabel", query = "SELECT d FROM DocumentV d WHERE d.versionLabel = :versionLabel"),
     @NamedQuery(name = "DocumentV.findByVersionSeriesId", query = "SELECT d FROM DocumentV d WHERE d.versionSeriesId = :versionSeriesId"),
     @NamedQuery(name = "DocumentV.findByVersionType", query = "SELECT d FROM DocumentV d WHERE d.versionType = :versionType"),
@@ -111,13 +111,13 @@ public class DocumentV implements Serializable {
     @Column(name = "DOC_STAGE", updatable = false)
     private String docStage;
     @Column(name = "DOC_AUDIT_C_BY", updatable = false)
-    private String docAuditCBy;
+    private String createdBy;
     @Column(name = "DOC_AUDIT_C_DATE", updatable = false)
-    private LocalDateTime docAuditCDate;
+    private LocalDateTime createdOn;
     @Column(name = "DOC_AUDIT_LAST_M_DATE", updatable = false)
-    private LocalDateTime docAuditLastMDate;
+    private LocalDateTime updatedOn;
     @Column(name = "DOC_AUDIT_LAST_M_BY", updatable = false)
-    private String docAuditLastMBy;
+    private String updatedBy;
     @Column(name = "VERSION_ID", updatable = false)
     private BigDecimal versionId;
     @Column(name = "VERSION_LABEL", updatable = false)
@@ -323,36 +323,36 @@ public class DocumentV implements Serializable {
         this.docStage = docStage;
     }
 
-    public String getDocAuditCBy() {
-        return docAuditCBy;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setDocAuditCBy(String docAuditCBy) {
-        this.docAuditCBy = docAuditCBy;
+    public void setCreatedBy(String docAuditCBy) {
+        this.createdBy = docAuditCBy;
     }
 
-    public LocalDateTime getDocAuditCDate() {
-        return docAuditCDate;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
-    public void setDocAuditCDate(LocalDateTime docAuditCDate) {
-        this.docAuditCDate = docAuditCDate;
+    public void setCreatedOn(LocalDateTime docAuditCDate) {
+        this.createdOn = docAuditCDate;
     }
 
-    public LocalDateTime getDocAuditLastMDate() {
-        return docAuditLastMDate;
+    public LocalDateTime getUpdatedOn() {
+        return updatedOn;
     }
 
-    public void setDocAuditLastMDate(LocalDateTime docAuditLastMDate) {
-        this.docAuditLastMDate = docAuditLastMDate;
+    public void setUpdatedOn(LocalDateTime docAuditLastMDate) {
+        this.updatedOn = docAuditLastMDate;
     }
 
-    public String getDocAuditLastMBy() {
-        return docAuditLastMBy;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setDocAuditLastMBy(String docAuditLastMBy) {
-        this.docAuditLastMBy = docAuditLastMBy;
+    public void setUpdatedBy(String docAuditLastMBy) {
+        this.updatedBy = docAuditLastMBy;
     }
 
     public String getVersionLabel() {

@@ -57,7 +57,7 @@ public class PackageServiceTests {
         assertTrue(pkgO.isPresent());
         long count = packageRepository.count();
         assertEquals(3, count);
-        packageService.deletePackage(pkg.getId());
+        packageService.deletePackage(REPO_ID, pkg.getName());
         pkgO = packageRepository.findPackageByName(REPO_ID, "test");
         assertFalse(pkgO.isPresent());
         count = packageRepository.count();

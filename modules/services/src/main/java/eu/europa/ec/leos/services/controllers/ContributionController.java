@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -70,6 +71,16 @@ public class ContributionController {
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/view-merge-pane/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request,
+                                                              @PathVariable("documentRef") String documentRef,
+                                                              @PathVariable("documentType") String documentType,
+                                                              @RequestParam String contributionVersionRef) {
+        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentRef, documentType, contributionVersionRef);
+        return ResponseEntity.ok(mergedContent);
+    }
+    
     @PostMapping(value = "/decline-contributions/{documentVersionedRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentVersionedRef") String documentVersionedRef,

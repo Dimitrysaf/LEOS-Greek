@@ -112,8 +112,14 @@ export class DocumentService implements OnDestroy {
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
   contributions$: Observable<ContributionVO[]>;
+  processed$: Observable<boolean>;
+  contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
+  contributionSelections$: Observable<number>;
 
-  // private documentCategoryBS = new BehaviorSubject(null);
+  private processedBS = new BehaviorSubject<boolean>(false);
+  private contributionViewAndMergeBS = new BehaviorSubject<
+    [DocumentViewResponse, ContributionVO]
+  >(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
@@ -145,6 +151,7 @@ export class DocumentService implements OnDestroy {
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
+  private contributionSelectionsBS = new BehaviorSubject<number>(0);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -289,6 +296,10 @@ export class DocumentService implements OnDestroy {
     this.collapseExpandAnnotation$ =
       this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
+    this.processed$ = this.processedBS.asObservable();
+    this.contributionViewAndMerge$ =
+      this.contributionViewAndMergeBS.asObservable();
+    this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -754,6 +765,24 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
+  handleContributionSelectCount(selected: boolean, reset?: boolean) {
+    if (reset) {
+      this.contributionSelectionsBS.next(0);
+    } else if (selected) {
+      this.contributionSelectionsBS.next(
+        this.contributionSelectionsBS.value + 1,
+      );
+    } else {
+      if (this.contributionSelectionsBS.value - 1 >= 0) {
+        this.contributionSelectionsBS.next(
+          this.contributionSelectionsBS.value - 1,
+        );
+      } else {
+        this.contributionSelectionsBS.next(0);
+      }
+    }
+  }
+
   versionRevert(versionNumber: string) {
     this.http
       .get(
@@ -933,13 +962,14 @@ export class DocumentService implements OnDestroy {
     const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
     return this.http
-      .post(
+      .post<{ contributionStatus: string }>(
         `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
         {},
         { params: { versionLabel } },
       )
       .subscribe({
         next: (res) => {
+          this.updateProcessedStatus(false);
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(
@@ -969,8 +999,37 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  viewContribution(contribution: ContributionVO) {
-    //TODO add api call and parameters
+  updateProcessedStatus(process: boolean) {
+    this.processedBS.next(process);
+  }
+
+  viewAndMergeContribution(contribution: ContributionVO) {
+    const contributionVersionRef = contribution.versionedReference;
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    this.http
+      .get<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
+      )
+      .subscribe({
+        next: (res) => {
+          this.contributionViewAndMergeBS.next([res, contribution]);
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.view-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   private setSearchResultsCounter(count: number) {

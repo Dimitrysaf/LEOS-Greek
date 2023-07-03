@@ -14,34 +14,39 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.common.VersionType;
+import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public interface DocumentService {
     LeosDocument createDocumentFromContent(final String repositoryId, final String packageName, final String name, Map<String, ?> metadata,
-                                           final String labelVersion, int versionType, byte[] contentBytes, String comments) throws RepositoryException;
+                                           final String labelVersion, int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException;
 
     LeosDocument createDocumentFromSource(final String repositoryId, final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
-                                        final String labelVersion, int versionType, String comments) throws RepositoryException;
+                                        final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
-    LeosDocument updateDocument(final String documentId, Map<String, ?> properties,
+    LeosDocument updateDocument(final String ref, Map<String, ?> properties,
                             final String labelVersion, int versionType, byte[] contentBytes, String comments, String userId) throws Exception;
 
-    LeosDocument updateDocument(final String documentId, Map<String, ?> properties, final String category,
+    LeosDocument updateDocument(final String ref, Map<String, ?> properties,
                                 final String labelVersion, int versionType, String comments, String userId) throws Exception;
 
     void deleteDocumentById(String id) throws RepositoryException;
 
+    void deleteDocumentByRef(String ref) throws RepositoryException;
+
     LeosDocument findDocumentById(final String id, final boolean latest);
 
-    LeosDocument findLatestMajorVersionById(final String id);
+    LeosDocument findLatestMajorVersionByRef(final String docRef);
 
-    LeosDocument findFirstVersion(final String id, final String docRef);
+    LeosDocument findFirstVersion(final String docRef);
 
-    LeosDocument findDocumentByVersion(final String id, final String docRef, final String versionLabel);
+    LeosDocument findDocumentByVersion(final String docRef, final String versionLabel);
 
     String getNextVersionLabel(final VersionType versionType, final String oldVersion);
 
@@ -57,11 +62,21 @@ public interface DocumentService {
 
     Integer getRecentMinorVersionsCount(final String docRef, final String versionLabel);
 
-    List<LeosDocument> findDocumentsByUserId(final String userId, final String primaryType, final String leosAuthority);
+    List<LeosDocument> findDocumentsByUserId(final String userId, final String role);
 
-    List<LeosDocument> findDocumentsByRef(final String ref);
+    Optional<LeosDocument> findDocumentByRef(final String ref);
 
-    List<LeosDocument> findDocumentsStatus(final String status);
+    List<LeosDocument> findDocumentsByStatus(final String status);
 
-    List<LeosDocument> findDocumentByPackageNameAndFileName(final String packageName, final String fileName, final String category) throws RepositoryException;
+    List<LeosDocument> findDocumentByName(final String fileName) throws RepositoryException;
+
+    List<LeosDocument> findAllDocumentsByPackageId(final String packageId) throws RepositoryException;
+
+    List<LeosDocument> findAllVersionsByRef(final String ref);
+
+    List<LeosDocument> findDocumentsUsingFilter(final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults);
+
+    Long countDocumentsUsingFilter(final Set<String> categories, final QueryFilter queryFilter);
+
+    LeosDocument findTemplateByName(String ref) throws RepositoryException;
 }

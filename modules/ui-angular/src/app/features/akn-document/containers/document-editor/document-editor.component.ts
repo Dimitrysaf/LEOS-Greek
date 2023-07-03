@@ -21,6 +21,7 @@ import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
+  BehaviorSubject,
   combineLatest,
   combineLatestWith,
   map,
@@ -44,6 +45,8 @@ import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
@@ -84,13 +87,16 @@ export class DocumentEditorComponent
   versionsComparisonForView: string;
   versionsComparisonForViewHeaderTitle$: Observable<string>;
   documentConfig: DocumentConfig;
+  contributionForView: string;
 
   isVersionForViewOpen = false;
   isTocPaneCollapsed = true;
   isAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
+  isContributionForViewOpen = false;
+  isViewContributionPaneCollapsed = true;
   reloadTrigger: number;
-
+  applyActionDisabled$: Observable<boolean>;
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
 
@@ -120,6 +126,13 @@ export class DocumentEditorComponent
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
   isContributionsPaneExpanded = false;
+  contributionActionSelected = 'accept_selected';
+  processed = false;
+  acceptedSelectedEnabled = false;
+  isDeclinedContribution = false;
+  contributions: ContributionVO[] = [];
+  contributionChanges: NodeListOf<HTMLElement>;
+  contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -145,10 +158,15 @@ export class DocumentEditorComponent
   versionForViewPaneElement: ElementRef;
   @ViewChild('compareModePane', { read: ElementRef })
   compareModePaneElement: ElementRef;
+  @ViewChild('contributionViewPane', { read: ElementRef })
+  contributionViewPaneElement: ElementRef;
+  @ViewChild('contributionViewContainer', { read: ElementRef })
+  contributionViewContainerElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private scrollables: NodeListOf<Element>;
+  private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
 
   constructor(
     private domService: DomService,
@@ -194,6 +212,7 @@ export class DocumentEditorComponent
         this.reloadTrigger = trigger;
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
+    this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
   }
 
   ngOnInit(): void {
@@ -242,6 +261,12 @@ export class DocumentEditorComponent
         }
       });
 
+    this.documentService.contributionViewAndMerge$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([contributionView, contribution]) => {
+        this.handleContributionView(contributionView, contribution);
+      });
+
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
@@ -284,9 +309,17 @@ export class DocumentEditorComponent
     this.documentService.contributions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((contributions) => {
-        // TODO: Investigate the extra condition(s) needed for contribution pane to show (maybe if the proposal is parent or if the logged-in user is not the contributor)
-        this.showContributionsPane = contributions.length > 0;
+        this.contributions = contributions;
+        this.showContributionsPane = this.contributions.length > 0;
+        this.greyContributions();
       });
+
+    this.documentService.processed$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((processed) => {
+        this.processed = processed;
+      });
+
     this.hideTocSplitter = this.isTocPaneCollapsed;
     this.hideAnnotationsSplitter = this.isAnnotationsPaneCollapsed;
   }
@@ -378,6 +411,7 @@ export class DocumentEditorComponent
     this.reloadTrigger = 0;
     this.closeVersionView();
     this.closeVersionComparisonView();
+    this.closeContributionsView();
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
@@ -435,12 +469,6 @@ export class DocumentEditorComponent
     hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
   ) {
     this.hideAnnotationsSplitter = hideAnnotationsSplitter;
-  }
-
-  onToggleVersionsPane(
-    isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed,
-  ) {
-    this.isVersionsPaneCollapsed = isVersionsPaneCollapsed;
   }
 
   handleEdit() {
@@ -706,6 +734,51 @@ export class DocumentEditorComponent
     }
   }
 
+  closeContributionsView() {
+    this.isContributionForViewOpen = false;
+    this.documentService.handleContributionSelectCount(false, true);
+  }
+
+  handleNextChangeContribution() {
+    if (this.contributionIndex !== this.contributionChanges.length - 1) {
+      const nextChange = this.contributionIndex + 1;
+      this.contributionChanges
+        .item(nextChange)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.contributionIndex++;
+    }
+  }
+
+  handlePrevChangeContribution() {
+    if (this.contributionIndex > 0) {
+      {
+        const prevChange = this.contributionIndex - 1;
+        this.contributionChanges
+          .item(prevChange)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contributionIndex--;
+      }
+    }
+  }
+
+  onSelectAction(e: any) {
+    //TODO add selection handler and enable apply button
+    this.documentService.contributionSelections$.subscribe((selections) => {
+      if (selections > 0) {
+        this.contributionActionSelected = e.target.value;
+        this.applyActionDisabledBS.next(false);
+      }
+    });
+  }
+
+  handleProceed() {
+    //TODO create handler
+  }
+
+  onChangeProcessedToggle(_e: boolean) {
+    this.processed = !this.processed;
+  }
+
   protected exploreMilestone(version: Version) {
     this.milestoneViewData = {
       createdBy: version.createdBy,
@@ -719,6 +792,54 @@ export class DocumentEditorComponent
 
   protected onMilestoneViewDialogClosed() {
     this.milestoneViewData = null;
+  }
+
+  private handleContributionView(
+    contributionView: DocumentViewResponse,
+    contribution: ContributionVO,
+  ) {
+    if (contributionView) {
+      this.contributionForView = this.cleanupAndSerializeXML(
+        contributionView.editableXml,
+      );
+      this.isContributionForViewOpen = true;
+      this.isViewContributionPaneCollapsed = false;
+      this.isDeclinedContribution =
+        contribution.contributionStatus === 'CONTRIBUTION_DONE';
+      if (this.isDeclinedContribution) {
+        this.handleGreyedContribution(contribution, true);
+      } else {
+        this.cdkEditor.triggerMergeContributionConnectorStateChange();
+        setTimeout(() => {
+          this.handleContributionsChanges();
+          this.isAsyncScrollEnabled = false;
+          this.handleAsyncScroll();
+        }, 100);
+      }
+    }
+  }
+
+  private handleGreyedContribution(
+    contribution: ContributionVO,
+    greyed: boolean,
+  ) {
+    this.contributions = this.contributions.map((c) => {
+      if (contribution.updatedDate === c.updatedDate) {
+        c.greyed = greyed;
+      }
+      return c;
+    });
+  }
+
+  private greyContributions() {
+    this.contributions = this.contributions.map((c) => {
+      if (c.contributionStatus === 'CONTRIBUTION_DONE') {
+        c.greyed = true;
+      } else {
+        c.greyed = false;
+      }
+      return c;
+    });
   }
 
   private handleSyncScroll(event: Event) {
@@ -738,6 +859,19 @@ export class DocumentEditorComponent
         });
         this.arrowClicked = false;
       }, 100);
+    }
+  }
+
+  private handleContributionsChanges() {
+    this.contributionChanges =
+      this.contributionViewContainerElement.nativeElement.querySelectorAll(
+        '.merge-contribution-wrapper',
+      );
+
+    if (this.contributionChanges.length > 0) {
+      this.contributionChanges
+        .item(this.contributionIndex)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 

@@ -11,16 +11,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository.repositories;
+package eu.europa.ec.leos.repository.controllers.requests;
 
-import eu.europa.ec.leos.repository.entities.Config;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
 
-import java.math.BigDecimal;
-import java.util.Optional;
+public class FindDocumentsRequest {
+    @NotNull
+    private Set<String> categories;
+    private QueryFilter queryFilter;
 
-public interface ConfigRepository extends JpaRepository<Config, BigDecimal> {
-    @Query(value = "SELECT * FROM CONFIG c WHERE c.REPOSITORY_ID IN (SELECT r.ID FROM REPOSITORY r WHERE r.CMIS_ID = ?1) AND c.NAME = ?2", nativeQuery = true)
-    Optional<Config> findConfigByNameAndRepositoryId(String repositoryId, String name);
+    public Set<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<String> categories) {
+        this.categories = categories;
+    }
+
+    public QueryFilter getQueryFilter() {
+        return queryFilter;
+    }
+
+    public void setQueryFilter(QueryFilter queryFilter) {
+        this.queryFilter = queryFilter;
+    }
 }

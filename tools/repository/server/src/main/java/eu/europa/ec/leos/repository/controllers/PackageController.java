@@ -14,18 +14,22 @@
 package eu.europa.ec.leos.repository.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
+import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
+import eu.europa.ec.leos.repository.controllers.response.ExceptionResponse;
+import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
+import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.services.PackageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import eu.europa.ec.leos.repository.entities.Package;
-import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.model.Package;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,70 +37,156 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.util.Arrays;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Tag(name = "Package API", description = "Package API")
+@Validated
 public class PackageController {
-    @Autowired
-    PackageRepository packageRepository;
+    private static final Logger LOG = LoggerFactory.getLogger(PackageController.class);
 
     @Autowired
-    DocumentVRepository documentRepository;
+    PackageService packageService;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
 
-    @GetMapping(path = "/{repositoryId}/package/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Value("${repository.default.id}")
+    private String repositoryId;
+
+    @PutMapping(path = "/package/create/{name}",
+    consumes = {MediaType.APPLICATION_JSON_VALUE},
+    produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @Operation(summary = "create a Package by name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Created", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<?> createPackage(@PathVariable("name") String name,
+                                                 @Valid @RequestBody CreatePackageRequest createPackageRequest) {
+        try {
+            Package p = packageService.createPackage(name, repositoryId, createPackageRequest.getIsCloned(),
+                    createPackageRequest.getClonedPackageName(), createPackageRequest.getUserId());
+            if (p != null) {
+                return new ResponseEntity<>(p, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ExceptionResponse("Error while creating package", ExceptionResponse.ExceptionType.ERROR), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            LOG.error("Error while creating a package with name {0} : {1}", name, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(path = "/package/delete/{name}")
+    @Operation(summary = "Delete a Package by name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity deletePackage(@PathVariable("name") String packageName) {
+        try {
+            packageService.deletePackage(repositoryId, packageName);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error while deleting a package with name {0} : {1}", packageName, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(path = "/package/find-by-name/{name}")
     @Operation(summary = "Get a Package by name")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found the Package", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Package.class)) }),
-            @ApiResponse(responseCode = "404", description = "Package not found", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Package> getPackageByName(@PathVariable("repositoryId") String repositoryId, @PathVariable("name") String name) {
+    public ResponseEntity<?> getPackageByName(@PathVariable("name") String name) {
         try {
-            Optional<Package> p = packageRepository.findPackageByName(repositoryId, name);
-            if (p.isPresent()) {
-                return new ResponseEntity<>(p.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            }
+            Package pkg = packageService.getPackageByName(repositoryId, name);
+            return new ResponseEntity<>(pkg, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error while searching for a package with name {0} : {1}", name, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping(path="/{repositoryId}/package/documents/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all documents' last version inside a Package by name")
+    @GetMapping(path = "/package/find-by-id/{id}")
+    @Operation(summary = "Get a Package by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found the Documents", content = { @Content(mediaType = "application/json", schema =
-            @Schema(implementation = List.class)) }),
-            @ApiResponse(responseCode = "404", description = "Package not found or no documents found", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<String> getDocumentsByPackageName(@PathVariable("repositoryId") String repositoryId, @PathVariable String name)
-    {
+    public ResponseEntity<?> getPackageById(@PathVariable("id") String id) {
         try {
-            Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, name);
-            List<DocumentV> docs = Arrays.asList();
-            if (pkg.isPresent()) {
-                docs = documentRepository.findDocumentsByPackageId(pkg.get().getId());
-            } else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            }
-            if (docs.isEmpty()) {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            } else {
-                mapper.findAndRegisterModules();
-                String jsonString = mapper.writeValueAsString(docs);
-                return new ResponseEntity<>(jsonString, HttpStatus.OK);
-            }
+            Package pkg = packageService.getPackageById(id);
+            return new ResponseEntity<>(pkg, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error while searching for a package with id {0} : {1}", id, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
+    @PostMapping(path = "/package/find-by-name/{name}/documents",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @Operation(summary = "Find documents by package name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<?> findDocumentsByPackageName(@PathVariable("name") String name,
+                                                                   @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
+                                                                  @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
+        try {
+            List<LeosDocument> xmlDocs = packageService.findDocumentsByPackageName(repositoryId, name, findDocumentsRequest.getCategories(),
+                    descendants);
+            if (!xmlDocs.isEmpty()) {
+                return new ResponseEntity(mapper.writeValueAsString(xmlDocs), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            LOG.error("Error while searching for documents in a package with name {0} : {1}", name, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(path = "/package/find-by-id/{id}/documents",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @Operation(summary = "Find documents by package id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<?> findDocumentsByPackageId(@PathVariable("id") String id,
+                                                           @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
+                                                                @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
+        try {
+            List<LeosDocument> xmlDocs = packageService.findDocumentsByPackageId(id, findDocumentsRequest.getCategories(),
+                    descendants);
+            if (!xmlDocs.isEmpty()) {
+                return new ResponseEntity(mapper.writeValueAsString(xmlDocs), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            LOG.error("Error while searching for documents in a package with id {0} : {1}", id, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(path = "/package/find-by-id/{id}/documents")
+    @Operation(summary = "Find documents by package id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<?> findDocumentsByPackageId(@PathVariable("id") String id) {
+        try {
+            List<LeosDocument> xmlDocs = packageService.findDocumentsByPackageId(id, null,  false);
+            if (!xmlDocs.isEmpty()) {
+                return new ResponseEntity(mapper.writeValueAsString(xmlDocs), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            LOG.error("Error while searching for documents in a package with id {0} : {1}", id, e.getMessage());
+            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

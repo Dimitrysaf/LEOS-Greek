@@ -148,7 +148,6 @@ CREATE TABLE CONFIG_CONTENT
 CREATE TABLE CONFIG_VERSION
 (	ID NUMBER(22,0) IDENTITY,
      CONFIG_ID NUMBER(22,0),
-     CONFIG_TYPE NUMBER(22,0),
      VERSION_LABEL VARCHAR2(100 BYTE),
      VERSION_SERIES_ID VARCHAR2(400 BYTE),
      VERSION_TYPE VARCHAR2(100 BYTE),
@@ -312,13 +311,12 @@ WHERE milv.milestone_id = millis.milestone_id;
 
 CREATE VIEW CONFIGURATION_V as
 SELECT conf.id||'_'||ver.id||'_'||con.id||'_'||cat.id unique_id, conf.ID, CONF.NAME, CONF.OBJECT_ID,
-       ver.config_id,ver.config_type,cat.category_code, cat.category_desc, ver.version_label,ver.version_series_id,ver.version_type,ver.is_latest_major_version,ver.is_latest_version,ver.is_major_version,ver.is_version_series_checked_out,ver.audit_c_by,ver.audit_c_date,ver.audit_last_m_by,ver.audit_last_m_date,ver.is_immutable
+       ver.config_id,cat.category_code, cat.category_desc, ver.version_label,ver.version_series_id,ver.version_type,ver.is_latest_major_version,ver.is_latest_version,ver.is_major_version,ver.is_version_series_checked_out,ver.audit_c_by,ver.audit_c_date,ver.audit_last_m_by,ver.audit_last_m_date,ver.is_immutable
         , con.content,con.content_stream_mime_type,con.content_stream_filename,con.content_stream_id,con.content_stream_length
 FROM config conf, config_version ver, config_content con, config_categories cat
 WHERE
-        conf.id = ver.config_id
-  and ver.id = con.version_id
-  and ver.config_type = cat.id;
+  conf.id = ver.config_id
+  and ver.id = con.version_id and cat.id = conf.category_id;
 
 CREATE VIEW PACKAGE_V AS SELECT pkg.id||'_'||doc.id||'_'||docver.id||'_'||docxml.id unique_id, pkg.id package_id, pkg.object_id pkg_object_id,
                                 pkg.name package_name, pkg.repository_id, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date,
@@ -441,9 +439,6 @@ ALTER TABLE CONFIG_CONTENT ADD CONSTRAINT CONFIGURATION_CONTENT_FK FOREIGN KEY (
 
 ALTER TABLE DOCUMENT_CONTENT ADD CONSTRAINT DOCUMENT_CONTENT_FK FOREIGN KEY (VERSION_ID)
     REFERENCES DOCUMENT_VERSION (ID);
-
-ALTER TABLE CONFIG_VERSION ADD CONSTRAINT CONFIG_CATEGORY_TYPE_FK FOREIGN KEY (CONFIG_TYPE)
-    REFERENCES CONFIG_CATEGORIES (ID);
 
 ALTER TABLE REPOSITORY MODIFY (ID NOT NULL);
 
@@ -626,6 +621,9 @@ ALTER TABLE CONFIG MODIFY (OBJECT_ID NOT NULL);
 ALTER TABLE CONFIG MODIFY (AUDIT_C_BY NOT NULL);
 
 ALTER TABLE CONFIG MODIFY (AUDIT_C_DATE NOT NULL);
+
+ALTER TABLE CONFIG ADD CONSTRAINT CONFIG_CATEGORY_TYPE_FK FOREIGN KEY (CATEGORY_ID)
+    REFERENCES CONFIG_CATEGORIES (ID);
 
 ALTER TABLE DOCUMENT MODIFY (ID NOT NULL);
 
