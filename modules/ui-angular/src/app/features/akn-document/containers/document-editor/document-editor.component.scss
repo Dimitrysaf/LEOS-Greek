@@ -205,11 +205,17 @@
 }
 
 .toc-edit-mode,
-.toc-edit-mode akomastoso {
+.toc-edit-mode akomastoso,
+.contribution-disabled-mode,
+.contribution-disabled-mode akomastoso {
   cursor: default;
   opacity: 0.3;
   pointer-events: none;
   user-select: none;
+}
+
+.processed-span {
+  white-space: pre;
 }
 
 .splitter {
