@@ -4,7 +4,8 @@
   "description": "",
   "main": "test-server.js",
   "scripts": {
-    "test": "nodemon test-server"
+    "test-debug": "nodemon test-server",
+    "test": "node test-server"
   },
   "author": "",
   "license": "ISC",

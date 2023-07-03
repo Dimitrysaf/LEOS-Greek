@@ -30,12 +30,13 @@ const getFilesRecursively = (pathDir) => {
 };
 
 const filterSpecs = (specs) => {
-    var specName = argv.hasOwnProperty("specName") ? argv["specName"] : config["specName"];
-    if (specName && specName.length > 0) {
+    var specNames = argv.hasOwnProperty("specNames") ? argv["specNames"] : config["specNames"];
+    if (specNames && specNames.length > 0) {
+        specNames = Array.isArray(specNames) ? specNames : [specNames];
         specs = specs.filter((spec) => {
             var partsOfPath = spec.split("/");
-            var lastPart = partsOfPath[partsOfPath.length - 1].length > 0 ? partsOfPath[partsOfPath.length - 1] : partsOfPath[partsOfPath.length - 2];
-            return lastPart === specName;
+            var specName = partsOfPath[partsOfPath.length - 1].length > 0 ? partsOfPath[partsOfPath.length - 1] : partsOfPath[partsOfPath.length - 2];
+            return specNames.includes(specName);
         });
     }
 
