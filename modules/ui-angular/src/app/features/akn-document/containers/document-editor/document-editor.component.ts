@@ -160,6 +160,8 @@ export class DocumentEditorComponent
   compareModePaneElement: ElementRef;
   @ViewChild('contributionViewPane', { read: ElementRef })
   contributionViewPaneElement: ElementRef;
+  @ViewChild('contributionViewContainer', { read: ElementRef })
+  contributionViewContainerElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -263,9 +265,6 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe(([contributionView, contribution]) => {
         this.handleContributionView(contributionView, contribution);
-        setTimeout(() => {
-          this.handleContributionsChanges();
-        }, 5000);
       });
 
     this.versionsComparisonForViewHeaderTitle$ =
@@ -811,6 +810,11 @@ export class DocumentEditorComponent
         this.handleGreyedContribution(contribution, true);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
+        setTimeout(() => {
+          this.handleContributionsChanges();
+          this.isAsyncScrollEnabled = false;
+          this.handleAsyncScroll();
+        }, 100);
       }
     }
   }
@@ -859,13 +863,10 @@ export class DocumentEditorComponent
   }
 
   private handleContributionsChanges() {
-    const contributionContainer = this.document.getElementById(
-      'contributionViewContainer',
-    );
-
-    this.contributionChanges = contributionContainer.querySelectorAll(
-      '.merge-contribution-wrapper',
-    );
+    this.contributionChanges =
+      this.contributionViewContainerElement.nativeElement.querySelectorAll(
+        '.merge-contribution-wrapper',
+      );
 
     if (this.contributionChanges.length > 0) {
       this.contributionChanges
