@@ -48,10 +48,10 @@ import {
   FetchElementResponse,
 } from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
+import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import { LoadingService } from './loading.service';
-import { MergeActionVO } from '../models/merge-action-vo.model';
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -117,7 +117,10 @@ export class DocumentService implements OnDestroy {
   contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
   contributionSelections$: Observable<number>;
 
-  private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([false, undefined]);
+  private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
+    false,
+    undefined,
+  ]);
   private contributionViewAndMergeBS = new BehaviorSubject<
     [DocumentViewResponse, ContributionVO]
   >(null);
