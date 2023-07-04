@@ -805,7 +805,38 @@ export class DocumentEditorComponent
 
   onAcceptMarkContributionAsProcessed() {
     this.processed = !this.processed;
-    this.documentService.markContributionAsProcessed(this.contribution);
+    this.documentService
+      .markContributionAsProcessed(this.contribution)
+      .subscribe({
+        next: (res) => {
+          this.appShellService.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.documentService.getContributions();
+          this.isContributionDeclinedOrProcessed = true;
+        },
+        error: (res) => {
+          this.appShellService.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
     this.markContributionAsProcessedDialog.closeDialog();
   }
 
