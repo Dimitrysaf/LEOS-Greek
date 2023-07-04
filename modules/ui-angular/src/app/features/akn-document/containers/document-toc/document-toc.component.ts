@@ -1253,6 +1253,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       } else {
         droppedElement.number = HASH_NUM_VALUE;
       }
+    } else {
+      droppedElement.number = null;
     }
   }
 
