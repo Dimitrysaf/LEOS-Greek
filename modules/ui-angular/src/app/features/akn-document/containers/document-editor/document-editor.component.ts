@@ -804,7 +804,6 @@ export class DocumentEditorComponent
   }
 
   onAcceptMarkContributionAsProcessed() {
-    this.processed = !this.processed;
     this.documentService
       .markContributionAsProcessed(this.contribution)
       .subscribe({
