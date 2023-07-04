@@ -38,7 +38,7 @@ define(function ckEditorTestUtil(require) {
         });
         
         var editor = await promise;
-        
+        // console.log(editor);
         return editor;
     }
 
@@ -56,7 +56,6 @@ define(function ckEditorTestUtil(require) {
 
         editor.destroy(true);
     }
-  
 
     function _fireKeyEvent(editor, keyCode) {
         var ckEditorEvent = new CKEDITOR.dom.event(
@@ -77,10 +76,53 @@ define(function ckEditorTestUtil(require) {
         return event;
     }
 
+    function _createPlaceHolder(div) {
+        var placeholder = document.getElementById("leos-placeholder")
+        placeholder.innerHTML = div;
+        return placeholder;
+    }
+
+    function _split_at_index(value, index) {
+        return [value.substring(0, index), value.substring(index)];
+    }
+
+    function _movePosition(editor, index) {
+        var selection = editor.getSelection();
+        var range = selection.getRanges()[0];
+        var element = selection.getStartElement();
+        var splits = _split_at_index(element.getText(), index);
+        var firstNode = new CKEDITOR.dom.text(splits[0]);
+        var secondNode = new CKEDITOR.dom.text(splits[1]);
+        element.getChildren().getItem(0).remove();
+        firstNode.appendTo(element);
+        secondNode.appendTo(element);
+        range.moveToPosition(secondNode, CKEDITOR.POSITION_AFTER_START);
+        range.select();
+        console.info("After moving the cursor to position ", index, ", editor.element: ")
+        _printElementEditor(editor);
+    }
+
+    function _printElementEditor(editor, msgToPrint) {
+        if(msgToPrint && msgToPrint!=="") {
+            console.info(msgToPrint)
+        }
+        var childNodes = editor.element.getChildren().getItem(0).getChildren();
+        console.log(childNodes.toArray().map(child => child.getText()));
+    }
+
+    function _printOffsetsWithinSelection(editor) {
+        var ranges = editor.getSelection().getRanges()
+        var range = editor.getSelection().getRanges()[0]
+        console.log("Selection: Nr. Ranges:", ranges.length, ", startOffset:", range.startOffset, ", endOffset:", range.endOffset);
+    }
 
     return {
-        "initializeEditor": _initializeEditor,
-        "destroyEditor": _destroyEditor,
-        "fireKeyEvent": _fireKeyEvent
+        initializeEditor: _initializeEditor,
+        destroyEditor: _destroyEditor,
+        fireKeyEvent: _fireKeyEvent,
+        createPlaceHolder: _createPlaceHolder,
+        movePosition: _movePosition,
+        printElementEditor: _printElementEditor,
+        printOffsetsWithinSelection: _printOffsetsWithinSelection
     };
 });

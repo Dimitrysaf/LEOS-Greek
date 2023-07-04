@@ -10,6 +10,7 @@
         "testLeosTrackChangesPlugin_TC2.js",
         "testLeosTrackChangesPlugin_trackChanges_deleteCharacter.js",
         "backspace.js",
-        "backspaceCharacter.js"
+        "backspaceCharacter.js",
+        "deleteMultipleCharacter.js"
     ]
 }
