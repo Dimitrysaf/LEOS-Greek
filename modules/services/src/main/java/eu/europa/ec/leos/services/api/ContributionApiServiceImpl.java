@@ -258,13 +258,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public void markRevisionAsProcessed(String documentType, String documentRef) {
+    public void markRevisionAsProcessed(String documentType, String documentVersionedRef) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
-        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(Validate.notNull(documentRef), documentClass.getClazz());
-        final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
-        this.populateCloneProposalMetadata(Validate.notNull(proposal));
-
-        final LeosDocument revision = this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
+        final LeosDocument revision = this.contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
