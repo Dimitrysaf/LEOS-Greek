@@ -404,7 +404,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         spacerLabel.setValue("&nbsp;");
         tocSaveButton();
         tocSaveCloseButton();
-        tocCancelButton();
+        tocCloseButton();
         tocMenuBar();
     }
 
@@ -720,8 +720,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         });
     }
 
-    private void tocCancelButton() {
-        cancelButton.setDescription(messageHelper.getMessage("leos.button.cancel"));
+    private void tocCloseButton() {
+        cancelButton.setDescription(messageHelper.getMessage("leos.button.close"));
         cancelButton.setIcon(LeosTheme.LEOS_TOC_CANCEL_ICON_16);
         cancelButton.addClickListener(event -> disableTocEdition());
     }
