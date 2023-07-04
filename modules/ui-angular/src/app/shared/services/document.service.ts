@@ -116,6 +116,7 @@ export class DocumentService implements OnDestroy {
   processed$: Observable<[boolean, ContributionVO]>;
   contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
   contributionSelections$: Observable<number>;
+  contributionViewAndMergeCollapsed$: Observable<boolean>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -156,6 +157,9 @@ export class DocumentService implements OnDestroy {
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
   private contributionSelectionsBS = new BehaviorSubject<number>(0);
+  private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
+    true,
+  );
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -304,6 +308,8 @@ export class DocumentService implements OnDestroy {
     this.contributionViewAndMerge$ =
       this.contributionViewAndMergeBS.asObservable();
     this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
+    this.contributionViewAndMergeCollapsed$ =
+      this.contributionViewAndMergeCollapsedBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -937,6 +943,10 @@ export class DocumentService implements OnDestroy {
 
   setDidDocumentLoadAndRender(loaded: boolean) {
     this.isDocumentLoadedBS.next(loaded);
+  }
+
+  setContributionViewAndMergeCollapsed(collapsed: boolean) {
+    this.contributionViewAndMergeCollapsedBS.next(collapsed);
   }
 
   getUserPermissions() {

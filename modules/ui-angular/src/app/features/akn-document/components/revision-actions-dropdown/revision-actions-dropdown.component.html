@@ -30,6 +30,7 @@
         euiListItem
         *ngIf="contribution.contributionStatus === 'RECEIVED'"
         translate="page.editor.contribution.actions.decline"
+        [disabled]="documentService.contributionViewAndMergeCollapsed$ | async"
         (click)="
           onContributionDecline(
             contribution.documentId,

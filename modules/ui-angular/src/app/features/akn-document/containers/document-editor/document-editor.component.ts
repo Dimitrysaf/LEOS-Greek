@@ -746,6 +746,7 @@ export class DocumentEditorComponent
   closeContributionsView() {
     this.isContributionForViewOpen = false;
     this.documentService.handleContributionSelectCount(false, true);
+    this.documentService.setContributionViewAndMergeCollapsed(true);
   }
 
   handleNextChangeContribution() {
@@ -869,6 +870,7 @@ export class DocumentEditorComponent
       );
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
+      this.documentService.setContributionViewAndMergeCollapsed(false);
       this.isContributionDeclinedOrProcessed =
         contribution.contributionStatus === 'CONTRIBUTION_DONE';
       if (this.isContributionDeclinedOrProcessed) {
