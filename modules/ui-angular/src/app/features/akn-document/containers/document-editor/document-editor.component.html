@@ -627,7 +627,7 @@
         #contributionViewPane
         interactiveScrollbars
         *ngIf="isContributionForViewOpen"
-        class="contribution-view-merge-pane"
+        class="eui-u-p-none contribution-view-merge-pane"
       >
         <eui-page-column-header-body>
           <div
@@ -694,13 +694,8 @@
               >
                 <span class="eui-icon eui-icon-sort-desc"></span>
               </button>
-            </div>
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
               <span
-                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s select-revisions-span"
+                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s flex-grow-1 select-revisions-span"
                 *ngIf="(documentService.contributionSelections$ | async) === 0"
                 >{{
                   'page.editor.contribution.view.text.select-revisions'
@@ -708,7 +703,7 @@
                 }}</span
               >
               <span
-                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s select-revisions-span"
+                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s flex-grow-1 select-revisions-span"
                 *ngIf="(documentService.contributionSelections$ | async) > 0"
                 >{{
                   'page.editor.contribution.view.text.revisions-selected'
@@ -767,16 +762,14 @@
                     | translate
                 }}
               </button>
-              <div class="eui-u-flex eui-u-mr-s">
-                <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
-                  'page.editor.contribution.view.actions.processed' | translate
-                }}</span>
-                <eui-slide-toggle
-                  (changed)="onChangeProcessedToggle($event)"
-                  [isChecked]="processed"
-                  [disabled]="isContributionDeclinedOrProcessed"
-                ></eui-slide-toggle>
-              </div>
+              <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
+                'page.editor.contribution.view.actions.processed' | translate
+              }}</span>
+              <eui-slide-toggle
+                (changed)="onChangeProcessedToggle($event)"
+                [isChecked]="processed"
+                [disabled]="isContributionDeclinedOrProcessed"
+              ></eui-slide-toggle>
 
               <button
                 euiButton
