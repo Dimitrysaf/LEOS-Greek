@@ -34,6 +34,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import { TocItem } from '../models/toc.model';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './tableOfContent.service';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -122,10 +123,14 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector.$triggerStateChange();
   }
 
-  handleMergeContributionsActions(acceptAllContributions: boolean) {
+  handleMergeContributionsActions(
+    acceptAllContributions: boolean,
+    contribution: ContributionVO,
+  ) {
     this.mergeContributionConnector?.setAcceptAllContributions(
       acceptAllContributions,
     );
+    this.mergeContributionConnector?.setContributionToMerge(contribution);
     this.mergeContributionConnector?.populateMergeActionList(
       acceptAllContributions,
     );

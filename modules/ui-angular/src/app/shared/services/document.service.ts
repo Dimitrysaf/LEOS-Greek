@@ -1063,6 +1063,7 @@ export class DocumentService implements OnDestroy {
           ...mergeActions,
           acceptAllContributions,
         },
+        { responseType: 'text' as 'json' },
       )
       .subscribe({
         next: (res) => {
@@ -1078,6 +1079,7 @@ export class DocumentService implements OnDestroy {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          this.setDocumentRefAndCategory(this.documentRef, this.documentType);
           this.getContributions();
         },
         error: (res) => {

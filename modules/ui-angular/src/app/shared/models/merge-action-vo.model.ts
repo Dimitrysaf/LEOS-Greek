@@ -13,10 +13,13 @@ enum ElementState {
   CONTENT_CHANGE = 'CONTENT_CHANGE',
 }
 
-export interface MergeActionVO {
+export interface MergeActionItem {
   action: MergeAction;
   elementState: ElementState;
   elementId: string;
   elementTagName: string;
+}
+
+export interface MergeActionVO extends MergeActionItem {
   contributionVO: ContributionVO;
 }

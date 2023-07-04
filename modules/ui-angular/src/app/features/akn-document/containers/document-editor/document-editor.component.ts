@@ -779,10 +779,10 @@ export class DocumentEditorComponent
     });
   }
 
-  handleProceed() {
+  handleMerge() {
     if (this.contributionActionSelected === 'accept_selected') {
       this.processed = !this.processed;
-      this.cdkEditor.handleMergeContributionsActions(false);
+      this.cdkEditor.handleMergeContributionsActions(false, this.contribution);
     } else {
       this.mergeAllContributionsChangesDialog.openDialog();
     }
@@ -795,7 +795,7 @@ export class DocumentEditorComponent
 
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
-    this.cdkEditor.handleMergeContributionsActions(true);
+    this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
 
