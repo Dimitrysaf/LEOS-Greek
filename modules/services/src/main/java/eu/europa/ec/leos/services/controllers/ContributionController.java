@@ -98,4 +98,12 @@ public class ContributionController {
         byte[] mergedContent = this.contributionApiService.mergeContribution(documentType, documentRef, applyContributionsRequest);
         return ResponseEntity.ok(mergedContent);
     }
+
+    @PostMapping(value = "/mark-as-processed/{contributionVersionRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> markAsProcessed(@PathVariable("contributionVersionRef") String contributionVersionRef,
+                                                  @PathVariable("documentType") String documentType) {
+        this.contributionApiService.markRevisionAsProcessed(documentType, contributionVersionRef);
+        return ResponseEntity.ok().build();
+    }
 }

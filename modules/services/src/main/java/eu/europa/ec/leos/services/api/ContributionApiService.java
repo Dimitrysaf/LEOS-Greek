@@ -14,13 +14,10 @@ import java.util.List;
 public interface ContributionApiService {
 
     CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName);
-
     Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFilename);
-
     List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType);
-
     DocumentViewResponse compareAndShowRevision(String contextPath, String documentType, String documentRef, String versionLabel);
     LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel);
-
+    void markRevisionAsProcessed(String documentType, String documentRef);
     byte[] mergeContribution(String documentType, String documentRef, ApplyContributionsRequest request) throws IOException;
 }

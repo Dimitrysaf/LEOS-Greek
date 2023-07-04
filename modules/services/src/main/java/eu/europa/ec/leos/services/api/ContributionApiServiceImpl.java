@@ -4,18 +4,14 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
-import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -24,17 +20,15 @@ import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
-import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.document.util.DocumentViewService;
-import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
@@ -49,7 +43,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -223,8 +216,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     public byte[] mergeContribution(String documentType,
-                                          String documentRef,
-                                          ApplyContributionsRequest request) throws IOException {
+                                    String documentRef,
+                                    ApplyContributionsRequest request) throws IOException {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
         final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(Validate.notNull(documentRef), documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
@@ -262,6 +255,20 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             return revision.getContent().get().getSource().getBytes();
         }
         return document.getContent().get().getSource().getBytes();
+    }
+
+    @Override
+    public void markRevisionAsProcessed(String documentType, String documentRef) {
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
+        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(Validate.notNull(documentRef), documentClass.getClazz());
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
+        this.populateCloneProposalMetadata(Validate.notNull(proposal));
+
+        final LeosDocument revision = this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        this.leosRepository.updateDocument(revision.getId(), properties, documentClass.getClazz(), false);
     }
 
     private List<InternalRefMap> getInternalRefMaps(ApplyContributionsRequest event, LeosDocument document, byte[] xmlClonedContent) {
