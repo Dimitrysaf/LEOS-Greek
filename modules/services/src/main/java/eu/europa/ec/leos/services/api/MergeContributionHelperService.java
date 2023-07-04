@@ -1,8 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
-import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.xml.Element;
@@ -17,8 +15,7 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +25,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState;
+import static eu.europa.ec.leos.services.dto.request.MergeActionVO.MergeAction;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_MERGE_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
@@ -40,25 +39,22 @@ import static eu.europa.ec.leos.services.support.XmlHelper.MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
-import static eu.europa.ec.leos.services.dto.request.MergeActionVO.MergeAction;
-import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState;
 
 
-@Component
-@Scope("prototype")
-public class MergeContributionHelper {
+@Service
+public class MergeContributionHelperService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MergeContributionHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MergeContributionHelperService.class);
 
     private final XPathCatalog xPathCatalog;
     private final XmlContentProcessor xmlContentProcessor;
     private final MessageHelper messageHelper;
     private final ContributionService contributionService;
 
-    public MergeContributionHelper(XPathCatalog xPathCatalog,
-                                   XmlContentProcessor xmlContentProcessor,
-                                   MessageHelper messageHelper,
-                                   ContributionService contributionService) {
+    public MergeContributionHelperService(XPathCatalog xPathCatalog,
+                                          XmlContentProcessor xmlContentProcessor,
+                                          MessageHelper messageHelper,
+                                          ContributionService contributionService) {
         this.xPathCatalog = xPathCatalog;
         this.xmlContentProcessor = xmlContentProcessor;
         this.messageHelper = messageHelper;

@@ -68,7 +68,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private LeosRepository leosRepository;
     private Provider<StructureContext> structureContext;
     private AttachmentProcessor attachmentProcessor;
-    private MergeContributionHelper mergeContributionHelper;
+    private MergeContributionHelperService mergeContributionHelperService;
     private XmlContentProcessor xmlContentProcessor;
     private NumberService numberService;
     private MessageHelper messageHelper;
@@ -92,7 +92,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       LeosRepository leosRepository,
                                       Provider<StructureContext> structureContext,
                                       AttachmentProcessor attachmentProcessor,
-                                      MergeContributionHelper mergeContributionHelper,
+                                      MergeContributionHelperService mergeContributionHelperService,
                                       XmlContentProcessor xmlContentProcessor,
                                       NumberService numberService,
                                       MessageHelper messageHelper,
@@ -109,7 +109,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.leosRepository = leosRepository;
         this.structureContext = structureContext;
         this.attachmentProcessor = attachmentProcessor;
-        this.mergeContributionHelper = mergeContributionHelper;
+        this.mergeContributionHelperService = mergeContributionHelperService;
         this.messageHelper = messageHelper;
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
@@ -230,7 +230,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         List<TocItem> tocItemList = this.structureContext.get().getTocItems();
         byte[] xmlClonedContent = request.getMergeActions().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
-        byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
+        byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
         xmlContent = this.numberService.renumberArticles(xmlContent, true);
         xmlContent = this.numberService.renumberRecitals(xmlContent);
         xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
