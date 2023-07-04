@@ -102,12 +102,15 @@ define(function ckEditorTestUtil(require) {
         _printElementEditor(editor);
     }
 
-    function _printElementEditor(editor, msgToPrint) {
+    function _printElementEditor(editor, msgToPrint, printHtml) {
         if(msgToPrint && msgToPrint!=="") {
             console.info(msgToPrint)
         }
         var childNodes = editor.element.getChildren().getItem(0).getChildren();
         console.log(childNodes.toArray().map(child => child.getText()));
+        if(printHtml) {
+            console.log( editor.element.getOuterHtml());
+        }
     }
 
     function _printOffsetsWithinSelection(editor) {

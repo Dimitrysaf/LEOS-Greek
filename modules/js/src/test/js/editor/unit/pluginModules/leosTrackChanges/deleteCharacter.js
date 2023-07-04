@@ -38,7 +38,19 @@ define(function deleteCharacter(require) {
             });
         });
 
+        beforeEach(function(done) {
+            console.info("Before EACH - deleteCharacter");
+            // var div = '<article>hello world</article>'
+            // testUtil.createPlaceHolder(div);
+            // editor.setData("")
+            done();
+        });
+
         it("when deleting single character (should create 3 nodes, where the 2nd is the trackChange element)", function (done) {
+            var div = '<article>hello world</article>'
+            placeholder = testUtil.createPlaceHolder(div);
+            // editor.setData(placeholder)
+
             editor.setReadOnly(false);
             editor.focus();
 
@@ -47,26 +59,58 @@ define(function deleteCharacter(require) {
             testUtil.printElementEditor(editor, "After TrackChanges logic, editor.element:");
 
             var editorElement = editor.element.getChildren().getItem(0);
+            var beforeElement = editorElement.getChildren().getItem(0);
             var trackChangeElement = editorElement.getChildren().getItem(1);
+            var afterElement = editorElement.getChildren().getItem(2);
             // console.log("After TrackChanges logic, editor.element html:", editorElement.getOuterHtml());
             // console.log("After TrackChanges logic, trackChangeElement html:", trackChangeElement.getOuterHtml());
 
             expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('hel');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('l');
             expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
             expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
-            console.info("END")
+            expect(afterElement.getText()).toEqual('o world');
+
+            console.info("END - deleting single character")
             done();
         })
 
-        // it("when backspacing single character (should create 3 nodes, where the 2nd is the trackChange element)", function (done) {
-        //     // editor.on('instanceReady', function (evt) {
-        //         console.info("END2")
-        //     // })
-        // })
+        it("when backspacing single character (should create 3 nodes, where the 2nd is the trackChange element)", function (done) {
+            var div = '<article>hello world</article>'
+            placeholder = testUtil.createPlaceHolder(div);
+            // editor.setData(placeholder)
+            testUtil.printElementEditor(editor, "Initilaizing: ", true);
+
+            editor.setReadOnly(false);
+            editor.focus();
+
+            testUtil.movePosition(editor, 3);
+            testUtil.fireKeyEvent(editor, KEYS.backspace);
+            testUtil.printElementEditor(editor, "After TrackChanges logic, editor.element:");
+
+            var editorElement = editor.element.getChildren().getItem(0);
+            var beforeElement = editorElement.getChildren().getItem(0);
+            var trackChangeElement = editorElement.getChildren().getItem(1);
+            var afterElement = editorElement.getChildren().getItem(2);
+            // console.log("After TrackChanges logic, editor.element html:", editorElement.getOuterHtml());
+            // console.log("After TrackChanges logic, trackChangeElement html:", trackChangeElement.getOuterHtml());
+
+            expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('he');
+            expect(trackChangeElement.getName()).toEqual('span');
+            expect(trackChangeElement.getText()).toEqual('l');
+            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
+            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
+            expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
+            expect(trackChangeElement.getAttribute("title")).toContain("testuser");
+            expect(afterElement.getText()).toEqual('lo world');
+            console.info("END - backspace single character")
+            done();
+        })
 
         afterAll(function() {
             testUtil.destroyEditor(editor, placeholder);
