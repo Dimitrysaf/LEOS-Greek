@@ -1049,7 +1049,6 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.updateProcessedStatus(false, contribution);
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(

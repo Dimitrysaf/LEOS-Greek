@@ -781,6 +781,7 @@ export class DocumentEditorComponent
 
   handleProceed() {
     if (this.contributionActionSelected === 'accept_selected') {
+      this.processed = !this.processed;
       this.cdkEditor.handleMergeContributionsActions(false);
     } else {
       this.mergeAllContributionsChangesDialog.openDialog();
@@ -793,10 +794,9 @@ export class DocumentEditorComponent
   }
 
   onAcceptMergeAllContributions() {
+    this.processed = !this.processed;
     this.cdkEditor.handleMergeContributionsActions(true);
     this.mergeAllContributionsChangesDialog.closeDialog();
-    this.onChangeProcessedToggle(true);
-    this.isContributionDeclinedOrProcessed = true;
   }
 
   onCancelMergeAllContributions() {
@@ -804,10 +804,9 @@ export class DocumentEditorComponent
   }
 
   onAcceptMarkContributionAsProcessed() {
-    // call this.markContributionAsProcessed(this.contribution);
+    this.processed = !this.processed;
+    this.documentService.markContributionAsProcessed(this.contribution);
     this.markContributionAsProcessedDialog.closeDialog();
-    this.onChangeProcessedToggle(true);
-    this.isContributionDeclinedOrProcessed = true;
   }
 
   onCancelMarkContributionAsProcessed() {
