@@ -1079,6 +1079,8 @@ export class DocumentService implements OnDestroy {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          if (!acceptAllContributions)
+            this.updateProcessedStatus(false, mergeActions[0].contributionVO);
           this.setDocumentRefAndCategory(this.documentRef, this.documentType);
           this.getContributions();
         },
