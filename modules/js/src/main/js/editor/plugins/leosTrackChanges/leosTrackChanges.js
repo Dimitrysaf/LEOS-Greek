@@ -21,7 +21,7 @@ define(function leosTrackChangesModule(require) {
     var core = {
 
         // Track changes names and element types
-        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]",
+        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
         UID_ATTR: "data-akn-uid",
 
@@ -116,6 +116,20 @@ define(function leosTrackChangesModule(require) {
                 "title": user[0]
             };
             return tcAttributes;
+        },
+
+        removeTrackChangesAttributes: function(element) {
+            var tcAttributes = ["data-akn-action", "data-akn-uid", "title"];
+            for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
+        addTrackChangesAttributes: function(element, editor, action) {
+            var tcAttributes = this.getTrackChangeAttributes(editor, action);
+            for (var attrName in tcAttributes) {
+                element.setAttribute(attrName, tcAttributes[attrName]);
+            }
         },
 
         buildTrackChangeElement: function(editor, action, text, isHtml) {
@@ -383,20 +397,24 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element) {
-            editor.getSelection().fake(element.getParent());
             if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 element.remove();
-            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
+            } else if ((element.getName().toLowerCase() === core.TRACKCHANGES_ELEMENT) &&
+                (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
+            } else {
+                core.removeTrackChangesAttributes(element);
             }
         },
 
         rejectChange: function(editor, element) {
-            editor.getSelection().fake(element.getParent());
             if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 element.remove();
-            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
+            } else if ((element.getName().toLowerCase() === core.TRACKCHANGES_ELEMENT) &&
+                (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
+            } else {
+                core.removeTrackChangesAttributes(element);
             }
         }
 
