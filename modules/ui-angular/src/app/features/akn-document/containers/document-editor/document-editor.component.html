@@ -667,7 +667,7 @@
                 *ngIf="contributionForView"
                 (click)="handlePrevChangeContribution()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.next-change'
+                    'page.editor.contribution.view.actions.prev-change'
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
@@ -686,8 +686,8 @@
                 *ngIf="contributionForView"
                 (click)="handleNextChangeContribution()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.prev-change'
-                    | translate
+                'page.editor.contribution.view.actions.next-change'
+                | translate
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="isContributionDeclinedOrProcessed"
