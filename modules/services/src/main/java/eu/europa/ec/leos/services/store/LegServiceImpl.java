@@ -1306,8 +1306,9 @@ public class LegServiceImpl implements LegService {
         for (int i = 0; i < usersId.size(); i++) {
             String userId = usersId.get(i);
             String userIdColor[] = this.generateColors(String.join("", Collections.nCopies(5, userId)) + proposalRef);
-            trackChangesCss += "akomantoso inline[name='trackchanges'][leos\\:uid='" + userId + "'] { color: " + userIdColor[0] + "; }\n";
-            trackChangesCss += "akomantoso inline[name='trackchanges'][leos\\:uid='" + userId + "']:hover { background-color: " + userIdColor[1] + "; }\n";
+            trackChangesCss += "akomantoso [leos\\:uid='" + userId + "'] { color: " + userIdColor[0] + "; }\n";
+            trackChangesCss += "akomantoso [leos\\:uid='" + userId + "']:hover { background-color: " + userIdColor[1] + "; }\n";
+            trackChangesCss += "akomantoso tr[leos\\:uid='" + userId + "'] { background-color: " + userIdColor[1] + "; }\n";
         }
         trackChangesCss += "</style>";
         return trackChangesCss;
