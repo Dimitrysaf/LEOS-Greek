@@ -1,5 +1,9 @@
 package eu.europa.ec.leos.model.action;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import eu.europa.ec.leos.model.user.Collaborator;
 
 import java.time.Instant;
@@ -67,6 +71,7 @@ public class ContributionVO implements Comparable<ContributionVO> {
         return dateFormatter.format(updatedDate);
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm", timezone = "CET")
     public void setUpdatedDate(Instant updatedDate) {
         this.updatedDate = updatedDate;
     }
@@ -189,6 +194,12 @@ public class ContributionVO implements Comparable<ContributionVO> {
         private final int[] versions;
         public VersionNumber(String versionNumber) {
             versions = Stream.of(versionNumber.split("[.]")).mapToInt(Integer::parseInt).toArray();
+        }
+
+        @JsonCreator
+        public VersionNumber(@JsonProperty("major") int major,  @JsonProperty("intermediate") int intermediate,
+                @JsonProperty("minor") int minor) {
+            this(String.format("%d.%d.%d", major, intermediate, minor));
         }
 
         @Override public String toString() {

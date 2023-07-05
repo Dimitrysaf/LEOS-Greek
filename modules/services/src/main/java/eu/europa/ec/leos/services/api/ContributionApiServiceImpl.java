@@ -66,6 +66,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private SecurityContext securityContext;
     private ContributionService contributionService;
     private LeosRepository leosRepository;
+    private Provider<StructureContext> structureContextProvider;
     private Provider<StructureContext> structureContext;
     private AttachmentProcessor attachmentProcessor;
     private MergeContributionHelperService mergeContributionHelperService;
@@ -90,6 +91,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       SecurityContext securityContext,
                                       ContributionService contributionService,
                                       LeosRepository leosRepository,
+                                      Provider<StructureContext> structureContextProvider,
                                       Provider<StructureContext> structureContext,
                                       AttachmentProcessor attachmentProcessor,
                                       MergeContributionHelperService mergeContributionHelperService,
@@ -107,6 +109,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.securityContext = securityContext;
         this.contributionService = contributionService;
         this.leosRepository = leosRepository;
+        this.structureContextProvider = structureContextProvider;
         this.structureContext = structureContext;
         this.attachmentProcessor = attachmentProcessor;
         this.mergeContributionHelperService = mergeContributionHelperService;
@@ -223,10 +226,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
         this.populateCloneProposalMetadata(Validate.notNull(proposal));
 
-        LeosDocument document = this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
+        XmlDocument document = (XmlDocument)this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
         if(Objects.isNull(request.getMergeActions()) || request.getMergeActions().isEmpty()) {
             return document.getContent().get().getSource().getBytes();
         }
+        structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
         List<TocItem> tocItemList = this.structureContext.get().getTocItems();
         byte[] xmlClonedContent = request.getMergeActions().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
@@ -234,7 +238,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         xmlContent = this.numberService.renumberArticles(xmlContent, true);
         xmlContent = this.numberService.renumberRecitals(xmlContent);
         xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
-        document = this.leosRepository.updateDocument(
+        document = (XmlDocument) this.leosRepository.updateDocument(
                 document.getId(),
                 xmlContent,
                 document.getVersionType(),
