@@ -199,7 +199,7 @@ define(function leosTrackChangesTableModule(require) {
 
         rowDelete: function(editor) {
             var selection = editor.getSelection(),
-                cursorPosition = this.deleteRows(selection);
+                cursorPosition = this.deleteRows(editor, selection);
 
             if (cursorPosition) {
                 this.placeCursorInCell(cursorPosition);
