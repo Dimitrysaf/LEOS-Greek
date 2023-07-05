@@ -66,9 +66,13 @@ define(function mergeContributionExtensionModule(require) {
                     var elementParentName = UTILS.getElementTagName($element.parent());
                     var $parent = _getParentElement(elementParentName, $element);
                     if ($parent) {
-                        if(!connector.getState().isAngularUI || (connector.getState().isAngularUI && UTILS.getElementTagName($parent) !== 'docpurpose')){
-                            $parent.attr(PARENT_AFFECTED, true);
-                            _attachWrapperActionEvents(connector, $parent)
+                        if(!connector.getState().isAngularUI ||
+                            (connector.getState().isAngularUI && UTILS.getElementTagName($parent) !== 'docpurpose')){
+                            if( UTILS.getElementTagName($parent) !== 'attachments'){
+                                $parent.attr(PARENT_AFFECTED, true);
+                                _attachWrapperActionEvents(connector, $parent)
+                            }
+
                         }
                     }
                 }
