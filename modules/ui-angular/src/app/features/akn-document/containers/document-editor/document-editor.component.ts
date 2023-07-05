@@ -172,6 +172,7 @@ export class DocumentEditorComponent
   private destroy$: Subject<any> = new Subject();
   private scrollables: NodeListOf<Element>;
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
+  private annexDocNumber = -1;
 
   constructor(
     private domService: DomService,
@@ -203,6 +204,11 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
+        if (data.category === 'annex') {
+          this.documentService.setAnnexDocNumber(
+            this.router.getCurrentNavigation().extras.state.annexRow.docNumber,
+          );
+        }
       });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -326,7 +332,8 @@ export class DocumentEditorComponent
         this.processed = processed;
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
-          this.isContributionDeclinedOrProcessed = contribution.contributionStatus === 'CONTRIBUTION_DONE';
+          this.isContributionDeclinedOrProcessed =
+            contribution.contributionStatus === 'CONTRIBUTION_DONE';
         }
       });
 

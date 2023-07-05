@@ -117,6 +117,7 @@ export class DocumentService implements OnDestroy {
   contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
   contributionSelections$: Observable<number>;
   contributionViewAndMergeCollapsed$: Observable<boolean>;
+  annexDocNumber$: Observable<number>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -160,6 +161,7 @@ export class DocumentService implements OnDestroy {
   private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
     true,
   );
+  private annexDocNumberBS = new BehaviorSubject<number>(-1);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -173,13 +175,14 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
   ) {
+    this.annexDocNumber$ = this.annexDocNumberBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
       .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((res) => this.getContributions()),
+      tap((res) => res.category !== 'coverpage' && this.getContributions()),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
@@ -949,6 +952,10 @@ export class DocumentService implements OnDestroy {
     this.contributionViewAndMergeCollapsedBS.next(collapsed);
   }
 
+  setAnnexDocNumber(num: number) {
+    this.annexDocNumberBS.next(num);
+  }
+
   getUserPermissions() {
     return this.permissionsBS.value;
   }
@@ -957,9 +964,10 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const queryString =
-      documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
-
+    let queryString = '';
+    this.annexDocNumber$.subscribe((num) => {
+      queryString = '?annexIndex=' + num;
+    });
     return this.http
       .get<ContributionVO[]>(
         `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
