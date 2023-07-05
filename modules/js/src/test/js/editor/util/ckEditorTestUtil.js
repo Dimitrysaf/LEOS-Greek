@@ -37,8 +37,8 @@ define(function ckEditorTestUtil(require) {
             editor.on('instanceReady', (evt) => resolve(editor));
         });
         
-        var editor = await promise;
-        // console.log(editor);
+        var editor = await promise;        
+        _printElementEditor(editor, "After Editor Init:");
         return editor;
     }
 
@@ -76,29 +76,36 @@ define(function ckEditorTestUtil(require) {
         return event;
     }
 
-    function _createPlaceHolder(div) {
-        var placeholder = document.getElementById("leos-placeholder")
-        placeholder.innerHTML = div;
-        return placeholder;
-    }
-
     function _split_at_index(value, index) {
         return [value.substring(0, index), value.substring(index)];
     }
 
-    function _movePosition(editor, index) {
-        var selection = editor.getSelection();
-        var range = selection.getRanges()[0];
-        var element = selection.getStartElement();
+    function _splitAtIndex(element, index) {
         var splits = _split_at_index(element.getText(), index);
         var firstNode = new CKEDITOR.dom.text(splits[0]);
         var secondNode = new CKEDITOR.dom.text(splits[1]);
-        element.getChildren().getItem(0).remove();
+        if(element.getChildCount() > 0) {
+            element.getChildren().toArray().forEach(node => node.remove());
+        }        
         firstNode.appendTo(element);
         secondNode.appendTo(element);
-        range.moveToPosition(secondNode, CKEDITOR.POSITION_AFTER_START);
+    }
+
+    function _selectElement(editor, element) {
+        var range = editor.createRange();
+        range.selectNodeContents(element);    
+        range.moveToPosition(element, CKEDITOR.POSITION_AFTER_START);
+        
+        editor.getSelection().removeAllRanges();
         range.select();
-        console.info("After moving the cursor to position ", index, ", editor.element: ")
+    }
+
+    function _movePosition(editor, element, index) {
+        _splitAtIndex(element, index);
+
+        _selectElement(editor, element.getChildren().getItem(1));
+        
+        console.info("After moving the cursor to position ", index);
         _printElementEditor(editor);
     }
 
@@ -106,11 +113,24 @@ define(function ckEditorTestUtil(require) {
         if(msgToPrint && msgToPrint!=="") {
             console.info(msgToPrint)
         }
-        var childNodes = editor.element.getChildren().getItem(0).getChildren();
-        console.log(childNodes.toArray().map(child => child.getText()));
-        if(printHtml) {
-            console.log( editor.element.getOuterHtml());
+       
+        var result = {};
+        _printText(editor.element, result);
+        console.log(JSON.stringify(result, null, 2));
+    }
+
+    function _printText(element, result) {
+        if(element.type === CKEDITOR.NODE_TEXT) {
+            result['name'] = 'text';
+            result['value'] = element.getText();
+            return result;
         }
+        result['name'] = element.getName();
+        result['children'] = [];
+        if(element.getChildCount() > 0) {
+            element.getChildren().toArray().forEach(child => result['children'].push(_printText(child, {})));
+        }
+        return result;
     }
 
     function _printOffsetsWithinSelection(editor) {
@@ -123,7 +143,7 @@ define(function ckEditorTestUtil(require) {
         initializeEditor: _initializeEditor,
         destroyEditor: _destroyEditor,
         fireKeyEvent: _fireKeyEvent,
-        createPlaceHolder: _createPlaceHolder,
+        selectElement:_selectElement,
         movePosition: _movePosition,
         printElementEditor: _printElementEditor,
         printOffsetsWithinSelection: _printOffsetsWithinSelection

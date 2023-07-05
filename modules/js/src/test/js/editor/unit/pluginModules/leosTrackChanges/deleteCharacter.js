@@ -23,16 +23,14 @@ define(function deleteCharacter(require) {
         backspace: 8
     };
 
-    var div = '<article>hello world</article>'
-    var placeholder = testUtil.createPlaceHolder(div);
+    var placeholder = document.getElementById("leos-placeholder");
 
-    describe("Unit tests for TrackChanges/deleteMultipleCharacter", function() {
+    describe("Unit tests for TrackChanges/deleteCharacter", function() {
         var editor;
 
         beforeAll(async function() {
             console.info("Before All - deleteCharacter");
             editor = await testUtil.initializeEditor(pluginToTest.name, placeholder)
-            testUtil.printElementEditor(editor);
         });
 
         beforeEach(function(done) {
@@ -44,14 +42,18 @@ define(function deleteCharacter(require) {
         });
 
         it("when deleting single character (should create 3 nodes, where the 2nd is the trackChange element)", function (done) {
-            var div = '<article>hello world</article>'
-            placeholder = testUtil.createPlaceHolder(div);
+            //var div = '<article>hello world</article>'
+            //placeholder = testUtil.createPlaceHolder(div);
             // editor.setData(placeholder)
 
+            var article = '<article>hello world</article>';
+            editor.setData(article);
             editor.setReadOnly(false);
-            editor.focus();
+            testUtil.selectElement(editor, editor.element.findOne("p"));
+            testUtil.printElementEditor(editor, "After SetData:");
 
-            testUtil.movePosition(editor, 3);
+
+            testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
             testUtil.fireKeyEvent(editor, KEYS.delete);
             testUtil.printElementEditor(editor, "After TrackChanges logic, editor.element:");
 

@@ -3,14 +3,6 @@
     "jsSrcDir": "/src/main/js",
     "jsTestSrcDir": "/src/test/js",
     "specDir": "/src/test/js/editor/unit/pluginModules/leosTrackChanges",
-    "excludes": ["leosTrackChangesUtil.js",
-        "testLeosTrackChangesPlugin.js",
-        "testLeosTrackChangesPlugin_deleteCharacter.js",
-        "testLeosTrackChangesPlugin_TC.js",
-        "testLeosTrackChangesPlugin_TC2.js",
-        "testLeosTrackChangesPlugin_trackChanges_deleteCharacter.js",
-        "backspace.js",
-        "backspaceCharacter.js",
-        "deleteMultipleCharacter.js"
-    ]
+    "specNames": ["deleteMultipleCharacter.js", "deleteCharacter.js"],
+    "excludes": []
 }

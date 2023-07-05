@@ -24,62 +24,65 @@ define(function deleteMultipleCharacter(require) {
         backspace: 8
     };
 
-    var div = '<article>hello world</article>'
-    var placeholder = createPlaceHolder(div);
+    var placeholder = document.getElementById("leos-placeholder");
         
     describe("Unit tests for TrackChanges/deleteMultipleCharacter", function() {
         var editor;
 
-        beforeAll(function(done) {
-            console.info("Beafore All");
-            testUtil.initializeEditor(pluginToTest.name, placeholder).then((val) =>{
-                editor = val;
-                print(editor);
-                done();
-            });
+        beforeAll(async function() {
+            console.info("Before All - deleteMultipleCharacter");
+            editor = await testUtil.initializeEditor(pluginToTest.name, placeholder);
         });
 
-        it("when deleting first character (should create 3 nodes, where the 2nd is the trackChange element)", function(done) {
+        it("when deleting first character (should create trackChange element)", function(done) {
             console.log("First Case");
+            var article = '<article>First Test</article>';
+            editor.setData(article);
             editor.setReadOnly(false);
-            editor.focus();
+            testUtil.selectElement(editor, editor.element.findOne("p"));
+            testUtil.printElementEditor(editor, "After SetData:");
 
-            movePosition(editor, 3);
+            testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
             testUtil.fireKeyEvent(editor, KEYS.delete);
-            print(editor);
+            testUtil.printElementEditor(editor, "After First Delete:");
 
-            var pEle = editor.element.getChildren().getItem(0);
+            var pEle = editor.element.findOne("p");
             expect(pEle.getChildCount()).toEqual(3);
             var trackChangeEle = pEle.getChildren().getItem(1);
             expect(trackChangeEle.$.nodeType).toEqual(1);
-            expect(trackChangeEle.getText()).toEqual('l');
+            expect(trackChangeEle.getText()).toEqual('s');
 
             done();
         });
         
         it("when deleting second character (should update the trackChange element)", function(done) {
             console.log("Second Case");
-            editor.focus();
-            print(editor);
+            var article = '<article>Second Test</article>';
+            editor.setData(article);
+            editor.setReadOnly(false);
+            testUtil.selectElement(editor, editor.element.findOne("p"));
+            testUtil.printElementEditor(editor, "After SetData:");
 
-            var nodeToSelect = editor.element.getChildren().getItem(0).getChildren().getItem(2);
-            var range = editor.getSelection().getRanges()[0];
-            range.moveToPosition(nodeToSelect, CKEDITOR.POSITION_AFTER_START);
-            range.select();
-
+            testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
             testUtil.fireKeyEvent(editor, KEYS.delete);
-            print(editor);
+            testUtil.printElementEditor(editor, "After First Delete:");
 
-            var pEle = editor.element.getChildren().getItem(0);
+            var pEle = editor.element.findOne("p");
             expect(pEle.getChildCount()).toEqual(3);
             var trackChangeEle = pEle.getChildren().getItem(1);
-            expect(trackChangeEle.getText()).toEqual('lo');
+            expect(trackChangeEle.type).toEqual(CKEDITOR.NODE_ELEMENT);
+            expect(trackChangeEle.getName()).toEqual("span");
+            expect(trackChangeEle.getText()).toEqual('o');
+
+            testUtil.fireKeyEvent(editor, KEYS.delete);
+            testUtil.printElementEditor(editor, "After Second Delete:");
+
             done();
         });
 
         afterAll(function() {
             testUtil.destroyEditor(editor, placeholder);
-            console.log("After All");
+            console.log("After All - deleteMultipleCharacter");
         });
     });
 
