@@ -1069,7 +1069,7 @@ export class DocumentService implements OnDestroy {
       .post(
         `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
         {
-          ...mergeActions,
+          mergeActions,
           acceptAllContributions,
         },
         { responseType: 'text' as 'json' },
