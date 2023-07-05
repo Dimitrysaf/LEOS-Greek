@@ -21,11 +21,9 @@ define(function leosTrackChangesModule(require) {
     var core = {
 
         // Track changes names and element types
-        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-name='trackchanges']",
+        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]",
         ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        STATUS_ATTR: "data-akn-status", NEW_STATUS: "new",
         UID_ATTR: "data-akn-uid",
-        NAME_ATTR: "data-akn-name", NAME_VALUE: "trackchanges",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -113,8 +111,6 @@ define(function leosTrackChangesModule(require) {
         getTrackChangeAttributes: function(editor, action) {
             var user = this.getUserAndId(editor);
             var tcAttributes = {
-                "data-akn-name" : "trackchanges",
-                "data-akn-status" : this.NEW_STATUS,
                 "data-akn-action": action,
                 "data-akn-uid": user[1],
                 "title": user[0]
@@ -239,8 +235,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         updateTrackChangesStyles: function(currentUserId, proposalRef, isTrackChangesShowed) {
-            var editorTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed,
-                "akomantoso div.cke_editable " + this.TRACKCHANGES_ELEMENT_SELECTOR, this.UID_ATTR, this.ACTION_ATTR);
+            var editorTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, this.UID_ATTR, this.ACTION_ATTR);
             $("head #editorTcStyle").remove();
             $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
         },
@@ -295,7 +290,7 @@ define(function leosTrackChangesModule(require) {
                 tcElement[0].remove();
                 tcElement = null;
             }
-            if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && (tcElement[0].getAttribute(core.STATUS_ATTR) === core.NEW_STATUS)) {
+            if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && !tcElement[0].getId()) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {

@@ -44,7 +44,7 @@ public class XPathCatalog {
     }
 
     public String getXPathTrackChanges() {
-        return "//akn:inline[@name=\"trackchanges\"]";
+        return "//akn:*[@leos:uid]";
     }
 
     public String getXPathAttachments() {

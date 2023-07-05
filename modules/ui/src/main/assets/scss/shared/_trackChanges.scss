@@ -16,7 +16,7 @@
 //------------------------------- XML Styles --------------------------------//
 %xmlTrackChanges {
 
-  inline[name="trackchanges"]::before {
+  [leos\:action]::before {
     content: attr(leos\:title);
     display: none;
     position: absolute;
@@ -37,27 +37,27 @@
     -o-transition: opacity 250ms ease-in-out;
     transition: opacity 250ms ease-in-out;
   }
-  inline[name="trackchanges"]:hover::before {
+
+  [leos\:action]:hover::before {
     display: inline;
   }
 
-  inline[name="trackchanges"] {
-    &[leos\:action="insert"] {
-      text-decoration: underline;
-      &[leos\:uid="anonymous"] {
-        color: #008000;
-        &:hover {
-          background-color: hsl(120, 100%, 35%);
-        }
+  [leos\:action="insert"] {
+    text-decoration: underline;
+    &[leos\:uid="anonymous"] {
+      color: #008000;
+      &:hover {
+        background-color: hsl(120, 100%, 35%);
       }
     }
-    &[leos\:action="delete"] {
-      text-decoration: line-through;
-      &[leos\:uid="anonymous"] {
-        color: #FF0000;
-        &:hover {
-          background-color: hsl(0, 100%, 90%);
-        }
+  }
+
+  [leos\:action="delete"] {
+    text-decoration: line-through;
+    &[leos\:uid="anonymous"] {
+      color: #FF0000;
+      &:hover {
+        background-color: hsl(0, 100%, 90%);
       }
     }
   }
@@ -67,13 +67,12 @@
 //------------------------------- Editor Styles -----------------------------//
 %editorTrackChanges {
 
-  span[data-akn-name="trackchanges"] {
-    &[data-akn-action="insert"] {
-      text-decoration: underline;
-    }
-    &[data-akn-action="delete"] {
-      text-decoration: line-through;
-    }
+  [data-akn-action="insert"] {
+    text-decoration: underline;
+  }
+
+  [data-akn-action="delete"] {
+    text-decoration: line-through;
   }
 
 }

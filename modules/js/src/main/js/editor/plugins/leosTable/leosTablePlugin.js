@@ -189,6 +189,15 @@ define(function leosTablePluginModule(require) {
                 }, {
                     akn : "leos:editable",
                     html : "contenteditable",
+                }, {
+                    akn: "leos:action",
+                    html : "data-akn-action"
+                }, {
+                    akn : "leos:uid",
+                    html : "data-akn-uid"
+                }, {
+                    akn : "leos:title",
+                    html : "title"
                 }],
                 sub: {
                     akn : {

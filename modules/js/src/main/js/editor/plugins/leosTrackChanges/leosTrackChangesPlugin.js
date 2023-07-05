@@ -18,8 +18,8 @@ define(function leosTrackChangesPluginModule(require) {
     // load module dependencies
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
-    var trackChanges = require("./leosTrackChanges");
-    var trackChangesStyle = require("./leosTrackChangesStyle");
+    var trackChanges = require("./leosTrackChanges"), trackChangesStyle = require("./leosTrackChangesStyle"),
+        trackChangesTable = require("./leosTrackChangesTable");
     var UTILS = require("core/leosUtils");
 
     var pluginName = "leosTrackChanges";
@@ -31,7 +31,7 @@ define(function leosTrackChangesPluginModule(require) {
                 return;
             }
 
-            var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style;
+            var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
 
@@ -302,6 +302,11 @@ define(function leosTrackChangesPluginModule(require) {
                         case "inlinesaveclose":
                             editor.setData(editor.getData().replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\""));
                             break;
+                        case "rowDelete":
+                            table.rowDelete(editor);
+                            editor.fire("change");
+                            return false;
+                        case "rowDelete":
                     }
                 }
             });
@@ -374,14 +379,11 @@ define(function leosTrackChangesPluginModule(require) {
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     var transformationConfig = {
-        akn : "inline[name=trackchanges]",
-        html : "span[data-akn-name=trackchanges]",
+        akn : "inline[leos:action]",
+        html : "span[data-akn-action]",
         attr : [{
             akn : "xml:id",
             html : "id"
-        }, {
-            akn: "name",
-            html : "data-akn-name"
         }, {
             akn: "leos:action",
             html : "data-akn-action"
