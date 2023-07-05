@@ -3,6 +3,6 @@
     "jsSrcDir": "/src/main/js",
     "jsTestSrcDir": "/src/test/js",
     "specDir": "/src/test/js/editor/unit/pluginModules/leosTrackChanges",
-    "specNames": ["deleteMultipleCharacter.js", "deleteCharacter.js"],
+    "specNames": ["deleteCharacter.js", "acceptChange.js"],
     "excludes": []
 }

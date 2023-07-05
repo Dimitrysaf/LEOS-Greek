@@ -25,33 +25,21 @@ define(function deleteCharacter(require) {
 
     var placeholder = document.getElementById("leos-placeholder");
 
-    describe("Unit tests for TrackChanges/deleteCharacter", function() {
+    describe("Unit tests for TrackChanges/deleteCharacter -  Legend: 'text' => normal test; (text) => text wrapped with TrackChanges SPAN", function() {
         var editor;
 
         beforeAll(async function() {
-            console.info("Before All - deleteCharacter");
+            console.info("=> DESCRIBE - START - deleteCharacter");
             editor = await testUtil.initializeEditor(pluginToTest.name, placeholder)
         });
 
-        beforeEach(function(done) {
-            console.info("Before EACH - deleteCharacter");
-            // var div = '<article>hello world</article>'
-            // testUtil.createPlaceHolder(div);
-            // editor.setData("")
-            done();
-        });
-
-        it("when deleting single character (should create 3 nodes, where the 2nd is the trackChange element)", function (done) {
-            //var div = '<article>hello world</article>'
-            //placeholder = testUtil.createPlaceHolder(div);
-            // editor.setData(placeholder)
-
-            var article = '<article>hello world</article>';
+        it("when deleting character in 3rd position, 's' in 'First Test', should create TC structure: [ 'Fir' (s) 't Test' ]", function (done) {
+            console.log("************** deleteCharacter / deleting single characters **************");
+            var article = '<article>First Test</article>';
             editor.setData(article);
             editor.setReadOnly(false);
-            testUtil.selectElement(editor, editor.element.findOne("p"));
-            testUtil.printElementEditor(editor, "After SetData:");
-
+            testUtil.selectElement(editor, editor.element.findOne("p")); //article
+            testUtil.printElementEditor(editor, "After Resetting Editor:");
 
             testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
             testUtil.fireKeyEvent(editor, KEYS.delete);
@@ -61,59 +49,155 @@ define(function deleteCharacter(require) {
             var beforeElement = editorElement.getChildren().getItem(0);
             var trackChangeElement = editorElement.getChildren().getItem(1);
             var afterElement = editorElement.getChildren().getItem(2);
-            // console.log("After TrackChanges logic, editor.element html:", editorElement.getOuterHtml());
+            console.log("After TrackChanges logic, editor.element html:", editorElement.getOuterHtml());
             // console.log("After TrackChanges logic, trackChangeElement html:", trackChangeElement.getOuterHtml());
 
             expect(editorElement.getChildCount()).toEqual(3);
-            expect(beforeElement.getText()).toEqual('hel');
+            expect(beforeElement.getText()).toEqual('Fir');
             expect(trackChangeElement.getName()).toEqual('span');
-            expect(trackChangeElement.getText()).toEqual('l');
+            expect(trackChangeElement.getText()).toEqual('s');
             expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
             expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
-            expect(afterElement.getText()).toEqual('o world');
-
-            console.info("END - deleting single character")
+            expect(afterElement.getText()).toEqual('t Test');
             done();
         })
 
-        // it("when backspacing single character (should create 3 nodes, where the 2nd is the trackChange element)", function (done) {
-        //     var div = '<article>hello world</article>'
-        //     placeholder = testUtil.createPlaceHolder(div);
-        //     // editor.setData(placeholder)
-        //     testUtil.printElementEditor(editor, "Initilaizing: ", true);
-        //
-        //     editor.setReadOnly(false);
-        //     editor.focus();
-        //
-        //     testUtil.movePosition(editor, 3);
-        //     testUtil.fireKeyEvent(editor, KEYS.backspace);
-        //     testUtil.printElementEditor(editor, "After TrackChanges logic, editor.element:");
-        //
-        //     var editorElement = editor.element.getChildren().getItem(0);
-        //     var beforeElement = editorElement.getChildren().getItem(0);
-        //     var trackChangeElement = editorElement.getChildren().getItem(1);
-        //     var afterElement = editorElement.getChildren().getItem(2);
-        //     // console.log("After TrackChanges logic, editor.element html:", editorElement.getOuterHtml());
-        //     // console.log("After TrackChanges logic, trackChangeElement html:", trackChangeElement.getOuterHtml());
-        //
-        //     expect(editorElement.getChildCount()).toEqual(3);
-        //     expect(beforeElement.getText()).toEqual('he');
-        //     expect(trackChangeElement.getName()).toEqual('span');
-        //     expect(trackChangeElement.getText()).toEqual('l');
-        //     expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-        //     expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
-        //     expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
-        //     expect(trackChangeElement.getAttribute("title")).toContain("testuser");
-        //     expect(afterElement.getText()).toEqual('lo world');
-        //     console.info("END - backspace single character")
-        //     done();
-        // })
+        it("when backspacing character in 3rd position, 'r' in 'First Test', should create TC structure: [ 'Fi' (r) 'st Test' ]", function (done) {
+            console.log("************** deleteCharacter / backspace single characters **************");
+            var article = '<article>First Test</article>';
+            editor.setData(article);
+            editor.setReadOnly(false);
+            testUtil.selectElement(editor, editor.element.findOne("p")); //article
+            testUtil.printElementEditor(editor, "After Resetting Editor:");
+
+            testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
+            testUtil.fireKeyEvent(editor, KEYS.backspace);
+            testUtil.printElementEditor(editor, "After TrackChanges logic, editor.element:");
+
+            var editorElement = editor.element.getChildren().getItem(0);
+            var beforeElement = editorElement.getChildren().getItem(0);
+            var trackChangeElement = editorElement.getChildren().getItem(1);
+            var afterElement = editorElement.getChildren().getItem(2);
+            console.log("After TrackChanges logic, editor.element html:", editorElement.getOuterHtml());
+            // console.log("After TrackChanges logic, trackChangeElement html:", trackChangeElement.getOuterHtml());
+
+            expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('Fi');
+            expect(trackChangeElement.getName()).toEqual('span');
+            expect(trackChangeElement.getText()).toEqual('r');
+            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
+            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
+            expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
+            expect(trackChangeElement.getAttribute("title")).toContain("testuser");
+            expect(afterElement.getText()).toEqual('st Test');
+            done();
+        })
+
+        it("when deleting 2 chars starting from 3rd position, 'st' in 'First Test', should create TC structure: [ 'Fir' (st) ' Test' ]", function(done) {
+            console.log("************** deleteMultipleCharacter / delete multiple characters **************");
+            var article = '<article>First Test</article>';
+            editor.setData(article);
+            editor.setReadOnly(false);
+            testUtil.selectElement(editor, editor.element.findOne("p"));
+            testUtil.printElementEditor(editor, "After Resetting Editor:");
+
+            testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
+            testUtil.fireKeyEvent(editor, KEYS.delete);
+            testUtil.printElementEditor(editor, "After TrackChanges logic (first delete), editor.element:");
+
+            var editorElement = editor.element.getChildren().getItem(0);
+            var beforeElement = editorElement.getChildren().getItem(0);
+            var trackChangeElement = editorElement.getChildren().getItem(1);
+            var afterElement = editorElement.getChildren().getItem(2);
+            console.log("After TrackChanges logic (first delete), editor.element html:", editorElement.getOuterHtml());
+            expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('Fir');
+            expect(trackChangeElement.getName()).toEqual('span');
+            expect(trackChangeElement.getText()).toEqual('s');
+            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
+            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
+            expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
+            expect(trackChangeElement.getAttribute("title")).toContain("testuser");
+            expect(afterElement.getText()).toEqual('t Test');
+
+            //delete another character
+            testUtil.fireKeyEvent(editor, KEYS.delete);
+            testUtil.printElementEditor(editor, "After TrackChanges logic (second delete), editor.element:");
+
+            editorElement = editor.element.getChildren().getItem(0);
+            beforeElement = editorElement.getChildren().getItem(0);
+            trackChangeElement = editorElement.getChildren().getItem(1);
+            afterElement = editorElement.getChildren().getItem(2);
+            console.log("After TrackChanges logic (second delete), editor.element html:", editorElement.getOuterHtml());
+            expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('Fir');
+            expect(trackChangeElement.getName()).toEqual('span');
+            expect(trackChangeElement.getText()).toEqual('st');
+            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
+            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
+            expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
+            expect(trackChangeElement.getAttribute("title")).toContain("testuser");
+            expect(afterElement.getText()).toEqual(' Test');
+
+            done();
+        });
+
+        it("when backspacing 2 chars starting from 3rd position, 'ir' in 'First Test', should create TC structure: [ 'F' (ir) 'st Test' ]", function(done) {
+            console.log("************** deleteMultipleCharacter / backspace multiple characters **************");
+            var article = '<article>First Test</article>';
+            editor.setData(article);
+            editor.setReadOnly(false);
+            testUtil.selectElement(editor, editor.element.findOne("p")); //article
+            testUtil.printElementEditor(editor, "After Resetting Editor:");
+
+            testUtil.movePosition(editor, editor.getSelection().getStartElement(), 3);
+            testUtil.fireKeyEvent(editor, KEYS.backspace);
+            testUtil.printElementEditor(editor, "After TrackChanges logic (first backspace), editor.element:");
+
+            var editorElement = editor.element.getChildren().getItem(0);
+            var beforeElement = editorElement.getChildren().getItem(0);
+            var trackChangeElement = editorElement.getChildren().getItem(1);
+            var afterElement = editorElement.getChildren().getItem(2);
+            console.log("After TrackChanges logic (first backspace), editor.element html:", editorElement.getOuterHtml());
+            // console.log("After TrackChanges logic, trackChangeElement html:", trackChangeElement.getOuterHtml());
+
+            expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('Fi');
+            expect(trackChangeElement.getName()).toEqual('span');
+            expect(trackChangeElement.getText()).toEqual('r');
+            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
+            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
+            expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
+            expect(trackChangeElement.getAttribute("title")).toContain("testuser");
+            expect(afterElement.getText()).toEqual('st Test');
+
+            //backspace another character
+            testUtil.fireKeyEvent(editor, KEYS.backspace);
+            testUtil.printElementEditor(editor, "After TrackChanges logic (second backspace), editor.element:");
+
+            editorElement = editor.element.getChildren().getItem(0);
+            beforeElement = editorElement.getChildren().getItem(0);
+            trackChangeElement = editorElement.getChildren().getItem(1);
+            afterElement = editorElement.getChildren().getItem(2);
+            console.log("After TrackChanges logic (second backspace), editor.element html:", editorElement.getOuterHtml());
+            expect(editorElement.getChildCount()).toEqual(3);
+            expect(beforeElement.getText()).toEqual('F');
+            expect(trackChangeElement.getName()).toEqual('span');
+            expect(trackChangeElement.getText()).toEqual('ir');
+            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
+            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
+            expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
+            expect(trackChangeElement.getAttribute("title")).toContain("testuser");
+            expect(afterElement.getText()).toEqual('st Test');
+
+            done();
+        });
 
         afterAll(function() {
             testUtil.destroyEditor(editor, placeholder);
-            console.log("After All - deleteCharacter");
+            console.info("=> DESCRIBE - END - deleteCharacter");
         });
     })
 });
