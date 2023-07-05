@@ -326,6 +326,7 @@ export class DocumentEditorComponent
         this.processed = processed;
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
+          this.isContributionDeclinedOrProcessed = contribution.contributionStatus === 'CONTRIBUTION_DONE';
         }
       });
 
