@@ -71,7 +71,7 @@ eui-icon-svg > svg > use {
   padding: var(--eui-base-spacing-2xs) var(--eui-base-spacing-s);
 }
 
-.eui-growl-item-message-detail {
+.eui-growl-item-message-title, .eui-growl-item-message-detail {
   font-size: var(--eui-base-font-size-xs);
 }
 

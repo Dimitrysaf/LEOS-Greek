@@ -1278,9 +1278,9 @@ export class DocumentService implements OnDestroy {
   private notifyExportEmailSent() {
     this.appConfig.config.subscribe((c) => {
       const userEmail = c.user.email;
-      // const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
+      const fileType = 'Pdf';
       this.translate
-        .get('page.editor.export-version-email-sent', { userEmail })
+        .get('page.editor.export-version-email-sent', { fileType, userEmail })
         .subscribe((message) => {
           this.appShell.growl({
             severity: 'info',

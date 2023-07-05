@@ -254,7 +254,7 @@
   "page.editor.close-compare-view-button.tooltip": "Close compare view",
   "page.editor.create-note-button.tooltip": "New Document Note",
   "page.editor.export-email-sent": "You will receive an email shortly with {{fileType}} file(s) at {{userEmail}}",
-  "page.editor.export-version-email-sent": "You will receive an email shortly with file(s) at {{userEmail}}",
+  "page.editor.export-version-email-sent": "You will receive an email shortly with {{fileType}} file at {{userEmail}}",
   "page.editor.export-econsilium-success": "The file has been exported. You can find it in the <em>Proposal Viewer</em> page, under the <em>Exports</em> tab.",
   "page.editor.export-econsilium-error": "Export to eConsilium failed. Please try again later.",
   "page.editor.highlights-button.tooltip-enable": "Show Highlights",
