@@ -1098,7 +1098,7 @@ export class DocumentService implements OnDestroy {
           });
           if (!acceptAllContributions)
             this.updateProcessedStatus(false, mergeActions[0].contributionVO);
-          this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+          this.reloadDocument();
           this.getContributions();
         },
         error: (res) => {
