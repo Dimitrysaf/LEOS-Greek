@@ -306,7 +306,6 @@ define(function leosTrackChangesPluginModule(require) {
                             table.rowDelete(editor);
                             editor.fire("change");
                             return false;
-                        case "rowDelete":
                     }
                 }
             });
