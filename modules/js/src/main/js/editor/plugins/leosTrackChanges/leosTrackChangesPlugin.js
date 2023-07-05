@@ -34,6 +34,7 @@ define(function leosTrackChangesPluginModule(require) {
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
+            var selectedElement;
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -55,40 +56,52 @@ define(function leosTrackChangesPluginModule(require) {
             // Add context menu accept and reject options
             if (editor.contextMenu) {
                 editor.addMenuGroup("trackChangesGroup");
-                editor.addMenuItem( "acceptOneChangeItem", {
+                editor.addMenuItem("acceptOneChangeItem", {
                     label: "Accept this change",
                     icon: this.path + "icons/ok.png",
                     command: "acceptOneChange",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem( "rejectOneChangeItem", {
+                editor.addMenuItem("rejectOneChangeItem", {
                     label: "Reject this change",
                     icon: this.path + "icons/remove.png",
                     command: "rejectOneChange",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem( "acceptSelectedChangesItem", {
+                editor.addMenuItem("acceptSelectedChangesItem", {
                     label: "Accept selected changes",
                     icon: this.path + "icons/ok.png",
                     command: "acceptSelectedChanges",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem( "rejectSelectedChangesItem", {
+                editor.addMenuItem("rejectSelectedChangesItem", {
                     label: "Reject selected changes",
                     icon: this.path + "icons/remove.png",
                     command: "rejectSelectedChanges",
                     group: "trackChangesGroup"
                 });
+                editor.addMenuItem("acceptRowChangeItem", {
+                    label: "Accept this row change",
+                    icon: this.path + "icons/ok.png",
+                    command: "acceptOneChange",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem( "rejectRowChangeItem", {
+                    label: "Reject this row change",
+                    icon: this.path + "icons/remove.png",
+                    command: "rejectOneChange",
+                    group: "trackChangesGroup"
+                });
                 editor.addCommand("acceptOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.acceptChange(editor, editor.getSelection().getStartElement());
+                        actions.acceptChange(editor, selectedElement);
                     }
                 });
                 editor.addCommand("rejectOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.rejectChange(editor, editor.getSelection().getStartElement());
+                        actions.rejectChange(editor, selectedElement);
                     }
                 });
                 editor.addCommand("acceptSelectedChanges", {
@@ -109,19 +122,30 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 });
-                editor.contextMenu.addListener( function(element) {
-                    if (editor.getSelection().isCollapsed()) {
-                        var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                editor.contextMenu.addListener(function(element) {
+                    var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
+                    if (tcElement) { // Is a track change deleted row
+                        selectedElement = new CKEDITOR.dom.element(tcElement);
+                        return {
+                            acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                            rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                        };
+                    } else if (editor.getSelection().isCollapsed()) {
+                        tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                         if (tcElement) {
-                            editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
-                            return { acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                            selectedElement = new CKEDITOR.dom.element(tcElement);
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
                         }
                     } else {
-                        var tcElements = core.findElementsInSelection(editor.getSelection());
+                        var tcElements = core.findElementsInSelection(selection);
                         if (tcElements.length > 0) {
-                            return { acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                            return {
+                                acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
                         }
                     }
                 });

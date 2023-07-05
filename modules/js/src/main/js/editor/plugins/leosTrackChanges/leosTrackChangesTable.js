@@ -187,10 +187,7 @@ define(function leosTrackChangesTableModule(require) {
                         selectionOrRow.remove();
                     }
                 } else {
-                    var tcAttributes = core.getTrackChangeAttributes(editor, core.DELETE_ACTION);
-                    for (var attrName in tcAttributes) {
-                        selectionOrRow.setAttribute(attrName, tcAttributes[attrName]);
-                    }
+                    core.addTrackChangesAttributes(selectionOrRow, editor, core.DELETE_ACTION);
                 }
             }
 
