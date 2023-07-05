@@ -286,6 +286,7 @@
   "page.editor.versions.restore.modal-text": "Are you sure you want to revert to this version? [FR]",
   "page.editor.last-element-delete-confirmation.title": "[FR] Last element detected",
   "page.editor.last-element-delete-confirmation.message": "[FR] Warning, You are about to delete the last editing zone of this area. If you need to have this type of element back, you will have to add it using the Table of Content Edition. Are you sure you want to delete this last element?",
+  "page.editor.navigation-pane.label": "[FR] Navigation Pane",
   "page.editor.toc-pane.label": "Table des Matières",
   "page.editor.versions-pane.label": "Versions",
   "page.editor.contribution-pane.label": "[FR] Contributions",

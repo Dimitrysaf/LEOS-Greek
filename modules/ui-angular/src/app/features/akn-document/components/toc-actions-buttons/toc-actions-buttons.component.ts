@@ -3,24 +3,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  HostListener,
   Inject,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-const MIN_WIDTH_FOR_ACTIONS_ROW = 235;
 @Component({
   selector: 'app-toc-actions-buttons',
   templateUrl: './toc-actions-buttons.component.html',
   styleUrls: ['./toc-actions-buttons.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TocActionsButtonsComponent implements OnInit, OnChanges {
+export class TocActionsButtonsComponent implements OnInit {
   @Input() isEditMode: boolean;
   @Input() isUndoDisabled: boolean;
   @Input() isSaveDisabled: boolean;
@@ -34,23 +30,10 @@ export class TocActionsButtonsComponent implements OnInit, OnChanges {
   @Output() handleCancel = new EventEmitter<void>();
   @Output() handleExpandAll = new EventEmitter<void>();
 
-  isOverflowing = false;
-
   constructor(
     private translateService: TranslateService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    //check for overflow on column state change
-    if (
-      'isEditMode' in changes ||
-      'isAnnotationsPaneCollapsed' in changes ||
-      'isVersionsPaneCollapsed' in changes
-    ) {
-      this.checkOverflow();
-    }
-  }
 
   ngOnInit(): void {}
 
@@ -83,26 +66,5 @@ export class TocActionsButtonsComponent implements OnInit, OnChanges {
     return this.translateService.instant(
       'page.editor.toc.toc-pane.actions.expandAll',
     );
-  }
-
-  checkOverflow() {
-    // get parent and the title element and calculate the availableWidth
-    const parent = this.document.querySelector('.eui-page-column__header');
-    const title = this.document.querySelector(
-      '.eui-page-column__header-left-content-label',
-    );
-    if (parent && title) {
-      const availableWidth = parent.clientWidth - title.clientWidth;
-      if (availableWidth > MIN_WIDTH_FOR_ACTIONS_ROW) {
-        this.isOverflowing = false;
-      } else {
-        this.isOverflowing = true;
-      }
-    } else this.isOverflowing = false;
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.checkOverflow();
   }
 }

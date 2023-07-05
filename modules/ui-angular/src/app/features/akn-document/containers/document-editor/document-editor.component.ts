@@ -91,6 +91,7 @@ export class DocumentEditorComponent
 
   isVersionForViewOpen = false;
   isTocPaneCollapsed = true;
+  isNavigationPaneExpanded = true;
   isAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
   isContributionForViewOpen = false;
@@ -737,8 +738,21 @@ export class DocumentEditorComponent
     }
   }
 
+  onNavigationPaneExpanded(e: any) {
+    this.isNavigationPaneExpanded = !this.isNavigationPaneExpanded;
+    if (this.isVersionsPaneExpanded) {
+      this.isVersionsPaneExpanded = false;
+    }
+    if (this.isContributionsPaneExpanded) {
+      this.isContributionsPaneExpanded = false;
+    }
+  }
+
   onVersionsPaneExpanded(e: any) {
     this.isVersionsPaneExpanded = !this.isVersionsPaneExpanded;
+    if (this.isNavigationPaneExpanded) {
+      this.isNavigationPaneExpanded = false;
+    }
     if (this.isContributionsPaneExpanded) {
       this.isContributionsPaneExpanded = false;
     }
@@ -746,6 +760,9 @@ export class DocumentEditorComponent
 
   onContributionsPaneExpanded(e: any) {
     this.isContributionsPaneExpanded = !this.isContributionsPaneExpanded;
+    if (this.isNavigationPaneExpanded) {
+      this.isNavigationPaneExpanded = false;
+    }
     if (this.isVersionsPaneExpanded) {
       this.isVersionsPaneExpanded = false;
     }

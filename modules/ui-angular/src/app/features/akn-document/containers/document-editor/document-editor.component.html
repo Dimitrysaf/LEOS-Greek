@@ -33,7 +33,6 @@
       <eui-page-column
         #tocPane
         class="toc-pane"
-        [label]="'page.editor.toc-pane.label' | translate"
         isCollapsible
         [label]="
           (documentService.navigationPaneCollapse$ | async)
@@ -50,66 +49,74 @@
         "
         style="flex-basis: 400px"
       >
-        <eui-page-column-header-right-content>
-          <div class="d-flex flex-row align-items-center">
-            <!-- Expand all -->
-            <button
-              euiButton
-              euiBasicButton
-              euiSizeS
-              class=""
-              *ngIf="!isEditMode"
-              [euiTooltip]="getTooltipForToggleTree()"
-              (click)="expandAll()"
-            >
-              <span class="eui-icon eui-icon-sitemap"></span>
-            </button>
-            <!-- Co edition Indicator -->
-            <div class="">
-              <app-co-edition-info [isToc]="true"></app-co-edition-info>
-            </div>
-            <!-- Edit mode -->
-            <button
-              euiButton
-              euiBasicButton
-              euiSizeS
-              class=""
-              euiTooltip="{{
-                'page.editor.toc.toc-pane.actions.edit' | translate
-              }}"
-              (click)="handleEdit()"
-              *ngIf="
-                !isEditMode &&
-                !['coverPage', 'memorandum'].includes(documentType)
-              "
-            >
-              <span class="eui-icon eui-icon-edit"></span>
-            </button>
-            <!-- Actions menu-->
-            <app-toc-actions-buttons
-              [isEditMode]="isEditMode"
-              [isUndoDisabled]="disableUndoButton()"
-              [isSaveDisabled]="disableSaveButton()"
-              [isCollapseToc]="isCollapseToc"
-              [isAnnotationsPaneCollapsed]="isAnnotationsPaneCollapsed"
-              [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
-              (handleExpandAll)="expandAll()"
-              (handleUndo)="handleUndo()"
-              (handleSave)="handleSave()"
-              (handleCancel)="handleCancel()"
-              (handleSaveAndClose)="handleSaveAndClose()"
-            >
-            </app-toc-actions-buttons>
-          </div>
-        </eui-page-column-header-right-content>
         <eui-page-column-body>
-          <app-document-toc
-            [tocItems]="tocItems"
-            [isEdit]="isEditMode"
-            [documentType]="documentType"
-            [documentRef]="documentRef"
-            (reBuildTocItems)="onRebuildTocItems($event)"
-          ></app-document-toc>
+          <eui-fieldset
+            class="eui-u-mt-s"
+            label="{{ 'page.editor.navigation-pane.label' | translate }}"
+            isExpandable
+            [isExpanded]="isNavigationPaneExpanded"
+            (expanded)="onNavigationPaneExpanded($event)"
+          >
+            <div class="d-flex flex-row align-items-center">
+              <!-- Expand all -->
+              <button
+                euiButton
+                euiBasicButton
+                euiSizeS
+                class=""
+                *ngIf="!isEditMode"
+                [euiTooltip]="getTooltipForToggleTree()"
+                [position]="'right'"
+                (click)="expandAll()"
+              >
+                <span class="eui-icon eui-icon-sitemap"></span>
+              </button>
+              <!-- Co edition Indicator -->
+              <div class="">
+                <app-co-edition-info [isToc]="true"></app-co-edition-info>
+              </div>
+              <!-- Edit mode -->
+              <button
+                euiButton
+                euiBasicButton
+                euiSizeS
+                class=""
+                euiTooltip="{{
+                  'page.editor.toc.toc-pane.actions.edit' | translate
+                }}"
+                [position]="'right'"
+                (click)="handleEdit()"
+                *ngIf="
+                  !isEditMode &&
+                  !['coverPage', 'memorandum'].includes(documentType)
+                "
+              >
+                <span class="eui-icon eui-icon-edit"></span>
+              </button>
+              <!-- Actions menu-->
+              <app-toc-actions-buttons
+                [isEditMode]="isEditMode"
+                [isUndoDisabled]="disableUndoButton()"
+                [isSaveDisabled]="disableSaveButton()"
+                [isCollapseToc]="isCollapseToc"
+                [isAnnotationsPaneCollapsed]="isAnnotationsPaneCollapsed"
+                [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
+                (handleExpandAll)="expandAll()"
+                (handleUndo)="handleUndo()"
+                (handleSave)="handleSave()"
+                (handleCancel)="handleCancel()"
+                (handleSaveAndClose)="handleSaveAndClose()"
+              >
+              </app-toc-actions-buttons>
+            </div>
+            <app-document-toc
+              [tocItems]="tocItems"
+              [isEdit]="isEditMode"
+              [documentType]="documentType"
+              [documentRef]="documentRef"
+              (reBuildTocItems)="onRebuildTocItems($event)"
+            ></app-document-toc>
+          </eui-fieldset>
           <!-- versions -->
           <hr />
           <eui-fieldset
@@ -667,7 +674,7 @@
                 *ngIf="contributionForView"
                 (click)="handlePrevChangeContribution()"
                 [euiTooltip]="
-                    'page.editor.contribution.view.actions.prev-change'
+                  'page.editor.contribution.view.actions.prev-change'
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
@@ -686,8 +693,8 @@
                 *ngIf="contributionForView"
                 (click)="handleNextChangeContribution()"
                 [euiTooltip]="
-                'page.editor.contribution.view.actions.next-change'
-                | translate
+                  'page.editor.contribution.view.actions.next-change'
+                    | translate
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="isContributionDeclinedOrProcessed"
