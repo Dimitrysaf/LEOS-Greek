@@ -48,8 +48,8 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     const mergeActionVOs: MergeActionVO[] = [];
     mergeActionList.forEach((item) => {
       const tmp = {
-        action: item.action,
-        elementState: item.elementState,
+        action: item.action.toUpperCase(),
+        elementState: item.elementState.toUpperCase(),
         elementId: item.elementId,
         elementTagName: item.elementTagName,
         contributionVO: this.contribution,
