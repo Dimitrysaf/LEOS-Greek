@@ -9,4 +9,6 @@ public interface ConfigService {
     List<LeosDocument> findConfigByName(final String name) throws RepositoryException;
 
     LeosDocument findConfigById(final String id) throws RepositoryException;
+
+    LeosDocument findConfigByVersionId(final String id) throws RepositoryException;
 }

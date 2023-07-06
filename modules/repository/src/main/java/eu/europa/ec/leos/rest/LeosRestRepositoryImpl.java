@@ -27,13 +27,16 @@ import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.rest.extensions.LeosDocumentExtensions;
 import eu.europa.ec.leos.rest.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.rest.extensions.LeosPackageExtensions;
-import eu.europa.ec.leos.rest.mapping.RestMapper;
+import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
 import eu.europa.ec.leos.rest.support.model.Package;
+import eu.europa.ec.leos.rest.support.util.ConversionUtils;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import org.slf4j.Logger;
@@ -41,8 +44,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.xml.SimpleNamespaceContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,7 +63,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateDocumentProperties;
@@ -91,46 +103,91 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         exportMimeType = "application/octet-stream";
     }
 
+    private void populateTemplateMetadataFromContent(eu.europa.ec.leos.rest.support.model.LeosDocument doc) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builderFactory.setNamespaceAware(true);
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+
+        Document xmlDoc = builder.parse(new ByteArrayInputStream(doc.getSource()));
+        xmlDoc.getDocumentElement().normalize();
+        setMetadataFromXml(xmlDoc, "docVersion", doc);
+        setMetadataFromXml(xmlDoc, repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE), doc);
+        setMetadataFromXml(xmlDoc, repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE), doc);
+        setMetadataFromXml(xmlDoc, repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), doc);
+        setMetadataFromXml(xmlDoc, repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE), doc);
+        setMetadataFromXml(xmlDoc, repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE), doc);
+    }
+
+    private String getMetadataFromXml(Document xmlDoc, String property, eu.europa.ec.leos.rest.support.model.LeosDocument doc) {
+        final String leosPref = "leos:";
+        NodeList docNodes = xmlDoc.getDocumentElement().getElementsByTagName(property);
+        if (docNodes.getLength() == 0) {
+            docNodes = xmlDoc.getDocumentElement().getElementsByTagName(leosPref + property);
+        }
+        return docNodes.getLength() > 0 ? docNodes.item(0).getTextContent() : null;
+    }
+
+    private void setMetadataFromXml(Document xmlDoc, String property, eu.europa.ec.leos.rest.support.model.LeosDocument doc) {
+        doc.getMetadata().put(property, getMetadataFromXml(xmlDoc, property, doc));
+    }
+
+    private String extractRefFromId(String id) {
+        String[] ids = id.split(";");
+        if (ids.length > 0) {
+            return ids[0];
+        } else {
+            return null;
+        }
+    }
+
+    private String extractVersionIdFromId(String id) {
+        String[] ids = id.split(";");
+        if (ids.length > 1) {
+            return ids[1];
+        } else {
+            return null;
+        }
+    }
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument, M extends LeosMetadata> D createDocument(String templateId, String path, String name,
                                                                               M metadata, Class<? extends D> type) {
         logger.trace("Creating document... [template=" + templateId + ", path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
 
-        long startTimeNanos = System.nanoTime();
         Map<String, Object> properties = new HashMap<>();
         setDocumentCollaboratorProperties(metadata, properties);
+        Set<LeosCategory> cats = LeosMapper.leosCategories(type);
+        if (!cats.isEmpty()) {
+            properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), cats.iterator().next());
+        }
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromSource(templateId, path, name, properties,
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromSource(extractRefFromId(templateId), path, name, properties,
                 securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document creation took " + time + " milliseconds.");
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [template=" + templateId + ", path=" + path + ", name=" + name + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument, M extends LeosMetadata> D createDocumentFromContent(String path, String name, M metadata, Class<? extends D> type, String leosCategory, byte[] contentBytes) {
         logger.trace("Creating document From Content... [path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
 
-        long startTimeNanos = System.nanoTime();
-
         Map<String, Object> properties = getCustomPropertiesMap(name, metadata, leosCategory);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
                 securityContext.getUserName());
-
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document creation took " + time + " milliseconds.");
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument, M extends LeosMetadata> D createClonedDocumentFromContent(String path, String name,
                                                                                         M metadata,
                                                                                         CloneProposalMetadataVO cloneProposalMetadataVO,
@@ -141,8 +198,6 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         checkSecurityContextEnsureUserIsPresent();
 
-        long startTimeNanos = System.nanoTime();
-
         Map<String, Object> properties = getCustomPropertiesMap(name, metadata, leosCategory);
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL), cloneProposalMetadataVO.isClonedProposal());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF), cloneProposalMetadataVO.getOriginRef());
@@ -152,8 +207,6 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
                 securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.info("Created cloned document {} in {} milliseconds.", name,  time);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
@@ -163,10 +216,10 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.putAll(LeosMetadataExtensions.toLeosRepositoryProperties(metadata));
         User user = securityContext.getUser();
         String userDefaultEntity = user.getDefaultEntity() != null ? user.getDefaultEntity().getName() : "";
-        /*properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS), singletonList(getAccessRecord(user.getLogin(),
-                authorityMapHelper.getRoleForDocCreation(),userDefaultEntity)));*/
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS), singletonList(new Collaborator(user.getLogin(),
+                authorityMapHelper.getRoleForDocCreation(), userDefaultEntity)));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), Date.from(Instant.now()));
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
     }
 
     private <M extends LeosMetadata> Map<String, Object> getCustomPropertiesMap(String name, M metadata, String leosCategory) {
@@ -177,13 +230,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    @PerformanceLogger
     public LegDocument createLegDocumentFromContent(String path, String name, String jobId, List<String> milestoneComments, byte[] contentBytes, LeosLegStatus status,
                                                     List<String> containedDocuments) {
         logger.trace("Creating leg document from content... [path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
-
-        long startTimeNanos = System.nanoTime();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), LeosCategory.LEG.name());
@@ -192,265 +244,228 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS), milestoneComments);
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), Date.from(Instant.now()));
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS), containedDocuments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, legMimeType, contentBytes, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document creation from content took " + time + " milliseconds.");
 
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create leg document from content! [path=" + path + ", name=" + name + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public LegDocument updateLegDocument(String id, LeosLegStatus status) {
         logger.trace("Updating Leg document status... [id=" + id + ", status=" + status.name() + ']');
-        long startTimeNanos = System.nanoTime();
-
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document status update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
 
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update leg document status! [id=" + id + ", status=" + status.name() + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public LegDocument updateLegDocument(String id, List<String> containedDocuments) {
         logger.trace("Updating Leg document contained files... [id=" + id + "]");
-        long startTimeNanos = System.nanoTime();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS), containedDocuments);
 
-
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document contained files update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
 
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update leg contained files! [id=" + id + "]"));
     }
 
     @Override
+    @PerformanceLogger
     public LegDocument updateLegDocument(String id, LeosLegStatus status, byte[] contentBytes, VersionType versionType, String comment) {
         logger.debug("Updating Leg document status and content... [id=" + id + ", status=" + status.name() + ", content size=" + contentBytes.length + ", versionType=" + versionType + ", comment=" + comment + ']');
-        long startTimeNanos = System.nanoTime();
-
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, contentBytes, versionType, comment,
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, contentBytes, versionType, comment,
                 securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document status and content update took " + time + " milliseconds.");
-
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update leg document! [id=" + id + ", status=" + status.name() + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
-        long startTimeNanos = System.nanoTime();
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, updateDocumentProperties(metadata), securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateDocumentProperties(metadata),
+                securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
-        long startTimeNanos = System.nanoTime();
-
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, updateDocumentProperties(metadata), content, versionType, comment, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateDocumentProperties(metadata), content, versionType, comment, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D updateDocument(String id, byte[] content, VersionType versionType, String comment,
                                                      Class<? extends D> type) {
         logger.trace("Updating document content... [id=" + id + ", comment=" + comment + ']');
 
-        long startTimeNanos = System.nanoTime();
-
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, updateMilestoneCommentsProperties(emptyList()), content, versionType, comment, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateMilestoneCommentsProperties(emptyList()), content, versionType, comment, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D updateDocument(String id, byte[] content, Map<String, Object> properties,
                                                      VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document content and properties... [id=" + id + ", comment=" + comment + ']');
 
-        long startTimeNanos = System.nanoTime();
-
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, content, versionType, comment, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D updateDocument(String id, Map<String, Object> properties, Class<? extends D> type, boolean latest) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
-        long startTimeNanos = System.nanoTime();
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, latest, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, latest, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D updateDocument(String id, List<Collaborator> collaborators, Class<? extends D> type) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
-        long startTimeNanos = System.nanoTime();
-
         Map<String, Object> properties = new HashMap<>(updateMilestoneCommentsProperties(emptyList()));
 
-        List<String> collaboratorUsers = collaborators
+        List<Collaborator> collaboratorUsers = collaborators
                 .stream()
-                .map(collaborator -> getAccessRecord(collaborator.getLogin(),  collaborator.getRole(), collaborator.getEntity()))
+                .map(collaborator -> new Collaborator(collaborator.getLogin(),  collaborator.getRole(), collaborator.getEntity()))
                 .collect(toList());
 
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS), collaboratorUsers);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
-        long startTimeNanos = System.nanoTime();
         Map<String, List<String>> properties = updateMilestoneCommentsProperties(milestoneComments);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, content, versionType, comment, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D updateMilestoneComments(String id, List<String> milestoneComments, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
-        long startTimeNanos = System.nanoTime();
 
         Map<String, List<String>> properties = updateMilestoneCommentsProperties(milestoneComments);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findDocumentById(String id, Class<? extends D> type, boolean latest) {
         logger.trace("Finding document by ID... [id=" + id + ", latest=" + latest + ']');
 
-        long startTimeNanos = System.nanoTime();
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentById(id, latest);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document search took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentById(extractVersionIdFromId(id), latest);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalArgumentException("Document not found! [id=" + id + ", latest=" + latest + ']'));
     }
 
-    // NOT YET IMPLEMENTED
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findDocumentsByUserId(String userId, Class<? extends D> type, String leosAuthority) {
         throw new NotImplementedException();
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
-        long startTimeNanos = System.nanoTime();
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(path, name).orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path +
                     ", name=" + name + ']'));
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document search took " + time + " milliseconds.");
+        if (doc.getCategory().contains("TEMPLATE")) {
+            try {
+                populateTemplateMetadataFromContent(doc);
+            } catch (Exception e) {
+                logger.debug("Error while getting metadata from template " + name);
+            }
+        }
 
         return toLeosDocument(doc, type, true).get();
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findDocumentsByParentPath(String path, Class<? extends D> type, boolean descendants, boolean fetchContent) {
         logger.trace("Finding documents by parent path... [path=" + path + ", type=" + type.getSimpleName() + ']');
 
-        long startTimeNanos = System.nanoTime();
-        Set<LeosCategory> categories = RestMapper.restCategories(type);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
 
-        List<eu.europa.ec.leos.rest.support.model.LeosDocument> docs = repository.findDocumentsByPackagePath(path, categories, descendants);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document search took " + time + " milliseconds.");
+        LeosDocumentList docs = repository.findDocumentsByPackagePath(path, categories, descendants);
 
-        return toLeosDocuments(docs, type, fetchContent);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, fetchContent);
     }
 
-    // NOT YET IMPLEMENTED
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findDocumentVersionsById(String id, Class<? extends D> type, boolean fetchContent) {
         logger.trace("Finding document versions by ID... [id=" + id + ']');
 
-        long startTimeNanos = System.nanoTime();
-        //List<Document> docs = restRepository.findAllVersions(id);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository versions search took " + time + " milliseconds.");
+        LeosDocumentList docs = repository.findAllVersions(extractVersionIdFromId(id));
 
-        return null;//toLeosDocuments(docs, type, fetchContent);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, fetchContent);
     }
-    
+
     @Override
+    @PerformanceLogger
     public void deleteDocumentById(String id) {
         logger.trace("Deleting Document... [id=" + id + ']');
-        long startTimeNanos = System.nanoTime();
-        repository.deleteDocumentByRef(id);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document deletion took " + time + " milliseconds.");
+        repository.deleteDocumentByRef(extractRefFromId(id));
     }
 
     @Override
+    @PerformanceLogger
     public LeosPackage createPackage(String path, String name) {
         logger.trace("Creating package... [path=" + path + ", name=" + name + ']');
 
-        long startTimeNanos = System.nanoTime();
-        Package pkg = repository.createPackage(name, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository package creation took " + time + " milliseconds.");
+        Package pkg = repository.createPackage(path + "/" + name, securityContext.getUserName());
         if (pkg != null) {
             return LeosPackageExtensions.toLeosPackage(pkg);
         }
@@ -459,48 +474,51 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    @PerformanceLogger
     public void deletePackage(String path) {
         logger.trace("Deleting package... [path=" + path + ']');
-        long startTimeNanos = System.nanoTime();
         repository.deletePackage(path);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository package deletion took " + time + " milliseconds.");
     }
 
-    // NOT YET IMPLEMENTED
     @Override
+    @PerformanceLogger
     public LeosPackage findPackageByDocumentId(String documentId) {
-        throw new NotImplementedException();
+        Package pkg =  repository.findPackageByDocumentRef(extractRefFromId(documentId));
+        if (pkg != null) {
+            return LeosPackageExtensions.toLeosPackage(pkg);
+        }
+        throw new IllegalStateException("Unable to read Package! [documentId=" + documentId + ']');
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
-        throw new NotImplementedException();
+        Package pkg =  repository.findPackageByDocumentRef(documentRef);
+        if (pkg != null) {
+            return LeosPackageExtensions.toLeosPackage(pkg);
+        }
+        throw new IllegalStateException("Unable to read Package! [documentId=" + documentRef + ']');
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findDocumentsByPackageId(String id, Class<? extends D> type, boolean allVersion, boolean fetchContent) {
         logger.trace("Finding documents by parent id... [pkgId=" + id + ", type=" + type.getSimpleName() + ']');
-        long startTimeNanos = System.nanoTime();
-        Set<LeosCategory> categories = RestMapper.restCategories(type);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
 
-        List<eu.europa.ec.leos.rest.support.model.LeosDocument> docs = repository.findDocumentsByPackageId(id, categories, allVersion);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document search took " + time + " milliseconds.");
+        LeosDocumentList docs = repository.findDocumentsByPackageId(id, categories, allVersion);
 
-        return toLeosDocuments(docs, type, fetchContent);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, fetchContent);
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findDocumentsByStatus(LeosLegStatus status, Class<? extends D> type) {
         logger.trace("Finding documents for status... status=" + status + ']');
 
-        long startTimeNanos = System.nanoTime();
-        List<eu.europa.ec.leos.rest.support.model.LeosDocument> docs = repository.findDocumentsByStatus(status);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document search took " + time + " milliseconds.");
+        LeosDocumentList docs = repository.findDocumentsByStatus(status);
 
-        return toLeosDocuments(docs, type, false);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
 
     private String getAccessRecord(String userLogin, String authority, String userEntity) {
@@ -526,74 +544,92 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> Stream<D> findPagedDocumentsByParentPath(String path, Class<? extends D> type, boolean descendants, boolean fetchContent,
                                                                              int startIndex, int maxResults, QueryFilter workspaceFilter) {
         logger.trace("Finding documents by parent path... [path=$path, type=${type.simpleName}]");
-        Set<LeosCategory> categories = RestMapper.restCategories(type);
-        List<eu.europa.ec.leos.rest.support.model.LeosDocument> docs = repository.findPagedDocuments(categories, startIndex, maxResults,
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+        LeosDocumentList docs = repository.findPagedDocuments(path, categories, startIndex, maxResults,
                 workspaceFilter);
-        logger.trace("LEOS Repository document search took $time milliseconds.");
 
-        return docs.stream().map(doc -> LeosDocumentExtensions.toLeosDocument(doc, type, fetchContent));
+        return docs.getLeosDocumentList().stream().map(doc -> LeosDocumentExtensions.toLeosDocument(doc, type, fetchContent));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> int findDocumentCountByParentPath(String path, Class<? extends D> type, boolean descendants, QueryFilter workspaceFilter) {
         logger.trace("Finding documents by parent path... [path=$path, type=${type.simpleName}]");
         int docCount = 0;
-        Set<LeosCategory> categories = RestMapper.restCategories(type);
-        docCount = repository.countDocuments(categories, workspaceFilter);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+        docCount = repository.countDocuments(path, categories, workspaceFilter);
 
-        logger.trace("LEOS Repository document search took $time milliseconds.");
         return docCount;
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findDocumentByRef(String ref, Class<? extends D> type) {
         logger.trace("Finding document with ref... [ref=" + ref + ']');
 
-        long startTimeNanos = System.nanoTime();
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByRef(ref);
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository document search took " + time + " milliseconds.");
 
         return toLeosDocument(doc, type, true)
             .orElseThrow(() -> new IllegalStateException("Error occurred retrieving document! [=" + ref + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findAllMinorsForIntermediate(Class<? extends D> type, String docRef, String currIntVersion, int startIndex, int maxResults) {
-        throw new NotImplementedException();
+        logger.trace("Finding all minors for intermediate. [docRef={}, currIntVersion={}, startIndex={}, maxResults={}]",docRef, currIntVersion, startIndex, maxResults);
+
+        LeosDocumentList docs = repository.findAllMinorsForIntermediate(docRef, currIntVersion,
+                startIndex,
+                maxResults);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> int findAllMinorsCountForIntermediate(Class<? extends D> type, String docRef, String currIntVersion) {
-        throw new NotImplementedException();
+        return repository.getAllMinorsCountForIntermediate(docRef, currIntVersion);
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> Integer findAllMajorsCount(Class<? extends D> type, String docRef) {
-        throw new NotImplementedException();
+        return repository.getAllMajorsCount(docRef);
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findAllMajors(Class<? extends D> type, String docRef, int startIndex, int maxResult) {
-        throw new NotImplementedException();
+        logger.trace("Finding all minors for intermediate. [docRef={}, currIntVersion={}, startIndex={}, maxResults={}]",docRef, startIndex, maxResult);
+        LeosDocumentList docs = repository.findAllMajors(extractRefFromId(docRef), startIndex, maxResult);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findLatestMajorVersionById(Class<? extends D> type, String documentId) {
-        throw new NotImplementedException();
+        logger.trace("Finding latest major version by id with documentId... [documentId=" + documentId + ']');
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = this.repository.findLatestMajorVersionByRef(extractRefFromId(documentId));
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalArgumentException("Document not found! [id=" + documentId +']'));
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findRecentMinorVersions(Class<? extends D> type, String documentRef, String lastMajorId, int startIndex, int maxResults) {
-        throw new NotImplementedException();
+        logger.trace("Finding recent minor versions for intermediate. [docRef={}, lastMajorId={}, startIndex={}, maxResults={}]",documentRef, lastMajorId, startIndex, maxResults);
+        LeosDocumentList docs = repository.findRecentMinorVersions( documentRef,  lastMajorId,  startIndex,  maxResults);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> Integer findRecentMinorVersionsCount(Class<? extends D> type, String documentRef, String versionLabel) {
-        throw new NotImplementedException();
+        Integer recentMinorVersionsCountCount = repository.getRecentMinorVersionsCount(documentRef, versionLabel);
+        return recentMinorVersionsCountCount;
     }
 
     private void checkSecurityContextEnsureUserIsPresent() {
@@ -601,96 +637,98 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             throw new IllegalStateException("Missing user in security context");
         }
     }
-    
+
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findFirstVersion(Class<? extends D> type, String documentRef) {
-        throw new NotImplementedException();
+        logger.trace("Finding document with ref... [ref=" + documentRef + ']');
+
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findFirstVersion(documentRef);
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Error occurred retrieving document! [=" + documentRef + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findDocumentByVersion(Class<? extends D> type, String documentRef, String versionLabel) {
-        throw new NotImplementedException();
+        logger.trace("Finding document with ref... [ref=" + documentRef + ']');
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByVersion(documentRef, versionLabel);
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Error occurred retrieving document! [=" + documentRef + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public ExportDocument createExportDocumentFromContent(String path, String name, List<String> comments, byte[] contentBytes, LeosExportStatus status) {
         logger.trace("Creating export document from content... [path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
 
-        long startTimeNanos = System.nanoTime();
-
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), LeosCategory.EXPORT.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), Date.from(Instant.now()));
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), comments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, exportMimeType, contentBytes,
                 securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository export document creation from content took " + time + " milliseconds.");
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create export document from content! [path=" + path + ", name=" + name + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public ExportDocument updateExportDocument(String id, LeosExportStatus status, byte[] contentBytes, VersionType versionType, String comment) {
         logger.debug("Updating export document status and content... [id=" + id + ", status=" + status.name() + ", content size=" + contentBytes.length + ", versionType=" + versionType + ", comment=" + comment + ']');
-        long startTimeNanos = System.nanoTime();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, contentBytes,
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, contentBytes,
                 versionType, comment, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document status update took " + time + " milliseconds.");
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update export document  [id=" + id + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public ExportDocument updateExportDocument(String id, LeosExportStatus status) {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + status.name() + ']');
-        long startTimeNanos = System.nanoTime();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document status update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update export document  [id=" + id + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public ExportDocument updateExportDocument(String id, List<String> comments) {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + comments + ']');
-        long startTimeNanos = System.nanoTime();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), String.join( ",", comments));
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, securityContext.getUserName());
-        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
-        logger.trace("LEOS Repository Leg document status update took " + time + " milliseconds.");
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update export document comments! [id=" + id + ", comments=" + comments + ']'));
     }
 
     @Override
+    @PerformanceLogger
     public Object createFolder(String path, String name) {
-        return repository.createPackage(name, securityContext.getUserName());
+        return repository.createPackage(path + "/" + name, securityContext.getUserName());
     }
 
     @Override
+    @PerformanceLogger
     public Object findFolderByPath(String path) {
         return repository.findPackageByName(path);
     }

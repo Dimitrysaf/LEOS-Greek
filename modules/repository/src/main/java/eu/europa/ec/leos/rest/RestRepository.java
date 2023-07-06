@@ -21,13 +21,14 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.rest.handlers.RestTemplateResponseErrorHandler;
 import eu.europa.ec.leos.rest.support.model.LeosDocument;
+import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.rest.support.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.rest.support.requests.CreatePackageRequest;
 import eu.europa.ec.leos.rest.support.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.rest.support.requests.UpdateDocumentRequest;
-import eu.europa.ec.leos.rest.support.response.ExceptionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Arrays;
+import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -58,7 +58,8 @@ import static org.springframework.web.util.UriUtils.encodeUriVariables;
 @Profile(value = {"rest"})
 public class RestRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestRepository.class);
+    private static final int NOT_FOUND = 404;
 
     @Value("${leos.rest.repository.url}")
     private String leosRestRepositoryURL;
@@ -84,8 +85,8 @@ public class RestRepository {
     private String leosRestFindDocumentsbyPackageNameURI;
     @Value("${leos.rest.repository.find.documents.package.id.uri}")
     private String leosRestFindDocumentsbyPackageIdURI;
-    @Value("${leos.rest.repository.find.documents.package.name}")
-    private String leosRestFindDocumentbyPackageNameURI;
+    @Value("${leos.rest.repository.find.document.name}")
+    private String leosRestFindDocumentbyNameURI;
     @Value("${leos.rest.repository.find.document.version.id}")
     private String leosRestFindDocumentByVersionIdURI;
     @Value("${leos.rest.repository.find.document.status}")
@@ -98,6 +99,28 @@ public class RestRepository {
     private String leosRestCountDocumentsbyFilterURI;
     @Value("${leos.rest.repository.find.last.version.document}")
     private String leosRestFindDocumentbyRefURI;
+    @Value("${leos.rest.repository.count.recent.minor.versions}")
+    private String leosRestGetRecentMinorVersionsCountURI;
+    @Value("${leos.rest.repository.find.document.first.version}")
+    private String leosRestFindFirstVersionURI;
+    @Value("${leos.rest.repository.find.document.by.version}")
+    private String leosRestFindDocumentByVersionURI;
+    @Value("${leos.rest.repository.find.documents.latest.major.version.ref}")
+    private String leosRestFindDocumentByLatestMajorVersionRefURI;
+    @Value("${leos.rest.repository.find.document.all.minors.intermediate}")
+    private String leosRestFindAllMinorsForIntermediateRefURI;
+    @Value("${leos.rest.repository.find.document.all.majors}")
+    private String leosRestFindAllMajorsURI;
+    @Value("${leos.rest.repository.count.all.majors}")
+    private String leosRestGetAllMajorsCountURI;
+    @Value("${leos.rest.repository.find.document.recent.minor}")
+    private String leosRestFindRecentMinorVersionsURI;
+    @Value("${leos.rest.repository.find.documents.user.id}")
+    private String leosRestFindDocumentsByUserIdURI;
+    @Value("${leos.rest.repository.count.all.minors.intermediate}")
+    private String leosRestGetAllMinorsCountForIntermediateURI;
+    @Value("${leos.rest.repository.find.package.by.document.id.uri}")
+    private String leosRestFindPackageByDocumentRefURI;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -107,45 +130,51 @@ public class RestRepository {
     private ObjectMapper mapper = new ObjectMapper();
 
     private final RestRepository self;
+
     @Autowired
     public RestRepository(RestRepository restRepository) {
         this.self = restRepository;
     }
 
+    @PostConstruct
+    private void init() {
+        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
+    }
+
     Package createPackage(final String name, final String userId) {
-        logger.trace("Creating package... [name=" + name + "]");
+        LOGGER.trace("Creating package... [name=" + name + "]");
 
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
         createPackageRequest.setUserId(userId);
 
         try {
-            ResponseEntity<Object> resp = restTemplate.postForEntity(leosRestRepositoryURL + leosRestCreatePackageURI, createPackageRequest, Object.class,
-                    encodeUriVariables(name));
+            HttpEntity<CreateDocumentRequest> request = new HttpEntity(createPackageRequest);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (Package) resp.getBody();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            ResponseEntity<Object> resp = restTemplate.exchange(leosRestRepositoryURL + leosRestCreatePackageURI, HttpMethod.PUT, request,
+                    Object.class,
+                    encodeUriVariables(name)[0]);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<Package>() {
+                    });
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
     }
 
     void deletePackage(final String name) {
-        logger.trace("Deleting package... [name=" + name + "]");
+        LOGGER.trace("Deleting package... [name=" + name + "]");
 
         try {
-            restTemplate.delete(leosRestRepositoryURL + leosRestDeletePackageURI, encodeUriVariables(name));
+            restTemplate.delete(leosRestRepositoryURL + leosRestDeletePackageURI, encodeUriVariables(name)[0]);
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
     }
 
     LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> properties, final String mimeType, byte[] contentBytes,
-                                       String userId) {
-        logger.trace("Creating document... [packageName=" + packageName + ", name=" + name + ", mimeType=" + mimeType + "]");
+                                           String userId) {
+        LOGGER.trace("Creating document... [packageName=" + packageName + ", name=" + name + ", mimeType=" + mimeType + "]");
 
         Map<String, Object> updatedProperties = new LinkedHashMap<>();
         updatedProperties.putAll(properties);
@@ -170,19 +199,16 @@ public class RestRepository {
             ResponseEntity<Object> resp = restTemplate.exchange(leosRestRepositoryURL + leosRestCreateDocumentContentURI, HttpMethod.PUT, request,
                     Object.class);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (LeosDocument) resp.getBody();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
     }
 
     LeosDocument createDocumentFromSource(final String sourceId, String path, final String name, Map<String, ?> properties, String userId) {
-        logger.trace("Creating document from source... [sourceId=" + sourceId + "]");
+        LOGGER.trace("Creating document from source... [sourceId=" + sourceId + "]");
 
         Map<String, Object> updatedProperties = new LinkedHashMap<>();
         updatedProperties.putAll(properties);
@@ -198,6 +224,7 @@ public class RestRepository {
         createDocRequest.setName(name);
         createDocRequest.setPackageName(path);
         createDocRequest.setUserId(userId);
+        createDocRequest.setSourceDocumentId(sourceId);
 
         HttpEntity<CreateDocumentRequest> request = new HttpEntity<>(createDocRequest);
 
@@ -205,19 +232,16 @@ public class RestRepository {
             ResponseEntity<Object> resp = restTemplate.exchange(leosRestRepositoryURL + leosRestCreateDocumentSourceURI, HttpMethod.PUT, request,
                     Object.class);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (LeosDocument) resp.getBody();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
     }
 
     void deleteDocumentByRef(final String ref) {
-        logger.trace("Deleting document... [ref=" + ref + "]");
+        LOGGER.trace("Deleting document... [ref=" + ref + "]");
         try {
             restTemplate.delete(leosRestRepositoryURL + leosRestDeleteDocumentRefURI, ref);
         } catch (Exception e) {
@@ -225,18 +249,17 @@ public class RestRepository {
         }
     }
 
-    LeosDocument updateDocument(final String id, Map<String, ?> properties, String userId) {
-        return this.updateDocument(id, properties, true, userId);
+    LeosDocument updateDocument(final String ref, Map<String, ?> properties, String userId) {
+        return this.updateDocument(ref, properties, true, userId);
     }
 
     LeosDocument updateDocument(final String ref, Map<String, ?> properties, boolean latest, String userId) {
-        logger.trace("Updating document properties... [ref=" + ref + "]");
+        LOGGER.trace("Updating document properties... [ref=" + ref + "]");
 
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(properties.get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) != null ?
                 (String) properties.get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) : null);
         updateDocumentRequest.setMetadata(properties);
-        updateDocumentRequest.setLabelVersion(getNextVersionLabel(VersionType.MINOR, null));
         updateDocumentRequest.setVersionType(VersionType.MINOR);
         updateDocumentRequest.setUserId(userId);
 
@@ -244,14 +267,11 @@ public class RestRepository {
 
         try {
             ResponseEntity<Object> resp = restTemplate.exchange(leosRestRepositoryURL + leosRestUpdateDocumentMetadataURI, HttpMethod.PUT, request,
-                    Object.class);
+                    Object.class, ref);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (LeosDocument) resp.getBody();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
@@ -259,36 +279,31 @@ public class RestRepository {
 
     public LeosDocument updateDocument(String ref, Map<String, ?> properties, byte[] updatedDocumentBytes, VersionType versionType, String comment,
                                        String userId) {
-        logger.trace("Updating document properties and content... [ref={}]", ref);
+        LOGGER.trace("Updating document properties and content... [ref={}]", ref);
 
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
-        updateDocumentRequest.setComments(properties.get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) != null ?
-                (String) properties.get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) : null);
         updateDocumentRequest.setContent(updatedDocumentBytes);
         updateDocumentRequest.setMetadata(properties);
-        updateDocumentRequest.setLabelVersion(getNextVersionLabel(versionType, null));
         updateDocumentRequest.setVersionType(versionType);
+        updateDocumentRequest.setComments(comment);
         updateDocumentRequest.setUserId(userId);
 
         HttpEntity<UpdateDocumentRequest> request = new HttpEntity<>(updateDocumentRequest);
 
         try {
             ResponseEntity<Object> resp = restTemplate.exchange(leosRestRepositoryURL + leosRestUpdateDocumentContentURI, HttpMethod.PUT, request,
-                    Object.class);
+                    Object.class, ref);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (LeosDocument) resp.getBody();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
     }
 
-    List<LeosDocument> findDocumentsByPackagePath(final String packageName, final Set<LeosCategory> categories, final boolean descendants) {
-        logger.trace("Finding documents by parent path... [packageName=" + packageName + ", categories=" + categories + ", descendants=" + descendants + ']');
+    LeosDocumentList findDocumentsByPackagePath(final String packageName, final Set<LeosCategory> categories, final boolean descendants) {
+        LOGGER.trace("Finding documents by parent path... [packageName=" + packageName + ", categories=" + categories + ", descendants=" + descendants + ']');
 
         Set<String> cats = categories.stream().map(c -> c.name()).collect(Collectors.toSet());
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
@@ -296,22 +311,22 @@ public class RestRepository {
 
         try {
             ResponseEntity<Object> resp = restTemplate.postForEntity(leosRestRepositoryURL + leosRestFindDocumentsbyPackageNameURI, findDocumentsRequest,
-                    Object.class, encodeUriVariables(packageName), descendants);
+                    Object.class, encodeUriVariables(packageName)[0], descendants);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return mapper.convertValue(resp.getBody(),
-                        new TypeReference<List<LeosDocument>>() { });
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
         } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
         }
     }
 
-    List<LeosDocument> findDocumentsByPackageId(final String id, final Set<LeosCategory> categories, final boolean allVersion) {
-        logger.trace("Finding documents by package Id... [pkgId=" + id + ", categories=" + categories + ", allVersion=" + allVersion + ']');
+    LeosDocumentList findDocumentsByPackageId(final String id, final Set<LeosCategory> categories, final boolean allVersion) {
+        LOGGER.trace("Finding documents by package Id... [pkgId=" + id + ", categories=" + categories + ", allVersion=" + allVersion + ']');
 
         Set<String> cats = categories.stream().map(c -> c.name()).collect(Collectors.toSet());
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
@@ -321,97 +336,88 @@ public class RestRepository {
             ResponseEntity<Object> resp = restTemplate.postForEntity(leosRestRepositoryURL + leosRestFindDocumentsbyPackageIdURI, findDocumentsRequest,
                     Object.class, id);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return mapper.convertValue(resp.getBody(),
-                        new TypeReference<List<LeosDocument>>() { });
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
         } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
         }
     }
 
     Optional<LeosDocument> findDocumentByName(final String packageName, final String name) {
-        logger.trace("Finding document by parent packageName... [packageName=" + packageName + ", name=" + name + ']');
+        LOGGER.trace("Finding document by parent packageName... [packageName=" + packageName + ", name=" + name + ']');
         try {
-            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentbyPackageNameURI, Object.class, name);
-
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                List<LeosDocument> docs = mapper.convertValue(resp.getBody(),
-                        new TypeReference<List<LeosDocument>>() { });
-                return docs.isEmpty() ? Optional.empty() : Optional.of(docs.get(0));
-            } else if (resp.getStatusCode().value() == 404) {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentbyNameURI, Object.class, name);
+            LeosDocument doc = mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
+            return doc == null ? Optional.empty() : Optional.of(doc);
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
                 return Optional.empty();
             } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
+                throw new IllegalStateException(e.getMessage());
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
         }
     }
 
     LeosDocument findDocumentById(final String versionId, final boolean latest) {
-        logger.trace("Finding document by id... [id=" + versionId + ", latest=" + latest + ']');
+        LOGGER.trace("Finding document by id... [id=" + versionId + ", latest=" + latest + ']');
         try {
             ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentByVersionIdURI +
                             "?latest={latest}",
-                    Object.class ,versionId, latest);
-
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (LeosDocument) resp.getBody();
-            } else if (resp.getStatusCode().value() == 404) {
+                    Object.class, versionId, latest);
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
                 return null;
             } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
+                throw new IllegalStateException(e.getMessage());
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
         }
     }
 
     LeosDocument findDocumentByRef(final String ref) {
-        logger.trace("Finding document by ref... [ref=" + ref + ']');
+        LOGGER.trace("Finding document by ref... [ref=" + ref + ']');
         try {
-            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentbyRefURI ,
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentbyRefURI,
                     Object.class, ref);
-
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (LeosDocument) resp.getBody();
-            } else if (resp.getStatusCode().value() == 404) {
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
                 return null;
             } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
+                throw new IllegalStateException(e.getMessage());
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
         }
     }
 
-    List<LeosDocument> findDocumentsByStatus(LeosLegStatus status) {
+    LeosDocumentList findDocumentsByStatus(LeosLegStatus status) {
         try {
             ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentsByStatusURI,
                     Object.class, status);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return mapper.convertValue(resp.getBody(),
-                        new TypeReference<List<LeosDocument>>() { });
-            } else if (resp.getStatusCode().value() == 404) {
-                return Arrays.asList();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
         } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return null;
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
         }
     }
 
-    List<LeosDocument> findAllVersions(final String id) {
+    LeosDocumentList findAllVersions(final String id) {
         throw new NotImplementedException();
     }
 
@@ -423,18 +429,16 @@ public class RestRepository {
     Package findPackageByName(String name) throws IllegalStateException {
         try {
             ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindPackageByNameURI,
-                    Object.class, name);
-
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (Package) resp.getBody();
-            } else if (resp.getStatusCode().value() == 404) {
+                    Object.class, encodeUriVariables(name)[0]);
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<Package>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
                 return null;
             } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
+                throw new IllegalStateException(e.getMessage());
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
         }
     }
 
@@ -442,41 +446,32 @@ public class RestRepository {
         try {
             ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindPackageByIdURI,
                     Object.class, id);
-
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (Package) resp.getBody();
-            } else if (resp.getStatusCode().value() == 404) {
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<Package>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
                 return null;
             } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
+                throw new IllegalStateException(e.getMessage());
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
         }
     }
 
     private String getNextVersionLabel(VersionType versionType, String oldVersion) {
         try {
-            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindNextVersionURI,
-                    Object.class, versionType.value(), oldVersion);
+            ResponseEntity<String> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindNextVersionURI,
+                    String.class, versionType.name(), oldVersion);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (String) resp.getBody();
-            } else if (resp.getStatusCode().value() == 404) {
-                return null;
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return resp.getBody();
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
     }
 
-    List<LeosDocument> findPagedDocuments(Set<LeosCategory> categories, int startIndex,
-                                                     int maxResults, QueryFilter workspaceFilter) {
-        logger.trace("Finding documents by parent path... [path=$path, primaryType=$primaryType, categories=$categories, descendants=$descendants]");
+    LeosDocumentList findPagedDocuments(String packageName, Set<LeosCategory> categories, int startIndex,
+                                        int maxResults, QueryFilter workspaceFilter) {
+        LOGGER.trace("Finding documents by parent path... [path=$path, primaryType=$primaryType, categories=$categories, descendants=$descendants]");
         Set<String> cats = categories.stream().map(c -> c.name()).collect(Collectors.toSet());
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(cats);
@@ -484,22 +479,22 @@ public class RestRepository {
 
         try {
             ResponseEntity<Object> resp = restTemplate.postForEntity(leosRestRepositoryURL + leosRestFindDocumentsbyFilterURI, findDocumentsRequest,
-                    Object.class, startIndex, maxResults);
+                    Object.class, encodeUriVariables(packageName)[0], startIndex, maxResults);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return mapper.convertValue(resp.getBody(),
-                        new TypeReference<List<LeosDocument>>() { });
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
         } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
         }
     }
 
-    int countDocuments(Set<LeosCategory> categories, QueryFilter workspaceFilter) {
-        logger.trace("Counting documents by parent path... [categories=$categories]");
+    int countDocuments(String packageName, Set<LeosCategory> categories, QueryFilter workspaceFilter) {
+        LOGGER.trace("Counting documents by parent path... [categories=$categories]");
         Set<String> cats = categories.stream().map(c -> c.name()).collect(Collectors.toSet());
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(cats);
@@ -507,16 +502,201 @@ public class RestRepository {
 
         try {
             ResponseEntity<Object> resp = restTemplate.postForEntity(leosRestRepositoryURL + leosRestCountDocumentsbyFilterURI, findDocumentsRequest,
-                    Object.class);
+                    Object.class, encodeUriVariables(packageName)[0]);
 
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return (int) resp.getBody();
-            } else {
-                ExceptionResponse respException = (ExceptionResponse) resp.getBody();
-                throw new IllegalStateException(respException.getMessage());
-            }
+            return (int) resp.getBody();
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
+    }
+
+    LeosDocumentList findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
+        LOGGER.trace("Finding all minors for intermediate. [docRef={}, currIntVersion={}, startIndex={}, maxResults={}]", docRef, currIntVersion, startIndex, maxResults);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindAllMinorsForIntermediateRefURI
+                            + "?currIntVersion={currIntVersion}&startIndex={startIndex}&maxResults={maxResults}",
+                    Object.class, docRef, currIntVersion, startIndex, maxResults);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+
+    LeosDocumentList findAllMajors(String docRef, int startIndex, int maxResults) {
+        LOGGER.trace("Finding all majors. [docRef={}, startIndex={}, maxResults={}]", docRef, startIndex, maxResults);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindAllMajorsURI
+                            + "?startIndex={startIndex}&maxResults={maxResults}",
+                    Object.class, docRef, startIndex, maxResults);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+    Integer getAllMajorsCount(String docRef) {
+        LOGGER.trace("Finding count all majors [docRef={}]", docRef);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestGetAllMajorsCountURI,
+                    Object.class, docRef);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<Integer>() {
+                    });
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    LeosDocumentList findRecentMinorVersions(String docRef, String versionLabel, int startIndex, int maxResults) {
+        LOGGER.trace("Finding all majors. [docRef={}, versionLabel={}, startIndex={}, maxResults={}]", docRef, versionLabel, startIndex, maxResults);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindRecentMinorVersionsURI
+                            + "?startIndex={startIndex}&maxResults={maxResults}",
+                    Object.class, docRef, startIndex, maxResults);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
+
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+    LeosDocumentList findDocumentsByUserId(String userId, String role) {
+        LOGGER.trace("Finding Documents By UserId  [userId={}, role={}]", userId, role);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentsByUserIdURI
+                            + "?role={role}",
+                    Object.class, userId, role);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocumentList>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return new LeosDocumentList();
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+    Integer getAllMinorsCountForIntermediate(String docRef, String currIntVersion) {
+        LOGGER.trace("Get all minors Count for Intermediate [docRef={}, currIntVersion={} ]", docRef, currIntVersion);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestGetAllMinorsCountForIntermediateURI
+                            + "?currIntVersion={currIntVersion}",
+                    Object.class, docRef, currIntVersion);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<Integer>() {
+                    });
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    Integer getRecentMinorVersionsCount(String docRef, String versionLabel) {
+        LOGGER.trace("Get all minors Count for Intermediate [docRef={}, versionLabel={} ]", docRef, versionLabel);
+
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestGetRecentMinorVersionsCountURI
+                            + "?versionLabel={versionLabel}",
+                    Object.class, docRef, versionLabel);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<Integer>() {
+                    });
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    LeosDocument findFirstVersion(final String ref) {
+        LOGGER.trace("Finding document by ref... [ref={}]", ref);
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindFirstVersionURI,
+                    Object.class, ref);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return null;
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+    LeosDocument findDocumentByVersion(String documentRef, String versionLabel) {
+        LOGGER.trace("Finding document by ref and version... [docRef={}, versionLabel={} ]", documentRef, versionLabel);
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentByVersionURI,
+                    Object.class, documentRef, versionLabel);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return null;
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+    LeosDocument findLatestMajorVersionByRef(final String ref) {
+        LOGGER.trace("Finding document by ref... [ref=" + ref + ']');
+        try {
+            ResponseEntity<Object> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindDocumentByLatestMajorVersionRefURI,
+                    Object.class, ref);
+
+            return mapper.convertValue(resp.getBody(),
+                    new TypeReference<LeosDocument>() {
+                    });
+        } catch (Exception e) {
+            if (e.getMessage().contains(Integer.toString(NOT_FOUND))) {
+                return null;
+            } else {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+    }
+
+    Package findPackageByDocumentRef(String documentRef) throws IllegalStateException {
+        LOGGER.trace("Finding package by document ref and version... [docRef={} ]", documentRef);
+        ResponseEntity<Package> resp = restTemplate.getForEntity(leosRestRepositoryURL + leosRestFindPackageByDocumentRefURI,
+                Package.class, documentRef);
+        return resp.getBody();
     }
 }

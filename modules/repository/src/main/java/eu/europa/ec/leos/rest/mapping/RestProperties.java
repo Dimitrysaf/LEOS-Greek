@@ -37,11 +37,13 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(MILESTONE_COMMENTS, "milestoneComments");
         ids.put(INITIAL_CREATED_BY, "initialCreatedBy");
         ids.put(INITIAL_CREATION_DATE, "initialCreationDate");
+        ids.put(METADATA_PROCEDURE_TYPE, "procedureType");
         ids.put(JOB_ID, "jobId");
         ids.put(JOB_DATE, "jobDate");
         ids.put(STATUS, "status");
         ids.put(METADATA_STAGE, "docStage");
         ids.put(METADATA_TYPE, "docType");
+        ids.put(METADATA_ACT_TYPE, "actType");
         ids.put(METADATA_PURPOSE, "docPurpose");
         ids.put(METADATA_DOCTEMPLATE, "docTemplate");
         ids.put(METADATA_EEA_RELEVANCE, "eeaRelevance");

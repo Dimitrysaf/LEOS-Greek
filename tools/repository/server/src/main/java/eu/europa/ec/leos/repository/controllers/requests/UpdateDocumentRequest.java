@@ -26,8 +26,6 @@ public class UpdateDocumentRequest implements Serializable {
     private String userId;
     @NotNull(message = "Document metadata cannot be empty")
     private Map<String, ?> metadata;
-    @NotBlank(message = "Document version's label cannot be blank")
-    private String labelVersion;
     @NotNull(message = "Document version's type cannot be null")
     private VersionType versionType;
     @Null(groups = OnUpdateWithoutContent.class)
@@ -50,14 +48,6 @@ public class UpdateDocumentRequest implements Serializable {
 
     public void setMetadata(Map<String, ?> metadata) {
         this.metadata = metadata;
-    }
-
-    public String getLabelVersion() {
-        return labelVersion;
-    }
-
-    public void setLabelVersion(String labelVersion) {
-        this.labelVersion = labelVersion;
     }
 
     public VersionType getVersionType() {

@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.cmis;
 
-import eu.europa.ec.leos.cmis.mapping.CmisMapper;
+import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.cmis.repository.CmisRepository;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -47,7 +47,7 @@ public class CmisRepositoryContext implements RepositoryContext {
 
     @Override
     public <D extends LeosDocument> void populateVersionsWithoutVersionLabel(Class<? extends D> type, String documentRef) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         List<Document> docs = cmisRepository.findVersionsWithoutVersionLabel(primaryType, documentRef);
         updateVersionLabel(docs);
     }

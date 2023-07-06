@@ -110,8 +110,8 @@ public class QueryFilter {
             return key;
         }
         
-        public String getValue() {
-            return value[0];
+        public String[] getValue() {
+            return value;
         }
     }
 

@@ -19,6 +19,7 @@ import eu.europa.ec.leos.rest.support.model.Package;
 public class LeosPackageExtensions {
 
     public static LeosPackage toLeosPackage(Package pkg) {
-        return new LeosPackage(pkg.getId(), pkg.getName(), "");
+        String[] pathNames = pkg.getName().split("/");
+        return new LeosPackage(pkg.getId(), pathNames[pathNames.length - 1], pkg.getName());
     }
 }

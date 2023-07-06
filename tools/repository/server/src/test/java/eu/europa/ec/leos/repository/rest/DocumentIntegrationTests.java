@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
@@ -335,7 +336,6 @@ public class DocumentIntegrationTests {
     public void test_updateDocument() throws Exception {
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
-        updateDocumentRequest.setLabelVersion(xmlDoc.getVersionLabel());
         updateDocumentRequest.setMetadata(DOC_PROPERTIES);
         updateDocumentRequest.setVersionType(xmlDoc.getVersionType());
         updateDocumentRequest.setUserId(USER);
@@ -344,8 +344,7 @@ public class DocumentIntegrationTests {
         String docSource = mapper.writeValueAsString(DOC_CONTENT.getBytes(StandardCharsets.UTF_8)).replace("\"", "");
         when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getRef()),
                 anyMap(),
-                ArgumentMatchers.eq(updateDocumentRequest.getLabelVersion()),
-                ArgumentMatchers.eq(updateDocumentRequest.getVersionType().value()),
+                ArgumentMatchers.eq(updateDocumentRequest.getVersionType()),
                 ArgumentMatchers.eq(updateDocumentRequest.getContent()),
                 ArgumentMatchers.eq(updateDocumentRequest.getComments()), ArgumentMatchers.eq(updateDocumentRequest.getUserId()))).thenReturn(xmlDoc);
 
@@ -366,7 +365,6 @@ public class DocumentIntegrationTests {
     public void test_updateDocumentWithContentBadRequest() throws Exception {
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
-        updateDocumentRequest.setLabelVersion(xmlDoc.getVersionLabel());
         updateDocumentRequest.setMetadata(DOC_PROPERTIES);
         updateDocumentRequest.setVersionType(xmlDoc.getVersionType());
         updateDocumentRequest.setUserId(USER);
@@ -385,7 +383,6 @@ public class DocumentIntegrationTests {
         String nextVersion = documentService.getNextVersionLabel(VersionType.MINOR, xmlDoc.getVersionLabel());
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
-        updateDocumentRequest.setLabelVersion(nextVersion);
         Map<String, Object> properties = (Map<String, Object>) DOC_PROPERTIES;
         properties.put("title", newTitle);
         updateDocumentRequest.setMetadata(DOC_PROPERTIES);
@@ -394,8 +391,7 @@ public class DocumentIntegrationTests {
         String json = mapper.writeValueAsString(updateDocumentRequest);
         when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getRef()),
                 anyMap(),
-                ArgumentMatchers.eq(updateDocumentRequest.getLabelVersion()),
-                ArgumentMatchers.eq(updateDocumentRequest.getVersionType().value()),
+                ArgumentMatchers.eq(updateDocumentRequest.getVersionType()),
                 ArgumentMatchers.eq(updateDocumentRequest.getComments()), ArgumentMatchers.eq(updateDocumentRequest.getUserId()))).thenReturn(xmlDoc);
 
         mockMvc.perform(put("/document/update-metadata/{ref}", xmlDoc.getRef()).contentType(MediaType.APPLICATION_JSON)
@@ -420,12 +416,13 @@ public class DocumentIntegrationTests {
                 .thenReturn(listDocs);
 
         mockMvc.perform(get("/documents/find-by-collaborator/{userId}?role={role}", USER, role).accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
-                .andExpect(jsonPath("$[0].name", is(xmlDoc.getName())))
-                .andExpect(jsonPath("$[0].createdBy", is(USER)))
-                .andExpect(jsonPath("$[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
-                .andExpect(jsonPath("$[0].updatedBy", is(USER)))
-                .andExpect(jsonPath("$[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp,
+                        ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(status().isOk()).andDo(print());
     }
 
@@ -435,15 +432,15 @@ public class DocumentIntegrationTests {
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
 
         when(documentService.findDocumentByName(name))
-                .thenReturn(listDocs);
+                .thenReturn(Optional.of(xmlDoc));
 
         mockMvc.perform(get("/documents/find-by-name/{name}", name).accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
-                .andExpect(jsonPath("$[0].name", is(xmlDoc.getName())))
-                .andExpect(jsonPath("$[0].createdBy", is(USER)))
-                .andExpect(jsonPath("$[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
-                .andExpect(jsonPath("$[0].updatedBy", is(USER)))
-                .andExpect(jsonPath("$[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
+                .andExpect(jsonPath("$.createdBy", is(USER)))
+                .andExpect(jsonPath("$.createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.updatedBy", is(USER)))
+                .andExpect(jsonPath("$.updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(status().isOk()).andDo(print());
     }
 
@@ -473,7 +470,7 @@ public class DocumentIntegrationTests {
         mockMvc.perform(post("/documents/find-by-filter/{packageName}?startIndex={startIndex}&maxResults={maxResults}", encodeUriVariables(PKG_NAME)[0],
                         startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)
                         .content(json).accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(status().isOk()).andDo(print());
     }
 
@@ -524,12 +521,12 @@ public class DocumentIntegrationTests {
         when(documentService.findAllVersionsByRef(xmlDoc.getRef())).thenReturn(Arrays.asList(xmlDoc));
 
         mockMvc.perform(get("/document/all-versions/{ref}", xmlDoc.getRef(), latest).accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
-                .andExpect(jsonPath("$[0].name", is(xmlDoc.getName())))
-                .andExpect(jsonPath("$[0].createdBy", is(USER)))
-                .andExpect(jsonPath("$[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
-                .andExpect(jsonPath("$[0].updatedBy", is(USER)))
-                .andExpect(jsonPath("$[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(status().isOk()).andDo(print());
     }
 }

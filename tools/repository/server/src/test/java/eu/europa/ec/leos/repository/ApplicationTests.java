@@ -62,7 +62,7 @@ public class ApplicationTests {
     @Test
     @Transactional(readOnly = true)
     public void test_findDocumentsByPackageName() {
-        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/package_ckk8202vl0000n070oin84afg");
+        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/package_leos");
         assertTrue(pkg.isPresent());
         List<Document> docs = documentRepository.findAllDocumentsByPackageId(pkg.get());
         assertEquals(docs.size(), 4);
@@ -86,7 +86,7 @@ public class ApplicationTests {
         assertEquals(docs.size(), 1);
         docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "MEMORANDUM");
         assertEquals(docs.size(), 1);
-        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/package_ckk8202vl0000n070oin84afg");
+        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/package_leos");
         assertTrue(pkg.isPresent());
         docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.get().getId(), "MEMORANDUM");
         assertEquals(docs.size(), 1);

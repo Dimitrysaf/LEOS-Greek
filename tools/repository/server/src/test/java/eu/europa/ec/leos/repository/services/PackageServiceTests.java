@@ -84,7 +84,7 @@ public class PackageServiceTests {
                 Sets.set(
                         "PROPOSAL", "BILL"), false);
         assertEquals(0, docs.size());
-        docs = packageService.findDocumentsByPackageName(REPO_ID, "/leos/workspaces/package_ckk8202vl0000n070oin84afg", Sets.set("PROPOSAL", "ANNEX"), false);
+        docs = packageService.findDocumentsByPackageName(REPO_ID, "/leos/workspaces/package_leos", Sets.set("PROPOSAL", "ANNEX"), false);
         assertEquals(2, docs.size());
     }
 }

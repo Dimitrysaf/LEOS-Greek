@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.leos.rest.extensions;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
@@ -30,6 +32,7 @@ import eu.europa.ec.leos.domain.repository.document.MediaDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.Structure;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
@@ -37,7 +40,6 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.rest.mapping.RestProperties;
 import io.atlassian.fugue.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,14 +48,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 public class LeosDocumentExtensions {
 
     private static final Logger logger = LoggerFactory.getLogger(LeosDocumentExtensions.class);
 
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
-    
+
     @SuppressWarnings("unchecked")
     public static <T extends LeosDocument> T toLeosDocument(eu.europa.ec.leos.rest.support.model.LeosDocument document, Class<? extends T> type, boolean fetchContent) {
 
@@ -74,7 +76,7 @@ public class LeosDocumentExtensions {
                     throw new IllegalStateException("Incompatible types! [category=" + category + ", mappedType=" + Explanatory.class.getSimpleName() + ", wantedType=" + type.getSimpleName() + ']');
                 }
                 break;
-                case MEMORANDUM:
+            case MEMORANDUM:
                 if (type.isAssignableFrom(Memorandum.class)) {
                     leosDocument = (T) toLeosMemorandum(document, fetchContent);
                 } else {
@@ -145,11 +147,14 @@ public class LeosDocumentExtensions {
     }
 
     private static Proposal toLeosProposal(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new Proposal(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new Proposal(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(),
+                getVersionType(d),
+                d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -167,11 +172,12 @@ public class LeosDocumentExtensions {
     }
 
     private static Explanatory toCouncilExplanatory(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new Explanatory(d.getVersionId(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new Explanatory(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -183,11 +189,12 @@ public class LeosDocumentExtensions {
     }
 
     private static Memorandum toLeosMemorandum(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new Memorandum(d.getVersionId(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new Memorandum(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -199,11 +206,12 @@ public class LeosDocumentExtensions {
     }
 
     private static Bill toLeosBill(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new Bill(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new Bill(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -216,11 +224,12 @@ public class LeosDocumentExtensions {
     }
 
     private static Annex toLeosAnnex(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new Annex(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new Annex(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -234,11 +243,12 @@ public class LeosDocumentExtensions {
     }
 
     private static FinancialStatement toFinancialStatement(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new FinancialStatement(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new FinancialStatement(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -251,39 +261,43 @@ public class LeosDocumentExtensions {
     }
 
     private static MediaDocument toLeosMediaDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new MediaDocument(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new MediaDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent));
     }
 
     private static ConfigDocument toLeosConfigDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new ConfigDocument(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new ConfigDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent));
     }
 
     private static Structure toLeosStructureDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new Structure(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new Structure(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getStructureMetadataOption(d));
     }
 
     private static LegDocument toLeosLegDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new LegDocument(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new LegDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getMilestoneComments(d),
                 contentOption(d, fetchContent),
                 getInitialCreatedBy(d),
@@ -295,11 +309,12 @@ public class LeosDocumentExtensions {
     }
 
     private static ExportDocument toLeosExportDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        return new ExportDocument(d.getRef(), d.getName(), d.getCreatedBy(),
+        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        return new ExportDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                null, d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
                 getInitialCreatedBy(d),
                 getInitialCreationInstant(d),
                 contentOption(d, fetchContent),
@@ -308,8 +323,8 @@ public class LeosDocumentExtensions {
     }
 
     private static LeosCategory getCategory(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        // FIXME add check for leos:document primary type???
         String leosCategory = document.getCategory();
+        leosCategory = (leosCategory.startsWith("TEMPLATE_")) ? leosCategory.substring("TEMPLATE_".length()) : leosCategory;
         return LeosCategory.valueOf(leosCategory);
     }
 
@@ -337,8 +352,9 @@ public class LeosDocumentExtensions {
 
     static List<Collaborator> getCollaborators(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
         if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS)) != null) {
-            List<Collaborator> collaborators = (List<Collaborator>) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS));
-
+            ObjectMapper mapper = new ObjectMapper();
+            List<Collaborator> collaborators =
+                    mapper.convertValue(document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS)), new TypeReference<List<Collaborator>>() { });
             return collaborators;
         } else {
             return Arrays.asList();
@@ -351,7 +367,7 @@ public class LeosDocumentExtensions {
     }
 
     private static List<String> getMilestoneComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        return null;
+        return Arrays.asList();
     }
 
     private static String getJobId(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -396,8 +412,7 @@ public class LeosDocumentExtensions {
     }
 
     private static VersionType getVersionType(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String versionType = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_TYPE));
-        return versionType != null ? VersionType.valueOf(versionType) : null;
+        return document.getVersionType();
     }
 
     private static List<String> getContainedDocuments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {

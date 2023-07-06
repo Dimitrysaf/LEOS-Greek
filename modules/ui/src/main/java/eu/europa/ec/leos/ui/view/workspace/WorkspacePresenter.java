@@ -154,9 +154,10 @@ class WorkspacePresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    void handleCreateDocumentRequest(CreateDocumentRequestEvent event) {
+    void handleCreateDocumentRequest(CreateDocumentRequestEvent event) throws IOException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.debug("Handling create document request event... [category={}]", event.getDocument().getCategory());
+        List<CatalogItem> catalogItems = templateService.getTemplatesCatalog();
         if (event.getDocument().isUploaded()) {
             //if it has id means that it is an uploaded document.
             CollectionContextService context = proposalContextServiceProvider.get();
@@ -180,6 +181,15 @@ class WorkspacePresenter extends AbstractLeosPresenter {
             }
             context.usePurpose(event.getDocument().getMetadata().getDocPurpose());
             context.useEeaRelevance(event.getDocument().getMetadata().getEeaRelevance());
+            if (event.getDocument().getProcedureType() != null) {
+                context.useProcedureType(event.getDocument().getProcedureType());
+            }
+            if (event.getDocument().getActType() != null) {
+                context.useActType(event.getDocument().getActType());
+            }
+            if (event.getDocument().getMetadata().getDocType() != null) {
+                context.useDocType(event.getDocument().getMetadata().getDocType());
+            }
             context.useActionMessage(ContextAction.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextAction.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
             context.executeCreateProposal();
