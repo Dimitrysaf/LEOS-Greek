@@ -16,7 +16,7 @@
 //------------------------------- XML Styles --------------------------------//
 %xmlTrackChanges {
 
-  [leos\:action]::before {
+  [leos\:action]:not(tr)::before {
     content: attr(leos\:title);
     display: none;
     position: absolute;

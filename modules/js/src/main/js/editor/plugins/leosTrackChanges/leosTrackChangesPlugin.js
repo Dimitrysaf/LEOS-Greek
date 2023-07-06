@@ -366,14 +366,15 @@ define(function leosTrackChangesPluginModule(require) {
                                     core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
                                     if (actions.insertNewData(editor, node.outerHTML))
                                         node.remove();
-                                /*} else if ((node.tagName === "TABLE") || (node.tagName === "TR") || (node.tagName === "TD")) {
-                                    if ((node.tagName === "TR") || (node.tagName === "TD"))
-                                        node = node.closest("table");
-                                    var tcAttributes = core.getTrackChangeAttributes(editor, core.INSERT_ACTION);
-                                    for (var attrName in tcAttributes) {
-                                        if (attrName !== "data-akn-name")
-                                            node.setAttribute(attrName, tcAttributes[attrName]);
-                                    }*/
+                                } else if (node.tagName === "TABLE") {
+                                    if (!node.id) { // It is a new table
+                                        var rows = node.querySelectorAll("tr");
+                                        rows.forEach(function (row) {
+                                            if (!row.getAttribute(core.UID_ATTR)) {
+                                                core.addTrackChangesAttributes(editor, row, core.INSERT_ACTION);
+                                            }
+                                        });
+                                    }
                                 } else {
                                     continue;
                                 }
