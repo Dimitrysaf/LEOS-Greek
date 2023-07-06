@@ -34,11 +34,6 @@
         #tocPane
         class="toc-pane"
         isCollapsible
-        [label]="
-          (documentService.navigationPaneCollapse$ | async)
-            ? ''
-            : ('page.editor.toc-pane.label' | translate)
-        "
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
         (collapsed)="onToggleTocPaneCollapsed()"
         [title]="
