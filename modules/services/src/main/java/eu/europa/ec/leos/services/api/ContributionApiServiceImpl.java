@@ -247,16 +247,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         );
 
         if(request.isAcceptAllContributions()) {
-            String contributionDocumentId = request.getMergeActions().get(0).getContributionVO().getDocumentId();
-            final Proposal contributionProposal = this.proposalService.findProposal(contributionDocumentId);
-            this.populateCloneProposalMetadata(Validate.notNull(contributionProposal));
-
-            LeosDocument revision = this.leosRepository.findDocumentById(contributionDocumentId, documentClass.getClazz(), false);
-
-            Map<String, Object> properties = new HashMap<>();
-            properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-            revision = this.leosRepository.updateDocument(revision.getId(), properties, documentClass.getClazz(), false);
-            return revision.getContent().get().getSource().getBytes();
+            String contributionRef = request.getMergeActions().get(0).getContributionVO().getVersionedReference();
+            this.markRevisionAsProcessed(documentType, contributionRef);
         }
         return document.getContent().get().getSource().getBytes();
     }
