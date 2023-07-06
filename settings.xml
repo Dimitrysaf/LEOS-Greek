@@ -4,8 +4,8 @@
     <servers>
         <server>
             <id>deployment-repo</id>
-            <username>${bamboo_deployment_user}</username>
-            <password>${bamboo_deployment_password}</password>
+            <username>${bamboo_release_user}</username>
+            <password>${bamboo_release_password}</password>
         </server>
     </servers>
 </settings>
