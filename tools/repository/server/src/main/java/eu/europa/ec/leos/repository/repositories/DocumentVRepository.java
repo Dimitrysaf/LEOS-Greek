@@ -46,6 +46,14 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.CATEGORY_CODE = ?2 AND d.IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findDocumentsByPackageIdAndCategory(BigDecimal packageId, String categoryCode);
 
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.NAME LIKE %?1%) AND d.CATEGORY_CODE = ?2 AND d" +
+            ".IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    List<DocumentV> findDocumentsByPackagePathAndCategory(String packagePath, String categoryCode);
+
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.NAME = ?1) AND d.CATEGORY_CODE = ?2 AND d" +
+            ".IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    List<DocumentV> findDocumentsByPackageNameAndCategory(String packageName, String categoryCode);
+
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.IS_LATEST_VERSION = 1 AND d.NAME = ?1 ORDER BY d" +
             ".DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findDocumentsByName(String name);

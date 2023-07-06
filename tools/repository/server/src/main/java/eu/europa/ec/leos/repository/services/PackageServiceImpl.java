@@ -137,13 +137,14 @@ public class PackageServiceImpl implements PackageService {
                                                          final boolean descendants) throws RepositoryException {
         List<DocumentV> docs = new ArrayList<>();
         List<MilestoneV> milestones = new ArrayList<>();
-        Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, packageName);
-        if (!pkg.isPresent()) {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
-        }
         for (String categoryCode : categories) {
-            docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(pkg.get().getId(), categoryCode));
-            milestones.addAll(milestoneVRepository.findMilestonesByPackageIdAndCategory(pkg.get().getId(), categoryCode));
+            if (descendants) {
+                docs.addAll(documentVRepository.findDocumentsByPackagePathAndCategory(packageName, categoryCode));
+                milestones.addAll(milestoneVRepository.findMilestonesByPackagePathAndCategory(packageName, categoryCode));
+            } else {
+                docs.addAll(documentVRepository.findDocumentsByPackageNameAndCategory(packageName, categoryCode));
+                milestones.addAll(milestoneVRepository.findMilestonesByPackageNameAndCategory(packageName, categoryCode));
+            }
         }
         List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
