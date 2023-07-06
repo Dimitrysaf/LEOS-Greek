@@ -225,7 +225,7 @@ define(function leosUtilsModule(require) {
         } else {
             tcStyle = "[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
             tcStyle += "[" + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
-            tcStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { border: none !important; }\n";
+            tcStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
         }
         return tcStyle;
     }
