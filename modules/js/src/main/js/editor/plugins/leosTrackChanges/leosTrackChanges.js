@@ -125,7 +125,7 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        addTrackChangesAttributes: function(element, editor, action) {
+        addTrackChangesAttributes: function(editor, element, action) {
             var tcAttributes = this.getTrackChangeAttributes(editor, action);
             for (var attrName in tcAttributes) {
                 element.setAttribute(attrName, tcAttributes[attrName]);
@@ -399,21 +399,41 @@ define(function leosTrackChangesModule(require) {
         acceptChange: function(editor, element) {
             if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 element.remove();
-            } else if ((element.getName().toLowerCase() === core.TRACKCHANGES_ELEMENT) &&
-                (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
-            } else {
-                core.removeTrackChangesAttributes(element);
             }
         },
 
         rejectChange: function(editor, element) {
             if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 element.remove();
-            } else if ((element.getName().toLowerCase() === core.TRACKCHANGES_ELEMENT) &&
-                (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
-            } else {
+            }
+        },
+
+        acceptRowChange: function(editor, element) {
+            if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                var table = element.getAscendant("table");
+                if (table.$.rows.length == 1) {
+                    table.remove();
+                } else {
+                    element.remove();
+                }
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                core.removeTrackChangesAttributes(element);
+            }
+        },
+
+        rejectRowChange: function(editor, element) {
+            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                var table = element.getAscendant("table");
+                if (table.$.rows.length == 1) {
+                    table.remove();
+                } else {
+                    element.remove();
+                }
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 core.removeTrackChangesAttributes(element);
             }
         }
