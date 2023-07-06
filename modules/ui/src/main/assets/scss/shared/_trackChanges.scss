@@ -63,11 +63,11 @@
   }
 
   tr[leos\:action="insert"] {
-    border: 2px dashed green;
+    box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
   }
 
   tr[leos\:action="delete"] {
-    border: 2px dashed red;
+    box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
   }
 
 }
@@ -84,11 +84,11 @@
   }
 
   tr[data-akn-action="insert"] {
-    border: 2px dashed green;
+    box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
   }
 
   tr[data-akn-action="delete"] {
-    border: 2px dashed red;
+    box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
   }
 
 }
