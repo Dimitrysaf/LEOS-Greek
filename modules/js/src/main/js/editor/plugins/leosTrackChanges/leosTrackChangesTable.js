@@ -186,8 +186,8 @@ define(function leosTrackChangesTableModule(require) {
                     } else {
                         selectionOrRow.remove();
                     }
-                } else {
-                    core.addTrackChangesAttributes(selectionOrRow, editor, core.DELETE_ACTION);
+                } else if (!selectionOrRow.getAttribute(core.UID_ATTR)) {
+                    core.addTrackChangesAttributes(editor, selectionOrRow, core.DELETE_ACTION);
                 }
             }
 
@@ -201,6 +201,62 @@ define(function leosTrackChangesTableModule(require) {
             if (cursorPosition) {
                 this.placeCursorInCell(cursorPosition);
             }
+        },
+
+        insertRow: function(editor, selectionOrCells, insertBefore) {
+            var cells = CKEDITOR.tools.isArray(selectionOrCells) ? selectionOrCells : this.getSelectedCells(selectionOrCells),
+                firstCell = cells[0],
+                table = firstCell.getAscendant("table"),
+                doc = firstCell.getDocument(),
+                startRow = cells[0].getParent(),
+                startRowIndex = startRow.$.rowIndex,
+                lastCell = cells[cells.length - 1],
+                endRowIndex = lastCell.getParent().$.rowIndex + lastCell.$.rowSpan - 1,
+                endRow = new CKEDITOR.dom.element(table.$.rows[endRowIndex]),
+                rowIndex = insertBefore ? startRowIndex : endRowIndex,
+                row = insertBefore ? startRow : endRow;
+
+            var map = CKEDITOR.tools.buildTableMap(table),
+                cloneRow = map[rowIndex],
+                nextRow = insertBefore ? map[rowIndex - 1] : map[rowIndex + 1],
+                width = map[0].length;
+
+            var newRow = doc.createElement("tr");
+            for (var i = 0; cloneRow[i] && i < width; i++) {
+                var cell;
+                // Check whether there's a spanning row here, do not break it.
+                if (cloneRow[i].rowSpan > 1 && nextRow && cloneRow[i] == nextRow[i] ) {
+                    cell = cloneRow[i];
+                    cell.rowSpan += 1;
+                } else {
+                    cell = new CKEDITOR.dom.element(cloneRow[i]).clone();
+                    cell.removeAttribute("rowSpan");
+                    cell.appendBogus();
+                    newRow.append(cell);
+                    cell = cell.$;
+                }
+
+                i += cell.colSpan - 1;
+            }
+
+            core.addTrackChangesAttributes(editor, newRow, core.INSERT_ACTION);
+            insertBefore ? newRow.insertBefore(row) : newRow.insertAfter(row);
+
+            return newRow;
+        },
+
+        rowInsertBefore: function(editor) {
+            var selection = editor.getSelection(),
+                cells = this.getSelectedCells(selection);
+
+            this.insertRow(editor, cells, true);
+        },
+
+        rowInsertAfter: function(editor) {
+            var selection = editor.getSelection(),
+                cells = this.getSelectedCells(selection);
+
+            this.insertRow(editor, cells);
         }
 
     };

@@ -83,13 +83,13 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addMenuItem("acceptRowChangeItem", {
                     label: "Accept this row change",
                     icon: this.path + "icons/ok.png",
-                    command: "acceptOneChange",
+                    command: "acceptRowChange",
                     group: "trackChangesGroup"
                 });
                 editor.addMenuItem( "rejectRowChangeItem", {
                     label: "Reject this row change",
                     icon: this.path + "icons/remove.png",
-                    command: "rejectOneChange",
+                    command: "rejectRowChange",
                     group: "trackChangesGroup"
                 });
                 editor.addCommand("acceptOneChange", {
@@ -122,6 +122,18 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 });
+                editor.addCommand("acceptRowChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.acceptRowChange(editor, selectedElement);
+                    }
+                });
+                editor.addCommand("rejectRowChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.rejectRowChange(editor, selectedElement);
+                    }
+                });
                 editor.contextMenu.addListener(function(element) {
                     var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
                     if (tcElement) { // Is a track change deleted row
@@ -140,7 +152,7 @@ define(function leosTrackChangesPluginModule(require) {
                             };
                         }
                     } else {
-                        var tcElements = core.findElementsInSelection(selection);
+                        var tcElements = core.findElementsInSelection(editor.getSelection());
                         if (tcElements.length > 0) {
                             return {
                                 acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
@@ -328,6 +340,14 @@ define(function leosTrackChangesPluginModule(require) {
                             break;
                         case "rowDelete":
                             table.rowDelete(editor);
+                            editor.fire("change");
+                            return false;
+                        case "rowInsertBefore":
+                            table.rowInsertBefore(editor);
+                            editor.fire("change");
+                            return false;
+                        case "rowInsertAfter":
+                            table.rowInsertAfter(editor);
                             editor.fire("change");
                             return false;
                     }
