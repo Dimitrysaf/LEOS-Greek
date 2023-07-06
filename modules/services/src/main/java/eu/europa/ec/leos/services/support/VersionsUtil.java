@@ -8,6 +8,7 @@ import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.user.UserHelper;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +96,7 @@ public class VersionsUtil {
         List<VersionVO> allVersions = new ArrayList<>();
         versions.forEach(doc -> {
             final String checkinCommentJson;
-            if (doc.getMilestoneComments().size() > 0) {
+            if (CollectionUtils.isNotEmpty(doc.getMilestoneComments())) {
                 // Only the first comment is related to the document changes. All other comments, if presents,
                 // means that the same document, without being changed, is included in other milestones.
                 // Example: Create a Milestone 1. Enter inside Annex, make a change, and then create another Milestone 2.

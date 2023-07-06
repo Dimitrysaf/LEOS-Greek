@@ -21,7 +21,9 @@ public enum PropertiesMetadata {
     CLONED_FROM("clonedFrom", false),
     REVISION_STATUS("revisionStatus", false),
     CONTRIBUTION_STATUS("contributionStatus", false),
-    BASE_REVISION_ID("baseRevisionId", false);
+    BASE_REVISION_ID("baseRevisionId", false),
+    LIVE_DIFFING_REQUIRED("liveDiffingRequired", false),
+    TRACK_CHANGES_ENABLED("trackChangesEnabled", false);
 
     private Boolean isMandatory = false;
     private String leosName;

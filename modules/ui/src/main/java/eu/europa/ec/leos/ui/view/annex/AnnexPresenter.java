@@ -844,7 +844,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LogUtil.logError(LOG, eventBus, "Unexpected error occurred while generating Export Package", e);
         } finally {
-            exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+            exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
                 exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
                 leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));

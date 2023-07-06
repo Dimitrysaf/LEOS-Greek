@@ -1,17 +1,21 @@
 package eu.europa.ec.leos.services.store;
 
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArchiveServiceImpl implements ArchiveService {
+@RepositoryProfile(repositoryProfiles = {RepositoryProfileType.DEFAULT, RepositoryProfileType.CMIS})
+public class ArchiveServiceCmisImpl implements ArchiveService {
 
     private final PackageRepository packageRepository;
     private final WorkspaceRepository workspaceRepository;
@@ -19,7 +23,7 @@ public class ArchiveServiceImpl implements ArchiveService {
     private String archiveFolder = "archive";
 
     @Autowired
-    public ArchiveServiceImpl(PackageRepository packageRepository, WorkspaceRepository workspaceRepository, LeosRepository leosRepository) {
+    public ArchiveServiceCmisImpl(PackageRepository packageRepository, WorkspaceRepository workspaceRepository, LeosRepository leosRepository) {
         this.packageRepository = packageRepository;
         this.workspaceRepository = workspaceRepository;
         this.leosRepository = leosRepository;

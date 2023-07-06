@@ -94,7 +94,7 @@ public class DocumentServiceTests {
 
     @Before
     public void setup() {
-        pkg = packageService.createPackage("/leos/workspaces/test", "leos_dev", false, null, "demo");
+        pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
     }
 
     @After
@@ -350,7 +350,7 @@ public class DocumentServiceTests {
         filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
                 , "SJ-023"));
         Set<String> categories = Sets.set("PROPOSAL");
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("/leos/workspaces", categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
         assertEquals(docs.get(0).getCategory(), "PROPOSAL");
@@ -371,7 +371,7 @@ public class DocumentServiceTests {
         Set<String> categories = Sets.set("PROPOSAL");
         filter.addSortOrder(new QueryFilter.SortOrder(QueryFilter.FilterType.lastModificationDate.name(), QueryFilter.SORT_DESCENDING));
 
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("/leos/workspaces", categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
         assertEquals(docs.get(0).getCategory(), "PROPOSAL");
@@ -651,6 +651,63 @@ public class DocumentServiceTests {
         assertEquals(docs.size(), 2);
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
         assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
+    }
+
+    @Test
+    @Transactional
+    public void test_findAllMinorsForIntermediate_2() throws Exception {
+        LeosDocument doc = docCreation();
+        Map<String, Object> properties = new HashMap<>();
+        properties.putAll(doc.getMetadata());
+        List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
+        properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Second Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Third Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MAJOR,
+                "Major Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Fifth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Sixth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Seventh Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Eighth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Ninth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Tenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Eleventh Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Twelveth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Thirteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Fourteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+                "Fifteenth Version", pkg.getName());
+        List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.0.0",0, 10);
+        assertEquals(docs.size(), 2);
+        assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
+        assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
+        docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.1.0",0, 40);
+        int count = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.1.0");
+        assertEquals(docs.size(), 11);
+        assertEquals(count, 11);
+        assertEquals(docs.get(0).getVersionLabel(), "1.0.11");
+        assertEquals(docs.get(1).getVersionLabel(), "1.0.10");
+        assertEquals(docs.get(2).getVersionLabel(), "1.0.9");
+        assertEquals(docs.get(3).getVersionLabel(), "1.0.8");
+        assertEquals(docs.get(4).getVersionLabel(), "1.0.7");
+        assertEquals(docs.get(5).getVersionLabel(), "1.0.6");
+        assertEquals(docs.get(6).getVersionLabel(), "1.0.5");
+        assertEquals(docs.get(7).getVersionLabel(), "1.0.4");
+        assertEquals(docs.get(8).getVersionLabel(), "1.0.3");
+        assertEquals(docs.get(9).getVersionLabel(), "1.0.2");
+        assertEquals(docs.get(10).getVersionLabel(), "1.0.1");
     }
 
     @Test

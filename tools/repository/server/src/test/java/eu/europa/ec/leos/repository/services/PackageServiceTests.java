@@ -52,16 +52,16 @@ public class PackageServiceTests {
     @Test
     @Transactional
     public void test_createAndDeletePackage() throws RepositoryException {
-        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("/leos/workspaces/test", "leos_dev", false, null, "demo");
-        Optional<Package> pkgO = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/test");
+        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
+        Optional<Package> pkgO = packageRepository.findPackageByName(REPO_ID, "test");
         assertTrue(pkgO.isPresent());
         long count = packageRepository.count();
-        assertEquals(3, count);
+        assertEquals(2, count);
         packageService.deletePackage(REPO_ID, pkg.getName());
-        pkgO = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/test");
+        pkgO = packageRepository.findPackageByName(REPO_ID, "test");
         assertFalse(pkgO.isPresent());
         count = packageRepository.count();
-        assertEquals(2, count);
+        assertEquals(1, count);
     }
 
     @Test
@@ -76,15 +76,15 @@ public class PackageServiceTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageName() throws RepositoryException {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "/leos/workspaces",
+        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
                 Sets.set(
                 "PROPOSAL", "BILL"), true);
         assertEquals(2, docs.size());
-        docs = packageService.findDocumentsByPackageName(REPO_ID, "/leos/workspaces",
+        docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
                 Sets.set(
                         "PROPOSAL", "BILL"), false);
         assertEquals(0, docs.size());
-        docs = packageService.findDocumentsByPackageName(REPO_ID, "/leos/workspaces/package_leos", Sets.set("PROPOSAL", "ANNEX"), false);
+        docs = packageService.findDocumentsByPackageName(REPO_ID, "package_leos", Sets.set("PROPOSAL", "ANNEX"), false);
         assertEquals(2, docs.size());
     }
 }

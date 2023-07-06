@@ -357,6 +357,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument> D moveDocument(String id, String newPackageName, Class<? extends D> type) {
+        return null;
+    }
+
+    @Override
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
@@ -452,7 +457,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
         return toLeosDocuments(docs, type, fetchContent);
     }
-    
+
     @Override
     public void deleteDocumentById(String id) {
         logger.trace("Deleting Document... [id=" + id + ']');
@@ -579,7 +584,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         Stream<Document> docs = repository.findPagedDocumentsByParentPath(path, primaryType, categories, descendants, startIndex, maxResults, workspaceFilter);
         logger.trace("CMIS Repository document search took $time milliseconds.");
-        
+
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return docs.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, fetchContent, oldVersions));
     }
@@ -622,19 +627,19 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public <D extends LeosDocument> int findAllMinorsCountForIntermediate(Class<? extends D> type, String docRef, String currIntVersion) {
      String primaryType = LeosMapper.leosPrimaryType(type);
      return repository.findAllMinorsCountForIntermediate(primaryType, docRef, currIntVersion);
     }
-    
+
     @Override
     public <D extends LeosDocument> Integer findAllMajorsCount(Class<? extends D> type, String docRef) {
         String primaryType = LeosMapper.leosPrimaryType(type);
         return repository.findAllMajorsCount(primaryType, docRef);
     }
-    
+
     @Override
     public <D extends LeosDocument> List<D> findAllMajors(Class<? extends D> type, String docRef, int startIndex, int maxResult) {
         String primaryType = LeosMapper.leosPrimaryType(type);
@@ -643,14 +648,14 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public <D extends LeosDocument> D findLatestMajorVersionById(Class<? extends D> type, String documentId) {
         Document doc = repository.findLatestMajorVersionById(documentId);
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions);
     }
-    
+
     @Override
     public <D extends LeosDocument> List<D> findRecentMinorVersions(Class<? extends D> type, String documentRef, String lastMajorId, int startIndex, int maxResults) {
         String primaryType = LeosMapper.leosPrimaryType(type);
@@ -659,7 +664,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public <D extends LeosDocument> Integer findRecentMinorVersionsCount(Class<? extends D> type, String documentRef, String versionLabel) {
         String primaryType = LeosMapper.leosPrimaryType(type);
@@ -671,14 +676,14 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
             throw new IllegalStateException("Missing user in security context");
         }
     }
-    
+
     @Override
     public <D extends LeosDocument> D findFirstVersion(Class<? extends D> type, String documentRef) {
         String primaryType = LeosMapper.leosPrimaryType(type);
         Optional<Document> document = repository.findFirstVersion(primaryType, documentRef).findFirst();
         if (document.isPresent()) {
             return toLeosDocument(document.get(), type, true)
-                    .orElseThrow(() -> new IllegalStateException("Error occurred retrieving first document version! [=" + documentRef + ']'));            
+                    .orElseThrow(() -> new IllegalStateException("Error occurred retrieving first document version! [=" + documentRef + ']'));
         } else {
             return null;
         }

@@ -237,7 +237,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             throw new ExportException(messageHelper.getMessage("export.package.error.message", e.getMessage()));
         } finally {
             if ((exportDocument != null)){
-                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
             }
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
                 exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);

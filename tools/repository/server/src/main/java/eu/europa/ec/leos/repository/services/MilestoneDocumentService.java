@@ -7,12 +7,15 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface MilestoneDocumentService {
     List<LeosDocument> findMilestonesByStatus(String status);
 
     List<LeosDocument> findMilestoneByName(final String fileName);
+
+    Optional<LeosDocument> findMilestoneByRef(final String Ref);
 
     List<LeosDocument> findMilestoneByPackageId(final String pkgId) throws RepositoryException;
 

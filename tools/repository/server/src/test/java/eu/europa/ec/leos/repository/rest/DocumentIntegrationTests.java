@@ -75,7 +75,7 @@ public class DocumentIntegrationTests {
     private final String DOC_TITLE = "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL TEST ON SUBPARAGRAPHS AS INTRO";
     private final String DOC_TYPE = "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL";
     private final List<Collaborator> COLLABORATORS = Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"));
-    private final String PKG_NAME = "/leos/workspaces/package-test";
+    private final String PKG_NAME = "package-test";
     private final BigDecimal PKG_ID = new BigDecimal(3);
     private final BigDecimal DOC_ID = new BigDecimal(6);
     private final String REPO_ID = "leos_dev";

@@ -46,9 +46,9 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.CATEGORY_CODE = ?2 AND d.IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
     List<DocumentV> findDocumentsByPackageIdAndCategory(BigDecimal packageId, String categoryCode);
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.NAME LIKE %?1%) AND d.CATEGORY_CODE = ?2 AND d" +
-            ".IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
-    List<DocumentV> findDocumentsByPackagePathAndCategory(String packagePath, String categoryCode);
+    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.REPOSITORY_ID IN (SELECT r.ID FROM REPOSITORY r WHERE" +
+            " r.CMIS_ID = ?1)) AND d.CATEGORY_CODE = ?2 AND d.IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    List<DocumentV> findDocumentsByCategory(String repositoryId, String categoryCode);
 
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.NAME = ?1) AND d.CATEGORY_CODE = ?2 AND d" +
             ".IS_LATEST_VERSION = 1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
@@ -74,11 +74,17 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.ref = ?1 AND d.version_label = ?2", nativeQuery = true)
     Optional<DocumentV> findDocumentByVersion(String docRef, String versionLabel);
 
-    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false and d.ref = ?1 AND d.versionLabel LIKE ?2")
-    Page<DocumentV> findAllMinorsForIntermediate(String docRef, String currIntVersion, Pageable pageable);
+    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel < ?2 AND d.versionLabel > ?3 ORDER BY d" +
+            ".createdOn DESC")
+    Page<DocumentV> findAllMinorsForIntermediate(String docRef, String currIntVersion, String previousMajorVersion, Pageable pageable);
 
-    @Query(value = "SELECT COUNT(DISTINCT VERSION_ID) MINORS_COUNT FROM DOCUMENT_V d WHERE IS_MAJOR_VERSION = 0 and d.ref = ?1", nativeQuery = true)
-    Integer getAllMinorsCountForIntermediate(String docRef, String currIntVersion);
+    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_MAJOR_VERSION = 1 and d.REF = ?1 AND d.VERSION_LABEL < ?2 ORDER BY d" +
+            ".DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
+    Optional<DocumentV> findPreviousMajorVersion(String docRef, String currIntVersion);
+
+    @Query(value = "SELECT COUNT(d) FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel < ?2 AND d.versionLabel > ?3 ORDER BY d" +
+            ".createdOn DESC")
+    Integer getAllMinorsCountForIntermediate(String docRef, String currIntVersion, String previousMajorVersion);
 
     @Query(value = "SELECT COUNT(DISTINCT VERSION_ID) MINORS_COUNT FROM DOCUMENT_V d WHERE IS_MAJOR_VERSION = 1 and d.ref = ?1", nativeQuery = true)
     Integer getAllMajorsCount(String docRef);

@@ -405,7 +405,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getExportPackage(@PathVariable("proposalRef") String proposalRef, @PathVariable("exportPackageId") String exportPackageId) {
         ExportDocument exportDocument = null;
         try {
-            exportDocument = exportPackageService.findExportDocumentById(exportPackageId, false);
+            exportDocument = exportPackageService.findExportDocumentById(exportPackageId, true);
             byte[] file = exportDocument.getContent().get().getSource().getBytes();
             HttpHeaders headers = new HttpHeaders();
             headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + exportDocument.getName() + "\"");

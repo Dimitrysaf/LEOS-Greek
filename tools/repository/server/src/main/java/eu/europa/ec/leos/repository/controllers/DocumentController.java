@@ -16,7 +16,6 @@ package eu.europa.ec.leos.repository.controllers;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
-import eu.europa.ec.leos.repository.controllers.response.ExceptionResponse;
 import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromContent;
 import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
@@ -35,7 +34,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.net.MalformedURLException;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,17 +41,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.server.ResponseStatusException;
-
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 
@@ -152,6 +143,20 @@ public class DocumentController {
         LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(),
                 updateDocumentRequest.getVersionType(),
                 updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
+        return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
+    }
+
+    @GetMapping(path = "/document/{docRef}/move/{packageName}",
+            consumes = {},
+            produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @Operation(summary = "Move a document in a new package (Milestone or Xml Document)r")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Moved", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> moveDocument(@PathVariable("docRef") String docRef, @PathVariable("packageName") String packageName,
+                                               @RequestParam("userId") String userId) throws Exception {
+        packageName = decode(packageName);
+        LeosDocument xmlDoc = documentService.moveDocument(docRef, packageName, userId);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 

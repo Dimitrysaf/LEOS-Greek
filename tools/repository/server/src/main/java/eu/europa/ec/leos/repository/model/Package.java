@@ -44,8 +44,6 @@ public class Package {
         this.createdOn = pkg.getAuditCDate() != null ? Date.from(pkg.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.updatedBy = pkg.getAuditLastMBy();
         this.updatedOn = pkg.getAuditLastMDate() != null ? Date.from(pkg.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
-        this.isCloned = pkg.getIsCloned();
-        this.clonedPackageName = pkg.getClonedPackageName();
     }
 
     public String getId() {

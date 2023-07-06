@@ -57,7 +57,7 @@ public class CollaboratorsRepositoryTests {
     @Test
     @Transactional
     public void test_getCollaboratorsFromPackage() {
-        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "/leos/workspaces/package_leos");
+        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "package_leos");
         assertTrue(pkg.isPresent());
         List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg.get());
         assertEquals(collaboratorsList.size(), 1);

@@ -36,6 +36,8 @@ public interface DocumentService {
     LeosDocument updateDocument(final String ref, Map<String, ?> properties,
                                 VersionType versionType, String comments, String userId) throws Exception;
 
+    LeosDocument moveDocument(final String ref, final String newPackageName, String userId) throws Exception;
+
     void deleteDocumentById(String id) throws RepositoryException;
 
     void deleteDocumentByRef(String ref) throws RepositoryException;

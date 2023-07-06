@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
+import eu.europa.ec.leos.repository.controllers.DocumentController;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
@@ -41,8 +42,11 @@ import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -58,7 +62,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -69,6 +72,8 @@ import static eu.europa.ec.leos.repository.controllers.requests.QueryFilter.getW
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
+    private static final Logger LOG = LoggerFactory.getLogger( DocumentServiceImpl.class);
+
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
     private final DocumentVersionRepository documentVersionRepository;
@@ -147,6 +152,8 @@ public class DocumentServiceImpl implements DocumentService {
                     (String) metadata.get(PropertiesMetadata.LANGUAGE.getLeosName()));
             doc.setProcedureType(metadata.get(PropertiesMetadata.PROCEDURE_TYPE.getLeosName()) == null ? "-" :
                     (String) metadata.get(PropertiesMetadata.PROCEDURE_TYPE.getLeosName()));
+            doc.setLiveDiffingRequired(metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()) == null ? false :
+                    (Boolean) metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()));
             if (metadata.get(PropertiesMetadata.COLLABORATORS.getLeosName()) != null) {
                 List<Collaborator> collaborators =
                         ConversionUtils.getLeosCollaboratorsFromLinkedHashMap((ArrayList<LinkedHashMap<String, Object>>) metadata.get(PropertiesMetadata.COLLABORATORS.getLeosName()));
@@ -161,9 +168,18 @@ public class DocumentServiceImpl implements DocumentService {
             }
             doc.setCategoryId(docCat);
             if (metadata.get(PropertiesMetadata.CLONED_PROPOSAL.getLeosName()) != null) {
-                doc.setOriginalRef(new BigDecimal(Long.parseLong((String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()))));
-                doc.setClonedFrom(new BigDecimal(Long.parseLong((String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()))));
-                doc.setRevisionStatus((String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()));
+                if (metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName())!=null) {
+                    doc.setOriginRef((String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()));
+                }
+                if (metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName())!=null) {
+                    doc.setClonedFrom((String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()));
+                }
+                if (metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName())!=null) {
+                    doc.setRevisionStatus((String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()));
+                }
+                if (metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName())!=null) {
+                    doc.setContributionStatus((String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()));
+                }
             }
             doc = documentRepository.save(doc);
             updateDocumentProperties(doc, (Map<String, Object>) metadata, userId);
@@ -274,6 +290,21 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public LeosDocument moveDocument(final String ref, final String newPackageName, String userId) throws Exception {
+        Document doc =
+                documentRepository.findDocumentByRef(ref).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
+                        Document.class.getName()));
+        Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, newPackageName);
+        if (pkg.isPresent()) {
+            doc.setPackageId(pkg.get());
+            doc.setAuditLastMBy(userId);
+            doc.setAuditLastMDate(LocalDateTime.now());
+            documentRepository.save(doc);
+        }
+        return ConversionUtils.buildXmlDocument(documentVRepository, collaboratorsService, documentPropertyValuesRepository, doc.getId());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDocumentById(String id) throws RepositoryException {
         DocumentV docView = documentVRepository.findVersionByVersionId(new BigDecimal(Long.parseLong(id))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName()));
         Optional<Document> doc = documentRepository.findById(docView.getDocumentId());
@@ -327,11 +358,13 @@ public class DocumentServiceImpl implements DocumentService {
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, docView.orElse(null));
     }
 
+    @Cacheable("findFirstVersion")
     public LeosDocument findFirstVersion(final String docRef) {
         Optional<DocumentV> docView = documentVRepository.findFirstVersion(docRef);
          return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, docView.orElse(null));
     }
 
+    @Cacheable("findDocumentByVersion")
     public LeosDocument findDocumentByVersion(final String docRef, final String versionLabel) {
         Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, docView.orElse(null));
@@ -394,13 +427,15 @@ public class DocumentServiceImpl implements DocumentService {
                     ConversionUtils.getLeosCollaboratorsFromLinkedHashMap((ArrayList<LinkedHashMap<String, Object>>) metadata.get(PropertiesMetadata.COLLABORATORS.getLeosName()));
             collaboratorsService.updateCollaborators(doc.getPackageId(), collaborators, userId);
         }
+        doc.setLiveDiffingRequired(metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()) == null ? false :
+                (Boolean) metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()));
         doc.setBaseRevisionId(metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) != null ?
                 new BigDecimal(Long.parseLong((String) metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()))) : doc.getBaseRevisionId());
         if (metadata.get(PropertiesMetadata.CLONED_PROPOSAL.getLeosName()) != null) {
-            doc.setOriginalRef(metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) != null ?
-                    new BigDecimal(Long.parseLong((String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()))) : doc.getOriginalRef());
+            doc.setOriginRef(metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) != null ?
+                    (String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) : doc.getOriginRef());
             doc.setClonedFrom(metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()) != null ?
-                    new BigDecimal(Long.parseLong((String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()))) : doc.getClonedFrom());
+                    (String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()) : doc.getClonedFrom());
             doc.setRevisionStatus(metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) != null ?
                     (String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) : doc.getRevisionStatus());
             doc.setContributionStatus(metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null ?
@@ -427,7 +462,7 @@ public class DocumentServiceImpl implements DocumentService {
                     value.setDocumentId(doc.getId());
                     value.setPropertyId(prop);
                     if (metadata.get(prop.getPropertyName()) instanceof String) {
-                        value.setPropertyValue((String)metadata.get(prop.getPropertyName()));
+                        value.setPropertyValue((String) metadata.get(prop.getPropertyName()));
                     } else {
                         value.setPropertyValue(mapper.writeValueAsString(metadata.get(prop.getPropertyName())));
                     }
@@ -462,23 +497,6 @@ public class DocumentServiceImpl implements DocumentService {
         return versionRegularExp.toString();
     }
 
-    private String buildMinorVersionsLowerThanMajorRegularExp(String majorVersionLabel, boolean allIntermediateVersions) {
-        List<String> str = parseMajorVersion(majorVersionLabel);
-        ListIterator listIterator = str.listIterator(str.size());
-
-        String lastDigit;
-        do {
-            if (!listIterator.hasPrevious()) {
-                return "";
-            }
-
-            lastDigit = (String)listIterator.previous();
-        } while("0".equals(lastDigit));
-
-        listIterator.set(String.valueOf(Integer.parseInt(lastDigit) - 1));
-        return buildSearchVersionRegularExp(str, allIntermediateVersions);
-    }
-
     private String buildMinorVersionsGreaterThanMajorRegularExp(String majorVersionLabel, boolean allIntermediateVersions) {
         List<String> str = parseMajorVersion(majorVersionLabel);
         return buildSearchVersionRegularExp(str, allIntermediateVersions);
@@ -486,11 +504,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     public List<LeosDocument> findAllMinorsForIntermediate(final String docRef, String currIntVersion, final int startIndex, final int maxResults) {
         List<LeosDocument> docs = new ArrayList<>();
-        currIntVersion = buildMinorVersionsLowerThanMajorRegularExp(currIntVersion, true);
         PageRequest pageRequest =
                 PageRequest.of(startIndex, maxResults, Sort.Direction.DESC, "updatedOn");
+        Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
+        String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
 
-        Page<DocumentV> docViews = documentVRepository.findAllMinorsForIntermediate(docRef, currIntVersion,
+        Page<DocumentV> docViews = documentVRepository.findAllMinorsForIntermediate(docRef, currIntVersion, prevMajorVersion,
                 pageRequest);
         for (DocumentV doc : docViews) {
             docs.add(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, doc));
@@ -499,13 +518,15 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     public Integer getAllMinorsCountForIntermediate(final String docRef, String currIntVersion) {
-        currIntVersion = buildMinorVersionsGreaterThanMajorRegularExp(currIntVersion, true);
-        return documentVRepository.getAllMinorsCountForIntermediate(docRef, currIntVersion);
+        Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
+        String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
+        return documentVRepository.getAllMinorsCountForIntermediate(docRef, currIntVersion, prevMajorVersion);
     }
 
     public Integer getAllMajorsCount(final String docRef) {
         return documentVRepository.getAllMajorsCount(docRef);
     }
+
 
     public Integer getRecentMinorVersionsCount(final String docRef, String currIntVersion) {
         currIntVersion = buildMinorVersionsGreaterThanMajorRegularExp(currIntVersion, true);
@@ -548,6 +569,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     public Optional<LeosDocument> findDocumentByRef(final String ref) {
         Optional<DocumentV> doc = documentVRepository.findDocumentByRef(ref);
+        if (!doc.isPresent()) {
+            return milestoneDocumentService.findMilestoneByRef(ref);
+        }
         return doc.isPresent() ? Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, doc.get())) :
                 Optional.empty();
     }
@@ -556,6 +580,8 @@ public class DocumentServiceImpl implements DocumentService {
         return milestoneDocumentService.findMilestonesByStatus(status);
     }
 
+
+    @Cacheable(cacheNames = "findTemplateByName")
     public LeosDocument findTemplateByName(String name) throws RepositoryException {
         List<LeosDocument> docs = configService.findConfigByName(name);
         if (docs.isEmpty()) {
@@ -568,8 +594,14 @@ public class DocumentServiceImpl implements DocumentService {
     public List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
                                                        final int startIndex, final int maxResults) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder(String.format("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true AND d.packageId IN (SELECT p.id FROM Package p" +
-                " WHERE p.name LIKE '%%%s%%' AND p.repositoryId IN (SELECT r.id FROM Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true") ;
+        if (!packageName.equals("%")) {
+            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+        } else {
+            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+        }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 
         List<DocumentV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
@@ -583,9 +615,14 @@ public class DocumentServiceImpl implements DocumentService {
 
     public Long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT COUNT(d) FROM DocumentV d WHERE d.isLatestVersion = true AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name " +
-                        "LIKE '%%%s%%' AND p.repositoryId IN (SELECT r.id FROM Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE d.isLatestVersion = true") ;
+        if (!packageName.equals("%")) {
+            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+        } else {
+            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+        }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 
         Long count = (Long) entityManager.createQuery(queryBuild.toString()).getSingleResult();

@@ -39,7 +39,7 @@ import javax.persistence.Table;
         @NamedQuery(name = "Document.findByClonedFrom", query = "SELECT d FROM Document d WHERE d.clonedFrom = :clonedFrom"),
         @NamedQuery(name = "Document.findByRevisionStatus", query = "SELECT d FROM Document d WHERE d.revisionStatus = :revisionStatus"),
         @NamedQuery(name = "Document.findByContributionStatus", query = "SELECT d FROM Document d WHERE d.contributionStatus = :contributionStatus"),
-        @NamedQuery(name = "Document.findByOriginalRef", query = "SELECT d FROM Document d WHERE d.originalRef = :originalRef"),
+        @NamedQuery(name = "Document.findByOriginRef", query = "SELECT d FROM Document d WHERE d.originRef = :originRef"),
         @NamedQuery(name = "Document.findByBaseRevisionId", query = "SELECT d FROM Document d WHERE d.baseRevisionId = :baseRevisionId"),
         @NamedQuery(name = "Document.findByLiveDiffingRequired", query = "SELECT d FROM Document d WHERE d.liveDiffingRequired = :liveDiffingRequired"),
         @NamedQuery(name = "Document.findByRef", query = "SELECT d FROM Document d WHERE d.ref = :ref"),
@@ -66,13 +66,13 @@ public class Document implements Serializable {
     @Column(name = "NAME", nullable = false, length = 400)
     private String name;
     @Column(name = "CLONED_FROM", precision = 22, scale = 0)
-    private BigDecimal clonedFrom;
+    private String clonedFrom;
     @Column(name = "REVISION_STATUS", length = 30)
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", length = 30)
     private String contributionStatus;
-    @Column(name = "ORIGINAL_REF", precision = 22, scale = 0)
-    private BigDecimal originalRef;
+    @Column(name = "ORIGIN_REF", length = 30)
+    private String originRef;
     @Column(name = "BASE_REVISION_ID", precision = 22, scale = 0)
     private BigDecimal baseRevisionId;
     @Column(name = "LIVE_DIFFING_REQUIRED")
@@ -149,11 +149,11 @@ public class Document implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getClonedFrom() {
+    public String getClonedFrom() {
         return clonedFrom;
     }
 
-    public void setClonedFrom(BigDecimal clonedFrom) {
+    public void setClonedFrom(String clonedFrom) {
         this.clonedFrom = clonedFrom;
     }
 
@@ -173,12 +173,12 @@ public class Document implements Serializable {
         this.contributionStatus = contributionStatus;
     }
 
-    public BigDecimal getOriginalRef() {
-        return originalRef;
+    public String getOriginRef() {
+        return originRef;
     }
 
-    public void setOriginalRef(BigDecimal originalRef) {
-        this.originalRef = originalRef;
+    public void setOriginRef(String originalRef) {
+        this.originRef = originalRef;
     }
 
     public BigDecimal getBaseRevisionId() {

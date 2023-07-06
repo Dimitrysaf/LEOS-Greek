@@ -9,7 +9,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.AnnexRepository;
-import eu.europa.ec.leos.repository.document.AnnexRepositoryImpl;
+import eu.europa.ec.leos.repository.document.CmisAnnexRepositoryImpl;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.repository.store.PackageRepository;
@@ -80,7 +80,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void onSetUp() {
 
         super.setup();
-        annexRepository = new AnnexRepositoryImpl(leosRepository);
+        annexRepository = new CmisAnnexRepositoryImpl(leosRepository);
 
         annexService = new AnnexServiceMandateImpl(annexRepository, xmlNodeProcessor,
                 xmlContentProcessor, numberService, xmlNodeConfigProcessor, validationService,

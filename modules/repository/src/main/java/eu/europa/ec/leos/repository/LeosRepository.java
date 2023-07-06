@@ -175,6 +175,16 @@ public interface LeosRepository {
     <D extends LeosDocument> D updateDocument(String id, List<Collaborator> collaborators, Class<? extends D> type);
 
     /**
+     * Moves a document in another package.
+     *
+     * @param id     the ID of the document to retrieve.
+     * @param type   the type class of the document.
+     * @param newPackageName retrieves the *latest version* of the document, when *true*.
+     * @return the moved document.
+     */
+    <D extends LeosDocument> D moveDocument(String id, String newPackageName, Class<? extends D> type);
+
+    /**
      * Finds a document with the specified characteristics.
      *
      * @param id     the ID of the document to retrieve.

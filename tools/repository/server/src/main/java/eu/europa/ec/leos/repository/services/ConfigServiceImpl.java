@@ -11,6 +11,7 @@ import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,6 +31,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Value("${repository.default.id}")
     private String repositoryId;
 
+    @Cacheable(cacheNames = "findConfigByName")
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
         Optional<Config> hasDoc = configRepository.findConfigByNameAndRepositoryId(repositoryId, name);
         if (hasDoc.isPresent()) {
@@ -47,6 +49,7 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
+    @Cacheable(cacheNames = "findConfigById")
     public LeosDocument findConfigById(final String id) throws RepositoryException {
         try {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(new BigDecimal(Long.parseLong(id)));
@@ -66,6 +69,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     }
 
+    @Cacheable(cacheNames = "findConfigByVersionId")
     public LeosDocument findConfigByVersionId(final String id) throws RepositoryException {
         try {
             ConfigVersion version = this.configVersionRepository.findLastConfigVersionByVersionId(new BigDecimal(Long.parseLong(id)));

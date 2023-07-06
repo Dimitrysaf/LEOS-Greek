@@ -16,12 +16,16 @@ package eu.europa.ec.leos.repository.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -42,7 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DocumentV.findByClonedFrom", query = "SELECT d FROM DocumentV d WHERE d.clonedFrom = :clonedFrom"),
     @NamedQuery(name = "DocumentV.findByRevisionStatus", query = "SELECT d FROM DocumentV d WHERE d.revisionStatus = :revisionStatus"),
     @NamedQuery(name = "DocumentV.findByContributionStatus", query = "SELECT d FROM DocumentV d WHERE d.contributionStatus = :contributionStatus"),
-    @NamedQuery(name = "DocumentV.findByOriginalRef", query = "SELECT d FROM DocumentV d WHERE d.originalRef = :originalRef"),
+    @NamedQuery(name = "DocumentV.findByOriginRef", query = "SELECT d FROM DocumentV d WHERE d.originRef = :originRef"),
     @NamedQuery(name = "DocumentV.findByBaseRevisionId", query = "SELECT d FROM DocumentV d WHERE d.baseRevisionId = :baseRevisionId"),
     @NamedQuery(name = "DocumentV.findByLiveDiffingRequired", query = "SELECT d FROM DocumentV d WHERE d.liveDiffingRequired = :liveDiffingRequired"),
     @NamedQuery(name = "DocumentV.findByRef", query = "SELECT d FROM DocumentV d WHERE d.ref = :ref"),
@@ -89,13 +93,13 @@ public class DocumentV implements Serializable {
     @Column(name = "NAME", updatable = false)
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
-    private BigDecimal clonedFrom;
+    private String clonedFrom;
     @Column(name = "REVISION_STATUS", updatable = false)
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", updatable = false)
     private String contributionStatus;
-    @Column(name = "ORIGINAL_REF", updatable = false)
-    private BigDecimal originalRef;
+    @Column(name = "ORIGIN_REF", updatable = false)
+    private String originRef;
     @Column(name = "BASE_REVISION_ID", updatable = false)
     private BigDecimal baseRevisionId;
     @Column(name = "LIVE_DIFFING_REQUIRED", updatable = false)
@@ -235,11 +239,11 @@ public class DocumentV implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getClonedFrom() {
+    public String getClonedFrom() {
         return clonedFrom;
     }
 
-    public void setClonedFrom(BigDecimal clonedFrom) {
+    public void setClonedFrom(String clonedFrom) {
         this.clonedFrom = clonedFrom;
     }
 
@@ -259,12 +263,12 @@ public class DocumentV implements Serializable {
         this.contributionStatus = contributionStatus;
     }
 
-    public BigDecimal getOriginalRef() {
-        return originalRef;
+    public String getOriginRef() {
+        return originRef;
     }
 
-    public void setOriginalRef(BigDecimal originalRef) {
-        this.originalRef = originalRef;
+    public void setOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 
     public BigDecimal getBaseRevisionId() {
@@ -466,5 +470,4 @@ public class DocumentV implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
-    
 }
