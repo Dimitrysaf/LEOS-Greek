@@ -28,6 +28,7 @@ import { UserGuidanceConnector } from '@/features/akn-document/services/user-gui
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentConfig, LeosConfig } from '@/shared/models';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -120,6 +121,19 @@ export class CKEditorService implements OnDestroy {
 
   triggerMergeContributionConnectorStateChange() {
     this.mergeContributionConnector.$triggerStateChange();
+  }
+
+  handleMergeContributionsActions(
+    acceptAllContributions: boolean,
+    contribution: ContributionVO,
+  ) {
+    this.mergeContributionConnector?.setAcceptAllContributions(
+      acceptAllContributions,
+    );
+    this.mergeContributionConnector?.setContributionToMerge(contribution);
+    this.mergeContributionConnector?.populateMergeActionList(
+      acceptAllContributions,
+    );
   }
 
   private initActionManager(

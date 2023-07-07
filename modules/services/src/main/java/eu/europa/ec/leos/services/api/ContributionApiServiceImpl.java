@@ -4,33 +4,36 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
 import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
 import eu.europa.ec.leos.domain.cmis.document.LegDocument;
 import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
 import eu.europa.ec.leos.domain.cmis.document.Proposal;
 import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
-import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.numbering.NumberService;
+import eu.europa.ec.leos.services.processor.AttachmentProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.vo.toc.TocItem;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +42,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Provider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +66,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private SecurityContext securityContext;
     private ContributionService contributionService;
     private LeosRepository leosRepository;
+    private Provider<StructureContext> structureContextProvider;
+    private Provider<StructureContext> structureContext;
+    private AttachmentProcessor attachmentProcessor;
+    private MergeContributionHelperService mergeContributionHelperService;
+    private XmlContentProcessor xmlContentProcessor;
+    private NumberService numberService;
+    private MessageHelper messageHelper;
+
     private DocumentContentService documentContentService;
     private ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
     private DocumentViewService<XmlDocument> documentViewService;
@@ -71,10 +83,24 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private String cloneOriginRef;
 
     @Autowired
-    public ContributionApiServiceImpl(CreateCollectionService createCollectionService, CloneContext cloneContext,
-            ProposalService proposalService, UserService userService, PackageService packageService, SecurityContext securityContext,
-            ContributionService contributionService, LeosRepository leosRepository, DocumentContentService documentContentService,
-            ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI, DocumentViewService<XmlDocument> documentViewService) {
+    public ContributionApiServiceImpl(CreateCollectionService createCollectionService,
+                                      CloneContext cloneContext,
+                                      ProposalService proposalService,
+                                      UserService userService,
+                                      PackageService packageService,
+                                      SecurityContext securityContext,
+                                      ContributionService contributionService,
+                                      LeosRepository leosRepository,
+                                      Provider<StructureContext> structureContextProvider,
+                                      Provider<StructureContext> structureContext,
+                                      AttachmentProcessor attachmentProcessor,
+                                      MergeContributionHelperService mergeContributionHelperService,
+                                      XmlContentProcessor xmlContentProcessor,
+                                      NumberService numberService,
+                                      MessageHelper messageHelper,
+                                      DocumentContentService documentContentService,
+                                      ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI,
+                                      DocumentViewService<XmlDocument> documentViewService) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
@@ -83,6 +109,13 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.securityContext = securityContext;
         this.contributionService = contributionService;
         this.leosRepository = leosRepository;
+        this.structureContextProvider = structureContextProvider;
+        this.structureContext = structureContext;
+        this.attachmentProcessor = attachmentProcessor;
+        this.mergeContributionHelperService = mergeContributionHelperService;
+        this.messageHelper = messageHelper;
+        this.xmlContentProcessor = xmlContentProcessor;
+        this.numberService = numberService;
         this.documentContentService = documentContentService;
         this.comparisonDelegateAPI = comparisonDelegateAPI;
         this.documentViewService = documentViewService;
@@ -183,5 +216,68 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
+    }
+
+    public byte[] mergeContribution(String documentType,
+                                    String documentRef,
+                                    ApplyContributionsRequest request) throws IOException {
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
+        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(Validate.notNull(documentRef), documentClass.getClazz());
+        final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
+        this.populateCloneProposalMetadata(Validate.notNull(proposal));
+
+        XmlDocument document = (XmlDocument)this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
+        if(Objects.isNull(request.getMergeActions()) || request.getMergeActions().isEmpty()) {
+            return document.getContent().get().getSource().getBytes();
+        }
+        structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
+        List<TocItem> tocItemList = this.structureContext.get().getTocItems();
+        byte[] xmlClonedContent = request.getMergeActions().get(0).getContributionVO().getXmlContent();
+        List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
+        byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
+        xmlContent = this.numberService.renumberArticles(xmlContent, true);
+        xmlContent = this.numberService.renumberRecitals(xmlContent);
+        xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
+        document = (XmlDocument) this.leosRepository.updateDocument(
+                document.getId(),
+                xmlContent,
+                document.getVersionType(),
+                this.messageHelper.getMessage("contribution.merge.operation.message"),
+                documentClass.getClazz()
+        );
+
+        if(request.isAcceptAllContributions()) {
+            String contributionRef = request.getMergeActions().get(0).getContributionVO().getVersionedReference();
+            this.markRevisionAsProcessed(documentType, contributionRef);
+        }
+        return document.getContent().get().getSource().getBytes();
+    }
+
+    @Override
+    public void markRevisionAsProcessed(String documentType, String documentVersionedRef) {
+        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
+        final LeosDocument revision = this.contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        this.leosRepository.updateDocument(revision.getId(), properties, documentClass.getClazz(), false);
+    }
+
+    private List<InternalRefMap> getInternalRefMaps(ApplyContributionsRequest event, LeosDocument document, byte[] xmlClonedContent) {
+        byte[] xmlContent = document.getContent().get().getSource().getBytes();
+        Map<String, String> attachmentsClonedContent = this.attachmentProcessor.getAttachmentsHrefFromBill(xmlClonedContent);
+        List<InternalRefMap> map = new ArrayList<>();
+        String ref = document.getName().replace(".xml", "");
+        String clonedRef  = event.getMergeActions().get(0).getContributionVO().getDocumentName().replace(".xml", "");
+        map.add(new InternalRefMap("BILL", ref, clonedRef));
+        Map<String, String> attachments = attachmentProcessor.getAttachmentsHrefFromBill(xmlContent);
+        attachments.forEach((docType, href) -> {
+            if(docType.equals("ANNEX")) {
+                docType = docType + " I";
+            }
+            String cloned = attachmentsClonedContent.get(docType);
+            map.add(new InternalRefMap(docType, href, cloned));
+        });
+        return map;
     }
 }

@@ -327,6 +327,7 @@
                 ></app-co-edition-info>
                 <a
                   [routerLink]="['/annex', row.metadata.internalRef]"
+                  [state]="{ annexRow: row }"
                   (click)="$event.preventDefault()"
                   ><strong>{{
                     row.title

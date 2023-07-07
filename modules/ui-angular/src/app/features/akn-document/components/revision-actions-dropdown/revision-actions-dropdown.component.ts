@@ -41,17 +41,17 @@ export class RevisionActionsDropdownComponent implements OnInit {
 
   onClickViewAndMerge(contribution: ContributionVO) {
     this.documentService.viewAndMergeContribution(contribution);
-    this.documentService.updateProcessedStatus(false);
+    this.documentService.updateProcessedStatus(false, contribution);
   }
 
   onClickView(contribution: ContributionVO) {
     this.documentService.viewAndMergeContribution(contribution);
-    this.documentService.updateProcessedStatus(true);
+    this.documentService.updateProcessedStatus(true, contribution);
   }
 
   onAccept() {
     this.documentService.declineContribution(this.contribution);
-    this.documentService.updateProcessedStatus(true);
+    this.documentService.updateProcessedStatus(true, this.contribution);
     this.declineContributionDialog.closeDialog();
     this.versionToDecline = '';
     this.versionModalText = '';
