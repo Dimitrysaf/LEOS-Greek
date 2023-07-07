@@ -1671,7 +1671,7 @@ __jsmin-sourcemap 0.16.0__
 
 __jsmin2 1.1.9__
  * https://github.com/twolfson/node-jsmin2
- * License: ???
+ * License: The JSON License
  * Copyright:
    * Copyright (c) 2012 Todd Wolfson (todd@twolfson.com)
 

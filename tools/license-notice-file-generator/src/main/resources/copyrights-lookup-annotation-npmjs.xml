@@ -15439,7 +15439,7 @@
         <version>1.1.9</version>
         <url>https://github.com/twolfson/node-jsmin2</url>
         <license>
-            <name>???</name>
+            <name>The JSON License</name>
         </license>
         <copyright>Copyright (c) 2012 Todd Wolfson (todd@twolfson.com)</copyright>
     </artifact>
