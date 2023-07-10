@@ -31,6 +31,7 @@ export class ImportManager {
     this.destroy$.next();
     this.destroy$.complete();
     this.connector?.destroy();
+    this.countSubj.next(0);
   }
 
   async getSelectedElements(): Promise<string[]> {
