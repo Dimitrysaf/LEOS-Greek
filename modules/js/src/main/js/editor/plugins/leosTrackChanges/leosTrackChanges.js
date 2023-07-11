@@ -397,6 +397,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element) {
+            editor.getSelection().fake(element.getParent());
             if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
                 element.remove();
             } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
@@ -405,6 +406,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         rejectChange: function(editor, element) {
+            editor.getSelection().fake(element.getParent());
             if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 element.remove();
             } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
