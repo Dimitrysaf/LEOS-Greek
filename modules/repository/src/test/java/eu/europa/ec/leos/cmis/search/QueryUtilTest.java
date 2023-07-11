@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.cmis.search;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.filter.QueryFilter.Filter;
 import eu.europa.ec.leos.model.filter.QueryFilter.FilterType;

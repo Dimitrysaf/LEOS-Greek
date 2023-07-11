@@ -1,10 +1,7 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
@@ -15,8 +12,6 @@ import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
-import io.atlassian.fugue.Option;
-import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,9 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

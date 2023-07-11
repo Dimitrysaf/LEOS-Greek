@@ -13,13 +13,13 @@
  */
 package eu.europa.ec.leos.services.processor.node;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.ExplanatoryMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Arrays;

@@ -14,8 +14,8 @@
 package eu.europa.ec.leos.services.export;
 
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.test.support.LeosTest;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

@@ -14,18 +14,21 @@
 package eu.europa.ec.leos.cmis.extensions;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.metadata.*;
+import eu.europa.ec.leos.domain.repository.metadata.*;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.europa.ec.leos.cmis.mapping.CmisProperties.*;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class LeosMetadataExtensions {
+
+    private static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 
     //todo: fix this generics..
     public static Map<String, ? extends Object> toCmisProperties(LeosMetadata leosMetadata) {
@@ -89,10 +92,10 @@ public class LeosMetadataExtensions {
 
         cmisProperties.putAll(buildCommonProperties(annexMetadata, title));
 
-        cmisProperties.put(CmisProperties.ANNEX_INDEX.getId(), annexMetadata.getIndex());
-        cmisProperties.put(CmisProperties.ANNEX_NUMBER.getId(), annexMetadata.getNumber());
-        cmisProperties.put(CmisProperties.ANNEX_TITLE.getId(), annexMetadata.getTitle());
-        cmisProperties.put(CmisProperties.ANNEX_CLONED_REF.getId(), annexMetadata.getClonedRef());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX), annexMetadata.getIndex());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER), annexMetadata.getNumber());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE), annexMetadata.getTitle());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF), annexMetadata.getClonedRef());
 
         return cmisProperties;
     }
@@ -105,19 +108,19 @@ public class LeosMetadataExtensions {
 
     private static Map<String, ? extends Object> buildCommonProperties(LeosMetadata leosMetadata, String title) {
         Map<String, Object> cmisProperties = new HashMap<>();
-        cmisProperties.put(METADATA_STAGE.getId(), leosMetadata.getStage());
-        cmisProperties.put(METADATA_TYPE.getId(), leosMetadata.getType());
-        cmisProperties.put(METADATA_PURPOSE.getId(), leosMetadata.getPurpose());
-        cmisProperties.put(METADATA_EEA_RELEVANCE.getId(), leosMetadata.getEeaRelevance());
-        cmisProperties.put(DOCUMENT_TEMPLATE.getId(), leosMetadata.getTemplate());
-        cmisProperties.put(DOCUMENT_LANGUAGE.getId(), leosMetadata.getLanguage());
-        cmisProperties.put(METADATA_DOCTEMPLATE.getId(), leosMetadata.getDocTemplate());
-        cmisProperties.put(CALLBACK_ADDRESS.getId(), leosMetadata.getCallbackAddress());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE), leosMetadata.getStage());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE), leosMetadata.getType());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE), leosMetadata.getPurpose());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE), leosMetadata.getEeaRelevance());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE), leosMetadata.getTemplate());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE), leosMetadata.getLanguage());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), leosMetadata.getDocTemplate());
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CALLBACK_ADDRESS), leosMetadata.getCallbackAddress());
 
         String ref = leosMetadata.getRef();
-        cmisProperties.put(METADATA_REF.getId(), ref != null ? ref : "");
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF), ref != null ? ref : "");
 
-        cmisProperties.put(DOCUMENT_TITLE.getId(), title);
+        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE), title);
 
         return cmisProperties;
     }

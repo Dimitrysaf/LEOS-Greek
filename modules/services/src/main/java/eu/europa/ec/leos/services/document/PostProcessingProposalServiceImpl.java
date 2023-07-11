@@ -1,10 +1,10 @@
 package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
@@ -13,6 +13,8 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
@@ -49,6 +51,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     private UserService userService;
     private SecurityContext securityContext;
     private MessageHelper messageHelper;
+    private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     @Value("${leos.cmis.repository.sysadmin}")
     private String repositorySysadmin;
@@ -58,7 +61,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
             BillService billService, AnnexService annexService, MemorandumService memorandumService,
             DocumentContentService documentContentService,
             UserService userService, XPathCatalog xPathCatalog,
-            SecurityContext securityContext, MessageHelper messageHelper) {
+            SecurityContext securityContext, MessageHelper messageHelper, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(xmlContentProcessor, xPathCatalog);
         this.proposalService = proposalService;
         this.billService = billService;
@@ -68,6 +71,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
         this.userService = userService;
         this.securityContext = securityContext;
         this.messageHelper = messageHelper;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -210,7 +214,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     @Override
     public void updatePostCloneMetadataProperties(String id, CloneProposalMetadataVO cloneProposalMetadataVO) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CLONED_FROM.getId(), cloneProposalMetadataVO.getClonedFromObjectId());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneProposalMetadataVO.getClonedFromObjectId());
         proposalService.updateProposal(id, properties);
     }
 }

@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.export;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 public class ExportVersions<T extends XmlDocument> {
     

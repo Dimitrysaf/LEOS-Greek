@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.dto.request;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
 
 import java.io.Serializable;

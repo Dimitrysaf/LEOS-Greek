@@ -13,7 +13,7 @@ public class AnnexNumberGenerator {
 	private static final String ANNEX_TITLE_PREFIX = "Annex";
 
 	/**
-	 * @param Annex
+	 * @param number
 	 *            number for conversion
 	 * @return Roman Number
 	 */

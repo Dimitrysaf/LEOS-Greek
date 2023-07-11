@@ -1,9 +1,6 @@
 package eu.europa.ec.leos.services.dto.response;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-
-import java.util.List;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 
 
 public class MilestoneDocumentView {

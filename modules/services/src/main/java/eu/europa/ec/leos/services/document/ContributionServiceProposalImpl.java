@@ -1,15 +1,14 @@
 package eu.europa.ec.leos.services.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
@@ -18,6 +17,8 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.LegService;
@@ -62,6 +63,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     private final LeosRepository leosRepository;
     private final MessageHelper messageHelper;
     private final XmlContentProcessor xmlContentProcessor;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     List<String> BILL_DOC_TYPES = new ArrayList(Arrays.asList("REG", "DIR", "DEC"));
     private static final String ANNEX_DOC_TYPE = "ANNEX";
@@ -72,7 +74,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     public ContributionServiceProposalImpl(LeosRepository leosRepository, MessageHelper messageHelper,
                                            ProposalService proposalService, PackageService packageService,
                                            BillService billService, AnnexService annexService,
-                                           MemorandumService memorandumService, LegService legService, XmlContentProcessor xmlContentProcessor) {
+                                           MemorandumService memorandumService, LegService legService, XmlContentProcessor xmlContentProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         this.leosRepository = leosRepository;
         this.messageHelper = messageHelper;
         this.proposalService = proposalService;
@@ -82,6 +84,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         this.memorandumService = memorandumService;
         this.legService = legService;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -204,7 +207,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
 
             //update cloned proposal properties
             Map<String, Object> clonedProperties = new HashMap<>();
-            clonedProperties.put(CmisProperties.REVISION_STATUS.getId(), cloneProposalMetadataVO.getRevisionStatus());
+            clonedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS), cloneProposalMetadataVO.getRevisionStatus());
             proposalService.updateProposal(clonedProposal.getId(), clonedProperties);
 
             //update Bill metadata
@@ -216,7 +219,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     }).findFirst();
             if(billFile.isPresent()) {
                 Bill clonedBill = findVersionByVersionedReference(billFile.get(), Bill.class);
-                clonedProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
+                clonedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                         ContributionVO.ContributionStatus.RECEIVED.getValue());
                 billService.updateBill(clonedBill.getId(), clonedProperties, true);
             }
@@ -226,7 +229,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     .filter(containedFile-> containedFile.startsWith(MEMORANDUM_DOC_TYPE)).findFirst();
             if(memorandumFile.isPresent()) {
                 Memorandum clonedMemo = findVersionByVersionedReference(memorandumFile.get(), Memorandum.class);
-                clonedProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
+                clonedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                         ContributionVO.ContributionStatus.RECEIVED.getValue());
                 memorandumService.updateMemorandum(clonedMemo.getId(), clonedProperties, true);
             }
@@ -236,7 +239,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             annexFile.forEach(annexVersionAndName -> {
                 Annex clonedAnnex = findVersionByVersionedReference(annexVersionAndName, Annex.class);
                 Map<String, Object>  annexProperties = new HashMap<>();
-                annexProperties.put(CmisProperties.CONTRIBUTION_STATUS.getId(),
+                annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                         ContributionVO.ContributionStatus.RECEIVED.getValue());
                 annexService.updateAnnex(clonedAnnex.getId(), annexProperties, true);
             });
@@ -248,7 +251,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             Map<String, Object> properties = new HashMap<>();
             List<String> clonedMilestoneIds = originalProposal.getClonedMilestoneIds();
             clonedMilestoneIds.add(getClonedMilestoneId(cloneProposalRef, cloneLegFileName));
-            properties.put(CmisProperties.CLONED_MILESTONE_ID.getId(), clonedMilestoneIds);
+            properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID), clonedMilestoneIds);
             updatedProposal = proposalService.updateProposal(originalProposal.getId(), properties);
             updatedLegDocument = legService.updateLegDocument(legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT);
         } catch(Exception e) {

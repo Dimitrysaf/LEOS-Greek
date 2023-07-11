@@ -15,7 +15,7 @@ package eu.europa.ec.leos.ui.component;
 
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.ui.Panel;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

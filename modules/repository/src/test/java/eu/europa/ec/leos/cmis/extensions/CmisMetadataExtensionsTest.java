@@ -1,8 +1,10 @@
 package eu.europa.ec.leos.cmis.extensions;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.metadata.*;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.metadata.*;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import io.atlassian.fugue.Option;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.junit.Test;
@@ -24,6 +26,7 @@ public class CmisMetadataExtensionsTest {
     private final static String METADATA_REF = "DOCUMENT METADATA_REF";
     private final static String DOCUMENT_TEMPLATE = "DOCUMENT_TEMPLATE";
     private final static String DOCUMENT_LANGUAGE = "DOCUMENT_LANGUAGE";
+    private final static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 
     @Test
     public void test_getProposalMetadataOption() {
@@ -116,9 +119,9 @@ public class CmisMetadataExtensionsTest {
         BigInteger ANNEX_INDEX = new BigInteger("20");
         String ANNEX_NUMBER = "DOCUMENT ANNEX_NUMBER";
         String ANNEX_TITLE = "DOCUMENT ANNEX_TITLE";
-        when(cmisDocument.getPropertyValue(CmisProperties.ANNEX_INDEX.getId())).thenReturn(ANNEX_INDEX);
-        when(cmisDocument.getPropertyValue(CmisProperties.ANNEX_NUMBER.getId())).thenReturn(ANNEX_NUMBER);
-        when(cmisDocument.getPropertyValue(CmisProperties.ANNEX_TITLE.getId())).thenReturn(ANNEX_TITLE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX))).thenReturn(ANNEX_INDEX);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER))).thenReturn(ANNEX_NUMBER);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE))).thenReturn(ANNEX_TITLE);
 
         //make call
         Option<AnnexMetadata> annexMetadataOption = CmisMetadataExtensions.getAnnexMetadataOption(cmisDocument);
@@ -160,13 +163,13 @@ public class CmisMetadataExtensionsTest {
     private Document setupCommonDocument() {
         Document cmisDocument = mock(Document.class);
 
-        when(cmisDocument.getPropertyValue(CmisProperties.METADATA_STAGE.getId())).thenReturn(METADATA_STAGE);
-        when(cmisDocument.getPropertyValue(CmisProperties.METADATA_TYPE.getId())).thenReturn(METADATA_TYPE);
-        when(cmisDocument.getPropertyValue(CmisProperties.METADATA_PURPOSE.getId())).thenReturn(METADATA_PURPOSE);
-        when(cmisDocument.getPropertyValue(CmisProperties.METADATA_DOCTEMPLATE.getId())).thenReturn(METADATA_DOCTEMPLATE);
-        when(cmisDocument.getPropertyValue(CmisProperties.METADATA_REF.getId())).thenReturn(METADATA_REF);
-        when(cmisDocument.getPropertyValue(CmisProperties.DOCUMENT_TEMPLATE.getId())).thenReturn(DOCUMENT_TEMPLATE);
-        when(cmisDocument.getPropertyValue(CmisProperties.DOCUMENT_LANGUAGE.getId())).thenReturn(DOCUMENT_LANGUAGE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE))).thenReturn(METADATA_STAGE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE))).thenReturn(METADATA_TYPE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE))).thenReturn(METADATA_PURPOSE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE))).thenReturn(METADATA_DOCTEMPLATE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF))).thenReturn(METADATA_REF);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE))).thenReturn(DOCUMENT_TEMPLATE);
+        when(cmisDocument.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE))).thenReturn(DOCUMENT_LANGUAGE);
 
         return cmisDocument;
     }

@@ -13,14 +13,13 @@
  */
 package eu.europa.ec.leos.services.processor.content;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import io.atlassian.fugue.Pair;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import java.util.List;

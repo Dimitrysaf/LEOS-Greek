@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.leos.repository.document;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;

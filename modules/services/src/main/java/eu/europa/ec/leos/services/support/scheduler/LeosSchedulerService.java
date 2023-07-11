@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.support.scheduler;
 
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import org.apache.commons.lang.StringUtils;

@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.vo.contribution;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 public class ContributionLegDocumentVO<T extends XmlDocument> {
 

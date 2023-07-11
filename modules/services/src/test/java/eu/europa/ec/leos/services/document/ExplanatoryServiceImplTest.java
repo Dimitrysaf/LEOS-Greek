@@ -16,15 +16,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.metadata.ExplanatoryMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -46,6 +48,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 
 	private ExplanatoryService explanatoryService;
 	private ExplanatoryRepository explanatoryRepository;
+	private RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 	
 	@Mock
 	private PackageRepository packageRepository;
@@ -88,7 +91,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
     public void test_updateBaseVersionId() {
 		when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithBaseVersionId());
 		Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.BASE_REVISION_ID.getId(), baseVersionId);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
 		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, properties, true);
 		assertEquals(baseVersionId, explanatory.getBaseRevisionId());
 		
@@ -98,7 +101,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
     public void test_enableLiveDiffing() {
 		when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithLiveDiffing());
 		Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), true);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
 		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, properties, true);
 		assertTrue(explanatory.isLiveDiffingRequired());
 		
@@ -108,7 +111,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
     public void test_disableLiveDiffing() {
 		when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithoutLiveDiffing());
 		Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), false);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
 		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, properties, true);
 		assertFalse(explanatory.isLiveDiffingRequired());
 		

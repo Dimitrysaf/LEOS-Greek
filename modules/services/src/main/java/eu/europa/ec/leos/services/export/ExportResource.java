@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.export;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

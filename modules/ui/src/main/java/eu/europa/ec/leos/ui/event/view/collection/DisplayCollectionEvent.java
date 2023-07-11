@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.ui.event.view.collection;
 
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 
 public class DisplayCollectionEvent {
     private String documentId;

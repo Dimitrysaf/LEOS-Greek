@@ -14,11 +14,10 @@
 package eu.europa.ec.leos.ui.wizard.document;
 
 import com.google.common.eventbus.EventBus;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.ui.event.CreateDocumentRequestEvent;
 import eu.europa.ec.leos.ui.event.view.collection.CancelCreateExplanatoryRequest;
 import eu.europa.ec.leos.ui.event.view.collection.CreateExplanatoryRequest;
 import eu.europa.ec.leos.ui.wizard.AbstractWizard;

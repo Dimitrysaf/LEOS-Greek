@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.security;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;

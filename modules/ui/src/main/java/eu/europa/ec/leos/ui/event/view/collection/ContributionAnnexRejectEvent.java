@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.ui.event.view.collection;
 
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 
 public class ContributionAnnexRejectEvent {
 

@@ -14,16 +14,14 @@
 package eu.europa.ec.leos.services.document;
 
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 // REFACTOR SecurityService API should probably be moved into WorkspaceService
 

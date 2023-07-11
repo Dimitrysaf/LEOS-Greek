@@ -14,8 +14,8 @@
 package eu.europa.ec.leos.ui.view.collection;
 
 import com.vaadin.server.Resource;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.ui.model.ExportPackageVO;

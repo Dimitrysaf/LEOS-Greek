@@ -17,21 +17,20 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -43,6 +42,8 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
@@ -212,6 +213,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     private final AttachmentProcessor attachmentProcessor;
     private final AnnotateService annotateService;
     private final ConfigurationHelper cfgHelper;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -246,7 +248,9 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                         ProposalService proposalService,
                         SearchService searchService, CommonDelegate<Memorandum> commonDelegate,
                         AnnotateService annotateService,
-                        CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver, AttachmentProcessor attachmentProcessor, ConfigurationHelper cfgHelper, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor) {
+                        CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver,
+                        AttachmentProcessor attachmentProcessor, ConfigurationHelper cfgHelper,
+                        MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         LOG.trace("Initializing memorandum presenter...");
         this.instanceTypeResolver = instanceTypeResolver;
@@ -278,6 +282,8 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         this.mergeContributionHelper = mergeContributionHelper;
         this.annotateService = annotateService;
         this.openElementEditors = new ArrayList<>();
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+
     }
     
     @Override
@@ -940,7 +946,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
         String versionNumber = event.getContributionVO().getVersionNumber().toString();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), contributionStatus);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
         Memorandum updatedMemo = memorandumService.updateMemorandum(revision.getId(), properties, false);
         if(updatedMemo != null) {
             memorandumScreen.disableMergePane();
@@ -956,7 +962,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
 
         memorandumScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         memorandumService.updateMemorandum(revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Memorandum.class);
         memorandumScreen.populateContributions(allContributions);

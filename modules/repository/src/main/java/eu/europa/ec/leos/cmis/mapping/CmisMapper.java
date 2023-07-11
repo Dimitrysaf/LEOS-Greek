@@ -13,12 +13,12 @@
  */
 package eu.europa.ec.leos.cmis.mapping;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.document.*;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.*;
 
 import java.util.*;
 
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.*;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 import static java.util.Collections.singleton;
 
 public class CmisMapper {

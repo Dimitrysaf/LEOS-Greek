@@ -15,8 +15,8 @@ package eu.europa.ec.leos.services.template;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.document.ConfigDocument;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

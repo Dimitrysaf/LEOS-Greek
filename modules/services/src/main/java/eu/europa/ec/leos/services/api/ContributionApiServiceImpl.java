@@ -1,19 +1,23 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
@@ -77,6 +81,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private DocumentContentService documentContentService;
     private ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
     private DocumentViewService<XmlDocument> documentViewService;
+    private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
 
     @Value("${leos.clone.originRef}")
@@ -119,6 +124,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.documentContentService = documentContentService;
         this.comparisonDelegateAPI = comparisonDelegateAPI;
         this.documentViewService = documentViewService;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -206,7 +212,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
         LeosDocument document = contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         return this.leosRepository.updateDocument(document.getId(), properties, documentClass.getClazz(), true);
     }
 
@@ -259,7 +265,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         final LeosDocument revision = this.contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
+                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         this.leosRepository.updateDocument(revision.getId(), properties, documentClass.getClazz(), false);
     }
 

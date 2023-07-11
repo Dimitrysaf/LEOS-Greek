@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.processor;
 
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;

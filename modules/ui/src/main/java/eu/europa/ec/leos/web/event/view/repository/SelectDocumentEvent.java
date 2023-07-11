@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.web.event.view.repository;
 
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 
 public class SelectDocumentEvent {
 

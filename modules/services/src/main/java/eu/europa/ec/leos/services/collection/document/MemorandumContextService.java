@@ -13,12 +13,13 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -51,6 +52,7 @@ public class MemorandumContextService {
     private final MemorandumService memorandumService;
     private final XmlNodeProcessor xmlNodeProcessor;
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private LeosPackage leosPackage = null;
     private Memorandum memorandum = null;
@@ -68,11 +70,12 @@ public class MemorandumContextService {
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
-            XmlNodeConfigProcessor xmlNodeConfigProcessor) {
+            XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         this.memorandumService = memorandumService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -200,8 +203,8 @@ public class MemorandumContextService {
                 actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, memoDocument.getName());
         if (cloneProposal) {
             Map<String, Object> memoProperties = new HashMap<>();
-            memoProperties.put(CmisProperties.CLONED_FROM.getId(), memoDocument.getId());
-            memoProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), memoDocument.getId());
+            memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             memorandumService.updateMemorandum(memorandumCreated.getId(), memoProperties, true);
         }
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

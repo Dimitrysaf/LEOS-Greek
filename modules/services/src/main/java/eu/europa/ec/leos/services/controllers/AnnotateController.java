@@ -15,7 +15,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.services.api.AnnotateApiService;
 import eu.europa.ec.leos.services.dto.request.AnnotateMergeSuggestionRequest;

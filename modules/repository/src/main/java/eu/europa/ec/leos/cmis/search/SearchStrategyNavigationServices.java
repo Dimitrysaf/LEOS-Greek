@@ -14,7 +14,9 @@
 package eu.europa.ec.leos.cmis.search;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
@@ -35,6 +37,8 @@ import java.util.stream.StreamSupport;
 class SearchStrategyNavigationServices extends SearchStrategyImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchStrategyNavigationServices.class);
+
+    private final static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
     
     SearchStrategyNavigationServices(Session cmisSession) {
         super(cmisSession);
@@ -52,7 +56,7 @@ class SearchStrategyNavigationServices extends SearchStrategyImpl {
             documents = findChildren(folder, primaryType, context);
         }
         return documents.stream()
-                .filter(document -> categoryList.contains(document.getPropertyValue(CmisProperties.DOCUMENT_CATEGORY.getId())))
+                .filter(document -> categoryList.contains(document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY))))
                 .collect(Collectors.toList());
     }
 

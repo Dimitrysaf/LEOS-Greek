@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.ui.wizard.document;
 
 import com.google.common.eventbus.EventBus;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;

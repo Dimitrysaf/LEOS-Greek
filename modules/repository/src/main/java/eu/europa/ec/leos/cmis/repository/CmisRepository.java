@@ -15,15 +15,16 @@ package eu.europa.ec.leos.cmis.repository;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.cmis.extensions.CmisDocumentExtensions;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.cmis.search.SearchStrategy;
 import eu.europa.ec.leos.cmis.search.SearchStrategyProvider;
 import eu.europa.ec.leos.cmis.support.OperationContextProvider;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.model.filter.QueryFilter;
-import eu.europa.ec.leos.repository.RepositoryContext;
+import eu.europa.ec.leos.cmis.CmisRepositoryContext;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -42,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
@@ -61,6 +63,7 @@ import static eu.europa.ec.leos.cmis.support.OperationContextProvider.getMinimal
 
 @Repository
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Profile(value = {"default","cmis"})
 public class CmisRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(CmisRepository.class);
@@ -68,7 +71,9 @@ public class CmisRepository {
     @Autowired
     private Session cmisSession;
     @Autowired
-    private Provider<RepositoryContext> repositoryContextProvider;
+    private RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    private Provider<CmisRepositoryContext> repositoryContextProvider;
     private static final Map<String, Long> synchronizedKeys = new ConcurrentHashMap<>();
 
     private final CmisRepository self;
@@ -108,8 +113,8 @@ public class CmisRepository {
 
         Map<String, Object> updatedProperties = new LinkedHashMap<>();
         updatedProperties.putAll(properties);
-        updatedProperties.put(CmisProperties.VERSION_TYPE.getId(), VersionType.MINOR.value());
-        updatedProperties.put(CmisProperties.VERSION_LABEL.getId(), getNextVersionLabel(VersionType.MINOR, null));
+        updatedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_TYPE), VersionType.MINOR.value());
+        updatedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL), getNextVersionLabel(VersionType.MINOR, null));
 
         return targetFolder.createDocument(updatedProperties, contentStream, VersioningState.MINOR);
     }
@@ -123,8 +128,8 @@ public class CmisRepository {
 
         Map<String, Object> updatedProperties = new LinkedHashMap<>();
         updatedProperties.putAll(properties);
-        updatedProperties.put(CmisProperties.VERSION_TYPE.getId(), VersionType.MINOR.value());
-        updatedProperties.put(CmisProperties.VERSION_LABEL.getId(), getNextVersionLabel(VersionType.MINOR, null));
+        updatedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_TYPE), VersionType.MINOR.value());
+        updatedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL), getNextVersionLabel(VersionType.MINOR, null));
 
         return sourceDoc.copy(targetFolder, updatedProperties, VersioningState.MINOR, null, null, null, context);
     }
@@ -194,8 +199,8 @@ public class CmisRepository {
             }
         });
         updatedProperties.putAll(properties);
-        updatedProperties.put(CmisProperties.VERSION_TYPE.getId(), versionType.value());
-        updatedProperties.put(CmisProperties.VERSION_LABEL.getId(), nextVersionLabel);
+        updatedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_TYPE), versionType.value());
+        updatedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL), nextVersionLabel);
         final boolean isMajor = versionType.equals(VersionType.MAJOR) || versionType.equals(VersionType.INTERMEDIATE);
         
         try (ByteArrayInputStream byteStream = new ByteArrayInputStream(updatedDocumentBytes)) {
@@ -269,7 +274,7 @@ public class CmisRepository {
         return getSearchStrategy().findDocumentsByStatus(status, primaryType, context);
     }
 
-    @Deprecated //shouldn't be used. Check time difference between document.getAllVersions() VS queryFindAllVersions()
+    @Deprecated
     List<Document> findAllVersions(final String id) {
         logger.trace("Finding all document versions... [id=" + id + ']');
         OperationContext context = getMinimalContext(cmisSession);
@@ -278,7 +283,7 @@ public class CmisRepository {
         logger.trace("Found " + versions.size() + " CMIS version(s).");
         return versions;
     }
-    
+
     public List<Document> findVersionsWithoutVersionLabel(String primaryType, String docRef){
         OperationContext context = getMinimalContext(cmisSession);
         return getSearchStrategy().findVersionsWithoutVersionLabel(primaryType, docRef, context);

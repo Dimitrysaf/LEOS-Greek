@@ -1,9 +1,11 @@
 package eu.europa.ec.leos.cmis.search;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.model.filter.QueryFilter;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
@@ -26,6 +28,8 @@ abstract public class SearchStrategyImpl implements SearchStrategy {
     
     private static final Logger logger = LoggerFactory.getLogger(SearchStrategyNavigationServices.class);
 
+    private final static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
+
     public SearchStrategyImpl(Session cmisSession) {
         this.cmisSession = cmisSession;
     }
@@ -34,7 +38,7 @@ abstract public class SearchStrategyImpl implements SearchStrategy {
     public List<Document> findDocumentsForUser(String userId, String primaryType, String leosAuthority, OperationContext context) {
         logger.trace("Finding documents...");
 
-        String whereClause = CmisProperties.DOCUMENT_CATEGORY.getId() + " IN ('PROPOSAL') AND " + CmisProperties.COLLABORATORS.getId() + " LIKE '" + userId +
+        String whereClause = repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY) + " IN ('PROPOSAL') AND " + repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS) + " LIKE '" + userId +
                 "::" + leosAuthority + "%'" ;
         logger.trace("Ordering by ....." + context.getOrderBy());
         ItemIterable<CmisObject> cmisObjects = cmisSession.queryObjects(primaryType, whereClause, false, context);
@@ -45,7 +49,7 @@ abstract public class SearchStrategyImpl implements SearchStrategy {
     
     @Override
     public List<Document> findDocumentsByStatus(LeosLegStatus status, String primaryType, OperationContext context) {
-        String whereClause = CmisProperties.STATUS.getId() + " IN ('" + status + "')";
+        String whereClause = repositoryPropertiesMapper.getId(RepositoryProperties.STATUS) + " IN ('" + status + "')";
         ItemIterable<CmisObject> cmisObjects = cmisSession.queryObjects(primaryType, whereClause, false, context);
         return StreamSupport.stream(cmisObjects.spliterator(), false)
                 .map(cmisObject -> (Document) cmisObject)
@@ -93,7 +97,7 @@ abstract public class SearchStrategyImpl implements SearchStrategy {
     @Override
     public List<Document> findDocumentsByRef(String ref, String primaryType, OperationContext context) {
         logger.trace("Finding documents by metadataRef...");
-        String whereClause = CmisProperties.METADATA_REF.getId() + " = '" + ref + "'";
+        String whereClause = repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF) + " = '" + ref + "'";
         ItemIterable<CmisObject> cmisObjects = cmisSession.queryObjects(primaryType, whereClause, false, context);
         return StreamSupport.stream(cmisObjects.spliterator(), false)
                 .map(cmisObject -> (Document) cmisObject)
