@@ -188,7 +188,7 @@ export class DocumentEditorComponent
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
     public breadcrumbService: EuiBreadcrumbService,
-    public enviromentService: EnvironmentService,
+    public environmentService: EnvironmentService,
     private tableOfContentService: TableOfContentService,
     private domSatinizer: DomSanitizer,
     private loadingService: LoadingService,
