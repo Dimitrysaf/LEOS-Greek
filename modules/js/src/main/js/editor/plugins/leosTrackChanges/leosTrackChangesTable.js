@@ -257,6 +257,40 @@ define(function leosTrackChangesTableModule(require) {
                 cells = this.getSelectedCells(selection);
 
             this.insertRow(editor, cells);
+        },
+
+        tableDelete: function(editor) {
+            var path = editor.elementPath(),
+                table = path.contains("table", 1);
+
+            if (!table)
+                return;
+
+            // If the table's parent has only one child remove it as well (unless it's a table cell, or the editable element)
+            //(https://dev.ckeditor.com/ticket/5416, https://dev.ckeditor.com/ticket/6289, https://dev.ckeditor.com/ticket/12110)
+            var parent = table.getParent(),
+                editable = editor.editable();
+
+            if (parent.getChildCount() == 1 && !parent.is("td", "th", "li") && !parent.equals(editable))
+                table = parent;
+
+            var range = editor.createRange();
+            range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
+            if (table.getId()) {
+                var rows = table.$.querySelectorAll("tr");
+                rows.forEach(function (row) {
+                    if (!row.getAttribute(core.UID_ATTR)) {
+                        core.addTrackChangesAttributes(editor, row, core.DELETE_ACTION);
+                    }
+                });
+            } else {
+                table.remove();
+            }
+            range.select();
+        },
+
+        execCustomCommand: function(editor, command) {
+            this[command](editor);
         }
 
     };

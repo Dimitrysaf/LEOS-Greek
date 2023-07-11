@@ -95,13 +95,13 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addCommand("acceptOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.acceptChange(editor, selectedElement);
+                        actions.acceptChange(editor, editor.getSelection().getStartElement());
                     }
                 });
                 editor.addCommand("rejectOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.rejectChange(editor, selectedElement);
+                        actions.rejectChange(editor, editor.getSelection().getStartElement());
                     }
                 });
                 editor.addCommand("acceptSelectedChanges", {
@@ -145,7 +145,7 @@ define(function leosTrackChangesPluginModule(require) {
                     } else if (editor.getSelection().isCollapsed()) {
                         tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                         if (tcElement) {
-                            selectedElement = new CKEDITOR.dom.element(tcElement);
+                            editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
                             return {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
@@ -338,17 +338,11 @@ define(function leosTrackChangesPluginModule(require) {
                         case "inlinesaveclose":
                             editor.setData(editor.getData().replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\""));
                             break;
+                        case "tableDelete":
                         case "rowDelete":
-                            table.rowDelete(editor);
-                            editor.fire("change");
-                            return false;
                         case "rowInsertBefore":
-                            table.rowInsertBefore(editor);
-                            editor.fire("change");
-                            return false;
                         case "rowInsertAfter":
-                            table.rowInsertAfter(editor);
-                            editor.fire("change");
+                            table.execCustomCommand(editor, event.data.name);
                             return false;
                     }
                 }
@@ -366,6 +360,7 @@ define(function leosTrackChangesPluginModule(require) {
                                     core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
                                     if (actions.insertNewData(editor, node.outerHTML))
                                         node.remove();
+                                    break;
                                 } else if (node.tagName === "TABLE") {
                                     if (!node.id) { // It is a new table
                                         var rows = node.querySelectorAll("tr");
@@ -375,10 +370,8 @@ define(function leosTrackChangesPluginModule(require) {
                                             }
                                         });
                                     }
-                                } else {
-                                    continue;
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
