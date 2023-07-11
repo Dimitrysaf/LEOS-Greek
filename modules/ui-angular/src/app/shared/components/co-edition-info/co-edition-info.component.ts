@@ -42,7 +42,7 @@ export class CoEditionInfoComponent implements OnInit, OnDestroy {
           target +
           `${c.userName} editing since ${formatDate(
             new Date(c.editionTime),
-            'dd/MM/yyyy hh:mm',
+            'dd/MM/yyyy HH:mm',
             'en-US',
           )} \n `),
     );
