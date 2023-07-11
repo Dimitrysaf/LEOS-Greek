@@ -15,7 +15,7 @@
 define(function testTransformationConfigResolverModule(require) {
     "use strict";
     var transformationConfigResolverStampToTest = require("transformer/transformationConfigResolver");
-    var ckEditorFragmentFactory = require("specs/editor/util/ckEditorFragmentFactory");
+    var ckEditorFragmentFactory = require("test.util/ckEditorFragmentFactory");
     var LODASH = require("lodash");
 
     var getHtmlTagsInArray = function getHtmlTagsInArray(params) {

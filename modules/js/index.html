@@ -31,6 +31,7 @@
       <script type="application/javascript" src="src/main/lib/requirejs_2.3.3/require.js" data-main="js/leosModulesBootstrap.js"></script>
     
       <script>
+        requirejs.config({paths: {"test.util": "../test/js/editor/util"}});
         require(["../test/specRunner"]);
       </script>
     </head>

@@ -2,7 +2,7 @@
     "indexFile": "/index.html",
     "jsSrcDir": "/src/main/js",
     "jsTestSrcDir": "/src/test/js",
-    "specDir": "/src/test/js/editor/unit/pluginModules/leosTrackChanges",
-    "specNames": ["deleteCharacter.js", "acceptChange.js"],
+    "specDir": "/src/test/js",
+    "specNames": [],
     "excludes": []
 }

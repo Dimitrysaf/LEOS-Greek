@@ -15,8 +15,8 @@
 define(function testTransformerModule(require) {
     "use strict";
     var transformerStamp = require("transformer/transformer");
-    var transformationsConfigUtil = require("specs/editor/util/transformationsConfigUtil");
-    var ckEditorFragmentFactory = require("specs/editor/util/ckEditorFragmentFactory");
+    var transformationsConfigUtil = require("test.util/transformationsConfigUtil");
+    var ckEditorFragmentFactory = require("test.util/ckEditorFragmentFactory");
     var transformationConfigResolverStamp = require("transformer/transformationConfigResolver");
     var aknNumberedParagraph = require("plugins/aknNumberedParagraph/aknNumberedParagraphPlugin");
     var aknOrderedList = require("plugins/aknOrderedList/aknOrderedListPlugin");

@@ -15,7 +15,7 @@
 define(function testHierarchicalElementTransformer(require) {
     "use strict";
     var leosHierarchicalElementTransformerStamp = require("plugins/leosHierarchicalElementTransformer/hierarchicalElementTransformer");
-    var ckEditorFragmentFactory = require("specs/editor/util/ckEditorFragmentFactory");
+    var ckEditorFragmentFactory = require("test.util/ckEditorFragmentFactory");
     /*
      * As sample data: <list><indent><num>1</num><subparagraph><content><mp>fdsa<b>fsa fda</b>sfd safsda fsad</mp></content></subparagraph><block>fdsa</block></indent></list>
      * is used on the akn side and the: <ul><li>fds<b>af</b>sa<block>fdasfdsa</block></li></ul> is used on html side.
