@@ -3,10 +3,24 @@ define(function ckEditorTestUtil(require) {
 
     var CKEDITOR = require("promise!ckEditor");
 
-    async function _initializeEditor(extraPluginsName, placeholder) {
+    function findOrCreatePlaceholder() {
+        var placeholder = document.getElementById("leos-placeholder");
+        if(!placeholder || placeholder == null) {
+            var htmlString = '<div id="leos-placeholder" class="leos-placeholder" data-wrapped-id="123" style="height:10px"></div>';
+            placeholder = document.createElement('div');
+            placeholder.innerHTML = htmlString.trim();
+            document.body.appendChild(placeholder.firstChild);
+            placeholder = document.getElementById("leos-placeholder");
+        }
+        return placeholder;
+    }
+
+    async function _initializeEditor(extraPluginsName) {
         console.log("Initializing editor...");
        
         var promise = new Promise((resolve, reject) => {
+            var placeholder = findOrCreatePlaceholder();
+
             var config = {
                 language: "en",
                 plugins: "toolbar",
@@ -42,11 +56,12 @@ define(function ckEditorTestUtil(require) {
         return editor;
     }
 
-    function _destroyEditor(editor, placeholder) {
+    function _destroyEditor(editor) {
         console.log("Destroying editor...");
         editor.setReadOnly(true);
 
         // destroy editor instance, without updating DOM
+        var placeholder = document.getElementById("leos-placeholder");
         if (placeholder != null) {
             placeholder.innerHTML = null; //used to avoid flickering text
         }

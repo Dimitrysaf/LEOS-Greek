@@ -18,14 +18,12 @@ define(function acceptChange(require) {
     var pluginToTest = require("plugins/leosTrackChanges/leosTrackChangesPlugin");
     var testUtil = require("test.util/ckEditorTestUtil");
 
-    var placeholder = document.getElementById("leos-placeholder");
-
     describe("Unit tests for TrackChanges / acceptChange", function() {
         var editor;
 
         beforeAll(async function() {
             console.info("=> DESCRIBE - START - acceptChange");
-            editor = await testUtil.initializeEditor(pluginToTest.name, placeholder)
+            editor = await testUtil.initializeEditor(pluginToTest.name)
         });
 
         it("when acceptChange for 'deleted character', (should ...)", function (done) {
@@ -74,7 +72,7 @@ define(function acceptChange(require) {
 
 
         afterAll(function() {
-            testUtil.destroyEditor(editor, placeholder);
+            testUtil.destroyEditor(editor);
             console.log("After All - TrackChanges / acceptChange");
         });
     })

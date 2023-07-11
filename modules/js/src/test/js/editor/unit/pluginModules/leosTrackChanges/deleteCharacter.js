@@ -23,14 +23,12 @@ define(function deleteCharacter(require) {
         backspace: 8
     };
 
-    var placeholder = document.getElementById("leos-placeholder");
-
     describe("Unit tests for TrackChanges/deleteCharacter -  Legend: 'text' => normal test; (text) => text wrapped with TrackChanges SPAN", function() {
         var editor;
 
         beforeAll(async function() {
             console.info("=> DESCRIBE - START - deleteCharacter");
-            editor = await testUtil.initializeEditor(pluginToTest.name, placeholder)
+            editor = await testUtil.initializeEditor(pluginToTest.name)
         });
 
         it("when deleting character in 3rd position, 's' in 'First Test', should create TC structure: [ 'Fir' (s) 't Test' ]", function (done) {
@@ -196,7 +194,7 @@ define(function deleteCharacter(require) {
         });
 
         afterAll(function() {
-            testUtil.destroyEditor(editor, placeholder);
+            testUtil.destroyEditor(editor);
             console.info("=> DESCRIBE - END - deleteCharacter");
         });
     })
