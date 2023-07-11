@@ -14,7 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;

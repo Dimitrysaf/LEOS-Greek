@@ -17,23 +17,23 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -54,6 +54,8 @@ import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
@@ -279,6 +281,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private final ExportPackageService exportPackageService;
     private final NotificationService notificationService;
     private final CloneContext cloneContext;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private DownloadExportRequest downloadExportRequest;
     protected final AttachmentProcessor attachmentProcessor;
@@ -318,7 +321,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                    NotificationService notificationService, CommonDelegate<Annex> commonDelegate, CloneContext cloneContext,
                    AttachmentProcessor attachmentProcessor, InstanceTypeResolver instanceTypeResolver, NumberService numberService,
                    MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
-                   TemplateConfigurationService templateConfigurationService) {
+                   TemplateConfigurationService templateConfigurationService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.attachmentProcessor = attachmentProcessor;
         LOG.trace("Initializing annex presenter...");
@@ -356,6 +359,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         this.openElementEditors = new ArrayList<>();
         this.annotateService = annotateService;
         this.templateConfigurationService = templateConfigurationService;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -1291,7 +1295,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final Annex revision = annexService.findAnnex(event.getContributionVO().getDocumentId(), false);
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), contributionStatus);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
         Annex updatedAnnex = annexService.updateAnnex(revision.getId(), properties, false);
         if (updatedAnnex != null) {
             annexScreen.disableMergePane();
@@ -1307,7 +1311,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         annexScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         annexService.updateAnnex(revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, getDocument().getMetadata().get().getIndex(), Annex.class);
         annexScreen.populateContributions(allContributions);
@@ -1886,7 +1890,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String versionLabel = event.getVersionLabel();
         String versionTitle = event.getBaseVersionTitle();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
         Annex updatedAnnex = annexService.updateAnnex(documentId, properties, true);
         VersionInfoVO versionInfoVO = getVersionInfo(updatedAnnex);
         versionInfoVO.setRevisedBaseVersion(versionLabel);
@@ -1926,14 +1930,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     private Annex updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
         Annex updatedExplanatory = annexService.updateAnnex(documentId, properties, true);
         return updatedExplanatory;
     }
 
     private Annex updateLiveDiffingRequired(boolean liveDiffingRequired) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), liveDiffingRequired);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), liveDiffingRequired);
         Annex updatedAnnex = annexService.updateAnnex(documentId, properties, true);
         return updatedAnnex;
     }

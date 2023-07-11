@@ -30,7 +30,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.dnd.DragSourceExtension;
 import com.vaadin.ui.dnd.event.DragStartListener;
 import cool.graph.cuid.Cuid;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.SecurityContext;

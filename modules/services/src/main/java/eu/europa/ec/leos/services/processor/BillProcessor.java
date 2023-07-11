@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.services.processor;
 
 
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;

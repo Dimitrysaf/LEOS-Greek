@@ -1,8 +1,8 @@
 package eu.europa.ec.leos.repository.document;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.metadata.ExplanatoryMetadata;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;

@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ConfigurationV.findById", query = "SELECT d FROM ConfigurationV d WHERE d.id = :id"),
     @NamedQuery(name = "ConfigurationV.findByConfigId", query = "SELECT d FROM ConfigurationV d WHERE d.configId = :configId"),
     @NamedQuery(name = "ConfigurationV.findByObjectId", query = "SELECT d FROM ConfigurationV d WHERE d.objectId = :docObjectId"),
-    @NamedQuery(name = "ConfigurationV.findByConfigType", query = "SELECT d FROM ConfigurationV d WHERE d.configType = :configType"),
     @NamedQuery(name = "ConfigurationV.findByCategoryCode", query = "SELECT d FROM ConfigurationV d WHERE d.categoryCode = :categoryCode"),
     @NamedQuery(name = "ConfigurationV.findByCategoryDesc", query = "SELECT d FROM ConfigurationV d WHERE d.categoryDesc = :categoryDesc"),
     @NamedQuery(name = "ConfigurationV.findByName", query = "SELECT d FROM ConfigurationV d WHERE d.name = :name"),
@@ -64,8 +63,6 @@ public class ConfigurationV implements Serializable {
     private BigDecimal objectId;
     @Column(name = "CONFIG_ID", updatable = false)
     private BigDecimal configId;
-    @Column(name = "CONFIG_TYPE", updatable = false)
-    private BigDecimal configType;
     @Column(name = "CATEGORY_CODE", updatable = false)
     private String categoryCode;
     @Column(name = "CATEGORY_DESC", updatable = false)
@@ -137,14 +134,6 @@ public class ConfigurationV implements Serializable {
 
     public void setConfigId(BigDecimal configId) {
         this.configId = configId;
-    }
-
-    public BigDecimal getConfigType() {
-        return configType;
-    }
-
-    public void setConfigType(BigDecimal configType) {
-        this.configType = configType;
     }
 
     public String getCategoryCode() {

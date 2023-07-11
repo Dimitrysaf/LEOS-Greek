@@ -14,9 +14,9 @@
 package eu.europa.ec.leos.ui.view.explanatory;
 
 import com.vaadin.server.StreamResource;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;

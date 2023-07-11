@@ -50,7 +50,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
         next: (proposal) => {
           this.proposalTitleNonEditablePart = `${proposal.metadata.docStage} ${proposal.metadata.docType}`;
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
-          this.isClonedProposal = this.isClonedProposal = Boolean(
+          this.isClonedProposal = Boolean(
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;

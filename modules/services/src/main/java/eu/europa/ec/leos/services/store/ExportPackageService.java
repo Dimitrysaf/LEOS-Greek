@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.store;
 
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 
 import java.util.List;
 

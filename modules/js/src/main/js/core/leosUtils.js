@@ -206,11 +206,11 @@ define(function leosUtilsModule(require) {
         }
     }
 
-    function _generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, tcSelector, uidAttr, actionAttr) {
+    function _generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, uidAttr, actionAttr) {
         var tcStyle = "";
         if (isTrackChangesShowed) {
             var usersUid = [currentUserId];
-            $(tcSelector).each(function () {
+            $("[" + uidAttr.replace("leos:", "leos\\:") + "]").each(function() {
                 var userUid = $(this).attr(uidAttr); // Retrieve user and add it to users array if not exists
                 if (userUid && $.inArray(userUid, usersUid) === -1) {
                     usersUid.push(userUid);
@@ -218,12 +218,14 @@ define(function leosUtilsModule(require) {
             });
             for (var i = 0; usersUid.length > i; i++) {
                 var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
-                tcStyle += tcSelector + "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
-                tcStyle += tcSelector + "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
+                tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { color: " + userColors[0] + "; }\n";
+                tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover { background-color: " + userColors[1] + "; }\n";
+                tcStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
             }
         } else {
-            tcStyle = tcSelector + "[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
-            tcStyle += tcSelector + "[" + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
+            tcStyle = "[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
+            tcStyle += "[" + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
+            tcStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
         }
         return tcStyle;
     }

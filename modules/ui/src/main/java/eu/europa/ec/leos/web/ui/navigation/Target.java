@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.web.ui.navigation;
 
 
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.ui.view.annex.AnnexView;
 import eu.europa.ec.leos.ui.view.collection.CollectionView;
 import eu.europa.ec.leos.ui.view.coverpage.CoverPageView;

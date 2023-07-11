@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.services.processor;
 
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.xml.Element;
 import org.springframework.security.access.prepost.PreAuthorize;
 

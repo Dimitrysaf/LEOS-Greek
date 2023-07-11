@@ -348,8 +348,7 @@ define(function leosTrackChangesStyleModule(require) {
 
                     if (styleNode) {
                         if (!isFormatStyles) {
-                            if (styleRange.startContainer.$.getAttribute(core.NAME_ATTR) === core.NAME_VALUE
-                                && styleRange.startContainer.$.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
+                            if (styleRange.startContainer.$.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
                                 && styleRange.startContainer.$.getAttribute(core.UID_ATTR) === core.getUserAndId(editor)[1]) {
                                 styleRange.extractContents();
                             } else {
@@ -840,8 +839,7 @@ define(function leosTrackChangesStyleModule(require) {
                 }
             }
 
-            if (element.getAttribute(core.NAME_ATTR) === core.NAME_VALUE
-                && element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
+            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
                 && element.getAttribute(core.UID_ATTR) === core.getUserAndId(editor)[1]) {
                 element.remove(false);
             }
@@ -918,8 +916,7 @@ define(function leosTrackChangesStyleModule(require) {
             // If no more attributes remained in the element, remove it,
             // leaving its children.
             if (!element.hasAttributes() || forceRemove
-                || (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION
-                    && element.getAttribute(core.STATUS_ATTR) === core.NEW_STATUS)) {
+                || ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && !element.getId())) {
                 if (CKEDITOR.dtd.$block[element.getName()]) {
                     var previous = element.getPrevious(this.nonWhitespaces),
                         next = element.getNext(this.nonWhitespaces);

@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.web.model;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 
 public class VersionInfoVO {
 

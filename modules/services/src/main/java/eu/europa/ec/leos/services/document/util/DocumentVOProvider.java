@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.document.util;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import org.springframework.stereotype.Component;
 

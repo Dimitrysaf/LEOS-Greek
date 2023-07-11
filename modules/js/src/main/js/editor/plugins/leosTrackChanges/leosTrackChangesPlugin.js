@@ -18,8 +18,8 @@ define(function leosTrackChangesPluginModule(require) {
     // load module dependencies
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
-    var trackChanges = require("./leosTrackChanges");
-    var trackChangesStyle = require("./leosTrackChangesStyle");
+    var trackChanges = require("./leosTrackChanges"), trackChangesStyle = require("./leosTrackChangesStyle"),
+        trackChangesTable = require("./leosTrackChangesTable");
     var UTILS = require("core/leosUtils");
 
     var pluginName = "leosTrackChanges";
@@ -31,9 +31,10 @@ define(function leosTrackChangesPluginModule(require) {
                 return;
             }
 
-            var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style;
+            var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
+            var selectedElement;
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -55,28 +56,40 @@ define(function leosTrackChangesPluginModule(require) {
             // Add context menu accept and reject options
             if (editor.contextMenu) {
                 editor.addMenuGroup("trackChangesGroup");
-                editor.addMenuItem( "acceptOneChangeItem", {
+                editor.addMenuItem("acceptOneChangeItem", {
                     label: "Accept this change",
                     icon: this.path + "icons/ok.png",
                     command: "acceptOneChange",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem( "rejectOneChangeItem", {
+                editor.addMenuItem("rejectOneChangeItem", {
                     label: "Reject this change",
                     icon: this.path + "icons/remove.png",
                     command: "rejectOneChange",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem( "acceptSelectedChangesItem", {
+                editor.addMenuItem("acceptSelectedChangesItem", {
                     label: "Accept selected changes",
                     icon: this.path + "icons/ok.png",
                     command: "acceptSelectedChanges",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem( "rejectSelectedChangesItem", {
+                editor.addMenuItem("rejectSelectedChangesItem", {
                     label: "Reject selected changes",
                     icon: this.path + "icons/remove.png",
                     command: "rejectSelectedChanges",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem("acceptRowChangeItem", {
+                    label: "Accept this row change",
+                    icon: this.path + "icons/ok.png",
+                    command: "acceptRowChange",
+                    group: "trackChangesGroup"
+                });
+                editor.addMenuItem( "rejectRowChangeItem", {
+                    label: "Reject this row change",
+                    icon: this.path + "icons/remove.png",
+                    command: "rejectRowChange",
                     group: "trackChangesGroup"
                 });
                 editor.addCommand("acceptOneChange", {
@@ -109,19 +122,42 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 });
-                editor.contextMenu.addListener( function(element) {
-                    if (editor.getSelection().isCollapsed()) {
-                        var tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                editor.addCommand("acceptRowChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.acceptRowChange(editor, selectedElement);
+                    }
+                });
+                editor.addCommand("rejectRowChange", {
+                    canUndo: true,
+                    exec: function(editor) {
+                        actions.rejectRowChange(editor, selectedElement);
+                    }
+                });
+                editor.contextMenu.addListener(function(element) {
+                    var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
+                    if (tcElement) { // Is a track change deleted row
+                        selectedElement = new CKEDITOR.dom.element(tcElement);
+                        return {
+                            acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                            rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                        };
+                    } else if (editor.getSelection().isCollapsed()) {
+                        tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                         if (tcElement) {
                             editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
-                            return { acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
                         }
                     } else {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
                         if (tcElements.length > 0) {
-                            return { acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED };
+                            return {
+                                acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
                         }
                     }
                 });
@@ -149,12 +185,12 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keydown", function(e) {
                     if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
-                        if (event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
+                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
                             style.apply(editor, deleteTcStyle);
                             var range = editor.getSelection().getRanges()[0];
                             range.collapse(false);
                             range.select();
-                            event.getInstance().data.domEvent.preventDefault();
+                            event.getInstance().data.preventDefault();
                             event.getInstance().stop();
                         }
                     }
@@ -222,7 +258,6 @@ define(function leosTrackChangesPluginModule(require) {
 
                                 event.getInstance().data.preventDefault(); // Prevent standard insert
                             } else {
-                                actions.preventInsertInDelete(editor); // Moves the caret if needed
                                 if (actions.insertNewData(editor, event.getChar())) { // Inserts the new data
                                     event.getInstance().data.preventDefault(); // Prevent standard insert
                                 }
@@ -303,6 +338,12 @@ define(function leosTrackChangesPluginModule(require) {
                         case "inlinesaveclose":
                             editor.setData(editor.getData().replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\""));
                             break;
+                        case "tableDelete":
+                        case "rowDelete":
+                        case "rowInsertBefore":
+                        case "rowInsertAfter":
+                            table.execCustomCommand(editor, event.data.name);
+                            return false;
                     }
                 }
             });
@@ -319,18 +360,18 @@ define(function leosTrackChangesPluginModule(require) {
                                     core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
                                     if (actions.insertNewData(editor, node.outerHTML))
                                         node.remove();
-                                /*} else if ((node.tagName === "TABLE") || (node.tagName === "TR") || (node.tagName === "TD")) {
-                                    if ((node.tagName === "TR") || (node.tagName === "TD"))
-                                        node = node.closest("table");
-                                    var tcAttributes = core.getTrackChangeAttributes(editor, core.INSERT_ACTION);
-                                    for (var attrName in tcAttributes) {
-                                        if (attrName !== "data-akn-name")
-                                            node.setAttribute(attrName, tcAttributes[attrName]);
-                                    }*/
-                                } else {
-                                    continue;
+                                    break;
+                                } else if (node.tagName === "TABLE") {
+                                    if (!node.id) { // It is a new table
+                                        var rows = node.querySelectorAll("tr");
+                                        rows.forEach(function (row) {
+                                            if (!row.getAttribute(core.UID_ATTR)) {
+                                                core.addTrackChangesAttributes(editor, row, core.INSERT_ACTION);
+                                            }
+                                        });
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
@@ -375,14 +416,11 @@ define(function leosTrackChangesPluginModule(require) {
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     var transformationConfig = {
-        akn : "inline[name=trackchanges]",
-        html : "span[data-akn-name=trackchanges]",
+        akn : "inline[leos:action]",
+        html : "span[data-akn-action]",
         attr : [{
             akn : "xml:id",
             html : "id"
-        }, {
-            akn: "name",
-            html : "data-akn-name"
         }, {
             akn: "leos:action",
             html : "data-akn-action"

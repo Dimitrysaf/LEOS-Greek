@@ -71,6 +71,7 @@ eui-icon-svg > svg > use {
   padding: var(--eui-base-spacing-2xs) var(--eui-base-spacing-s);
 }
 
+.eui-growl-item-message-title,
 .eui-growl-item-message-detail {
   font-size: var(--eui-base-font-size-xs);
 }
@@ -209,6 +210,18 @@ article.leos-content-soft-new[leos\:softaction='add']
   line-height: 1;
   margin: 0 2px;
   text-decoration: none !important;
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
+#contributionViewContainer longtitle {
+  .leos-content-new {
+    color: black;
+    text-decoration: none;
+  }
+
+  .leos-content-removed {
+    display: none;
+  }
 }
 
 a.cke_dialog_tab {

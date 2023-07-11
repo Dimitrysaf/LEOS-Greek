@@ -37,17 +37,17 @@ public class ConfigServiceTests {
     @Test
     @Transactional
     public void test_getConfigStructure() throws RepositoryException {
-        List<LeosDocument> structure = documentService.findDocumentByPackageNameAndFileName("templates", "structure_01", "STRUCTURE");
+        List<LeosDocument> structure = documentService.findDocumentByName("structure_01");
         assertEquals(structure.size(), 1);
         assertEquals(structure.get(0).getName(), "structure_01");
         assertEquals(structure.get(0).getRef(), "structure_01");
         assertEquals(structure.get(0).getCategory(), "STRUCTURE");
-        List<LeosDocument> config = documentService.findDocumentByPackageNameAndFileName("templates", "BL-019-CONF", "CONFIG");
+        List<LeosDocument> config = documentService.findDocumentByName("BL-019-CONF");
         assertEquals(config.size(), 1);
         assertEquals(config.get(0).getName(), "BL-019-CONF");
         assertEquals(config.get(0).getRef(), "BL-019-CONF");
         assertEquals(config.get(0).getCategory(), "CONFIG");
-        List<LeosDocument> template = documentService.findDocumentByPackageNameAndFileName("templates", "BL-019", "TEMPLATE");
+        List<LeosDocument> template = documentService.findDocumentByName("BL-019");
         assertEquals(template.size(), 1);
         assertEquals(template.get(0).getName(), "BL-019");
         assertEquals(template.get(0).getRef(), "BL-019");

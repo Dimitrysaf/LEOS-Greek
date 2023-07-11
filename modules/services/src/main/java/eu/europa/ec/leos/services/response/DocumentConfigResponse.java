@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.response;
 
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.Level;

@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.web.event.view.document;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 import java.util.List;
 

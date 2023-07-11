@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.cmis.extensions;
 
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import org.apache.chemistry.opencmis.client.api.Folder;
 
 public class CmisFolderExtensions {

@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.services.store;
 
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.model.filter.QueryFilter;

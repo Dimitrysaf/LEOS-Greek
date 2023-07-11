@@ -13,10 +13,10 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;

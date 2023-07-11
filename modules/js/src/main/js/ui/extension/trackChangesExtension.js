@@ -30,7 +30,7 @@ define(function trackChangesExtensionModule(require) {
     function _connectorUnregistrationListener() {
         var connector = this;
         log.debug("Unregistering track changes extension...");
-        $("head style[id$=TcStyle]").remove();
+        $("head style[id$=TcStyle]").remove(); // Remove docTcStyle and editorTcStyle
     }
 
     function _connectorStateChangeListener() {
@@ -41,8 +41,7 @@ define(function trackChangesExtensionModule(require) {
     }
 
     function _updateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed) {
-        var docTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed,
-            "akomantoso inline[name='trackchanges']", "leos:uid", "leos:action");
+        var docTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, "leos:uid", "leos:action");
         $("head #docTcStyle").remove();
         $("head").prepend("<style id='docTcStyle'>" + docTcStyle + "</style>");
     }

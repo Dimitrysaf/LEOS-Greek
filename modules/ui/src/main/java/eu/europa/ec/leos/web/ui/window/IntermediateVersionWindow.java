@@ -19,7 +19,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;

@@ -48,6 +48,7 @@ import {
   FetchElementResponse,
 } from '../models/document-view-response.model';
 import { NodeValidationResponse } from '../models/drop-response.model';
+import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import { LoadingService } from './loading.service';
@@ -112,8 +113,19 @@ export class DocumentService implements OnDestroy {
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
   contributions$: Observable<ContributionVO[]>;
+  processed$: Observable<[boolean, ContributionVO]>;
+  contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
+  contributionSelections$: Observable<number>;
+  contributionViewAndMergeCollapsed$: Observable<boolean>;
+  annexDocNumber$: Observable<number>;
 
-  // private documentCategoryBS = new BehaviorSubject(null);
+  private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
+    false,
+    undefined,
+  ]);
+  private contributionViewAndMergeBS = new BehaviorSubject<
+    [DocumentViewResponse, ContributionVO]
+  >(null);
   private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
   private documentIdBS = new BehaviorSubject<string | null>(null);
@@ -145,6 +157,11 @@ export class DocumentService implements OnDestroy {
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
+  private contributionSelectionsBS = new BehaviorSubject<number>(0);
+  private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
+    true,
+  );
+  private annexDocNumberBS = new BehaviorSubject<number>(-1);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -158,13 +175,14 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
   ) {
+    this.annexDocNumber$ = this.annexDocNumberBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
       .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((res) => this.getContributions()),
+      tap((res) => res.category !== 'coverpage' && this.getContributions()),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
@@ -289,6 +307,12 @@ export class DocumentService implements OnDestroy {
     this.collapseExpandAnnotation$ =
       this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
+    this.processed$ = this.processedBS.asObservable();
+    this.contributionViewAndMerge$ =
+      this.contributionViewAndMergeBS.asObservable();
+    this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
+    this.contributionViewAndMergeCollapsed$ =
+      this.contributionViewAndMergeCollapsedBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -754,6 +778,24 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
+  handleContributionSelectCount(selected: boolean, reset?: boolean) {
+    if (reset) {
+      this.contributionSelectionsBS.next(0);
+    } else if (selected) {
+      this.contributionSelectionsBS.next(
+        this.contributionSelectionsBS.value + 1,
+      );
+    } else {
+      if (this.contributionSelectionsBS.value - 1 >= 0) {
+        this.contributionSelectionsBS.next(
+          this.contributionSelectionsBS.value - 1,
+        );
+      } else {
+        this.contributionSelectionsBS.next(0);
+      }
+    }
+  }
+
   versionRevert(versionNumber: string) {
     this.http
       .get(
@@ -906,6 +948,14 @@ export class DocumentService implements OnDestroy {
     this.isDocumentLoadedBS.next(loaded);
   }
 
+  setContributionViewAndMergeCollapsed(collapsed: boolean) {
+    this.contributionViewAndMergeCollapsedBS.next(collapsed);
+  }
+
+  setAnnexDocNumber(num: number) {
+    this.annexDocNumberBS.next(num);
+  }
+
   getUserPermissions() {
     return this.permissionsBS.value;
   }
@@ -914,9 +964,10 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const queryString =
-      documentType === 'annex' ? '?annexIndex=' + annexIndex : '?annexIndex=-1';
-
+    let queryString = '';
+    this.annexDocNumber$.subscribe((num) => {
+      queryString = '?annexIndex=' + num;
+    });
     return this.http
       .get<ContributionVO[]>(
         `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
@@ -933,7 +984,7 @@ export class DocumentService implements OnDestroy {
     const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
 
     return this.http
-      .post(
+      .post<{ contributionStatus: string }>(
         `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
         {},
         { params: { versionLabel } },
@@ -969,8 +1020,100 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  viewContribution(contribution: ContributionVO) {
-    //TODO add api call and parameters
+  updateProcessedStatus(process: boolean, contribution: ContributionVO) {
+    this.processedBS.next([process, contribution]);
+  }
+
+  viewAndMergeContribution(contribution: ContributionVO) {
+    const contributionVersionRef = contribution.versionedReference;
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    this.http
+      .get<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
+        {},
+      )
+      .subscribe({
+        next: (res) => {
+          this.contributionViewAndMergeBS.next([res, contribution]);
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.view-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  markContributionAsProcessed(contribution: ContributionVO) {
+    const contributionVersionRef = contribution.versionedReference;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    return this.http.post(
+      `${apiBaseUrl}/secured/contribution/mark-as-processed/${contributionVersionRef}/${documentType}`,
+      {},
+    );
+  }
+
+  mergeContributions(
+    mergeActions: MergeActionVO[],
+    acceptAllContributions: boolean,
+  ) {
+    const documentRef = this.documentRef;
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+
+    this.http
+      .post(
+        `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
+        {
+          mergeActions,
+          acceptAllContributions,
+        },
+        { responseType: 'text' as 'json' },
+      )
+      .subscribe({
+        next: (res) => {
+          this.appShell.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.merge-contribution-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          if (!acceptAllContributions)
+            this.updateProcessedStatus(false, mergeActions[0].contributionVO);
+          this.reloadDocument();
+          this.getContributions();
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.merge-contribution-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   private setSearchResultsCounter(count: number) {
@@ -1219,9 +1362,9 @@ export class DocumentService implements OnDestroy {
   private notifyExportEmailSent() {
     this.appConfig.config.subscribe((c) => {
       const userEmail = c.user.email;
-      // const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
+      const fileType = 'Pdf';
       this.translate
-        .get('page.editor.export-version-email-sent', { userEmail })
+        .get('page.editor.export-version-email-sent', { fileType, userEmail })
         .subscribe((message) => {
           this.appShell.growl({
             severity: 'info',

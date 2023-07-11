@@ -10,6 +10,9 @@ public class Collaborator {
 
     private String role;
 
+    protected Collaborator() {
+    }
+
     public Collaborator(String login, String role, String entity) {
         this.login = login;
         this.role = role;

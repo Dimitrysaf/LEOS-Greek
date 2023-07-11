@@ -461,6 +461,7 @@ export const isNumbered = (
     if (targetElement.tocItem.aknTag === droppedElement.tocItem.aknTag) {
       if (
         targetElement.number === '' ||
+        targetElement.number === null ||
         targetElement.softActionAttr === 'DELETE'
       ) {
         numbered = false;

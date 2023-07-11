@@ -8,7 +8,7 @@
   flex-grow: 1;
   flex-shrink: 1;
   font-weight: bold;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -24,6 +24,6 @@
   width: 100%;
 }
 
-.revisions-pane.top-content {
-  color: chartreuse;
+.greyed {
+  background-color: var(--eui-base-color-grey-10);
 }

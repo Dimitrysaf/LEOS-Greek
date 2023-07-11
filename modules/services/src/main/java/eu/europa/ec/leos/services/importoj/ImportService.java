@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.importoj;
 
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 
 import java.util.List;
 

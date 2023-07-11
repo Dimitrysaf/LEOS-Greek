@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.leos.services.export;
 
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.lang3.Validate;

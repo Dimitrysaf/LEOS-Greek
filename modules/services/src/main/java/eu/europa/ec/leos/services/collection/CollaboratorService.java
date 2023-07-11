@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.collection;
 
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 

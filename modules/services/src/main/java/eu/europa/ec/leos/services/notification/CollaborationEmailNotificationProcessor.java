@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.notification;
 
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.EmailNotification;
 import eu.europa.ec.leos.model.notification.collaborators.CollaboratorEmailNotification;

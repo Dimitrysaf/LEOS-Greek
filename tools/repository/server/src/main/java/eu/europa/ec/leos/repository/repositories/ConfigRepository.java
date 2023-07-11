@@ -15,9 +15,12 @@ package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.Config;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface ConfigRepository extends JpaRepository<Config, BigDecimal> {
-    Config findConfigByName(String name);
+    @Query(value = "SELECT * FROM CONFIG c WHERE c.REPOSITORY_ID IN (SELECT r.ID FROM REPOSITORY r WHERE r.CMIS_ID = ?1) AND c.NAME = ?2", nativeQuery = true)
+    Optional<Config> findConfigByNameAndRepositoryId(String repositoryId, String name);
 }

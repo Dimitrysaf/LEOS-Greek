@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.ui.view;
 
 import com.google.common.eventbus.EventBus;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.xml.Element;

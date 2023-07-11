@@ -1,8 +1,8 @@
 package eu.europa.ec.leos.services.collection.milestone.helpers;
 
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XmlHelper;

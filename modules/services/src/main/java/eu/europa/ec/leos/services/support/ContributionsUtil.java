@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.support;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.vo.contribution.ContributionLegDocumentVO;

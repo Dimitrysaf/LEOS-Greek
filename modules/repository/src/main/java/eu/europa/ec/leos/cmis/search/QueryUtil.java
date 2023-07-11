@@ -1,10 +1,12 @@
 package eu.europa.ec.leos.cmis.search;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.filter.QueryFilter.Filter;
 import eu.europa.ec.leos.model.filter.QueryFilter.FilterType;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 class QueryUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryUtil.class);
+
+    private final static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 
     static String formFilterClause(QueryFilter workspaceFilter) {
         LOG.trace("Form where clause for filter...");
@@ -94,7 +98,7 @@ class QueryUtil {
     }
     
     static String getMajorVersionQueryString(String docRef) {
-       StringBuilder queryBuilder =  new StringBuilder(CmisProperties.METADATA_REF.getId()).append(" = '").append(docRef)
+       StringBuilder queryBuilder =  new StringBuilder(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF)).append(" = '").append(docRef)
                .append("' ")
                .append(" AND cmis:isMajorVersion = true ")
                .append(" order by cmis:creationDate DESC");
@@ -102,9 +106,9 @@ class QueryUtil {
     }
     
     static String getVersionsWithoutVersionLabelQueryString(String docRef) {
-        StringBuilder queryBuilder =  new StringBuilder(CmisProperties.METADATA_REF.getId()).append(" = '").append(docRef)
+        StringBuilder queryBuilder =  new StringBuilder(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF)).append(" = '").append(docRef)
                 .append("' ")
-                .append(" AND ").append(CmisProperties.VERSION_LABEL.getId()).append(" IS NULL")
+                .append(" AND ").append(repositoryPropertiesMapper.getId(RepositoryProperties.VERSION_LABEL)).append(" IS NULL")
                 .append(" order by cmis:creationDate DESC");
         return queryBuilder.toString();
     }

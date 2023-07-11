@@ -50,7 +50,7 @@ public class DocumentContent implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
+    @Column(name = "ID", updatable = false, precision = 22, scale = 0)
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )

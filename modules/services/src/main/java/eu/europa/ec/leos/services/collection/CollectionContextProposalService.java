@@ -13,25 +13,16 @@
  */
 package eu.europa.ec.leos.services.collection;
 
-import cool.graph.cuid.Cuid;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
-import eu.europa.ec.leos.domain.cmis.document.Memorandum;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
-import eu.europa.ec.leos.domain.vo.DocumentVO;
-import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
-import eu.europa.ec.leos.model.user.Entity;
-import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
@@ -42,26 +33,18 @@ import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
-import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.BILL;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.COUNCIL_EXPLANATORY;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.MEMORANDUM;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 
 @Service
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})

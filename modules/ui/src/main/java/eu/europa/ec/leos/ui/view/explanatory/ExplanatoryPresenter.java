@@ -17,21 +17,20 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.ExportDocument;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.ExplanatoryMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -50,6 +49,8 @@ import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
@@ -182,7 +183,6 @@ import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,6 +247,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private final ExportPackageService exportPackageService;
     private final NotificationService notificationService;
     private final ConfigurationHelper cfgHelper;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private DownloadExportRequest downloadExportRequest;
 
     private String strDocumentVersionSeriesId;
@@ -275,7 +276,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                          UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
                          ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
                          NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate,
-                         TemplateConfigurationService templateConfigurationService) {
+                         TemplateConfigurationService templateConfigurationService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         LOG.trace("Initializing explanatory presenter...");
         this.explanatoryScreen = explanatoryScreen;
@@ -304,6 +305,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         this.openElementEditors = new ArrayList<>();
         this.templateConfigurationService = templateConfigurationService;
         this.cfgHelper = cfgHelper;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -1585,14 +1587,14 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     private Explanatory updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.BASE_REVISION_ID.getId(), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
         Explanatory updatedExplanatory = explanatoryService.updateExplanatory(documentId, properties, true);
         return updatedExplanatory;
     }
 
     private Explanatory updateLiveDiffingRequired(boolean liveDiffingRequired) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.LIVE_DIFFING_REQUIRED.getId(), liveDiffingRequired);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), liveDiffingRequired);
         Explanatory updatedExplanatory = explanatoryService.updateExplanatory(documentId, properties, true);
         return updatedExplanatory;
     }

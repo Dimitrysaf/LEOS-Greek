@@ -54,8 +54,6 @@ define(function deleteCharacter(require) {
             expect(beforeElement.getText()).toEqual('Fir');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('s');
-            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
             expect(afterElement.getText()).toEqual('t Test');
@@ -85,8 +83,6 @@ define(function deleteCharacter(require) {
             expect(beforeElement.getText()).toEqual('Fi');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('r');
-            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
             expect(afterElement.getText()).toEqual('st Test');
@@ -114,8 +110,6 @@ define(function deleteCharacter(require) {
             expect(beforeElement.getText()).toEqual('Fir');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('s');
-            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
             expect(afterElement.getText()).toEqual('t Test');
@@ -133,8 +127,6 @@ define(function deleteCharacter(require) {
             expect(beforeElement.getText()).toEqual('Fir');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('st');
-            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
             expect(afterElement.getText()).toEqual(' Test');
@@ -165,8 +157,6 @@ define(function deleteCharacter(require) {
             expect(beforeElement.getText()).toEqual('Fi');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('r');
-            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
             expect(afterElement.getText()).toEqual('st Test');
@@ -184,8 +174,6 @@ define(function deleteCharacter(require) {
             expect(beforeElement.getText()).toEqual('F');
             expect(trackChangeElement.getName()).toEqual('span');
             expect(trackChangeElement.getText()).toEqual('ir');
-            expect(trackChangeElement.getAttribute("data-akn-name")).toEqual("trackchanges");
-            expect(trackChangeElement.getAttribute("data-akn-status")).toEqual("new");
             expect(trackChangeElement.getAttribute("data-akn-uid")).toEqual("testuser");
             expect(trackChangeElement.getAttribute("title")).toContain("testuser");
             expect(afterElement.getText()).toEqual('st Test');

@@ -1,7 +1,5 @@
 package eu.europa.ec.leos.services.collection;
 
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.PROPOSAL;
-
 import java.io.File;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -16,10 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
-
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -38,6 +35,8 @@ import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import io.atlassian.fugue.Pair;
+
+import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 
 @Service
 public class CreateCollectionServiceImpl implements CreateCollectionService {

@@ -155,7 +155,7 @@
                   | translate
               "
             >
-              {{ row.updatedOn | date: 'dd/MM/yyyy hh:mm:ss' }}
+              {{ row.updatedOn | date: 'dd/MM/yyyy HH:mm' }}
             </td>
             <td
               [attr.data-col-label]="
@@ -327,6 +327,7 @@
                 ></app-co-edition-info>
                 <a
                   [routerLink]="['/annex', row.metadata.internalRef]"
+                  [state]="{ annexRow: row }"
                   (click)="$event.preventDefault()"
                   ><strong>{{
                     row.title
@@ -351,7 +352,7 @@
                   | translate
               "
             >
-              {{ row.updatedOn | date: 'dd/MM/yyyy hh:mm:ss' }}
+              {{ row.updatedOn | date: 'dd/MM/yyyy HH:mm' }}
             </td>
             <td
               [attr.data-col-label]="

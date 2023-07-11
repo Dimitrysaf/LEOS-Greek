@@ -13,12 +13,11 @@
  */
 package eu.europa.ec.leos.usecases.document;
 
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Explanatory;
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -38,7 +37,7 @@ import javax.inject.Provider;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.domain.cmis.LeosCategory.*;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 
 @Component
 @Scope("prototype")

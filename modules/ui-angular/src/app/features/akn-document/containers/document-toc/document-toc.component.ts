@@ -814,8 +814,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   handleNodeSelect(node: TableOfContentItemVO) {
     this.selectedNode = node;
     this.handleTocStylingOnInlineEdit(this.isEdit);
+
     this.scrollToDocumentElement(node, 'docContainer');
-    this.scrollToDocumentElement(node, 'versionComparisonContainer');
+    const syncScrollElements =
+      document.querySelectorAll(`.sync-scroll-enabled`);
+    syncScrollElements.forEach((element) => {
+      if (element.id !== 'docContainer') {
+        this.scrollToDocumentElement(node, element.id);
+      }
+    });
   }
 
   //a node can be dropped from two sources
@@ -1253,6 +1260,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       } else {
         droppedElement.number = HASH_NUM_VALUE;
       }
+    } else {
+      droppedElement.number = null;
     }
   }
 

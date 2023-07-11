@@ -1,13 +1,15 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.domain.cmis.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
 import org.junit.Before;
@@ -15,11 +17,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
@@ -115,6 +121,27 @@ public class ContributionControllerTest {
     }
 
     @Test
+    public void test_viewMergePane(){
+        String TEST_CONTEXT_PATH = "/test-content-path";
+        String TEST_DOCUMENT_REF = "documentRef";
+        String TEST_DOCUMENT_TYPE = "documentType";
+        String TEST_VERSION_LABEL = "versionLabel";
+        String TEST_RESPONSE_BODY = "Test Response";
+        HttpServletRequest httpRequestMock = Mockito.mock(HttpServletRequest.class);
+        DocumentViewResponse testResponse = new DocumentViewResponse(TEST_DOCUMENT_REF, TEST_RESPONSE_BODY, null);
+        when(httpRequestMock.getContextPath()).thenReturn(TEST_CONTEXT_PATH);
+        when(contributionApiService.compareAndShowRevision(anyString(),anyString(),anyString(),anyString())).thenReturn(testResponse);
+
+        ResponseEntity<DocumentViewResponse> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF,TEST_DOCUMENT_TYPE,TEST_VERSION_LABEL);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(TEST_RESPONSE_BODY, response.getBody().getEditableXml());
+
+        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL);
+    }
+
+    @Test
     public void test_declineContribution(){
         String TEST_DOCUMENT_REF = "documentRef";
         String TEST_DOCUMENT_TYPE = "documentType";
@@ -130,5 +157,22 @@ public class ContributionControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(responseData);
         assertEquals(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue(), responseData.getContributionStatus());
+    }
+
+    @Test
+    public void test_mergeContribution() throws IOException {
+        String TEST_DOCUMENT_REF = "documentRef";
+        String TEST_DOCUMENT_TYPE = "documentType";
+        String TEST_DOCUMENT_CONTENT = "test content";
+        ApplyContributionsRequest TEST_REQUEST = new ApplyContributionsRequest();
+
+        when(this.contributionApiService.mergeContribution(anyString(),anyString(),any(ApplyContributionsRequest.class))).thenReturn(TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8));
+
+        ResponseEntity<byte[]> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_REQUEST);
+
+        verify(this.contributionApiService).mergeContribution(TEST_DOCUMENT_TYPE, TEST_DOCUMENT_REF, TEST_REQUEST);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(TEST_DOCUMENT_CONTENT, new String(response.getBody()));
     }
 }

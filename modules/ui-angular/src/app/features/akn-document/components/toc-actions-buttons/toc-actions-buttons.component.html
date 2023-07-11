@@ -1,5 +1,5 @@
 <ng-container class="mr-2">
-  <div class="d-flex flex-wrap" *ngIf="isEditMode && !isOverflowing">
+  <div class="d-flex flex-wrap" *ngIf="isEditMode">
     <button
       euiButton
       euiBasicButton
@@ -10,6 +10,7 @@
       <span
         *ngIf="isEditMode"
         [euiTooltip]="getTooltipForToggleTree()"
+        [position]="'right'"
         class="eui-icon eui-icon-sitemap"
       ></span>
     </button>
@@ -78,83 +79,4 @@
       <span class="eui-icon eui-icon-times"></span>
     </button>
   </div>
-  <!-- Dropdown -->
-  <eui-dropdown *ngIf="isEditMode && isOverflowing">
-    <button euiButton euiSizeS euiPrimary>
-      <span euiIcon euiSizeS iconClass="eui-icon eui-icon-ecl-hamburger"></span>
-    </button>
-    <eui-dropdown-content>
-      <ul euiList>
-        <li euiListItem>
-          <button
-            euiButton
-            euiBasicButton
-            class=""
-            euiSizeS
-            (click)="onExpandAll()"
-          >
-            <div class="d-flex flex-row">
-              <span class="eui-icon eui-icon-sitemap"></span>
-              <span>{{ getTooltipForToggleTree() }}</span>
-            </div>
-          </button>
-        </li>
-        <li euiListItem>
-          <button
-            euiButton
-            euiBasicButton
-            class=""
-            euiSizeS
-            [disabled]="isUndoDisabled"
-            (click)="onUndo()"
-          >
-            <div class="d-flex flex-row justify-content-around">
-              <eui-icon euiSizeS iconClass="eui-icon-undo"></eui-icon>
-              <span>{{
-                'page.editor.toc.toc-pane.actions.undo' | translate
-              }}</span>
-            </div>
-          </button>
-        </li>
-        <li euiListItem>
-          <button
-            euiButton
-            euiBasicButton
-            class=""
-            euiSizeS
-            [disabled]="isSaveDisabled"
-            (click)="onSave()"
-          >
-            <img src="assets/images/toc-save.png" alt="" />
-            <span style="margin-left: 0.8rem">{{
-              'global.actions.save' | translate
-            }}</span>
-          </button>
-        </li>
-        <li euiListItem>
-          <button
-            euiButton
-            euiBasicButton
-            class=""
-            euiSizeS
-            [disabled]="isSaveDisabled"
-            (click)="onSaveAndClose()"
-          >
-            <img src="assets/images/toc-save-close.png" alt="" />
-            <span style="margin-left: 0.5rem">{{
-              'global.actions.save-close' | translate
-            }}</span>
-          </button>
-        </li>
-        <li euiListItem>
-          <button euiButton euiSizeS euiBasicButton (click)="onCancel()">
-            <div class="d-flex flex-row">
-              <span class="eui-icon eui-icon-times"></span>
-              <span>{{ 'global.actions.cancel' | translate }}</span>
-            </div>
-          </button>
-        </li>
-      </ul>
-    </eui-dropdown-content>
-  </eui-dropdown>
 </ng-container>

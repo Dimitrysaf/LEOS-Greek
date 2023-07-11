@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.ui.view;
 
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;

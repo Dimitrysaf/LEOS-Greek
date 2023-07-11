@@ -21,6 +21,7 @@ import { uniqueId, UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
+  BehaviorSubject,
   combineLatest,
   combineLatestWith,
   map,
@@ -44,6 +45,8 @@ import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
@@ -84,13 +87,17 @@ export class DocumentEditorComponent
   versionsComparisonForView: string;
   versionsComparisonForViewHeaderTitle$: Observable<string>;
   documentConfig: DocumentConfig;
+  contributionForView: string;
 
   isVersionForViewOpen = false;
   isTocPaneCollapsed = true;
+  isNavigationPaneExpanded = true;
   isAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
+  isContributionForViewOpen = false;
+  isViewContributionPaneCollapsed = true;
   reloadTrigger: number;
-
+  applyActionDisabled$: Observable<boolean>;
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
 
@@ -120,10 +127,22 @@ export class DocumentEditorComponent
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
   isContributionsPaneExpanded = false;
+  contributionActionSelected = 'accept_selected';
+  processed = false;
+  acceptedSelectedEnabled = false;
+  isContributionDeclinedOrProcessed = false;
+  contributions: ContributionVO[] = [];
+  contribution: ContributionVO;
+  contributionChanges: NodeListOf<HTMLElement>;
+  contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
+  @ViewChild('mergeAllContributionsChangesDialog')
+  mergeAllContributionsChangesDialog: EuiDialogComponent;
+  @ViewChild('markContributionAsProcessedDialog')
+  markContributionAsProcessedDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -145,10 +164,16 @@ export class DocumentEditorComponent
   versionForViewPaneElement: ElementRef;
   @ViewChild('compareModePane', { read: ElementRef })
   compareModePaneElement: ElementRef;
+  @ViewChild('contributionViewPane', { read: ElementRef })
+  contributionViewPaneElement: ElementRef;
+  @ViewChild('contributionViewContainer', { read: ElementRef })
+  contributionViewContainerElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private scrollables: NodeListOf<Element>;
+  private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
+  private annexDocNumber = -1;
 
   constructor(
     private domService: DomService,
@@ -163,7 +188,7 @@ export class DocumentEditorComponent
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
     public breadcrumbService: EuiBreadcrumbService,
-    public enviromentService: EnvironmentService,
+    public environmentService: EnvironmentService,
     private tableOfContentService: TableOfContentService,
     private domSatinizer: DomSanitizer,
     private loadingService: LoadingService,
@@ -180,6 +205,11 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
+        if (data.category === 'annex') {
+          this.documentService.setAnnexDocNumber(
+            this.router.getCurrentNavigation().extras.state.annexRow.docNumber,
+          );
+        }
       });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -194,6 +224,7 @@ export class DocumentEditorComponent
         this.reloadTrigger = trigger;
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
+    this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
   }
 
   ngOnInit(): void {
@@ -242,6 +273,13 @@ export class DocumentEditorComponent
         }
       });
 
+    this.documentService.contributionViewAndMerge$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([contributionView, contribution]) => {
+        this.handleContributionView(contributionView, contribution);
+        this.contribution = contribution;
+      });
+
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
@@ -284,9 +322,22 @@ export class DocumentEditorComponent
     this.documentService.contributions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((contributions) => {
-        // TODO: Investigate the extra condition(s) needed for contribution pane to show (maybe if the proposal is parent or if the logged-in user is not the contributor)
-        this.showContributionsPane = contributions.length > 0;
+        this.contributions = contributions;
+        this.showContributionsPane = this.contributions.length > 0;
+        this.greyContributions();
       });
+
+    this.documentService.processed$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([processed, contribution]) => {
+        this.processed = processed;
+        if (contribution) {
+          this.handleGreyedContribution(contribution, processed);
+          this.isContributionDeclinedOrProcessed =
+            contribution.contributionStatus === 'CONTRIBUTION_DONE';
+        }
+      });
+
     this.hideTocSplitter = this.isTocPaneCollapsed;
     this.hideAnnotationsSplitter = this.isAnnotationsPaneCollapsed;
   }
@@ -378,6 +429,7 @@ export class DocumentEditorComponent
     this.reloadTrigger = 0;
     this.closeVersionView();
     this.closeVersionComparisonView();
+    this.closeContributionsView();
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
@@ -435,12 +487,6 @@ export class DocumentEditorComponent
     hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
   ) {
     this.hideAnnotationsSplitter = hideAnnotationsSplitter;
-  }
-
-  onToggleVersionsPane(
-    isVersionsPaneCollapsed = !this.isVersionsPaneCollapsed,
-  ) {
-    this.isVersionsPaneCollapsed = isVersionsPaneCollapsed;
   }
 
   handleEdit() {
@@ -539,11 +585,15 @@ export class DocumentEditorComponent
       this.scrollables = this.document.querySelectorAll('.sync-scroll');
       this.scrollables.forEach((scrollable: Element) => {
         scrollable.addEventListener('scroll', this.handleSyncScroll.bind(this));
+        scrollable.classList.add('sync-scroll-enabled');
+        scrollable.classList.remove('sync-scroll-disabled');
       });
     }
     if (!this.isAsyncScrollEnabled) {
       this.scrollables.forEach((scrollable: Element) => {
         scrollable.removeEventListener('scroll', this.handleSyncScroll);
+        scrollable.classList.add('sync-scroll-disabled');
+        scrollable.classList.remove('sync-scroll-enabled');
       });
     }
   }
@@ -692,8 +742,21 @@ export class DocumentEditorComponent
     }
   }
 
+  onNavigationPaneExpanded(e: any) {
+    this.isNavigationPaneExpanded = !this.isNavigationPaneExpanded;
+    if (this.isVersionsPaneExpanded) {
+      this.isVersionsPaneExpanded = false;
+    }
+    if (this.isContributionsPaneExpanded) {
+      this.isContributionsPaneExpanded = false;
+    }
+  }
+
   onVersionsPaneExpanded(e: any) {
     this.isVersionsPaneExpanded = !this.isVersionsPaneExpanded;
+    if (this.isNavigationPaneExpanded) {
+      this.isNavigationPaneExpanded = false;
+    }
     if (this.isContributionsPaneExpanded) {
       this.isContributionsPaneExpanded = false;
     }
@@ -701,9 +764,114 @@ export class DocumentEditorComponent
 
   onContributionsPaneExpanded(e: any) {
     this.isContributionsPaneExpanded = !this.isContributionsPaneExpanded;
+    if (this.isNavigationPaneExpanded) {
+      this.isNavigationPaneExpanded = false;
+    }
     if (this.isVersionsPaneExpanded) {
       this.isVersionsPaneExpanded = false;
     }
+  }
+
+  closeContributionsView() {
+    this.isContributionForViewOpen = false;
+    this.documentService.handleContributionSelectCount(false, true);
+    this.documentService.setContributionViewAndMergeCollapsed(true);
+  }
+
+  handleNextChangeContribution() {
+    if (this.contributionIndex !== this.contributionChanges.length - 1) {
+      const nextChange = this.contributionIndex + 1;
+      this.contributionChanges
+        .item(nextChange)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.contributionIndex++;
+    }
+  }
+
+  handlePrevChangeContribution() {
+    if (this.contributionIndex > 0) {
+      {
+        const prevChange = this.contributionIndex - 1;
+        this.contributionChanges
+          .item(prevChange)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contributionIndex--;
+      }
+    }
+  }
+
+  onSelectAction(e: any) {
+    this.contributionActionSelected = e.target.value;
+    this.documentService.contributionSelections$.subscribe((selections) => {
+      if (selections > 0) {
+        this.applyActionDisabledBS.next(false);
+      }
+    });
+  }
+
+  handleMerge() {
+    if (this.contributionActionSelected === 'accept_selected') {
+      this.processed = !this.processed;
+      this.cdkEditor.handleMergeContributionsActions(false, this.contribution);
+    } else {
+      this.mergeAllContributionsChangesDialog.openDialog();
+    }
+  }
+
+  onChangeProcessedToggle(_e: boolean) {
+    this.processed = !this.processed;
+    this.markContributionAsProcessedDialog.openDialog();
+  }
+
+  onAcceptMergeAllContributions() {
+    this.processed = !this.processed;
+    this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
+    this.mergeAllContributionsChangesDialog.closeDialog();
+  }
+
+  onCancelMergeAllContributions() {
+    this.mergeAllContributionsChangesDialog.closeDialog();
+  }
+
+  onAcceptMarkContributionAsProcessed() {
+    this.documentService
+      .markContributionAsProcessed(this.contribution)
+      .subscribe({
+        next: (res) => {
+          this.appShellService.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.documentService.getContributions();
+          this.isContributionDeclinedOrProcessed = true;
+        },
+        error: (res) => {
+          this.appShellService.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+    this.markContributionAsProcessedDialog.closeDialog();
+  }
+
+  onCancelMarkContributionAsProcessed() {
+    this.processed = !this.processed;
+    this.markContributionAsProcessedDialog.closeDialog();
   }
 
   protected exploreMilestone(version: Version) {
@@ -719,6 +887,51 @@ export class DocumentEditorComponent
 
   protected onMilestoneViewDialogClosed() {
     this.milestoneViewData = null;
+  }
+
+  private handleContributionView(
+    contributionView: DocumentViewResponse,
+    contribution: ContributionVO,
+  ) {
+    if (contributionView) {
+      this.contributionForView = this.cleanupAndSerializeXML(
+        contributionView.editableXml,
+      );
+      this.isContributionForViewOpen = true;
+      this.isViewContributionPaneCollapsed = false;
+      this.documentService.setContributionViewAndMergeCollapsed(false);
+      this.isContributionDeclinedOrProcessed =
+        contribution.contributionStatus === 'CONTRIBUTION_DONE';
+      if (this.isContributionDeclinedOrProcessed) {
+        this.handleGreyedContribution(contribution, true);
+      } else {
+        this.cdkEditor.triggerMergeContributionConnectorStateChange();
+        setTimeout(() => {
+          this.handleContributionsChanges();
+          this.isAsyncScrollEnabled = false;
+          this.handleAsyncScroll();
+        }, 100);
+      }
+    }
+  }
+
+  private handleGreyedContribution(
+    contribution: ContributionVO,
+    greyed: boolean,
+  ) {
+    contribution.greyed = greyed;
+    return contribution;
+  }
+
+  private greyContributions() {
+    this.contributions = this.contributions.map((c) => {
+      if (c.contributionStatus === 'CONTRIBUTION_DONE') {
+        c.greyed = true;
+      } else {
+        c.greyed = false;
+      }
+      return c;
+    });
   }
 
   private handleSyncScroll(event: Event) {
@@ -738,6 +951,19 @@ export class DocumentEditorComponent
         });
         this.arrowClicked = false;
       }, 100);
+    }
+  }
+
+  private handleContributionsChanges() {
+    this.contributionChanges =
+      this.contributionViewContainerElement.nativeElement.querySelectorAll(
+        '.merge-contribution-wrapper',
+      );
+
+    if (this.contributionChanges.length > 0) {
+      this.contributionChanges
+        .item(this.contributionIndex)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 

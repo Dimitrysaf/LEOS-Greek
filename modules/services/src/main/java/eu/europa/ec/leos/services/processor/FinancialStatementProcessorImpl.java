@@ -13,14 +13,13 @@
  */
 package eu.europa.ec.leos.services.processor;
 
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;

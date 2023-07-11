@@ -16,7 +16,7 @@
 //------------------------------- XML Styles --------------------------------//
 %xmlTrackChanges {
 
-  inline[name="trackchanges"]::before {
+  [leos\:action]:not(tr)::before {
     content: attr(leos\:title);
     display: none;
     position: absolute;
@@ -37,29 +37,37 @@
     -o-transition: opacity 250ms ease-in-out;
     transition: opacity 250ms ease-in-out;
   }
-  inline[name="trackchanges"]:hover::before {
+
+  [leos\:action]:hover::before {
     display: inline;
   }
 
-  inline[name="trackchanges"] {
-    &[leos\:action="insert"] {
-      text-decoration: underline;
-      &[leos\:uid="anonymous"] {
-        color: #008000;
-        &:hover {
-          background-color: hsl(120, 100%, 35%);
-        }
+  [leos\:action="insert"] {
+    text-decoration: underline;
+    &[leos\:uid="anonymous"] {
+      color: #008000;
+      &:hover {
+        background-color: hsl(120, 100%, 35%);
       }
     }
-    &[leos\:action="delete"] {
-      text-decoration: line-through;
-      &[leos\:uid="anonymous"] {
-        color: #FF0000;
-        &:hover {
-          background-color: hsl(0, 100%, 90%);
-        }
+  }
+
+  [leos\:action="delete"] {
+    text-decoration: line-through;
+    &[leos\:uid="anonymous"] {
+      color: #FF0000;
+      &:hover {
+        background-color: hsl(0, 100%, 90%);
       }
     }
+  }
+
+  tr[leos\:action="insert"] {
+    box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
+  }
+
+  tr[leos\:action="delete"] {
+    box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
   }
 
 }
@@ -67,13 +75,20 @@
 //------------------------------- Editor Styles -----------------------------//
 %editorTrackChanges {
 
-  span[data-akn-name="trackchanges"] {
-    &[data-akn-action="insert"] {
-      text-decoration: underline;
-    }
-    &[data-akn-action="delete"] {
-      text-decoration: line-through;
-    }
+  [data-akn-action="insert"] {
+    text-decoration: underline;
+  }
+
+  [data-akn-action="delete"] {
+    text-decoration: line-through;
+  }
+
+  tr[data-akn-action="insert"] {
+    box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
+  }
+
+  tr[data-akn-action="delete"] {
+    box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
   }
 
 }

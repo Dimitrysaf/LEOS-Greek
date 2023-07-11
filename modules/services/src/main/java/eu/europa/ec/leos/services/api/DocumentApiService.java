@@ -14,8 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
-import eu.europa.ec.leos.domain.cmis.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;

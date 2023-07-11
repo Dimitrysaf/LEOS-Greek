@@ -13,17 +13,9 @@
  */
 package eu.europa.ec.leos.repository.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.utils.CollaboratorDesSerializer;
-import eu.europa.ec.leos.repository.utils.CollaboratorSerializer;
-import eu.europa.ec.leos.repository.utils.DateDesSerializer;
-import eu.europa.ec.leos.repository.utils.DateSerializer;
-import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +26,7 @@ public class XmlDocumentMetadata {
     private String docStage;
     private String docType;
     private String docPurpose;
+    private String procedureType;
     private String packageTitle;
     private String internalRef;
     private String language;
@@ -58,6 +51,7 @@ public class XmlDocumentMetadata {
         this.docStage = doc.getDocStage();
         this.docType = doc.getDocType();
         this.docPurpose = doc.getDocPurpose();
+        this.procedureType = doc.getProcedureType();
         this.template = doc.getTemplate();
         this.language = doc.getLanguage();
         this.eeaRelevance = doc.getEeaRelevance();
@@ -103,6 +97,9 @@ public class XmlDocumentMetadata {
         if (this.getDocTemplate() != null) {
             metadataMap.put("docTemplate", this.getDocTemplate());
         }
+        if (this.getProcedureType() != null) {
+            metadataMap.put("procedureType", this.getProcedureType());
+        }
         if (this.getRef() != null) {
             metadataMap.put("ref", this.getRef());
         }
@@ -134,8 +131,6 @@ public class XmlDocumentMetadata {
         return metadataMap;
     }
 
-    @JsonSerialize(using = CollaboratorSerializer.class)
-    @JsonDeserialize(using = CollaboratorDesSerializer.class)
     public List<Collaborator> getCollaborators() {
         return collaborators;
     }
@@ -310,5 +305,13 @@ public class XmlDocumentMetadata {
 
     public void setBaseRevisionId(String baseRevisionId) {
         this.baseRevisionId = baseRevisionId;
+    }
+
+    public String getProcedureType() {
+        return procedureType;
+    }
+
+    public void setProcedureType(String procedureType) {
+        this.procedureType = procedureType;
     }
 }

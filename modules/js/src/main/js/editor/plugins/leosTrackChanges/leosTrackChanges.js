@@ -21,11 +21,9 @@ define(function leosTrackChangesModule(require) {
     var core = {
 
         // Track changes names and element types
-        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-name='trackchanges']",
+        TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        STATUS_ATTR: "data-akn-status", NEW_STATUS: "new",
         UID_ATTR: "data-akn-uid",
-        NAME_ATTR: "data-akn-name", NAME_VALUE: "trackchanges",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -113,13 +111,25 @@ define(function leosTrackChangesModule(require) {
         getTrackChangeAttributes: function(editor, action) {
             var user = this.getUserAndId(editor);
             var tcAttributes = {
-                "data-akn-name" : "trackchanges",
-                "data-akn-status" : this.NEW_STATUS,
                 "data-akn-action": action,
                 "data-akn-uid": user[1],
                 "title": user[0]
             };
             return tcAttributes;
+        },
+
+        removeTrackChangesAttributes: function(element) {
+            var tcAttributes = ["data-akn-action", "data-akn-uid", "title"];
+            for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
+        addTrackChangesAttributes: function(editor, element, action) {
+            var tcAttributes = this.getTrackChangeAttributes(editor, action);
+            for (var attrName in tcAttributes) {
+                element.setAttribute(attrName, tcAttributes[attrName]);
+            }
         },
 
         buildTrackChangeElement: function(editor, action, text, isHtml) {
@@ -132,7 +142,10 @@ define(function leosTrackChangesModule(require) {
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
-            if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
+            if (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                tcElement.insertAfter(selectedElement);
+                tcElement.mergeSiblings();
+            } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
                 editor.insertElement(tcElement);
@@ -236,8 +249,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         updateTrackChangesStyles: function(currentUserId, proposalRef, isTrackChangesShowed) {
-            var editorTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed,
-                "akomantoso div.cke_editable " + this.TRACKCHANGES_ELEMENT_SELECTOR, this.UID_ATTR, this.ACTION_ATTR);
+            var editorTcStyle = UTILS.generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, this.UID_ATTR, this.ACTION_ATTR);
             $("head #editorTcStyle").remove();
             $("head").prepend("<style id='editorTcStyle'>" + editorTcStyle + "</style>");
         },
@@ -292,12 +304,15 @@ define(function leosTrackChangesModule(require) {
                 tcElement[0].remove();
                 tcElement = null;
             }
-            if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && (tcElement[0].getAttribute(core.STATUS_ATTR) === core.NEW_STATUS)) {
+            if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && !tcElement[0].getId()) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {
-                    core.setToEditablePosition(editor, tcElement[0], core.CARET_START);
-                    return false;
+                    var range = editor.createRange();
+                    range.moveToPosition(tcElement[0], CKEDITOR.POSITION_BEFORE_START);
+                    range.select();
+                    var elementAdded = core.insertTrackChangeElement(editor, core.INSERT_ACTION, data, core.CARET_END, true);
+                    elementAdded.mergeSiblings();
                 } else {
                     var html = tcElement[1] === core.CARET_END ? tcElement[0].getHtml() + data : data + tcElement[0].getHtml();
                     tcElement[0].setHtml(html);
@@ -396,6 +411,32 @@ define(function leosTrackChangesModule(require) {
                 element.remove();
             } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
+            }
+        },
+
+        acceptRowChange: function(editor, element) {
+            if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                var table = element.getAscendant("table");
+                if (table.$.rows.length == 1) {
+                    table.remove();
+                } else {
+                    element.remove();
+                }
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                core.removeTrackChangesAttributes(element);
+            }
+        },
+
+        rejectRowChange: function(editor, element) {
+            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                var table = element.getAscendant("table");
+                if (table.$.rows.length == 1) {
+                    table.remove();
+                } else {
+                    element.remove();
+                }
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                core.removeTrackChangesAttributes(element);
             }
         }
 

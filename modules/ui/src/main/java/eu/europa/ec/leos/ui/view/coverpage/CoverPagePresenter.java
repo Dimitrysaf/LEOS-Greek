@@ -17,18 +17,17 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.cmis.domain.ContentImpl;
-import eu.europa.ec.leos.cmis.domain.SourceImpl;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosCategory;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
-import eu.europa.ec.leos.domain.cmis.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.cmis.metadata.ProposalMetadata;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -41,6 +40,8 @@ import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
@@ -156,7 +157,6 @@ import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import io.atlassian.fugue.Option;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,6 +209,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     private final ContributionService contributionService;
     private final InstanceTypeResolver instanceTypeResolver;
     protected final AttachmentProcessor attachmentProcessor;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -244,7 +245,8 @@ class CoverPagePresenter extends AbstractLeosPresenter {
             WorkspaceService workspaceService, LegService legService,
             SearchService searchService, CommonDelegate<Proposal> commonDelegate, AnnotateService annotateService,
             CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver,
-            AttachmentProcessor attachmentProcessor, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor, TransformationService transformationService) {
+            AttachmentProcessor attachmentProcessor, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
+                       TransformationService transformationService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.instanceTypeResolver = instanceTypeResolver;
         this.attachmentProcessor = attachmentProcessor;
@@ -275,6 +277,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         this.transformationService = transformationService;
         this.annotateService = annotateService;
         this.openElementEditors = new ArrayList<>();
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -897,7 +900,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         final Proposal revision = proposalService.findProposalVersion(event.getContributionVO().getDocumentId());
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), contributionStatus);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
         Proposal updatedProposal = proposalService.updateProposal(revision.getId(), properties, false);
         if(updatedProposal != null) {
             coverPageScreen.disableMergePane();
@@ -913,7 +916,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
 
         coverPageScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CmisProperties.CONTRIBUTION_STATUS.getId(), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         proposalService.updateProposal(revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Proposal.class);
         coverPageScreen.populateContributions(allContributions);

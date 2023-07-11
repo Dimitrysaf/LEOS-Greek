@@ -1,14 +1,15 @@
 package eu.europa.ec.leos.services.collection.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.FinancialStatement;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
@@ -40,6 +41,7 @@ public class FinancialStatementContextService {
     private final FinancialStatementService financialStatementService;
     private final ProposalService proposalService;
     private final SecurityService securityService;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private LeosPackage leosPackage;
     private FinancialStatement financialStatement;
@@ -60,12 +62,13 @@ public class FinancialStatementContextService {
     public FinancialStatementContextService(
             TemplateService templateService,
             FinancialStatementService financialStatementService,
-            ProposalService proposalService, SecurityService securityService) {
+            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         this.templateService = templateService;
         this.financialStatementService = financialStatementService;
         this.proposalService = proposalService;
         this.securityService = securityService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     public void useTemplate(String template) {
@@ -181,7 +184,7 @@ public class FinancialStatementContextService {
         financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
         if (cloneProposal) {
             Map<String, Object> financialStatementProperties = new HashMap<>();
-            financialStatementProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            financialStatementProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             financialStatementService.updateFinancialStatement(financialStatement.getId(), financialStatementProperties, true);
         }
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

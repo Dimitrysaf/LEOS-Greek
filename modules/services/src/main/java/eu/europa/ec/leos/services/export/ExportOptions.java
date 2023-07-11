@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.export;
 
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 import java.util.List;
 

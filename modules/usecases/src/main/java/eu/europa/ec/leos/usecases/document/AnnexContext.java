@@ -13,15 +13,16 @@
  */
 package eu.europa.ec.leos.usecases.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.LeosPackage;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Annex;
-import eu.europa.ec.leos.domain.cmis.document.Proposal;
-import eu.europa.ec.leos.domain.cmis.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
@@ -48,6 +49,7 @@ public class AnnexContext {
     private final AnnexService annexService;
     private final ProposalService proposalService;
     private final SecurityService securityService;
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private LeosPackage leosPackage;
     private Annex annex = null;
@@ -68,12 +70,13 @@ public class AnnexContext {
     public AnnexContext(
             TemplateService templateService,
             AnnexService annexService,
-            ProposalService proposalService, SecurityService securityService) {
+            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         this.templateService = templateService;
         this.annexService = annexService;
         this.proposalService = proposalService;
         this.securityService = securityService;
         this.actionMsgMap = new HashMap<>();
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     public void useTemplate(String template) {
@@ -185,7 +188,7 @@ public class AnnexContext {
         annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         if (cloneProposal) {
             Map<String, Object> annexProperties = new HashMap<>();
-            annexProperties.put(CmisProperties.TRACK_CHANGES_ENABLED.getId(), true);
+            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
         }
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));

@@ -7,7 +7,6 @@ import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
-import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

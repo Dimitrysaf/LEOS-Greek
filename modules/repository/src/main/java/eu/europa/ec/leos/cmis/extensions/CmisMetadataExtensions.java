@@ -14,7 +14,9 @@
 package eu.europa.ec.leos.cmis.extensions;
 
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
-import eu.europa.ec.leos.domain.cmis.metadata.*;
+import eu.europa.ec.leos.domain.repository.metadata.*;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import io.atlassian.fugue.Option;
 import org.apache.chemistry.opencmis.client.api.Document;
 
@@ -22,6 +24,8 @@ import java.math.BigInteger;
 import java.util.function.Function;
 
 class CmisMetadataExtensions {
+
+    private static RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 
     private static class CommonMetadataProperties {
         String stage, type, purpose, template, language, docTemplate, ref;
@@ -116,68 +120,68 @@ class CmisMetadataExtensions {
 
     // FIXME make this property mandatory???
     private static String getMetadataStage(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.METADATA_STAGE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE));
     }
 
     // FIXME make this property mandatory???
     private static String getMetadataType(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.METADATA_TYPE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE));
     }
 
     // FIXME make this property mandatory???
     private static String getMetadataPurpose(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.METADATA_PURPOSE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE));
     }
 
     // FIXME make this property mandatory???
     private static String getMetadataDocTemplate(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.METADATA_DOCTEMPLATE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE));
     }
 
     private static boolean getMetadataEeaRelevance(Document document) {
-        Boolean eeaRelevance = document.getPropertyValue(CmisProperties.METADATA_EEA_RELEVANCE.getId());
+        Boolean eeaRelevance = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE));
         return eeaRelevance != null ? (boolean) eeaRelevance : false;
     }
 
     // FIXME make this property mandatory???
     private static Integer getAnnexIndex(Document document) {
-        BigInteger value = document.getPropertyValue(CmisProperties.ANNEX_INDEX.getId());
+        BigInteger value = document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX));
         return value != null ? value.intValueExact() : null;
     }
 
     // FIXME make this property mandatory???
     private static String getAnnexNumber(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.ANNEX_NUMBER.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER));
     }
 
     // FIXME make this property mandatory???
     private static String getAnnexTitle(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.ANNEX_TITLE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE));
     }
 
     private static String getAnnexClonedRef(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.ANNEX_CLONED_REF.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF));
     }
 
     // FIXME make this property mandatory???
     private static String getExplanatoryTitle(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.DOCUMENT_TITLE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }
 
     // FIXME make this property mandatory???
     private static String getMetadataRef(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.METADATA_REF.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF));
     }
 
     private static String getTemplate(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.DOCUMENT_TEMPLATE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE));
     }
 
     private static String getLanguage(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.DOCUMENT_LANGUAGE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE));
     }
 
     private static String getFinancialStatementTitle(Document document) {
-        return (String) document.getPropertyValue(CmisProperties.DOCUMENT_TITLE.getId());
+        return (String) document.getPropertyValue(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }
 }

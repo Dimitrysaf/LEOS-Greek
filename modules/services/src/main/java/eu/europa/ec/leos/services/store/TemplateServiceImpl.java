@@ -15,9 +15,9 @@ package eu.europa.ec.leos.services.store;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.document.ConfigDocument;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.support.converter.DescriptionMapConverter;
 import eu.europa.ec.leos.services.support.converter.LanguageMapConverter;

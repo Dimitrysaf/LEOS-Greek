@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.delegates;
 
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -23,7 +23,6 @@ import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

@@ -1,11 +1,13 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.cmis.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -65,6 +69,16 @@ public class ContributionController {
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/view-merge-pane/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request,
+                                                              @PathVariable("documentRef") String documentRef,
+                                                              @PathVariable("documentType") String documentType,
+                                                              @RequestParam String contributionVersionRef) {
+        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentRef, documentType, contributionVersionRef);
+        return ResponseEntity.ok(mergedContent);
+    }
+    
     @PostMapping(value = "/decline-contributions/{documentVersionedRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentVersionedRef") String documentVersionedRef,
@@ -72,5 +86,22 @@ public class ContributionController {
                                                                            @RequestParam String versionLabel) {
         this.contributionApiService.declineRevision(documentType, documentVersionedRef, versionLabel);
         return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
+    }
+
+    @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<byte[]> mergeContribution(@PathVariable("documentRef") String documentRef,
+                                                    @PathVariable("documentType") String documentType,
+                                                    @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
+        byte[] mergedContent = this.contributionApiService.mergeContribution(documentType, documentRef, applyContributionsRequest);
+        return ResponseEntity.ok(mergedContent);
+    }
+
+    @PostMapping(value = "/mark-as-processed/{contributionVersionRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> markAsProcessed(@PathVariable("contributionVersionRef") String contributionVersionRef,
+                                                  @PathVariable("documentType") String documentType) {
+        this.contributionApiService.markRevisionAsProcessed(documentType, contributionVersionRef);
+        return ResponseEntity.ok().build();
     }
 }

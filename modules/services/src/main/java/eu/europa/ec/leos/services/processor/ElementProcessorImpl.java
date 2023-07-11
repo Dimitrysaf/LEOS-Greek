@@ -14,8 +14,8 @@
 package eu.europa.ec.leos.services.processor;
 
 
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;

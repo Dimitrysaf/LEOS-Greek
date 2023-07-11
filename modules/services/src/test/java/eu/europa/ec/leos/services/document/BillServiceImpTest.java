@@ -1,10 +1,10 @@
 package eu.europa.ec.leos.services.document;
 
 
-import eu.europa.ec.leos.domain.cmis.Content;
-import eu.europa.ec.leos.domain.cmis.common.VersionType;
-import eu.europa.ec.leos.domain.cmis.document.Bill;
-import eu.europa.ec.leos.domain.cmis.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.BillRepository;

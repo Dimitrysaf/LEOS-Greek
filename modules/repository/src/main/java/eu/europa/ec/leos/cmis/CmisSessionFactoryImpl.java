@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.cmis;
 
 import eu.europa.ec.leos.cmis.mapping.CmisMapper;
-import eu.europa.ec.leos.domain.cmis.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;

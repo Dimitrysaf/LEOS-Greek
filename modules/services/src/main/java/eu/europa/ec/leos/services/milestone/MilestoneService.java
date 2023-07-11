@@ -13,8 +13,8 @@
  */
 package eu.europa.ec.leos.services.milestone;
 
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
-import eu.europa.ec.leos.domain.cmis.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-Copyright 2017 European Commission
+Copyright 2023 European Commission
 
 Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");<br/>
 You may not use this work except in compliance with the Licence.<br/>
@@ -1671,7 +1671,7 @@ __jsmin-sourcemap 0.16.0__
 
 __jsmin2 1.1.9__
  * https://github.com/twolfson/node-jsmin2
- * License: ???
+ * License: The JSON License
  * Copyright:
    * Copyright (c) 2012 Todd Wolfson (todd@twolfson.com)
 

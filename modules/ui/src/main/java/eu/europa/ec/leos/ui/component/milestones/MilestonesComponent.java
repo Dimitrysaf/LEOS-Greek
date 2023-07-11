@@ -27,7 +27,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.components.grid.HeaderRow;
-import eu.europa.ec.leos.domain.cmis.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.ui.event.CreateRevisionRequestEvent;
 import eu.europa.ec.leos.ui.event.FetchMilestoneEvent;
