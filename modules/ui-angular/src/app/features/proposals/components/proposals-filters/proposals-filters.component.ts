@@ -144,9 +144,14 @@ export class ProposalsFiltersComponent implements OnInit, OnDestroy {
       },
       {
         title: this.tranlsateService.instant('page.workspace.filter.roles'),
-        filterOptions: ['OWNER', 'CONTRIBUTOR', 'REVIEWER'].map(
-          this.roleToOption,
-        ),
+        filterOptions: [
+          'OWNER',
+          'CONTRIBUTOR',
+          'REVIEWER',
+          'SUPPORT',
+          'ADMIN',
+          'USER',
+        ].map(this.roleToOption),
       },
     ];
   }

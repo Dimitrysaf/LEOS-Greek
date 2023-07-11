@@ -39,6 +39,10 @@
   "page.workspace.filter.filters.roles.owner": "Auteur",
   "page.workspace.filter.filters.roles.reviewer": "Réviseur",
   "page.workspace.filter.filters.roles.contributor": "Contributeur",
+  "page.workspace.filter.filters.roles.support": "Soutien",
+  "page.workspace.filter.filters.roles.admin": "Admin",
+  "page.workspace.filter.filters.roles.user": "Usager",
+
   "page.workspace.filter.reset": "Réinitialiser",
   "page.workspace.filter.search": "Recherche",
   "page.workspace.filter.search-tooltip": "Recherche par titre",
