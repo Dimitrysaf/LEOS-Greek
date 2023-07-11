@@ -585,11 +585,15 @@ export class DocumentEditorComponent
       this.scrollables = this.document.querySelectorAll('.sync-scroll');
       this.scrollables.forEach((scrollable: Element) => {
         scrollable.addEventListener('scroll', this.handleSyncScroll.bind(this));
+        scrollable.classList.add('sync-scroll-enabled');
+        scrollable.classList.remove('sync-scroll-disabled');
       });
     }
     if (!this.isAsyncScrollEnabled) {
       this.scrollables.forEach((scrollable: Element) => {
         scrollable.removeEventListener('scroll', this.handleSyncScroll);
+        scrollable.classList.add('sync-scroll-disabled');
+        scrollable.classList.remove('sync-scroll-enabled');
       });
     }
   }
