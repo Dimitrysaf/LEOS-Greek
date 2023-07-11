@@ -1,11 +1,11 @@
 <button
   euiButton
-  [euiPrimary]="enviromentService.isCouncil()"
-  [euiSecondary]="!enviromentService.isCouncil()"
+  [euiPrimary]="environmentService.isCouncil()"
+  [euiSecondary]="!environmentService.isCouncil()"
   (click)="openUploadWizard()"
 >
   {{
-    (enviromentService.isCouncil()
+    (environmentService.isCouncil()
       ? 'page.workspace.upload-cn.button.text'
       : 'page.workspace.upload.button.text'
     ) | translate
@@ -15,7 +15,7 @@
 <eui-dialog
   #uploadWizard
   [title]="
-    (enviromentService.isCouncil()
+    (environmentService.isCouncil()
       ? 'page.workspace.upload-cn.title'
       : 'page.workspace.upload.title'
     ) | translate
@@ -31,7 +31,7 @@
   >
     <ux-wizard-step
       [label]="
-        (enviromentService.isCouncil()
+        (environmentService.isCouncil()
           ? 'page.workspace.upload-cn.label'
           : 'page.workspace.upload.label'
         ) | translate
@@ -82,7 +82,7 @@
     </ux-wizard-step>
     <ux-wizard-step
       [label]="
-        (enviromentService.isCouncil()
+        (environmentService.isCouncil()
           ? 'page.workspace.create-form.draft.label'
           : 'page.workspace.create-form.document.label'
         ) | translate
@@ -93,7 +93,7 @@
         ><app-proposal-create-form
           [createForm]="uploadForm"
           [translationKey]="
-            (enviromentService.isCouncil() ? 'draft' : 'document') | translate
+            (environmentService.isCouncil() ? 'draft' : 'document') | translate
           "
         ></app-proposal-create-form
       ></uxWizardStepContent>

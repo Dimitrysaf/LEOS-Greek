@@ -11,17 +11,18 @@ import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { EuiFileUploadComponent } from '@eui/components/eui-file-upload';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
-import { debounce, debounceTime, filter, Subject, takeUntil, tap } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
+import { ErrorVO } from '@/features/proposals/models';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
+import { GLOBAL } from '../../../../../config/global';
 import {
   CatalogItem,
   CreateProposalBody,
   UpdateProposalMetadataModel,
 } from '../../models';
-import { ErrorVO } from '../../models/upload-response.model';
 import { ProposalService } from '../../services/proposal.service';
 
 @Component({
@@ -51,8 +52,8 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
-    public tranlsateService: TranslateService,
-    public enviromentService: EnvironmentService,
+    public translateService: TranslateService,
+    public environmentService: EnvironmentService,
   ) {}
 
   ngOnDestroy(): void {
@@ -61,38 +62,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.uploadForm = this.fb.group({
-      legFile: new FormControl(null, Validators.required),
-      templateName: new FormControl(
-        { value: '', disabled: true },
-        { validators: Validators.required },
-      ),
-      documentLanguage: new FormControl({ value: '', disabled: true }),
-      confidentialityLevel: new FormControl({ value: '', disabled: true }),
-      docPurpose: new FormControl('', {
-        validators: [Validators.required, noWhitespaceValidator],
-      }),
-      templateId: new FormControl(
-        { value: '', disabled: true },
-        { validators: Validators.required },
-      ),
-      langCode: new FormControl(
-        { value: '', disabled: true },
-        { validators: Validators.required },
-      ),
-      internalReference: new FormControl({ value: '', disabled: true }),
-      interInstitutionalReference: new FormControl({
-        value: '',
-        disabled: true,
-      }),
-      packageTitleCheck: new FormControl({ value: false, disabled: true }),
-      packageTitle: new FormControl({ value: '', disabled: true }),
-      eeaRelevance: new FormControl(
-        { value: false, disabled: true },
-        { validators: Validators.required },
-      ),
-      eeaRelevanceText: new FormControl({ value: '', disabled: true }),
-    });
+    this.initCreateForm();
   }
 
   handleSelectTemplate(template: CatalogItem | null) {
@@ -202,12 +172,53 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     this.validateLegFile();
   }
 
+  initCreateForm() {
+    this.uploadForm = this.fb.group({
+      legFile: new FormControl(null, Validators.required),
+      templateName: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      documentLanguage: new FormControl({ value: '', disabled: true }),
+      confidentialityLevel: new FormControl({
+        value: this.translateService.instant(
+          'page.workspace.create-form.document.confidentiality-level-predefined-value',
+        ),
+        disabled: true,
+      }),
+      docPurpose: new FormControl('', {
+        validators: [Validators.required, noWhitespaceValidator],
+      }),
+      templateId: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      langCode: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      internalReference: new FormControl({ value: '', disabled: true }),
+      interInstitutionalReference: new FormControl({
+        value: '',
+        disabled: true,
+      }),
+      packageTitleCheck: new FormControl({ value: false, disabled: true }),
+      packageTitle: new FormControl({ value: '', disabled: true }),
+      eeaRelevance: new FormControl(
+        { value: false, disabled: true },
+        { validators: Validators.required },
+      ),
+      eeaRelevanceText: new FormControl({ value: '', disabled: true }),
+    });
+  }
+
   resetInitials() {
     this.uploadForm.reset();
     this.errorsVO = null;
     this.stepSelected = null;
     this.currentStepIndex = 1;
     this.isNavigationAllowed = false;
+    this.initCreateForm();
   }
 
   showResetButton() {
@@ -228,9 +239,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
       .validateLegFile(legFile)
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
+        this.fileName = (legFile as File).name;
         if (res.errors) {
           this.errorsVO = res.errors;
-          this.fileName = (legFile as File).name;
           this.uploadForm.get('legFile').setValue(null);
           this.isNavigationAllowed = false;
         }
@@ -241,15 +252,24 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
           this.currentStepIndex = 2;
           this.uploadForm.patchValue({
             templateName: res.documentToBeCreated.metadata.templateName,
-            documentLanguage: res.documentToBeCreated.metadata.language,
             docPurpose: res.documentToBeCreated.metadata.docPurpose,
             eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
-            confidentialityLevel:
-              res.documentToBeCreated.metadata.securityLevel,
             packageTitle: res.documentToBeCreated.metadata.packageTitle,
             internalReference: res.documentToBeCreated.metadata.internalRef,
+            documentLanguage: this.getLanguage(this.fileName),
           });
         }
       });
+  }
+
+  private getLanguage(legFileName: string): string {
+    const parts = legFileName.split('-');
+    const languageCode = parts[2].split('.')[0].toLowerCase();
+
+    if (GLOBAL.i18n.i18nService.languages.includes(languageCode)) {
+      return this.translateService.instant('global.language.' + languageCode);
+    }
+
+    return '';
   }
 }
