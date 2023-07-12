@@ -185,7 +185,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keydown", function(e) {
                     if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
-                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
+                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
                             style.apply(editor, deleteTcStyle);
                             var range = editor.getSelection().getRanges()[0];
                             range.collapse(false);
@@ -210,24 +210,21 @@ define(function leosTrackChangesPluginModule(require) {
                             var range = editor.getSelection().getRanges()[0];
                             var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
-                            var allow = true;
                             if (range.collapsed) {
-                                allow = actions.selectOneChar(deleteKey, range, editor);
+                                actions.selectOneChar(deleteKey, range, editor);
                             }
 
-                            if (allow) {
-                                editor.fire("saveSnapshot");
+                            editor.fire("saveSnapshot");
 
-                                style.apply(editor, deleteTcStyle);
-                                range = editor.getSelection().getRanges()[0];
-                                if (deleteKey) {
-                                    range.collapse(false);
-                                } else {
-                                    range.collapse(true);
-                                }
-                                range.select();
-                                editor.fire("change");
+                            style.apply(editor, deleteTcStyle);
+                            range = editor.getSelection().getRanges()[0];
+                            if (deleteKey) {
+                                range.collapse(false);
+                            } else {
+                                range.collapse(true);
                             }
+                            range.select();
+                            editor.fire("change");
 
                             event.getInstance().data.domEvent.preventDefault();
                             event.getInstance().stop();
@@ -334,9 +331,6 @@ define(function leosTrackChangesPluginModule(require) {
                                 !range.collapsed) {
                                 return false;
                             }
-                            break;
-                        case "inlinesaveclose":
-                            editor.setData(editor.getData().replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\""));
                             break;
                         case "tableDelete":
                         case "rowDelete":

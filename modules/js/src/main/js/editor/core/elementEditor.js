@@ -318,10 +318,11 @@ define(function elementEditorModule(require) {
                 // set read-only to prevent changes
                 editor.setReadOnly(true);
                 // save the element being edited
+                var dataToBeStored = event.data.data.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + UTILS.toIsoString(new Date()) + "\"");
                 var data = {
                     elementId: elementId,
                     elementType: elementType,
-                    elementFragment: event.data.data,
+                    elementFragment: dataToBeStored,
                     isSplit: event.data.origin === "split" ? true : false
                 };
                 editor.LEOS.saveCmdExecuted = true;
