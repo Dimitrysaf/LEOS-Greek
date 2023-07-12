@@ -18,10 +18,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
     @Query(value = "SELECT * FROM PACKAGE p WHERE p.REPOSITORY_ID in (SELECT ID from REPOSITORY WHERE CMIS_ID = ?1) and p.NAME = ?2", nativeQuery =
             true)
     Optional<Package> findPackageByName(String repositoryId, String name);
+
+    @Query(value = "SELECT * FROM PACKAGE p WHERE p.REPOSITORY_ID in (SELECT ID from REPOSITORY WHERE CMIS_ID = ?1) and p.NAME LIKE ?2", nativeQuery =
+            true)
+    List<Package> findPackagesByPath(String repositoryId, String path);
 }

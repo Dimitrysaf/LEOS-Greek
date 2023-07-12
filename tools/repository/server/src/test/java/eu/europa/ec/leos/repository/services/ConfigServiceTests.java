@@ -47,6 +47,11 @@ public class ConfigServiceTests {
         assertEquals(config.get(0).getName(), "BL-019-CONF");
         assertEquals(config.get(0).getRef(), "BL-019-CONF");
         assertEquals(config.get(0).getCategory(), "CONFIG");
+        config = documentService.findDocumentByName("catalog");
+        assertEquals(config.size(), 1);
+        assertEquals(config.get(0).getName(), "catalog");
+        assertEquals(config.get(0).getRef(), "catalog");
+        assertEquals(config.get(0).getCategory(), "CONFIG");
         List<LeosDocument> template = documentService.findDocumentByName("BL-019");
         assertEquals(template.size(), 1);
         assertEquals(template.get(0).getName(), "BL-019");
