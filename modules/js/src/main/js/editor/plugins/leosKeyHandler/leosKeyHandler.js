@@ -75,36 +75,9 @@ define(function leosKeyHandler(require) {
         return false;
     };
 
-    var selectTextInsideElement = function(editor, selectedElement, startOffset, endOffset) {
-        var targetRange = editor.createRange();
-        targetRange.moveToPosition(selectedElement, CKEDITOR.POSITION_AFTER_START);
-        targetRange.startOffset = startOffset
-        targetRange.endOffset = endOffset
-        targetRange.select();
-    };
-
-    // var selectTextInsideElement = function(editor, selectedElement, startOffset, endOffset) {
-    //     var targetRange = editor.createRange();
-    //     var targetPosition;
-    //     var count = 0
-    //     while (targetRange.startContainer.type === CKEDITOR.NODE_ELEMENT) {
-    //         targetRange = editor.createRange();
-    //         targetRange.moveToPosition(nextNode, CKEDITOR.POSITION_AFTER_START);
-    //         targetRange.startOffset = startOffset
-    //         targetRange.endOffset = endOffset
-    //         targetRange.select();
-    //         if (count >= 1000) {
-    //             break;
-    //         }
-    //         targetPosition = editor.getSelection().getRanges()[0].getNextNode();
-    //         count++;
-    //     }
-    // };
-
     return {
 	      on: on,
         isContentEmptyTextNode: isContentEmptyTextNode,
-        getSelectedElement: getSelectedElement,
-        selectTextInsideElement: selectTextInsideElement
+        getSelectedElement: getSelectedElement
     }
 });
