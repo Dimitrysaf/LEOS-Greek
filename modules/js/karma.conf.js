@@ -1,40 +1,47 @@
-// Karma configuration
-// Generated on Mon Jul 10 2023 00:23:22 GMT+0200 (Central European Summer Time)
+/*
+ * Copyright 2023 European Commission
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
 
+/**
+ * Standard configuration used when running: npm run test-karma (or karma start)
+ */
 module.exports = function(config) {
   config.set({
-
-    // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
-
+    basePath: '', // base path that will be used to resolve all patterns (eg. files, exclude)
 
     // frameworks to use
     // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
     frameworks: ['jasmine'],
 
-
     // list of files / patterns to load in the browser
     files: [
-      "test-requirejs-config.js",
+      "karma.requirejs.config.js",
       'node_modules/requirejs/require.js',
       'node_modules/karma-requirejs/lib/adapter.js',
       "src/main/js/leosModulesBootstrap.js",
       {pattern: 'src/test/**/*.js', watched: true, served: true, included: false},
       {pattern: 'src/main/**/*.js', watched: true, served: true, included: false},
-      "test-main.js"
+      "karma.main.js"
     ],
-
 
     // list of files / patterns to exclude
     exclude: [
     ],
 
-
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
     preprocessors: {
     },
-
 
     plugins: [
         require('karma-jasmine'),
@@ -43,7 +50,6 @@ module.exports = function(config) {
         require('karma-jasmine-html-reporter')
     ],
 
-
     client: {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
       jasmine: {
@@ -51,40 +57,21 @@ module.exports = function(config) {
       }
     },
 
-    
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://www.npmjs.com/search?q=keywords:karma-reporter
     reporters: ['kjhtml'],
-
-
-    // web server port
-    port: 9876,
-
-
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
-
-
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    port: 9876,  // web server port
+    colors: true,  // enable / disable colors in the output (reporters and logs)
     logLevel: config.LOG_INFO,
-
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
+    autoWatch: true, // enable / disable watching file and executing tests whenever any file changes
 
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
     browsers: ['Chrome'],
 
-
     browserNoActivityTimeout: 60000,
-    
-    
     browserDisconnectTimeout: 60000,
-
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
