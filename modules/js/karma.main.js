@@ -12,12 +12,18 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 ; // jshint ignore:line
-(function testMain(global, require) {
+
+/**
+ * Initial config for require library.
+ * Equivalent of /main/js/leosModulesBootstrap.js
+ */
+(function karmaModulesBootstrap(global, require) {
     "use strict";
 
     var allTestFiles = [];
     var TEST_REGEXP = /^\/base\/src\/test\/js\/editor\/.*\.js$/;
     var runOnce = true;
+
     var startKarma = function () {
         if (runOnce) {
             runOnce = false;

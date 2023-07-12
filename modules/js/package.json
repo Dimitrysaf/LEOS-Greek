@@ -2,10 +2,10 @@
   "name": "leos-js",
   "version": "1.0.0",
   "description": "To run tests with Node.js, Jasmine and Karma",
-  "main": "test-server.js",
+  "main": "jasmin-server.js",
   "scripts": {
-    "test-debug": "nodemon test-server",
-    "test": "node test-server",
+    "test-debug": "nodemon jasmin-server",
+    "test": "node jasmin-server",
     "test-karma": "karma start"
   },
   "author": "",
