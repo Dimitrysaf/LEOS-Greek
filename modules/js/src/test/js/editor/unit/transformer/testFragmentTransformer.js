@@ -15,7 +15,7 @@
 define(function testTransformerModule(require) {
     "use strict";
     var transformerFragmentStamp = require("transformer/fragmentTransformer");
-    var ckEditorFragmentFactory = require("specs/editor/util/ckEditorFragmentFactory");
+    var ckEditorFragmentFactory = require("test.util/ckEditorFragmentFactory");
 
     describe(
             "Tests /transformer/fragmentTransformer/getTransformedElement()",
