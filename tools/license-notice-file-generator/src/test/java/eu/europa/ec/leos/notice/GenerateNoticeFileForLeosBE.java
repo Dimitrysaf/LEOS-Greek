@@ -27,7 +27,7 @@ class GenerateNoticeFileForLeosBE extends BaseTest {
         final Path xmlCopyrights = new PathRetriever().fromClasspath(lookUpFileFile);
         MavenXmlCopyrightsMapping mappings = new MavenXmlCopyrightsMapping(xmlCopyrights);
 
-        final Product trustedApp = new Product("LEOS", "2022 European Union", "1.0", EUPLv1_2Content.content());
+        final Product trustedApp = new Product("LEOS", "2023 European Union", "1.0", EUPLv1_2Content.content());
 
         final BackEndNoticeGenerator trustedAppNoticeGenerator = new BackEndNoticeGenerator(trustedApp, trustedAppTxtFile, mappings, existingJsonResponse, useExistingResponses);
         try (PrintStream ps = new PrintStream(outputFile)) {

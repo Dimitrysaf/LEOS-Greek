@@ -930,4 +930,13 @@
         <copyright>Nilan Marktanner</copyright>
     </artifact>
 
+    <artifact>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.13.4</version>
+        <url>https://github.com/eirslett/frontend-maven-plugin</url>
+        <license>Apache 2.0</license>
+        <copyright>Eirik Sletteberg</copyright>
+    </artifact>
+
 </copyrights-lookup>

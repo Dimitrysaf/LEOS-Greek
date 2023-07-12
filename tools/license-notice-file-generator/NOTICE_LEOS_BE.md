@@ -306,6 +306,12 @@ __de.datenhahn.vaadin:componentrenderer 2.0.0__
  * Copyright:
    * datenhahn
 
+__com.github.eirslett:frontend-maven-plugin 1.13.4__
+ * https://github.com/eirslett/frontend-maven-plugin
+ * License: Apache 2.0
+ * Copyright:
+   * Eirik Sletteberg
+                   
 __io.atlassian.fugue:fugue 4.4.0__
  * http://www.atlassian.com/central-pom/fugue-parent/fugue/
  * License: Apache License 2.0
