@@ -34,8 +34,7 @@ define(function leosTrackChangesDelPluginModule(require) {
             akn : "xml:id",
             html : "id"
         }, {
-            akn: "leos:action",
-            html : "data-akn-action"
+            html : "data-akn-action=delete"
         }, {
             akn : "leos:uid",
             html : "data-akn-uid"

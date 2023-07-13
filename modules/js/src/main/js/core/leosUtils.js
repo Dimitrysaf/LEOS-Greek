@@ -223,8 +223,8 @@ define(function leosUtilsModule(require) {
                 tcStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
             }
         } else {
-            tcStyle = "[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
-            tcStyle += "[" + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
+            tcStyle = "ins, [" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
+            tcStyle += "del, [" + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
             tcStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
         }
         return tcStyle;
