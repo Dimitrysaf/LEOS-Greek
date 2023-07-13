@@ -36,6 +36,13 @@ public class CollectionUrlBuilder {
                 , memorandumId);
     }
 
+    public String buildFinancialStatementViewUrl(String financialStatementId) {
+        return  MessageFormat.format(
+                applicationProperties.getProperty("leos.mapping.url") +
+                        applicationProperties.getProperty("leos.document.view.financialstatement.uri")
+                , financialStatementId);
+    }
+
     public String buildAnnexViewUrl(String annexId) {
         return MessageFormat.format(
                 applicationProperties.getProperty("leos.mapping.url") +

@@ -10,6 +10,8 @@ public class CollectionIdsAndUrlsHolder {
     private String billUrl;
     private String memorandumId;
     private String memorandumUrl;
+    private String financialStatementId;
+    private String financialStatementUrl;
     private String coverpageId;
     private String coverpageUrl;
     private Map<String,String> annexIdAndUrl;
@@ -50,6 +52,22 @@ public class CollectionIdsAndUrlsHolder {
 
     public void setMemorandumUrl(String memorandumUrl) {
         this.memorandumUrl = memorandumUrl;
+    }
+
+    public String getFinancialStatementId() {
+        return financialStatementId;
+    }
+
+    public void setFinancialStatementId(String financialStatementId) {
+        this.financialStatementId = financialStatementId;
+    }
+
+    public String getFinancialStatementUrl() {
+        return financialStatementUrl;
+    }
+
+    public void setFinancialStatementUrl(String financialStatementUrl) {
+        this.financialStatementUrl = financialStatementUrl;
     }
 
     public String getCoverpageId() { return coverpageId; }

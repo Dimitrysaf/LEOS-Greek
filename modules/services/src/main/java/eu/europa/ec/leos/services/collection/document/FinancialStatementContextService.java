@@ -13,6 +13,8 @@ import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
+import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
+import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -27,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+
 @Component
 @Scope("prototype")
 public class FinancialStatementContextService {
@@ -39,6 +44,8 @@ public class FinancialStatementContextService {
 
     private final TemplateService templateService;
     private final FinancialStatementService financialStatementService;
+    private final XmlNodeProcessor xmlNodeProcessor;
+    private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final ProposalService proposalService;
     private final SecurityService securityService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -56,19 +63,20 @@ public class FinancialStatementContextService {
     private String versionComment;
     private String milestoneComment;
     private String financialStatementId;
-
+    private boolean eeaRelevance;
     private boolean cloneProposal = false;
 
-    public FinancialStatementContextService(
-            TemplateService templateService,
-            FinancialStatementService financialStatementService,
-            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+    public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
+            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
+            XmlNodeProcessor xmlNodeProcessor, XmlNodeConfigProcessor xmlNodeConfigProcessor) {
         this.templateService = templateService;
         this.financialStatementService = financialStatementService;
         this.proposalService = proposalService;
         this.securityService = securityService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.xmlNodeProcessor = xmlNodeProcessor;
+        this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
     }
 
     public void useTemplate(String template) {
@@ -194,16 +202,46 @@ public class FinancialStatementContextService {
         LOG.trace("Executing 'Import FinancialStatement' use case...");
         Validate.notNull(leosPackage, FINANCIAL_STATEMENT_PACKAGE_IS_REQUIRED);
         Validate.notNull(financialStatement, "FinancialStatement template is required!");
-        Validate.notNull(collaborators, "FinancialStatement collaborators are required!");
         Validate.notNull(purpose, FINANCIAL_STATEMENT_PURPOSE_IS_REQUIRED);
-        Validate.notNull(type, "FinancialStatement type is required!");
+        Option<FinancialStatementMetadata> metadataOption = financialStatement.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), FINANCIAL_STATEMENT_METADATA_IS_REQUIRED);
 
-        final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
-        final FinancialStatementMetadata metadataDocument = (FinancialStatementMetadata) financialStatementDocument.getMetadataDocument();
-        financialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadataDocument, actionMessage, financialStatementDocument.getSource(), financialStatementDocument.getName());
-        financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
+        String ref = createRefForFS();
+        FinancialStatementMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withType(type)
+                .withTemplate(template)
+                .withRef(ref)
+                .withEeaRelevance(eeaRelevance)
+                .build();
 
+        Validate.notNull(financialStatementDocument.getSource(), "Financial statement xml is required!");
+        final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(financialStatementDocument.getSource(), createValueMap(metadata),
+                xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
+        FinancialStatement financialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadata,
+                actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, financialStatementDocument.getName());
+        if (cloneProposal) {
+            Map<String, Object> fsProperties = new HashMap<>();
+            fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), financialStatementDocument.getId());
+            fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
+            financialStatementService.updateFinancialStatement(financialStatement.getId(), fsProperties, true);
+        }
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private String createRefForFS() {
+        final String ref = financialStatementService.generateFinancialStatementReference(financialStatement.getContent().get().getSource().getBytes(),
+                financialStatement.getMetadata().get().getLanguage());
+        final FinancialStatementMetadata updatedFSMetadata = financialStatement.getMetadata().get()
+                .builder()
+                .withPurpose(purpose)
+                .withRef(ref)
+                .build();
+
+        financialStatementDocument.setName(ref + XML_DOC_EXT);
+        financialStatementDocument.setMetadataDocument(updatedFSMetadata);
+        return ref;
     }
 
     public void executeUpdateFinancialStatement() {
@@ -279,5 +317,10 @@ public class FinancialStatementContextService {
     public String getProposalId() {
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal != null ? proposal.getId() : null;
+    }
+
+    public void useEeaRelevance(boolean eeaRelevance) {
+        LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
+        this.eeaRelevance = eeaRelevance;
     }
 }

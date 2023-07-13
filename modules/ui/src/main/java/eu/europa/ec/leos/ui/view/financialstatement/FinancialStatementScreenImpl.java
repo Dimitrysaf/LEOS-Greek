@@ -32,16 +32,16 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.declarative.Design;
 import com.vaadin.ui.dnd.DragSourceExtension;
 import com.vaadin.ui.dnd.event.DragStartListener;
 import cool.graph.cuid.Cuid;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -57,6 +57,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.AccordionPane;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.component.LeosDisplayField;
@@ -104,7 +105,6 @@ import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.event.view.document.RefreshDocumentEvent;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
-import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
 import eu.europa.ec.leos.web.ui.component.FinancialstatementComponent;
@@ -125,7 +125,6 @@ import org.vaadin.sliderpanel.SliderPanel;
 import org.vaadin.sliderpanel.SliderPanelBuilder;
 import org.vaadin.sliderpanel.client.SliderMode;
 import org.vaadin.sliderpanel.client.SliderTabPosition;
-
 
 import javax.annotation.PostConstruct;
 import javax.inject.Provider;
@@ -518,11 +517,6 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     @Override
     public void refreshVersions(List<VersionVO> allVersions, boolean isComparisonMode) {
         versionsTab.refreshVersions(allVersions, isComparisonMode);
-    }
-
-    @Override
-    public void setContributionsData(List<ContributionVO> allContributions) {
-
     }
 
     @Override
