@@ -34,8 +34,7 @@ define(function leosTrackChangesInsPluginModule(require) {
             akn : "xml:id",
             html : "id"
         }, {
-            akn: "leos:action",
-            html : "data-akn-action"
+            html : "data-akn-action=insert"
         }, {
             akn : "leos:uid",
             html : "data-akn-uid"

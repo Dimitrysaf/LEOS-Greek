@@ -16,7 +16,7 @@
 //------------------------------- XML Styles --------------------------------//
 %xmlTrackChanges {
 
-  [leos\:action]:not(tr)::before {
+  [leos\:uid]:not(tr)::before {
     content: attr(leos\:title);
     display: none;
     position: absolute;
@@ -38,11 +38,11 @@
     transition: opacity 250ms ease-in-out;
   }
 
-  [leos\:action]:hover::before {
+  [leos\:uid]:hover::before {
     display: inline;
   }
 
-  [leos\:action="insert"] {
+  ins, [leos\:action="insert"] {
     text-decoration: underline;
     &[leos\:uid="anonymous"] {
       color: #008000;
@@ -52,7 +52,7 @@
     }
   }
 
-  [leos\:action="delete"] {
+  del, [leos\:action="delete"] {
     text-decoration: line-through;
     &[leos\:uid="anonymous"] {
       color: #FF0000;
