@@ -417,7 +417,8 @@ define(function leosTrackChangesPluginModule(require) {
 
     // return plugin module
     var pluginModule = {
-        name : pluginName
+        name : pluginName,
+        trackChanges: trackChanges
     };
 
     return pluginModule;
