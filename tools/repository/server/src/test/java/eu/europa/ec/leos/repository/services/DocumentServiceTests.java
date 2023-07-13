@@ -94,7 +94,7 @@ public class DocumentServiceTests {
 
     @Before
     public void setup() {
-        pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
+        pkg = packageService.createPackage("/leos/workspaces/test", "leos_dev", false, null, "demo");
     }
 
     @After
@@ -348,7 +348,7 @@ public class DocumentServiceTests {
         filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-017"
                 , "SJ-023"));
         Set<String> categories = Sets.set("PROPOSAL");
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter(categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("/leos/workspaces", categories, filter, 0, 5);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
         assertEquals(docs.get(0).getCategory(), "PROPOSAL");
@@ -369,7 +369,7 @@ public class DocumentServiceTests {
         Set<String> categories = Sets.set("PROPOSAL");
         filter.addSortOrder(new QueryFilter.SortOrder(QueryFilter.FilterType.lastModificationDate.name(), QueryFilter.SORT_DESCENDING));
 
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter(categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("/leos/workspaces", categories, filter, 0, 5);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
         assertEquals(docs.get(0).getCategory(), "PROPOSAL");

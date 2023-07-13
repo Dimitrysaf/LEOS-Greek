@@ -122,30 +122,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- JASMINE -->
-                <!-- JavaScript Behavior Driven Development testing framework -->
-                <groupId>com.github.searls</groupId>
-                <artifactId>jasmine-maven-plugin</artifactId>
-                <configuration>
-                    <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-                    <customRunnerConfiguration>src/etc/jasmine/specRunner.config</customRunnerConfiguration>
-                    <jsSrcDir>src/main/js</jsSrcDir>
-                    <srcDirectoryName>js</srcDirectoryName>
-                    <jsTestSrcDir>src/test/js</jsTestSrcDir>
-                    <specDirectoryName>spec</specDirectoryName>
-                    <additionalContexts>
-                        <context>
-                            <contextRoot>/lib</contextRoot>
-                            <directory>src/main/lib</directory>
-                        </context>
-                    </additionalContexts>
-                    <preloadSources>
-                        <source>lib/requirejs_2.3.3/require.js</source>
-                        <source>js/leosModulesBootstrap.js</source>
-                    </preloadSources>
-                </configuration>
-            </plugin>
-            <plugin>
                 <!-- JETTY -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -161,6 +137,44 @@
                         <overrideDescriptor>src/etc/jetty/web.xml</overrideDescriptor>
                     </webApp>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                </configuration> 
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                        <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                        <nodeVersion>v16.17.1</nodeVersion>
+                        <npmVersion>8.15.0</npmVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm ci</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>ci</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javascript tests</id>
+                        <goals>
+                            <goal>karma</goal>
+                        </goals>
+                        <configuration>
+                            <karmaConfPath>karma.conf.ci.js</karmaConfPath>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

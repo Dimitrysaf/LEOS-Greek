@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,7 +54,7 @@ public class ConfigContent implements Serializable {
     private BigDecimal id;
     @Lob
     @Column(name = "CONTENT")
-    private byte[] content;
+    private String content;
     @Column(name = "CONTENT_STREAM_MIME_TYPE")
     private String contentStreamMimeType;
     @Column(name = "CONTENT_STREAM_FILENAME")
@@ -82,11 +83,11 @@ public class ConfigContent implements Serializable {
     }
 
     public byte[] getContent() {
-        return content;
+        return content.getBytes(StandardCharsets.UTF_8);
     }
 
     public void setContent(byte[] content) {
-        this.content = content;
+        this.content = new String(content, StandardCharsets.UTF_8);
     }
 
     public String getContentStreamMimeType() {

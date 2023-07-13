@@ -555,9 +555,11 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    public List<LeosDocument> findDocumentsUsingFilter(final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults) {
+    public List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
+                                                       final int startIndex, final int maxResults) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true");
+        StringBuilder queryBuild = new StringBuilder(String.format("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true AND d.packageId IN (SELECT p.id FROM Package p" +
+                " WHERE p.name LIKE '%%%s%%')", packageName));
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 
         List<DocumentV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
@@ -565,18 +567,19 @@ public class DocumentServiceImpl implements DocumentService {
         for (DocumentV doc : docs) {
             xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
         }
-        xmlDocs.addAll(milestoneDocumentService.findMilestonesUsingFilter(categories, queryFilter, startIndex, maxResults));
+        xmlDocs.addAll(milestoneDocumentService.findMilestonesUsingFilter(packageName, categories, queryFilter, startIndex, maxResults));
         return xmlDocs;
     }
 
-    public Long countDocumentsUsingFilter(final Set<String> categories, final QueryFilter queryFilter) {
+    public Long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
         StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT COUNT(d) FROM DocumentV d WHERE d.isLatestVersion = true"));
+                String.format("SELECT COUNT(d) FROM DocumentV d WHERE d.isLatestVersion = true AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name " +
+                        "LIKE '%%%s%%')", packageName));
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 
         Long count = (Long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
-        count += milestoneDocumentService.countMilestonesUsingFilter(categories, queryFilter);
+        count += milestoneDocumentService.countMilestonesUsingFilter(packageName, categories, queryFilter);
         return count;
     }
 

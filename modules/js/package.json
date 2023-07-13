@@ -1,0 +1,27 @@
+{
+  "name": "leos-js",
+  "version": "1.0.0",
+  "description": "To run tests with Node.js, Jasmine and Karma",
+  "main": "jasmin-server.js",
+  "scripts": {
+    "test-debug": "nodemon jasmin-server",
+    "test": "node jasmin-server",
+    "test-karma": "karma start"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.18.2",
+    "jasmine-core": "^5.0.1",
+    "karma": "^6.4.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "karma-requirejs": "^1.1.0",
+    "karma-spec-reporter": "0.0.36",
+    "minimist": "^1.2.8",
+    "nodemon": "^2.0.22",
+    "puppeteer": "^20.8.0",
+    "requirejs": "^2.3.3"
+  }
+}

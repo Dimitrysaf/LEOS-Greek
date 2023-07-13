@@ -74,9 +74,9 @@ public interface DocumentService {
 
     List<LeosDocument> findAllVersionsByRef(final String ref);
 
-    List<LeosDocument> findDocumentsUsingFilter(final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults);
+    List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults);
 
-    Long countDocumentsUsingFilter(final Set<String> categories, final QueryFilter queryFilter);
+    Long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
 }

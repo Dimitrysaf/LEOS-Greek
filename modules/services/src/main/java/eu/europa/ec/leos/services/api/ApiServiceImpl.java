@@ -15,15 +15,16 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
-import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
@@ -32,9 +33,14 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.common.Result;
-import eu.europa.ec.leos.domain.vo.*;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.ErrorVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
+import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -49,7 +55,12 @@ import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
-import eu.europa.ec.leos.services.document.*;
+import eu.europa.ec.leos.services.document.AnnexService;
+import eu.europa.ec.leos.services.document.BillService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -78,7 +89,6 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.micrometer.core.instrument.util.StringUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -591,6 +601,17 @@ public abstract class ApiServiceImpl implements ApiService {
                     docVerSeriesIds.add(annex.getVersionSeriesId());
                     break;
                 }
+                case STAT_FINANC_LEGIS: {
+                    FinancialStatement financialStatement = (FinancialStatement) document;
+                    DocumentVO financialStatementVO = createFinancialStatementVO(financialStatement);
+                    proposalVO.addChildDocument(financialStatementVO);
+                    financialStatementVO.addCollaborators(financialStatement.getCollaborators());
+                    financialStatementVO.getMetadata()
+                            .setInternalRef(financialStatement.getMetadata().getOrError(() -> "financialStatement metadata is not available!").getRef());
+                    financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
+                    docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
+                    break;
+                }
                 default:
                     LOG.debug("Do nothing for rest of the categories like MEDIA, CONFIG & LEG");
                     break;
@@ -606,6 +627,21 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         return proposalVO;
+    }
+
+    private DocumentVO createFinancialStatementVO(FinancialStatement financialStatement) {
+        DocumentVO financialDocumentVO =
+                new DocumentVO(financialStatement.getId(),
+                        financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
+                        LeosCategory.STAT_FINANC_LEGIS,
+                        financialStatement.getLastModifiedBy(),
+                        Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
+
+        if (financialStatement.getMetadata().isDefined()) {
+            FinancialStatementMetadata metadata = financialStatement.getMetadata().get();
+            financialDocumentVO.setTitle(metadata.getTitle());
+        }
+        return financialDocumentVO;
     }
 
     private DocumentVO getExplanatroyVO(Explanatory explanatory) {

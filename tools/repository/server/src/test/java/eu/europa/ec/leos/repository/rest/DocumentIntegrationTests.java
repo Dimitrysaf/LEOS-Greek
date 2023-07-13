@@ -51,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = DocumentController.class)
@@ -73,7 +74,7 @@ public class DocumentIntegrationTests {
     private final String DOC_TITLE = "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL TEST ON SUBPARAGRAPHS AS INTRO";
     private final String DOC_TYPE = "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL";
     private final List<Collaborator> COLLABORATORS = Arrays.asList(new Collaborator("jane", "OWNER", "DGT.R.3"));
-    private final String PKG_NAME = "package-test";
+    private final String PKG_NAME = "/leos/workspaces/package-test";
     private final BigDecimal PKG_ID = new BigDecimal(3);
     private final BigDecimal DOC_ID = new BigDecimal(6);
     private final String REPO_ID = "leos_dev";
@@ -429,6 +430,24 @@ public class DocumentIntegrationTests {
     }
 
     @Test
+    public void findDocumentsByName() throws Exception {
+        String name = "catalog";
+        List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
+
+        when(documentService.findDocumentByName(name))
+                .thenReturn(listDocs);
+
+        mockMvc.perform(get("/documents/find-by-name/{name}", name).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$[0].name", is(xmlDoc.getName())))
+                .andExpect(jsonPath("$[0].createdBy", is(USER)))
+                .andExpect(jsonPath("$[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$[0].updatedBy", is(USER)))
+                .andExpect(jsonPath("$[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(status().isOk()).andDo(print());
+    }
+
+    @Test
     public void findDocumentsWithFilter() throws Exception {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
@@ -447,10 +466,12 @@ public class DocumentIntegrationTests {
         int maxResults = 5;
         List<LeosDocument> xmlDocs = Arrays.asList(xmlDoc);
 
-        when(documentService.findDocumentsUsingFilter(ArgumentMatchers.eq(findDocumentsRequest.getCategories()),
+        when(documentService.findDocumentsUsingFilter(ArgumentMatchers.eq(PKG_NAME),
+                ArgumentMatchers.eq(findDocumentsRequest.getCategories()),
                 any(), ArgumentMatchers.eq(startIndex), ArgumentMatchers.eq(maxResults))).thenReturn(xmlDocs);
 
-        mockMvc.perform(post("/documents/find-by-filter?startIndex={startIndex}&maxResults={maxResults}", startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/documents/find-by-filter/{packageName}?startIndex={startIndex}&maxResults={maxResults}", encodeUriVariables(PKG_NAME)[0],
+                        startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)
                         .content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
                 .andExpect(status().isOk()).andDo(print());
@@ -472,10 +493,11 @@ public class DocumentIntegrationTests {
         findDocumentsRequest.setCategories(categories);
         String json = mapper.writeValueAsString(findDocumentsRequest);
 
-        when(documentService.countDocumentsUsingFilter(ArgumentMatchers.eq(findDocumentsRequest.getCategories()), any()))
+        when(documentService.countDocumentsUsingFilter(ArgumentMatchers.eq(PKG_NAME),
+                ArgumentMatchers.eq(findDocumentsRequest.getCategories()), any()))
                 .thenReturn(1L);
 
-        mockMvc.perform(post("/documents/count-by-filter").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/documents/count-by-filter/{packageName}", encodeUriVariables(PKG_NAME)[0]).contentType(MediaType.APPLICATION_JSON)
                         .content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("1"))
                 .andExpect(status().isOk()).andDo(print());

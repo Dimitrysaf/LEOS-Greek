@@ -250,10 +250,10 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return docMilestone;
     }
 
-    public List<LeosDocument> findMilestonesUsingFilter(final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults) {
+    public List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults) {
         //Build query
         StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT m FROM MilestoneV m"));
+                String.format("SELECT m FROM MilestoneV m WHERE m.packageId IN (SELECT p.id FROM Package p WHERE p.name LIKE '%%%s%%')", packageName));
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
         List<MilestoneV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
@@ -264,10 +264,10 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return xmlDocs;
     }
 
-    public Long countMilestonesUsingFilter(final Set<String> categories, final QueryFilter queryFilter) {
+    public Long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
         StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT COUNT(m) FROM MilestoneV m"));
+                String.format("SELECT COUNT(m) FROM MilestoneV m WHERE m.packageId IN (SELECT p.id FROM Package p WHERE p.name LIKE '%%%s%%')", packageName));
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
         return (Long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
@@ -275,7 +275,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
 
     private void buildQueryWithFilterQuery(StringBuilder queryBuild, final Set<String> categories, final QueryFilter queryFilter) {
         if (!categories.isEmpty()) {
-            queryBuild.append(" WHERE ");
+            queryBuild.append(" AND ");
             String categoryStr = categories.stream()
                     .map(a -> "'" + a + "'")
                     .collect(Collectors.joining(","));
@@ -285,12 +285,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
         String whereFiltersClause = getWhereClauseFromQueryFilter(queryFilter, MilestoneV.class);
         if(!whereFiltersClause.isEmpty()){
-            if (categories.isEmpty()) {
-                queryBuild.append(" WHERE ");
-
-            } else {
-                queryBuild.append(" AND ");
-            }
+            queryBuild.append(" AND ");
             Optional<QueryFilter.Filter> docsFilter = queryFilter.getFilters().stream().filter(f -> f.key.equals("containedDocuments")).findFirst();
             if (docsFilter.isPresent()) {
                 StringBuilder value = new StringBuilder("'");

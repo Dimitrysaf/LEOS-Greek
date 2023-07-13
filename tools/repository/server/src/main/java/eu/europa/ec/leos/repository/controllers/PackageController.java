@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.repository.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
 import eu.europa.ec.leos.repository.controllers.response.ExceptionResponse;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
@@ -32,13 +31,14 @@ import org.springframework.web.bind.annotation.*;
 import eu.europa.ec.leos.repository.model.Package;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 
 @RestController
 @Tag(name = "Package API", description = "Package API")
@@ -48,9 +48,6 @@ public class PackageController {
 
     @Autowired
     PackageService packageService;
-
-    @Autowired
-    ObjectMapper mapper;
 
     @Value("${repository.default.id}")
     private String repositoryId;
@@ -62,9 +59,10 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Package Created", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<?> createPackage(@PathVariable("name") String name,
+    public ResponseEntity<Object> createPackage(@PathVariable("name") String name,
                                                  @Valid @RequestBody CreatePackageRequest createPackageRequest) {
         try {
+            name = decode(name);
             Package p = packageService.createPackage(name, repositoryId, createPackageRequest.getIsCloned(),
                     createPackageRequest.getClonedPackageName(), createPackageRequest.getUserId());
             if (p != null) {
@@ -85,6 +83,7 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity deletePackage(@PathVariable("name") String packageName) {
         try {
+            packageName = decode(packageName);
             packageService.deletePackage(repositoryId, packageName);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -98,8 +97,9 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<?> getPackageByName(@PathVariable("name") String name) {
+    public ResponseEntity<Object> getPackageByName(@PathVariable("name") String name) {
         try {
+            name = decode(name);
             Package pkg = packageService.getPackageByName(repositoryId, name);
             return new ResponseEntity<>(pkg, HttpStatus.OK);
         } catch (Exception e) {
@@ -113,7 +113,7 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<?> getPackageById(@PathVariable("id") String id) {
+    public ResponseEntity<Object> getPackageById(@PathVariable("id") String id) {
         try {
             Package pkg = packageService.getPackageById(id);
             return new ResponseEntity<>(pkg, HttpStatus.OK);
@@ -130,14 +130,15 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<?> findDocumentsByPackageName(@PathVariable("name") String name,
+    public ResponseEntity<Object> findDocumentsByPackageName(@PathVariable("name") String name,
                                                                    @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                   @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
         try {
+            name = decode(name);
             List<LeosDocument> xmlDocs = packageService.findDocumentsByPackageName(repositoryId, name, findDocumentsRequest.getCategories(),
                     descendants);
             if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(mapper.writeValueAsString(xmlDocs), HttpStatus.OK);
+                return new ResponseEntity(xmlDocs, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
             }
@@ -154,14 +155,14 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<?> findDocumentsByPackageId(@PathVariable("id") String id,
+    public ResponseEntity<Object> findDocumentsByPackageId(@PathVariable("id") String id,
                                                            @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                 @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
         try {
             List<LeosDocument> xmlDocs = packageService.findDocumentsByPackageId(id, findDocumentsRequest.getCategories(),
                     descendants);
             if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(mapper.writeValueAsString(xmlDocs), HttpStatus.OK);
+                return new ResponseEntity(xmlDocs, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
             }
@@ -176,11 +177,11 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<?> findDocumentsByPackageId(@PathVariable("id") String id) {
+    public ResponseEntity<Object> findDocumentsByPackageId(@PathVariable("id") String id) {
         try {
             List<LeosDocument> xmlDocs = packageService.findDocumentsByPackageId(id, null,  false);
             if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(mapper.writeValueAsString(xmlDocs), HttpStatus.OK);
+                return new ResponseEntity(xmlDocs, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }

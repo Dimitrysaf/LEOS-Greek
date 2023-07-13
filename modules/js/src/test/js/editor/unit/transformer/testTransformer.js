@@ -16,7 +16,7 @@ define(function testTransformerModule(require) {
     "use strict";
     var STAMPIT = require("stampit");
     var transformerStampToTest = require("transformer/transformer");
-    var ckEditorFragmentFactory = require("specs/editor/util/ckEditorFragmentFactory");
+    var ckEditorFragmentFactory = require("test.util/ckEditorFragmentFactory");
 
     describe("Unit Tests for: /transformer/transformer/transform().", function() {
 

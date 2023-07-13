@@ -44,6 +44,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.web.util.UriUtils.encodeQueryParam;
+import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(PackageController.class)
@@ -62,8 +64,8 @@ public class PackageIntegrationTests {
 
     private final String USER = "demo";
     private final BigDecimal PKG_ID = new BigDecimal(3);
-    private final String PKG_NAME = "package-test";
-    private final String TEST_PKG_NAME = "package_ckk8202vl0000n070oin84afg";
+    private final String PKG_NAME = "/leos/workspaces/package-test";
+    private final String TEST_PKG_NAME = "/leos/workspaces/package_ckk8202vl0000n070oin84afg";
     private final String REPO_ID = "leos_dev";
     private final Date currentTimeStamp = new Date();
     private eu.europa.ec.leos.repository.model.Package pkg;
@@ -216,7 +218,7 @@ public class PackageIntegrationTests {
                 ArgumentMatchers.eq(createPackageRequest.getIsCloned()),
                 ArgumentMatchers.eq(createPackageRequest.getClonedPackageName()), ArgumentMatchers.eq(createPackageRequest.getUserId()))).thenReturn(pkg);
 
-        mockMvc.perform(put("/package/create/{name}", PKG_NAME).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(PKG_ID.toString())))
@@ -236,7 +238,7 @@ public class PackageIntegrationTests {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                 "Package Not Found")).when(packageService).deletePackage(REPO_ID, PKG_NAME);
 
-        mockMvc.perform(delete("/package/delete/{name}", PKG_NAME).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(delete("/package/delete/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError()).andDo(print());
     }
@@ -252,7 +254,7 @@ public class PackageIntegrationTests {
         when(packageService.findDocumentsByPackageName(REPO_ID, TEST_PKG_NAME, findDocumentsRequest.getCategories(), false))
                 .thenReturn(listDocs);
 
-        mockMvc.perform(post("/package/find-by-name/{name}/documents", TEST_PKG_NAME).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/package/find-by-name/{name}/documents", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))

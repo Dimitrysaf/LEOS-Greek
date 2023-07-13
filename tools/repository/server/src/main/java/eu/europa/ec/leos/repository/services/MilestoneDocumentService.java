@@ -23,9 +23,10 @@ public interface MilestoneDocumentService {
 
     LeosDocument updateMilestone(final Document doc, byte[] content, Map<String, ?> properties, String userId) throws RepositoryException;
 
-    List<LeosDocument> findMilestonesUsingFilter(final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults);
+    List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex,
+                                                 final int maxResults);
 
-    Long countMilestonesUsingFilter(final Set<String> categories, final QueryFilter queryFilter);
+    Long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     void deleteMilestoneByRef(Document doc);
 }
