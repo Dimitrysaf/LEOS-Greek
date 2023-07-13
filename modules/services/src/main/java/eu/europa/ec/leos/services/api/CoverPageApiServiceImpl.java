@@ -134,7 +134,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         VersionInfoVO versionInfoVO = getVersionInfo(proposal);
         String editableXml = getEditableXml(proposal);
-        return new DocumentViewResponse(proposal.getOriginRef(), editableXml, versionInfoVO);
+        String proposalRef = proposal.getMetadata().get().getRef();
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO);
     }
 
     @Override
