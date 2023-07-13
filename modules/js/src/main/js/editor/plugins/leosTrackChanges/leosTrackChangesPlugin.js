@@ -415,36 +415,11 @@ define(function leosTrackChangesPluginModule(require) {
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
-    var transformationConfig = {
-        akn : "inline[leos:action]",
-        html : "span[data-akn-action]",
-        attr : [{
-            akn : "xml:id",
-            html : "id"
-        }, {
-            akn: "leos:action",
-            html : "data-akn-action"
-        }, {
-            akn : "leos:uid",
-            html : "data-akn-uid"
-        }, {
-            akn : "leos:title",
-            html : "title"
-        }],
-        sub : {
-            akn : "text",
-            html : "span/text"
-        }
-    };
-
     // return plugin module
     var pluginModule = {
         name : pluginName,
-        transformationConfig : transformationConfig,
         trackChanges: trackChanges
     };
-
-    pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     return pluginModule;
 });
