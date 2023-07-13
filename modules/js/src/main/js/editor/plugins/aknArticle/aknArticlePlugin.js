@@ -182,17 +182,11 @@ define(function aknArticlePluginModule(require) {
                 akn : "text",
                 html : "article/h2/text"
             }, {
-                akn : "del[name=trackchanges]",
-                html : "article/h2/del[name=trackchanges]",
+                akn : "del",
+                html : "article/h2/del",
                 attr : [{
                     akn : "xml:id",
                     html : "xml:id"
-                }, {
-                    akn: "name",
-                    html : "name"
-                }, {
-                    akn: "leos:action",
-                    html : "leos:action"
                 }, {
                     akn : "leos:uid",
                     html : "leos:uid"
@@ -205,17 +199,11 @@ define(function aknArticlePluginModule(require) {
                     html : "article/h2/del/text"
                 }
             }, {
-                akn : "ins[name=trackchanges]",
-                html : "article/h2/ins[name=trackchanges]",
+                akn : "ins",
+                html : "article/h2/ins",
                 attr : [{
                     akn : "xml:id",
                     html : "xml:id"
-                }, {
-                    akn: "name",
-                    html : "name"
-                }, {
-                    akn: "leos:action",
-                    html : "leos:action"
                 }, {
                     akn : "leos:uid",
                     html : "leos:uid"

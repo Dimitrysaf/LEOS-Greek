@@ -169,6 +169,10 @@ define(function leosTrackChangesPluginModule(require) {
                     .setState(isTrackChangesShowed ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
             });
 
+            editor.on("toDataFormat", function(event) {
+                event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
+            }, null, null, 15);
+
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
 
