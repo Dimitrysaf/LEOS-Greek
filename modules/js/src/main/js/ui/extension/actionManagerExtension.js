@@ -26,7 +26,7 @@ define(function actionManagerExtensionModule(require) {
     // configuration
     var EDITOR_CHANNEL_CFG = CONFIG.channels.editor;
     var IGNORE_EDIT_CLICK = {
-        elementName: ["A", "AUTHORIALNOTE", "HYPOTHESIS-HIGHLIGHT", "MREF", "IMG", "GUIDANCE"],
+        elementName: ["A", "AUTHORIALNOTE", "HYPOTHESIS-HIGHLIGHT", "MREF", "REF", "IMG", "GUIDANCE","INLINE"],
         elementClass: ["leos-soft-move-label", "leos-content-soft-removed"]
     };
 
@@ -315,7 +315,8 @@ define(function actionManagerExtensionModule(require) {
             // Ignore clicks coming from specific elements
             const shouldBeIgnored = connector.getState().isAngularUI &&
                 (IGNORE_EDIT_CLICK.elementName.includes(event.target.nodeName) ||
-                 IGNORE_EDIT_CLICK.elementClass.some((cl) => event.target?.classList?.contains(cl))
+                 IGNORE_EDIT_CLICK.elementClass.some((cl) => event.target?.classList?.contains(cl)) ||
+                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName)
                 );
             if (shouldBeIgnored) {
                 return;

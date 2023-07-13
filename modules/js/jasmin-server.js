@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-const config = require('./test-server-config.json');
+const config = require('./jasmin-server-config.json');
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
