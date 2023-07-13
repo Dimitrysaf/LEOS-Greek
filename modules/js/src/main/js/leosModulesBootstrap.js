@@ -105,7 +105,6 @@
                 plugins: "js/editor/plugins",
                 profiles: "js/editor/profiles",
                 transformer: "js/editor/transformer",
-                "test.util": "../test/js/editor/util"
             }
         },
         // shim configuration for loading non-AMD scripts
