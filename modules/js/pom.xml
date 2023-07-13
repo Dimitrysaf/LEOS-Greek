@@ -139,39 +139,35 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin.version}</version>
-                <configuration>
-                    <installDirectory>target</installDirectory>
-                </configuration> 
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>npm install</id>
                         <goals>
-                        <goal>install-node-and-npm</goal>
+                            <goal>exec</goal>
                         </goals>
+                        <phase>validate</phase>
                         <configuration>
-                        <nodeVersion>v16.17.1</nodeVersion>
-                        <npmVersion>8.15.0</npmVersion>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm ci</id>
+                        <id>karma start</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>exec</goal>
                         </goals>
+                        <phase>test</phase>
                         <configuration>
-                            <arguments>ci</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>javascript tests</id>
-                        <goals>
-                            <goal>karma</goal>
-                        </goals>
-                        <configuration>
-                            <karmaConfPath>karma.conf.ci.js</karmaConfPath>
+                            <executable>karma</executable>
+                            <arguments>
+                                <argument>start</argument>
+                                <argument>karma.conf.ci.js</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
