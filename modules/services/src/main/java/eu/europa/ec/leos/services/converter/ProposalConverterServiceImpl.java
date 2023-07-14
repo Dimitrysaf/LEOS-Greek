@@ -14,8 +14,8 @@
 
 package eu.europa.ec.leos.services.converter;
 
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.common.ErrorCode;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -92,10 +92,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         proposal.setCategory(LeosCategory.PROPOSAL);
         // unzip file
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, "/unzip/");
-        /*String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE))
-                .findFirst()
-                .orElseThrow(() -> new ImportElementException("A proposal file is required to upload a valid legislative document."));
-*/        try {
+        try {
             String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().orElse("");
             if (unzippedFiles.containsKey(proposalFileKey)) {
                 List<DocumentVO> propChildDocs = new ArrayList<>();

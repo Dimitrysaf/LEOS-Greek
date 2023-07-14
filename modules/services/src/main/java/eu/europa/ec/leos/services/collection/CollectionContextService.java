@@ -46,17 +46,17 @@ import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Provider;
 
+import javax.inject.Provider;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.COUNCIL_EXPLANATORY;
-import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
 
 public abstract class CollectionContextService {
 
@@ -292,7 +292,26 @@ public abstract class CollectionContextService {
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(billRef, docChild.getRef());
                 }
             } else if (docChild.getCategory() == STAT_FINANC_LEGIS) {
-                executeCreateFinancialStatement();
+                FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
+                financialStatementContext.usePackage(leosPckg);
+                String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+                financialStatementContext.useTemplate(template);
+                financialStatementContext.usePurpose(purpose);
+                financialStatementContext.useDocument(docChild);
+                financialStatementContext.useEeaRelevance(eeaRelevance);
+                Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
+                financialStatementContext.useType(metadata.getType());
+                financialStatementContext.useActionMessageMap(actionMsgMap);
+                financialStatementContext.useCollaborators(proposal.getCollaborators());
+                financialStatementContext.useCloneProposal(cloneProposal);
+                FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
+                String financialStatementRef = financialStatement.getMetadata().get().getRef();
+                if(cloneProposal) {
+                    idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
+                    idsAndUrlsHolder.setFinancialStatementUrl(urlBuilder.buildFinancialStatementViewUrl(financialStatementRef));
+                    idsAndUrlsHolder.addDocCloneAndOriginIdMap(financialStatementRef, docChild.getRef());
+                }
+                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
             }
         }
         String coverpageRef = proposal.getMetadata().get().getRef();
@@ -321,7 +340,6 @@ public abstract class CollectionContextService {
         financialStatementContext.useType(metadata.getType());
         financialStatementContext.useActionMessageMap(actionMsgMap);
         financialStatementContext.useCollaborators(proposal.getCollaborators());
-        financialStatementContext.useCloneProposal(cloneProposal);
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
         proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

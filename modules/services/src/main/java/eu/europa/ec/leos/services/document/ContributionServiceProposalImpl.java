@@ -1,17 +1,18 @@
 package eu.europa.ec.leos.services.document;
 
+import eu.europa.ec.leos.domain.common.ErrorCode;
+import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.ErrorCode;
-import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -44,8 +45,10 @@ import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
+import static eu.europa.ec.leos.services.support.XmlHelper.FINANCIAL_STATEMENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service
@@ -68,6 +71,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     List<String> BILL_DOC_TYPES = new ArrayList(Arrays.asList("REG", "DIR", "DEC"));
     private static final String ANNEX_DOC_TYPE = "ANNEX";
     private static final String MEMORANDUM_DOC_TYPE = "EXPL_MEMORANDUM";
+    private static final String FS_DOC_TYPE = "STAT_FINANC_LEGIS";
 
 
     @Autowired
@@ -176,7 +180,20 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                                 docContent, legName, documentName));
                     }
                 }
-            } else if(filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
+            } else if(filterType.getSimpleName().equalsIgnoreCase(FINANCIAL_STATEMENT)) {
+                Optional<String> fileToFind = containedDocuments.stream()
+                        .filter(containedFile -> containedFile.startsWith(STAT_FINANC_LEGIS + "-"))
+                        .findFirst();
+                if (fileToFind.isPresent()) {
+                    FinancialStatement doc = (FinancialStatement) findVersionByVersionedReference(fileToFind.get(), filterType);
+                    if (doc != null) {
+                        String documentName = doc.getName();
+                        byte[] docContent = (byte[])legContent.get(documentName);
+                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName));
+                    }
+                }
+            }else if(filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
                 Proposal doc = clonedProposal;
                 if (doc != null) {
                     String documentName = doc.getName();

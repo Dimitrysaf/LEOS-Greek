@@ -1,11 +1,11 @@
 package eu.europa.ec.leos.services.document;
 
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.FinancialStatement.FinancialStatementStructureType;
+import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
@@ -69,4 +69,6 @@ public interface FinancialStatementService {
     FinancialStatement findFirstVersion(String documentRef);
 
     List<FinancialStatement> findFinancialStatementByPackagePath(String path);
+
+    String generateFinancialStatementReference(byte[] content, String language);
 }
