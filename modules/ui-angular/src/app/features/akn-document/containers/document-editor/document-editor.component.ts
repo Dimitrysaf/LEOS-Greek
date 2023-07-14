@@ -308,6 +308,10 @@ export class DocumentEditorComponent
             this.isAsyncScrollEnabled = false;
             this.handleAsyncScroll();
           });
+        } else {
+          this.isAsyncScrollEnabled = true;
+          this.handleAsyncScroll();
+          this.clearVersionComparisonView();
         }
       });
 
@@ -699,11 +703,15 @@ export class DocumentEditorComponent
   }
 
   closeVersionComparisonView() {
+    this.clearVersionComparisonView();
+    this.documentService.toggleCompareMode(false);
+  }
+
+  clearVersionComparisonView() {
     this.compareChanges = null;
     this.compareIndex = 0;
     this.removeAllPins();
     this.versionsComparisonForView = null;
-    this.documentService.toggleCompareMode(false);
   }
 
   handleClose() {

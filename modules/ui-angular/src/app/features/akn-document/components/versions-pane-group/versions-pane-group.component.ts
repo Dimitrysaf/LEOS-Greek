@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { orderBy } from 'lodash-es';
-import { Observable, of, switchMap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { Version } from '@/features/akn-document/models/versions';
 import { DocumentService } from '@/shared/services/document.service';
@@ -86,7 +86,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       const maxVersion = this.sortVersions(sorted.at(-1), version)[1];
       newVersions = [minVersion, maxVersion];
     }
-
     this.docService.setVersionCompareIds(newVersions);
   }
 
