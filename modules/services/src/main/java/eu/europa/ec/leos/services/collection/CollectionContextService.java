@@ -251,72 +251,70 @@ public abstract class CollectionContextService {
 
         // create child element
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
-            if ((docChild.getCategory() == MEMORANDUM) && (cast(categoryTemplateMap.get(MEMORANDUM)) != null)) {
-                MemorandumContextService memorandumContext = memorandumContextProvider.get();
-                memorandumContext.usePackage(leosPckg);
-                // use template
-                memorandumContext.useTemplate(cast(categoryTemplateMap.get(MEMORANDUM)));
-                // We want to use the same purpose that was set in the wizard for all the documents.
-                memorandumContext.usePurpose(purpose);
-                memorandumContext.useDocument(docChild);
-                memorandumContext.useActionMessageMap(actionMsgMap);
-                memorandumContext.useType(metadata.getType());
-                memorandumContext.usePackageTemplate(metadata.getTemplate());
-                memorandumContext.useEeaRelevance(eeaRelevance);
-                memorandumContext.useCloneProposal(cloneProposal);
-                Memorandum memorandum = memorandumContext.executeImportMemorandum();
-                proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
-                String memorandumRef = memorandum.getMetadata().get().getRef();
-                idsAndUrlsHolder.setMemorandumId(memorandumRef);
-                idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(memorandumRef));
-                if (cloneProposal) {
+            switch (docChild.getCategory()) {
+                case MEMORANDUM:
+                    MemorandumContextService memorandumContext = memorandumContextProvider.get();
+                    memorandumContext.usePackage(leosPckg);
+                    // use template
+                    memorandumContext.useTemplate(cast(categoryTemplateMap.get(MEMORANDUM)));
+                    // We want to use the same purpose that was set in the wizard for all the documents.
+                    memorandumContext.usePurpose(purpose);
+                    memorandumContext.useDocument(docChild);
+                    memorandumContext.useActionMessageMap(actionMsgMap);
+                    memorandumContext.useType(metadata.getType());
+                    memorandumContext.usePackageTemplate(metadata.getTemplate());
+                    memorandumContext.useEeaRelevance(eeaRelevance);
+                    memorandumContext.useCloneProposal(cloneProposal);
+                    Memorandum memorandum = memorandumContext.executeImportMemorandum();
+                    proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
+                    String memorandumRef = memorandum.getMetadata().get().getRef();
+                    idsAndUrlsHolder.setMemorandumId(memorandumRef);
+                    idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(memorandumRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(memorandumRef, docChild.getRef());
-                }
-            } else if (docChild.getCategory() == BILL) {
-                BillContextService billContext = billContextProvider.get();
-                billContext.usePackage(leosPckg);
-                // use template
-                billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
-                billContext.usePurpose(purpose);
-                billContext.useDocument(docChild);
-                billContext.useActionMessageMap(actionMsgMap);
-                billContext.useIdsAndUrlsHolder(idsAndUrlsHolder);
-                billContext.useCloneProposal(cloneProposal);
-                billContext.useEeaRelevance(eeaRelevance);
-                Bill bill = billContext.executeImportBill();
-                proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
-                String billRef = bill.getMetadata().get().getRef();
-                idsAndUrlsHolder.setBillId(billRef);
-                idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
-                if (cloneProposal) {
+                    break;
+                case BILL:
+                    BillContextService billContext = billContextProvider.get();
+                    billContext.usePackage(leosPckg);
+                    // use template
+                    billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
+                    billContext.usePurpose(purpose);
+                    billContext.useDocument(docChild);
+                    billContext.useActionMessageMap(actionMsgMap);
+                    billContext.useIdsAndUrlsHolder(idsAndUrlsHolder);
+                    billContext.useCloneProposal(cloneProposal);
+                    billContext.useEeaRelevance(eeaRelevance);
+                    Bill bill = billContext.executeImportBill();
+                    proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
+                    String billRef = bill.getMetadata().get().getRef();
+                    idsAndUrlsHolder.setBillId(billRef);
+                    idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(billRef, docChild.getRef());
-                }
-            } else if (docChild.getCategory() == STAT_FINANC_LEGIS) {
-                FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
-                financialStatementContext.usePackage(leosPckg);
-                String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
-                financialStatementContext.useTemplate(template);
-                financialStatementContext.usePurpose(purpose);
-                financialStatementContext.useDocument(docChild);
-                financialStatementContext.useEeaRelevance(eeaRelevance);
-                Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
-                financialStatementContext.useType(metadata.getType());
-                financialStatementContext.useActionMessageMap(actionMsgMap);
-                financialStatementContext.useCollaborators(proposal.getCollaborators());
-                financialStatementContext.useCloneProposal(cloneProposal);
-                FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
-                String financialStatementRef = financialStatement.getMetadata().get().getRef();
-                if(cloneProposal) {
+                    break;
+                case STAT_FINANC_LEGIS:
+                    FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
+                    financialStatementContext.usePackage(leosPckg);
+                    String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+                    financialStatementContext.useTemplate(template);
+                    financialStatementContext.usePurpose(purpose);
+                    financialStatementContext.useDocument(docChild);
+                    financialStatementContext.useEeaRelevance(eeaRelevance);
+                    Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
+                    financialStatementContext.useType(metadata.getType());
+                    financialStatementContext.useActionMessageMap(actionMsgMap);
+                    financialStatementContext.useCollaborators(proposal.getCollaborators());
+                    financialStatementContext.useCloneProposal(cloneProposal);
+                    FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
+                    String financialStatementRef = financialStatement.getMetadata().get().getRef();
+                    proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
                     idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
                     idsAndUrlsHolder.setFinancialStatementUrl(urlBuilder.buildFinancialStatementViewUrl(financialStatementRef));
                     idsAndUrlsHolder.addDocCloneAndOriginIdMap(financialStatementRef, docChild.getRef());
-                }
-                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
+                    break;
             }
         }
-        String coverpageRef = proposal.getMetadata().get().getRef();
-        idsAndUrlsHolder.setCoverpageId(coverpageRef);
-        idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverpageRef));
+        String coverPageRef = proposal.getMetadata().get().getRef();
+        idsAndUrlsHolder.setCoverpageId(coverPageRef);
+        idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverPageRef));
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -327,9 +325,9 @@ public abstract class CollectionContextService {
     }
 
     public void executeCreateFinancialStatement() {
-        LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
-        financialStatementContext.usePackage(leosPckg);
+        financialStatementContext.usePackage(leosPackage);
         String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
         financialStatementContext.useTemplate(template);
         financialStatementContext.usePurpose(purpose);

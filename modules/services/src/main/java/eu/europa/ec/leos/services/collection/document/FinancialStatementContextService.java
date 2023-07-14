@@ -219,15 +219,15 @@ public class FinancialStatementContextService {
         Validate.notNull(financialStatementDocument.getSource(), "Financial statement xml is required!");
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(financialStatementDocument.getSource(), createValueMap(metadata),
                 xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
-        FinancialStatement financialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadata,
+        FinancialStatement updatedFinancialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadata,
                 actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, financialStatementDocument.getName());
         if (cloneProposal) {
             Map<String, Object> fsProperties = new HashMap<>();
             fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), financialStatementDocument.getId());
             fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
-            financialStatementService.updateFinancialStatement(financialStatement.getId(), fsProperties, true);
+            financialStatementService.updateFinancialStatement(updatedFinancialStatement.getId(), fsProperties, true);
         }
-        return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+        return financialStatementService.createVersion(updatedFinancialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
     private String createRefForFS() {
