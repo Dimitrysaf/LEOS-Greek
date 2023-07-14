@@ -263,11 +263,14 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   private getLanguage(legFileName: string): string {
-    const parts = legFileName.split('-');
-    const languageCode = parts[2].split('.')[0].toLowerCase();
+    const regex = /-(\w+)\.leg/;
+    const match = legFileName.match(regex);
 
-    if (GLOBAL.i18n.i18nService.languages.includes(languageCode)) {
-      return this.translateService.instant('global.language.' + languageCode);
+    if (match && match.length > 1) {
+      const languageCode = match[1].toLowerCase();
+      if (GLOBAL.i18n.i18nService.languages.includes(languageCode)) {
+        return this.translateService.instant('global.language.' + languageCode);
+      }
     }
 
     return '';
