@@ -68,11 +68,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     private final XmlContentProcessor xmlContentProcessor;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
-    List<String> BILL_DOC_TYPES = new ArrayList(Arrays.asList("REG", "DIR", "DEC"));
+    List<String> BILL_DOC_TYPES = new ArrayList<>(Arrays.asList("REG", "DIR", "DEC"));
     private static final String ANNEX_DOC_TYPE = "ANNEX";
     private static final String MEMORANDUM_DOC_TYPE = "EXPL_MEMORANDUM";
-    private static final String FS_DOC_TYPE = "STAT_FINANC_LEGIS";
-
 
     @Autowired
     public ContributionServiceProposalImpl(LeosRepository leosRepository, MessageHelper messageHelper,
@@ -148,8 +146,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (annex != null && annex.getMetadata().get().getIndex() == annexIndex) {
                         String annexName = annex.getName();
                         byte[] annexContent = (byte[]) legContent.get(annexName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), annex,
-                                annexContent, legName, annexName));
+                        ContributionLegDocumentVO<Annex> annexContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), annex,
+                                annexContent, legName, annexName);
+                        documentVersions.add((ContributionLegDocumentVO<T>) annexContributionLegDocumentVO);
                     }
                 });
             } else if(filterType.getSimpleName().equalsIgnoreCase(BILL)) {
@@ -163,8 +162,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (doc != null) {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName));
+                        ContributionLegDocumentVO<Bill> billContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName);
+                        documentVersions.add((ContributionLegDocumentVO<T>) billContributionLegDocumentVO);
                     }
                 }
             } else if(filterType.getSimpleName().equalsIgnoreCase(MEMORANDUM)) {
@@ -176,8 +176,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (doc != null) {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName));
+                        ContributionLegDocumentVO<Memorandum> contributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName);
+                        documentVersions.add((ContributionLegDocumentVO<T>)contributionLegDocumentVO);
                     }
                 }
             } else if(filterType.getSimpleName().equalsIgnoreCase(FINANCIAL_STATEMENT)) {
@@ -189,8 +190,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (doc != null) {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName));
+                        ContributionLegDocumentVO<FinancialStatement> financialStatementContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName);
+                        documentVersions.add((ContributionLegDocumentVO<T>) financialStatementContributionLegDocumentVO);
                     }
                 }
             }else if(filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
@@ -200,8 +202,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     byte[] docContent = (byte[]) legContent.get(documentName);
                     XPathCatalog catalog = new XPathCatalog();
                     doc = proposalService.findProposalVersion(xmlContentProcessor.getElementValue(docContent, catalog.getXPathObjectId(), true));
-                    documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                            docContent, legName, documentName));
+                    ContributionLegDocumentVO<Proposal> proposalContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                            docContent, legName, documentName);
+                    documentVersions.add((ContributionLegDocumentVO<T>) proposalContributionLegDocumentVO);
                 }
             }
         }
