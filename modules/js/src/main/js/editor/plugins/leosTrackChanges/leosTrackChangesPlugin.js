@@ -181,6 +181,9 @@ define(function leosTrackChangesPluginModule(require) {
                 // Initialize styles with selected track changes showed option
                 core.updateTrackChangesStyles(core.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
 
+                // Attach key listeners for table
+                table.keyboardIntegration(editor);
+
                 // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
                     if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
