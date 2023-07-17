@@ -483,9 +483,16 @@ define(function leosTrackChangesTableModule(require) {
                 ranges = selection.getRanges();
                 firstCell = ranges[0].getEnclosedNode().getAscendant( { td: 1, th: 1 }, true);
 
-                for (i = 0; i < ranges.length; i++) {
+                var deleteTcStyle = new CKEDITOR.style({
+                    element: core.TRACKCHANGES_ELEMENT,
+                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                });
+
+                style.apply(editor, deleteTcStyle);
+
+                /*for (i = 0; i < ranges.length; i++) {
                     clearCellInRange(ranges[i]);
-                }
+                }*/
 
                 // In case of selection of table element, there won't be any cell (#867).
                 if (firstCell) {
