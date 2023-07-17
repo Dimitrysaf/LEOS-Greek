@@ -258,15 +258,22 @@ export class DocumentService implements OnDestroy {
       distinctUntilChanged(),
       combineLatestWith(this.documentRefAndCategory$),
       mergeMap(([versionToCompare, option]) =>
-        versionToCompare.length > 1
-          ? this.getDocumentVersionsComparison(
+        versionToCompare.length > 2
+          ? this.getDocumentVersionsDoubleComparison(
+              option.ref,
+              option.category,
+              versionToCompare[2],
+              versionToCompare[1] !== undefined ? versionToCompare[1] : null,
+              versionToCompare[0],
+            )
+          : versionToCompare.length > 1 ?
+            this.getDocumentVersionsSimpleComparison(
               option.ref,
               option.category,
               versionToCompare[1],
-              versionToCompare[2] !== undefined ? versionToCompare[2] : null,
               versionToCompare[0],
             )
-          : of(''),
+            : of(''),
       ),
     );
 
@@ -896,7 +903,7 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersionsComparison(
+  getDocumentVersionsDoubleComparison(
     documentRef: string,
     documentType: string,
     newVersion: Version,
@@ -919,12 +926,21 @@ export class DocumentService implements OnDestroy {
         },
         { responseType: 'text' as 'json' },
       );
-    } else {
-      return this.http.get<string>(
-        `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
-        { responseType: 'text' as 'json' },
-      );
     }
+  }
+
+  getDocumentVersionsSimpleComparison(
+    documentRef: string,
+    documentType: string,
+    newVersion: Version,
+    oldVersion: Version,
+  ) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
+    return this.http.get<string>(
+      `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
+      {responseType: 'text' as 'json'},
+    );
   }
 
   renumberDocument() {
