@@ -834,6 +834,7 @@ export class DocumentEditorComponent
 
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
+    this.isContributionDeclinedOrProcessed = !this.isContributionDeclinedOrProcessed;
     this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
