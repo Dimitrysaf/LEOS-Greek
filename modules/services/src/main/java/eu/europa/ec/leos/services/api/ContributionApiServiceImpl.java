@@ -105,7 +105,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       MessageHelper messageHelper,
                                       DocumentContentService documentContentService,
                                       ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI,
-                                      DocumentViewService<XmlDocument> documentViewService) {
+                                      DocumentViewService<XmlDocument> documentViewService,
+                                      RepositoryPropertiesMapper repositoryPropertiesMapper) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
