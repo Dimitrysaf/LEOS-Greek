@@ -421,6 +421,7 @@ body {
   .eui-input-group.row label,
   .eui-input-group.row .eui-label {
     font-family: var(--eui-base-font-family);
+    margin-top: var(--eui-base-spacing-xs);
   }
 
   .eui-chip {
