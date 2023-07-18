@@ -290,17 +290,23 @@ export class CKEditorService implements OnDestroy {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.mergeContributionConnector = new MergeContributionConnector(
-      leosState,
-      this.documentService,
-      {
-        rootElement,
-      },
-    );
+    this.documentService.isClonedProposal$.subscribe((isCloned) => {
+      if (!isCloned) {
+        this.mergeContributionConnector = new MergeContributionConnector(
+          leosState,
+          this.documentService,
+          {
+            rootElement,
+          },
+        );
 
-    require(['extension/mergeContributionExtension'], (mergeContribution) => {
-      mergeContribution.init(this.mergeContributionConnector);
-      this.mergeContributionConnector.jsDepsInited();
+        require(['extension/mergeContributionExtension'], (
+          mergeContribution,
+        ) => {
+          mergeContribution.init(this.mergeContributionConnector);
+          this.mergeContributionConnector.jsDepsInited();
+        });
+      }
     });
   }
 
