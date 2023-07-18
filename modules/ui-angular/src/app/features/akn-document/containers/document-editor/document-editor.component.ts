@@ -828,6 +828,7 @@ export class DocumentEditorComponent
 
   onChangeProcessedToggle(_e: boolean) {
     this.processed = !this.processed;
+    this.isContributionDeclinedOrProcessed = !this.isContributionDeclinedOrProcessed;
     this.markContributionAsProcessedDialog.openDialog();
   }
 
