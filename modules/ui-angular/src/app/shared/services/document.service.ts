@@ -118,6 +118,7 @@ export class DocumentService implements OnDestroy {
   contributionSelections$: Observable<number>;
   contributionViewAndMergeCollapsed$: Observable<boolean>;
   annexDocNumber$: Observable<number>;
+  isClonedProposal$: Observable<boolean>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -162,6 +163,7 @@ export class DocumentService implements OnDestroy {
     true,
   );
   private annexDocNumberBS = new BehaviorSubject<number>(-1);
+  private isClonedProposalBS = new BehaviorSubject<boolean>(false);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -176,6 +178,7 @@ export class DocumentService implements OnDestroy {
     private loadingService: LoadingService,
   ) {
     this.annexDocNumber$ = this.annexDocNumberBS.asObservable();
+    this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
@@ -956,6 +959,9 @@ export class DocumentService implements OnDestroy {
     this.annexDocNumberBS.next(num);
   }
 
+  setIsClonedProposal(cloned: boolean) {
+    this.isClonedProposalBS.next(cloned);
+  }
   getUserPermissions() {
     return this.permissionsBS.value;
   }

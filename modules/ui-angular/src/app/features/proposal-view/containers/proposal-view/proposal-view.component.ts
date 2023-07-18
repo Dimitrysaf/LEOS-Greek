@@ -7,6 +7,8 @@ import { Document } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
+import { DocumentService } from '@/shared/services/document.service';
+
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({
@@ -33,6 +35,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
+    private documentService: DocumentService,
     public breadcrumbService: EuiBreadcrumbService,
   ) {}
 
@@ -52,6 +55,9 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
           this.proposalTitleEditablePart = `${proposal.metadata.docPurpose}`;
           this.isClonedProposal = Boolean(
             proposal.cloneProposalMetadataVO?.clonedProposal,
+          );
+          this.documentService.setIsClonedProposal(
+            Boolean(proposal.cloneProposalMetadataVO?.clonedProposal),
           );
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);

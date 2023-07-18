@@ -179,20 +179,20 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
-                                                       String documentRef,
+                                                       String documentVersionRef,
                                                        String documentType,
                                                        String contributionVersionRef) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
-        XmlDocument contributionVersion = (XmlDocument)contributionService.findVersionByVersionedReference(contributionVersionRef, documentClass.getClazz());
-        XmlDocument originalVersion = (XmlDocument)leosRepository.findFirstVersion(documentClass.getClazz(), documentRef);
-        final LeosPackage leosPackage = this.leosRepository.findPackageByDocumentRef(contributionVersion.getMetadata().get().getRef(), documentClass.getClazz());
+        XmlDocument contributionVersion = (XmlDocument)this.contributionService.findVersionByVersionedReference(contributionVersionRef, documentClass.getClazz());
+        XmlDocument originalVersion = (XmlDocument)this.leosRepository.findDocumentByRef(documentVersionRef, documentClass.getClazz());
+        final LeosPackage leosPackage = this.leosRepository.findPackageByDocumentRef(originalVersion.getMetadata().get().getRef(), documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
 
         if(Objects.isNull(contributionVersion)){
             throw new RuntimeException(String.format("Contribution version not found for %s", contributionVersionRef));
         }
         if(Objects.isNull(originalVersion)){
-            throw new RuntimeException(String.format("Original version not found for %s", documentRef));
+            throw new RuntimeException(String.format("Original version not found for %s", documentVersionRef));
         }
 
         final String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion, contextPath,
@@ -205,7 +205,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         cloneContext.setContribution(Boolean.TRUE);
         String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
 
-        return new DocumentViewResponse(proposal.getOriginRef(), comparedContent,
+        return new DocumentViewResponse(proposal.getMetadata().get().getRef(), comparedContent,
                 documentViewService.getVersionInfo(contributionVersion));
     }
     
@@ -234,26 +234,24 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.populateCloneProposalMetadata(Validate.notNull(proposal));
 
         XmlDocument document = (XmlDocument)this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
-        if(Objects.isNull(request.getMergeActions()) || request.getMergeActions().isEmpty()) {
-            return document.getContent().get().getSource().getBytes();
+        if(Objects.nonNull(request.getMergeActions()) && Boolean.FALSE.equals(request.getMergeActions().isEmpty())) {
+            structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
+            List<TocItem> tocItemList = this.structureContext.get().getTocItems();
+            byte[] xmlClonedContent = request.getMergeActions().get(0).getContributionVO().getXmlContent();
+            List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
+            byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
+            xmlContent = this.numberService.renumberArticles(xmlContent, true);
+            xmlContent = this.numberService.renumberRecitals(xmlContent);
+            xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
+            document = (XmlDocument) this.leosRepository.updateDocument(
+                    document.getId(),
+                    xmlContent,
+                    document.getVersionType(),
+                    this.messageHelper.getMessage("contribution.merge.operation.message"),
+                    documentClass.getClazz()
+            );
         }
-        structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
-        List<TocItem> tocItemList = this.structureContext.get().getTocItems();
-        byte[] xmlClonedContent = request.getMergeActions().get(0).getContributionVO().getXmlContent();
-        List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
-        byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
-        xmlContent = this.numberService.renumberArticles(xmlContent, true);
-        xmlContent = this.numberService.renumberRecitals(xmlContent);
-        xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
-        document = (XmlDocument) this.leosRepository.updateDocument(
-                document.getId(),
-                xmlContent,
-                document.getVersionType(),
-                this.messageHelper.getMessage("contribution.merge.operation.message"),
-                documentClass.getClazz()
-        );
-
-        if(request.isAcceptAllContributions()) {
+        if( request.isAcceptAllContributions() ) {
             String contributionRef = request.getMergeActions().get(0).getContributionVO().getVersionedReference();
             this.markRevisionAsProcessed(documentType, contributionRef);
         }
