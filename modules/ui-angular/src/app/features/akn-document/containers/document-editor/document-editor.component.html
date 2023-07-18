@@ -733,8 +733,9 @@
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="
-                  (documentService.contributionSelections$ | async) === 0 &&
-                  contributionActionSelected === 'accept_selected'
+                  ((documentService.contributionSelections$ | async) === 0 &&
+                  contributionActionSelected === 'accept_selected') ||
+                  isContributionDeclinedOrProcessed
                 "
               >
                 {{
