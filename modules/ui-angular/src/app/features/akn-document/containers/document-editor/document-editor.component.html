@@ -674,27 +674,34 @@
               >
                 <span class="eui-icon eui-icon-sort-desc"></span>
               </button>
-              <span
-                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s flex-grow-1 select-revisions-span"
-                *ngIf="(documentService.contributionSelections$ | async) === 0"
-                >{{
-                  'page.editor.contribution.view.text.select-revisions'
-                    | translate
-                }}</span
-              >
-              <span
-                class="eui-u-ml-s eui-u-mr-s eui-u-font-size-s flex-grow-1 select-revisions-span"
-                *ngIf="(documentService.contributionSelections$ | async) > 0"
-                >{{
-                  'page.editor.contribution.view.text.revisions-selected'
-                    | translate
-                      : {
-                          selected:
-                            documentService.contributionSelections$ | async,
-                          all: contributionChanges.length
-                        }
-                }}</span
-              >
+            </div>
+            <h4
+              class="eui-u-font-size-s"
+              *ngIf="(documentService.contributionSelections$ | async) === 0"
+            >
+              {{
+                'page.editor.contribution.view.text.select-revisions'
+                  | translate
+              }}
+            </h4>
+            <h4
+              class="eui-u-font-size-s"
+              *ngIf="(documentService.contributionSelections$ | async) > 0"
+            >
+              {{
+                'page.editor.contribution.view.text.revisions-selected'
+                  | translate
+                    : {
+                        selected:
+                          documentService.contributionSelections$ | async,
+                        all: contributionChanges.length
+                      }
+              }}
+            </h4>
+            <div
+              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
+              style="max-width: fit-content"
+            >
               <select
                 euiSelect
                 name="action_nolabel"
@@ -734,7 +741,7 @@
                 [showDelay]="tooltipsDelay"
                 [disabled]="
                   ((documentService.contributionSelections$ | async) === 0 &&
-                  contributionActionSelected === 'accept_selected') ||
+                    contributionActionSelected === 'accept_selected') ||
                   isContributionDeclinedOrProcessed
                 "
               >

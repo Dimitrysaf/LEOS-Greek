@@ -134,6 +134,7 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector?.populateMergeActionList(
       acceptAllContributions,
     );
+    this.documentService.handleContributionSelectCount(false, true);
   }
 
   private initActionManager(
