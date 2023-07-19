@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.leos.services.milestone;
 
+import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
-import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.export.ComparisonType;
@@ -56,7 +56,7 @@ public class ProposalMilestoneServiceImpl extends AbstractMilestoneService {
     protected LegPackage createLegPackage(String proposalId) throws IOException {
         if(cloneContext != null && cloneContext.isClonedProposal()) {
             // TODO:
-            // Trackchanges: Comparinson removed because of trackchanges. Remove this line when we clean up after finish track changes
+            // Trackchanges: Comparison removed because of trackchanges. Remove this line when we clean up after finish track changes
             /*ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF,
                     true, ComparisonType.SIMPLE);*/
             ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF, true);

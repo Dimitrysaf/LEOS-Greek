@@ -54,6 +54,7 @@ public class XmlHelper {
     public static final String DOC = "doc";
     public static final String BILL = "bill";
     public static final String MEMORANDUM = "memorandum";
+    public static final String FINANCIAL_STATEMENT = "FinancialStatement";
     public static final String PROPOSAL = "proposal";
     public static final String AKOMANTOSO = "akomaNtoso";
     public static final String META = "meta";

@@ -2,11 +2,11 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.FinancialStatement.FinancialStatementStructureType;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
+import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 
 @Service
@@ -322,5 +323,12 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     @Override
     public List<FinancialStatement> findFinancialStatementByPackagePath(String path) {
         return packageRepository.findDocumentsByPackagePath(path, FinancialStatement.class, true);
+    }
+
+    @Override
+    public String generateFinancialStatementReference(byte[] content, String language) {
+        String docName = xmlContentProcessor.getDocReference(content);
+        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
+                .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
     }
 }

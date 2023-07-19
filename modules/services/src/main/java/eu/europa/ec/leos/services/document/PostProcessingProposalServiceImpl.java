@@ -1,13 +1,12 @@
 package eu.europa.ec.leos.services.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
+import eu.europa.ec.leos.domain.common.ErrorCode;
+import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.ErrorCode;
-import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -47,6 +46,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     private BillService billService;
     private AnnexService annexService;
     private MemorandumService memorandumService;
+    private FinancialStatementService financialStatementService;
     private DocumentContentService documentContentService;
     private UserService userService;
     private SecurityContext securityContext;
@@ -59,7 +59,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     @Autowired
     PostProcessingProposalServiceImpl(XmlContentProcessor xmlContentProcessor, ProposalService proposalService,
             BillService billService, AnnexService annexService, MemorandumService memorandumService,
-            DocumentContentService documentContentService,
+            FinancialStatementService financialStatementService, DocumentContentService documentContentService,
             UserService userService, XPathCatalog xPathCatalog,
             SecurityContext securityContext, MessageHelper messageHelper, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(xmlContentProcessor, xPathCatalog);
@@ -67,6 +67,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
         this.billService = billService;
         this.annexService = annexService;
         this.memorandumService = memorandumService;
+        this.financialStatementService = financialStatementService;
         this.documentContentService = documentContentService;
         this.userService = userService;
         this.securityContext = securityContext;
@@ -170,7 +171,7 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                     XmlDocument xmlDocument = documentContentService.getDocumentById(child.getId(), documentCategory);
                     xmlContent = xmlDocument.getContent().getOrThrow(() ->
                             new IllegalArgumentException("Document not found")).getSource().getBytes();
-                    byte[] updatedContent = new byte[0];
+                    byte[] updatedContent;
                     switch (child.getCategory()) {
                         case BILL:
                             updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getBillId(),
@@ -183,6 +184,12 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                                     cloneProposalMetadataVO);
                             child.setSource(updatedContent);
                             memorandumService.updateMemorandum(child.getId(), updatedContent);
+                            break;
+                        case STAT_FINANC_LEGIS:
+                            updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getFinancialStatementId(),
+                                    cloneProposalMetadataVO);
+                            child.setSource(updatedContent);
+                            financialStatementService.updateFinancialStatement(child.getId(), updatedContent);
                             break;
                         case ANNEX:
                             String clonedAnnexId = idsAndUrlsHolder.getDocCloneAndOriginIdMap().entrySet()
@@ -197,7 +204,8 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                             annexService.updateAnnex(child.getId(), updatedContent);
                             break;
                         default:
-                            throw new RuntimeException("Invalid document category");
+                            LOG.debug("Do nothing for rest of the categories like FS, MEDIA, CONFIG & LEG");
+                            break;
                     }
                 }
             } catch (Exception e) {

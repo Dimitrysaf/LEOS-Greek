@@ -16,6 +16,7 @@
  * Standard configuration used when running: npm run test-karma (or karma start)
  */
 module.exports = function(config) {
+  console.log("*************** Running karma in Local ***************");
   config.set({
     basePath: '', // base path that will be used to resolve all patterns (eg. files, exclude)
 
@@ -26,11 +27,11 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       "karma.requirejs.config.js",
-      'node_modules/requirejs/require.js',
-      'node_modules/karma-requirejs/lib/adapter.js',
+      "node_modules/requirejs/require.js",
+      "node_modules/karma-requirejs/lib/adapter.js",
       "src/main/js/leosModulesBootstrap.js",
-      {pattern: 'src/test/**/*.js', watched: true, served: true, included: false},
-      {pattern: 'src/main/**/*.js', watched: true, served: true, included: false},
+      {pattern: 'src/test/**/*.js', nocache: true, watched: true, served: true, included: false},
+      {pattern: 'src/main/**/*.js', nocache: true, watched: true, served: true, included: false},
       "karma.main.js"
     ],
 

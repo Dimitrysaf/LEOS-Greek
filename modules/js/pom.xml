@@ -35,6 +35,8 @@
         <resourcesOutputDirectory>META-INF/resources</resourcesOutputDirectory>
         <testResourcesOutputDirectory>META-INF/resources</testResourcesOutputDirectory>
         <sonar.sources>src/main</sonar.sources>
+        <exec.plugin.execution.phase>test</exec.plugin.execution.phase>
+        <frontend.plugin.execution.phase>test</frontend.plugin.execution.phase>
     </properties>
 
     <dependencies>
@@ -139,37 +141,76 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>npm-install</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>${exec.plugin.execution.phase}</phase>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>karma-tests</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>${exec.plugin.execution.phase}</phase>
+                        <configuration>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <executable>node</executable>
+                            <arguments>
+                                <argument>node_modules/karma/bin/karma</argument>
+                                <argument>start</argument>
+                                <argument>karma.conf.ci.js</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>${frontend-maven-plugin.version}</version>
                 <configuration>
                     <installDirectory>target</installDirectory>
-                </configuration> 
+                </configuration>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install-node-and-npm</id>
                         <goals>
-                        <goal>install-node-and-npm</goal>
+                            <goal>install-node-and-npm</goal>
                         </goals>
+                        <phase>${frontend.plugin.execution.phase}</phase>
                         <configuration>
-                        <nodeVersion>v16.17.1</nodeVersion>
-                        <npmVersion>8.15.0</npmVersion>
+                            <nodeVersion>v16.17.1</nodeVersion>
+                            <npmVersion>8.15.0</npmVersion>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm ci</id>
+                        <id>npm-install</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <phase>${frontend.plugin.execution.phase}</phase>
                         <configuration>
-                            <arguments>ci</arguments>
+                            <arguments>install</arguments>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>javascript tests</id>
+                        <id>karma-tests</id>
                         <goals>
                             <goal>karma</goal>
                         </goals>
+                        <phase>${frontend.plugin.execution.phase}</phase>
                         <configuration>
                             <karmaConfPath>karma.conf.ci.js</karmaConfPath>
                         </configuration>
@@ -178,4 +219,41 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>skipFrontendPlugin</id>
+            <activation>
+                <property>
+                    <name>skipFrontendPlugin</name>
+                </property>
+            </activation>
+            <properties>
+                <frontend.plugin.execution.phase>none</frontend.plugin.execution.phase>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipExecPlugin</id>
+            <activation>
+                <property>
+                    <name>!skipFrontendPlugin</name>
+                </property>
+            </activation>
+            <properties>
+                <exec.plugin.execution.phase>none</exec.plugin.execution.phase>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipTests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <frontend.plugin.execution.phase>none</frontend.plugin.execution.phase>
+                <exec.plugin.execution.phase>none</exec.plugin.execution.phase>
+            </properties>
+        </profile>
+    </profiles>
 </project>

@@ -1,17 +1,18 @@
 package eu.europa.ec.leos.services.document;
 
+import eu.europa.ec.leos.domain.common.ErrorCode;
+import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.ErrorCode;
-import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -44,8 +45,10 @@ import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
+import static eu.europa.ec.leos.services.support.XmlHelper.FINANCIAL_STATEMENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.MEMORANDUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service
@@ -65,10 +68,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     private final XmlContentProcessor xmlContentProcessor;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
-    List<String> BILL_DOC_TYPES = new ArrayList(Arrays.asList("REG", "DIR", "DEC"));
+    List<String> BILL_DOC_TYPES = new ArrayList<>(Arrays.asList("REG", "DIR", "DEC"));
     private static final String ANNEX_DOC_TYPE = "ANNEX";
     private static final String MEMORANDUM_DOC_TYPE = "EXPL_MEMORANDUM";
-
 
     @Autowired
     public ContributionServiceProposalImpl(LeosRepository leosRepository, MessageHelper messageHelper,
@@ -144,8 +146,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (annex != null && annex.getMetadata().get().getIndex() == annexIndex) {
                         String annexName = annex.getName();
                         byte[] annexContent = (byte[]) legContent.get(annexName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), annex,
-                                annexContent, legName, annexName));
+                        ContributionLegDocumentVO<Annex> annexContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), annex,
+                                annexContent, legName, annexName);
+                        documentVersions.add((ContributionLegDocumentVO<T>) annexContributionLegDocumentVO);
                     }
                 });
             } else if(filterType.getSimpleName().equalsIgnoreCase(BILL)) {
@@ -159,8 +162,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (doc != null) {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName));
+                        ContributionLegDocumentVO<Bill> billContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName);
+                        documentVersions.add((ContributionLegDocumentVO<T>) billContributionLegDocumentVO);
                     }
                 }
             } else if(filterType.getSimpleName().equalsIgnoreCase(MEMORANDUM)) {
@@ -172,19 +176,35 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     if (doc != null) {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
-                        documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName));
+                        ContributionLegDocumentVO<Memorandum> contributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName);
+                        documentVersions.add((ContributionLegDocumentVO<T>)contributionLegDocumentVO);
                     }
                 }
-            } else if(filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
+            } else if(filterType.getSimpleName().equalsIgnoreCase(FINANCIAL_STATEMENT)) {
+                Optional<String> fileToFind = containedDocuments.stream()
+                        .filter(containedFile -> containedFile.startsWith(STAT_FINANC_LEGIS + "-"))
+                        .findFirst();
+                if (fileToFind.isPresent()) {
+                    FinancialStatement doc = (FinancialStatement) findVersionByVersionedReference(fileToFind.get(), filterType);
+                    if (doc != null) {
+                        String documentName = doc.getName();
+                        byte[] docContent = (byte[])legContent.get(documentName);
+                        ContributionLegDocumentVO<FinancialStatement> financialStatementContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                                docContent, legName, documentName);
+                        documentVersions.add((ContributionLegDocumentVO<T>) financialStatementContributionLegDocumentVO);
+                    }
+                }
+            }else if(filterType.getSimpleName().equalsIgnoreCase(PROPOSAL)) {
                 Proposal doc = clonedProposal;
                 if (doc != null) {
                     String documentName = doc.getName();
                     byte[] docContent = (byte[]) legContent.get(documentName);
                     XPathCatalog catalog = new XPathCatalog();
                     doc = proposalService.findProposalVersion(xmlContentProcessor.getElementValue(docContent, catalog.getXPathObjectId(), true));
-                    documentVersions.add(new ContributionLegDocumentVO(clonedProposal.getOriginRef(), doc,
-                            docContent, legName, documentName));
+                    ContributionLegDocumentVO<Proposal> proposalContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
+                            docContent, legName, documentName);
+                    documentVersions.add((ContributionLegDocumentVO<T>) proposalContributionLegDocumentVO);
                 }
             }
         }

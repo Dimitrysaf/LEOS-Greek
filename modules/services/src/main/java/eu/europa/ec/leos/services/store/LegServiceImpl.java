@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import cool.graph.cuid.Cuid;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
@@ -26,7 +27,6 @@ import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.LegDocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -1508,7 +1508,11 @@ public class LegServiceImpl implements LegService {
         addMemorandumToPackageForClone(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage,
                 proposal.getMetadata().getOrNull().getRef());
 
-        //5. Add toc and media
+        //5. Add financial statement to package
+        addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage,
+                proposal.getMetadata().getOrNull().getRef());
+
+        //6. Add toc and media
         enrichZipWithToc(contentToZip);
         enrichZipWithMedia(contentToZip, leosPackage);
 
