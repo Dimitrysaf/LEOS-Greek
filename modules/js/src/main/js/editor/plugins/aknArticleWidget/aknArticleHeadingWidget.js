@@ -34,8 +34,7 @@ define(function aknArticleHeadingWidgetModule(require) {
                 allowedContent: {
                     "sup": {},
                     "sub": {},
-                    "ins": { attributes: true },
-                    "del": { attributes: true }
+                    "span": { attributes: true }
                 },
             }
         },

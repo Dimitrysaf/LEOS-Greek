@@ -178,44 +178,10 @@ define(function aknArticlePluginModule(require) {
                 akn : "xml:id",
                 html : "data-akn-heading-id"
             } ],
-            sub : [ {
+            sub : {
                 akn : "text",
                 html : "article/h2/text"
-            }, {
-                akn : "del",
-                html : "article/h2/del",
-                attr : [{
-                    akn : "xml:id",
-                    html : "xml:id"
-                }, {
-                    akn : "leos:uid",
-                    html : "leos:uid"
-                }, {
-                    akn : "leos:title",
-                    html : "leos:title"
-                }],
-                sub : {
-                    akn : "text",
-                    html : "article/h2/del/text"
-                }
-            }, {
-                akn : "ins",
-                html : "article/h2/ins",
-                attr : [{
-                    akn : "xml:id",
-                    html : "xml:id"
-                }, {
-                    akn : "leos:uid",
-                    html : "leos:uid"
-                }, {
-                    akn : "leos:title",
-                    html : "leos:title"
-                }],
-                sub : {
-                    akn : "text",
-                    html : "article/h2/ins/text"
-                }
-            } ]
+            }
         }, {
             akn : "article",
             html : "article/ol",
