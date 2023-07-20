@@ -37,7 +37,7 @@ define(function transformerModule(require) {
          * 
          */
         transform: function transform(params) {
-            if(this._isCKEditorWidget(params.fragment) || this._isArticleHeading(params.fragment)) {
+            if(this._isCKEditorWidget(params.fragment)) {
                 return;
             }
             this._initPrivate();
