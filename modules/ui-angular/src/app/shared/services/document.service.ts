@@ -119,6 +119,7 @@ export class DocumentService implements OnDestroy {
   contributionViewAndMergeCollapsed$: Observable<boolean>;
   annexDocNumber$: Observable<number>;
   isClonedProposal$: Observable<boolean>;
+  isContributionDeclinedOrProcessed$: Observable<boolean>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -164,6 +165,9 @@ export class DocumentService implements OnDestroy {
   );
   private annexDocNumberBS = new BehaviorSubject<number>(-1);
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
+  private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
+    false,
+  );
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -179,6 +183,8 @@ export class DocumentService implements OnDestroy {
   ) {
     this.annexDocNumber$ = this.annexDocNumberBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
+    this.isContributionDeclinedOrProcessed$ =
+      this.isContributionDeclinedOrProcessedBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
@@ -962,6 +968,14 @@ export class DocumentService implements OnDestroy {
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
   }
+  setIsContributionDeclinedOrProcessed(declined: boolean) {
+    this.isContributionDeclinedOrProcessedBS.next(declined);
+  }
+  toggleIsContributionDeclinedOrProcessed() {
+    this.isContributionDeclinedOrProcessedBS.next(
+      !this.isContributionDeclinedOrProcessedBS.value,
+    );
+  }
   getUserPermissions() {
     return this.permissionsBS.value;
   }
@@ -1009,6 +1023,7 @@ export class DocumentService implements OnDestroy {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          this.setIsContributionDeclinedOrProcessed(true);
           this.getContributions();
         },
         error: (res) => {
