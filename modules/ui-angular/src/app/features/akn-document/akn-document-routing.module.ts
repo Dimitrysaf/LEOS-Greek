@@ -10,6 +10,11 @@ const routes: Routes = [
     data: { category: 'annex' },
   },
   {
+    path: 'financial-statement/:id',
+    component: DocumentEditorComponent,
+    data: { category: 'financial-statement' },
+  },
+  {
     path: 'memorandum/:id',
     component: DocumentEditorComponent,
     data: { category: 'memorandum' },

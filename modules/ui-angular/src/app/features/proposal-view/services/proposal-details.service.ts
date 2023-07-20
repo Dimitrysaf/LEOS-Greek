@@ -511,6 +511,56 @@ export class ProposalDetailsService implements OnDestroy {
     );
   }
 
+  deleteFinancialStatement(financialStatementRef: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .delete<any>(
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/delete-financial-statement/${financialStatementRef}`,
+        {},
+      )
+      .subscribe({
+        next: (res) => this.setProposalRef(this.proposalRef),
+        error: (res) => {
+          this.loadingService.setLoading(false);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.drafts.financial-statement.delete.error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  createFinancialStatement() {
+    this.loadingService.setLoading(true);
+    this.http
+      .post<any>(
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/create-financial-statement`,
+        {},
+      )
+      .subscribe({
+        next: (res) => this.setProposalRef(this.proposalRef),
+        error: (res) => {
+          this.loadingService.setLoading(false);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.drafts.financial-statement.create.error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
   private getProposalDetails(): Observable<Document> {
     this.loadingService.setLoading(true);
     return this.http.get<Document>(

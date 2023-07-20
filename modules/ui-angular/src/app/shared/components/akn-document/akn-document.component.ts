@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { DOCUMENT_STYLES } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 
@@ -69,7 +70,8 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
     this.config.config.subscribe((config) => {
       // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
       // FIXME: import stylesheets to ngui?
-      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css`;
+      const styleName = DOCUMENT_STYLES[category] ?? category;
+      const cssUrl = `${config.mappingUrl}/assets/css/${styleName}.css`;
       this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
     });
   }
