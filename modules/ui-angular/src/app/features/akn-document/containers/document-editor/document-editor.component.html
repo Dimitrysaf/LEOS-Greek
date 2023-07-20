@@ -633,7 +633,9 @@
                   ) | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="isContributionDeclinedOrProcessed"
+                [disabled]="
+                  documentService.isContributionDeclinedOrProcessed$ | async
+                "
               >
                 <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
               </button>
@@ -651,7 +653,9 @@
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="isContributionDeclinedOrProcessed"
+                [disabled]="
+                  documentService.isContributionDeclinedOrProcessed$ | async
+                "
               >
                 <span class="eui-icon eui-icon-sort-asc"></span>
               </button>
@@ -670,7 +674,9 @@
                     | translate
                 "
                 [showDelay]="tooltipsDelay"
-                [disabled]="isContributionDeclinedOrProcessed"
+                [disabled]="
+                  documentService.isContributionDeclinedOrProcessed$ | async
+                "
               >
                 <span class="eui-icon eui-icon-sort-desc"></span>
               </button>
@@ -706,7 +712,9 @@
                 euiSelect
                 name="action_nolabel"
                 aria-label="action nolabel"
-                [disabled]="isContributionDeclinedOrProcessed"
+                [disabled]="
+                  documentService.isContributionDeclinedOrProcessed$ | async
+                "
                 (change)="onSelectAction($event)"
               >
                 <option
@@ -742,7 +750,7 @@
                 [disabled]="
                   ((documentService.contributionSelections$ | async) === 0 &&
                     contributionActionSelected === 'accept_selected') ||
-                  isContributionDeclinedOrProcessed
+                  (documentService.isContributionDeclinedOrProcessed$ | async)
                 "
               >
                 {{
@@ -756,7 +764,9 @@
               <eui-slide-toggle
                 (changed)="onChangeProcessedToggle($event)"
                 [isChecked]="processed"
-                [disabled]="isContributionDeclinedOrProcessed"
+                [disabled]="
+                  documentService.isContributionDeclinedOrProcessed$ | async
+                "
               ></eui-slide-toggle>
 
               <button

@@ -130,7 +130,6 @@ export class DocumentEditorComponent
   contributionActionSelected = 'accept_selected';
   processed = false;
   acceptedSelectedEnabled = false;
-  isContributionDeclinedOrProcessed = false;
   contributions: ContributionVO[] = [];
   contribution: ContributionVO;
   contributionChanges: NodeListOf<HTMLElement>;
@@ -337,8 +336,9 @@ export class DocumentEditorComponent
         this.processed = processed;
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
-          this.isContributionDeclinedOrProcessed =
-            contribution.contributionStatus === 'CONTRIBUTION_DONE';
+          this.documentService.setIsContributionDeclinedOrProcessed(
+            contribution.contributionStatus === 'CONTRIBUTION_DONE',
+          );
         }
       });
 
@@ -828,13 +828,13 @@ export class DocumentEditorComponent
 
   onChangeProcessedToggle(_e: boolean) {
     this.processed = !this.processed;
-    this.isContributionDeclinedOrProcessed = !this.isContributionDeclinedOrProcessed;
+    this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.markContributionAsProcessedDialog.openDialog();
   }
 
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
-    this.isContributionDeclinedOrProcessed = !this.isContributionDeclinedOrProcessed;
+    this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
@@ -861,7 +861,7 @@ export class DocumentEditorComponent
             position: 'bottom-right',
           });
           this.documentService.getContributions();
-          this.isContributionDeclinedOrProcessed = true;
+          this.documentService.setIsContributionDeclinedOrProcessed(true);
         },
         error: (res) => {
           this.appShellService.growl({
@@ -910,9 +910,10 @@ export class DocumentEditorComponent
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
       this.documentService.setContributionViewAndMergeCollapsed(false);
-      this.isContributionDeclinedOrProcessed =
-        contribution.contributionStatus === 'CONTRIBUTION_DONE';
-      if (this.isContributionDeclinedOrProcessed) {
+      this.documentService.setIsContributionDeclinedOrProcessed(
+        contribution.contributionStatus === 'CONTRIBUTION_DONE',
+      );
+      if (contribution.contributionStatus === 'CONTRIBUTION_DONE') {
         this.handleGreyedContribution(contribution, true);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
