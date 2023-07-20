@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 public enum LeosCategoryClass {
 
@@ -17,9 +18,9 @@ public enum LeosCategoryClass {
     COVERPAGE(Proposal.class),
     STAT_FINANC_LEGIS(FinancialStatement.class);
 
-    private Class clazz;
+    private Class<? extends XmlDocument> clazz;
 
-    LeosCategoryClass(Class clazz) {
+    LeosCategoryClass(Class<? extends XmlDocument> clazz) {
         this. clazz = clazz;
     }
 
@@ -34,6 +35,10 @@ public enum LeosCategoryClass {
             }
         }
         throw new IllegalArgumentException("No enum constant " + LeosCategoryClass.class + "." + name);
+    }
+
+    public static Class getClass(LeosCategory category){
+        return LeosCategoryClass.valueOf(category.name()).getClazz();
     }
 
 }

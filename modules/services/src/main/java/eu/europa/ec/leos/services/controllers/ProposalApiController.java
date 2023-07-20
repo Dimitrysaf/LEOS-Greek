@@ -19,6 +19,7 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.dto.request.CreateExplanatoryDocumentRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
@@ -31,12 +32,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +48,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/secured/proposal")
@@ -52,10 +57,13 @@ public class ProposalApiController {
     private static final Logger LOG = LoggerFactory.getLogger(ProposalApiController.class);
 
     private final ApiService apiService;
+    private final FinancialStatementService financialStatementService;
 
     @Autowired
-    public ProposalApiController(ApiService apiService) {
-        this.apiService = apiService;
+    public ProposalApiController(ApiService apiService,
+                                 FinancialStatementService financialStatementService) {
+        this.apiService = Objects.requireNonNull(apiService);
+        this.financialStatementService = Objects.requireNonNull(financialStatementService);
     }
 
     @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)
@@ -254,5 +262,18 @@ public class ProposalApiController {
         }
         LegFileValidation result = this.apiService.validateLegFile(content);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "{proposalRef}/create-financial-statement", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void createFinancialStatement(@PathVariable("proposalRef") String proposalRef){
+        this.financialStatementService.createFinancialStatementFromProposal(proposalRef);
+    }
+
+    @DeleteMapping(value = "{proposalRef}/delete-financial-statement/{financialStatementRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFinancialStatement(@PathVariable("proposalRef") String proposalRef,
+                                         @PathVariable("financialStatementRef") String financialStatementRef){
+        this.financialStatementService.deleteFinancialStatement(proposalRef, financialStatementRef);
     }
 }

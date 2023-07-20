@@ -38,7 +38,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
-import { DocumentConfig } from '@/shared';
+import { DOCUMENT_STYLES, DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
@@ -1211,7 +1211,8 @@ export class DocumentEditorComponent
     this.config.config.subscribe((config) => {
       // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
       // FIXME: import stylesheets to ngui?
-      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css`;
+      const stylesName = DOCUMENT_STYLES[category] ?? category;
+      const cssUrl = `${config.mappingUrl}/assets/css/${stylesName}.css`;
       this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
     });
   }

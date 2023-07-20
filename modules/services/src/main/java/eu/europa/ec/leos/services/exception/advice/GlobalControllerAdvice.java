@@ -19,6 +19,7 @@ import eu.europa.ec.leos.services.controllers.AnnexController;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.ImportElementException;
+import eu.europa.ec.leos.services.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -57,6 +58,13 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleImportElementException(ImportElementException exception) {
         LOG.info(" ---- Controller Advice --- handle ImportElementException: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNotFoundException(NotFoundException exception) {
+        LOG.info(" ---- Controller Advice --- handle {}: {}", NotFoundException.class.getSimpleName(), exception.getMessage());
+        return exception.getMessage();
     }
 
     @Override

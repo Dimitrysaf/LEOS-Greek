@@ -110,12 +110,12 @@ public class ContributionControllerTest {
 
     @Test
     public void listContributionsForDocument() {
-        when(contributionApiService.listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS)).thenReturn(new ArrayList<>());
+        when(contributionApiService.listContributionsForDocument(DOCUMENT_REF, 0)).thenReturn(new ArrayList<>());
 
         ResponseEntity<Object> response = contributionController.listContributionsForDocument(DOCUMENT_REF, "ANNEX", 0);
 
         //verify that the service has been called with the correct params
-        verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0, TEST_CLASS);
+        verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -162,15 +162,14 @@ public class ContributionControllerTest {
     @Test
     public void test_mergeContribution() throws IOException {
         String TEST_DOCUMENT_REF = "documentRef";
-        String TEST_DOCUMENT_TYPE = "documentType";
         String TEST_DOCUMENT_CONTENT = "test content";
         ApplyContributionsRequest TEST_REQUEST = new ApplyContributionsRequest();
 
-        when(this.contributionApiService.mergeContribution(anyString(),anyString(),any(ApplyContributionsRequest.class))).thenReturn(TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8));
+        when(this.contributionApiService.mergeContribution(anyString(),any(ApplyContributionsRequest.class))).thenReturn(TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8));
 
-        ResponseEntity<byte[]> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_REQUEST);
+        ResponseEntity<byte[]> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
 
-        verify(this.contributionApiService).mergeContribution(TEST_DOCUMENT_TYPE, TEST_DOCUMENT_REF, TEST_REQUEST);
+        verify(this.contributionApiService).mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(TEST_DOCUMENT_CONTENT, new String(response.getBody()));

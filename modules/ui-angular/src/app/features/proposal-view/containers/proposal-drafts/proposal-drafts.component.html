@@ -243,8 +243,79 @@
     </eui-card-header-subtitle>
   </eui-card-header>
   <eui-card-content>
+    <!-- FINANCIAL STATEMENT SECTION   -->
     <ng-container *ngIf="!documentCard.euiCollapsed">
-      <div class="eui-u-flex">
+      <div
+        class="eui-u-flex pb-3"
+        style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
+      >
+        <div class="flex-grow-1">
+          <div class="d-flex flex-row">
+            <div *ngIf="!financialStatement">
+              <strong>{{
+                'page.collection.drafts.financial-statement.title' | translate
+              }}</strong>
+            </div>
+            <a
+              *ngIf="financialStatement"
+              [routerLink]="[
+                '/financial-statement',
+                financialStatement.metadata.internalRef
+              ]"
+              (click)="$event.stopPropagation()"
+              ><strong>{{
+                'page.collection.drafts.financial-statement.title' | translate
+              }}</strong></a
+            >
+          </div>
+          <div *ngIf="financialStatement">
+            <eui-card-header-subtitle
+              *ngIf="
+                financialStatement.updatedOn && financialStatement.updatedBy
+              "
+            >
+              <app-proposal-last-updated-on
+                [date]="financialStatement.updatedOn"
+                [name]="financialStatement.updatedBy"
+              ></app-proposal-last-updated-on>
+            </eui-card-header-subtitle>
+          </div>
+          <div *ngIf="!financialStatement">
+            {{
+              'page.collection.drafts.financial-statement.not-fount' | translate
+            }}
+          </div>
+        </div>
+        <ng-container
+          *ngIf="!financialStatement && permissions.includes('CAN_UPDATE')"
+        >
+          <button
+            class="eui-u-ml-l"
+            euiButton
+            euiPrimary
+            (click)="onFinancialStatementCreate()"
+          >
+            {{ 'global.actions.add' | translate }}
+          </button>
+        </ng-container>
+        <ng-container
+          *ngIf="financialStatement && permissions.includes('CAN_UPDATE')"
+        >
+          <button
+            class="eui-u-ml-l"
+            euiButton
+            euiDanger
+            euiOutline
+            (click)="onFinancialStatementDelete()"
+          >
+            {{ 'global.actions.delete' | translate }}
+          </button>
+        </ng-container>
+      </div>
+    </ng-container>
+    <!-- ANNEX SECTION   -->
+    <ng-container *ngIf="!documentCard.euiCollapsed">
+      <div class="eui-u-flex pt-3">
         <div class="flex-grow-1">
           <div>
             <strong>{{
@@ -281,7 +352,6 @@
           </button>
         </ng-container>
       </div>
-
       <table
         class="eui-u-mt-m"
         euiTable

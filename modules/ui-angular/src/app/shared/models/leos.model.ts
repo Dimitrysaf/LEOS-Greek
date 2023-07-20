@@ -8,6 +8,15 @@ export enum InstanceType {
   ANY = 'any',
 }
 
+export const DOCUMENT_STYLES = {
+  annex: 'annex',
+  bill: 'bill',
+  coverpage: 'coverpage',
+  explanatory: 'explanatory',
+  memorandum: 'memorandum',
+  'financial-statement': 'stat_financ_legis',
+};
+
 export type LeosConfig = {
   headerTitle: string;
   headerPath: string | null;
