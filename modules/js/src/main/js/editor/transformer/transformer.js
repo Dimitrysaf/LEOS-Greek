@@ -37,7 +37,7 @@ define(function transformerModule(require) {
          * 
          */
         transform: function transform(params) {
-            if(this._isCKEditorWidget(params.fragment)) {
+            if(this._isCKEditorWidget(params.fragment) || this._isArticleHeading(params.fragment)) {
                 return;
             }
             this._initPrivate();
@@ -56,6 +56,9 @@ define(function transformerModule(require) {
             }
             var rootElement = fragment.children[0];
             return (rootElement && rootElement.hasClass && rootElement.hasClass("cke_widget_wrapper"));
+        },
+        _isArticleHeading : function _isArticleHeading(fragment) {
+            return fragment.name === 'h2';
         },
         _getFragmentTransformer: function _getFragmentTransformer() {
             var fragmentTransformer = fragmentTransformerStamp();

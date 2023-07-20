@@ -356,7 +356,6 @@ define(function leosTrackChangesModule(require) {
                 previousNode = returnArray[1];
             }
             this.doCharSelection(deleteKey, range, nextNode, previousNode);
-            return true;
         },
 
         enterTextNode: function (deleteKey, range, editor, node) {
