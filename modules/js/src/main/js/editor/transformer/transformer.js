@@ -58,18 +58,15 @@ define(function transformerModule(require) {
             return (rootElement && rootElement.hasClass && rootElement.hasClass("cke_widget_wrapper"));
         },
         _skipTransformation : function _skipTransformation(params) {
-            var isH2 = params.fragment.name === 'h2'
-            var isH2InTop = true;
             if (params.transformationConfigResolver._ && params.transformationConfigResolver._.resolverConfigs) {
                 var keys = Object.keys(params.transformationConfigResolver._.resolverConfigs.from);
-                keys.forEach(element => {
+                return keys.every(element => {
                     if (!element.startsWith('h2')) {
-                        isH2InTop = false;
+                        return params.fragment.name === 'h2';
                     }
                 });
             }
-
-            return isH2 && !isH2InTop;
+            return false;
         },
         _getFragmentTransformer: function _getFragmentTransformer() {
             var fragmentTransformer = fragmentTransformerStamp();
