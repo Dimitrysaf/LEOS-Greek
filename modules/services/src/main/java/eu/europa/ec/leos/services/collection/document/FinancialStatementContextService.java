@@ -212,6 +212,7 @@ public class FinancialStatementContextService {
                 .withPurpose(purpose)
                 .withType(type)
                 .withTemplate(template)
+                .withTitle(title)
                 .withRef(ref)
                 .withEeaRelevance(eeaRelevance)
                 .build();

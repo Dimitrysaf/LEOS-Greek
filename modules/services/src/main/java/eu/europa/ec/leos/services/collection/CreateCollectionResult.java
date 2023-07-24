@@ -12,6 +12,8 @@ public class CreateCollectionResult {
     private String memorandumUrl;
     private String memorandumId;
     private String coverpageUrl;
+    private String financialStatementId;
+    private String financialStatementUrl;
     private String coverpageId;
     private Map<String, String> annexIdUrl;
     private Map<String, String> docCloneAndOriginIdMap;
@@ -31,6 +33,8 @@ public class CreateCollectionResult {
         this.billUrl = idsAndUrlsHolder.getBillUrl();
         this.memorandumId = idsAndUrlsHolder.getMemorandumId();
         this.memorandumUrl = idsAndUrlsHolder.getMemorandumUrl();
+        this.financialStatementId = idsAndUrlsHolder.getFinancialStatementId();
+        this.financialStatementUrl = idsAndUrlsHolder.getFinancialStatementUrl();
         this.coverpageId = idsAndUrlsHolder.getCoverpageId();
         this.coverpageUrl = idsAndUrlsHolder.getCoverpageUrl();
         this.annexIdUrl = idsAndUrlsHolder.getAnnexIdAndUrl();
@@ -58,6 +62,14 @@ public class CreateCollectionResult {
     public String getMemorandumId() { return memorandumId; }
 
     public String getMemorandumUrl() { return memorandumUrl; }
+
+    public String getFinancialStatementId() {
+        return financialStatementId;
+    }
+
+    public String getFinancialStatementUrl() {
+        return financialStatementUrl;
+    }
 
     public String getCoverpageId() {
         return coverpageId;
