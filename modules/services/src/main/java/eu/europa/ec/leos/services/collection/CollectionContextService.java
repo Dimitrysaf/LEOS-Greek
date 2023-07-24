@@ -296,6 +296,7 @@ public abstract class CollectionContextService {
                     String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
                     financialStatementContext.useTemplate(template);
                     financialStatementContext.usePurpose(purpose);
+                    financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
                     financialStatementContext.useDocument(docChild);
                     financialStatementContext.useEeaRelevance(eeaRelevance);
                     Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
