@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -18,6 +19,7 @@ enum MilestoneStatus {
   Ready = 'FILE_READY',
   ContributionSent = 'CONTRIBUTION_SENT',
   InPreparation = 'IN_PREPARATION',
+  Error = 'FILE_ERROR',
 }
 
 @Component({
@@ -44,12 +46,16 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
+  milestonesInPreparationExist = false;
+  milestonesInFileErrorExist = false;
+  milestoneCheckTimer = null;
 
   destroy$: Subject<any> = new Subject();
 
   constructor(
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
+    private uxAppService: UxAppShellService,
   ) {}
 
   ngOnInit(): void {
@@ -144,6 +150,19 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
     milestones.forEach((milestone) => {
+      if (this.milestonesInFileErrorExist) {
+        return;
+      }
+
+      this.milestonesInPreparationExist =
+        milestone.status === MilestoneStatus.InPreparation;
+
+      if (milestone.status === MilestoneStatus.Error) {
+        this.milestonesInFileErrorExist = true;
+        clearTimeout(this.milestoneCheckTimer);
+        return;
+      }
+
       if (milestone.clonedMilestones !== null) {
         milestone.opened = true;
         milestone.clonedMilestones = milestone.clonedMilestones.map(
@@ -152,6 +171,15 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         );
       }
     });
+
+    if (this.milestonesInPreparationExist && !this.milestonesInFileErrorExist) {
+      this.milestoneCheckTimer = setTimeout(
+        this.checkForMilestoneStatusChange,
+        2000,
+      );
+    } else {
+      clearTimeout(this.milestoneCheckTimer);
+    }
 
     return milestones;
   }
@@ -167,5 +195,27 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     ).getTime();
 
     return clonedMilestone;
+  }
+
+  private checkForMilestoneStatusChange() {
+    this.proposalDetailsService.milestones$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (milestones) => {
+          this.dataSource = this.initMilestonesDataSource(milestones);
+        },
+        error: (error) => {
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.check-for-milestone-status-change.error',
+            ),
+            detail: error.error,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 }
