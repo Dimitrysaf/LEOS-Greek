@@ -13,6 +13,7 @@ import {
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
+import { UxAppShellService } from '@eui/core';
 
 enum MilestoneStatus {
   Ready = 'FILE_READY',
@@ -54,6 +55,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   constructor(
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
+    private uxAppService: UxAppShellService,
   ) {}
 
   ngOnInit(): void {
@@ -203,7 +205,16 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           this.dataSource = this.initMilestonesDataSource(milestones);
         },
         error: (error) => {
-          console.log('Error => ', error);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.check-for-milestone-status-change.error',
+            ),
+            detail: error.error,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
         },
       });
   }

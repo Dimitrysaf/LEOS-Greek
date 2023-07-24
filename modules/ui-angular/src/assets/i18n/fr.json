@@ -116,6 +116,7 @@
   "page.collection.milestones.actions.send-revision-for-merge": "[FR] Send contribution",
   "page.collection.milestones.send-copy-for-contribution-send-revision-message-success": "[FR] Contribution sent and notification sent to Lead DG",
   "page.collection.milestones.send-copy-for-contribution-send-revision-message-error": "[FR] Failed sending contribution",
+  "page.collection.milestones.check-for-milestone-status-change.error": "[FR] Failed checking for milestone status change",
   "page.collection.milestones.table.title": "Titre",
   "page.workspace.milestones.status.file-ready": "[FR] File ready",
   "page.workspace.milestones.status.contribution-sent": "[FR] Contribution sent",
