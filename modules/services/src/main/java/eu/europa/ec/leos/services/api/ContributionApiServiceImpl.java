@@ -185,20 +185,21 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
-                                                       String documentVersionRef,
                                                        String documentType,
-                                                       String contributionVersionRef) {
+                                                       String originalVersionRef,
+                                                       String versionLabel,
+                                                       String documentRef) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
-        XmlDocument contributionVersion = (XmlDocument)this.contributionService.findVersionByVersionedReference(contributionVersionRef, documentClass.getClazz());
-        XmlDocument originalVersion = (XmlDocument)this.leosRepository.findDocumentByRef(documentVersionRef, documentClass.getClazz());
+        XmlDocument contributionVersion = (XmlDocument) this.contributionService.findVersionByVersionedReference(versionLabel, documentClass.getClazz());
+        XmlDocument originalVersion = (XmlDocument) this.leosRepository.findFirstVersion(documentClass.getClazz(), documentRef);
         final LeosPackage leosPackage = this.leosRepository.findPackageByDocumentRef(originalVersion.getMetadata().get().getRef(), documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
 
         if(Objects.isNull(contributionVersion)){
-            throw new RuntimeException(String.format("Contribution version not found for %s", contributionVersionRef));
+            throw new RuntimeException(String.format("Contribution version not found for %s", versionLabel));
         }
         if(Objects.isNull(originalVersion)){
-            throw new RuntimeException(String.format("Original version not found for %s", documentVersionRef));
+            throw new RuntimeException(String.format("Original version not found for %s", originalVersionRef));
         }
 
         final String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion, contextPath,

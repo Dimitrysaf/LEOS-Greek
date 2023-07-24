@@ -1153,8 +1153,6 @@ export const validateAddingToItem = (
         if (!indentAllowed) {
           validationResult.messageKey =
             'toc.edit.window.drop.error.indentation.message';
-          console.log('toc.edit.window.drop.error.indentation.message');
-          // result.setMessageKey("toc.edit.window.drop.error.indentation.message");
         } else if (containsItem(actualTargetItem, LIST)) {
           validationResult.messageKey =
             'toc.edit.window.drop.already.contains.list.error.message';
