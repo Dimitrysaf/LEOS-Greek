@@ -370,14 +370,12 @@ define(function leosTrackChangesModule(require) {
                 range.moveToPosition(selectedNode, position);
                 if (selectedNode.$.length === 1) {
                     range.selectNodeContents(selectedNode);
-                    range.select();
                 } else if (deleteKey) {
                     range.endOffset = range.endOffset + 1;
-                    range.select();
                 } else {
                     range.startOffset = range.startOffset - 1;
-                    range.select();
                 }
+                range.select();
             }
         },
 
