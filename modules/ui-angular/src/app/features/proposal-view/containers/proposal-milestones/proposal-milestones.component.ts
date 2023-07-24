@@ -154,8 +154,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.milestonesInPreparationExist =
-        milestone.status === MilestoneStatus.InPreparation;
+      if (!this.milestonesInPreparationExist) {
+        this.milestonesInPreparationExist =
+          milestone.status === MilestoneStatus.InPreparation;
+      }
 
       if (milestone.status === MilestoneStatus.Error) {
         this.milestonesInFileErrorExist = true;

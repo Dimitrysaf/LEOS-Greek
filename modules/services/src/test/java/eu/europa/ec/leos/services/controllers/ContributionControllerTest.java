@@ -139,7 +139,7 @@ public class ContributionControllerTest {
         assertNotNull(response.getBody());
         assertEquals(TEST_RESPONSE_BODY, response.getBody().getEditableXml());
 
-        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL, TEST_DOCUMENT_REF);
+        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_TYPE,  TEST_ORIGINAL_LABEL, TEST_VERSION_LABEL ,TEST_DOCUMENT_REF);
     }
 
     @Test
