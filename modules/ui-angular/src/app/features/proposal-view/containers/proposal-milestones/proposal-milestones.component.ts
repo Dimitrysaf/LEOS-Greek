@@ -18,6 +18,7 @@ enum MilestoneStatus {
   Ready = 'FILE_READY',
   ContributionSent = 'CONTRIBUTION_SENT',
   InPreparation = 'IN_PREPARATION',
+  Error = 'FILE_ERROR',
 }
 
 @Component({
@@ -45,6 +46,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
   milestonesInPreparationExist = false;
+  milestonesInFileErrorExist = false;
   milestoneCheckTimer = null;
 
   destroy$: Subject<any> = new Subject();
@@ -146,8 +148,19 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
     milestones.forEach((milestone) => {
+      if (this.milestonesInFileErrorExist) {
+        return;
+      }
+
       this.milestonesInPreparationExist =
         milestone.status === MilestoneStatus.InPreparation;
+
+      if (milestone.status === MilestoneStatus.Error) {
+        this.milestonesInFileErrorExist = true;
+        clearTimeout(this.milestoneCheckTimer);
+        return;
+      }
+
       if (milestone.clonedMilestones !== null) {
         milestone.opened = true;
         milestone.clonedMilestones = milestone.clonedMilestones.map(
@@ -157,7 +170,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       }
     });
 
-    if (this.milestonesInPreparationExist) {
+    if (this.milestonesInPreparationExist && !this.milestonesInFileErrorExist) {
       this.milestoneCheckTimer = setTimeout(
         this.checkForMilestoneStatusChange,
         2000,
