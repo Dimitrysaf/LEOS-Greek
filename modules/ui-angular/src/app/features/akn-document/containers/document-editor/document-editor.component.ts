@@ -828,13 +828,15 @@ export class DocumentEditorComponent
 
   onChangeProcessedToggle(_e: boolean) {
     this.processed = !this.processed;
-    this.isContributionDeclinedOrProcessed = !this.isContributionDeclinedOrProcessed;
+    this.isContributionDeclinedOrProcessed =
+      !this.isContributionDeclinedOrProcessed;
     this.markContributionAsProcessedDialog.openDialog();
   }
 
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
-    this.isContributionDeclinedOrProcessed = !this.isContributionDeclinedOrProcessed;
+    this.isContributionDeclinedOrProcessed =
+      !this.isContributionDeclinedOrProcessed;
     this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
     this.mergeAllContributionsChangesDialog.closeDialog();
   }

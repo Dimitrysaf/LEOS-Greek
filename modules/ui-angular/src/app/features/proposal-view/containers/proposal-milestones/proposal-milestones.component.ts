@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -13,7 +14,6 @@ import {
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
-import { UxAppShellService } from '@eui/core';
 
 enum MilestoneStatus {
   Ready = 'FILE_READY',
