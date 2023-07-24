@@ -205,14 +205,19 @@
 }
 
 .toc-edit-mode,
-.toc-edit-mode akomastoso,
-.contribution-disabled-mode,
-.contribution-disabled-mode akomastoso {
+.toc-edit-mode akomantoso {
   cursor: default;
   opacity: 0.3;
   pointer-events: none;
   user-select: none;
 }
+
+.contribution-disabled-mode,
+.contribution-disabled-mode akomantoso {
+  cursor: default;
+  opacity: 0.3;
+  user-select: none;
+}ß
 
 .processed-span,
 .select-revisions-span {
