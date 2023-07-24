@@ -34,7 +34,7 @@ define(function leosTrackChangesPluginModule(require) {
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
-            var selectedElement;
+            var selectedElement, handleMutations = true;
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -142,7 +142,7 @@ define(function leosTrackChangesPluginModule(require) {
                             acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                             rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                         };
-                    } else if (editor.getSelection().isCollapsed()) {
+                    } else if (editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) {
                         tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                         if (tcElement) {
                             editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
@@ -169,6 +169,10 @@ define(function leosTrackChangesPluginModule(require) {
                     .setState(isTrackChangesShowed ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF);
             });
 
+            editor.on("toDataFormat", function(event) {
+                event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
+            }, null, null, 15);
+
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
 
@@ -188,7 +192,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editable.attachListener(editor.document, "keydown", function(e) {
                     if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
-                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_CTRL_X) {
+                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
                             style.apply(editor, deleteTcStyle);
                             var range = editor.getSelection().getRanges()[0];
                             range.collapse(false);
@@ -213,24 +217,21 @@ define(function leosTrackChangesPluginModule(require) {
                             var range = editor.getSelection().getRanges()[0];
                             var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
-                            var allow = true;
                             if (range.collapsed) {
-                                allow = actions.selectOneChar(deleteKey, range, editor);
+                                actions.selectOneChar(deleteKey, range, editor);
                             }
 
-                            if (allow) {
-                                editor.fire("saveSnapshot");
+                            editor.fire("saveSnapshot");
 
-                                style.apply(editor, deleteTcStyle);
-                                range = editor.getSelection().getRanges()[0];
-                                if (deleteKey) {
-                                    range.collapse(false);
-                                } else {
-                                    range.collapse(true);
-                                }
-                                range.select();
-                                editor.fire("change");
+                            style.apply(editor, deleteTcStyle);
+                            range = editor.getSelection().getRanges()[0];
+                            if (deleteKey) {
+                                range.collapse(false);
+                            } else {
+                                range.collapse(true);
                             }
+                            range.select();
+                            editor.fire("change");
 
                             event.getInstance().data.domEvent.preventDefault();
                             event.getInstance().stop();
@@ -247,23 +248,19 @@ define(function leosTrackChangesPluginModule(require) {
                     if (!CKEDITOR.dialog?.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
                         && (event.getKeyCode() != UTILS.KEYS.KEY_DELETE) && (event.getKeyCode() != UTILS.KEYS.KEY_BACKSPACE) && (event.getKeyCode() != 29)) { // Do not capture CTRL hotkeys & escape
                         if (isTrackChangesEnabled) {
-                            var range = editor.getSelection().getRanges()[0];
-                            if (!range.collapsed) {
+                            if (!editor.getSelection().isCollapsed()) {
                                 editor.fire("saveSnapshot");
-                                var style = new CKEDITOR.style({attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)});
-                                editor.applyStyle(style);
+                                var deleteTcStyle = new CKEDITOR.style({
+                                    element: core.TRACKCHANGES_ELEMENT,
+                                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                                });
+                                style.apply(editor, deleteTcStyle);
                                 var endContainer = editor.getSelection().getRanges()[0].endContainer; // Collapse range to write at end
                                 core.setToEditablePosition(editor, endContainer, core.CARET_END);
                                 editor.fire("saveSnapshot");
-
-                                actions.preventInsertInDelete(editor); // Moves the caret if needed
-                                core.insertTrackChangeElement(editor, core.INSERT_ACTION, character, core.CARET_END);
-
+                            }
+                            if (actions.insertNewData(editor, character)) { // Inserts the new data
                                 event.getInstance().data.preventDefault(); // Prevent standard insert
-                            } else {
-                                if (actions.insertNewData(editor, event.getChar())) { // Inserts the new data
-                                    event.getInstance().data.preventDefault(); // Prevent standard insert
-                                }
                             }
                         } else {
                             var tcElement = core.isInsideTrackChangeElement(editor);
@@ -309,74 +306,86 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Catch toolbar buttons commands before execution
             editor.on("beforeCommandExec", function(event) {
-                if (isTrackChangesEnabled) {
-                    switch (event.data.name) {
-                        case "bold":
-                        case "italic":
-                        case "subscript":
-                        case "superscript":
-                            if (editor.LEOS.isTrackChangesStyleFormattingEnabled) {
-                                var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
-                                if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
-                                    style.apply(editor, formatStyleToBeApplied.style);
-                                    editor.fire("change");
-                                    return false;
-                                } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
-                                    //TODO: Check style definition. Custom or default implementation no works with it.
-                                    //style.remove(editor, formatStyleToBeApplied.style);
-                                    //editor.removeStyle(formatStyleToBeApplied.style);
-                                }
-                            }
-                            break;
-                        case "authorialNoteWidget":
-                        case "leosCrossReferenceWidget":
-                        case "mathjax":
-                        case "table":
-                            var range = editor.getSelection().getRanges()[0];
-                            if ((range.collapsed && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) ||
-                                !range.collapsed) {
+                handleMutations = true;
+                switch (event.data.name) {
+                    case "bold":
+                    case "italic":
+                    case "subscript":
+                    case "superscript":
+                        if (isTrackChangesEnabled && editor.LEOS.isTrackChangesStyleFormattingEnabled) {
+                            var formatStyleToBeApplied = style.FORMAT_STYLES.find(s => s.event === event.data.name);
+                            if (event.data.command.state == CKEDITOR.TRISTATE_OFF) {
+                                style.apply(editor, formatStyleToBeApplied.style);
+                                editor.fire("change");
                                 return false;
+                            } else if (event.data.command.state == CKEDITOR.TRISTATE_ON) {
+                                //TODO: Check style definition. Custom or default implementation no works with it.
+                                //style.remove(editor, formatStyleToBeApplied.style);
+                                //editor.removeStyle(formatStyleToBeApplied.style);
                             }
-                            break;
-                        case "inlinesaveclose":
-                            editor.setData(editor.getData().replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\""));
-                            break;
-                        case "tableDelete":
-                        case "rowDelete":
-                        case "rowInsertBefore":
-                        case "rowInsertAfter":
+                        }
+                        break;
+                    case "authorialNoteWidget":
+                    case "leosCrossReferenceWidget":
+                    case "mathjax":
+                    case "table":
+                        if ((editor.getSelection().isCollapsed() && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) ||
+                            !editor.getSelection().isCollapsed()) {
+                            return false;
+                        }
+                        break;
+                    case "tableDelete":
+                    case "rowDelete":
+                    case "rowInsertBefore":
+                    case "rowInsertAfter":
+                        if (isTrackChangesEnabled) {
                             table.execCustomCommand(editor, event.data.name);
                             return false;
-                    }
+                        }
+                        break;
+                }
+            });
+
+            editor.on("afterCommandExec", function(event) {
+                switch (event.data.name) {
+                    case "acceptOneChange":
+                    case "rejectOneChange":
+                    case "acceptSelectedChanges":
+                    case "rejectSelectedChanges":
+                        handleMutations = false;
+                        break;
                 }
             });
 
             // Add observer to CKEditor when data is received
             editor.on("receiveData", function() {
                 function processMutations(mutations) {
-                    for (var mutation of mutations) {
-                        if (mutation.type === "childList") {
-                            for (var node of mutation.addedNodes) {
-                                if (!(node instanceof HTMLElement)) continue;
-                                if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
-                                    node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
-                                    core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
-                                    if (actions.insertNewData(editor, node.outerHTML))
-                                        node.remove();
-                                    break;
-                                } else if (node.tagName === "TABLE") {
-                                    if (!node.id) { // It is a new table
+                    if (handleMutations) {
+                        for (var mutation of mutations) {
+                            if (mutation.type === "childList") {
+                                for (var node of mutation.addedNodes) {
+                                    if (!(node instanceof HTMLElement)) continue;
+                                    if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
+                                        node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
+                                        core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
+                                        if (actions.insertNewData(editor, node.outerHTML)) {
+                                            node.remove();
+                                        }
+                                        break;
+                                    } else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
                                         var rows = node.querySelectorAll("tr");
                                         rows.forEach(function (row) {
                                             if (!row.getAttribute(core.UID_ATTR)) {
                                                 core.addTrackChangesAttributes(editor, row, core.INSERT_ACTION);
                                             }
                                         });
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
+                    } else {
+                        handleMutations = true;
                     }
                 }
                 if (isTrackChangesEnabled) {
@@ -385,6 +394,50 @@ define(function leosTrackChangesPluginModule(require) {
                         rootElement.mutationObserver = new MutationObserver(processMutations);
                         rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true });
                     }
+                }
+            });
+
+            // Implementation for tracking special characters
+            CKEDITOR.on("dialogDefinition", function(event) {
+                if (event.data.name === "specialchar") {
+                    var onChoice = function(event) {
+                        var target, value;
+                        if (event.data)
+                            target = event.data.getTarget();
+                        else
+                            target = new CKEDITOR.dom.element(event);
+
+                        if (target.getName() == "a" && (value = target.getChild(0).getHtml())) {
+                            target.removeClass("cke_light_background");
+                            dialog.hide();
+
+                            // We must use "insertText" here to keep text styled.
+                            var span = editor.document.createElement("span");
+                            span.setHtml(value);
+
+                            // Special character tracking
+                            if (!editor.getSelection().isCollapsed()) {
+                                var deleteTcStyle = new CKEDITOR.style({
+                                    element: core.TRACKCHANGES_ELEMENT,
+                                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                                });
+                                style.apply(editor, deleteTcStyle);
+                                var endContainer = editor.getSelection().getRanges()[0].endContainer;
+                                core.setToEditablePosition(editor, endContainer, core.CARET_END);
+                            }
+                            if (!actions.insertNewData(editor, span.getText())) {
+                                editor.insertText(span.getText());
+                            }
+                        }
+                    };
+                    var onClick = CKEDITOR.tools.addFunction(onChoice);
+                    var dialog = event.data.definition.dialog;
+                    dialog.on("show", function () {
+                        var specialCharElements = document.getElementsByClassName("cke_specialchar");
+                        for (var i = 0; i < specialCharElements.length; i++) {
+                            specialCharElements[i].setAttribute("onclick","CKEDITOR.tools.callFunction(" + onClick + ", this); return false;");
+                        }
+                    });
                 }
             });
         }

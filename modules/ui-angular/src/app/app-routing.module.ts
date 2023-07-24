@@ -42,6 +42,7 @@ const routes: Routes = [
         'document',
         'explanatory',
         'memorandum',
+        'financial-statement',
       ];
       const isEditorRoute = url.length === 2 && paths.includes(url[0].path);
       return isEditorRoute ? { consumed: [] } : null;

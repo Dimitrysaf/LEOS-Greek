@@ -18,7 +18,11 @@ public interface FinancialStatementService {
 
     FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content, String name);
 
+    void createFinancialStatementFromProposal(String proposalRef);
+
     void deleteFinancialStatement(FinancialStatement FinancialStatement);
+
+    void deleteFinancialStatement(String proposalRef, String financialStatementRef);
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, FinancialStatementMetadata metadata, VersionType versionType, String comment);
 

@@ -4,21 +4,30 @@ import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.FinancialStatement.FinancialStatementStructureType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.FinancialStatementRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
+import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
+import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -30,9 +39,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
@@ -58,16 +70,32 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     private final ValidationService validationService;
     private final MessageHelper messageHelper;
     private final XPathCatalog xPathCatalog;
-
+    private final ProposalService proposalService;
+    private final Provider<CollectionContextService> proposalContextProvider;
     private final TableOfContentProcessor tableOfContentProcessor;
+    private final PackageService packageService;
+    private final Provider<FinancialStatementContextService> financialStatementContextProvider;
+    private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
+
+
 
     @Autowired
-    FinancialStatementServiceImpl(FinancialStatementRepository financialStatementRepository, PackageRepository packageRepository,
-                                  XmlNodeProcessor xmlNodeProcessor, XmlContentProcessor xmlContentProcessor,
-                                  NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
-                                  ValidationService validationService, DocumentVOProvider documentVOProvider,
-                                  TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper,
-                                  XPathCatalog xPathCatalog) {
+    FinancialStatementServiceImpl(FinancialStatementRepository financialStatementRepository,
+                                  PackageRepository packageRepository,
+                                  XmlNodeProcessor xmlNodeProcessor,
+                                  XmlContentProcessor xmlContentProcessor,
+                                  NumberService numberService,
+                                  XmlNodeConfigProcessor xmlNodeConfigProcessor,
+                                  ValidationService validationService,
+                                  DocumentVOProvider documentVOProvider,
+                                  TableOfContentProcessor tableOfContentProcessor,
+                                  MessageHelper messageHelper,
+                                  XPathCatalog xPathCatalog,
+                                  ProposalService proposalService,
+                                  Provider<CollectionContextService> proposalContextProvider,
+                                  PackageService packageService,
+                                  Provider<FinancialStatementContextService> financialStatementContextProvider,
+                                  UpdateInternalReferencesProducer updateInternalReferencesProducer) {
         this.financialStatementRepository = financialStatementRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -79,6 +107,11 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.numberService = numberService;
         this.xPathCatalog = xPathCatalog;
+        this.proposalService = proposalService;
+        this.proposalContextProvider = proposalContextProvider;
+        this.packageService = packageService;
+        this.financialStatementContextProvider = financialStatementContextProvider;
+        this.updateInternalReferencesProducer = updateInternalReferencesProducer;
     }
 
     @Override
@@ -108,9 +141,43 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
+    public void createFinancialStatementFromProposal(String proposalRef) {
+        Objects.requireNonNull(proposalRef);
+        Proposal proposal = Objects.requireNonNull(this.proposalService.findProposalByRef(proposalRef));
+        ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is required!");
+        CollectionContextService context = proposalContextProvider.get();
+        String template = "FS-001";
+        context.useTemplate(template);
+        context.usePurpose(metadata.getPurpose());
+        context.useProposalId(proposal.getId());
+        boolean useCloneProposal = Optional.of(proposal.getContent())
+                .filter(content -> content.exists(c -> Objects.nonNull(c.getSource())))
+                .map(content -> content.get().getSource().getBytes())
+                .map(this.proposalService::getClonedProposalMetadata)
+                .filter(CloneProposalMetadataVO::isClonedProposal)
+                .isPresent();
+        context.useCloneProposal(useCloneProposal);
+        String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
+        context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
+        context.executeCreateFinancialStatement();
+    }
+
+    @Override
     public void deleteFinancialStatement(FinancialStatement financialStatement) {
         LOG.trace("Deleting FinancialStatement... [id={}]", financialStatement.getId());
         financialStatementRepository.deleteFinancialStatement(financialStatement.getId());
+    }
+
+    @Override
+    public void deleteFinancialStatement(String proposalRef, String financialStatementRef) {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        FinancialStatement financialStatement = this.financialStatementRepository.findFinancialStatementByRef(financialStatementRef);
+
+        FinancialStatementContextService financialStatementContext = this.financialStatementContextProvider.get();
+        financialStatementContext.useFinancialStatement(financialStatement.getId());
+        financialStatementContext.usePackage(leosPackage);
+        financialStatementContext.executeDeleteFinancialStatement();
     }
 
     @Override
@@ -193,7 +260,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement updateFinancialStatementWithMilestoneComments(FinancialStatement financialStatement, List<String> milestoneComments, VersionType versionType, String comment){
+    public FinancialStatement updateFinancialStatementWithMilestoneComments(FinancialStatement financialStatement, List<String> milestoneComments, VersionType versionType, String comment) {
         LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}, versionType={}, comment={}]", financialStatement.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(financialStatement);
         financialStatement = financialStatementRepository.updateMilestoneComments(financialStatement.getId(), milestoneComments, updatedBytes, versionType, comment);
@@ -201,7 +268,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement updateFinancialStatementWithMilestoneComments(String financialStatementId, List<String> milestoneComments){
+    public FinancialStatement updateFinancialStatementWithMilestoneComments(String financialStatementId, List<String> milestoneComments) {
         LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}]", financialStatementId, milestoneComments);
         return financialStatementRepository.updateMilestoneComments(financialStatementId, milestoneComments);
     }
@@ -210,7 +277,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     public List<FinancialStatement> findVersions(String id) {
         LOG.trace("Finding FinancialStatement versions... [id={}]", id);
         //LEOS-2813 We have memory issues is we fetch the content of all versions.
-        return financialStatementRepository.findFinancialStatementVersions(id,false);
+        return financialStatementRepository.findFinancialStatementVersions(id, false);
     }
 
     @Override

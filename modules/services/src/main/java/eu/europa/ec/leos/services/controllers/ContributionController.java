@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
@@ -62,10 +61,10 @@ public class ContributionController {
 
     @GetMapping(value = "/list-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String documentRef, @PathVariable("documentType") String documentType,
+    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String documentRef,
+                                                               @PathVariable("documentType") String documentType,
                                                                @RequestParam Integer annexIndex) {
-        final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
-        List<ContributionVO> contributions = contributionApiService.listContributionsForDocument(documentRef, annexIndex, documentCategory);
+        List<ContributionVO> contributions = this.contributionApiService.listContributionsForDocument(documentRef, annexIndex);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 
@@ -91,9 +90,8 @@ public class ContributionController {
     @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<byte[]> mergeContribution(@PathVariable("documentRef") String documentRef,
-                                                    @PathVariable("documentType") String documentType,
                                                     @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
-        byte[] mergedContent = this.contributionApiService.mergeContribution(documentType, documentRef, applyContributionsRequest);
+        byte[] mergedContent = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
         return ResponseEntity.ok(mergedContent);
     }
 
@@ -101,7 +99,7 @@ public class ContributionController {
     @ResponseBody
     public ResponseEntity<Object> markAsProcessed(@PathVariable("contributionVersionRef") String contributionVersionRef,
                                                   @PathVariable("documentType") String documentType) {
-        this.contributionApiService.markRevisionAsProcessed(documentType, contributionVersionRef);
+        this.contributionApiService.markRevisionAsProcessed(contributionVersionRef);
         return ResponseEntity.ok().build();
     }
 }

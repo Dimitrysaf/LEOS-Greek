@@ -37,19 +37,20 @@ define(function leosTrackChangesModule(require) {
         searchTrackChangeElementCheckingParent: function(editor, action) {
             editor.getSelection().getRanges()[0].optimize();
             var range = editor.getSelection().getRanges()[0];
-            var startContainer = range.startContainer;
-            if ((typeof(startContainer.getAttribute) != 'undefined') && (startContainer.getAttribute(this.ACTION_ATTR) === action)) {
-                return [startContainer, this.CURRENT];
-            } else if ((typeof(startContainer.getParent().getAttribute) != 'undefined') && (startContainer.getParent().getAttribute(this.ACTION_ATTR) === action)) {
-                return [startContainer.getParent(), this.PARENT];
+            if (this.isTrackChangeElement(range.startContainer, action)) {
+                return [range.startContainer, this.CURRENT];
+            } else if (this.isTrackChangeElement(range.startContainer.getParent(), action)) {
+                return [range.startContainer.getParent(), this.PARENT];
             } else { // If other checks not have found anything. This should be a parent.
                 var tcElement = this.findElementInPathByName(editor, this.TRACKCHANGES_ELEMENT, action);
                 if (tcElement) {
                     return [tcElement, this.PARENT];
                 }
             }
+            // TODO: Not needed anymore but check if causes some regression
             // Check element before and after caret
-            return this.searchTrackChangeElement(editor, action);
+            // return this.searchTrackChangeElement(editor, action);
+            return null;
         },
 
         searchTrackChangeElement: function(editor, action, deleteKey) {
@@ -72,11 +73,11 @@ define(function leosTrackChangesModule(require) {
 
         searchPreviousTrackChangeElement: function(editor, action, deleteKey) {
             var node = editor.getSelection().getRanges()[0].getPreviousEditableNode();
-            if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
+            if (this.isTrackChangeElement(node, action)) {
                 return [node, this.CARET_END];
             } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasPrevious() && (deleteKey === false)) {
                 node = node.getPrevious();
-                if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
+                if (this.isTrackChangeElement(node, action)) {
                     return [node, this.CARET_END];
                 }
             }
@@ -85,11 +86,11 @@ define(function leosTrackChangesModule(require) {
 
         searchNextTrackChangeElement: function(editor, action, deleteKey) {
             var node = editor.getSelection().getRanges()[0].getNextEditableNode();
-            if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
+            if (this.isTrackChangeElement(node, action)) {
                 return [node, this.CARET_START];
             } else if (node && (node.type === CKEDITOR.NODE_TEXT) && node.hasNext() && (deleteKey === true)) {
                 node = node.getNext();
-                if (node && (node.type === CKEDITOR.NODE_ELEMENT) && (typeof(node.getAttribute) != 'undefined') && (node.getAttribute(this.ACTION_ATTR) === action)) {
+                if (this.isTrackChangeElement(node, action)) {
                     return [node, this.CARET_START];
                 }
             }
@@ -142,7 +143,7 @@ define(function leosTrackChangesModule(require) {
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
-            if (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+            if (core.isTrackChangeElement(selectedElement, core.DELETE_ACTION)) {
                 tcElement.insertAfter(selectedElement);
                 tcElement.mergeSiblings();
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
@@ -300,10 +301,6 @@ define(function leosTrackChangesModule(require) {
         insertNewData: function(editor, data) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
-            if (tcElement && core.isEmpty(tcElement[0])) { // TC Element is empty then it should be removed and create a new one
-                tcElement[0].remove();
-                tcElement = null;
-            }
             if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && !tcElement[0].getId()) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
@@ -356,7 +353,6 @@ define(function leosTrackChangesModule(require) {
                 previousNode = returnArray[1];
             }
             this.doCharSelection(deleteKey, range, nextNode, previousNode);
-            return true;
         },
 
         enterTextNode: function (deleteKey, range, editor, node) {

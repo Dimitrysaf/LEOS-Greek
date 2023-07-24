@@ -1,14 +1,12 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.document.Annex;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
-import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
@@ -29,7 +27,9 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
+import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -128,6 +129,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
+    private XmlDocument findDocumentByRef(String docRef) throws NotFoundException {
+        return Optional.ofNullable(this.leosRepository.findDocumentByRef(docRef, XmlDocument.class))
+                .orElseThrow(()->new NotFoundException(String.format("Not found document %s", docRef)));
+    }
+
     @Override
     public CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName) {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -172,9 +178,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType) {
-        Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
-        return this.contributionService.getDocumentContributions(documentRef, annexIndex, clazz);
+    public List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex) {
+        Class docClass = LeosCategoryClass.getClass(this.findDocumentByRef(documentRef).getCategory());
+        return this.contributionService.getDocumentContributions(documentRef, annexIndex, docClass);
     }
 
     @Override
@@ -225,48 +231,54 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         }
     }
 
-    public byte[] mergeContribution(String documentType,
-                                    String documentRef,
-                                    ApplyContributionsRequest request) throws IOException {
-        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
-        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(Validate.notNull(documentRef), documentClass.getClazz());
+    public byte[] mergeContribution(@NotNull String documentRef,
+                                    @NotNull ApplyContributionsRequest request) throws NotFoundException, IOException {
+        XmlDocument document = this.findDocumentByRef(documentRef);
+        Class docClass = LeosCategoryClass.getClass(document.getCategory());
+        final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, docClass);
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
         this.populateCloneProposalMetadata(Validate.notNull(proposal));
 
-        XmlDocument document = (XmlDocument)this.leosRepository.findDocumentByRef(documentRef, documentClass.getClazz());
-        if(Objects.nonNull(request.getMergeActions()) && Boolean.FALSE.equals(request.getMergeActions().isEmpty())) {
+        final List<MergeActionVO> mergeActions = Optional.ofNullable(request.getMergeActions()).orElse(new ArrayList<>());
+        final ContributionVO contribution = Optional.ofNullable(mergeActions)
+                .filter(list->Boolean.FALSE.equals(list.isEmpty()))
+                .map(list->list.get(0))
+                .map(MergeActionVO::getContributionVO)
+                .orElse(null);
+
+        if(Boolean.FALSE.equals(mergeActions.isEmpty())) {
             structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
             List<TocItem> tocItemList = this.structureContext.get().getTocItems();
-            byte[] xmlClonedContent = request.getMergeActions().get(0).getContributionVO().getXmlContent();
+            byte[] xmlClonedContent = contribution.getXmlContent();
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
             xmlContent = this.numberService.renumberArticles(xmlContent, true);
             xmlContent = this.numberService.renumberRecitals(xmlContent);
             xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
-            document = (XmlDocument) this.leosRepository.updateDocument(
+            document = this.leosRepository.updateDocument(
                     document.getId(),
                     xmlContent,
                     document.getVersionType(),
                     this.messageHelper.getMessage("contribution.merge.operation.message"),
-                    documentClass.getClazz()
+                    XmlDocument.class
             );
         }
-        if( request.isAcceptAllContributions() ) {
-            String contributionRef = request.getMergeActions().get(0).getContributionVO().getVersionedReference();
-            this.markRevisionAsProcessed(documentType, contributionRef);
+        if( request.isAcceptAllContributions() && Objects.nonNull(contribution) ) {
+            this.markRevisionAsProcessed(contribution.getVersionedReference());
         }
         return document.getContent().get().getSource().getBytes();
     }
 
     @Override
-    public void markRevisionAsProcessed(String documentType, String documentVersionedRef) {
-        LeosCategoryClass documentClass = LeosCategoryClass.valueOf(Validate.notBlank(documentType).toUpperCase());
-        final LeosDocument revision = this.contributionService.findVersionByVersionedReference(documentVersionedRef, documentClass.getClazz());
+    public void markRevisionAsProcessed(String contributionVersionRef) {
+        final XmlDocument revision = this.contributionService.findVersionByVersionedReference(contributionVersionRef, XmlDocument.class);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
-                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-        this.leosRepository.updateDocument(revision.getId(), properties, documentClass.getClazz(), false);
+        properties.put(
+                repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
+                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()
+        );
+        this.leosRepository.updateDocument(revision.getId(), properties, XmlDocument.class, false);
     }
 
     private List<InternalRefMap> getInternalRefMaps(ApplyContributionsRequest event, LeosDocument document, byte[] xmlClonedContent) {

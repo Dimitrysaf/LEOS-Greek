@@ -37,14 +37,14 @@ define(function transformerModule(require) {
          * 
          */
         transform: function transform(params) {
-            if(this._isCKEditorWidget(params.fragment)) {
-                return;
-            }
             this._initPrivate();
             this._validateRequired("fragment", params);
             this._validateRequired("direction", params);
-            this._.direction = params.direction;
             this._validateRequired("transformationConfigResolver", params);
+            if(this._isCKEditorWidget(params.fragment) || this._skipTransformation(params)) {
+                return;
+            }
+            this._.direction = params.direction;
             this._.transformationConfigResolver = params.transformationConfigResolver;
             var bindedTransformElement = LODASH.bind(this._transformElement, this);
             params.fragment.forEach(bindedTransformElement);
@@ -56,6 +56,17 @@ define(function transformerModule(require) {
             }
             var rootElement = fragment.children[0];
             return (rootElement && rootElement.hasClass && rootElement.hasClass("cke_widget_wrapper"));
+        },
+        _skipTransformation : function _skipTransformation(params) {
+            if (params.transformationConfigResolver._ && params.transformationConfigResolver._.resolverConfigs) {
+                var keys = Object.keys(params.transformationConfigResolver._.resolverConfigs.from);
+                return keys.every(element => {
+                    if (!element.startsWith('h2')) {
+                        return params.fragment.name === 'h2';
+                    }
+                });
+            }
+            return false;
         },
         _getFragmentTransformer: function _getFragmentTransformer() {
             var fragmentTransformer = fragmentTransformerStamp();

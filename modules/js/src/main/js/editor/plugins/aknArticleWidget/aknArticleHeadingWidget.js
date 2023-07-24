@@ -31,7 +31,11 @@ define(function aknArticleHeadingWidgetModule(require) {
         editables: {
             heading: {
                 selector: ".akn-article-heading",
-                allowedContent: "sup; sub"                      // TODO verify what should be the allowed content
+                allowedContent: {
+                    "sup": {},
+                    "sub": {},
+                    "span": { attributes: true }
+                },
             }
         },
 

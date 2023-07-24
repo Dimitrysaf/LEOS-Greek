@@ -10,7 +10,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import {
+  EuiDialogComponent,
+  EuiDialogService,
+} from '@eui/components/eui-dialog';
 import { Document, DocumentType, Permission } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -35,6 +38,7 @@ export class ProposalDraftsComponent
   explanatories: Document[] | null = null;
   memorandum: Document | null = null;
   document: Document | null = null;
+  financialStatement: Document | null;
   annexes: Document[] = [];
   annexToDelete: Document = null;
   explToDelete: Document = null;
@@ -66,6 +70,7 @@ export class ProposalDraftsComponent
     private route: ActivatedRoute,
     private coEditionService: CoEditionServiceWS,
     private translate: TranslateService,
+    private dialogService: EuiDialogService,
   ) {}
 
   ngOnDestroy(): void {
@@ -189,6 +194,27 @@ export class ProposalDraftsComponent
       });
   }
 
+  onFinancialStatementCreate() {
+    this.proposalDetailsService.createFinancialStatement();
+  }
+
+  onFinancialStatementDelete() {
+    this.dialogService.openDialog({
+      title: this.translate.instant(
+        'page.collection.drafts.financial-statement.delete.confirm-dialog.title',
+      ),
+      content: this.translate.instant(
+        'page.collection.drafts.financial-statement.delete.confirm-dialog.body',
+      ),
+      acceptLabel: this.translate.instant('global.actions.delete'),
+      accept: () => {
+        this.proposalDetailsService.deleteFinancialStatement(
+          this.financialStatement.metadata.internalRef,
+        );
+      },
+    });
+  }
+
   private populateView() {
     const getChildDocument = (type: DocumentType) =>
       this.proposal.childDocuments.find((d) => d.category === type) ?? null;
@@ -198,6 +224,7 @@ export class ProposalDraftsComponent
     this.explanatories = this.proposal.childDocuments.filter(
       (d) => d.category === 'COUNCIL_EXPLANATORY',
     );
+    this.financialStatement = getChildDocument('STAT_FINANC_LEGIS');
     this.annexes =
       this.document?.childDocuments.filter((d) => d.category === 'ANNEX') ??
       null;

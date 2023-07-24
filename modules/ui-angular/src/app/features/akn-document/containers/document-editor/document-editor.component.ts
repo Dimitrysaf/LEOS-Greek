@@ -38,7 +38,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
-import { DocumentConfig } from '@/shared';
+import { DOCUMENT_STYLES, DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
@@ -130,7 +130,6 @@ export class DocumentEditorComponent
   contributionActionSelected = 'accept_selected';
   processed = false;
   acceptedSelectedEnabled = false;
-  isContributionDeclinedOrProcessed = false;
   contributions: ContributionVO[] = [];
   contribution: ContributionVO;
   contributionChanges: NodeListOf<HTMLElement>;
@@ -337,8 +336,9 @@ export class DocumentEditorComponent
         this.processed = processed;
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
-          this.isContributionDeclinedOrProcessed =
-            contribution.contributionStatus === 'CONTRIBUTION_DONE';
+          this.documentService.setIsContributionDeclinedOrProcessed(
+            contribution.contributionStatus === 'CONTRIBUTION_DONE',
+          );
         }
       });
 
@@ -828,15 +828,13 @@ export class DocumentEditorComponent
 
   onChangeProcessedToggle(_e: boolean) {
     this.processed = !this.processed;
-    this.isContributionDeclinedOrProcessed =
-      !this.isContributionDeclinedOrProcessed;
+    this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.markContributionAsProcessedDialog.openDialog();
   }
 
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
-    this.isContributionDeclinedOrProcessed =
-      !this.isContributionDeclinedOrProcessed;
+    this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
@@ -863,7 +861,7 @@ export class DocumentEditorComponent
             position: 'bottom-right',
           });
           this.documentService.getContributions();
-          this.isContributionDeclinedOrProcessed = true;
+          this.documentService.setIsContributionDeclinedOrProcessed(true);
         },
         error: (res) => {
           this.appShellService.growl({
@@ -912,9 +910,10 @@ export class DocumentEditorComponent
       this.isContributionForViewOpen = true;
       this.isViewContributionPaneCollapsed = false;
       this.documentService.setContributionViewAndMergeCollapsed(false);
-      this.isContributionDeclinedOrProcessed =
-        contribution.contributionStatus === 'CONTRIBUTION_DONE';
-      if (this.isContributionDeclinedOrProcessed) {
+      this.documentService.setIsContributionDeclinedOrProcessed(
+        contribution.contributionStatus === 'CONTRIBUTION_DONE',
+      );
+      if (contribution.contributionStatus === 'CONTRIBUTION_DONE') {
         this.handleGreyedContribution(contribution, true);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
@@ -1212,7 +1211,8 @@ export class DocumentEditorComponent
     this.config.config.subscribe((config) => {
       // 'http://localhost:8080/leos-pilot/assets/css/annex.css?cacheToken_1667202194805'
       // FIXME: import stylesheets to ngui?
-      const cssUrl = `${config.mappingUrl}/assets/css/${category}.css`;
+      const stylesName = DOCUMENT_STYLES[category] ?? category;
+      const cssUrl = `${config.mappingUrl}/assets/css/${stylesName}.css`;
       this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
     });
   }
