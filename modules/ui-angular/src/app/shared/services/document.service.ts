@@ -1024,6 +1024,7 @@ export class DocumentService implements OnDestroy {
             position: 'bottom-right',
           });
           this.setIsContributionDeclinedOrProcessed(true);
+          this.contributionSelectionsBS.next(0);
           this.getContributions();
         },
         error: (res) => {
