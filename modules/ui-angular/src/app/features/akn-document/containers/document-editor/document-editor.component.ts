@@ -970,12 +970,6 @@ export class DocumentEditorComponent
       this.contributionViewContainerElement.nativeElement.querySelectorAll(
         '.merge-contribution-wrapper',
       );
-
-    if (this.contributionChanges.length > 0) {
-      this.contributionChanges
-        .item(this.contributionIndex)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
   }
 
   private handleCompareChanges() {
