@@ -34,6 +34,7 @@ define(function leosTrackChangesPluginModule(require) {
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
+            var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
             var selectedElement, handleMutations = true;
 
             // Add toggle display
@@ -177,10 +178,6 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("contentDom", function() {
 
                 var editable = editor.editable();
-                var deleteTcStyle = new CKEDITOR.style({
-                    element: core.TRACKCHANGES_ELEMENT,
-                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
-                });
 
                 // Initialize styles with selected track changes showed option
                 core.updateTrackChangesStyles(core.getUserId(editor), editor.LEOS.proposalRef, isTrackChangesShowed);
@@ -250,10 +247,6 @@ define(function leosTrackChangesPluginModule(require) {
                         if (isTrackChangesEnabled) {
                             if (!editor.getSelection().isCollapsed()) {
                                 editor.fire("saveSnapshot");
-                                var deleteTcStyle = new CKEDITOR.style({
-                                    element: core.TRACKCHANGES_ELEMENT,
-                                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
-                                });
                                 style.apply(editor, deleteTcStyle);
                                 var endContainer = editor.getSelection().getRanges()[0].endContainer; // Collapse range to write at end
                                 core.setToEditablePosition(editor, endContainer, core.CARET_END);
@@ -399,7 +392,7 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Implementation for tracking special characters
             CKEDITOR.on("dialogDefinition", function(event) {
-                if (event.data.name === "specialchar") {
+                if (isTrackChangesEnabled && (event.data.name === "specialchar")) {
                     var onChoice = function(event) {
                         var target, value;
                         if (event.data)
@@ -417,10 +410,6 @@ define(function leosTrackChangesPluginModule(require) {
 
                             // Special character tracking
                             if (!editor.getSelection().isCollapsed()) {
-                                var deleteTcStyle = new CKEDITOR.style({
-                                    element: core.TRACKCHANGES_ELEMENT,
-                                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
-                                });
                                 style.apply(editor, deleteTcStyle);
                                 var endContainer = editor.getSelection().getRanges()[0].endContainer;
                                 core.setToEditablePosition(editor, endContainer, core.CARET_END);
@@ -432,14 +421,34 @@ define(function leosTrackChangesPluginModule(require) {
                     };
                     var onClick = CKEDITOR.tools.addFunction(onChoice);
                     var dialog = event.data.definition.dialog;
-                    dialog.on("show", function () {
+                    dialog.on("show", function() {
                         var specialCharElements = document.getElementsByClassName("cke_specialchar");
                         for (var i = 0; i < specialCharElements.length; i++) {
+                            specialCharElements[i].removeAttribute("onkeydown");
                             specialCharElements[i].setAttribute("onclick","CKEDITOR.tools.callFunction(" + onClick + ", this); return false;");
                         }
                     });
                 }
             });
+
+            // Handle widgets deletion
+            editor.widgets.on("instanceCreated", function instanceCreated(event) {
+                if (isTrackChangesEnabled) {
+                    var widget = event.data;
+                    widget.on("key", function(event) {
+                        if ((event.data.keyCode === UTILS.KEYS.KEY_DELETE) || (event.data.keyCode === UTILS.KEYS.KEY_BACKSPACE)) {
+                            var widgetElement = event.sender.element.$.closest(".cke_widget_inline");
+                            editor.getSelection().selectElement(new CKEDITOR.dom.element(widgetElement));
+                            if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                                style.apply(editor, deleteTcStyle);
+                                var endContainer = editor.getSelection().getRanges()[0].endContainer;
+                                core.setToEditablePosition(editor, endContainer, core.CARET_END);
+                            }
+                            event.cancel();
+                        }
+                    });
+                }
+            }, null, null, 11);
         }
     }
 
