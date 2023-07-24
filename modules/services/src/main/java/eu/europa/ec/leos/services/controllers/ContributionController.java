@@ -75,7 +75,8 @@ public class ContributionController {
                                                               @PathVariable("documentType") String documentType,
                                                               @RequestParam String contributionVersionRef,
                                                               @RequestParam String originalVersionRef) {
-        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentType,originalVersionRef , contributionVersionRef,documentRef);
+        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentType, originalVersionRef,
+                contributionVersionRef, documentRef);
         return ResponseEntity.ok(mergedContent);
     }
     
