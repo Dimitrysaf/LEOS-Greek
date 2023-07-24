@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
@@ -14,9 +15,9 @@ public interface ContributionApiService {
 
     CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName);
     Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFilename);
-    List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex);
-    DocumentViewResponse compareAndShowRevision(String contextPath, String documentType, String documentRef, String versionLabel);
+    List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex, LeosCategoryClass documentType);
+    DocumentViewResponse compareAndShowRevision(String contextPath, String documentType, String originalVersionRef, String versionLabel, String documentRef);
     LeosDocument declineRevision(String documentType, String documentVersionedRef, String versionLabel);
-    void markRevisionAsProcessed(String docVersionRef);
-    byte[] mergeContribution(String documentRef, ApplyContributionsRequest request) throws IOException;
+    void markRevisionAsProcessed(String documentType, String documentRef);
+    byte[] mergeContribution(String documentType, String documentRef, ApplyContributionsRequest request) throws IOException;
 }

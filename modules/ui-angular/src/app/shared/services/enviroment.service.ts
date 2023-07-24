@@ -10,7 +10,6 @@ export class EnvironmentService {
 
   constructor() {
     // Get the instance name from the environment variables
-    console.log(process.env);
     this.instanceName = process.env.NG_APP_LEOS_INSTANCE;
   }
 

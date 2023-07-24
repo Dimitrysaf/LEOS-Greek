@@ -1669,7 +1669,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     ].join('_');
     const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
 
-    console.log(targetTocItems);
     if (
       isSourceDivision(sourceItem) ||
       isCrossheading(sourceItem) ||

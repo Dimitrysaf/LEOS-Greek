@@ -168,6 +168,7 @@ export class DocumentService implements OnDestroy {
   private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
     false,
   );
+  private latestMilestoneVersion: string | null = null;
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -873,9 +874,11 @@ export class DocumentService implements OnDestroy {
 
   getDocumentVersionsData(documentType: string, documentRef: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<Version[]>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
-    );
+    return this.http
+      .get<Version[]>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
+      )
+      .pipe(tap((versions) => this.setLatestMilestoneVersion(versions)));
   }
 
   getDocumentRecentChangesData(documentType: string, documentRef: string) {
@@ -968,14 +971,17 @@ export class DocumentService implements OnDestroy {
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
   }
+
   setIsContributionDeclinedOrProcessed(declined: boolean) {
     this.isContributionDeclinedOrProcessedBS.next(declined);
   }
+
   toggleIsContributionDeclinedOrProcessed() {
     this.isContributionDeclinedOrProcessedBS.next(
       !this.isContributionDeclinedOrProcessedBS.value,
     );
   }
+
   getUserPermissions() {
     return this.permissionsBS.value;
   }
@@ -1051,10 +1057,10 @@ export class DocumentService implements OnDestroy {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-
+    const lateMilestoneVersionRef = this.latestMilestoneVersion;
     this.http
       .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}&originalVersionRef=${lateMilestoneVersionRef}`,
         {},
       )
       .subscribe({
@@ -1136,6 +1142,19 @@ export class DocumentService implements OnDestroy {
           });
         },
       });
+  }
+
+  private setLatestMilestoneVersion(versions: Version[]) {
+    if (versions.length > 0) {
+      for (let x = versions.length - 1; x >= 0; x--) {
+        if (versions[x].versionType === 'MAJOR') {
+          this.latestMilestoneVersion = this.getVersionReferenceString(
+            versions[x],
+          );
+          break;
+        }
+      }
+    }
   }
 
   private setSearchResultsCounter(count: number) {
