@@ -902,17 +902,15 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void fetchSearchMetadata(SearchMetadataRequest event){
-        if (!milestoneExplorerOpened) {
-            List<AnnotateMetadata> metadataList = new ArrayList<>();
-            if (instanceTypeResolver.getInstanceType().equals(InstanceType.COMMISSION.toString()) || instanceTypeResolver.getInstanceType().equals(InstanceType.COUNCIL.toString())) {
-                AnnotateMetadata metadata = new AnnotateMetadata();
-                List<String> statusList = new ArrayList<String>();
-                statusList.add(AnnotationStatus.ALL.name());
-                metadata.setStatus(statusList);
-                metadataList.add(metadata);
-            }
-            eventBus.post(new SearchMetadataResponse(metadataList));
+        List<AnnotateMetadata> metadataList = new ArrayList<>();
+         if (instanceTypeResolver.getInstanceType().equals(InstanceType.COMMISSION.toString()) || instanceTypeResolver.getInstanceType().equals(InstanceType.COUNCIL.toString())) {
+            AnnotateMetadata metadata = new AnnotateMetadata();
+            List<String> statusList = new ArrayList<String>();
+            statusList.add(AnnotationStatus.ALL.name());
+            metadata.setStatus(statusList);
+            metadataList.add(metadata);
         }
+        eventBus.post(new SearchMetadataResponse(metadataList));
     }
 
     private String getEditableXml(Bill document) {
