@@ -335,7 +335,7 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        selectOneChar: function(deleteKey, range, editor) {
+        selectToDelete: function(deleteKey, range, editor) {
             // To know the blocks before and after the current position
             // If the node is empty we need go to next or previous editable node
             var selectedNode;
@@ -354,8 +354,19 @@ define(function leosTrackChangesModule(require) {
                     selectedNode = editor.getSelection().getRanges()[0].getPreviousEditableNode();
                 }
             }
-            // Go to text node inside selected element and select next or previous char
-            this.doCharSelection(deleteKey, editor, selectedNode);
+            /*if (core.isTrackChangeElement(selectedNode)) {
+                editor.getSelection().selectElement(selectedNode);
+                var test = editor.getSelection().getStartElement();
+                var test2 = editor.getSelection().getSelectedElement();*/
+                //core.setToPosition(editor, selectedNode, !deleteKey ? CKEDITOR.POSITION_BEFORE_END : CKEDITOR.POSITION_AFTER_START);
+                /*var ranges = editor.createRange();
+                range.setStartAfter(selectedNode);
+                range.setEndAfter( selectedNode );
+                editor.getSelection().selectRanges( [ ranges ] );*/
+            //} else {
+                // Go to text node inside selected element and select next or previous char
+                this.doCharSelection(deleteKey, editor, selectedNode);
+            //}
         },
 
         doCharSelection: function(deleteKey, editor, selectedNode) {
