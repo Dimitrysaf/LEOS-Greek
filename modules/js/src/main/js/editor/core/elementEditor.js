@@ -69,6 +69,7 @@ define(function elementEditorModule(require) {
         docType = docType.toLowerCase();
         var isAlternative = (alternatives != null && alternatives != "");
         let profileId = _getEditorProfileId(tocItemsList, elementType, element, isAlternative, alternateConfigs);
+        elementFragment = UTILS.cleanUpElementFragment(elementFragment);
 
         if (profileId) {
             var params = {
