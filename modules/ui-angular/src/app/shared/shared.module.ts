@@ -20,8 +20,6 @@ import { ProposalCreateDraftComponent } from './components/proposal-create-draft
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
-import { IsRecievedForContributionDirective } from './directives/is-recieved-for-contribution.directive';
-import { IsSentForContributionDirective } from './directives/is-sent-for-contribution.directive';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
@@ -56,8 +54,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
     ConfirmReloadDialogComponent,
-    IsSentForContributionDirective,
-    IsRecievedForContributionDirective,
   ],
   exports: [
     UxAllModule,
@@ -83,8 +79,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
     ConfirmReloadDialogComponent,
-    IsSentForContributionDirective,
-    IsRecievedForContributionDirective,
   ],
 })
 export class SharedModule {}
