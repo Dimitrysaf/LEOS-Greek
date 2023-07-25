@@ -1,8 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
-import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
