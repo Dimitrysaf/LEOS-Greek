@@ -83,7 +83,9 @@
                 (click)="handleEdit()"
                 *ngIf="
                   !isEditMode &&
-                  !['coverPage', 'memorandum'].includes(documentType)
+                  !['coverPage', 'memorandum', 'financial-statement'].includes(
+                    documentType
+                  )
                 "
               >
                 <span class="eui-icon eui-icon-edit"></span>
@@ -754,8 +756,11 @@
                 "
               >
                 {{
-                  'page.editor.contribution.view.actions.apply-selected'
-                    | translate
+                  contributionActionSelected === 'accept_selected'
+                    ? ('page.editor.contribution.view.actions.apply-selected'
+                      | translate)
+                    : ('page.editor.contribution.view.actions.apply'
+                      | translate)
                 }}
               </button>
               <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
