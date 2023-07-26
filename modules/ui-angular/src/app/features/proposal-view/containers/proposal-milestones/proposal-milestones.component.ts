@@ -78,6 +78,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.milestoneCheckTimer);
     this.destroy$.next(null);
     this.destroy$.unsubscribe();
   }
@@ -178,7 +179,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     if (this.milestonesInPreparationExist && !this.milestonesInFileErrorExist) {
       this.milestoneCheckTimer = setTimeout(
-        this.milestoneStatusChangeRoutine.bind(this),
+        () => this.milestoneStatusChangeRoutine(),
         5000,
       );
     } else {
