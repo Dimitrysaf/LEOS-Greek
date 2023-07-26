@@ -44,14 +44,17 @@
     <eui-card-footer-action-icons>
       <img
         src="assets/icons/contribution_received.png"
-        *ngIf="contribution.contributionStatus === 'RECEIVED'"
+        *ngIf="contribution.contributionStatus === ContributionStatus.Received"
         [euiTooltip]="
           'page.workspace.proposal-item.contribution-received' | translate
         "
       />
       <img
         src="assets/icons/contribution_done.png"
-        *ngIf="contribution.contributionStatus === 'CONTRIBUTION_DONE'"
+        *ngIf="
+          contribution.contributionStatus ===
+          ContributionStatus.ContributionDone
+        "
         [euiTooltip]="
           'page.workspace.proposal-item.contribution-done' | translate
         "

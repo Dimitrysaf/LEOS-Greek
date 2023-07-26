@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 
 @Component({
@@ -14,6 +15,7 @@ export class RevisionPaneGroupComponent implements OnInit {
   revisionTitle: string;
   updatedAtBy: string;
   status: string;
+  ContributionStatus = ContributionStatus;
 
   constructor() {}
 

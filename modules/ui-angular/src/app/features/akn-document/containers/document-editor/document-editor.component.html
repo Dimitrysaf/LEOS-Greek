@@ -83,7 +83,7 @@
                 (click)="handleEdit()"
                 *ngIf="
                   !isEditMode &&
-                  !['coverPage', 'memorandum', 'financial-statement'].includes(
+                  !['coverPage', 'memorandum', 'stat_financ_legis'].includes(
                     documentType
                   )
                 "
@@ -719,13 +719,7 @@
                 "
                 (change)="onSelectAction($event)"
               >
-                <option
-                  value="accept_selected"
-                  selected
-                  [disabled]="
-                    (documentService.contributionSelections$ | async) === 0
-                  "
-                >
+                <option value="accept_selected" selected>
                   {{
                     'page.editor.contribution.view.actions.accept.selected'
                       | translate
@@ -745,8 +739,7 @@
                 *ngIf="contributionForView"
                 (click)="handleMerge()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply-selected'
-                    | translate
+                  'page.editor.contribution.view.actions.apply' | translate
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="
@@ -755,13 +748,7 @@
                   (documentService.isContributionDeclinedOrProcessed$ | async)
                 "
               >
-                {{
-                  contributionActionSelected === 'accept_selected'
-                    ? ('page.editor.contribution.view.actions.apply-selected'
-                      | translate)
-                    : ('page.editor.contribution.view.actions.apply'
-                      | translate)
-                }}
+                {{ 'page.editor.contribution.view.actions.apply' | translate }}
               </button>
               <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
                 'page.editor.contribution.view.actions.processed' | translate
