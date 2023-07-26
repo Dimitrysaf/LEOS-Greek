@@ -38,7 +38,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
-import { DOCUMENT_STYLES, DocumentConfig } from '@/shared';
+import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
@@ -337,8 +337,10 @@ export class DocumentEditorComponent
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
           this.documentService.setIsContributionDeclinedOrProcessed(
-            contribution.contributionStatus === 'CONTRIBUTION_DONE',
+            contribution.contributionStatus ===
+              ContributionStatus.ContributionDone,
           );
+          this.contribution = contribution;
         }
       });
 
@@ -782,6 +784,14 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
+    if (
+      this.contribution &&
+      this.contribution.contributionStatus ===
+        ContributionStatus.ContributionDone
+    ) {
+      this.isAsyncScrollEnabled = true;
+      this.handleAsyncScroll();
+    }
     this.documentService.handleContributionSelectCount(false, true);
     this.documentService.setContributionViewAndMergeCollapsed(true);
   }
@@ -911,10 +921,16 @@ export class DocumentEditorComponent
       this.isViewContributionPaneCollapsed = false;
       this.documentService.setContributionViewAndMergeCollapsed(false);
       this.documentService.setIsContributionDeclinedOrProcessed(
-        contribution.contributionStatus === 'CONTRIBUTION_DONE',
+        contribution.contributionStatus === ContributionStatus.ContributionDone,
       );
-      if (contribution.contributionStatus === 'CONTRIBUTION_DONE') {
+      if (
+        contribution.contributionStatus === ContributionStatus.ContributionDone
+      ) {
         this.handleGreyedContribution(contribution, true);
+        setTimeout(() => {
+          this.isAsyncScrollEnabled = true;
+          this.handleAsyncScroll();
+        }, 100);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
         setTimeout(() => {
@@ -936,7 +952,7 @@ export class DocumentEditorComponent
 
   private greyContributions() {
     this.contributions = this.contributions.map((c) => {
-      if (c.contributionStatus === 'CONTRIBUTION_DONE') {
+      if (c.contributionStatus === ContributionStatus.ContributionDone) {
         c.greyed = true;
       } else {
         c.greyed = false;

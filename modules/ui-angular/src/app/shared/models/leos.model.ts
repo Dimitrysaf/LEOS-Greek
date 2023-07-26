@@ -8,6 +8,12 @@ export enum InstanceType {
   ANY = 'any',
 }
 
+/** @see modules/domain/src/main/java/eu/europa/ec/leos/model/action/ContributionVO.java */
+export enum ContributionStatus {
+  Received = 'RECEIVED',
+  ContributionDone = 'CONTRIBUTION_DONE',
+}
+
 export const DOCUMENT_STYLES = {
   annex: 'annex',
   bill: 'bill',
