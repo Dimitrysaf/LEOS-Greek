@@ -214,21 +214,18 @@ define(function leosTrackChangesPluginModule(require) {
                             var range = editor.getSelection().getRanges()[0];
                             var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
-                            if (range.collapsed) {
-                                actions.selectToDelete(deleteKey, range, editor);
-                            }
+                            if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
 
-                            editor.fire("saveSnapshot");
+                                editor.fire("saveSnapshot");
 
-                            style.apply(editor, deleteTcStyle);
-                            range = editor.getSelection().getRanges()[0];
-                            if (deleteKey) {
-                                range.collapse(false);
-                            } else {
-                                range.collapse(true);
+                                style.apply(editor, deleteTcStyle);
+
+                                range = editor.getSelection().getRanges()[0];
+                                range.collapse(!deleteKey);
+                                range.select();
+
+                                editor.fire("change");
                             }
-                            range.select();
-                            editor.fire("change");
 
                             event.getInstance().data.domEvent.preventDefault();
                             event.getInstance().stop();
@@ -403,7 +400,10 @@ define(function leosTrackChangesPluginModule(require) {
                             editor.getSelection().selectElement(new CKEDITOR.dom.element(widgetElement));
                             if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
                                 style.apply(editor, deleteTcStyle);
-                                var endContainer = editor.getSelection().getRanges()[0].endContainer;
+                            }
+                            var endContainer = editor.getSelection().getRanges()[0].endContainer;
+                            // If widget is not removed then set new position
+                            if (editor.getSelection().getRanges()[0].startOffset !== editor.getSelection().getRanges()[0].endOffset) {
                                 core.setToEditablePosition(editor, endContainer, (event.data.keyCode === UTILS.KEYS.KEY_BACKSPACE) ?
                                     core.CARET_END : core.CARET_START);
                             }
