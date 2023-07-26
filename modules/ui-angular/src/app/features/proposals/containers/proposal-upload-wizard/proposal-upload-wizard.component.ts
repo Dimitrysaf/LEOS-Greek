@@ -54,8 +54,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     public translateService: TranslateService,
     public environmentService: EnvironmentService,
-  ) {
-  }
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next(null);
@@ -177,10 +176,10 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     this.uploadForm = this.fb.group({
       legFile: new FormControl(null, Validators.required),
       templateName: new FormControl(
-        {value: '', disabled: true},
-        {validators: Validators.required},
+        { value: '', disabled: true },
+        { validators: Validators.required },
       ),
-      documentLanguage: new FormControl({value: '', disabled: true}),
+      documentLanguage: new FormControl({ value: '', disabled: true }),
       confidentialityLevel: new FormControl({
         value: this.translateService.instant(
           'page.workspace.create-form.document.confidentiality-level-predefined-value',
@@ -191,25 +190,25 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
         validators: [Validators.required, noWhitespaceValidator],
       }),
       templateId: new FormControl(
-        {value: '', disabled: true},
-        {validators: Validators.required},
+        { value: '', disabled: true },
+        { validators: Validators.required },
       ),
       langCode: new FormControl(
-        {value: '', disabled: true},
-        {validators: Validators.required},
+        { value: '', disabled: true },
+        { validators: Validators.required },
       ),
-      internalReference: new FormControl({value: '', disabled: true}),
+      internalReference: new FormControl({ value: '', disabled: true }),
       interInstitutionalReference: new FormControl({
         value: '',
         disabled: true,
       }),
-      packageTitleCheck: new FormControl({value: false, disabled: true}),
-      packageTitle: new FormControl({value: '', disabled: true}),
+      packageTitleCheck: new FormControl({ value: false, disabled: true }),
+      packageTitle: new FormControl({ value: '', disabled: true }),
       eeaRelevance: new FormControl(
-        {value: false, disabled: true},
-        {validators: Validators.required},
+        { value: false, disabled: true },
+        { validators: Validators.required },
       ),
-      eeaRelevanceText: new FormControl({value: '', disabled: true}),
+      eeaRelevanceText: new FormControl({ value: '', disabled: true }),
     });
   }
 
@@ -227,9 +226,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const {templateId, templateName, langCode, docPurpose, eeaRelevance} =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance } =
       this.uploadForm.getRawValue();
-    return {templateId, templateName, langCode, docPurpose, eeaRelevance};
+    return { templateId, templateName, langCode, docPurpose, eeaRelevance };
   }
 
   private validateLegFile() {
@@ -257,7 +256,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
             eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
             packageTitle: res.documentToBeCreated.metadata.packageTitle,
             internalReference: res.documentToBeCreated.metadata.internalRef,
-            documentLanguage: this.getLanguage(res.documentToBeCreated.metadata.language),
+            documentLanguage: this.getLanguage(
+              res.documentToBeCreated.metadata.language,
+            ),
           });
         }
       });

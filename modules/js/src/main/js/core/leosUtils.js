@@ -240,6 +240,10 @@ define(function leosUtilsModule(require) {
         return ["hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"];
     }
 
+    function _cleanUpElementFragment(str) {
+        return str.replace(/>\n\s*/g, ">");
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -252,6 +256,7 @@ define(function leosUtilsModule(require) {
         getParentWrapper : _getParentWrapper,
         toIsoString : _toIsoString,
         generateTrackChangesStyles : _generateTrackChangesStyles,
+        cleanUpElementFragment: _cleanUpElementFragment,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS
     };

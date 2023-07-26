@@ -67,17 +67,18 @@ define(function mergeContributionExtensionModule(require) {
                     var $parent = _getParentElement(elementParentName, $element);
                     if ($parent) {
                         if(!connector.getState().isAngularUI ||
-                            (connector.getState().isAngularUI && UTILS.getElementTagName($parent) !== 'docpurpose')){
-                            if( UTILS.getElementTagName($parent) !== 'attachments'){
+                            (connector.getState().isAngularUI && UTILS.getElementTagName($parent) !== 'docpurpose' )){
                                 $parent.attr(PARENT_AFFECTED, true);
                                 _attachWrapperActionEvents(connector, $parent)
-                            }
 
                         }
                     }
                 }
             } else {
-                _attachWrapperActionEvents(connector, $element);
+                if(!connector.getState().isAngularUI ||
+                    (connector.getState().isAngularUI && UTILS.getElementTagName($element) !== 'attachment' )) {
+                    _attachWrapperActionEvents(connector, $element);
+                }
             }
         });
     }

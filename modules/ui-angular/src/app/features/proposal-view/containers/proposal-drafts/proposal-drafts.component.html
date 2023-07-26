@@ -244,10 +244,11 @@
   </eui-card-header>
   <eui-card-content>
     <!-- FINANCIAL STATEMENT SECTION   -->
-    <ng-container *ngIf="!documentCard.euiCollapsed">
+    <ng-container *appShowOnInstance="['ec', 'os']">
       <div
         class="eui-u-flex pb-3"
         style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
+        *ngIf="!documentCard.euiCollapsed"
       >
         <div class="flex-grow-1">
           <div class="d-flex flex-row">

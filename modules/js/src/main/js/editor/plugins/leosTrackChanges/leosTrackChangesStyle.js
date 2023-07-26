@@ -223,8 +223,7 @@ define(function leosTrackChangesStyleModule(require) {
                         nodeIsNoStyle = nodeName && currentNode.getAttribute("data-nostyle");
 
                     // Skip bookmarks or comments.
-                    if ((nodeName && currentNode.data("cke-bookmark")) || (currentNode.type === CKEDITOR.NODE_COMMENT) ||
-                        (core.isTrackChangeElement(currentNode, core.DELETE_ACTION) && isFormatStyles)) {
+                    if ((nodeName && currentNode.data("cke-bookmark")) || (currentNode.type === CKEDITOR.NODE_COMMENT)) {
                         currentNode = currentNode.getNextSourceNode(true);
                         continue;
                     }
@@ -404,6 +403,11 @@ define(function leosTrackChangesStyleModule(require) {
                         // We should try to normalize with IE too in some way, somewhere.
                         if (!CKEDITOR.env.ie)
                             styleNode.$.normalize();
+
+                        // Remove style node if does not contain any children
+                        if (styleNode.getChildCount() === 0) {
+                            styleNode.remove();
+                        }
                     }
                     // Style already inherit from parents, left just to clear up any internal overrides. (https://dev.ckeditor.com/ticket/5931)
                     else {
