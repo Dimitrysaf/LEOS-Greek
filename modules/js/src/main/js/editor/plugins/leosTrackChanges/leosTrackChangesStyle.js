@@ -403,6 +403,11 @@ define(function leosTrackChangesStyleModule(require) {
                         // We should try to normalize with IE too in some way, somewhere.
                         if (!CKEDITOR.env.ie)
                             styleNode.$.normalize();
+
+                        // Remove style node if does not contain any children
+                        if (styleNode.getChildCount() === 0) {
+                            styleNode.remove();
+                        }
                     }
                     // Style already inherit from parents, left just to clear up any internal overrides. (https://dev.ckeditor.com/ticket/5931)
                     else {
@@ -410,7 +415,7 @@ define(function leosTrackChangesStyleModule(require) {
                         styleRange.extractContents().appendTo(styleNode);
                         styleRange.insertNode(styleNode);
                         this.removeFromInsideElement(editor, style, styleNode);
-                        styleNode.remove(true);
+                        styleNode.remove(styleNode.getChildCount() > 0);
                     }
 
                     // Style applied, let's release the range, so it gets
