@@ -415,7 +415,7 @@ define(function leosTrackChangesStyleModule(require) {
                         styleRange.extractContents().appendTo(styleNode);
                         styleRange.insertNode(styleNode);
                         this.removeFromInsideElement(editor, style, styleNode);
-                        styleNode.remove(styleNode.getChildCount() > 0);
+                        styleNode.remove(true);
                     }
 
                     // Style applied, let's release the range, so it gets
