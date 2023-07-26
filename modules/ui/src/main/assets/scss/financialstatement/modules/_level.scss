@@ -100,6 +100,11 @@ $LEVEL_SPACING: 25px;
     point > list > .cke_editable > ol[data-akn-name="aknPointMandateOrderedList"] {
       padding-left: 40px;
     }
+
+    //do not add extra padding to first level indent
+    > list > indent {
+      padding-left: 0;
+    }
   }
 
 }
