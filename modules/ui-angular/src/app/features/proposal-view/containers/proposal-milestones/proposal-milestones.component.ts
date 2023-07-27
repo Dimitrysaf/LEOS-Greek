@@ -47,8 +47,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
-  milestonesInPreparationExist = false;
-  milestonesInFileErrorExist = false;
   milestoneCheckTimer = null;
 
   destroy$: Subject<any> = new Subject();
@@ -152,18 +150,18 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
-    milestones.forEach((milestone) => {
-      if (this.milestonesInFileErrorExist) {
-        return;
-      }
+    let atLeastOneMilestoneInPreparation = false;
 
-      if (!this.milestonesInPreparationExist) {
-        this.milestonesInPreparationExist =
+    milestones.forEach((milestone) => {
+      if (!atLeastOneMilestoneInPreparation) {
+        atLeastOneMilestoneInPreparation =
           milestone.status === MilestoneStatus.InPreparation;
       }
 
-      if (milestone.status === MilestoneStatus.Error) {
-        this.milestonesInFileErrorExist = true;
+      if (
+        milestone.status === MilestoneStatus.Error ||
+        milestone.status === MilestoneStatus.Ready
+      ) {
         clearTimeout(this.milestoneCheckTimer);
         return;
       }
@@ -177,9 +175,9 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       }
     });
 
-    if (this.milestonesInPreparationExist && !this.milestonesInFileErrorExist) {
+    if (atLeastOneMilestoneInPreparation) {
       this.milestoneCheckTimer = setTimeout(
-        () => this.milestoneStatusChangeRoutine(),
+        this.milestoneStatusChangeRoutine.bind(this),
         5000,
       );
     } else {
