@@ -141,7 +141,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   private loadDocuments() {
     const hiddenCategories = [
-      ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec' ? ['COVERPAGE'] : []),
+      ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
+        ? ['COVERPAGE', 'STAT_FINANC_LEGIS']
+        : []),
     ];
     this.milestonesService
       .listMilestoneView(
