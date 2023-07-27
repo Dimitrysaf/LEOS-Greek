@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -30,6 +29,7 @@ enum MilestoneStatus {
 })
 export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
+  @Input() proposalRef: string;
   @ViewChild('addMilestoneDialog')
   addMilestoneDialog: AddMilestoneDialogComponent;
   addMilestoneDialogVisible = false;
@@ -43,7 +43,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @ViewChild('milestoneAnnotationWarningModal')
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
-  proposalRef: string;
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
@@ -55,7 +54,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
     private uxAppService: UxAppShellService,
-    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -177,8 +175,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     if (atLeastOneMilestoneInPreparation) {
       this.milestoneCheckTimer = setTimeout(
-        this.milestoneStatusChangeRoutine.bind(this),
-        5000,
+        () => this.milestoneStatusChangeRoutine(),
+        10000,
       );
     } else {
       clearTimeout(this.milestoneCheckTimer);
@@ -188,11 +186,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   private milestoneStatusChangeRoutine() {
-    this.route.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(({ proposalId }) => {
-        this.proposalDetailsService.setProposalRef(proposalId);
-      });
+    if (this.proposalRef)
+      this.proposalDetailsService.setProposalRef(this.proposalRef);
     this.checkForMilestoneStatusChange();
   }
 
