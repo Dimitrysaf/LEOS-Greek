@@ -240,7 +240,9 @@ public class CmisDocumentExtensions {
                 contentOption(d, fetchContent),
                 getFinancialstatementdataOption(d),
                 getBaseRevisionId(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                getContributionStatus(d),
+                getClonedFrom(d));
     }
 
     private static MediaDocument toLeosMediaDocument(Document d, boolean fetchContent) {
