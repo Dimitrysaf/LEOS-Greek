@@ -430,19 +430,14 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Add observer to CKEditor when data is received
             editor.on("receiveData", function() {
-                function processWidgetModification(node) {
-                    var target = node.closest(".cke_widget_inline");
-                    if (target && (target.classList.contains("cke_widget_authorialNoteWidget") || target.classList.contains("cke_widget_mathjax") ||
-                            target.classList.contains("cke_widget_leosCrossReferenceWidget"))) {
-                        var modifiedWidget = new CKEDITOR.dom.element(target);
-                        editor.getSelection().selectElement(modifiedWidget);
-                        if (!core.isInsideTrackChangeElement(editor)) {
-                            selectedElement.insertBefore(modifiedWidget);
-                            style.apply(editor, deleteTcStyle);
-                            core.setToEditablePosition(editor, modifiedWidget, core.CARET_END);
-                            if (actions.insertNewData(editor, modifiedWidget.$.outerHTML)) {
-                                modifiedWidget.remove();
-                            }
+                function processModification(target) {
+                    editor.getSelection().selectElement(target);
+                    if (!core.isInsideTrackChangeElement(editor)) {
+                        selectedElement.insertBefore(target);
+                        style.apply(editor, deleteTcStyle);
+                        core.setToEditablePosition(editor, target, core.CARET_END);
+                        if (actions.insertNewData(editor, target.$.outerHTML)) {
+                            target.remove();
                         }
                     }
                 }
@@ -468,13 +463,20 @@ define(function leosTrackChangesPluginModule(require) {
                                             }
                                         });
                                         break;
-                                    } else if (node.tagName === "REF") { // Authorial note modification
-                                        processWidgetModification(node);
+                                    } else if (node.tagName === "REF") {
+                                        var target = node.closest(".cke_widget_inline");
+                                        if (target && target.classList.contains("cke_widget_leosCrossReferenceWidget")) { // Cross-reference modification
+                                            processModification(new CKEDITOR.dom.element(target));
+                                        }
                                         break;
                                     }
                                 }
-                            } else if (mutation.type === "attributes") { // Math and cross-reference modification
-                                processWidgetModification(mutation.target);
+                            } else if (mutation.type === "attributes") {
+                                var target = mutation.target.closest(".cke_widget_inline");
+                                if (target && (target.classList.contains("cke_widget_authorialNoteWidget") || // Authorial note and Math modification
+                                        target.classList.contains("cke_widget_mathjax"))) {
+                                    processModification(new CKEDITOR.dom.element(target));
+                                }
                                 break;
                             }
                         }
