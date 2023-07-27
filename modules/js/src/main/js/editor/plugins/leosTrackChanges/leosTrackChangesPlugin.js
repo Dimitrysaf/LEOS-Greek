@@ -380,6 +380,12 @@ define(function leosTrackChangesPluginModule(require) {
                         case "authorialNoteDialog":
                         case "leosCrossReferenceDialog":
                         case "mathjax":
+                            var dialog = event.data.definition.dialog;
+                            dialog.on("ok", function(event) {
+                                selectedElement = core.clone(event.sender._.editor.getSelection().getSelectedElement());
+                                handleMutations = true;
+                            });
+                            break;
                         case "table":
                             var dialog = event.data.definition.dialog;
                             dialog.on("ok", function() {
@@ -408,6 +414,15 @@ define(function leosTrackChangesPluginModule(require) {
                                     core.CARET_END : core.CARET_START);
                             }
                             event.cancel();
+                        } else if ((event.data.keyCode === UTILS.KEYS.KEY_ENTER) &&
+                                core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                            event.cancel(); // Prevent open widget dialog
+                        }
+                    });
+                    widget.on("doubleclick", function(event) {
+                        if (editor.getSelection().getSelectedElement() &&
+                                core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                            event.cancel(); // Prevent open widget dialog
                         }
                     });
                 }
@@ -415,6 +430,22 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Add observer to CKEditor when data is received
             editor.on("receiveData", function() {
+                function processWidgetModification(node) {
+                    var target = node.closest(".cke_widget_inline");
+                    if (target && (target.classList.contains("cke_widget_authorialNoteWidget") || target.classList.contains("cke_widget_mathjax") ||
+                            target.classList.contains("cke_widget_leosCrossReferenceWidget"))) {
+                        var modifiedWidget = new CKEDITOR.dom.element(target);
+                        editor.getSelection().selectElement(modifiedWidget);
+                        if (!core.isInsideTrackChangeElement(editor)) {
+                            selectedElement.insertBefore(modifiedWidget);
+                            style.apply(editor, deleteTcStyle);
+                            core.setToEditablePosition(editor, modifiedWidget, core.CARET_END);
+                            if (actions.insertNewData(editor, modifiedWidget.$.outerHTML)) {
+                                modifiedWidget.remove();
+                            }
+                        }
+                    }
+                }
                 function processMutations(mutations) {
                     if (handleMutations) {
                         handleMutations = false;
@@ -423,8 +454,8 @@ define(function leosTrackChangesPluginModule(require) {
                                 for (var node of mutation.addedNodes) {
                                     if (!(node instanceof HTMLElement)) continue;
                                     if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
-                                        node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
-                                        core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
+                                            node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
+                                        core.setToEditablePosition(editor, new CKEDITOR.dom.element(node), core.CARET_END);
                                         if (actions.insertNewData(editor, node.outerHTML)) {
                                             node.remove();
                                         }
@@ -437,8 +468,14 @@ define(function leosTrackChangesPluginModule(require) {
                                             }
                                         });
                                         break;
+                                    } else if (node.tagName === "REF") { // Authorial note modification
+                                        processWidgetModification(node);
+                                        break;
                                     }
                                 }
+                            } else if (mutation.type === "attributes") { // Math and cross-reference modification
+                                processWidgetModification(mutation.target);
+                                break;
                             }
                         }
                     }
@@ -447,7 +484,8 @@ define(function leosTrackChangesPluginModule(require) {
                     var rootElement = editor.editable().$.firstChild;
                     if (rootElement && !rootElement.mutationObserver) {
                         rootElement.mutationObserver = new MutationObserver(processMutations);
-                        rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true });
+                        rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true,
+                            attributes: true, attributeFilter: [ "data-cke-widget-data" ] });
                     }
                 }
             });

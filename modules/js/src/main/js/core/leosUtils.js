@@ -40,7 +40,8 @@ define(function leosUtilsModule(require) {
     var KEYS = {
         "KEY_DELETE": 8,
         "KEY_BACKSPACE": 46,
-        "KEY_X": 88
+        "KEY_X": 88,
+        "KEY_ENTER": 13
     }
 
     function _getParentElement(connector) {
