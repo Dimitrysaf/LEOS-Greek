@@ -245,7 +245,9 @@ public class LeosDocumentExtensions {
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getFinancialstatementdataOption(d),
                 getBaseRevisionId(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                getContributionStatus(d),
+                getClonedFrom(d));
     }
 
     private static MediaDocument toLeosMediaDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
