@@ -1,8 +1,9 @@
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import { ContributionAnnotateConnector } from '@/shared/components/contribution-document-annotations/contribution-annotate-connector';
 import type { AnnotateConnector } from '@/shared/components/document-annotations/annotate-connector';
 
 export type AnnotateExtension = {
-  init(connector: AnnotateConnector);
+  init(connector: AnnotateConnector | ContributionAnnotateConnector);
 };
 
 export type AnnotateOperationMode = 'READ_ONLY' | 'PRIVATE' | 'NORMAL';

@@ -65,9 +65,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         next: (milestones) => {
           this.dataSource = this.initMilestonesDataSource(milestones);
         },
-        error: (error) => {
-          console.log('Error => ', error);
-        },
+        error: (error) => {},
       });
 
     this.proposalDetailsService.permissions$

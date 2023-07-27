@@ -1,0 +1,22 @@
+:host {
+  /* provide enough space for floating `.annotator-bucket-bar` and
+   `annotator-toolbar` */
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  padding-left: 33px; // .annotator-frame .annotator-toolbar { left: -33px }
+}
+
+:host ::ng-deep .annotator-frame {
+  height: 100% !important;
+  left: 0 !important;
+  margin: unset !important;
+  position: relative !important;
+  top: 0 !important;
+  width: unset !important;
+  z-index: 0;
+
+  .annotator-frame-button--sidebar_toggle {
+    display: none;
+  }
+}

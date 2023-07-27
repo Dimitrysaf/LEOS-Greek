@@ -116,7 +116,6 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   }
 
   private setStateError(error: unknown) {
-    console.log('Error => ', error);
     this.proposal = null;
     this.proposalState = 'error';
     this.proposalError = error;

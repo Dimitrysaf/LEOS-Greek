@@ -14,6 +14,7 @@ import { AknDocumentComponent } from './components/akn-document/akn-document.com
 import { CoEditionDetectedDialogComponent } from './components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { CoEditionInfoComponent } from './components/co-edition-info/co-edition-info.component';
 import { ConfirmDeleteDialogComponent } from './components/confirm-delete-dialog/confirm-delete-dialog.component';
+import { ContributionDocumentAnnotationsComponent } from './components/contribution-document-annotations/contribution-document-annotations.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
 import { MilestoneTocComponent } from './components/milestone-toc/milestone-toc.component';
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
@@ -58,6 +59,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmReloadDialogComponent,
     IsSentForContributionDirective,
     IsRecievedForContributionDirective,
+    ContributionDocumentAnnotationsComponent,
   ],
   exports: [
     UxAllModule,
@@ -85,6 +87,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmReloadDialogComponent,
     IsSentForContributionDirective,
     IsRecievedForContributionDirective,
+    ContributionDocumentAnnotationsComponent,
   ],
 })
 export class SharedModule {}

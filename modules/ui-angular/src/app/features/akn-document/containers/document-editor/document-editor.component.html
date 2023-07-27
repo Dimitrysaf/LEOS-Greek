@@ -589,19 +589,64 @@
       </eui-page-column>
 
       <app-draggable-splitter
-        *ngIf="isContributionForViewOpen"
-        [isLeftAreaCollapsed]="false"
+        *ngIf="!hideAnnotationsSplitter"
+        [isLeftAreaCollapsed]="
+          isContributionForViewOpen ? isViewContributionPaneCollapsed : false
+        "
         [leftArea]="
           (documentService.compareModeEnabled$ | async)
             ? compareModePaneElement
             : isVersionForViewOpen
             ? versionForViewPaneElement
+            : isContributionForViewOpen
+            ? contributionViewPaneElement
+            : documentPaneElement
+        "
+        [rightArea]="annotationsPaneElement"
+        [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
+        (hideSplitter)="onHideAnnotationsSplitter($event)"
+      ></app-draggable-splitter>
+      <!-- annotations -->
+      <eui-page-column
+        #annotationsPane
+        class="eui-page-column--right-column annotations-pane"
+        [label]="'page.editor.annotations-pane.label' | translate"
+        isCollapsible
+        [isCollapsed]="isAnnotationsPaneCollapsed"
+        (collapsed)="onToggleAnnotationsPaneCollapsed()"
+        style="flex-basis: 580px"
+      >
+        <eui-page-column-body class="flex-grow-1">
+          <app-document-annotations
+            [documentId]="documentRef"
+            [containerId]="containerId"
+            [connectedEntity]="connectedEntity"
+            [proposalRef]="proposalRef"
+            [permissions]="documentService.permissions$ | async"
+            [showStatusFilter]="showStatusFilter"
+            (sidebarShown)="onSidebarShown()"
+            *ngIf="!milestoneViewData"
+          ></app-document-annotations>
+        </eui-page-column-body>
+      </eui-page-column>
+
+      <app-draggable-splitter
+        *ngIf="isContributionForViewOpen"
+        [isLeftAreaCollapsed]="
+          isContributionForViewOpen ? isViewContributionPaneCollapsed : false
+        "
+        [leftArea]="
+          (documentService.compareModeEnabled$ | async)
+            ? compareModePaneElement
+            : isVersionForViewOpen
+            ? versionForViewPaneElement
+            : isContributionForViewOpen
+            ? annotationsPaneElement
             : documentPaneElement
         "
         [rightArea]="contributionViewPaneElement"
         [isRightAreaCollapsed]="isViewContributionPaneCollapsed"
       ></app-draggable-splitter>
-
       <!-- contribution view and merge pane -->
       <eui-page-column
         #contributionViewPane
@@ -801,75 +846,27 @@
         </eui-page-column-body>
       </eui-page-column>
 
-      <app-draggable-splitter
-        *ngIf="!hideAnnotationsSplitter"
-        [isLeftAreaCollapsed]="
-          isContributionForViewOpen ? isViewContributionPaneCollapsed : false
-        "
-        [leftArea]="
-          (documentService.compareModeEnabled$ | async)
-            ? compareModePaneElement
-            : isVersionForViewOpen
-            ? versionForViewPaneElement
-            : isContributionForViewOpen
-            ? contributionViewPaneElement
-            : documentPaneElement
-        "
-        [rightArea]="annotationsPaneElement"
-        [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
-        (hideSplitter)="onHideAnnotationsSplitter($event)"
-      ></app-draggable-splitter>
-
-      <!-- unsaved data dialog -->
-      <eui-dialog
-        #unSavedDialog
-        [title]="
-          getTranlsations('page.editor.toc.unsaved-changes-dialog.title')
-        "
-        [isHandleCloseOnAccept]="true"
-        [isHandleCloseOnDismiss]="true"
-      >
-        <p euiSizeXL>
-          {{ 'page.editor.toc.unsaved-changes-dialog.body' | translate }}
-        </p>
-        <eui-dialog-footer>
-          <div class="d-flex flex-row justify-content-end" style="gap: 0.5rem">
-            <button
-              euiButton
-              class="mr-2"
-              euiSecondary
-              (click)="hanldeUnSaveDialogClose(false)"
-            >
-              {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
-            </button>
-            <button class="" euiPrimary (click)="hanldeUnSaveDialogClose(true)">
-              {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
-            </button>
-          </div>
-        </eui-dialog-footer>
-      </eui-dialog>
-
-      <!-- annotations -->
       <eui-page-column
-        #annotationsPane
+        #contributionAnnotationsPane
+        *ngIf="contributionForView"
         class="eui-page-column--right-column annotations-pane"
         [label]="'page.editor.annotations-pane.label' | translate"
         isCollapsible
-        [isCollapsed]="isAnnotationsPaneCollapsed"
-        (collapsed)="onToggleAnnotationsPaneCollapsed()"
+        [isCollapsed]="isContributionAnnotationsPaneCollapsed"
+        (collapsed)="onToggleContributionAnnotationsPaneCollapsed()"
         style="flex-basis: 580px"
       >
         <eui-page-column-body class="flex-grow-1">
-          <app-document-annotations
-            [documentId]="documentRef"
-            [containerId]="containerId"
+          <app-contribution-document-annotations
+            [documentId]="documentService.contributionDocumentRef$ | async"
+            [containerId]="contributionAnnotationsContainerId"
             [connectedEntity]="connectedEntity"
             [proposalRef]="proposalRef"
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
             (sidebarShown)="onSidebarShown()"
             *ngIf="!milestoneViewData"
-          ></app-document-annotations>
+          ></app-contribution-document-annotations>
         </eui-page-column-body>
       </eui-page-column>
     </eui-page-columns>
@@ -956,3 +953,30 @@
   [description]="'editor-switch-annex-structure-content' | translate"
   (confirmDeletion)="handleAnnexChangeStructure()"
 ></app-confirm-delete-dialog> -->
+
+<!-- unsaved data dialog -->
+<eui-dialog
+  #unSavedDialog
+  [title]="getTranlsations('page.editor.toc.unsaved-changes-dialog.title')"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+>
+  <p euiSizeXL>
+    {{ 'page.editor.toc.unsaved-changes-dialog.body' | translate }}
+  </p>
+  <eui-dialog-footer>
+    <div class="d-flex flex-row justify-content-end" style="gap: 0.5rem">
+      <button
+        euiButton
+        class="mr-2"
+        euiSecondary
+        (click)="hanldeUnSaveDialogClose(false)"
+      >
+        {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
+      </button>
+      <button class="" euiPrimary (click)="hanldeUnSaveDialogClose(true)">
+        {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>
