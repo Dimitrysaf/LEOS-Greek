@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -56,6 +57,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
     private uxAppService: UxAppShellService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +78,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.milestoneCheckTimer);
     this.destroy$.next(null);
     this.destroy$.unsubscribe();
   }
@@ -176,14 +179,23 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     if (this.milestonesInPreparationExist && !this.milestonesInFileErrorExist) {
       this.milestoneCheckTimer = setTimeout(
-        this.checkForMilestoneStatusChange,
-        2000,
+        () => this.milestoneStatusChangeRoutine(),
+        5000,
       );
     } else {
       clearTimeout(this.milestoneCheckTimer);
     }
 
     return milestones;
+  }
+
+  private milestoneStatusChangeRoutine() {
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ proposalId }) => {
+        this.proposalDetailsService.setProposalRef(proposalId);
+      });
+    this.checkForMilestoneStatusChange();
   }
 
   private formatClonedMilestoneUpdatedDate(
