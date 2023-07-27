@@ -12,7 +12,7 @@ const routes: Routes = [
   {
     path: 'financial-statement/:id',
     component: DocumentEditorComponent,
-    data: { category: 'financial-statement' },
+    data: { category: 'stat_financ_legis' },
   },
   {
     path: 'memorandum/:id',
