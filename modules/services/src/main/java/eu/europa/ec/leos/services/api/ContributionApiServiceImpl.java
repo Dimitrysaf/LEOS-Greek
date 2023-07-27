@@ -186,12 +186,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
                                                        String documentType,
-                                                       String originalVersionRef,
-                                                       String versionLabel,
-                                                       String documentRef) {
+                                                       String versionLabel) {
         LeosCategoryClass documentClass = LeosCategoryClass.valueOf(documentType.toUpperCase());
         XmlDocument contributionVersion = (XmlDocument) this.contributionService.findVersionByVersionedReference(versionLabel, documentClass.getClazz());
-        XmlDocument originalVersion = (XmlDocument) this.leosRepository.findFirstVersion(documentClass.getClazz(), documentRef);
+        XmlDocument originalVersion = (XmlDocument) this.leosRepository.findFirstVersion(documentClass.getClazz(), contributionVersion.getMetadata().get().getRef());
         final LeosPackage leosPackage = this.leosRepository.findPackageByDocumentRef(originalVersion.getMetadata().get().getRef(), documentClass.getClazz());
         final Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
 
@@ -199,7 +197,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             throw new RuntimeException(String.format("Contribution version not found for %s", versionLabel));
         }
         if(Objects.isNull(originalVersion)){
-            throw new RuntimeException(String.format("Original version not found for %s", originalVersionRef));
+            throw new RuntimeException(String.format("Original version not found for %s", versionLabel));
         }
 
         final String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion, contextPath,

@@ -73,10 +73,8 @@ public class ContributionController {
     public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request,
                                                               @PathVariable("documentRef") String documentRef,
                                                               @PathVariable("documentType") String documentType,
-                                                              @RequestParam String contributionVersionRef,
-                                                              @RequestParam String originalVersionRef) {
-        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentType, originalVersionRef,
-                contributionVersionRef, documentRef);
+                                                              @RequestParam String contributionVersionRef) {
+        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentType, contributionVersionRef);
         return ResponseEntity.ok(mergedContent);
     }
     
