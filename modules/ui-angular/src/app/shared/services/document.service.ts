@@ -317,8 +317,9 @@ export class DocumentService implements OnDestroy {
       this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
     this.processed$ = this.processedBS.asObservable();
-    this.contributionViewAndMerge$ =
-      this.contributionViewAndMergeBS.asObservable();
+    this.contributionViewAndMerge$ = this.contributionViewAndMergeBS.pipe(
+      filter(Boolean),
+    );
     this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
     this.contributionViewAndMergeCollapsed$ =
       this.contributionViewAndMergeCollapsedBS.asObservable();

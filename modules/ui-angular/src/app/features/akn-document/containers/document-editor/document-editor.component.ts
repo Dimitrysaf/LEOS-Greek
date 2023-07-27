@@ -105,7 +105,7 @@ export class DocumentEditorComponent
 
   compareChanges: NodeListOf<HTMLElement>;
   compareIndex = 0;
-  isAsyncScrollEnabled: boolean;
+  isAsyncScrollEnabled = false;
   arrowClicked = false;
   eventFunc;
   isScrollFromButton: boolean;
@@ -170,7 +170,7 @@ export class DocumentEditorComponent
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
-  private scrollables: NodeListOf<Element>;
+  private scrollables = new Map<Element, () => void>();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
   private annexDocNumber = -1;
 
@@ -588,19 +588,24 @@ export class DocumentEditorComponent
   handleAsyncScroll() {
     this.isAsyncScrollEnabled = !this.isAsyncScrollEnabled;
     if (this.isAsyncScrollEnabled) {
-      this.scrollables = this.document.querySelectorAll('.sync-scroll');
-      this.scrollables.forEach((scrollable: Element) => {
-        scrollable.addEventListener('scroll', this.handleSyncScroll.bind(this));
-        scrollable.classList.add('sync-scroll-enabled');
-        scrollable.classList.remove('sync-scroll-disabled');
-      });
-    }
-    if (!this.isAsyncScrollEnabled) {
-      this.scrollables.forEach((scrollable: Element) => {
-        scrollable.removeEventListener('scroll', this.handleSyncScroll);
-        scrollable.classList.add('sync-scroll-disabled');
-        scrollable.classList.remove('sync-scroll-enabled');
-      });
+      this.document
+        .querySelectorAll('.sync-scroll')
+        .forEach((scrollable: Element) => {
+          const handler = this.handleSyncScroll.bind(this);
+          scrollable.addEventListener('scroll', handler);
+          scrollable.classList.add('sync-scroll-enabled');
+          scrollable.classList.remove('sync-scroll-disabled');
+
+          const destroyFn = () => {
+            scrollable.removeEventListener('scroll', handler);
+            scrollable.classList.add('sync-scroll-disabled');
+            scrollable.classList.remove('sync-scroll-enabled');
+            this.scrollables.delete(scrollable);
+          };
+          this.scrollables.set(scrollable, destroyFn);
+        });
+    } else {
+      [...this.scrollables.values()].forEach((destroyFn) => destroyFn());
     }
   }
 
@@ -970,12 +975,12 @@ export class DocumentEditorComponent
       setTimeout(() => {
         const percentage =
           sender.scrollTop / (sender.scrollHeight - sender.clientHeight);
-        this.scrollables.forEach((scrollable: Element) => {
-          if (scrollable !== sender) {
+        [...this.scrollables.keys()]
+          .filter((scrollable) => scrollable !== sender)
+          .forEach((scrollable) => {
             scrollable.scrollTop =
               percentage * (scrollable.scrollHeight - scrollable.clientHeight);
-          }
-        });
+          });
         this.arrowClicked = false;
       }, 100);
     }
@@ -1309,6 +1314,10 @@ export class DocumentEditorComponent
         return this.tranlsateService.instant('global.breadcrumb.memorandum');
       case 'coverPage':
         return this.tranlsateService.instant('global.breadcrumb.cover.page');
+      case 'stat_financ_legis':
+        return this.tranlsateService.instant(
+          'global.breadcrumb.financial-statement',
+        );
       default:
         return capitalizeFirstLetter(name);
     }

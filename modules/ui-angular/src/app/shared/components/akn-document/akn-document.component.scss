@@ -17,15 +17,61 @@
     margin-right: auto;
   }
 
+  akomantoso i {
+    font-style: italic;
+  }
+
   akomantoso > coverpage {
     border: $border;
   }
 
-  akomantoso > *:not(coverpage) {
+  akomantoso > * > * {
+    margin-right: 12px;
+  }
+
+  akomantoso > doc[name='STAT_FINANC_LEGIS'] > {
+    :not(mainbody) {
+      border-left: $border;
+      border-right: $border;
+    }
+
+    :not(mainbody):first-child {
+      border-top: $border;
+    }
+
+    :not(mainbody):last-child {
+      border-bottom: $border;
+      border-top: $border;
+    }
+
+    mainbody > * {
+      border-left: $border;
+      border-right: $border;
+    }
+
+    mainbody > .landscape {
+      border-bottom: $border;
+      border-top: $border;
+    }
+
+    mainbody > .landscape + .portrait {
+      border-top: $border;
+    }
+
+    mainbody > .portrait:has(+ .landscape) {
+      border-bottom: $border;
+    }
+
+    mainbody > * {
+      //border: $border;
+    }
+  }
+
+  akomantoso > *:not(coverpage):not(doc[name='STAT_FINANC_LEGIS']) {
     padding: 1px;
   }
 
-  akomantoso > *:not(coverpage) > {
+  akomantoso > *:not(coverpage):not(doc[name='STAT_FINANC_LEGIS']) > {
     * {
       border-left: $border;
       border-right: $border;
@@ -40,5 +86,10 @@
     coverpage {
       border-bottom: $border;
     }
+  }
+
+  // counter `a:not(eui-breadcrumb-item a)`
+  akomantoso aknp a {
+    text-decoration: underline;
   }
 }
