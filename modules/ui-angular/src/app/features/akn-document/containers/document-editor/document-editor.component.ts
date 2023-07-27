@@ -132,7 +132,7 @@ export class DocumentEditorComponent
   acceptedSelectedEnabled = false;
   contributions: ContributionVO[] = [];
   contribution: ContributionVO;
-  contributionChanges: NodeListOf<HTMLElement>;
+  contributionChanges$: Observable<NodeListOf<HTMLElement>>;
   contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
@@ -173,6 +173,9 @@ export class DocumentEditorComponent
   private scrollables = new Map<Element, () => void>();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
   private annexDocNumber = -1;
+  private contributionChangesBS = new BehaviorSubject<NodeListOf<HTMLElement>>(
+    null,
+  );
 
   constructor(
     private domService: DomService,
@@ -224,6 +227,7 @@ export class DocumentEditorComponent
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
+    this.contributionChanges$ = this.contributionChangesBS.asObservable();
   }
 
   ngOnInit(): void {
@@ -802,11 +806,15 @@ export class DocumentEditorComponent
   }
 
   handleNextChangeContribution() {
-    if (this.contributionIndex !== this.contributionChanges.length - 1) {
+    if (
+      this.contributionIndex !==
+      this.contributionChangesBS.value.length - 1
+    ) {
       const nextChange = this.contributionIndex + 1;
-      this.contributionChanges
-        .item(nextChange)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.contributionChangesBS.value.item(nextChange)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
       this.contributionIndex++;
     }
   }
@@ -815,9 +823,10 @@ export class DocumentEditorComponent
     if (this.contributionIndex > 0) {
       {
         const prevChange = this.contributionIndex - 1;
-        this.contributionChanges
-          .item(prevChange)
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contributionChangesBS.value.item(prevChange)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
         this.contributionIndex--;
       }
     }
@@ -987,10 +996,11 @@ export class DocumentEditorComponent
   }
 
   private handleContributionsChanges() {
-    this.contributionChanges =
+    this.contributionChangesBS.next(
       this.contributionViewContainerElement.nativeElement.querySelectorAll(
         '.merge-contribution-wrapper',
-      );
+      ),
+    );
   }
 
   private handleCompareChanges() {

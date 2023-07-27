@@ -702,7 +702,7 @@
                     : {
                         selected:
                           documentService.contributionSelections$ | async,
-                        all: contributionChanges.length
+                        all: (contributionChanges$ | async).length
                       }
               }}
             </h4>

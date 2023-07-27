@@ -1051,6 +1051,7 @@ export class DocumentService implements OnDestroy {
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
+    this.handleContributionSelectCount(false, true);
     const contributionVersionRef = contribution.versionedReference;
     const documentRef = this.documentRef;
     const documentType =
