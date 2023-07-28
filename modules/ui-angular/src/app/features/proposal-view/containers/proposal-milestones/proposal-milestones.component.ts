@@ -158,10 +158,24 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           milestone.status === MilestoneStatus.InPreparation;
       }
 
-      if (
-        milestone.status === MilestoneStatus.Error ||
-        milestone.status === MilestoneStatus.Ready
-      ) {
+      if (milestone.status === MilestoneStatus.Error) {
+        clearTimeout(this.milestoneCheckTimer);
+        return;
+      }
+
+      if (milestone.status === MilestoneStatus.Ready) {
+        this.uxAppService.growl({
+          severity: 'success',
+          summary: this.translateService.instant(
+            'global.notifications.title.success',
+          ),
+          detail: this.translateService.instant(
+            'page.collection.milestons.check-for-milestone-status-change.success',
+          ),
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
         clearTimeout(this.milestoneCheckTimer);
         return;
       }
