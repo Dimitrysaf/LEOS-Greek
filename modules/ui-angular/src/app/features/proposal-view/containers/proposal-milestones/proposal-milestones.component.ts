@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -55,7 +54,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
     private uxAppService: UxAppShellService,
-    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
