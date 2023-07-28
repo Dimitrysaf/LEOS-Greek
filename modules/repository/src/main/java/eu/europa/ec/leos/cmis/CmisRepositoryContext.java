@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.cmis;
 
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.cmis.repository.CmisRepository;
@@ -9,7 +11,6 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @Component
 @Scope(WebApplicationContext.SCOPE_APPLICATION)
-@Profile(value = {"default","cmis"})
+@RepositoryProfile(repositoryProfiles = {RepositoryProfileType.DEFAULT, RepositoryProfileType.CMIS})
 public class CmisRepositoryContext implements RepositoryContext {
     
     private final CmisRepository cmisRepository;

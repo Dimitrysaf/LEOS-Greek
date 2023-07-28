@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.rest;
 
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
@@ -27,6 +28,7 @@ import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
@@ -78,7 +80,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * @constructor Creates a generic LEOS Repository, injected with a LEOS Repository and a Security Context.
  */
 @Repository
-@Profile(value = {"rest"})
+@RepositoryProfile(RepositoryProfileType.REST)
 public class LeosRestRepositoryImpl implements LeosRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(LeosRestRepositoryImpl.class);
