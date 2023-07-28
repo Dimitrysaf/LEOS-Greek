@@ -21,8 +21,6 @@ import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.common.ActType;
-import eu.europa.ec.leos.domain.common.ProcedureType;
 import eu.europa.ec.leos.model.user.Collaborator;
 
 import java.util.*;
@@ -45,8 +43,8 @@ public class DocumentVO {
     private String proposalRef;
 
     private LeosCategory documentType;
-    private ProcedureType procedureType;
-    private ActType actType;
+    private String procedureType;
+    private String actType;
     private List<DocumentVO> childDocuments = new ArrayList<>();
     private List<Collaborator> collaborators = new ArrayList<>();
     private MetadataVO metadata = new MetadataVO();
@@ -302,19 +300,19 @@ public class DocumentVO {
         this.metadata = metadataVO;
     }
 
-    public ProcedureType getProcedureType() {
+    public String getProcedureType() {
         return procedureType;
     }
 
-    public void setProcedureType(ProcedureType procedureType) {
+    public void setProcedureType(String procedureType) {
         this.procedureType = procedureType;
     }
 
-    public ActType getActType() {
+    public String getActType() {
         return actType;
     }
 
-    public void setActType(ActType actType) {
+    public void setActType(String actType) {
         this.actType = actType;
     }
 

@@ -22,13 +22,19 @@ import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithoutContent;
 import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.model.LeosDocumentList;
 import eu.europa.ec.leos.repository.services.DocumentService;
+
+import eu.europa.ec.leos.repository.utils.RestPreconditions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.net.MalformedURLException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +43,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 
@@ -65,22 +75,15 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Created", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> createDocumentFromContent(@Validated(OnCreateFromContent.class) @Valid @RequestBody CreateDocumentRequest createDocumentRequest) {
-        try {
+    public ResponseEntity<Object> createDocumentFromContent(@Validated(OnCreateFromContent.class)
+                @Valid @RequestBody CreateDocumentRequest createDocumentRequest)
+            throws RepositoryException {
+        LeosDocument xmlDoc = documentService.createDocumentFromContent(repositoryId, createDocumentRequest.getPackageName(),
+                createDocumentRequest.getName(),
+                createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),
+                createDocumentRequest.getContent(), createDocumentRequest.getComments(), createDocumentRequest.getUserId());
 
-            LeosDocument xmlDoc = documentService.createDocumentFromContent(repositoryId, createDocumentRequest.getPackageName(),
-                    createDocumentRequest.getName(),
-                    createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),
-                    createDocumentRequest.getContent(), createDocumentRequest.getComments(), createDocumentRequest.getUserId());
-            if (xmlDoc != null) {
-                return new ResponseEntity<>(xmlDoc, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("Error while creating document", ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while creating a document with content and name {0} : {1}", createDocumentRequest.getName(), e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating document"));
     }
 
     @PutMapping(path = "/document/create-with-source",
@@ -90,22 +93,15 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Created", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> createDocumentFromSource(@Validated(OnCreateFromSource.class) @Valid @RequestBody CreateDocumentRequest createDocumentRequest) {
-        try {
-            LeosDocument xmlDoc = documentService.createDocumentFromSource(repositoryId, createDocumentRequest.getSourceDocumentId(),
-                    createDocumentRequest.getPackageName(),
-                    createDocumentRequest.getName(),
-                    createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),
-                    createDocumentRequest.getComments(), createDocumentRequest.getUserId());
-            if (xmlDoc != null) {
-                return new ResponseEntity<>(xmlDoc, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("Error while creating document", ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while creating a Xml document using template {0} : {1}", createDocumentRequest.getSourceDocumentId(), e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Object> createDocumentFromSource(@Validated(OnCreateFromSource.class) @Valid @RequestBody CreateDocumentRequest createDocumentRequest)
+            throws RepositoryException {
+        LeosDocument xmlDoc = documentService.createDocumentFromSource(repositoryId, createDocumentRequest.getSourceDocumentId(),
+                createDocumentRequest.getPackageName(),
+                createDocumentRequest.getName(),
+                createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),
+                createDocumentRequest.getComments(), createDocumentRequest.getUserId());
+
+        return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating document"));
     }
 
     @DeleteMapping(path = "/document/delete-by-id/{id}")
@@ -113,14 +109,9 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity deleteDocumentById(@PathVariable("id") String id) {
-        try {
-            documentService.deleteDocumentById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Error while deleting a Xml document by version id {0} : {1}", id, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity deleteDocumentById(@PathVariable("id") String id)  throws RepositoryException{
+        documentService.deleteDocumentById(id);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(path = "/document/delete-by-ref/{docRef}")
@@ -128,14 +119,9 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document deleted", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity deleteDocumentByRef(@PathVariable("docRef") String docRef) {
-        try {
-            documentService.deleteDocumentByRef(docRef);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Error while deleting document with ref {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity deleteDocumentByRef(@PathVariable("docRef") String docRef)   throws RepositoryException{
+        documentService.deleteDocumentByRef(docRef);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(path = "/document/update-content/{docRef}",
@@ -146,20 +132,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> updateDocument(@PathVariable("docRef") String docRef,
-                                                                 @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest) {
-        try {
-            LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(),
-                    updateDocumentRequest.getLabelVersion(), updateDocumentRequest.getVersionType().value(), updateDocumentRequest.getContent(),
-                    updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
-            if (xmlDoc != null) {
-                return new ResponseEntity<>(xmlDoc, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while updating document with ref {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+             @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
+            throws Exception {
+        LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(), updateDocumentRequest.getContent(),
+                updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
+        return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
     @PutMapping(path = "/document/update-metadata/{docRef}",
@@ -170,20 +147,12 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("docRef") String docRef,
-                                                                 @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest) {
-        try {
-            LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(),
-                    updateDocumentRequest.getLabelVersion(), updateDocumentRequest.getVersionType().value(),
-                    updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
-            if (xmlDoc != null) {
-                return new ResponseEntity<>(xmlDoc, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while updating document with ref {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                     @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
+            throws Exception {
+        LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(),
+                updateDocumentRequest.getVersionType(),
+                updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
+        return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
     @GetMapping(path = "/documents/find-by-collaborator/{userId}",
@@ -194,18 +163,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity findDocumentsByUserId(@RequestParam("role") String role,
-                                                @PathVariable("userId") String userId) {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userId, role);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching document by collaborator {0}: {1}", userId, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                @PathVariable("userId") String userId)
+            throws RepositoryException {
+        List<LeosDocument> xmlDocs = RestPreconditions.checkFound(documentService.findDocumentsByUserId(userId, role),
+                HttpStatus.NOT_FOUND, "No documents found");
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
     @GetMapping(path = "/document/find-version/{versionId}",
@@ -215,18 +177,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Document Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findDocumentById(@PathVariable("versionId") String versionId,
-                                                         @RequestParam("latest") Boolean latest) {
-        try {
-            LeosDocument xmlDoc = documentService.findDocumentById(versionId, latest);
-            if (xmlDoc != null) {
-                return new ResponseEntity<>(xmlDoc, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching document by version id with collaborator {0}: {1}", versionId, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                         @RequestParam("latest") Boolean latest)
+            throws RepositoryException {
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentById(versionId, latest),
+                HttpStatus.NOT_FOUND, "No documents found");
+        return ResponseEntity.ok(xmlDoc);
     }
 
     @GetMapping(path = "/document/all-versions/{docRef}")
@@ -235,18 +190,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Versions of the Document Found", content = { @Content(mediaType =
                     MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> findAllVersionsByDocumentRef(@PathVariable("docRef") String docRef) {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findAllVersionsByRef(docRef);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity<>(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching document by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Object> findAllVersionsByDocumentRef(@PathVariable("docRef") String docRef)
+            throws RepositoryException {
+        List<LeosDocument> xmlDocs = RestPreconditions.checkFound(documentService.findAllVersionsByRef(docRef),
+                HttpStatus.NOT_FOUND, "No documents found");
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
     @GetMapping(path = "/documents/last-version/{docRef}",
@@ -256,18 +204,11 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> findDocumentsByRef( @PathVariable("docRef") String ref) {
-        try {
-            Optional<LeosDocument> xmlDoc = documentService.findDocumentByRef(ref);
-            if (xmlDoc.isPresent()) {
-                return new ResponseEntity(xmlDoc.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching Xml document's last version by reference {0}: {1}", ref, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<LeosDocument> findDocumentsByRef( @PathVariable("docRef") String ref)
+            throws RepositoryException {
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentByRef(ref).orElse(null),
+                HttpStatus.NOT_FOUND, "No documents found");
+        return ResponseEntity.ok(xmlDoc);
     }
 
     @GetMapping(path = "/document/next-version-label")
@@ -275,18 +216,11 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Next version label issued", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> getNextVersionLabel(@RequestParam("versionType") String versionType, @RequestParam("oldVersion") String oldVersion) {
-        try {
-            String nextVersion = documentService.getNextVersionLabel(VersionType.valueOf(versionType), oldVersion);
-            if (nextVersion != null) {
-                return new ResponseEntity<>(nextVersion, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("Error while counting", ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while getting next version {0}: {1}", oldVersion, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> getNextVersionLabel(@RequestParam("versionType") String versionType, @RequestParam("oldVersion") String oldVersion)
+            throws RepositoryException {
+        String nextVersion = RestPreconditions.checkFound(documentService.getNextVersionLabel(VersionType.valueOf(versionType), oldVersion),
+                HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
+        return ResponseEntity.ok(nextVersion);
     }
 
     @GetMapping(path = "/documents/all-minors-for-intermediate/{docRef}",
@@ -297,19 +231,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findAllMinorsForIntermediate(@PathVariable("docRef") String docRef, @RequestParam("currIntVersion") String currIntVersion,
-                                                       @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults
-    ) {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findAllMinorsForIntermediate(docRef, currIntVersion, startIndex, maxResults);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching document's minor versions by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                       @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults)
+            throws RepositoryException {
+        List<LeosDocument> xmlDocs = RestPreconditions.checkFound(documentService.findAllMinorsForIntermediate(docRef, currIntVersion, startIndex, maxResults),
+                HttpStatus.NOT_FOUND, "No documents found");
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
 
@@ -321,18 +247,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findAllMajors(@PathVariable("docRef") String docRef,
-                                                       @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResult) {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findAllMajors( docRef, startIndex, maxResult);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching Xml document's major versions by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                       @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResult)
+            throws RepositoryException {
+        List<LeosDocument> xmlDocs = RestPreconditions.checkFound(documentService.findAllMajors( docRef, startIndex, maxResult),
+                HttpStatus.NOT_FOUND, "No documents found");
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
     @GetMapping(path = "/documents/count-all-minors-for-intermediate/{docRef}",
@@ -342,19 +261,12 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> getAllMinorsCountForIntermediate(@PathVariable("docRef") String docRef,
-                                                                  @RequestParam("currIntVersion") String currIntVersion) {
-        try {
-            Integer result = documentService.getAllMinorsCountForIntermediate(docRef, currIntVersion);
-            if (result != null) {
-                return new ResponseEntity(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("Error while counting", ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while counting Xml document's minor versions by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Integer> getAllMinorsCountForIntermediate(@PathVariable("docRef") String docRef,
+                                                                  @RequestParam("currIntVersion") String currIntVersion)
+            throws RepositoryException {
+        Integer result = RestPreconditions.checkFound(documentService.getAllMinorsCountForIntermediate(docRef, currIntVersion),
+                HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
+        return ResponseEntity.ok(result);
     }
 
 
@@ -365,18 +277,11 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> getAllMajorsCount(@PathVariable("docRef") String docRef) {
-        try {
-            Integer result = documentService.getAllMajorsCount(docRef);
-            if (result != null) {
-                return new ResponseEntity(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("Error while counting", ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while counting Xml document's major versions by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Integer> getAllMajorsCount(@PathVariable("docRef") String docRef)
+            throws RepositoryException {
+        Integer result = RestPreconditions.checkFound(documentService.getAllMajorsCount(docRef),
+                HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
 
@@ -388,19 +293,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findRecentMinorVersions(@PathVariable("docRef") String docRef, @RequestParam("lastMajorVersion") String lastMajorVersion,
-                                                       @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults
-    ) {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findRecentMinorVersions(docRef, lastMajorVersion, startIndex, maxResults);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching Xml document's recent minor versions by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                       @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults)
+            throws RepositoryException {
+        List<LeosDocument> xmlDocs = RestPreconditions.checkFound(documentService.findRecentMinorVersions(docRef, lastMajorVersion, startIndex, maxResults),
+                HttpStatus.NOT_FOUND ,"No documents found");
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
     @GetMapping(path = "/documents/count-recent-minor-versions/{docRef}",
@@ -410,18 +307,11 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> getRecentMinorVersionsCount(@PathVariable("docRef") String docRef, @RequestParam("versionLabel") String versionLabel) {
-        try {
-            Integer result = documentService.getRecentMinorVersionsCount(docRef, versionLabel);
-            if (result != null) {
-                return new ResponseEntity(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("Error while counting", ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while counting Xml document's recent minor versions by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Integer> getRecentMinorVersionsCount(@PathVariable("docRef") String docRef, @RequestParam("versionLabel") String versionLabel)
+            throws RepositoryException {
+        Integer result = RestPreconditions.checkFound(documentService.getRecentMinorVersionsCount(docRef, versionLabel),
+                HttpStatus.UNPROCESSABLE_ENTITY ,"Error while counting");
+        return ResponseEntity.ok(result);
     }
 
 
@@ -432,19 +322,12 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> findLatestMajorVersionByRef(@PathVariable("docRef") String docRef)
-            {
-        try {
-            LeosDocument xmlDocs = documentService.findLatestMajorVersionByRef(docRef);
-            if (xmlDocs != null) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching for Xml document's latest major version by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<LeosDocument> findLatestMajorVersionByRef(@PathVariable("docRef") String docRef)
+            throws RepositoryException {
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findLatestMajorVersionByRef(docRef),
+                HttpStatus.NOT_FOUND ,"No documents found");
+        return ResponseEntity.ok(xmlDoc);
+
     }
 
 
@@ -456,18 +339,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findFirstVersion(@PathVariable("docRef") String docRef)
+            throws RepositoryException
     {
-        try {
-            LeosDocument xmlDocs = documentService.findFirstVersion(docRef);
-            if (xmlDocs != null) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching for Xml document's first version by reference {0}: {1}", docRef, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findFirstVersion(docRef),
+                HttpStatus.NOT_FOUND ,"No documents found");
+        return ResponseEntity.ok(xmlDoc);
     }
 
 
@@ -479,41 +355,25 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findDocumentByVersion(@PathVariable("docRef") String docRef,
-                                                    @PathVariable("versionLabel") String versionLabel)
+                                                    @PathVariable("versionLabel") String versionLabel) throws RepositoryException
     {
-        try {
-            LeosDocument xmlDocs = documentService.findDocumentByVersion(docRef, versionLabel);
-            if (xmlDocs != null) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching for Xml document's version by reference {0} - version label - {1} : {2}", docRef, versionLabel, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentByVersion(docRef, versionLabel),
+                HttpStatus.NOT_FOUND ,"No documents found");
+        return ResponseEntity.ok(xmlDoc);
     }
 
     @GetMapping(path = "/documents/find-by-name/{name}",
             consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE} )
+            produces = {"application/json;charset=UTF-8"} )
     @Operation(summary = "Find Xml document, configuration or milestone by name")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = "application/json;charset=UTF-8") }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> findDocumentByName(@PathVariable("name") String name)
+    public ResponseEntity<LeosDocument> findDocumentByName(@PathVariable("name") String name) throws RepositoryException
     {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findDocumentByName(name);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching for document by name {0}: {1}", name, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentByName(name).orElse(null),
+                HttpStatus.NOT_FOUND ,"No documents found");
+        return ResponseEntity.ok(xmlDoc);
     }
 
     @GetMapping(path = "/documents/find-by-status/{status}",
@@ -523,19 +383,11 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "LEG Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<Object> findDocumentByStatus(@PathVariable("status") String status)
+    public ResponseEntity<Object> findDocumentByStatus(@PathVariable("status") String status) throws RepositoryException
     {
-        try {
-            List<LeosDocument> xmlDocs = documentService.findDocumentsByStatus(status);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching for Leg documents by sattus {0} : {1}", status, e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        List<LeosDocument> xmlDocs = RestPreconditions.checkFound(documentService.findDocumentsByStatus(status),
+                HttpStatus.NOT_FOUND ,String.format("No documents found with status: %s", status));
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
     @PostMapping(path = "/documents/find-by-filter/{packageName}",
@@ -546,22 +398,14 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> findDocumentsUsingFilter(@PathVariable("packageName") String packageName, @RequestBody FindDocumentsRequest findDocumentsRequest,
-                                                           @RequestParam("startIndex") Integer startIndex,
-                                                      @RequestParam("maxResults") Integer maxResults) {
-        try {
-            packageName = decode(packageName);
-            List<LeosDocument> xmlDocs = documentService.findDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(),
-                    findDocumentsRequest.getQueryFilter()
-                    , startIndex, maxResults);
-            if (!xmlDocs.isEmpty()) {
-                return new ResponseEntity(xmlDocs, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ExceptionResponse("No documents found", ExceptionResponse.ExceptionType.WARNING), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while searching for documents using filter : {0}", e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                           @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults)
+            throws RepositoryException, MalformedURLException
+    {
+        packageName = decode(packageName);
+        List<LeosDocument> xmlDocs = documentService.findDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(),
+                findDocumentsRequest.getQueryFilter(), startIndex, maxResults);
+
+       return ResponseEntity.ok(RestPreconditions.checkFound(new LeosDocumentList(xmlDocs), HttpStatus.NOT_FOUND ,"No documents found"));
     }
 
     @PostMapping(path = "/documents/count-by-filter/{packageName}",
@@ -572,14 +416,11 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> countDocumentsUsingFilter(@PathVariable("packageName") String packageName,
-                                                            @RequestBody FindDocumentsRequest findDocumentsRequest) {
-        try {
+                                                            @RequestBody FindDocumentsRequest findDocumentsRequest)
+            throws RepositoryException, MalformedURLException
+    {
             packageName = decode(packageName);
             Long count = documentService.countDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(), findDocumentsRequest.getQueryFilter());
-            return new ResponseEntity(count, HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Error while searching for documents using filter : {0}", e.getMessage());
-            return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return ResponseEntity.ok(RestPreconditions.checkFound(count, HttpStatus.UNPROCESSABLE_ENTITY ,"Error while counting"));
     }
 }

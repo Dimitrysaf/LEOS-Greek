@@ -27,7 +27,6 @@ import eu.europa.ec.leos.rest.mapping.RestProperties;
 import eu.europa.ec.leos.rest.support.model.LeosDocument;
 import io.atlassian.fugue.Option;
 
-import java.math.BigInteger;
 import java.util.function.Function;
 
 class LeosRepositoryMetadataExtensions {
@@ -38,64 +37,55 @@ class LeosRepositoryMetadataExtensions {
         Boolean eeaRelevance;
     }
 
-    // FIXME add check for leos:proposal secondary type???
-    static Option<ProposalMetadata> getProposalMetadataOption(LeosDocument LeosDocument) {
-        return buildMetadata(LeosDocument, props -> Option.some(
+    static Option<ProposalMetadata> getProposalMetadataOption(LeosDocument leosDocument) {
+        return buildMetadata(leosDocument, props -> Option.some(
                 new ProposalMetadata(props.stage, props.type, props.purpose, props.template,
                         props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
     }
 
-    static Option<StructureMetaData> getStructureMetadataOption(LeosDocument LeosDocument) {
-        return buildMetadata(LeosDocument, props -> Option.some(
+    static Option<StructureMetaData> getStructureMetadataOption(LeosDocument leosDocument) {
+        return buildMetadata(leosDocument, props -> Option.some(
                 new StructureMetaData(props.stage, props.type, props.purpose, props.template,
                         props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
     }
 
-    // FIXME add check for leos:memorandum secondary type???
-    static Option<ExplanatoryMetadata> getExplanatorydataOption(LeosDocument LeosDocument) {
-        String title = getExplanatoryTitle(LeosDocument);
-        return buildMetadata(LeosDocument, props -> Option.some(
+    static Option<ExplanatoryMetadata> getExplanatorydataOption(LeosDocument leosDocument) {
+        String title = getExplanatoryTitle(leosDocument);
+        return buildMetadata(leosDocument, props -> Option.some(
                 new ExplanatoryMetadata(props.stage, props.type, props.purpose, props.template,
                         props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance)));
     }
 
-    // FIXME add check for leos:memorandum secondary type???
-    static Option<MemorandumMetadata> getMemorandumMetadataOption(LeosDocument LeosDocument) {
-        return buildMetadata(LeosDocument, props -> Option.some(
+    static Option<MemorandumMetadata> getMemorandumMetadataOption(LeosDocument leosDocument) {
+        return buildMetadata(leosDocument, props -> Option.some(
                 new MemorandumMetadata(props.stage, props.type, props.purpose, props.template,
                         props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
     }
 
-    // FIXME add check for leos:bill secondary type???
-    static Option<BillMetadata> getBillMetadataOption(LeosDocument LeosDocument) {
-        return buildMetadata(LeosDocument, props -> Option.some(
+    static Option<BillMetadata> getBillMetadataOption(LeosDocument leosDocument) {
+        return buildMetadata(leosDocument, props -> Option.some(
                 new BillMetadata(props.stage, props.type, props.purpose, props.template,
                         props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
     }
 
-    // FIXME add check for leos:annex secondary type???
-    static Option<AnnexMetadata> getAnnexMetadataOption(LeosDocument LeosDocument) {
-        Integer index = getAnnexIndex(LeosDocument);
-        String number = getAnnexNumber(LeosDocument);
-        String title = getAnnexTitle(LeosDocument);
+    static Option<AnnexMetadata> getAnnexMetadataOption(LeosDocument leosDocument) {
+        Integer index = getAnnexIndex(leosDocument);
+        String number = getAnnexNumber(leosDocument);
+        String title = getAnnexTitle(leosDocument);
         String annexTitle = title == null ? "" : title;
-        String clonedRef = getAnnexClonedRef(LeosDocument);
+        String clonedRef = getAnnexClonedRef(leosDocument);
 
-        return buildMetadata(LeosDocument, props -> {
-            if (index != null && number != null) {
-                return Option.some(
-                        new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
-                                props.language, props.docTemplate, props.ref, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, clonedRef));
-            } else {
-                return Option.none();
-            }
+        return buildMetadata(leosDocument, props -> {
+            return Option.some(
+                    new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
+                            props.language, props.docTemplate, props.ref, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, clonedRef));
 
         });
     }
 
-    static Option<FinancialStatementMetadata> getFinancialstatementdataOption(LeosDocument LeosDocument) {
-        String title = getFinancialStatementTitle(LeosDocument);
-        return buildMetadata(LeosDocument, props -> {
+    static Option<FinancialStatementMetadata> getFinancialstatementdataOption(LeosDocument leosDocument) {
+        String title = getFinancialStatementTitle(leosDocument);
+        return buildMetadata(leosDocument, props -> {
             Option<FinancialStatementMetadata> fin =
              Option.some(
                     new FinancialStatementMetadata(props.stage, props.type, props.purpose, props.template,
@@ -116,7 +106,7 @@ class LeosRepositoryMetadataExtensions {
         props.eeaRelevance = getMetadataEeaRelevance(doc);
 
         Option<T> result;
-        if (props.stage != null && props.type != null && props.purpose != null && props.template != null && props.language != null && props.docTemplate != null) {
+        if (props.language != null && props.docTemplate != null) {
             result = leosMetadataBuilder.apply(props);
         } else {
             result = Option.none();
@@ -124,70 +114,64 @@ class LeosRepositoryMetadataExtensions {
         return result;
     }
 
-    // FIXME make this property mandatory???
-    private static String getMetadataStage(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE));
+    private static String getMetadataStage(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE));
     }
 
-    // FIXME make this property mandatory???
-    private static String getMetadataType(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE));
+    private static String getMetadataType(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE));
     }
 
-    // FIXME make this property mandatory???
-    private static String getMetadataPurpose(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE));
+    private static String getMetadataPurpose(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE));
     }
 
-    // FIXME make this property mandatory???
-    private static String getMetadataDocTemplate(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE));
+    private static String getMetadataDocTemplate(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE));
     }
 
-    private static boolean getMetadataEeaRelevance(LeosDocument LeosDocument) {
-        Boolean eeaRelevance = (Boolean) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE));
-        return eeaRelevance != null ? (boolean) eeaRelevance : false;
+    private static boolean getMetadataEeaRelevance(LeosDocument leosDocument) {
+        Boolean eeaRelevance = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE));
+        return eeaRelevance != null ? eeaRelevance : false;
     }
 
-    // FIXME make this property mandatory???
-    private static Integer getAnnexIndex(LeosDocument LeosDocument) {
-        BigInteger value = (BigInteger) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX));
-        return value != null ? value.intValueExact() : null;
+    private static Integer getAnnexIndex(LeosDocument leosDocument) {
+        if (leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)) != null) {
+            Integer value = Integer.parseInt((String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)));
+            return value != null ? value : 0;
+        }
+        return 0;
     }
 
-    // FIXME make this property mandatory???
-    private static String getAnnexNumber(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER));
+    private static String getAnnexNumber(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER));
     }
 
-    // FIXME make this property mandatory???
-    private static String getAnnexTitle(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE));
+    private static String getAnnexTitle(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE));
     }
 
-    private static String getAnnexClonedRef(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF));
+    private static String getAnnexClonedRef(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF));
     }
 
-    // FIXME make this property mandatory???
-    private static String getExplanatoryTitle(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
+    private static String getExplanatoryTitle(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }
 
-    // FIXME make this property mandatory???
-    private static String getMetadataRef(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF));
+    private static String getMetadataRef(LeosDocument leosDocument) {
+        return leosDocument.getRef();
     }
 
-    private static String getTemplate(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE));
+    private static String getTemplate(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE));
     }
 
-    private static String getLanguage(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE));
+    private static String getLanguage(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE));
     }
 
-    private static String getFinancialStatementTitle(LeosDocument LeosDocument) {
-        return (String) LeosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
+    private static String getFinancialStatementTitle(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }
 }

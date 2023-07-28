@@ -388,6 +388,18 @@ class TemplateSelectionStep extends CustomComponent implements WizardStep {
 
         if (isValid) {
             Item item = tree.getItem(selectedItemId);
+            String parentItemId = (String) tree.getParent(selectedItemId);
+            if (parentItemId != null && CatalogItem.ItemType.CATEGORY.equals(tree.getItem(parentItemId).getItemProperty(CatalogUtil.TYPE_PROPERTY).getValue())) {
+                document.getMetadata().setDocType((String) tree.getItem(parentItemId).getItemProperty(CatalogUtil.KEY_PROPERTY).getValue());
+                String grandParentItemId = (String) tree.getParent(parentItemId);
+                if (grandParentItemId != null && CatalogItem.ItemType.CATEGORY.equals(tree.getItem(grandParentItemId).getItemProperty(CatalogUtil.TYPE_PROPERTY).getValue())) {
+                    document.setProcedureType((String) tree.getItem(grandParentItemId).getItemProperty(CatalogUtil.KEY_PROPERTY).getValue());
+                    String grandGrandParentItemId = (String) tree.getParent(grandParentItemId);
+                    if (grandGrandParentItemId != null && CatalogItem.ItemType.CATEGORY.equals(tree.getItem(grandGrandParentItemId).getItemProperty(CatalogUtil.TYPE_PROPERTY).getValue())) {
+                        document.setActType((String) tree.getItem(grandGrandParentItemId).getItemProperty(CatalogUtil.KEY_PROPERTY).getValue());
+                    }
+                }
+            }
             document.getMetadata().setDocTemplate(selectedItemId);
             document.getMetadata().setTemplateName((String) item.getItemProperty(CatalogUtil.NAME_PROPERTY).getValue());
             document.getMetadata().setLanguage((String) langSelector.getValue());

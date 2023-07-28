@@ -65,7 +65,7 @@ public class PackageIntegrationTests {
     private final String USER = "demo";
     private final BigDecimal PKG_ID = new BigDecimal(3);
     private final String PKG_NAME = "/leos/workspaces/package-test";
-    private final String TEST_PKG_NAME = "/leos/workspaces/package_ckk8202vl0000n070oin84afg";
+    private final String TEST_PKG_NAME = "/leos/workspaces/package_test";
     private final String REPO_ID = "leos_dev";
     private final Date currentTimeStamp = new Date();
     private eu.europa.ec.leos.repository.model.Package pkg;
@@ -257,12 +257,12 @@ public class PackageIntegrationTests {
         mockMvc.perform(post("/package/find-by-name/{name}/documents", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
-                .andExpect(jsonPath("$[0].name", is(xmlDoc.getName())))
-                .andExpect(jsonPath("$[0].createdBy", is(USER)))
-                .andExpect(jsonPath("$[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
-                .andExpect(jsonPath("$[0].updatedBy", is(USER)))
-                .andExpect(jsonPath("$[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(status().isOk()).andDo(print());
     }
 
@@ -281,12 +281,12 @@ public class PackageIntegrationTests {
         mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID_STR).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].ref", is(xmlDoc.getRef())))
-                .andExpect(jsonPath("$[0].name", is(xmlDoc.getName())))
-                .andExpect(jsonPath("$[0].createdBy", is(USER)))
-                .andExpect(jsonPath("$[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
-                .andExpect(jsonPath("$[0].updatedBy", is(USER)))
-                .andExpect(jsonPath("$[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
+                .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedBy", is(USER)))
+                .andExpect(jsonPath("$.leosDocumentList[0].updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(status().isOk()).andDo(print());
     }
 }

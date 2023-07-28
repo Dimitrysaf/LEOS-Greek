@@ -29,4 +29,7 @@ public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
     @Query(value = "SELECT * FROM PACKAGE p WHERE p.REPOSITORY_ID in (SELECT ID from REPOSITORY WHERE CMIS_ID = ?1) and p.NAME LIKE ?2", nativeQuery =
             true)
     List<Package> findPackagesByPath(String repositoryId, String path);
+
+    @Query(value = "SELECT * FROM PACKAGE p WHERE p.ID IN (SELECT d.PACKAGE_ID FROM DOCUMENT d WHERE d.REF = ?1)", nativeQuery = true)
+    Optional<Package> findPackageByDocumentRef(String documentRefId);
 }

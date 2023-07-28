@@ -30,6 +30,7 @@ public class CatalogItem {
     private Boolean enabled;
     private Boolean hidden;
     private String key;
+    private String category;
 
     private Map<String, String> nameMap;
     private Map<String, String> descMap;
@@ -87,5 +88,13 @@ public class CatalogItem {
 
     public void setHidden(Boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -47,6 +47,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     @Override
     public XmlDocument findTemplate(String path, String name) {
         logger.debug("Finding template... [path=" + path + ", name=" + name + "]");
+
         return leosRepository.findDocumentByParentPath(path, name, XmlDocument.class);
     }
 }

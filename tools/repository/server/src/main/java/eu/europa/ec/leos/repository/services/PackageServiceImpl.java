@@ -13,17 +13,15 @@
  */
 package eu.europa.ec.leos.repository.services;
 
-import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
-import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.entities.Repository;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertiesVRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
@@ -47,7 +45,7 @@ public class PackageServiceImpl implements PackageService {
     private final MilestoneVRepository milestoneVRepository;
     private final PackageRepository packageRepository;
     private final RepositoryRepository repositoryRepository;
-    private final DocumentPropertiesVRepository documentPropertiesVRepository;
+    private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
     private final CollaboratorsService collaboratorsService;
     private final DocumentMilestoneListRepository documentMilestoneListRepository;
     private final DocumentCategoriesRepository documentCategoriesRepository;
@@ -55,14 +53,15 @@ public class PackageServiceImpl implements PackageService {
 
     @Autowired
     public PackageServiceImpl(DocumentVRepository documentVRepository, MilestoneVRepository milestoneVRepository, PackageRepository packageRepository,
-                              RepositoryRepository repositoryRepository, DocumentPropertiesVRepository documentPropertiesVRepository, CollaboratorsService collaboratorsService,
+                              RepositoryRepository repositoryRepository, DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                              CollaboratorsService collaboratorsService,
                               DocumentMilestoneListRepository documentMilestoneListRepository, DocumentCategoriesRepository documentCategoriesRepository,
                               @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
         this.milestoneVRepository = milestoneVRepository;
         this.packageRepository = packageRepository;
         this.repositoryRepository = repositoryRepository;
-        this.documentPropertiesVRepository = documentPropertiesVRepository;
+        this.documentPropertyValuesRepository = documentPropertyValuesRepository;
         this.collaboratorsService = collaboratorsService;
         this.documentMilestoneListRepository = documentMilestoneListRepository;
         this.documentCategoriesRepository = documentCategoriesRepository;
@@ -93,7 +92,7 @@ public class PackageServiceImpl implements PackageService {
 
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String repositoryId, final String name) throws RepositoryException {
         Package pkg =
-                packageRepository.findPackageByName(repositoryId, name).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
+                packageRepository.findPackageByName(repositoryId, name).orElse(null);
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
@@ -148,7 +147,7 @@ public class PackageServiceImpl implements PackageService {
         }
         List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
-            xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
+            xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, doc));
         }
         for (MilestoneV m : milestones) {
             xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
@@ -179,7 +178,7 @@ public class PackageServiceImpl implements PackageService {
         }
         List<LeosDocument> xmlDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
-            xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertiesVRepository, collaboratorsService, doc));
+            xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, doc));
         }
         for (MilestoneV m : milestones) {
             xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
@@ -193,5 +192,13 @@ public class PackageServiceImpl implements PackageService {
             documentCount += documentVRepository.getDocumentCountByPackageName(packageName, categoryCode);
         }
         return documentCount;
+    }
+
+    @Override
+    public eu.europa.ec.leos.repository.model.Package findPackageByDocumentRef(final String documentRefId) throws RepositoryException {
+        Package pkg =
+                packageRepository.findPackageByDocumentRef(documentRefId)
+                        .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
+        return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 }

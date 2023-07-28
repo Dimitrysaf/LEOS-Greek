@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.repository.model;
 
 import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
+import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class XmlDocumentMetadata {
         this.setCollaborators(collaborators);
     }
 
-    public Map<String, Object> generateMetadataMap(List<DocumentPropertiesV> otherMetadata) {
+    public Map<String, Object> generateMetadataMap(List<DocumentPropertyValues> otherMetadata) {
         Map<String, Object> metadataMap = new HashMap<String, Object>();
         if (this.getDocStage() != null) {
             metadataMap.put("docStage", this.getDocStage());
@@ -125,8 +126,8 @@ public class XmlDocumentMetadata {
             metadataMap.put("collaborators", this.getCollaborators());
         }
 
-        for (DocumentPropertiesV propValue : otherMetadata) {
-            metadataMap.put(propValue.getPropertyName(), propValue.getPropertyValue());
+        for (DocumentPropertyValues propValue : otherMetadata) {
+            metadataMap.put(propValue.getPropertyId().getPropertyName(), propValue.getPropertyValue());
         }
         return metadataMap;
     }

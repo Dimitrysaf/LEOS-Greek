@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.cmis;
 
-import eu.europa.ec.leos.cmis.mapping.CmisMapper;
+import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -139,7 +139,7 @@ public class CmisSessionFactoryImpl implements CmisSessionFactory {
 
     //this method checks for mandatory capabilities. if not then throw exception.
     private void checkMandatoryCapabilities(Session session) {
-        DocumentType leosDocType = (DocumentType) session.getTypeDefinition(CmisMapper.cmisPrimaryType(XmlDocument.class));
+        DocumentType leosDocType = (DocumentType) session.getTypeDefinition(LeosMapper.leosPrimaryType(XmlDocument.class));
         //1. if leos:Document type is available
         Objects.requireNonNull(leosDocType, "leos:document type is not defined");
         LOG.debug("Leos Document Type is defined");

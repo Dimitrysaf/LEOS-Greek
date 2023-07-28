@@ -45,6 +45,7 @@ import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.JOB_ID;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.LIVE_DIFFING_REQUIRED;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_DOCTEMPLATE;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_EEA_RELEVANCE;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_PROCEDURE_TYPE;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_PURPOSE;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_REF;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_STAGE;
@@ -71,6 +72,7 @@ public class CmisProperties implements RepositoryPropertiesMapper {
         ids.put(MILESTONE_COMMENTS, "leos:milestoneComments");
         ids.put(INITIAL_CREATED_BY, "leos:initialCreatedBy");
         ids.put(INITIAL_CREATION_DATE, "leos:initialCreationDate");
+        ids.put(METADATA_PROCEDURE_TYPE, "metadata:procedureType");
         ids.put(JOB_ID, "leos:jobId");
         ids.put(JOB_DATE, "leos:jobDate");
         ids.put(STATUS, "leos:status");
