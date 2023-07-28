@@ -51,10 +51,10 @@ export class ProposalDetailsService implements OnDestroy {
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
-  private proposalRefBS = new BehaviorSubject<string>(null);
+  private proposalRefBS = new BehaviorSubject<[string, boolean]>(null);
   private milestonesBS = new BehaviorSubject<Milestone[]>([]);
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
-    switchMap(() => this.getProposalDetails()),
+    switchMap(([_proposalRef, loading]) => this.getProposalDetails(loading)),
   );
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
@@ -106,12 +106,12 @@ export class ProposalDetailsService implements OnDestroy {
     this.userInputFieldChangeBS.next(name);
   }
 
-  setProposalRef(proposalRef: string) {
-    this.proposalRefBS.next(proposalRef);
+  setProposalRef(proposalRef: string, loading = true) {
+    this.proposalRefBS.next([proposalRef, loading]);
   }
 
   get proposalRef(): string {
-    return this.proposalRefBS.getValue();
+    return this.proposalRefBS.getValue()[0];
   }
 
   createAnnex() {
@@ -191,7 +191,7 @@ export class ProposalDetailsService implements OnDestroy {
         title: '',
       })
       .subscribe((val) => {
-        this.proposalRefBS.next(this.proposalRef);
+        this.proposalRefBS.next([this.proposalRef, true]);
       });
   }
 
@@ -561,8 +561,8 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  private getProposalDetails(): Observable<Document> {
-    this.loadingService.setLoading(true);
+  private getProposalDetails(loading = true): Observable<Document> {
+    if (loading) this.loadingService.setLoading(true);
     return this.http.get<Document>(
       `${apiBaseUrl}/secured/proposals/${this.proposalRef}`,
     );

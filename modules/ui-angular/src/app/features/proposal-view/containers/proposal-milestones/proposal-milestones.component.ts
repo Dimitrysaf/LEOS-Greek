@@ -203,7 +203,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   private milestoneStatusChangeRoutine() {
     if (this.proposalRef)
-      this.proposalDetailsService.setProposalRef(this.proposalRef);
+      this.proposalDetailsService.setProposalRef(this.proposalRef, false);
     this.checkForMilestoneStatusChange();
   }
 
