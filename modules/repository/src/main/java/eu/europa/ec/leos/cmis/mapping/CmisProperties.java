@@ -13,9 +13,10 @@
  */
 package eu.europa.ec.leos.cmis.mapping;
 
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -59,9 +60,9 @@ import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.VERSION_
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.VERSION_TYPE;
 
 @Component
-@Profile(value = {"default","cmis"})
+@RepositoryProfile(repositoryProfiles = {RepositoryProfileType.DEFAULT, RepositoryProfileType.CMIS})
 public class CmisProperties implements RepositoryPropertiesMapper {
-    private Map<RepositoryProperties, String> ids = new HashMap();
+    private final Map<RepositoryProperties, String> ids = new HashMap();
 
     public CmisProperties() {
         ids.put(DOCUMENT_CATEGORY, "leos:category");

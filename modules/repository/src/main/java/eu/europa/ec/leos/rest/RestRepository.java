@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpEntity;
@@ -55,7 +54,6 @@ import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
 @Repository
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
-@Profile(value = {"rest"})
 public class RestRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestRepository.class);

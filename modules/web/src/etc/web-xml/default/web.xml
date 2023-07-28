@@ -41,10 +41,6 @@
         <param-value>120</param-value>
         <!-- heartbeat should always be smaller then half of the session timeout  -->
     </context-param>
-    <context-param>
-        <param-name>spring.profiles.active</param-name>
-        <param-value>${leos.spring.profiles.active}</param-value>
-    </context-param>
     <!-- SLF4J bridge listener -->
     <listener>
         <listener-class>eu.europa.ec.leos.web.support.log.SLF4JBridgeListener</listener-class>

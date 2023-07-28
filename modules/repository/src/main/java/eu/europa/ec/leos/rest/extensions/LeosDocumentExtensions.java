@@ -32,7 +32,6 @@ import eu.europa.ec.leos.domain.repository.document.MediaDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.Structure;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;

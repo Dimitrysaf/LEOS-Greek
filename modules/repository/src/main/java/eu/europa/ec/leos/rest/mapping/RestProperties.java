@@ -13,9 +13,10 @@
  */
 package eu.europa.ec.leos.rest.mapping;
 
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -24,9 +25,9 @@ import java.util.Map;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.*;
 
 @Component
-@Profile(value = {"rest"})
+@RepositoryProfile(RepositoryProfileType.REST)
 public class RestProperties implements RepositoryPropertiesMapper {
-   private Map<RepositoryProperties, String> ids = new HashMap();
+   private final Map<RepositoryProperties, String> ids = new HashMap();
 
     public RestProperties() {
         ids.put(DOCUMENT_CATEGORY, "category");

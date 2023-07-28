@@ -16,6 +16,8 @@ package eu.europa.ec.leos.cmis.repository;
 import eu.europa.ec.leos.cmis.extensions.CmisDocumentExtensions;
 import eu.europa.ec.leos.cmis.extensions.CmisFolderExtensions;
 import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
@@ -44,7 +46,6 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
@@ -72,7 +73,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * @constructor Creates a generic LEOS Repository, injected with a CMIS Repository and a Security Context.
  */
 @Repository
-@Profile(value = {"default","cmis"})
+@RepositoryProfile(repositoryProfiles = {RepositoryProfileType.DEFAULT, RepositoryProfileType.CMIS})
 public class LeosCmisRepositoryImpl implements LeosRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(LeosCmisRepositoryImpl.class);
@@ -605,7 +606,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
         logger.trace("CMIS Repository document search took " + time + " milliseconds.");
 
-        if (docs.isEmpty() || (docs.size() > 1)) {
+        if (docs.size() != 1) {
             throw new IllegalStateException("Error occurred retrieving document! [=" + ref + ']');
         } else {
             return toLeosDocument(docs.get(0), type, true)
