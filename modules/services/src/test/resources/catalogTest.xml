@@ -31,7 +31,7 @@
                 <description lang="EN">Proposal for a</description>
                 <description lang="FR">Proposition de</description>
             </descriptions>
-            <item enabled="false" id="SJ-023" type="TEMPLATE">
+            <item enabled="false" id="SJ-023" type="TEMPLATE" category="PROPOSAL;MEMORANDUM;BILL">
                 <names>
                     <name lang="EN">SJ-023 - Proposal for a Regulation of the European Parliament and of the Council</name>
                     <name lang="FR">SJ-023 - Proposition de règlement du Parlement européen et du Conseil</name>
@@ -45,7 +45,7 @@
                     <language lang="FR">Français</language>
                 </languages>
             </item>
-            <item enabled="true" id="SJ-016" type="TEMPLATE">
+            <item enabled="true" id="SJ-016" type="TEMPLATE" category="PROPOSAL;MEMORANDUM;BILL">
                 <names>
                     <name lang="EN">SJ-016 - Proposal for a Council Regulation</name>
                     <name lang="FR">SJ-016 - Proposition de règlement du Conseil</name>

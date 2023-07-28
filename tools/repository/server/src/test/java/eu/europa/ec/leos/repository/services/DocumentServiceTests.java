@@ -329,13 +329,15 @@ public class DocumentServiceTests {
     @Transactional
     public void test_searchDocument() throws RepositoryException {
         LeosDocument doc = docCreation();
-        List<LeosDocument> docs = documentService.findDocumentByName(doc.getName());
-        assertEquals(docs.size(), 1);
-        assertEquals(docs.get(0).getName(), doc.getName());
-        assertTrue(Arrays.equals(docs.get(0).getSource(), doc.getSource()));
-        assertEquals(docs.get(0).getRef(), doc.getRef());
-        assertEquals(docs.get(0).getCategory(), doc.getCategory());
-        assertEquals(pkg.getId(), docs.get(0).getPackageId());
+        Optional<LeosDocument> docOpt = documentService.findDocumentByName(doc.getName());
+        assertNotNull(docOpt);
+        assertTrue(docOpt.isPresent());
+        LeosDocument newDoc = docOpt.get();
+        assertEquals(newDoc.getName(), doc.getName());
+        assertTrue(Arrays.equals(newDoc.getSource(), doc.getSource()));
+        assertEquals(newDoc.getRef(), doc.getRef());
+        assertEquals(newDoc.getCategory(), doc.getCategory());
+        assertEquals(pkg.getId(), newDoc.getPackageId());
     }
 
     @Test
@@ -345,7 +347,7 @@ public class DocumentServiceTests {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
                 , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
-        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-017"
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
                 , "SJ-023"));
         Set<String> categories = Sets.set("PROPOSAL");
         List<LeosDocument> docs = documentService.findDocumentsUsingFilter("/leos/workspaces", categories, filter, 0, 5);
@@ -361,7 +363,7 @@ public class DocumentServiceTests {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
                 , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
-        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-017"
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
                 , "SJ-023"));
         filter.addFilter(new QueryFilter.Filter("role", "IN", false, "demo::OWNER::DGT.R.3"
                 , "demo::CONTRIBUTOR::DGT.R.3", "demo::REVIEWER::DGT.R.3", "demo::OWNER"
@@ -469,7 +471,7 @@ public class DocumentServiceTests {
                 "            </block></conclusions>\n" +
                 "    </bill>\n" +
                 "</akomaNtoso>";
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                     content.getBytes(StandardCharsets.UTF_8), "Second Version", pkg.getName());
 
         assertNotNull(doc);
@@ -496,7 +498,7 @@ public class DocumentServiceTests {
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         collaborators.add(new Collaborator(pkg.getName(), "REVIEWER", "DIGIT"));
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                     "Second Version", pkg.getName());
         assertNotNull(doc);
         List<DocumentV> docV = documentVRepository.findAllVersionsByRef(doc.getRef());
@@ -534,7 +536,7 @@ public class DocumentServiceTests {
         LeosDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", pkg.getName(),
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version", USER_ID);
 
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.2", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
         assertNotNull(doc);
         List<DocumentV> docVersionsBeforeDelete =
@@ -558,7 +560,7 @@ public class DocumentServiceTests {
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
 
-        LeosDocument updatedDoc = documentService.updateDocument(doc.getRef(), properties, "0.1.1", 3,
+        LeosDocument updatedDoc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
         assertNotNull(updatedDoc);
         assertFalse(doc.getVersionId().equals(updatedDoc.getVersionId()));
@@ -577,7 +579,7 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
         assertNotNull(doc);
         List<LeosDocument> docs = documentService.findAllVersionsByRef("REG-clh5v2p720007ng28khrr03h7-en");
@@ -600,7 +602,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findLatestMajorVersionById() throws RepositoryException {
-        LeosDocument doc = documentService.findLatestMajorVersionByRef("annex_ckk820mup0004n070ph1ubpzg");
+        LeosDocument doc = documentService.findLatestMajorVersionByRef("annex_test");
         assertEquals(doc.getVersionLabel(), "1.0.0");
         assertNotNull(doc);
         doc = documentService.findLatestMajorVersionByRef("dummy");
@@ -610,7 +612,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findFirstVersion() throws RepositoryException {
-        LeosDocument doc = documentService.findFirstVersion("annex_ckk820mup0004n070ph1ubpzg");
+        LeosDocument doc = documentService.findFirstVersion("annex_test");
         assertEquals(doc.getVersionLabel(), "1.0.0");
         assertNotNull(doc);
     }
@@ -618,9 +620,9 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findDocumentByVersion() throws RepositoryException {
-        LeosDocument doc = documentService.findDocumentByVersion("annex_ckk820mup0004n070ph1ubpzg","1.0.0");
+        LeosDocument doc = documentService.findDocumentByVersion("annex_test","1.0.0");
         assertNotNull(doc);
-        doc = documentService.findDocumentByVersion("annex_ckk820mup0004n070ph1ubpzg","1.2.0");
+        doc = documentService.findDocumentByVersion("annex_test","1.2.0");
         assertNull(doc);
     }
 
@@ -641,9 +643,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.2", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Third Version", pkg.getName());
         List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0",0, 10);
         assertEquals(docs.size(), 2);
@@ -659,11 +661,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, documentService.getNextVersionLabel(VersionType.MINOR,
-                        doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, documentService.getNextVersionLabel(VersionType.MINOR,
-                        doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Third Version", pkg.getName());
         Integer minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
         assertEquals(minorsCount, new Integer(2));
@@ -672,7 +672,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_getAllMajorsCount() throws RepositoryException {
-        Integer majorsCount = documentService.getAllMajorsCount("annex_ckk820mup0004n070ph1ubpzg");
+        Integer majorsCount = documentService.getAllMajorsCount("annex_test");
         assertEquals(majorsCount, new Integer(1));
     }
 
@@ -684,9 +684,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.1", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, "0.1.2", 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Third Version", pkg.getName());
         List<LeosDocument> docs = documentService.findRecentMinorVersions("REG-clh5v2p720007ng28khrr03h7-en", "0.1.0",0, 10);
         assertEquals(docs.size(), 2);
@@ -706,11 +706,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, documentService.getNextVersionLabel(VersionType.MINOR,
-                        doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, documentService.getNextVersionLabel(VersionType.MINOR,
-                        doc.getVersionLabel()), 3,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Third Version", pkg.getName());
         Integer recentMinorVersionCount = documentService.getRecentMinorVersionsCount("REG-clh5v2p720007ng28khrr03h7-en","0.1.0");
         assertEquals(recentMinorVersionCount, new Integer(2));
@@ -719,7 +717,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findAllMajors() throws RepositoryException {
-        List<LeosDocument> docs = documentService.findAllMajors("annex_ckk820mup0004n070ph1ubpzg",0,10);
+        List<LeosDocument> docs = documentService.findAllMajors("annex_test",0,10);
         assertEquals(docs.size(), 1);
     }
 }

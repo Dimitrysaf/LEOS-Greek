@@ -35,4 +35,6 @@ public interface PackageService {
     List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories, final boolean allVersion);
 
     Integer getDocumentCountByPackageName(final String packageName, Set<String> categories);
+
+    eu.europa.ec.leos.repository.model.Package findPackageByDocumentRef(String documentRefId) throws RepositoryException;
 }

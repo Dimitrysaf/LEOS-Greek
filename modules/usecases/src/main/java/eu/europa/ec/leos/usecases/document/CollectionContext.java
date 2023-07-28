@@ -59,6 +59,9 @@ public abstract class CollectionContext {
     protected Proposal proposal = null;
     protected String purpose;
     protected boolean eeaRelevance;
+    protected String procedureType;
+    protected String actType;
+    protected String docType;
     protected String versionComment;
     protected String milestoneComment;
 
@@ -110,6 +113,24 @@ public abstract class CollectionContext {
         Validate.notNull(purpose, "Proposal purpose is required!");
         LOG.trace("Using Proposal purpose... [purpose={}]", purpose);
         this.purpose = purpose;
+    }
+
+    public void useProcedureType(String procedureType) {
+        Validate.notNull(procedureType, "Proposal procedure type is required!");
+        LOG.trace("Using Proposal procedure type... [procedure type={}]", procedureType);
+        this.procedureType = procedureType;
+    }
+
+    public void useActType(String actType) {
+        Validate.notNull(actType, "Proposal act type is required!");
+        LOG.trace("Using Proposal act type... [act type={}]", actType);
+        this.actType = actType;
+    }
+
+    public void useDocType(String docType) {
+        Validate.notNull(docType, "Proposal doc type is required!");
+        LOG.trace("Using Proposal doc type... [doc type={}]", docType);
+        this.docType = docType;
     }
 
     public void useEeaRelevance(boolean eeaRelevance) {
@@ -199,7 +220,7 @@ public abstract class CollectionContext {
             }
         }
         proposal = proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
-    };
+    }
 
     public void executeUpdateProposal() {
         LOG.trace("Executing 'Update Proposal' use case...");

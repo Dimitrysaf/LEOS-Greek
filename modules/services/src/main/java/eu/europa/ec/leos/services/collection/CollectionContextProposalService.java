@@ -71,6 +71,8 @@ public class CollectionContextProposalService extends CollectionContextService {
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
+                .withActType(actType)
+                .withProcedureType(procedureType)
                 .withEeaRelevance(eeaRelevance)
                 .build();
 

@@ -43,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
@@ -63,7 +62,6 @@ import static eu.europa.ec.leos.cmis.support.OperationContextProvider.getMinimal
 
 @Repository
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
-@Profile(value = {"default","cmis"})
 public class CmisRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(CmisRepository.class);

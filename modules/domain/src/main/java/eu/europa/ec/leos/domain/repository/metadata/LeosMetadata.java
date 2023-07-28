@@ -17,6 +17,8 @@ public abstract class LeosMetadata {
     protected final String objectId;
     protected final String docVersion;
     protected final boolean eeaRelevance;
+    private String procedureType;
+    private String actType;
     private String callbackAddress;
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
@@ -85,6 +87,22 @@ public abstract class LeosMetadata {
 
     public void setCallbackAddress(String callbackAddress) {
         this.callbackAddress = callbackAddress;
+    }
+
+    public String getProcedureType() {
+        return procedureType;
+    }
+
+    public void setProcedureType(String procedureType) {
+        this.procedureType = procedureType;
+    }
+
+    public String getActType() {
+        return actType;
+    }
+
+    public void setActType(String actType) {
+        this.actType = actType;
     }
 
     @Override

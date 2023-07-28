@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.cmis.mapping;
+package eu.europa.ec.leos.repository.mapping;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.*;
@@ -21,10 +21,11 @@ import java.util.*;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 import static java.util.Collections.singleton;
 
-public class CmisMapper {
+public class LeosMapper {
 
     private static final Map<Class<? extends LeosDocument>, Set<LeosCategory>> documentCategoryMap;
     private static final Map<Class<? extends LeosDocument>, String> documentPrimaryTypeMap;
+    private static final Map<LeosCategory, Class<? extends LeosDocument>> categoryDocumentMap;
 
     static {
         documentCategoryMap = new HashMap<>();
@@ -43,6 +44,19 @@ public class CmisMapper {
         documentCategoryMap.put(LegDocument.class, singleton(LEG));
         documentCategoryMap.put(ExportDocument.class, singleton(EXPORT));
 
+        categoryDocumentMap = new HashMap<>();
+        // FIXME move this mapping somewhere else or implement in better way?!!!
+        categoryDocumentMap.put(PROPOSAL, Proposal.class);
+        categoryDocumentMap.put(MEMORANDUM, Memorandum.class);
+        categoryDocumentMap.put(COUNCIL_EXPLANATORY, Explanatory.class);
+        categoryDocumentMap.put(BILL, Bill.class);
+        categoryDocumentMap.put(ANNEX, Annex.class);
+        categoryDocumentMap.put(STAT_FINANC_LEGIS, FinancialStatement.class);
+        categoryDocumentMap.put(MEDIA, MediaDocument.class);
+        categoryDocumentMap.put(CONFIG, ConfigDocument.class);
+        categoryDocumentMap.put(LEG, LegDocument.class);
+        categoryDocumentMap.put(EXPORT, ExportDocument.class);
+
         // FIXME move this mapping somewhere else or implement in better way?!!!
         documentPrimaryTypeMap = new HashMap<>();
         documentPrimaryTypeMap.put(LeosDocument.class, "leos:document");
@@ -60,7 +74,7 @@ public class CmisMapper {
     }
 
     // FIXME move this mapping somewhere else or implement in better way?!!!
-    public static String cmisPrimaryType(Class<? extends LeosDocument> type) {
+    public static String leosPrimaryType(Class<? extends LeosDocument> type) {
         String result = documentPrimaryTypeMap.get(type);
         if (result == null) {
             throw new IllegalArgumentException("Unknown CMIS primary type!");
@@ -69,7 +83,11 @@ public class CmisMapper {
     }
 
     // FIXME move this mapping somewhere else or implement in better way?!!!
-    public static Set<LeosCategory> cmisCategories(Class<? extends LeosDocument> type) {
+    public static Set<LeosCategory> leosCategories(Class<? extends LeosDocument> type) {
         return documentCategoryMap.getOrDefault(type, Collections.emptySet());
+    }
+
+    public static Class<? extends LeosDocument> leosType(LeosCategory category) {
+        return categoryDocumentMap.getOrDefault(category, LeosDocument.class);
     }
 }

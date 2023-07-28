@@ -277,6 +277,15 @@ define(function leosTrackChangesModule(require) {
 
         canUserRejectChanges: function(editor) {
             return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_REJECT_CHANGES");
+        },
+
+        clone: function(element) {
+            var cloneElement = null;
+            if (element) {
+                cloneElement = element.clone(true);
+                cloneElement.$.classList.remove("cke_widget_focused", "cke_widget_selected");
+            }
+            return cloneElement;
         }
 
     };

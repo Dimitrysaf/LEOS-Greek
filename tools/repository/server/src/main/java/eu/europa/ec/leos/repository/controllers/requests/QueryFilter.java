@@ -14,6 +14,10 @@ public class QueryFilter {
     public static final String SORT_DESCENDING = "DESC";
     public static final String SORT_ASCENDING = "ASC";
 
+    public QueryFilter() {
+
+    }
+
     private final List<Filter> filters = new ArrayList<>();
     private final List<SortOrder> sortOrders = new ArrayList<>();
 
@@ -102,10 +106,14 @@ public class QueryFilter {
     }
 
     public static class Filter {
-        public final String key;
-        public final String[] value;
-        public final String operator;
-        public final boolean nullCheck;
+        public String key;
+        public String[] value;
+        public String operator;
+        public boolean nullCheck;
+
+        public Filter() {
+            value = new String[0];
+        }
 
         public Filter(String key, String operator, boolean nullCheck, String... value) {
             this.key = key;
@@ -121,15 +129,50 @@ public class QueryFilter {
         public String[] getValue() {
             return value;
         }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public void setValue(String[] value) {
+            this.value = value;
+        }
+
+        public String getOperator() {
+            return operator;
+        }
+
+        public void setOperator(String operator) {
+            this.operator = operator;
+        }
+
+        public boolean isNullCheck() {
+            return nullCheck;
+        }
+
+        public void setNullCheck(boolean nullCheck) {
+            this.nullCheck = nullCheck;
+        }
     }
 
     public static class SortOrder {
-        public final String key;
-        public final String direction;
+        public String key;
+        public String direction;
+
+        public SortOrder() {
+        }
 
         public SortOrder(String key, String direction) {
             this.key = key;
             this.direction = direction;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
         }
     }
 
@@ -148,6 +191,8 @@ public class QueryFilter {
                     whereClauseFilter.append("(");
                     whereClauseFilter.append(QueryFilter.FilterType.getColumnName(filter.key) );
                     whereClauseFilter.append(" IS NULL OR ");
+                    whereClauseFilter.append(QueryFilter.FilterType.getColumnName(filter.key) );
+                    whereClauseFilter.append("='-' OR ");
                 }
                 StringBuilder value = new StringBuilder("'");
                 value.append(StringUtils.join(filter.value, "', '"));

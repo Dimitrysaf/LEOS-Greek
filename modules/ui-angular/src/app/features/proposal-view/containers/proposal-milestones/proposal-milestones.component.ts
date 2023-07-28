@@ -30,6 +30,7 @@ enum MilestoneStatus {
 })
 export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
+  @Input() proposalRef: string;
   @ViewChild('addMilestoneDialog')
   addMilestoneDialog: AddMilestoneDialogComponent;
   addMilestoneDialogVisible = false;
@@ -43,12 +44,9 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @ViewChild('milestoneAnnotationWarningModal')
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
-  proposalRef: string;
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
-  milestonesInPreparationExist = false;
-  milestonesInFileErrorExist = false;
   milestoneCheckTimer = null;
 
   destroy$: Subject<any> = new Subject();
@@ -152,18 +150,18 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
-    milestones.forEach((milestone) => {
-      if (this.milestonesInFileErrorExist) {
-        return;
-      }
+    let atLeastOneMilestoneInPreparation = false;
 
-      if (!this.milestonesInPreparationExist) {
-        this.milestonesInPreparationExist =
+    milestones.forEach((milestone) => {
+      if (!atLeastOneMilestoneInPreparation) {
+        atLeastOneMilestoneInPreparation =
           milestone.status === MilestoneStatus.InPreparation;
       }
 
-      if (milestone.status === MilestoneStatus.Error) {
-        this.milestonesInFileErrorExist = true;
+      if (
+        milestone.status === MilestoneStatus.Error ||
+        milestone.status === MilestoneStatus.Ready
+      ) {
         clearTimeout(this.milestoneCheckTimer);
         return;
       }
@@ -177,10 +175,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       }
     });
 
-    if (this.milestonesInPreparationExist && !this.milestonesInFileErrorExist) {
+    if (atLeastOneMilestoneInPreparation) {
       this.milestoneCheckTimer = setTimeout(
         () => this.milestoneStatusChangeRoutine(),
-        5000,
+        10000,
       );
     } else {
       clearTimeout(this.milestoneCheckTimer);
@@ -190,11 +188,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   private milestoneStatusChangeRoutine() {
-    this.route.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(({ proposalId }) => {
-        this.proposalDetailsService.setProposalRef(proposalId);
-      });
+    if (this.proposalRef)
+      this.proposalDetailsService.setProposalRef(this.proposalRef);
     this.checkForMilestoneStatusChange();
   }
 

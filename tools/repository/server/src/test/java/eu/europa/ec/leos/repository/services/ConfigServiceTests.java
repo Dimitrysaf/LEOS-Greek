@@ -24,8 +24,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -37,25 +39,25 @@ public class ConfigServiceTests {
     @Test
     @Transactional
     public void test_getConfigStructure() throws RepositoryException {
-        List<LeosDocument> structure = documentService.findDocumentByName("structure_01");
-        assertEquals(structure.size(), 1);
-        assertEquals(structure.get(0).getName(), "structure_01");
-        assertEquals(structure.get(0).getRef(), "structure_01");
-        assertEquals(structure.get(0).getCategory(), "STRUCTURE");
-        List<LeosDocument> config = documentService.findDocumentByName("BL-019-CONF");
-        assertEquals(config.size(), 1);
-        assertEquals(config.get(0).getName(), "BL-019-CONF");
-        assertEquals(config.get(0).getRef(), "BL-019-CONF");
-        assertEquals(config.get(0).getCategory(), "CONFIG");
+        Optional<LeosDocument> structure = documentService.findDocumentByName("structure_01");
+        assertTrue(structure.isPresent());
+        assertEquals(structure.get().getName(), "structure_01");
+        assertEquals(structure.get().getRef(), "structure_01");
+        assertEquals(structure.get().getCategory(), "STRUCTURE");
+        Optional<LeosDocument> config = documentService.findDocumentByName("BL-019-CONF");
+        assertTrue(structure.isPresent());
+        assertEquals(config.get().getName(), "BL-019-CONF");
+        assertEquals(config.get().getRef(), "BL-019-CONF");
+        assertEquals(config.get().getCategory(), "CONFIG");
         config = documentService.findDocumentByName("catalog");
-        assertEquals(config.size(), 1);
-        assertEquals(config.get(0).getName(), "catalog");
-        assertEquals(config.get(0).getRef(), "catalog");
-        assertEquals(config.get(0).getCategory(), "CONFIG");
-        List<LeosDocument> template = documentService.findDocumentByName("BL-019");
-        assertEquals(template.size(), 1);
-        assertEquals(template.get(0).getName(), "BL-019");
-        assertEquals(template.get(0).getRef(), "BL-019");
-        assertEquals(template.get(0).getCategory(), "TEMPLATE");
+        assertTrue(structure.isPresent());
+        assertEquals(config.get().getName(), "catalog");
+        assertEquals(config.get().getRef(), "catalog");
+        assertEquals(config.get().getCategory(), "CONFIG");
+        Optional<LeosDocument> template = documentService.findDocumentByName("BL-019");
+        assertTrue(template.isPresent());
+        assertEquals(template.get().getName(), "BL-019");
+        assertEquals(template.get().getRef(), "BL-019");
+        assertEquals(template.get().getCategory(), "TEMPLATE_BILL");
     }
 }

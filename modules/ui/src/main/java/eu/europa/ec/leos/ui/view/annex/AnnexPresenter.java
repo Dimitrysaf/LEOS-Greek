@@ -19,7 +19,6 @@ import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.domain.repository.Content;

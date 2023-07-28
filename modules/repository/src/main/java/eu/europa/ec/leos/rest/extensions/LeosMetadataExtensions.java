@@ -39,30 +39,30 @@ public class LeosMetadataExtensions {
     //todo: fix this generics..
     public static Map<String, ? extends Object> toLeosRepositoryProperties(LeosMetadata leosMetadata) {
 
-        Map<String, ? extends Object> cmisProperties;
+        Map<String, ? extends Object> leosProperties;
         if (leosMetadata instanceof ProposalMetadata) {
-            cmisProperties = toLeosRepositoryProperties((ProposalMetadata) leosMetadata);
+            leosProperties = toLeosRepositoryProperties((ProposalMetadata) leosMetadata);
         } else if (leosMetadata instanceof MemorandumMetadata) {
-            cmisProperties = toLeosRepositoryProperties((MemorandumMetadata) leosMetadata);
+            leosProperties = toLeosRepositoryProperties((MemorandumMetadata) leosMetadata);
         } else if (leosMetadata instanceof BillMetadata) {
-            cmisProperties = toLeosRepositoryProperties((BillMetadata) leosMetadata);
+            leosProperties = toLeosRepositoryProperties((BillMetadata) leosMetadata);
         } else if (leosMetadata instanceof AnnexMetadata) {
-            cmisProperties = toLeosRepositoryProperties((AnnexMetadata) leosMetadata);
+            leosProperties = toLeosRepositoryProperties((AnnexMetadata) leosMetadata);
         } else if (leosMetadata instanceof ExplanatoryMetadata) {
-            cmisProperties = toLeosRepositoryProperties((ExplanatoryMetadata) leosMetadata);
+            leosProperties = toLeosRepositoryProperties((ExplanatoryMetadata) leosMetadata);
         } else if (leosMetadata instanceof FinancialStatementMetadata) {
-            cmisProperties = toLeosRepositoryProperties((FinancialStatementMetadata) leosMetadata);
+            leosProperties = toLeosRepositoryProperties((FinancialStatementMetadata) leosMetadata);
         } else {
             throw new IllegalStateException("Unknown LEOS Metadata! [type=" + leosMetadata.getClass().getSimpleName() + ']');
         }
 
-        return cmisProperties.entrySet()
+        return leosProperties.entrySet()
                 .stream()
                 .filter(mapEntry -> !isEmpty(mapEntry.getValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryPropertie(ProposalMetadata proposalMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(ProposalMetadata proposalMetadata) {
 
         String title = Stream.of(proposalMetadata.getStage(), proposalMetadata.getType(), proposalMetadata.getPurpose())
                 .filter(s -> s != null && !s.isEmpty())
@@ -71,19 +71,19 @@ public class LeosMetadataExtensions {
         return buildCommonProperties(proposalMetadata, title);
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryPropertie(ExplanatoryMetadata explanatoryMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(ExplanatoryMetadata explanatoryMetadata) {
         String title = explanatoryMetadata.getTitle();
 
         return buildCommonProperties(explanatoryMetadata, title);
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryPropertie(MemorandumMetadata memorandumMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(MemorandumMetadata memorandumMetadata) {
         String title = memorandumMetadata.getType();
 
         return buildCommonProperties(memorandumMetadata, title);
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryPropertie(BillMetadata billMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(BillMetadata billMetadata) {
         String title = Stream.of(billMetadata.getStage(), billMetadata.getType(), billMetadata.getPurpose())
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(Collectors.joining(" "));
@@ -91,42 +91,45 @@ public class LeosMetadataExtensions {
         return buildCommonProperties(billMetadata, title);
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryPropertie(AnnexMetadata annexMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(AnnexMetadata annexMetadata) {
         String title = annexMetadata.getType();
 
-        Map<String, Object> cmisProperties = new HashMap<>();
+        Map<String, Object> leosProperties = new HashMap<>();
 
-        cmisProperties.putAll(buildCommonProperties(annexMetadata, title));
+        leosProperties.putAll(buildCommonProperties(annexMetadata, title));
 
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX), annexMetadata.getIndex());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER), annexMetadata.getNumber());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE), annexMetadata.getTitle());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF), annexMetadata.getClonedRef());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX), annexMetadata.getIndex());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER), annexMetadata.getNumber());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE), annexMetadata.getTitle());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF), annexMetadata.getClonedRef());
 
-        return cmisProperties;
+        return leosProperties;
     }
 
-    private static Map<String, ? extends Object> toLeosRepositoryPropertie(FinancialStatementMetadata financialStatementMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(FinancialStatementMetadata financialStatementMetadata) {
         String title = financialStatementMetadata.getTitle();
 
         return buildCommonProperties(financialStatementMetadata, title);
     }
 
     private static Map<String, ? extends Object> buildCommonProperties(LeosMetadata leosMetadata, String title) {
-        Map<String, Object> cmisProperties = new HashMap<>();
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE), leosMetadata.getStage());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE), leosMetadata.getType());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE), leosMetadata.getPurpose());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE), leosMetadata.getEeaRelevance());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE), leosMetadata.getTemplate());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE), leosMetadata.getLanguage());
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), leosMetadata.getDocTemplate());
+        Map<String, Object> leosProperties = new HashMap<>();
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_STAGE), leosMetadata.getStage());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_TYPE), leosMetadata.getType());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE), leosMetadata.getPurpose());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PROCEDURE_TYPE), leosMetadata.getProcedureType());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_ACT_TYPE), leosMetadata.getActType());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PURPOSE), leosMetadata.getPurpose());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE), leosMetadata.getEeaRelevance());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE), leosMetadata.getTemplate());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE), leosMetadata.getLanguage());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), leosMetadata.getDocTemplate());
 
         String ref = leosMetadata.getRef();
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF), ref != null ? ref : "");
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF), ref != null ? ref : "");
 
-        cmisProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE), title);
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE), title);
 
-        return cmisProperties;
+        return leosProperties;
     }
 }

@@ -21,7 +21,6 @@ import java.util.Map;
 public class UpdateDocumentRequest implements Serializable {
     private String userId;
     private Map<String, ?> metadata;
-    private String labelVersion;
     private VersionType versionType;
     private byte[] content;
     private String comments;
@@ -40,14 +39,6 @@ public class UpdateDocumentRequest implements Serializable {
 
     public void setMetadata(Map<String, ?> metadata) {
         this.metadata = metadata;
-    }
-
-    public String getLabelVersion() {
-        return labelVersion;
-    }
-
-    public void setLabelVersion(String labelVersion) {
-        this.labelVersion = labelVersion;
     }
 
     public VersionType getVersionType() {

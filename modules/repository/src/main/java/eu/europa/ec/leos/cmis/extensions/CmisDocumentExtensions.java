@@ -69,7 +69,7 @@ public class CmisDocumentExtensions {
                     throw new IllegalStateException("Incompatible types! [category=" + category + ", mappedType=" + Explanatory.class.getSimpleName() + ", wantedType=" + type.getSimpleName() + ']');
                 }
                 break;
-                case MEMORANDUM:
+            case MEMORANDUM:
                 if (type.isAssignableFrom(Memorandum.class)) {
                     leosDocument = (T) toLeosMemorandum(document, fetchContent, oldVersions);
                 } else {
@@ -240,7 +240,9 @@ public class CmisDocumentExtensions {
                 contentOption(d, fetchContent),
                 getFinancialstatementdataOption(d),
                 getBaseRevisionId(d),
-                isTrackChangesEnabled(d));
+                isTrackChangesEnabled(d),
+                getContributionStatus(d),
+                getClonedFrom(d));
     }
 
     private static MediaDocument toLeosMediaDocument(Document d, boolean fetchContent) {

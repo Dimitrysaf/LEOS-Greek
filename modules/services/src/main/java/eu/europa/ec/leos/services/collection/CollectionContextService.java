@@ -62,6 +62,8 @@ public abstract class CollectionContextService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextService.class);
     private static final String PROPOSAL_PURPOSE_IS_REQUIRED = "Proposal purpose is required!";
+    private static final String PROPOSAL_PROCEDURE_TYPE_IS_REQUIRED = "Proposal procedure type is required!";
+    private static final String PROPOSAL_ACT_TYPE_IS_REQUIRED = "Proposal act type is required!";
     private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
 
     protected final MessageHelper messageHelper;
@@ -79,6 +81,8 @@ public abstract class CollectionContextService {
     protected final Map<ContextActionService, String> actionMsgMap;
     protected Proposal proposal = null;
     protected String purpose;
+    protected String procedureType;
+    protected String actType;
     private String versionComment;
     private String milestoneComment;
     protected boolean eeaRelevance;
@@ -150,6 +154,18 @@ public abstract class CollectionContextService {
         Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
         LOG.trace("Using Proposal purpose... [purpose={}]", purpose);
         this.purpose = purpose;
+    }
+
+    public void useProcedureType(String procedureType) {
+        Validate.notNull(procedureType, PROPOSAL_PROCEDURE_TYPE_IS_REQUIRED);
+        LOG.trace("Using Proposal procedureType... [procedureType={}]", procedureType);
+        this.procedureType = procedureType;
+    }
+
+    public void useActType(String actType) {
+        Validate.notNull(actType, PROPOSAL_ACT_TYPE_IS_REQUIRED);
+        LOG.trace("Using Proposal actType... [actType={}]", actType);
+        this.actType = actType;
     }
 
     public void useEeaRelevance(boolean eeaRelevance) {

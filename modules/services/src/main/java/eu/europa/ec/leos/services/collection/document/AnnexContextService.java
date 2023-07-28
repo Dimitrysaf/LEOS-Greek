@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
-import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;

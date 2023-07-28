@@ -16,7 +16,9 @@ package eu.europa.ec.leos.cmis.repository;
 import eu.europa.ec.leos.cmis.extensions.CmisDocumentExtensions;
 import eu.europa.ec.leos.cmis.extensions.CmisFolderExtensions;
 import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
-import eu.europa.ec.leos.cmis.mapping.CmisMapper;
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.repository.RepositoryProfile;
+import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
@@ -44,7 +46,6 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
@@ -72,7 +73,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * @constructor Creates a generic LEOS Repository, injected with a CMIS Repository and a Security Context.
  */
 @Repository
-@Profile(value = {"default","cmis"})
+@RepositoryProfile(repositoryProfiles = {RepositoryProfileType.DEFAULT, RepositoryProfileType.CMIS})
 public class LeosCmisRepositoryImpl implements LeosRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(LeosCmisRepositoryImpl.class);
@@ -179,7 +180,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
-        properties.put(PropertyIds.OBJECT_TYPE_ID, CmisMapper.cmisPrimaryType(XmlDocument.class));
+        properties.put(PropertyIds.OBJECT_TYPE_ID, LeosMapper.leosPrimaryType(XmlDocument.class));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), leosCategory);
         setDocumentCollaboratorProperties(metadata, properties);
         return properties;
@@ -197,7 +198,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
-        properties.put(PropertyIds.OBJECT_TYPE_ID, CmisMapper.cmisPrimaryType(LegDocument.class));
+        properties.put(PropertyIds.OBJECT_TYPE_ID, LeosMapper.leosPrimaryType(LegDocument.class));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), LeosCategory.LEG.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_ID), jobId);
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE), Date.from(Instant.now()));
@@ -403,7 +404,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding documents for user... userId=" + userId + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         List<Document> docs = repository.findDocumentsByUserId(userId, primaryType, leosAuthority);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
         logger.trace("CMIS Repository document search took " + time + " milliseconds.");
@@ -416,7 +417,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         Document document = repository.findDocumentByParentPath(path, name, primaryType)
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path + ", name=" + name + ']'));
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
@@ -430,8 +431,8 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding documents by parent path... [path=" + path + ", type=" + type.getSimpleName() + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
-        Set<LeosCategory> categories = CmisMapper.cmisCategories(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
 
         List<Document> docs = repository.findDocumentsByParentPath(path, primaryType, categories, descendants);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
@@ -506,7 +507,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding package by document ref... [documentRef=" + documentRef + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         List<Document> docs = repository.findDocumentsByRef(documentRef, primaryType);
         if(!docs.isEmpty()) {
             Folder folder = docs.get(0).getParents().stream().findFirst().orElse(null);
@@ -524,8 +525,8 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding documents by parent id... [pkgId=" + id + ", type=" + type.getSimpleName() + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
-        Set<LeosCategory> categories = CmisMapper.cmisCategories(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         List<Document> docs = repository.findDocumentsByPackageId(id, primaryType, categories, allVersion);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
         logger.trace("CMIS Repository document search took " + time + " milliseconds.");
@@ -538,7 +539,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding documents for status... status=" + status + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         List<Document> docs = repository.findDocumentsByStatus(status, primaryType);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
         logger.trace("CMIS Repository document search took " + time + " milliseconds.");
@@ -574,8 +575,8 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> Stream<D> findPagedDocumentsByParentPath(String path, Class<? extends D> type, boolean descendants, boolean fetchContent,
                                                                              int startIndex, int maxResults, QueryFilter workspaceFilter) {
         logger.trace("Finding documents by parent path... [path=$path, type=${type.simpleName}]");
-        String primaryType = CmisMapper.cmisPrimaryType(type);
-        Set<LeosCategory> categories = CmisMapper.cmisCategories(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         Stream<Document> docs = repository.findPagedDocumentsByParentPath(path, primaryType, categories, descendants, startIndex, maxResults, workspaceFilter);
         logger.trace("CMIS Repository document search took $time milliseconds.");
         
@@ -587,8 +588,8 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> int findDocumentCountByParentPath(String path, Class<? extends D> type, boolean descendants, QueryFilter workspaceFilter) {
         logger.trace("Finding documents by parent path... [path=$path, type=${type.simpleName}]");
         int docCount = 0;
-        String primaryType = CmisMapper.cmisPrimaryType(type);
-        Set<LeosCategory> categories = CmisMapper.cmisCategories(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         docCount = repository.findDocumentCountByParentPath(path, primaryType, categories, descendants, workspaceFilter);
 
         logger.trace("CMIS Repository document search took $time milliseconds.");
@@ -600,12 +601,12 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         logger.trace("Finding document with ref... [ref=" + ref + ']');
 
         long startTimeNanos = System.nanoTime();
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         List<Document> docs = repository.findDocumentsByRef(ref, primaryType);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
         logger.trace("CMIS Repository document search took " + time + " milliseconds.");
 
-        if (docs.isEmpty() || (docs.size() > 1)) {
+        if (docs.size() != 1) {
             throw new IllegalStateException("Error occurred retrieving document! [=" + ref + ']');
         } else {
             return toLeosDocument(docs.get(0), type, true)
@@ -615,7 +616,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public <D extends LeosDocument> List<D> findAllMinorsForIntermediate(Class<? extends D> type, String docRef, String currIntVersion, int startIndex, int maxResults) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         Stream<Document> documents = repository.findAllMinorsForIntermediate(primaryType, docRef, currIntVersion, startIndex, maxResults);
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
@@ -624,19 +625,19 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     
     @Override
     public <D extends LeosDocument> int findAllMinorsCountForIntermediate(Class<? extends D> type, String docRef, String currIntVersion) {
-     String primaryType = CmisMapper.cmisPrimaryType(type);
+     String primaryType = LeosMapper.leosPrimaryType(type);
      return repository.findAllMinorsCountForIntermediate(primaryType, docRef, currIntVersion);
     }
     
     @Override
     public <D extends LeosDocument> Integer findAllMajorsCount(Class<? extends D> type, String docRef) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         return repository.findAllMajorsCount(primaryType, docRef);
     }
     
     @Override
     public <D extends LeosDocument> List<D> findAllMajors(Class<? extends D> type, String docRef, int startIndex, int maxResult) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         Stream<Document> documents = repository.findAllMajors(primaryType, docRef, startIndex, maxResult);
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
@@ -652,7 +653,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     
     @Override
     public <D extends LeosDocument> List<D> findRecentMinorVersions(Class<? extends D> type, String documentRef, String lastMajorId, int startIndex, int maxResults) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         Stream<Document> documents = repository.findRecentMinorVersions(primaryType, documentRef, lastMajorId, startIndex, maxResults);
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
@@ -661,7 +662,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     
     @Override
     public <D extends LeosDocument> Integer findRecentMinorVersionsCount(Class<? extends D> type, String documentRef, String versionLabel) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         return repository.findRecentMinorVersionsCount(primaryType, documentRef, versionLabel);
     }
 
@@ -673,7 +674,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     
     @Override
     public <D extends LeosDocument> D findFirstVersion(Class<? extends D> type, String documentRef) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         Optional<Document> document = repository.findFirstVersion(primaryType, documentRef).findFirst();
         if (document.isPresent()) {
             return toLeosDocument(document.get(), type, true)
@@ -685,7 +686,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public <D extends LeosDocument> D findDocumentByVersion(Class<? extends D> type, String documentRef, String versionLabel) {
-        String primaryType = CmisMapper.cmisPrimaryType(type);
+        String primaryType = LeosMapper.leosPrimaryType(type);
         Optional<Document> document = repository.findDocumentByVersion(primaryType, documentRef, versionLabel).findFirst();
         if (document.isPresent()) {
             return toLeosDocument(document.get(), type, true)
@@ -706,7 +707,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
-        properties.put(PropertyIds.OBJECT_TYPE_ID, CmisMapper.cmisPrimaryType(ExportDocument.class));
+        properties.put(PropertyIds.OBJECT_TYPE_ID, LeosMapper.leosPrimaryType(ExportDocument.class));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), LeosCategory.EXPORT.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), Date.from(Instant.now()));

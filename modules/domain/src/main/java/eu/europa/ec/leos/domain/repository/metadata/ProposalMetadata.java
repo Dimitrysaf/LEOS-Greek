@@ -23,6 +23,8 @@ public final class ProposalMetadata extends LeosMetadata {
         private String ref;
         private String objectId;
         private String docVersion;
+        private String procedureType;
+        private String actType;
         private boolean eeaRelevance;
         private ProposalMetadataBuilder() {
         }
@@ -37,6 +39,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.objectId= metadata.objectId;
             this.docVersion= metadata.docVersion;
             this.eeaRelevance= metadata.eeaRelevance;
+            this.procedureType = metadata.getProcedureType();
+            this.actType = metadata.getActType();
         }
         public ProposalMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -78,9 +82,22 @@ public final class ProposalMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
+        public ProposalMetadataBuilder withProcedureType(String procedureType) {
+            this.procedureType = procedureType;
+            return this;
+        }
+        public ProposalMetadataBuilder withActType(String actType) {
+            this.actType = actType;
+            return this;
+        }
 
         public ProposalMetadata build() {
-            return new ProposalMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.objectId, this.docVersion, this.eeaRelevance);
+            ProposalMetadata metadata = new ProposalMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref,
+                    this.objectId,
+                this.docVersion, this.eeaRelevance);
+            metadata.setProcedureType(procedureType);
+            metadata.setActType(actType);
+            return metadata;
         }
     }
 }
