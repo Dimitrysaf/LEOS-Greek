@@ -61,7 +61,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones, true);
+          this.dataSource = this.initMilestonesDataSource(milestones);
         },
         error: (error) => {
           console.log('Error => ', error);
@@ -147,12 +147,11 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     }
   }
 
-  private initMilestonesDataSource(
-    milestones: Milestone[],
-    notShowGrowl = false,
-  ): Milestone[] {
+  private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
     let atLeastOneMilestoneInPreparation = false;
-
+    const allMilestonesReady = milestones.every(
+      (milestone) => milestone.status === MilestoneStatus.Ready,
+    );
     milestones.forEach((milestone) => {
       if (!atLeastOneMilestoneInPreparation) {
         atLeastOneMilestoneInPreparation =
@@ -164,20 +163,19 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (milestone.status === MilestoneStatus.Ready) {
-        if (!notShowGrowl)
-          this.uxAppService.growl({
-            severity: 'success',
-            summary: this.translateService.instant(
-              'global.notifications.title.success',
-            ),
-            detail: this.translateService.instant(
-              'page.collection.milestons.check-for-milestone-status-change.success',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
+      if (allMilestonesReady) {
+        this.uxAppService.growl({
+          severity: 'success',
+          summary: this.translateService.instant(
+            'global.notifications.title.success',
+          ),
+          detail: this.translateService.instant(
+            'page.collection.milestons.check-for-milestone-status-change.success',
+          ),
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
         clearTimeout(this.milestoneCheckTimer);
         return;
       }
