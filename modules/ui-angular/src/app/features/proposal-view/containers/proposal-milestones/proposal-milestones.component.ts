@@ -61,10 +61,19 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones, true);
+          this.dataSource = this.initMilestonesDataSource(milestones, false);
         },
         error: (error) => {
-          console.log('Error => ', error);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.load-milestones.error',
+            ),
+            detail: error.error,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
         },
       });
 
@@ -149,7 +158,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   private initMilestonesDataSource(
     milestones: Milestone[],
-    notShowGrowl = false,
+    showGrowl: boolean,
   ): Milestone[] {
     let atLeastOneMilestoneInPreparation = false;
 
@@ -165,7 +174,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       }
 
       if (milestone.status === MilestoneStatus.Ready) {
-        if (!notShowGrowl)
+        if (!showGrowl)
           this.uxAppService.growl({
             severity: 'success',
             summary: this.translateService.instant(
@@ -223,24 +232,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   private checkForMilestoneStatusChange() {
-    this.proposalDetailsService.milestones$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones);
-        },
-        error: (error) => {
-          this.uxAppService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant(
-              'page.collection.milestones.check-for-milestone-status-change.error',
-            ),
-            detail: error.error,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
+    this.dataSource = this.initMilestonesDataSource(this.dataSource, true);
   }
 }

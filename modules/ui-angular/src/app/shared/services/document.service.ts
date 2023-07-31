@@ -275,14 +275,14 @@ export class DocumentService implements OnDestroy {
               versionToCompare[1] !== undefined ? versionToCompare[1] : null,
               versionToCompare[0],
             )
-          : versionToCompare.length > 1 ?
-            this.getDocumentVersionsSimpleComparison(
+          : versionToCompare.length > 1
+          ? this.getDocumentVersionsSimpleComparison(
               option.ref,
               option.category,
               versionToCompare[1],
               versionToCompare[0],
             )
-            : of(''),
+          : of(''),
       ),
     );
 
@@ -949,7 +949,7 @@ export class DocumentService implements OnDestroy {
     //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
     return this.http.get<string>(
       `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
-      {responseType: 'text' as 'json'},
+      { responseType: 'text' as 'json' },
     );
   }
 
