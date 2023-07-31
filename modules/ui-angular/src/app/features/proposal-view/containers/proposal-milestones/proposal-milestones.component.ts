@@ -67,7 +67,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           this.uxAppService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
-              'page.collection.milestones.check-for-milestone-status-change.error',
+              'page.collection.milestones.load-milestones.error',
             ),
             detail: error.error,
             life: 3000,
