@@ -64,7 +64,16 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           this.dataSource = this.initMilestonesDataSource(milestones, false);
         },
         error: (error) => {
-          console.log('Error => ', error);
+          this.uxAppService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestones.check-for-milestone-status-change.error',
+            ),
+            detail: error.error,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
         },
       });
 
