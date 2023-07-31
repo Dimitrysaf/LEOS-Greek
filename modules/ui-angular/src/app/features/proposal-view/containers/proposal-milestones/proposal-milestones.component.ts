@@ -61,7 +61,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones);
+          this.dataSource = this.initMilestonesDataSource(milestones, false);
         },
         error: (error) => {
           console.log('Error => ', error);
@@ -147,11 +147,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     }
   }
 
-  private initMilestonesDataSource(milestones: Milestone[]): Milestone[] {
+  private initMilestonesDataSource(
+    milestones: Milestone[],
+    showGrowl: boolean,
+  ): Milestone[] {
     let atLeastOneMilestoneInPreparation = false;
-    const allMilestonesReady = milestones.every(
-      (milestone) => milestone.status === MilestoneStatus.Ready,
-    );
+
     milestones.forEach((milestone) => {
       if (!atLeastOneMilestoneInPreparation) {
         atLeastOneMilestoneInPreparation =
@@ -163,19 +164,20 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (allMilestonesReady) {
-        this.uxAppService.growl({
-          severity: 'success',
-          summary: this.translateService.instant(
-            'global.notifications.title.success',
-          ),
-          detail: this.translateService.instant(
-            'page.collection.milestons.check-for-milestone-status-change.success',
-          ),
-          life: 3000,
-          isGrowlSticky: false,
-          position: 'bottom-right',
-        });
+      if (milestone.status === MilestoneStatus.Ready) {
+        if (!showGrowl)
+          this.uxAppService.growl({
+            severity: 'success',
+            summary: this.translateService.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.milestons.check-for-milestone-status-change.success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
         clearTimeout(this.milestoneCheckTimer);
         return;
       }
@@ -221,24 +223,6 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   private checkForMilestoneStatusChange() {
-    this.proposalDetailsService.milestones$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones);
-        },
-        error: (error) => {
-          this.uxAppService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant(
-              'page.collection.milestones.check-for-milestone-status-change.error',
-            ),
-            detail: error.error,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
+    this.dataSource = this.initMilestonesDataSource(this.dataSource, true);
   }
 }
