@@ -479,5 +479,14 @@ body {
       font-family: inherit;
     }
   }
+  .leos-double-compare-removed {
+    font-weight: bold;
+    text-decoration: line-through underline;
+  }
+  .leos-double-compare-added {
+    font-weight: bold;
+    text-decoration: underline;
+  }
 }
+
 // Overriding application fonts (end)

@@ -24,6 +24,7 @@ import {
   BehaviorSubject,
   combineLatest,
   combineLatestWith,
+  distinctUntilChanged,
   map,
   merge,
   Observable,
@@ -286,6 +287,7 @@ export class DocumentEditorComponent
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
+        distinctUntilChanged(),
         combineLatestWith(merge(of(null), this.translate.onLangChange)),
         map(([versions]) => this.getVersionComparisonViewHeaderTitle(versions)),
       );
@@ -1010,8 +1012,18 @@ export class DocumentEditorComponent
     const nodeList = document.querySelectorAll(
       '.leos-content-new, .leos-content-removed',
     );
+    const nodeListCNDoubleCompare = document.querySelectorAll(
+      '.leos-double-compare-removed, .leos-double-compare-added',
+    );
+    console.log('nodeList:', nodeList);
+    console.log('nodeListCN:', nodeListCN);
+    console.log('nodeListCNDoubleCompare:', nodeListCNDoubleCompare);
     this.compareChanges = (
-      nodeList.length > 0 ? nodeList : nodeListCN
+      nodeList && nodeList.length > 0
+        ? nodeList
+        : nodeListCN && nodeListCN.length > 0
+        ? nodeListCN
+        : nodeListCNDoubleCompare
     ) as NodeListOf<HTMLElement>;
     const container = this.document.getElementById(
       'versionComparisonContainer',
@@ -1032,6 +1044,8 @@ export class DocumentEditorComponent
       '.leos-content-removed-cn': 'pin-leos-content-removed',
       '.leos-content-new': 'pin-leos-content-new',
       '.leos-content-new-cn': 'pin-leos-content-new',
+      '.leos-double-compare-removed': 'pin-leos-marker-content-removed',
+      '.leos-double-compare-added': 'pin-leos-marker-content-added',
     };
     this.addPins(container, pinContainer, selectorStyleMap);
   }
@@ -1295,12 +1309,30 @@ export class DocumentEditorComponent
   }
 
   private getVersionComparisonViewHeaderTitle(versions: Version[]) {
-    return versions.length === 2
-      ? this.translate.instant('version.compare.header', {
+    if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+      if (versions.length === 2) {
+        return this.translate.instant('version.compare.header', {
           oldVersion: this.formatVersionNumber(versions[0]),
           newVersion: this.formatVersionNumber(versions[1]),
-        })
-      : this.translate.instant('version.compare.header.default');
+        });
+      }
+      if (versions.length === 3) {
+        return this.translate.instant('version.double.compare.header', {
+          oldestVersion: this.formatVersionNumber(versions[0]),
+          newVersion: this.formatVersionNumber(versions[1]),
+          newestVersion: this.formatVersionNumber(versions[2]),
+        });
+      } else {
+        return this.translate.instant('version.compare.header.default.cn');
+      }
+    } else {
+      return versions.length === 2
+        ? this.translate.instant('version.compare.header', {
+            oldVersion: this.formatVersionNumber(versions[0]),
+            newVersion: this.formatVersionNumber(versions[1]),
+          })
+        : this.translate.instant('version.compare.header.default');
+    }
   }
 
   private getFormValues(): VersionSearchParams {
@@ -1355,7 +1387,7 @@ export class DocumentEditorComponent
 
   private getIntermediateVersion(versions): Version {
     if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && versions.length === 3) {
-      return versions[0];
+      return versions[2];
     }
     return null;
   }

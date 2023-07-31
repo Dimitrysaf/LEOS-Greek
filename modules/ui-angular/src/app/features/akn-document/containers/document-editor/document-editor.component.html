@@ -487,7 +487,6 @@
                 euiSizeS
                 *ngIf="versionsComparisonForView"
                 (click)="handleNextChange()"
-                [disabled]="compareIndex >= compareChanges.length"
                 [euiTooltip]="
                   'page.editor.versions.compare.actions.prev-change' | translate
                 "
@@ -585,7 +584,7 @@
           <app-annex-document
             id="versionComparisonContainer"
             [xml]="versionsComparisonForView"
-            class="sync-scroll"
+            class="sync-scroll leos-double-comparison-content"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
