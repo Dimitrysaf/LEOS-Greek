@@ -51,7 +51,7 @@ export class ProposalDetailsService implements OnDestroy {
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
-  private proposalRefBS = new BehaviorSubject<[string, boolean]>(null);
+  private proposalRefBS = new BehaviorSubject<[string, boolean]>([null, false]);
   private milestonesBS = new BehaviorSubject<Milestone[]>([]);
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
     switchMap(([_proposalRef, loading]) => this.getProposalDetails(loading)),
