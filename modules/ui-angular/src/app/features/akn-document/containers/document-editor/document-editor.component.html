@@ -618,7 +618,6 @@
       >
         <eui-page-column-body class="flex-grow-1">
           <app-document-annotations
-            [documentId]="documentRef"
             [containerId]="containerId"
             [connectedEntity]="connectedEntity"
             [proposalRef]="proposalRef"
@@ -857,16 +856,18 @@
         style="flex-basis: 580px"
       >
         <eui-page-column-body class="flex-grow-1">
-          <app-contribution-document-annotations
-            [documentId]="documentService.contributionDocumentRef$ | async"
+          <app-document-annotations
             [containerId]="contributionAnnotationsContainerId"
-            [connectedEntity]="connectedEntity"
-            [proposalRef]="proposalRef"
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
+            operationMode="READ_ONLY"
+            sidebarAppId="revision-01"
+            [temporaryDataDocument]="
+              documentService.contributionDocumentRef$ | async
+            "
             (sidebarShown)="onSidebarShown()"
             *ngIf="!milestoneViewData"
-          ></app-contribution-document-annotations>
+          ></app-document-annotations>
         </eui-page-column-body>
       </eui-page-column>
     </eui-page-columns>
