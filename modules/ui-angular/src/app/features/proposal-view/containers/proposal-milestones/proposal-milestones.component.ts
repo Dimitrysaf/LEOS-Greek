@@ -61,11 +61,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones);
-        },
-        error: (error) => {},
+      .subscribe((milestones) => {
+        this.dataSource = this.initMilestonesDataSource(milestones);
       });
 
     this.proposalDetailsService.permissions$
