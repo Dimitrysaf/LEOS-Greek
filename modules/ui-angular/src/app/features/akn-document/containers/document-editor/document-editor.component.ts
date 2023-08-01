@@ -905,6 +905,7 @@ export class DocumentEditorComponent
 
   onCancelMarkContributionAsProcessed() {
     this.processed = !this.processed;
+    this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.markContributionAsProcessedDialog.closeDialog();
   }
 
