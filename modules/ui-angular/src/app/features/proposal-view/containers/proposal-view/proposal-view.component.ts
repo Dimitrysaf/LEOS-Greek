@@ -57,9 +57,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
           this.isClonedProposal = Boolean(
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
-          this.documentService.setIsClonedProposal(
-            Boolean(proposal.cloneProposalMetadataVO?.clonedProposal),
-          );
+          this.documentService.setIsClonedProposal(this.isClonedProposal);
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);
         },

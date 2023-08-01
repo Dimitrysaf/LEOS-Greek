@@ -302,8 +302,8 @@ export class CKEditorService implements OnDestroy {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.documentService.isClonedProposal$.subscribe((isCloned) => {
-      if (!isCloned) {
+    this.documentService.contributions$.subscribe((contributions) => {
+      if (contributions.length > 0) {
         this.mergeContributionConnector = new MergeContributionConnector(
           leosState,
           this.documentService,
