@@ -232,7 +232,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                         }
                     }
-                });
+                }, null, null, 9);
 
                 // - Prevent of insert in Delete
                 // - Insert functionality
