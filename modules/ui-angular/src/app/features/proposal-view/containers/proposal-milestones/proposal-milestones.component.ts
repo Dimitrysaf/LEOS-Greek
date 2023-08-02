@@ -174,7 +174,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       }
 
       if (milestone.status === MilestoneStatus.Ready) {
-        if (!showGrowl)
+        if (showGrowl)
           this.uxAppService.growl({
             severity: 'success',
             summary: this.translateService.instant(
