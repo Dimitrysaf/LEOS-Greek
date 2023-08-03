@@ -277,6 +277,15 @@ define(function leosTrackChangesModule(require) {
 
         canUserRejectChanges: function(editor) {
             return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_REJECT_CHANGES");
+        },
+
+        clone: function(element) {
+            var cloneElement = null;
+            if (element) {
+                cloneElement = element.clone(true);
+                cloneElement.$.classList.remove("cke_widget_focused", "cke_widget_selected");
+            }
+            return cloneElement;
         }
 
     };
@@ -335,37 +344,27 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        selectOneChar: function(deleteKey, range, editor) {
-            // To know the blocks before and after the current position
-            // If the node is empty we need go to next or previous editable node
+        selectElementToDelete: function(deleteKey, editor) {
             var selectedNode;
-            if (deleteKey) {
-                selectedNode = editor.getSelection().getRanges()[0].getNextNode();
-                if (core.isEmpty(selectedNode)) {
-                    selectedNode = editor.getSelection().getRanges()[0].getNextEditableNode();
-                }
-                // Go to nextNode if we are in last position of previous, only in case of delete key
-                if ((range.startContainer.type === CKEDITOR.NODE_TEXT) && (range.startContainer.$.textContent.length === range.startOffset)) {
-                    core.setToPosition(editor, selectedNode, CKEDITOR.POSITION_AFTER_START);
-                }
-            } else {
-                selectedNode = editor.getSelection().getRanges()[0].getPreviousNode();
-                if (core.isEmpty(selectedNode)) {
-                    selectedNode = editor.getSelection().getRanges()[0].getPreviousEditableNode();
-                }
-            }
-            // Go to text node inside selected element and select next or previous char
-            this.doCharSelection(deleteKey, editor, selectedNode);
-        },
-
-        doCharSelection: function(deleteKey, editor, selectedNode) {
             var position = !deleteKey ? CKEDITOR.POSITION_BEFORE_END : CKEDITOR.POSITION_AFTER_START;
-            while (selectedNode && (selectedNode.type === CKEDITOR.NODE_ELEMENT)) {
-                core.setToPosition(editor, selectedNode, position);
+
+            do {
                 selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextNode() :
                     editor.getSelection().getRanges()[0].getPreviousNode();
-            }
-            if (selectedNode) {
+                if (selectedNode && (selectedNode.$.textContent.replace(/\u200B/g,'') === '') && ((selectedNode.type !== CKEDITOR.NODE_ELEMENT) ||
+                        ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
+                    selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextEditableNode() :
+                        editor.getSelection().getRanges()[0].getPreviousEditableNode();
+                }
+                core.setToPosition(editor, selectedNode, position);
+            } while (selectedNode && (selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline"));
+
+            if (!selectedNode) {
+                return false;
+            } else if (selectedNode.type === CKEDITOR.NODE_ELEMENT) {
+                editor.getSelection().selectElement(selectedNode);
+                return false;
+            } else {
                 var range = editor.createRange();
                 range.moveToPosition(selectedNode, position);
                 if (selectedNode.$.length === 1) {
@@ -377,6 +376,7 @@ define(function leosTrackChangesModule(require) {
                 }
                 range.select();
             }
+            return true;
         },
 
         acceptChange: function(editor, element) {

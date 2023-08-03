@@ -24,6 +24,7 @@ import {
   BehaviorSubject,
   combineLatest,
   combineLatestWith,
+  distinctUntilChanged,
   map,
   merge,
   Observable,
@@ -38,7 +39,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
-import { DOCUMENT_STYLES, DocumentConfig } from '@/shared';
+import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
@@ -107,7 +108,7 @@ export class DocumentEditorComponent
 
   compareChanges: NodeListOf<HTMLElement>;
   compareIndex = 0;
-  isAsyncScrollEnabled: boolean;
+  isAsyncScrollEnabled = false;
   arrowClicked = false;
   eventFunc;
   isScrollFromButton: boolean;
@@ -134,7 +135,7 @@ export class DocumentEditorComponent
   acceptedSelectedEnabled = false;
   contributions: ContributionVO[] = [];
   contribution: ContributionVO;
-  contributionChanges: NodeListOf<HTMLElement>;
+  contributionChanges$: Observable<NodeListOf<HTMLElement>>;
   contributionIndex = 0;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
@@ -172,9 +173,12 @@ export class DocumentEditorComponent
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
-  private scrollables: NodeListOf<Element>;
+  private scrollables = new Map<Element, () => void>();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
   private annexDocNumber = -1;
+  private contributionChangesBS = new BehaviorSubject<NodeListOf<HTMLElement>>(
+    null,
+  );
 
   constructor(
     private domService: DomService,
@@ -226,6 +230,7 @@ export class DocumentEditorComponent
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
+    this.contributionChanges$ = this.contributionChangesBS.asObservable();
   }
 
   ngOnInit(): void {
@@ -284,6 +289,7 @@ export class DocumentEditorComponent
     this.versionsComparisonForViewHeaderTitle$ =
       this.documentService.versionCompareIds$.pipe(
         takeUntil(this.destroy$),
+        distinctUntilChanged(),
         combineLatestWith(merge(of(null), this.translate.onLangChange)),
         map(([versions]) => this.getVersionComparisonViewHeaderTitle(versions)),
       );
@@ -339,8 +345,10 @@ export class DocumentEditorComponent
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
           this.documentService.setIsContributionDeclinedOrProcessed(
-            contribution.contributionStatus === 'CONTRIBUTION_DONE',
+            contribution.contributionStatus ===
+              ContributionStatus.ContributionDone,
           );
+          this.contribution = contribution;
         }
       });
 
@@ -603,19 +611,24 @@ export class DocumentEditorComponent
   handleAsyncScroll() {
     this.isAsyncScrollEnabled = !this.isAsyncScrollEnabled;
     if (this.isAsyncScrollEnabled) {
-      this.scrollables = this.document.querySelectorAll('.sync-scroll');
-      this.scrollables.forEach((scrollable: Element) => {
-        scrollable.addEventListener('scroll', this.handleSyncScroll.bind(this));
-        scrollable.classList.add('sync-scroll-enabled');
-        scrollable.classList.remove('sync-scroll-disabled');
-      });
-    }
-    if (!this.isAsyncScrollEnabled) {
-      this.scrollables.forEach((scrollable: Element) => {
-        scrollable.removeEventListener('scroll', this.handleSyncScroll);
-        scrollable.classList.add('sync-scroll-disabled');
-        scrollable.classList.remove('sync-scroll-enabled');
-      });
+      this.document
+        .querySelectorAll('.sync-scroll')
+        .forEach((scrollable: Element) => {
+          const handler = this.handleSyncScroll.bind(this);
+          scrollable.addEventListener('scroll', handler);
+          scrollable.classList.add('sync-scroll-enabled');
+          scrollable.classList.remove('sync-scroll-disabled');
+
+          const destroyFn = () => {
+            scrollable.removeEventListener('scroll', handler);
+            scrollable.classList.add('sync-scroll-disabled');
+            scrollable.classList.remove('sync-scroll-enabled');
+            this.scrollables.delete(scrollable);
+          };
+          this.scrollables.set(scrollable, destroyFn);
+        });
+    } else {
+      [...this.scrollables.values()].forEach((destroyFn) => destroyFn());
     }
   }
 
@@ -799,16 +812,28 @@ export class DocumentEditorComponent
 
   closeContributionsView() {
     this.isContributionForViewOpen = false;
+    if (
+      this.contribution &&
+      this.contribution.contributionStatus ===
+        ContributionStatus.ContributionDone
+    ) {
+      this.isAsyncScrollEnabled = true;
+      this.handleAsyncScroll();
+    }
     this.documentService.handleContributionSelectCount(false, true);
     this.documentService.setContributionViewAndMergeCollapsed(true);
   }
 
   handleNextChangeContribution() {
-    if (this.contributionIndex !== this.contributionChanges.length - 1) {
+    if (
+      this.contributionIndex !==
+      this.contributionChangesBS.value.length - 1
+    ) {
       const nextChange = this.contributionIndex + 1;
-      this.contributionChanges
-        .item(nextChange)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.contributionChangesBS.value.item(nextChange)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
       this.contributionIndex++;
     }
   }
@@ -817,9 +842,10 @@ export class DocumentEditorComponent
     if (this.contributionIndex > 0) {
       {
         const prevChange = this.contributionIndex - 1;
-        this.contributionChanges
-          .item(prevChange)
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contributionChangesBS.value.item(prevChange)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
         this.contributionIndex--;
       }
     }
@@ -928,10 +954,16 @@ export class DocumentEditorComponent
       this.isViewContributionPaneCollapsed = false;
       this.documentService.setContributionViewAndMergeCollapsed(false);
       this.documentService.setIsContributionDeclinedOrProcessed(
-        contribution.contributionStatus === 'CONTRIBUTION_DONE',
+        contribution.contributionStatus === ContributionStatus.ContributionDone,
       );
-      if (contribution.contributionStatus === 'CONTRIBUTION_DONE') {
+      if (
+        contribution.contributionStatus === ContributionStatus.ContributionDone
+      ) {
         this.handleGreyedContribution(contribution, true);
+        setTimeout(() => {
+          this.isAsyncScrollEnabled = true;
+          this.handleAsyncScroll();
+        }, 100);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
         setTimeout(() => {
@@ -953,7 +985,7 @@ export class DocumentEditorComponent
 
   private greyContributions() {
     this.contributions = this.contributions.map((c) => {
-      if (c.contributionStatus === 'CONTRIBUTION_DONE') {
+      if (c.contributionStatus === ContributionStatus.ContributionDone) {
         c.greyed = true;
       } else {
         c.greyed = false;
@@ -971,22 +1003,23 @@ export class DocumentEditorComponent
       setTimeout(() => {
         const percentage =
           sender.scrollTop / (sender.scrollHeight - sender.clientHeight);
-        this.scrollables.forEach((scrollable: Element) => {
-          if (scrollable !== sender) {
+        [...this.scrollables.keys()]
+          .filter((scrollable) => scrollable !== sender)
+          .forEach((scrollable) => {
             scrollable.scrollTop =
               percentage * (scrollable.scrollHeight - scrollable.clientHeight);
-          }
-        });
+          });
         this.arrowClicked = false;
       }, 100);
     }
   }
 
   private handleContributionsChanges() {
-    this.contributionChanges =
+    this.contributionChangesBS.next(
       this.contributionViewContainerElement.nativeElement.querySelectorAll(
         '.merge-contribution-wrapper',
-      );
+      ),
+    );
   }
 
   private handleCompareChanges() {
@@ -996,8 +1029,18 @@ export class DocumentEditorComponent
     const nodeList = document.querySelectorAll(
       '.leos-content-new, .leos-content-removed',
     );
+    const nodeListCNDoubleCompare = document.querySelectorAll(
+      '.leos-double-compare-removed, .leos-double-compare-added',
+    );
+    console.log('nodeList:', nodeList);
+    console.log('nodeListCN:', nodeListCN);
+    console.log('nodeListCNDoubleCompare:', nodeListCNDoubleCompare);
     this.compareChanges = (
-      nodeList.length > 0 ? nodeList : nodeListCN
+      nodeList && nodeList.length > 0
+        ? nodeList
+        : nodeListCN && nodeListCN.length > 0
+        ? nodeListCN
+        : nodeListCNDoubleCompare
     ) as NodeListOf<HTMLElement>;
     const container = this.document.getElementById(
       'versionComparisonContainer',
@@ -1018,6 +1061,8 @@ export class DocumentEditorComponent
       '.leos-content-removed-cn': 'pin-leos-content-removed',
       '.leos-content-new': 'pin-leos-content-new',
       '.leos-content-new-cn': 'pin-leos-content-new',
+      '.leos-double-compare-removed': 'pin-leos-marker-content-removed',
+      '.leos-double-compare-added': 'pin-leos-marker-content-added',
     };
     this.addPins(container, pinContainer, selectorStyleMap);
   }
@@ -1281,12 +1326,30 @@ export class DocumentEditorComponent
   }
 
   private getVersionComparisonViewHeaderTitle(versions: Version[]) {
-    return versions.length === 2
-      ? this.translate.instant('version.compare.header', {
+    if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
+      if (versions.length === 2) {
+        return this.translate.instant('version.compare.header', {
           oldVersion: this.formatVersionNumber(versions[0]),
           newVersion: this.formatVersionNumber(versions[1]),
-        })
-      : this.translate.instant('version.compare.header.default');
+        });
+      }
+      if (versions.length === 3) {
+        return this.translate.instant('version.double.compare.header', {
+          oldestVersion: this.formatVersionNumber(versions[0]),
+          newVersion: this.formatVersionNumber(versions[1]),
+          newestVersion: this.formatVersionNumber(versions[2]),
+        });
+      } else {
+        return this.translate.instant('version.compare.header.default.cn');
+      }
+    } else {
+      return versions.length === 2
+        ? this.translate.instant('version.compare.header', {
+            oldVersion: this.formatVersionNumber(versions[0]),
+            newVersion: this.formatVersionNumber(versions[1]),
+          })
+        : this.translate.instant('version.compare.header.default');
+    }
   }
 
   private getFormValues(): VersionSearchParams {
@@ -1310,6 +1373,10 @@ export class DocumentEditorComponent
         return this.tranlsateService.instant('global.breadcrumb.memorandum');
       case 'coverPage':
         return this.tranlsateService.instant('global.breadcrumb.cover.page');
+      case 'stat_financ_legis':
+        return this.tranlsateService.instant(
+          'global.breadcrumb.financial-statement',
+        );
       default:
         return capitalizeFirstLetter(name);
     }
@@ -1337,7 +1404,7 @@ export class DocumentEditorComponent
 
   private getIntermediateVersion(versions): Version {
     if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && versions.length === 3) {
-      return versions[0];
+      return versions[2];
     }
     return null;
   }

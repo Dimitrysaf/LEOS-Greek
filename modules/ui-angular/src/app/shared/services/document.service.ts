@@ -269,19 +269,23 @@ export class DocumentService implements OnDestroy {
 
     this.versionCompareView$ = this.versionCompareIds$.pipe(
       takeUntil(this.destroy$),
-      distinctUntilChanged((a, b) =>
-        isEqual(
-          a.map((x) => x.documentId),
-          b.map((x) => x.documentId),
-        ),
-      ),
+      distinctUntilChanged(),
       combineLatestWith(this.documentRefAndCategory$),
-      mergeMap(([[oldVersion, newVersion], option]) =>
-        oldVersion && newVersion
-          ? this.getDocumentVersionsComparison(
+      mergeMap(([versionToCompare, option]) =>
+        versionToCompare.length > 2
+          ? this.getDocumentVersionsDoubleComparison(
+              option.ref,
               option.category,
-              newVersion.documentId,
-              oldVersion.documentId,
+              versionToCompare[2],
+              versionToCompare[1] !== undefined ? versionToCompare[1] : null,
+              versionToCompare[0],
+            )
+          : versionToCompare.length > 1
+          ? this.getDocumentVersionsSimpleComparison(
+              option.ref,
+              option.category,
+              versionToCompare[1],
+              versionToCompare[0],
             )
           : of(''),
       ),
@@ -322,8 +326,9 @@ export class DocumentService implements OnDestroy {
       this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
     this.processed$ = this.processedBS.asObservable();
-    this.contributionViewAndMerge$ =
-      this.contributionViewAndMergeBS.asObservable();
+    this.contributionViewAndMerge$ = this.contributionViewAndMergeBS.pipe(
+      filter(Boolean),
+    );
     this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
     this.contributionViewAndMergeCollapsed$ =
       this.contributionViewAndMergeCollapsedBS.asObservable();
@@ -878,11 +883,9 @@ export class DocumentService implements OnDestroy {
 
   getDocumentVersionsData(documentType: string, documentRef: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http
-      .get<Version[]>(
-        `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
-      )
-      .pipe(tap((versions) => this.setLatestMilestoneVersion(versions)));
+    return this.http.get<Version[]>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
+    );
   }
 
   getDocumentRecentChangesData(documentType: string, documentRef: string) {
@@ -915,14 +918,42 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersionsComparison(
+  getDocumentVersionsDoubleComparison(
+    documentRef: string,
     documentType: string,
-    newVersionId: string,
-    oldVersionId: string,
+    newVersion: Version,
+    intermediateVersion: Version,
+    oldVersion: Version,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
+    if (
+      process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
+      intermediateVersion !== null
+    ) {
+      return this.http.post<string>(
+        `${apiBaseUrl}/secured/document/double-compare/${documentType}/${documentRef}`,
+        {
+          originalProposalId: this.getVersionReferenceString(oldVersion),
+          intermediateMajorId:
+            this.getVersionReferenceString(intermediateVersion) ?? null,
+          currentId: this.getVersionReferenceString(newVersion),
+        },
+        { responseType: 'text' as 'json' },
+      );
+    }
+  }
+
+  getDocumentVersionsSimpleComparison(
+    documentRef: string,
+    documentType: string,
+    newVersion: Version,
+    oldVersion: Version,
+  ) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
     return this.http.get<string>(
-      `${apiBaseUrl}/secured/${documentType}/${newVersionId}/compare/${oldVersionId}`,
+      `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
       { responseType: 'text' as 'json' },
     );
   }
@@ -1061,6 +1092,7 @@ export class DocumentService implements OnDestroy {
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
+    this.handleContributionSelectCount(false, true);
     const contributionVersionRef = contribution.versionedReference;
     const documentRef = this.documentRef;
     this.setContributionDocumentRef(
@@ -1068,10 +1100,9 @@ export class DocumentService implements OnDestroy {
     );
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const lateMilestoneVersionRef = this.latestMilestoneVersion;
     this.http
       .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}&originalVersionRef=${lateMilestoneVersionRef}`,
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
         {},
       )
       .subscribe({
@@ -1153,19 +1184,6 @@ export class DocumentService implements OnDestroy {
           });
         },
       });
-  }
-
-  private setLatestMilestoneVersion(versions: Version[]) {
-    if (versions.length > 0) {
-      for (let x = versions.length - 1; x >= 0; x--) {
-        if (versions[x].versionType === 'MAJOR') {
-          this.latestMilestoneVersion = this.getVersionReferenceString(
-            versions[x],
-          );
-          break;
-        }
-      }
-    }
   }
 
   private setSearchResultsCounter(count: number) {
@@ -1443,6 +1461,8 @@ export class DocumentService implements OnDestroy {
   }
 
   private getVersionReferenceString(v: Version): string {
-    return `${v.versionNumber.major}.${v.versionNumber.intermediate}.${v.versionNumber.minor}`;
+    return v
+      ? `${v.versionNumber.major}.${v.versionNumber.intermediate}.${v.versionNumber.minor}`
+      : null;
   }
 }

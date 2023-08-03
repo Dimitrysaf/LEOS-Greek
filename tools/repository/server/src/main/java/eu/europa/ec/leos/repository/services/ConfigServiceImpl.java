@@ -65,4 +65,25 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
     }
+
+    public LeosDocument findConfigByVersionId(final String id) throws RepositoryException {
+        try {
+            ConfigVersion version = this.configVersionRepository.findLastConfigVersionByVersionId(new BigDecimal(Long.parseLong(id)));
+            if (version == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigVersion.class.getName());
+            } else {
+                Config doc = this.configRepository.findById(version.getConfigId()).orElseThrow(() -> {
+                    return new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
+                });
+                ConfigContent content = this.configContentRepository.findConfigContentByVersionId(version);
+                if (content == null) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigContent.class.getName());
+                } else {
+                    return ConversionUtils.buildConfigDocument(doc, content);
+                }
+            }
+        } catch (Exception var5) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
+        }
+    }
 }

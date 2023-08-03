@@ -30,7 +30,7 @@ public class Package {
     private Date createdOn;
     private String updatedBy;
     private Date updatedOn;
-    private Boolean isCloned;
+    private Boolean cloned;
     private String clonedPackageName;
     private List<Collaborator> collaboratorList;
 
@@ -90,11 +90,11 @@ public class Package {
     }
 
     public Boolean isCloned() {
-        return this.isCloned;
+        return this.cloned;
     }
 
-    public void setIsCloned(boolean isCloned) {
-        this.isCloned = isCloned;
+    public void setCloned(boolean cloned) {
+        this.cloned = cloned;
     }
 
     public String getClonedPackageName() {

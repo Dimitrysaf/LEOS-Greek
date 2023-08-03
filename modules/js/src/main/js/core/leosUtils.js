@@ -40,7 +40,8 @@ define(function leosUtilsModule(require) {
     var KEYS = {
         "KEY_DELETE": 8,
         "KEY_BACKSPACE": 46,
-        "KEY_X": 88
+        "KEY_X": 88,
+        "KEY_ENTER": 13
     }
 
     function _getParentElement(connector) {
@@ -240,6 +241,10 @@ define(function leosUtilsModule(require) {
         return ["hsl(" + hue + ", 100%, 35%)", "hsl(" + hue + ", 100%, 90%)"];
     }
 
+    function _cleanUpElementFragment(str) {
+        return str.replace(/>\n\s*/g, ">");
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -252,6 +257,7 @@ define(function leosUtilsModule(require) {
         getParentWrapper : _getParentWrapper,
         toIsoString : _toIsoString,
         generateTrackChangesStyles : _generateTrackChangesStyles,
+        cleanUpElementFragment: _cleanUpElementFragment,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS
     };

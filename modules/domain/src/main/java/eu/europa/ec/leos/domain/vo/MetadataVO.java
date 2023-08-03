@@ -26,6 +26,7 @@ public class MetadataVO {
     private boolean eeaRelevance;
     private String templateName;
     private String template;
+    private String docTemplateCategory;
     private String docTemplate;
     private String title;
     private String index;
@@ -159,6 +160,14 @@ public class MetadataVO {
         this.docTemplate = docTemplate;
     }
 
+    public String getDocTemplateCategory() {
+        return docTemplateCategory;
+    }
+
+    public void setDocTemplateCategory(String docTemplateCategory) {
+        this.docTemplateCategory = docTemplateCategory;
+    }
+
     public void clean() {
         this.setDocStage(null);
         this.setDocType(null);
@@ -170,6 +179,7 @@ public class MetadataVO {
         this.setTemplateName(null);
         this.setTemplate(null);
         this.setDocTemplate(null);
+        this.setDocTemplateCategory(null);
         this.setTitle(null);
         this.setIndex(null);
         this.setNumber(null);

@@ -16,19 +16,22 @@
     <div euiList>
       <button
         euiListItem
-        *ngIf="contribution.contributionStatus === 'RECEIVED'"
+        *ngIf="contribution.contributionStatus === ContributionStatus.Received"
         translate="page.editor.contribution.actions.view.amd.merge"
         (click)="onClickViewAndMerge(contribution)"
       ></button>
       <button
         euiListItem
-        *ngIf="contribution.contributionStatus === 'CONTRIBUTION_DONE'"
+        *ngIf="
+          contribution.contributionStatus ===
+          ContributionStatus.ContributionDone
+        "
         translate="page.collection.milestones.actions.view-milestone"
         (click)="onClickView(contribution)"
       ></button>
       <button
         euiListItem
-        *ngIf="contribution.contributionStatus === 'RECEIVED'"
+        *ngIf="contribution.contributionStatus === ContributionStatus.Received"
         translate="page.editor.contribution.actions.decline"
         [disabled]="documentService.contributionViewAndMergeCollapsed$ | async"
         (click)="

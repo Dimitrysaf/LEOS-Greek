@@ -13,9 +13,10 @@
  */
 package eu.europa.ec.leos.rest.mapping;
 
+import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -24,9 +25,9 @@ import java.util.Map;
 import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.*;
 
 @Component
-@Profile(value = {"rest"})
+@RepositoryProfile(RepositoryProfileType.REST)
 public class RestProperties implements RepositoryPropertiesMapper {
-   private Map<RepositoryProperties, String> ids = new HashMap();
+   private final Map<RepositoryProperties, String> ids = new HashMap();
 
     public RestProperties() {
         ids.put(DOCUMENT_CATEGORY, "category");
@@ -37,11 +38,13 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(MILESTONE_COMMENTS, "milestoneComments");
         ids.put(INITIAL_CREATED_BY, "initialCreatedBy");
         ids.put(INITIAL_CREATION_DATE, "initialCreationDate");
+        ids.put(METADATA_PROCEDURE_TYPE, "procedureType");
         ids.put(JOB_ID, "jobId");
         ids.put(JOB_DATE, "jobDate");
         ids.put(STATUS, "status");
         ids.put(METADATA_STAGE, "docStage");
         ids.put(METADATA_TYPE, "docType");
+        ids.put(METADATA_ACT_TYPE, "actType");
         ids.put(METADATA_PURPOSE, "docPurpose");
         ids.put(METADATA_DOCTEMPLATE, "docTemplate");
         ids.put(METADATA_EEA_RELEVANCE, "eeaRelevance");

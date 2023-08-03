@@ -33,6 +33,8 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocItem } from '../models/toc.model';
+import { CheckBoxesConnector } from './check-boxes-connector';
+import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './tableOfContent.service';
 
@@ -49,6 +51,8 @@ export class CKEditorService implements OnDestroy {
   private mathJaxConnector?: MathJaxConnector;
   private trackChangesConnector?: TrackChangesConnector;
   private mergeContributionConnector?: MergeContributionConnector;
+  private datePickerConnector?: DatePickerConnector;
+  private checkBoxesConnector?: CheckBoxesConnector;
 
   private openStateSubj = new Subject<EditorOpenState>();
   private destroy$ = new Subject<void>();
@@ -77,6 +81,8 @@ export class CKEditorService implements OnDestroy {
     this.mathJaxConnector?.destroy();
     this.trackChangesConnector?.destroy();
     this.mergeContributionConnector?.destroy();
+    this.datePickerConnector?.destroy();
+    this.checkBoxesConnector?.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -98,6 +104,10 @@ export class CKEditorService implements OnDestroy {
         this.initMathJax(require, leosState, rootElement);
         this.initTrackChanges(require, leosState, rootElement);
         this.initMergeContribution(require, leosState, rootElement);
+        this.initDatePicker(require, leosState, rootElement);
+        if (this.documentService.documentType === 'stat_financ_legis') {
+          this.initCheckBoxes(require, rootElement);
+        }
       });
 
     this.documentService.documentView$
@@ -117,6 +127,8 @@ export class CKEditorService implements OnDestroy {
     this.mathJaxConnector?.$triggerStateChange();
     this.trackChangesConnector?.$triggerStateChange();
     this.mergeContributionConnector?.$triggerStateChange();
+    this.datePickerConnector?.$triggerStateChange();
+    this.checkBoxesConnector?.$triggerStateChange();
   }
 
   triggerMergeContributionConnectorStateChange() {
@@ -290,8 +302,8 @@ export class CKEditorService implements OnDestroy {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.documentService.isClonedProposal$.subscribe((isCloned) => {
-      if (!isCloned) {
+    this.documentService.contributions$.subscribe((contributions) => {
+      if (contributions.length > 0) {
         this.mergeContributionConnector = new MergeContributionConnector(
           leosState,
           this.documentService,
@@ -307,6 +319,54 @@ export class CKEditorService implements OnDestroy {
           this.mergeContributionConnector.jsDepsInited();
         });
       }
+    });
+  }
+
+  private initDatePicker(
+    require: Require,
+    leosState: any,
+    rootElement: HTMLElement,
+  ) {
+    this.datePickerConnector = new DatePickerConnector(
+      leosState,
+      {
+        rootElement,
+      },
+      this.http,
+      this.documentService,
+      this.tableOfContentService,
+      this.coEditionService,
+    );
+
+    require(['extension/datePickerExtension'], (datePicker) => {
+      datePicker.init(this.datePickerConnector);
+      this.datePickerConnector.jsDepsInited();
+    });
+  }
+
+  private initCheckBoxes(require: Require, rootElement: HTMLElement) {
+    // see modules/ui/src/main/java/eu/europa/ec/leos/ui/view/financialstatement/FinancialStatementScreenImpl.java
+    this.checkBoxesConnector = new CheckBoxesConnector(
+      {
+        checkBoxTagName: 'indent',
+        checkedBoxValue: '&#x2611;',
+        uncheckedBoxValue: '&#x2610;',
+        checkBoxAttributeName: 'name',
+        checkedBoxAttribute: 'checked',
+        uncheckedBoxAttribute: 'unchecked',
+      },
+      {
+        rootElement,
+      },
+      this.http,
+      this.documentService,
+      this.tableOfContentService,
+      this.coEditionService,
+    );
+
+    require(['extension/checkBoxesExtension'], (checkBoxes) => {
+      checkBoxes.init(this.checkBoxesConnector);
+      this.checkBoxesConnector.jsDepsInited();
     });
   }
 

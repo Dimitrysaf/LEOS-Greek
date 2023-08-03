@@ -100,6 +100,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     @Override
     public String doubleCompare(LeosCategoryClass documentType, String documentRef, String originalProposalId, String intermediateMajorId, String currentId) {
+
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         final XmlDocument original = this.getDocumentByVersion(documentRef, originalProposalId, clazz);
         final XmlDocument intermediate = this.getDocumentByVersion(documentRef, intermediateMajorId, clazz);

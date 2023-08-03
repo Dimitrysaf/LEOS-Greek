@@ -193,7 +193,6 @@ public interface LeosRepository {
      * @return the found document.
      */
     <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type);
-
     /**
      * Finds documents with the specified characteristics.
      *

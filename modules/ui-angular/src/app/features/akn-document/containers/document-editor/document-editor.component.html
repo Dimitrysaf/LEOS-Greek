@@ -83,7 +83,9 @@
                 (click)="handleEdit()"
                 *ngIf="
                   !isEditMode &&
-                  !['coverPage', 'memorandum'].includes(documentType)
+                  !['coverPage', 'memorandum', 'stat_financ_legis'].includes(
+                    documentType
+                  )
                 "
               >
                 <span class="eui-icon eui-icon-edit"></span>
@@ -485,7 +487,6 @@
                 euiSizeS
                 *ngIf="versionsComparisonForView"
                 (click)="handleNextChange()"
-                [disabled]="compareIndex >= compareChanges.length"
                 [euiTooltip]="
                   'page.editor.versions.compare.actions.prev-change' | translate
                 "
@@ -583,7 +584,7 @@
           <app-annex-document
             id="versionComparisonContainer"
             [xml]="versionsComparisonForView"
-            class="sync-scroll"
+            class="sync-scroll leos-double-comparison-content"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
@@ -744,7 +745,7 @@
                     : {
                         selected:
                           documentService.contributionSelections$ | async,
-                        all: contributionChanges.length
+                        all: (contributionChanges$ | async).length
                       }
               }}
             </h4>
@@ -761,13 +762,7 @@
                 "
                 (change)="onSelectAction($event)"
               >
-                <option
-                  value="accept_selected"
-                  selected
-                  [disabled]="
-                    (documentService.contributionSelections$ | async) === 0
-                  "
-                >
+                <option value="accept_selected" selected>
                   {{
                     'page.editor.contribution.view.actions.accept.selected'
                       | translate
@@ -787,8 +782,7 @@
                 *ngIf="contributionForView"
                 (click)="handleMerge()"
                 [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply-selected'
-                    | translate
+                  'page.editor.contribution.view.actions.apply' | translate
                 "
                 [showDelay]="tooltipsDelay"
                 [disabled]="
@@ -797,10 +791,7 @@
                   (documentService.isContributionDeclinedOrProcessed$ | async)
                 "
               >
-                {{
-                  'page.editor.contribution.view.actions.apply-selected'
-                    | translate
-                }}
+                {{ 'page.editor.contribution.view.actions.apply' | translate }}
               </button>
               <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
                 'page.editor.contribution.view.actions.processed' | translate

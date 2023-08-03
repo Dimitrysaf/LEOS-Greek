@@ -21,6 +21,4 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface DocumentPropertiesVRepository extends JpaRepository<DocumentPropertiesV, BigDecimal> {
-    @Query(value = "SELECT * FROM DOCUMENT_PROPERTIES_V d WHERE d.ID = ?1", nativeQuery = true)
-    List<DocumentPropertiesV> findDocumentPropertiesVById(BigDecimal id);
 }

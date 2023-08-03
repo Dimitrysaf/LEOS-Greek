@@ -25,6 +25,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   proposalTitleNonEditablePart: string;
   isClonedProposal = false;
   originRef: string | null = null;
+  proposalRef: string;
 
   protected readonly homeUrl = document.baseURI;
 
@@ -56,9 +57,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
           this.isClonedProposal = Boolean(
             proposal.cloneProposalMetadataVO?.clonedProposal,
           );
-          this.documentService.setIsClonedProposal(
-            Boolean(proposal.cloneProposalMetadataVO?.clonedProposal),
-          );
+          this.documentService.setIsClonedProposal(this.isClonedProposal);
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);
         },
@@ -84,6 +83,7 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
 
   private loadProposal(id: string) {
     this.setStateLoading();
+    this.proposalRef = id;
     this.proposalDetailsService.setProposalRef(id);
     // this.proposalDetailsService
     //   .getProposalDetails(id)

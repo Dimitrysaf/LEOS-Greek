@@ -106,7 +106,7 @@
                   <button
                     euiListItem
                     (click)="openMilestoneSendCopyForContributionDialog(row)"
-                    *appIsRecievedForContribution="proposal"
+                    *ngIf="!proposal.cloneProposalMetadataVO.clonedProposal"
                   >
                     {{
                       'page.collection.milestones.actions.send-copy-for-contribution'
@@ -116,8 +116,8 @@
                   <button
                     euiListItem
                     (click)="openSendContributionForRevision(row)"
-                    *appIsSentForContribution="proposal"
                     [disabled]="row.status !== milestoneStatus.Ready"
+                    *ngIf="proposal.cloneProposalMetadataVO.clonedProposal"
                   >
                     {{
                       'page.collection.milestones.actions.send-revision-for-merge'

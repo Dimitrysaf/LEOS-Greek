@@ -13,5 +13,6 @@ public enum LeosCategory {
     EXPORT,
     COVERPAGE,
     SUPPORT_DOCUMENT,
-    STAT_FINANC_LEGIS
+    STAT_FINANC_LEGIS,
+    TEMPLATE
 }

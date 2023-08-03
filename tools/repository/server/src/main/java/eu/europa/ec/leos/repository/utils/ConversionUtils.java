@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.repository.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.entities.Config;
@@ -21,6 +20,7 @@ import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
+import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.model.Collaborator;
@@ -29,6 +29,7 @@ import eu.europa.ec.leos.repository.model.Package;
 import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertiesVRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import org.slf4j.Logger;
@@ -119,17 +120,18 @@ public class ConversionUtils {
     }
 
     public static LeosDocument buildXmlDocument(DocumentVRepository documentVRepository,
-                                               CollaboratorsService collaboratorsService, DocumentPropertiesVRepository documentPropertiesVRepository,
+                                               CollaboratorsService collaboratorsService, DocumentPropertyValuesRepository documentPropertyValuesRepository,
                                                BigDecimal docId) {
         Optional<DocumentV> docV = documentVRepository.findLastVersionByDocumentId(docId);
-        return docV.isPresent() ? buildXmlDocument(documentPropertiesVRepository, collaboratorsService,
+        return docV.isPresent() ? buildXmlDocument(documentPropertyValuesRepository, collaboratorsService,
                 docV.get()) : null;
     }
 
-    public static LeosDocument buildXmlDocument(DocumentPropertiesVRepository documentPropertiesVRepository, CollaboratorsService collaboratorsService,
+    public static LeosDocument buildXmlDocument(DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                                                CollaboratorsService collaboratorsService,
                                                 DocumentV doc) {
         if (doc != null) {
-            List<DocumentPropertiesV> docProps = documentPropertiesVRepository.findDocumentPropertiesVById(doc.getDocumentId());
+            List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(doc.getDocumentId());
             List<Collaborator> collaborators = collaboratorsService.getCollaborators(doc.getPackageId());
             return new LeosDocument(doc, collaborators, docProps);
         } else {

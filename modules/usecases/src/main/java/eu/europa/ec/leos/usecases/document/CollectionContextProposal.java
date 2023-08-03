@@ -85,13 +85,15 @@ public class CollectionContextProposal extends CollectionContext {
 
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        ProposalMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withActType(actType)
+                    .withProcedureType(procedureType)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
 
         Validate.notNull(purpose, "Proposal purpose is required!");
-        ProposalMetadata metadata = metadataOption.get()
-                .builder()
-                .withPurpose(purpose)
-                .withEeaRelevance(eeaRelevance)
-                .build();
 
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
 

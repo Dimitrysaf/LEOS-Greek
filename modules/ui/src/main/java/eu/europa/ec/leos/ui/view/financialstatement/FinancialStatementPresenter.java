@@ -934,7 +934,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 updatedContentOptionObj,
                 source.getMetadata(),
                 source.getBaseRevisionId(),
-                source.isTrackChangesEnabled());
+                source.isTrackChangesEnabled(),
+                source.getContributionStatus(),
+                source.getClonedFrom());
     }
 
     @Subscribe

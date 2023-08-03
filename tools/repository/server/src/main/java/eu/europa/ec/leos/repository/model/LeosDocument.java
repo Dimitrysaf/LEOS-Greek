@@ -21,7 +21,7 @@ import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
-import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
+import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
@@ -65,8 +65,7 @@ public class LeosDocument {
 
     public LeosDocument() {}
 
-
-    public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertiesV> otherMetadata) {
+    public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
         if (doc != null) {
             this.name = doc.getName();
             this.createdBy = doc.getCreatedBy();

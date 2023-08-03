@@ -35,7 +35,7 @@ define(function leosTrackChangesPluginModule(require) {
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
-            var selectedElement, handleMutations = true;
+            var selectedElement, handleMutations = false;
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -214,21 +214,18 @@ define(function leosTrackChangesPluginModule(require) {
                             var range = editor.getSelection().getRanges()[0];
                             var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
-                            if (range.collapsed) {
-                                actions.selectOneChar(deleteKey, range, editor);
-                            }
+                            if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
 
-                            editor.fire("saveSnapshot");
+                                editor.fire("saveSnapshot");
 
-                            style.apply(editor, deleteTcStyle);
-                            range = editor.getSelection().getRanges()[0];
-                            if (deleteKey) {
-                                range.collapse(false);
-                            } else {
-                                range.collapse(true);
+                                style.apply(editor, deleteTcStyle);
+
+                                range = editor.getSelection().getRanges()[0];
+                                range.collapse(!deleteKey);
+                                range.select();
+
+                                editor.fire("change");
                             }
-                            range.select();
-                            editor.fire("change");
 
                             event.getInstance().data.domEvent.preventDefault();
                             event.getInstance().stop();
@@ -299,7 +296,6 @@ define(function leosTrackChangesPluginModule(require) {
 
             // Catch toolbar buttons commands before execution
             editor.on("beforeCommandExec", function(event) {
-                handleMutations = true;
                 switch (event.data.name) {
                     case "bold":
                     case "italic":
@@ -339,95 +335,64 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             });
 
-            editor.on("afterCommandExec", function(event) {
-                switch (event.data.name) {
-                    case "acceptOneChange":
-                    case "rejectOneChange":
-                    case "acceptSelectedChanges":
-                    case "rejectSelectedChanges":
-                        handleMutations = false;
-                        break;
-                }
-            });
+            // Implementation for tracking special characters
+            // Handle element added by authorial note, references, mathjax and table
+            CKEDITOR.on("dialogDefinition", function(event) {
+                if (isTrackChangesEnabled) {
+                    switch (event.data.name) {
+                        case "specialchar":
+                            var onChoice = function(event) {
+                                var target, value;
+                                if (event.data)
+                                    target = event.data.getTarget();
+                                else
+                                    target = new CKEDITOR.dom.element(event);
 
-            // Add observer to CKEditor when data is received
-            editor.on("receiveData", function() {
-                function processMutations(mutations) {
-                    if (handleMutations) {
-                        for (var mutation of mutations) {
-                            if (mutation.type === "childList") {
-                                for (var node of mutation.addedNodes) {
-                                    if (!(node instanceof HTMLElement)) continue;
-                                    if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
-                                        node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
-                                        core.setToEditablePosition(editor, new CKEDITOR.dom.node(node), true);
-                                        if (actions.insertNewData(editor, node.outerHTML)) {
-                                            node.remove();
-                                        }
-                                        break;
-                                    } else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
-                                        var rows = node.querySelectorAll("tr");
-                                        rows.forEach(function (row) {
-                                            if (!row.getAttribute(core.UID_ATTR)) {
-                                                core.addTrackChangesAttributes(editor, row, core.INSERT_ACTION);
-                                            }
-                                        });
-                                        break;
+                                if (target.getName() == "a" && (value = target.getChild(0).getHtml())) {
+                                    target.removeClass("cke_light_background");
+                                    dialog.hide();
+
+                                    // We must use "insertText" here to keep text styled.
+                                    var span = editor.document.createElement("span");
+                                    span.setHtml(value);
+
+                                    // Special character tracking
+                                    if (!editor.getSelection().isCollapsed()) {
+                                        style.apply(editor, deleteTcStyle);
+                                        var endContainer = editor.getSelection().getRanges()[0].endContainer;
+                                        core.setToEditablePosition(editor, endContainer, core.CARET_END);
+                                    }
+                                    if (!actions.insertNewData(editor, span.getText())) {
+                                        editor.insertText(span.getText());
                                     }
                                 }
-                            }
-                        }
-                    } else {
-                        handleMutations = true;
+                            };
+                            var onClick = CKEDITOR.tools.addFunction(onChoice);
+                            var dialog = event.data.definition.dialog;
+                            dialog.on("show", function() {
+                                var specialCharElements = document.getElementsByClassName("cke_specialchar");
+                                for (var i = 0; i < specialCharElements.length; i++) {
+                                    specialCharElements[i].removeAttribute("onkeydown");
+                                    specialCharElements[i].setAttribute("onclick","CKEDITOR.tools.callFunction(" + onClick + ", this); return false;");
+                                }
+                            });
+                            break;
+                        case "authorialNoteDialog":
+                        case "leosCrossReferenceDialog":
+                        case "mathjax":
+                            var dialog = event.data.definition.dialog;
+                            dialog.on("ok", function(event) {
+                                selectedElement = core.clone(event.sender._.editor.getSelection().getSelectedElement());
+                                handleMutations = true;
+                            });
+                            break;
+                        case "table":
+                            var dialog = event.data.definition.dialog;
+                            dialog.on("ok", function() {
+                                handleMutations = true;
+                            });
+                            break;
                     }
-                }
-                if (isTrackChangesEnabled) {
-                    var rootElement = editor.editable().$.firstChild;
-                    if (rootElement && !rootElement.mutationObserver) {
-                        rootElement.mutationObserver = new MutationObserver(processMutations);
-                        rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true });
-                    }
-                }
-            });
-
-            // Implementation for tracking special characters
-            CKEDITOR.on("dialogDefinition", function(event) {
-                if (isTrackChangesEnabled && (event.data.name === "specialchar")) {
-                    var onChoice = function(event) {
-                        var target, value;
-                        if (event.data)
-                            target = event.data.getTarget();
-                        else
-                            target = new CKEDITOR.dom.element(event);
-
-                        if (target.getName() == "a" && (value = target.getChild(0).getHtml())) {
-                            target.removeClass("cke_light_background");
-                            dialog.hide();
-
-                            // We must use "insertText" here to keep text styled.
-                            var span = editor.document.createElement("span");
-                            span.setHtml(value);
-
-                            // Special character tracking
-                            if (!editor.getSelection().isCollapsed()) {
-                                style.apply(editor, deleteTcStyle);
-                                var endContainer = editor.getSelection().getRanges()[0].endContainer;
-                                core.setToEditablePosition(editor, endContainer, core.CARET_END);
-                            }
-                            if (!actions.insertNewData(editor, span.getText())) {
-                                editor.insertText(span.getText());
-                            }
-                        }
-                    };
-                    var onClick = CKEDITOR.tools.addFunction(onChoice);
-                    var dialog = event.data.definition.dialog;
-                    dialog.on("show", function() {
-                        var specialCharElements = document.getElementsByClassName("cke_specialchar");
-                        for (var i = 0; i < specialCharElements.length; i++) {
-                            specialCharElements[i].removeAttribute("onkeydown");
-                            specialCharElements[i].setAttribute("onclick","CKEDITOR.tools.callFunction(" + onClick + ", this); return false;");
-                        }
-                    });
                 }
             });
 
@@ -441,14 +406,91 @@ define(function leosTrackChangesPluginModule(require) {
                             editor.getSelection().selectElement(new CKEDITOR.dom.element(widgetElement));
                             if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
                                 style.apply(editor, deleteTcStyle);
-                                var endContainer = editor.getSelection().getRanges()[0].endContainer;
-                                core.setToEditablePosition(editor, endContainer, core.CARET_END);
+                            }
+                            var endContainer = editor.getSelection().getRanges()[0].endContainer;
+                            // If widget is not removed then set new position
+                            if (editor.getSelection().getRanges()[0].startOffset !== editor.getSelection().getRanges()[0].endOffset) {
+                                core.setToEditablePosition(editor, endContainer, (event.data.keyCode === UTILS.KEYS.KEY_BACKSPACE) ?
+                                    core.CARET_END : core.CARET_START);
                             }
                             event.cancel();
+                        } else if ((event.data.keyCode === UTILS.KEYS.KEY_ENTER) &&
+                                core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                            event.cancel(); // Prevent open widget dialog
+                        }
+                    });
+                    widget.on("doubleclick", function(event) {
+                        if (editor.getSelection().getSelectedElement() &&
+                                core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                            event.cancel(); // Prevent open widget dialog
                         }
                     });
                 }
             }, null, null, 11);
+
+            // Add observer to CKEditor when data is received
+            editor.on("receiveData", function() {
+                function processModification(target) {
+                    editor.getSelection().selectElement(target);
+                    if (!core.isInsideTrackChangeElement(editor)) {
+                        selectedElement.insertBefore(target);
+                        style.apply(editor, deleteTcStyle);
+                        core.setToEditablePosition(editor, target, core.CARET_END);
+                        if (actions.insertNewData(editor, target.$.outerHTML)) {
+                            target.remove();
+                        }
+                    }
+                }
+                function processMutations(mutations) {
+                    if (handleMutations) {
+                        handleMutations = false;
+                        for (var mutation of mutations) {
+                            if (mutation.type === "childList") {
+                                for (var node of mutation.addedNodes) {
+                                    if (!(node instanceof HTMLElement)) continue;
+                                    if (node.classList.contains("cke_widget_authorialNoteWidget") || node.classList.contains("cke_widget_mathjax") ||
+                                            node.classList.contains("cke_widget_leosCrossReferenceWidget")) {
+                                        core.setToEditablePosition(editor, new CKEDITOR.dom.element(node), core.CARET_END);
+                                        if (actions.insertNewData(editor, node.outerHTML)) {
+                                            node.remove();
+                                        }
+                                        break;
+                                    } else if ((node.tagName === "TABLE") && !node.id) { // It is a new table
+                                        var rows = node.querySelectorAll("tr");
+                                        rows.forEach(function (row) {
+                                            if (!row.getAttribute(core.UID_ATTR)) {
+                                                core.addTrackChangesAttributes(editor, row, core.INSERT_ACTION);
+                                            }
+                                        });
+                                        break;
+                                    } else if (node.tagName === "REF") {
+                                        var target = node.closest(".cke_widget_inline");
+                                        if (target && target.classList.contains("cke_widget_leosCrossReferenceWidget")) { // Cross-reference modification
+                                            processModification(new CKEDITOR.dom.element(target));
+                                        }
+                                        break;
+                                    }
+                                }
+                            } else if (mutation.type === "attributes") {
+                                var target = mutation.target.closest(".cke_widget_inline");
+                                if (target && (target.classList.contains("cke_widget_authorialNoteWidget") || // Authorial note and Math modification
+                                        target.classList.contains("cke_widget_mathjax"))) {
+                                    processModification(new CKEDITOR.dom.element(target));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (isTrackChangesEnabled) {
+                    var rootElement = editor.editable().$.firstChild;
+                    if (rootElement && !rootElement.mutationObserver) {
+                        rootElement.mutationObserver = new MutationObserver(processMutations);
+                        rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true,
+                            attributes: true, attributeFilter: [ "data-cke-widget-data" ] });
+                    }
+                }
+            });
         }
     }
 

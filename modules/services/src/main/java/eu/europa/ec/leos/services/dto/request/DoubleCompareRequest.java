@@ -18,12 +18,6 @@ public class DoubleCompareRequest {
     private String intermediateMajorId;
     private String currentId;
 
-    public DoubleCompareRequest(String originalProposalId, String intermediateMajorId, String currentId) {
-        this.originalProposalId = originalProposalId;
-        this.intermediateMajorId = intermediateMajorId;
-        this.currentId = currentId;
-    }
-
     public String getOriginalProposalId() {
         return originalProposalId;
     }

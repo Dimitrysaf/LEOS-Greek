@@ -609,6 +609,8 @@ public abstract class ApiServiceImpl implements ApiService {
                     financialStatementVO.getMetadata()
                             .setInternalRef(financialStatement.getMetadata().getOrError(() -> "financialStatement metadata is not available!").getRef());
                     financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
+                    financialStatementVO.setUpdatedBy(userHelper.convertToPresentation(financialStatementVO.getUpdatedBy()));
+                    financialStatementVO.setCreatedBy(userHelper.convertToPresentation(financialStatementVO.getCreatedBy()));
                     docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
                     break;
                 }

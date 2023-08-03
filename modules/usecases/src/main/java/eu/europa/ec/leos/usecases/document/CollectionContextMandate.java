@@ -119,7 +119,9 @@ public class CollectionContextMandate extends CollectionContext {
                                       boolean createProposal) {
         explanatoryContext.useTemplate(template);
         explanatoryContext.usePurpose(purpose);
-        explanatoryContext.useType(metadata.getType());
+        if (metadata.getType() != null) {
+            explanatoryContext.useType(metadata.getType());
+        }
         explanatoryContext.useTitle(messageHelper.getMessage("document.default.explanatory.title.default." + template));
         explanatoryContext.useActionMessageMap(actionMsgMap);
         explanatoryContext.useCollaborators(proposal.getCollaborators());
@@ -140,6 +142,8 @@ public class CollectionContextMandate extends CollectionContext {
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
+                .withActType(this.actType)
+                .withProcedureType(this.procedureType)
                 .withEeaRelevance(eeaRelevance)
                 .build();
 

@@ -170,6 +170,10 @@
   @include eui-scrollbars();
 }
 
+app-annex-document {
+  border-top: 1px solid var(--eui-base-color-grey-15);
+}
+
 .tree-drag-content {
   background-color: var(--eui-app-body-bg-color);
   border-radius: 1rem;

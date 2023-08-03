@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
+import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
 
@@ -16,6 +17,7 @@ export class RevisionActionsDropdownComponent implements OnInit {
   declineContributionDialog: EuiDialogComponent;
   versionModalText: string;
   versionToDecline = '';
+  ContributionStatus = ContributionStatus;
 
   constructor(
     public documentService: DocumentService,

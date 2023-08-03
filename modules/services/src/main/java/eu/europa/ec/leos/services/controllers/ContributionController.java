@@ -73,18 +73,20 @@ public class ContributionController {
     public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request,
                                                               @PathVariable("documentRef") String documentRef,
                                                               @PathVariable("documentType") String documentType,
-                                                              @RequestParam String contributionVersionRef,
-                                                              @RequestParam String originalVersionRef) {
-        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(request.getContextPath(), documentType,originalVersionRef , contributionVersionRef,documentRef);
+                                                              @RequestParam String contributionVersionRef) {
+        DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(
+                request.getContextPath(),
+                documentRef,
+                contributionVersionRef
+        );
         return ResponseEntity.ok(mergedContent);
     }
     
     @PostMapping(value = "/decline-contributions/{documentVersionedRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentVersionedRef") String documentVersionedRef,
-                                                                           @PathVariable("documentType") String documentType,
-                                                                           @RequestParam String versionLabel) {
-        this.contributionApiService.declineRevision(documentType, documentVersionedRef, versionLabel);
+                                                                           @PathVariable("documentType") String documentType) {
+        this.contributionApiService.declineContribution(documentVersionedRef);
         return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
     }
 
@@ -100,7 +102,7 @@ public class ContributionController {
     @ResponseBody
     public ResponseEntity<Object> markAsProcessed(@PathVariable("contributionVersionRef") String contributionVersionRef,
                                                   @PathVariable("documentType") String documentType) {
-        this.contributionApiService.markRevisionAsProcessed(contributionVersionRef);
+        this.contributionApiService.markContributionAsProcessed(contributionVersionRef);
         return ResponseEntity.ok().build();
     }
 }

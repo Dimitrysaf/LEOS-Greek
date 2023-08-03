@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.TestUtils;
+import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
@@ -102,16 +103,18 @@ public class MilestonesServiceTests {
     @Test
     @Transactional
     public void test_searchMilestone() throws RepositoryException {
-        List<LeosDocument> milestones = documentService.findDocumentByName(MILESTONE_NAME);
-        assertEquals(milestones.size(), 1);
-        assertEquals(milestones.get(0).getName(), MILESTONE_NAME);
-        assertTrue(Arrays.equals(milestones.get(0).getSource(), content));
-        assertEquals(milestones.get(0).getRef(), MILESTONE_NAME.substring(0, MILESTONE_NAME.lastIndexOf('.')));
-        assertEquals(milestones.get(0).getMetadata().get("containedDocuments"), milestone.getMetadata().get("containedDocuments"));
-        assertEquals(milestones.get(0).getMetadata().get("milestoneComments"), milestone.getMetadata().get("milestoneComments"));
-        assertEquals(milestones.get(0).getCategory(), CAT);
-        assertEquals(pkg.getId(), milestones.get(0).getPackageId());
-        assertEquals(milestones.get(0).getMetadata().get("status"), milestone.getMetadata().get("status"));
+        Optional<LeosDocument> milestoneOpt = documentService.findDocumentByName(MILESTONE_NAME);
+        assertNotNull(milestoneOpt);
+        assertTrue(milestoneOpt.isPresent());
+        LeosDocument milestone = milestoneOpt.get();
+        assertEquals(milestone.getName(), MILESTONE_NAME);
+        assertTrue(Arrays.equals(milestone.getSource(), content));
+        assertEquals(milestone.getRef(), MILESTONE_NAME.substring(0, MILESTONE_NAME.lastIndexOf('.')));
+        assertEquals(milestone.getMetadata().get("containedDocuments"), this.milestone.getMetadata().get("containedDocuments"));
+        assertEquals(milestone.getMetadata().get("milestoneComments"), this.milestone.getMetadata().get("milestoneComments"));
+        assertEquals(milestone.getCategory(), CAT);
+        assertEquals(pkg.getId(), milestone.getPackageId());
+        assertEquals(milestone.getMetadata().get("status"), this.milestone.getMetadata().get("status"));
     }
 
     @Test
@@ -136,7 +139,7 @@ public class MilestonesServiceTests {
             {
                 put("status", "FILE_READY");
             }};
-        LeosDocument updatedMilestone = documentService.updateDocument(milestone.getRef(), properties, "0.1.1", 3,
+        LeosDocument updatedMilestone = documentService.updateDocument(milestone.getRef(), properties, VersionType.MINOR,
                 "Second Version", "test");
         assertEquals(updatedMilestone.getName(), MILESTONE_NAME);
         assertTrue(Arrays.equals(updatedMilestone.getSource(), content));

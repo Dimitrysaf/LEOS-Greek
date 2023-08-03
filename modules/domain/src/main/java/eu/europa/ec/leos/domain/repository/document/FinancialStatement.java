@@ -13,18 +13,23 @@ import java.util.List;
 public final class FinancialStatement extends XmlDocument {
     private final Option<FinancialStatementMetadata> metadata;
     private final String baseRevisionId;
+    private final String contributionStatus;
+    private final String clonedFrom;
 
     public FinancialStatement(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
                               Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel,
                               String versionComment, VersionType versionType, boolean isLatestVersion, String title,
                               List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
-                              Option<FinancialStatementMetadata> metadata, String baseRevisionId, boolean trackChangesEnabled) {
+                              Option<FinancialStatementMetadata> metadata, String baseRevisionId, boolean trackChangesEnabled,
+                                String contributionStatus, String clonedFrom) {
 
         super(LeosCategory.STAT_FINANC_LEGIS, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
                 collaborators, milestoneComments, content, trackChangesEnabled);
         this.metadata = metadata;
         this.baseRevisionId = baseRevisionId;
+        this.contributionStatus = contributionStatus;
+        this.clonedFrom = clonedFrom;
     }
 
     public final Option<FinancialStatementMetadata> getMetadata() {
@@ -33,8 +38,11 @@ public final class FinancialStatement extends XmlDocument {
 
     public String getBaseRevisionId() { return baseRevisionId; }
 
-    @Override
     public String getContributionStatus() {
-        return null;
+        return contributionStatus;
+    }
+
+    public String getClonedFrom() {
+        return clonedFrom;
     }
 }
