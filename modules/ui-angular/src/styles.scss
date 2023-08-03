@@ -481,3 +481,15 @@ body {
   }
 }
 // Overriding application fonts (end)
+
+//create temporary ui rule for merged contributions
+.contribution-view-merge-pane .contribution-wrapper-after-merge {
+  background-color: rgb(166, 166, 166, 0.8);
+  border: #8c8c8c thin solid;
+  .accept {
+    background-color: #f7f7f7;
+  }
+  .reject {
+    background-color: #f7f7f7;
+  }
+}
