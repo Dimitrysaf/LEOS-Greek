@@ -120,6 +120,7 @@ export class DocumentService implements OnDestroy {
   annexDocNumber$: Observable<number>;
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
+  contributionDocumentRef$: Observable<string>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -168,6 +169,8 @@ export class DocumentService implements OnDestroy {
   private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
     false,
   );
+  private latestMilestoneVersion: string | null = null;
+  private contributionDocumentRefBS = new BehaviorSubject<string | null>(null);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -181,6 +184,8 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
   ) {
+    this.contributionDocumentRef$ =
+      this.contributionDocumentRefBS.asObservable();
     this.annexDocNumber$ = this.annexDocNumberBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
@@ -994,6 +999,10 @@ export class DocumentService implements OnDestroy {
     this.contributionViewAndMergeCollapsedBS.next(collapsed);
   }
 
+  setContributionDocumentRef(ref: string) {
+    this.contributionDocumentRefBS.next(ref);
+  }
+
   setAnnexDocNumber(num: number) {
     this.annexDocNumberBS.next(num);
   }
@@ -1086,6 +1095,9 @@ export class DocumentService implements OnDestroy {
     this.handleContributionSelectCount(false, true);
     const contributionVersionRef = contribution.versionedReference;
     const documentRef = this.documentRef;
+    this.setContributionDocumentRef(
+      contributionVersionRef.substring(0, contributionVersionRef.length - 6),
+    );
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     this.http

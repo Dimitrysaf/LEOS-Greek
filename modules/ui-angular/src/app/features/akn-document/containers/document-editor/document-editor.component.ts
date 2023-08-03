@@ -75,6 +75,7 @@ export class DocumentEditorComponent
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
+  contributionAnnotationsContainerId = 'contributionViewContainer';
   documentRef: string;
   documentType: string;
   pageTitle: string;
@@ -94,6 +95,7 @@ export class DocumentEditorComponent
   isTocPaneCollapsed = true;
   isNavigationPaneExpanded = true;
   isAnnotationsPaneCollapsed = true;
+  isContributionAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
   isContributionForViewOpen = false;
   isViewContributionPaneCollapsed = true;
@@ -493,6 +495,21 @@ export class DocumentEditorComponent
     )?.click();
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
     if (!this.isAnnotationsPaneCollapsed) this.onHideAnnotationsSplitter(false);
+  }
+
+  onToggleContributionAnnotationsPaneCollapsed(
+    isContributionAnnotationsPaneCollapsed = !this
+      .isContributionAnnotationsPaneCollapsed,
+  ) {
+    (
+      document.querySelector(
+        'button.annotator-frame-button--sidebar_toggle',
+      ) as HTMLButtonElement
+    )?.click();
+    this.isContributionAnnotationsPaneCollapsed =
+      isContributionAnnotationsPaneCollapsed;
+    if (!this.isContributionAnnotationsPaneCollapsed)
+      this.onHideAnnotationsSplitter(false);
   }
 
   onHideAnnotationsSplitter(

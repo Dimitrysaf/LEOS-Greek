@@ -29,13 +29,16 @@ import { AnnotateManager } from './annotate-manager';
 })
 export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() documentId: string;
-  @Input() connectedEntity: string | null = null;
+  @Input() connectedEntity?: string;
   @Input() containerId = 'docContainer';
   @Input() operationMode: AnnotateOperationMode = 'NORMAL';
   @Input() permissions: Permission[] = [];
-  @Input() proposalRef: string | null = null;
+  @Input() proposalRef?: string;
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
+  @Input() sidebarAppId?: string;
+  @Input() temporaryDataId?: string;
+  @Input() temporaryDataDocument?: string;
   @Input() canvasClass?: string;
   @Output() sidebarShown = new EventEmitter<void>();
 
@@ -63,7 +66,6 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     this.annotate = new AnnotateManager(
       this.leos,
       this.appConfig,
-      this.documentId,
       this.permissions,
       {
         annotationContainer: `#${this.containerId}`,
@@ -72,6 +74,9 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
         proposalRef: this.proposalRef,
         showGuideLinesButton: this.showGuideLinesButton,
         showStatusFilter: this.showStatusFilter,
+        sidebarAppId: this.sidebarAppId,
+        temporaryDataId: this.temporaryDataId,
+        temporaryDataDocument: this.temporaryDataDocument,
       },
       this.annotateService,
       this.documentService,

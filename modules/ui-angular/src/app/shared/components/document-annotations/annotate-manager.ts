@@ -30,6 +30,9 @@ export type AnnotateConnectorOptions = Pick<
   | 'showStatusFilter'
   | 'showGuideLinesButton'
   | 'connectedEntity'
+  | 'sidebarAppId'
+  | 'temporaryDataId'
+  | 'temporaryDataDocument'
 >;
 
 export class AnnotateManager {
@@ -40,7 +43,6 @@ export class AnnotateManager {
   constructor(
     private leos: LeosLegacyService,
     private appConfig: AppConfigService,
-    private documentId: string,
     private permissions: Permission[],
     private options: AnnotateConnectorOptions,
     private annotateService: AnnotateService,
@@ -134,11 +136,8 @@ export class AnnotateManager {
             oauthClientId: config.annotateJwtIssuerClientId,
             annotationPopupDefaultStatus: config.annotatePopupDefaultStatus,
             isSpellCheckerEnabled: config.spellCheckerEnabled,
-            spellCheckerServiceUrl: config.spellCheckerServiceUrl,
-            spellCheckerSourceUrl: config.spellCheckerSourceUrl,
-            sidebarAppId: null, // TODO
-            // temporaryDataId: 'xxx', // TODO
-            // temporaryDataDocument: 'xxx', // TODO
+            spellCheckerServiceUrl: config.spellCheckerServiceUrl ?? '',
+            spellCheckerSourceUrl: config.spellCheckerSourceUrl ?? '',
             ...this.options,
           } as AnnotateConnectorState),
       ),

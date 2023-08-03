@@ -1,8 +1,8 @@
-import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import type { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import type { AnnotateConnector } from '@/shared/components/document-annotations/annotate-connector';
 
 export type AnnotateExtension = {
-  init(connector: AnnotateConnector);
+  init(connector: AnnotateConnector): void;
 };
 
 export type AnnotateOperationMode = 'READ_ONLY' | 'PRIVATE' | 'NORMAL';
@@ -21,10 +21,10 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
   spellCheckerServiceUrl: string;
   spellCheckerSourceUrl: string;
 
-  // these 3 are used only in Proposal* documents (EC?)
-  sidebarAppId?: string | null;
+  // these 3 are used only in revision sidebar (contribution view)
+  sidebarAppId?: string; // always 'revision-01'
   temporaryDataId?: string;
-  temporaryDataDocument?: string;
+  temporaryDataDocument?: string; // documentRef of "contributed document"
 
   // Component context options
   operationMode: AnnotateOperationMode;
@@ -32,14 +32,14 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
   annotationContainer: string;
 
   // Calculated on the server (instance + env + document + user dependent)
-  proposalRef: string;
+  proposalRef?: string;
 
   // Client-side only state
   showStatusFilter: boolean;
   showGuideLinesButton: boolean;
 
   // App session depended properties
-  connectedEntity: string;
+  connectedEntity?: string;
 };
 
 export type MergeSuggestion = {
