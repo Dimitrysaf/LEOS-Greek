@@ -1166,6 +1166,7 @@ export class DocumentService implements OnDestroy {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          this.handleContributionUI();
           if (!acceptAllContributions)
             this.updateProcessedStatus(false, mergeActions[0].contributionVO);
           this.reloadDocument();
@@ -1184,6 +1185,48 @@ export class DocumentService implements OnDestroy {
           });
         },
       });
+  }
+
+  handleContributionUI() {
+    const changes = this.document.querySelectorAll(
+      '.selected-contribution-wrapper',
+    );
+    if (changes.length > 0) {
+      changes.forEach((item) => {
+        if (!item.classList.contains('contribution-wrapper-after-merge')) {
+          item.classList.add('contribution-wrapper-after-merge');
+
+          for (const child of item.children) {
+            if (child.classList.contains('merge-actions-wrapper')) {
+              for (const innerChild of child.children) {
+                if (innerChild.classList.contains('accept')) {
+                  innerChild.setAttribute(
+                    'title',
+                    this.translate.instant(
+                      'page.editor.contribution.view.merge-contributions.accepted-change',
+                    ),
+                  );
+                }
+                if (innerChild.classList.contains('reject')) {
+                  innerChild.setAttribute(
+                    'title',
+                    this.translate.instant(
+                      'page.editor.contribution.view.merge-contributions.rejected-change',
+                    ),
+                  );
+                }
+              }
+            }
+          }
+        }
+      });
+    } else {
+      this.document
+        .querySelectorAll('contribution-wrapper-after-merge')
+        .forEach((item) => {
+          item.classList.remove('contribution-wrapper-after-merge');
+        });
+    }
   }
 
   private setSearchResultsCounter(count: number) {

@@ -359,6 +359,8 @@
   "page.editor.contribution.view.mark-contribution-as-processed.modal-text": "The revision will be marked as processed",
   "page.editor.contribution.view.merge-contributions.accept-all.modal-title": "All Contribution",
   "page.editor.contribution.view.merge-contributions.accept-all.modal-text": "All contributions will be accepted",
+  "page.editor.contribution.view.merge-contributions.accepted-change": "Accepted change",
+  "page.editor.contribution.view.merge-contributions.rejected-change": "Rejected change",
   "page.editor.contribution.merge-contribution-message-success": "Contributions merged",
   "page.editor.contribution.merge-contribution-message-error": "Failed to merge contributions",
   "page.editor.contribution.mark-as-processed-message-success": "Contribution marked as processed",
