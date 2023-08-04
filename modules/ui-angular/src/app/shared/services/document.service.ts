@@ -1156,10 +1156,20 @@ export class DocumentService implements OnDestroy {
             if (child.classList.contains('merge-actions-wrapper')) {
               for (const innerChild of child.children) {
                 if (innerChild.classList.contains('accept')) {
-                  innerChild.setAttribute('title', 'Accepted change');
+                  innerChild.setAttribute(
+                    'title',
+                    this.translate.instant(
+                      'page.editor.contribution.view.merge-contributions.accepted-change',
+                    ),
+                  );
                 }
                 if (innerChild.classList.contains('reject')) {
-                  innerChild.setAttribute('title', 'Rejected change');
+                  innerChild.setAttribute(
+                    'title',
+                    this.translate.instant(
+                      'page.editor.contribution.view.merge-contributions.rejected-change',
+                    ),
+                  );
                 }
               }
             }

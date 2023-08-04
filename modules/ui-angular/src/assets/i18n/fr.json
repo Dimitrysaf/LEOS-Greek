@@ -335,6 +335,8 @@
   "page.editor.contribution.view.mark-contribution-as-processed.modal-text": "[FR] The revision will be marked as processed",
   "page.editor.contribution.view.merge-contributions.accept-all.modal-title": "[FR] All Contribution",
   "page.editor.contribution.view.merge-contributions.accept-all.modal-text": "[FR] All cotributions will be accepted",
+  "page.editor.contribution.view.merge-contributions.accepted-change": "[FR] Accepted change",
+  "page.editor.contribution.view.merge-contributions.rejected-change": "[FR] Rejected change",
   "page.editor.contribution.merge-contribution-message-success": "[FR] Contributions merged",
   "page.editor.contribution.merge-contribution-message-error": "[FR] Failed to merge contributions",
   "page.editor.contribution.mark-as-processed-message-success": "[FR] Contribution marked as processed",
