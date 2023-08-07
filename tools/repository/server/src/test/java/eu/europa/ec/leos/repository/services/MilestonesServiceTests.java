@@ -66,7 +66,7 @@ public class MilestonesServiceTests {
 
     private LeosDocument milestone;
     private final String REPO_ID = "leos_dev";
-    private final String PKG_NAME = "/leos/workspaces/testMilestone";
+    private final String PKG_NAME = "testMilestone";
     private final String MILESTONE_NAME = "PROP_ACT-clilif9gy0000ro28zt8al0yh-en.leg";
     private final String CAT = "LEG";
     private eu.europa.ec.leos.repository.model.Package pkg;
@@ -158,7 +158,7 @@ public class MilestonesServiceTests {
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
                 "-en.xml"));
         Set<String> categories = Sets.set("LEG");
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("/leos/workspaces", categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getCategory(), "LEG");
     }
@@ -166,7 +166,7 @@ public class MilestonesServiceTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageName() throws RepositoryException {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "/leos/workspaces",
+        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
                 Sets.set("LEG"), true);
         assertEquals(1, docs.size());
     }

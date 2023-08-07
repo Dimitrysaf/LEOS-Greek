@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.repository;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -24,5 +25,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableJpaRepositories(basePackages="eu.europa.ec.leos.repository.repositories")
 @EnableWebMvc
 @EnableSpringDataWebSupport
+@EnableCaching
 class ApplicationConfiguration {
 }

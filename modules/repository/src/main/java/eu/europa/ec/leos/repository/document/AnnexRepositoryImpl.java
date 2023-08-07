@@ -32,11 +32,11 @@ import java.util.Map;
  * @constructor Creates a specific Annex Repository, injected with a generic LEOS Repository.
  */
 @Repository
-public class AnnexRepositoryImpl implements AnnexRepository {
+public abstract class AnnexRepositoryImpl implements AnnexRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnexRepositoryImpl.class);
 
-    private final LeosRepository leosRepository;
+    protected final LeosRepository leosRepository;
 
     @Autowired
     public AnnexRepositoryImpl(LeosRepository leosRepository) {

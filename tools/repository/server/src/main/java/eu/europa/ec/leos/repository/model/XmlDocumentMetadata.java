@@ -45,7 +45,7 @@ public class XmlDocumentMetadata {
     private String revisionStatus;
     private String contributionStatus;
     private Boolean isLiveDiffingRequired;
-    private String originalRef;
+    private String originRef;
     private String baseRevisionId;
 
     public XmlDocumentMetadata(DocumentV doc, List<Collaborator> collaborators) {
@@ -60,11 +60,11 @@ public class XmlDocumentMetadata {
         this.category = doc.getCategoryCode();
         this.docTemplate = doc.getDocTemplate();
         this.ref = doc.getRef();
-        this.clonedFrom = doc.getClonedFrom() != null ? doc.getClonedFrom().toString() : null;
+        this.clonedFrom = doc.getClonedFrom() != null ? doc.getClonedFrom() : null;
         this.revisionStatus = doc.getRevisionStatus();
         this.contributionStatus = doc.getContributionStatus();
         this.isLiveDiffingRequired = doc.isLiveDiffingRequired();
-        this.originalRef = doc.getOriginalRef() != null ? doc.getOriginalRef().toString() : null;
+        this.originRef = doc.getOriginRef() != null ? doc.getOriginRef() : null;
         this.baseRevisionId = doc.getBaseRevisionId() != null ? doc.getBaseRevisionId().toString() : null;
         this.setCollaborators(collaborators);
     }
@@ -116,8 +116,8 @@ public class XmlDocumentMetadata {
         if (this.isLiveDiffingRequired() != null) {
             metadataMap.put("liveDiffingRequired", this.isLiveDiffingRequired());
         }
-        if (this.getOriginalRef() != null) {
-            metadataMap.put("originalRef", this.getOriginalRef());
+        if (this.getOriginRef() != null) {
+            metadataMap.put("originRef", this.getOriginRef());
         }
         if (this.getBaseRevisionId() != null) {
             metadataMap.put("baseRevisionId", this.getBaseRevisionId());
@@ -292,12 +292,12 @@ public class XmlDocumentMetadata {
         isLiveDiffingRequired = liveDiffingRequired;
     }
 
-    public String getOriginalRef() {
-        return originalRef;
+    public String getOriginRef() {
+        return originRef;
     }
 
-    public void setOriginalRef(String originalRef) {
-        this.originalRef = originalRef;
+    public void setOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 
     public String getBaseRevisionId() {

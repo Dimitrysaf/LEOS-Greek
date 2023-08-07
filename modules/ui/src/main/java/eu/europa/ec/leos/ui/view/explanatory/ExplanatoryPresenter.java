@@ -659,7 +659,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         } catch (Exception e) {
             LogUtil.logError(LOG, eventBus, "Unexpected error occurred while generating Export Package", e);
         } finally {
-            ExportDocument exportDocument = exportPackageService.findExportDocumentById(exportDocumentId, false);
+            ExportDocument exportDocument = exportPackageService.findExportDocumentById(exportDocumentId, true);
             if (exportDocument != null && !exportDocument.getStatus().equals(LeosExportStatus.FILE_READY)) {
                 exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
                 leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));

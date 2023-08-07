@@ -40,14 +40,13 @@ import javax.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "DocumentMilestone.findById", query = "SELECT d FROM DocumentMilestone d WHERE d.id = :id"),
         @NamedQuery(name = "DocumentMilestone.findByDocument", query = "SELECT d FROM DocumentMilestone d WHERE d.document = :document"),
         @NamedQuery(name = "DocumentMilestone.findByJobDate", query = "SELECT d FROM DocumentMilestone d WHERE d.jobDate = :jobDate"),
-        @NamedQuery(name = "DocumentMilestone.findByClonedMilestoneId", query = "SELECT d FROM DocumentMilestone d WHERE d.clonedMilestoneId = :clonedMilestoneId"),
         @NamedQuery(name = "DocumentMilestone.findByMilestoneComments", query = "SELECT d FROM DocumentMilestone d WHERE d.milestoneComments = :milestoneComments"),
         @NamedQuery(name = "DocumentMilestone.findByStatus", query = "SELECT d FROM DocumentMilestone d WHERE d.status = :status"),
         @NamedQuery(name = "DocumentMilestone.findByAuditCBy", query = "SELECT d FROM DocumentMilestone d WHERE d.auditCBy = :auditCBy"),
         @NamedQuery(name = "DocumentMilestone.findByAuditCDate", query = "SELECT d FROM DocumentMilestone d WHERE d.auditCDate = :auditCDate"),
         @NamedQuery(name = "DocumentMilestone.findByAuditLastMBy", query = "SELECT d FROM DocumentMilestone d WHERE d.auditLastMBy = :auditLastMBy"),
         @NamedQuery(name = "DocumentMilestone.findByAuditLastMDate", query = "SELECT d FROM DocumentMilestone d WHERE d.auditLastMDate = :auditLastMDate"),
-        @NamedQuery(name = "DocumentMilestone.findByMilestoneId", query = "SELECT d FROM DocumentMilestone d WHERE d.milestoneId = :milestoneId"),
+        @NamedQuery(name = "DocumentMilestone.findByJobId", query = "SELECT d FROM DocumentMilestone d WHERE d.jobId = :jobId"),
         @NamedQuery(name = "DocumentMilestone.findByExportStatus", query = "SELECT d FROM DocumentMilestone d WHERE d.exportStatus = :exportStatus"),
         @NamedQuery(name = "DocumentMilestone.findByExportDate", query = "SELECT d FROM DocumentMilestone d WHERE d.exportDate = :exportDate")})
 public class DocumentMilestone implements Serializable {
@@ -61,8 +60,6 @@ public class DocumentMilestone implements Serializable {
     private BigDecimal id;
     @Column(name = "JOB_DATE", nullable = false)
     private LocalDateTime jobDate;
-    @Column(name = "CLONED_MILESTONE_ID", precision = 22, scale = 0)
-    private BigDecimal clonedMilestoneId;
     @Column(name = "MILESTONE_COMMENTS", length = 4000)
     private String milestoneComments;
     @Lob
@@ -82,8 +79,8 @@ public class DocumentMilestone implements Serializable {
     private String exportStatus;
     @Column(name = "EXPORT_DATE")
     private LocalDateTime exportDate;
-    @Column(name = "MILESTONE_ID", nullable = false, precision = 22, scale = 0)
-    private BigDecimal milestoneId;
+    @Column(name = "JOB_ID", length = 30)
+    private String jobId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "milestone")
     private Collection<DocumentMilestoneList> documentMilestoneListCollection;
     @JoinColumn(name = "DOCUMENT_ID", referencedColumnName = "ID")
@@ -97,13 +94,13 @@ public class DocumentMilestone implements Serializable {
         this.id = id;
     }
 
-    public DocumentMilestone(BigDecimal id, LocalDateTime jobDate, String status, String auditCBy, LocalDateTime auditCDate, BigDecimal milestoneId) {
+    public DocumentMilestone(BigDecimal id, LocalDateTime jobDate, String status, String auditCBy, LocalDateTime auditCDate, String jobId) {
         this.id = id;
         this.jobDate = jobDate;
         this.status = status;
         this.auditCBy = auditCBy;
         this.auditCDate = auditCDate;
-        this.milestoneId = milestoneId;
+        this.jobId = jobId;
     }
 
     public BigDecimal getId() {
@@ -120,14 +117,6 @@ public class DocumentMilestone implements Serializable {
 
     public void setJobDate(LocalDateTime jobDate) {
         this.jobDate = jobDate;
-    }
-
-    public BigDecimal getClonedMilestoneId() {
-        return clonedMilestoneId;
-    }
-
-    public void setClonedMilestoneId(BigDecimal clonedMilestoneId) {
-        this.clonedMilestoneId = clonedMilestoneId;
     }
 
     public String getMilestoneComments() {
@@ -186,12 +175,12 @@ public class DocumentMilestone implements Serializable {
         this.auditLastMBy = auditLastMBy;
     }
 
-    public BigDecimal getMilestoneId() {
-        return milestoneId;
+    public String getJobId() {
+        return jobId;
     }
 
-    public void setMilestoneId(BigDecimal milestoneId) {
-        this.milestoneId = milestoneId;
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
     public String getExportStatus() {

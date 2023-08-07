@@ -299,21 +299,24 @@ public class VersionCard<D extends XmlDocument> extends VerticalLayout {
         } else {
             versionString = messageHelper.getMessage("document.version.label") + " " + versionVO.getVersionNumber();
             lastUpdateString = versionVO.getUpdatedDate() + "   " + userHelper.convertToPresentation(versionVO.getUsername());
-            switch (versionVO.getVersionType()) {
-                case INTERMEDIATE:
-                    style = "intermediate";
-                    break;
-                case MAJOR:
-                    style = "milestone";
-                    final Label milestoneTag = new Label(messageHelper.getMessage("document.version.milestone"));
-                    milestoneTag.setStyleName("milestone-tag-block");
-                    versionCardHeader.addComponent(milestoneTag);
-                    versionCardHeader.setComponentAlignment(milestoneTag, Alignment.BOTTOM_RIGHT);
-                    break;
-                default:
-                    style = "recent";
+            if(versionVO.getVersionType() == null){
+                style = "recent";
+            }else {
+                switch (versionVO.getVersionType()) {
+                    case INTERMEDIATE:
+                        style = "intermediate";
+                        break;
+                    case MAJOR:
+                        style = "milestone";
+                        final Label milestoneTag = new Label(messageHelper.getMessage("document.version.milestone"));
+                        milestoneTag.setStyleName("milestone-tag-block");
+                        versionCardHeader.addComponent(milestoneTag);
+                        versionCardHeader.setComponentAlignment(milestoneTag, Alignment.BOTTOM_RIGHT);
+                        break;
+                    default:
+                        style = "recent";
+                }
             }
-
             title.setValue(versionVO.getCheckinCommentVO().getTitle());
             if (Strings.isNullOrEmpty(versionVO.getCheckinCommentVO().getDescription())) {
                 description.setVisible(false);

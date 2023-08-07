@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.rest.extensions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
@@ -366,7 +368,10 @@ public class LeosDocumentExtensions {
     }
 
     private static List<String> getMilestoneComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        return Arrays.asList();
+        if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)) != null && document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)) instanceof List) {
+            return (List<String>) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS));
+        }
+        return new ArrayList<String>();
     }
 
     private static String getJobId(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -374,9 +379,13 @@ public class LeosDocumentExtensions {
     }
 
     private static Instant getJobDate(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        //GregorianCalendar jobDate = (String)document.getMetadata().get(RestProperties.JOB_DATE.getId());
-        //return jobDate != null ? jobDate.toInstant() : Instant.MIN;
-        return null;
+        try {
+            GregorianCalendar jobDate = new GregorianCalendar();
+            jobDate.setTime(new Date((Long) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE))));
+            return jobDate.toInstant();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static LeosLegStatus getStatus(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -424,8 +433,13 @@ public class LeosDocumentExtensions {
     }
 
     private static boolean isClonedProposal(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        Boolean clonedProposal = (Boolean) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL));
-        return clonedProposal != null ? clonedProposal : false;
+        try {
+            Boolean isClonedProposal =
+                    Boolean.parseBoolean((String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL)));
+            return isClonedProposal;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private static String getOriginRef(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -449,17 +463,30 @@ public class LeosDocumentExtensions {
     }
 
     private static List<String> getComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS)) != null) {
-            String comments = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS));
-            return Arrays.asList(comments);
-        } else {
+        try {
+            if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) != null) {
+                if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) instanceof List) {
+                    return (List<String>) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS));
+                } else {
+                    String comments = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS));
+                    return Arrays.asList(comments);
+                }
+            } else {
+                return Arrays.asList();
+            }
+        } catch (Exception e) {
             return Arrays.asList();
         }
     }
 
     private static List<String> getClonedMilestoneId(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String clonedMilestoneId = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID));
-        return clonedMilestoneId != null ? Arrays.asList(clonedMilestoneId) : new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        String clonedMilestoneIds = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID));
+        try {
+            return clonedMilestoneIds != null ? mapper.readValue(clonedMilestoneIds, List.class) : new ArrayList<>();
+        } catch (JsonProcessingException e) {
+            return new ArrayList<>();
+        }
     }
 
     private static String getBaseRevisionId(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -472,7 +499,12 @@ public class LeosDocumentExtensions {
     }
 
     private static boolean isTrackChangesEnabled(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        Boolean trackChangesEnabled = (Boolean) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED));
-        return trackChangesEnabled != null ? trackChangesEnabled : false;
+        try {
+            Boolean trackChangesEnabled =
+                    Boolean.parseBoolean((String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED)));
+            return trackChangesEnabled;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

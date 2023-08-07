@@ -61,7 +61,6 @@ CREATE TABLE DOCUMENT_MILESTONE
 (   ID NUMBER(22,0) IDENTITY,
     DOCUMENT_ID NUMBER(22,0),
     JOB_DATE DATE,
-    CLONED_MILESTONE_ID NUMBER(22,0),
     MILESTONE_COMMENTS VARCHAR2(4000 BYTE),
     CONTENT BLOB,
     STATUS VARCHAR2(30 BYTE),
@@ -69,7 +68,7 @@ CREATE TABLE DOCUMENT_MILESTONE
     AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSDATE,
     AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
     AUDIT_LAST_M_DATE TIMESTAMP (6),
-    MILESTONE_ID NUMBER,
+    JOB_ID VARCHAR2(100 BYTE),
     EXPORT_STATUS VARCHAR2(30 BYTE),
     EXPORT_DATE TIMESTAMP (6)
 );
@@ -124,11 +123,7 @@ CREATE TABLE PACKAGE
      AUDIT_C_BY VARCHAR2(30 BYTE),
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSDATE,
      AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
-     AUDIT_LAST_M_DATE TIMESTAMP (6),
-     ORIGINAL_ID NUMBER(22,0),
-     IS_CLONED NUMBER(1,0) DEFAULT 0,
-     CLONED_PACKAGE_NAME VARCHAR2(100 BYTE),
-     CLONED_PACKAGE_ID NUMBER(22,0)
+     AUDIT_LAST_M_DATE TIMESTAMP (6)
 );
 
 CREATE TABLE CONFIG_CONTENT
@@ -211,10 +206,10 @@ CREATE TABLE DOCUMENT
      PACKAGE_ID NUMBER(22,0),
      CATEGORY_ID NUMBER(22,0),
      NAME VARCHAR2(400 BYTE),
-     CLONED_FROM NUMBER(22,0),
+     CLONED_FROM VARCHAR2(400 BYTE),
      REVISION_STATUS VARCHAR2(30 BYTE),
      CONTRIBUTION_STATUS VARCHAR2(30 BYTE),
-     ORIGINAL_REF NUMBER(22,0),
+     ORIGIN_REF VARCHAR2(30 BYTE),
      BASE_REVISION_ID NUMBER(22,0),
      LIVE_DIFFING_REQUIRED NUMBER(1,0),
      REF VARCHAR2(400 BYTE),
@@ -281,7 +276,7 @@ SELECT ID,CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AU
 
 CREATE VIEW DOCUMENT_V AS SELECT doc.id||'_'||docver.id||'_'||docxml.id||'_'||doccat.id unique_id ,
                                  doc.id document_id, doc.object_id doc_object_id, doc.category_id, doc.package_id, docxml.version_id, doccat.category_code,
-                                 doccat.category_desc, doc.name,doc.cloned_from, doc.revision_status, doc.contribution_status, doc.original_ref,
+                                 doccat.category_desc, doc.name,doc.cloned_from, doc.revision_status, doc.contribution_status, doc.origin_ref,
                                  doc.base_revision_id, doc.live_diffing_required, doc.ref,doc.procedure_type, doc.doc_template, doc.language,
                                  doc.doc_stage, doc.is_private_working_copy, doc.audit_c_by doc_audit_c_by, doc.audit_c_date doc_audit_c_date,
                                  docver.audit_last_m_date doc_audit_last_m_date, docver.audit_last_m_by doc_audit_last_m_by , docver.version_label,
@@ -289,11 +284,14 @@ CREATE VIEW DOCUMENT_V AS SELECT doc.id||'_'||docver.id||'_'||docxml.id||'_'||do
                                  docver.is_major_version, docver.is_version_series_checked_out , docxml.content, docxml.act_type,
                                  docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments
                           FROM document doc, document_version docver, document_content docxml, document_categories_v doccat
-                          WHERE doc.id = docver.document_id AND docver.id = docxml.version_id AND doc.category_id = doccat.id;
+                               WHERE doc.id = docver.document_id AND docver.id = docxml.version_id AND doc.category_id = doccat.id;
 
 CREATE VIEW MILESTONE_V as
-SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
-     , docmil.id milestone_id, docmil.job_date, docmil.cloned_milestone_id, docmil.milestone_comments, docmil.content, docmil.status, docmil.audit_c_by, docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
+SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+     , docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.export_date, docmil.export_status, docmil.milestone_comments, docmil.content, docmil
+         .status, docmil
+         .audit_c_by,
+       docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
 FROM document doc, document_milestone docmil
 WHERE doc.id = docmil.document_id;
 
@@ -321,7 +319,7 @@ WHERE
 CREATE VIEW PACKAGE_V AS SELECT pkg.id||'_'||doc.id||'_'||docver.id||'_'||docxml.id unique_id, pkg.id package_id, pkg.object_id pkg_object_id,
                                 pkg.name package_name, pkg.repository_id, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date,
                                 pkg.audit_last_m_by , doc.id document_id, doc.object_id doc_object_id,doc.category_id,
-                                doc.name, doc.cloned_from, doc.revision_status, doc.contribution_status, doc.original_ref, doc.base_revision_id,
+                                doc.name, doc.cloned_from, doc.revision_status, doc.contribution_status, doc.origin_ref, doc.base_revision_id,
                                 doc.live_diffing_required, doc.ref, doc.procedure_type, doc.doc_template, doc.language, doc.doc_stage,
                                 doc.is_private_working_copy, doc.audit_c_by doc_audit_c_by, doc.audit_c_date doc_audit_c_date, doc.audit_last_m_date
                                     doc_audit_last_m_date, doc.audit_last_m_by doc_audit_last_m_by, docver.version_label,
@@ -363,8 +361,6 @@ CREATE UNIQUE INDEX PROPOSAL_PK ON PACKAGE (ID);
 CREATE UNIQUE INDEX DOCUMENT_MILESTONE_PK ON DOCUMENT_MILESTONE (ID);
 
 CREATE INDEX DOC_MILESTONE_DOC_IDX ON DOCUMENT_MILESTONE (DOCUMENT_ID);
-
-CREATE INDEX DOC_MILESTONE_CLO_IDX ON DOCUMENT_MILESTONE (CLONED_MILESTONE_ID);
 
 CREATE UNIQUE INDEX DOCUMENT_MILESTONE_COMMENTS_PK ON DOCUMENT_MILESTONE_COMMENTS (ID);
 
@@ -424,9 +420,6 @@ ALTER TABLE DOCUMENT_MILESTONE_LIST ADD CONSTRAINT DOCUMENT_MILESTONE_LIST_FK FO
 
 ALTER TABLE DOCUMENT_PROPERTY_VALUES ADD CONSTRAINT DOCUMENT_PROPERTY_VALUES_FK2 FOREIGN KEY (PROPERTY_ID)
     REFERENCES DOCUMENT_PROPERTIES (ID);
-
-ALTER TABLE PACKAGE ADD CONSTRAINT PROPOSAL_CLONED_FK FOREIGN KEY (CLONED_PACKAGE_ID)
-    REFERENCES PACKAGE (ID);
 
 ALTER TABLE DOCUMENT ADD CONSTRAINT DOCUMENT_METADATA_FK FOREIGN KEY (PACKAGE_ID)
     REFERENCES PACKAGE (ID);
@@ -502,7 +495,7 @@ ALTER TABLE DOCUMENT_CATEGORIES MODIFY (AUDIT_C_BY NOT NULL);
 
 ALTER TABLE DOCUMENT_CATEGORIES MODIFY (AUDIT_C_DATE NOT NULL);
 
-ALTER TABLE DOCUMENT_MILESTONE MODIFY (MILESTONE_ID NOT NULL);
+ALTER TABLE DOCUMENT_MILESTONE MODIFY (JOB_ID NOT NULL);
 
 ALTER TABLE DOCUMENT_MILESTONE MODIFY (ID NOT NULL);
 

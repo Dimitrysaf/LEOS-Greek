@@ -64,8 +64,8 @@ public class PackageIntegrationTests {
 
     private final String USER = "demo";
     private final BigDecimal PKG_ID = new BigDecimal(3);
-    private final String PKG_NAME = "/leos/workspaces/package-test";
-    private final String TEST_PKG_NAME = "/leos/workspaces/package_test";
+    private final String PKG_NAME = "package-test";
+    private final String TEST_PKG_NAME = "package_test";
     private final String REPO_ID = "leos_dev";
     private final Date currentTimeStamp = new Date();
     private eu.europa.ec.leos.repository.model.Package pkg;
@@ -188,7 +188,6 @@ public class PackageIntegrationTests {
         pkgEntity.setRepositoryId(new BigDecimal(10000));
         pkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
 
-        pkgEntity.setIsCloned(true);
         clonedPkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
 
         xmlDoc = new LeosDocument();

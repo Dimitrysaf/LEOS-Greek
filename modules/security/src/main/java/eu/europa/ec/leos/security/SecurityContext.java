@@ -38,6 +38,10 @@ public class SecurityContext {
         this.tokenService = tokenService;
     }
 
+    public boolean hasAuthenticationInContext() {
+        return SecurityContextHolder.getContext().getAuthentication() != null;
+    }
+
     public User getUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

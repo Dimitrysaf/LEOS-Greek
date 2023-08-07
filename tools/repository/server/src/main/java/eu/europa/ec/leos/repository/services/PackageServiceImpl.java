@@ -28,6 +28,7 @@ import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.repositories.RepositoryRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,8 +78,6 @@ public class PackageServiceImpl implements PackageService {
             pkg.setObjectId(new BigDecimal(0));
             pkg.setName(name);
             pkg.setRepositoryId(repo.getId());
-            pkg.setIsCloned(isCloned);
-            pkg.setClonedPackageName(clonedPackageName);
             pkg.setAuditCBy(userId);
             pkg.setAuditCDate(LocalDateTime.now());
             pkg.setAuditLastMBy(userId);
@@ -89,13 +88,14 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-
+    @Cacheable(cacheNames = "getPackageByName")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String repositoryId, final String name) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByName(repositoryId, name).orElse(null);
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
+    @Cacheable(cacheNames = "getPackageById")
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
             Package pkg =
@@ -138,8 +138,8 @@ public class PackageServiceImpl implements PackageService {
         List<MilestoneV> milestones = new ArrayList<>();
         for (String categoryCode : categories) {
             if (descendants) {
-                docs.addAll(documentVRepository.findDocumentsByPackagePathAndCategory(packageName, categoryCode));
-                milestones.addAll(milestoneVRepository.findMilestonesByPackagePathAndCategory(packageName, categoryCode));
+                docs.addAll(documentVRepository.findDocumentsByCategory(repositoryId, categoryCode));
+                milestones.addAll(milestoneVRepository.findMilestonesByCategory(repositoryId, categoryCode));
             } else {
                 docs.addAll(documentVRepository.findDocumentsByPackageNameAndCategory(packageName, categoryCode));
                 milestones.addAll(milestoneVRepository.findMilestonesByPackageNameAndCategory(packageName, categoryCode));

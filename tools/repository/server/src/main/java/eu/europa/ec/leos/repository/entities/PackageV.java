@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
         @NamedQuery(name = "PackageV.findByClonedFrom", query = "SELECT p FROM PackageV p WHERE p.clonedFrom = :clonedFrom"),
         @NamedQuery(name = "PackageV.findByRevisionStatus", query = "SELECT p FROM PackageV p WHERE p.revisionStatus = :revisionStatus"),
         @NamedQuery(name = "PackageV.findByContributionStatus", query = "SELECT p FROM PackageV p WHERE p.contributionStatus = :contributionStatus"),
-        @NamedQuery(name = "PackageV.findByOriginalRef", query = "SELECT p FROM PackageV p WHERE p.originalRef = :originalRef"),
+        @NamedQuery(name = "PackageV.findByOriginRef", query = "SELECT p FROM PackageV p WHERE p.originRef = :originRef"),
         @NamedQuery(name = "PackageV.findByBaseRevisionId", query = "SELECT p FROM PackageV p WHERE p.baseRevisionId = :baseRevisionId"),
         @NamedQuery(name = "PackageV.findByLiveDiffingRequired", query = "SELECT p FROM PackageV p WHERE p.liveDiffingRequired = :liveDiffingRequired"),
         @NamedQuery(name = "PackageV.findByRef", query = "SELECT p FROM PackageV p WHERE p.ref = :ref"),
@@ -113,8 +113,8 @@ public class PackageV implements Serializable {
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", updatable = false)
     private String contributionStatus;
-    @Column(name = "ORIGINAL_REF", updatable = false)
-    private String originalRef;
+    @Column(name = "ORIGIN_REF", updatable = false)
+    private String originRef;
     @Column(name = "BASE_REVISION_ID", updatable = false)
     private BigInteger baseRevisionId;
     @Column(name = "LIVE_DIFFING_REQUIRED", updatable = false)
@@ -300,12 +300,12 @@ public class PackageV implements Serializable {
         this.contributionStatus = contributionStatus;
     }
 
-    public String getOriginalRef() {
-        return originalRef;
+    public String getOriginRef() {
+        return originRef;
     }
 
-    public void setOriginalRef(String originalRef) {
-        this.originalRef = originalRef;
+    public void setOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 
     public BigInteger getBaseRevisionId() {

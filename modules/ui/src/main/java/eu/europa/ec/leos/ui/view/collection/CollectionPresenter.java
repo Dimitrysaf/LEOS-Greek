@@ -666,7 +666,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "collection.block.export.package.action.notify.error", e.getMessage()));
         } finally {
             if (exportDocument != null) {
-                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
                 if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
                     exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
                     leosApplicationEventBus.post(new ExportPackageUpdatedEvent(proposalRef, exportDocument));
@@ -1133,7 +1133,11 @@ class CollectionPresenter extends AbstractLeosPresenter {
     }
 
     private String getProposalRef() {
-        return (String) httpSession.getAttribute(id + "." + SessionAttribute.PROPOSAL_REF.name());
+        try {
+            return (String) httpSession.getAttribute(id + "." + SessionAttribute.PROPOSAL_REF.name());
+        } catch (Exception e) {
+            return this.proposalRef;
+        }
     }
 
     @Subscribe

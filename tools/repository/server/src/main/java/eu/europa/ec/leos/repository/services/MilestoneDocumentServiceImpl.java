@@ -15,6 +15,7 @@ import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -44,6 +45,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     @Autowired
     private EntityManager entityManager;
 
+    @Value("${repository.default.id}")
+    private String repositoryId;
+
     public List<LeosDocument> findMilestonesByStatus(String status) {
         List<LeosDocument> legDocuments = new ArrayList<>();
         List<MilestoneV> milestones = milestoneVRepository.findMilestonesByStatus(status);
@@ -63,6 +67,13 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             listDocs.add(ConversionUtils.buildLegDocument(doc, documentMilestoneListRepository, documentCategoriesRepository));
         }
         return listDocs;
+    }
+
+    public Optional<LeosDocument> findMilestoneByRef(final String ref) {
+        List<LeosDocument> listDocs = new ArrayList<>();
+        Optional<MilestoneV> doc = milestoneVRepository.findMilestonesByRef(ref);
+        return doc.isPresent() ? Optional.of(ConversionUtils.buildLegDocument(doc.get(), documentMilestoneListRepository, documentCategoriesRepository)) :
+                Optional.empty();
     }
 
     public List<LeosDocument> findMilestoneByPackageId(final String pkgId) throws RepositoryException {
@@ -109,6 +120,20 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                             "'milestoneComments'");
                 }
             }
+            if (metadata.get("comments")  != null) {
+                try {
+                    List<String> milestoneCommentsList = (List<String>) metadata.get("comments");
+                    if (milestoneCommentsList.isEmpty()) {
+                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                                "'comments'");
+
+                    }
+                    docMilestone.setMilestoneComments(milestoneCommentsList.get(0));
+                } catch (ClassCastException e) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                            "'comments'");
+                }
+            }
             if (metadata.get("status") != null) {
                 docMilestone.setStatus((String) metadata.get("status"));
             }
@@ -119,10 +144,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 docMilestone.setExportDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                         , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
             }
-            if (metadata.get("clonedMilestoneId") != null) {
-                docMilestone.setClonedMilestoneId(new BigDecimal(Long.parseLong((String) metadata.get("clonedMilestoneId"))));
+            if (metadata.get("jobId")  != null) {
+                docMilestone.setJobId((String) metadata.get("jobId"));
             }
-            docMilestone.setMilestoneId(docMilestone.getId());
             docMilestone = documentMilestoneRepository.save(docMilestone);
             return ConversionUtils.buildLegDocument(docMilestone, documentMilestoneListRepository);
         } catch (Exception e) {
@@ -157,6 +181,20 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                             "'milestoneComments'");
                 }
             }
+            if (metadata.get("comments")  != null) {
+                try {
+                    List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
+                    if (milestoneCommentsList.isEmpty()) {
+                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                                "'comments'");
+
+                    }
+                    docMilestone.setMilestoneComments(milestoneCommentsList.get(0));
+                } catch (ClassCastException e) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                            "'comments'");
+                }
+            }
             if (metadata.get("status") != null) {
                 docMilestone.setStatus((String) metadata.get("status"));
             }
@@ -167,10 +205,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 docMilestone.setExportDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                         , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
             }
-            if (metadata.get("clonedMilestoneId") != null) {
-                docMilestone.setClonedMilestoneId(new BigDecimal(Long.parseLong((String) metadata.get("clonedMilestoneId"))));
+            if (metadata.get("jobId")  != null) {
+                docMilestone.setJobId((String) metadata.get("jobId"));
             }
-            docMilestone.setMilestoneId(docMilestone.getId());
             docMilestone = documentMilestoneRepository.save(docMilestone);
             return ConversionUtils.buildLegDocument(docMilestone, documentMilestoneListRepository);
         } catch (Exception e) {
@@ -186,9 +223,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         docMilestone.setAuditLastMBy(updatedBy);
         docMilestone.setAuditLastMDate(LocalDateTime.now());
         docMilestone.setDocument(doc);
-        if (metadata.get("milestoneComments")  == null) {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Missing parameter 'milestoneComments'");
-        } else {
+        if (metadata.get("milestoneComments")  != null) {
             try {
                 List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
                 if (milestoneCommentsList.isEmpty()) {
@@ -202,8 +237,21 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                         "'milestoneComments'");
             }
         }
+        if (metadata.get("comments")  != null) {
+            try {
+                List<String> milestoneCommentsList = (List<String>) metadata.get("comments");
+                if (milestoneCommentsList.isEmpty()) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                            "'comments'");
 
-        docMilestone.setMilestoneId(new BigDecimal(0));
+                }
+                docMilestone.setMilestoneComments(milestoneCommentsList.get(0));
+            } catch (ClassCastException e) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                        "'comments'");
+            }
+        }
+
         docMilestone.setContent(content);
 
         if (metadata.get("status")  == null) {
@@ -214,6 +262,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             docMilestone.setJobDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("jobDate")
                     , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
         }
+        if (metadata.get("jobId")  != null) {
+            docMilestone.setJobId((String) metadata.get("jobId"));
+        }
         if (metadata.get("exportDate")  != null) {
             docMilestone.setJobDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                     , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
@@ -221,15 +272,13 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         if (metadata.get("exportStatus")  != null) {
             docMilestone.setExportStatus((String) metadata.get("exportStatus"));
         }
-        if (metadata.get("clonedMilestoneId")  != null) {
-            docMilestone.setClonedMilestoneId(new BigDecimal(Long.parseLong((String) metadata.get("clonedMilestoneId"))));
-        }
 
+        if (docMilestone.getJobDate() == null) {
+            docMilestone.setJobDate(LocalDateTime.now());
+        }
         docMilestone = documentMilestoneRepository.save(docMilestone);
 
-        if (metadata.get("containedDocuments")  == null) {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Missing parameter 'containedDocuments'");
-        } else {
+        if (metadata.get("containedDocuments") != null) {
             try {
                 List<String> containedDocuments = (List<String>) metadata.get("containedDocuments");
                 for (String containedDoc : containedDocuments) {
@@ -253,7 +302,14 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     public List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults) {
         //Build query
         StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT m FROM MilestoneV m WHERE m.packageId IN (SELECT p.id FROM Package p WHERE p.name LIKE '%%%s%%')", packageName));
+                String.format("SELECT m FROM MilestoneV m WHERE ", packageName));
+        if (!packageName.equals("%")) {
+            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+        } else {
+            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+        }
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
         List<MilestoneV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
@@ -267,7 +323,14 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     public Long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
         StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT COUNT(m) FROM MilestoneV m WHERE m.packageId IN (SELECT p.id FROM Package p WHERE p.name LIKE '%%%s%%')", packageName));
+                String.format("SELECT COUNT(m) FROM MilestoneV m WHERE", packageName));
+        if (!packageName.equals("%")) {
+            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+        } else {
+            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
+                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+        }
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
         return (Long) entityManager.createQuery(queryBuild.toString()).getSingleResult();

@@ -42,10 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Package.findByAuditCBy", query = "SELECT p FROM Package p WHERE p.auditCBy = :auditCBy"),
     @NamedQuery(name = "Package.findByAuditCDate", query = "SELECT p FROM Package p WHERE p.auditCDate = :auditCDate"),
     @NamedQuery(name = "Package.findByAuditLastMBy", query = "SELECT p FROM Package p WHERE p.auditLastMBy = :auditLastMBy"),
-    @NamedQuery(name = "Package.findByAuditLastMDate", query = "SELECT p FROM Package p WHERE p.auditLastMDate = :auditLastMDate"),
-    @NamedQuery(name = "Package.findByOriginalId", query = "SELECT p FROM Package p WHERE p.originalId = :originalId"),
-    @NamedQuery(name = "Package.findByIsCloned", query = "SELECT p FROM Package p WHERE p.isCloned = :isCloned"),
-    @NamedQuery(name = "Package.findByClonedPackageName", query = "SELECT p FROM Package p WHERE p.clonedPackageName = :clonedPackageName")})
+    @NamedQuery(name = "Package.findByAuditLastMDate", query = "SELECT p FROM Package p WHERE p.auditLastMDate = :auditLastMDate")})
 public class Package implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,17 +64,6 @@ public class Package implements Serializable {
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
-    @Column(name = "ORIGINAL_ID", precision = 22, scale = 0)
-    private BigDecimal originalId;
-    @Column(name = "IS_CLONED")
-    private Boolean isCloned;
-    @Column(name = "CLONED_PACKAGE_NAME")
-    private String clonedPackageName;
-    @OneToMany(mappedBy = "clonedPackageId")
-    private Collection<Package> packageCollection;
-    @JoinColumn(name = "CLONED_PACKAGE_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private Package clonedPackageId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pkg")
     private Collection<PackageCollaborators> packageCollaboratorsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "packageId")
@@ -161,47 +147,6 @@ public class Package implements Serializable {
 
     public void setAuditLastMDate(LocalDateTime auditLastMDate) {
         this.auditLastMDate = auditLastMDate;
-    }
-
-    public BigDecimal getOriginalId() {
-        return originalId;
-    }
-
-    public void setOriginalId(BigDecimal originalId) {
-        this.originalId = originalId;
-    }
-
-    public Boolean getIsCloned() {
-        return isCloned;
-    }
-
-    public void setIsCloned(Boolean isCloned) {
-        this.isCloned = isCloned;
-    }
-
-    public String getClonedPackageName() {
-        return clonedPackageName;
-    }
-
-    public void setClonedPackageName(String clonedPackageName) {
-        this.clonedPackageName = clonedPackageName;
-    }
-
-    @XmlTransient
-    public Collection<Package> getPackageCollection() {
-        return packageCollection;
-    }
-
-    public void setPackageCollection(Collection<Package> packageCollection) {
-        this.packageCollection = packageCollection;
-    }
-
-    public Package getClonedPackageId() {
-        return clonedPackageId;
-    }
-
-    public void setClonedPackageId(Package clonedPackageId) {
-        this.clonedPackageId = clonedPackageId;
     }
 
     @XmlTransient

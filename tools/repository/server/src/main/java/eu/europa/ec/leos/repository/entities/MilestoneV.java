@@ -37,7 +37,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "MilestoneV.findByClonedFrom", query = "SELECT m FROM MilestoneV m WHERE m.clonedFrom = :clonedFrom"),
     @NamedQuery(name = "MilestoneV.findByRevisionStatus", query = "SELECT m FROM MilestoneV m WHERE m.revisionStatus = :revisionStatus"),
     @NamedQuery(name = "MilestoneV.findByContributionStatus", query = "SELECT m FROM MilestoneV m WHERE m.contributionStatus = :contributionStatus"),
-    @NamedQuery(name = "MilestoneV.findByOriginalRef", query = "SELECT m FROM MilestoneV m WHERE m.originalRef = :originalRef"),
+    @NamedQuery(name = "MilestoneV.findByOriginRef", query = "SELECT m FROM MilestoneV m WHERE m.originRef = :originRef"),
     @NamedQuery(name = "MilestoneV.findByBaseRevisionId", query = "SELECT m FROM MilestoneV m WHERE m.baseRevisionId = :baseRevisionId"),
     @NamedQuery(name = "MilestoneV.findByLiveDiffingRequired", query = "SELECT m FROM MilestoneV m WHERE m.liveDiffingRequired = :liveDiffingRequired"),
     @NamedQuery(name = "MilestoneV.findByRef", query = "SELECT m FROM MilestoneV m WHERE m.ref = :ref"),
@@ -51,7 +51,6 @@ import javax.persistence.Table;
     @NamedQuery(name = "MilestoneV.findByUpdatedBy", query = "SELECT m FROM MilestoneV m WHERE m.updatedBy = :updatedBy"),
     @NamedQuery(name = "MilestoneV.findByMilestoneId", query = "SELECT m FROM MilestoneV m WHERE m.milestoneId = :milestoneId"),
     @NamedQuery(name = "MilestoneV.findByJobDate", query = "SELECT m FROM MilestoneV m WHERE m.jobDate = :jobDate"),
-    @NamedQuery(name = "MilestoneV.findByClonedMilestoneId", query = "SELECT m FROM MilestoneV m WHERE m.clonedMilestoneId = :clonedMilestoneId"),
     @NamedQuery(name = "MilestoneV.findByMilestoneComments", query = "SELECT m FROM MilestoneV m WHERE m.milestoneComments = :milestoneComments"),
     @NamedQuery(name = "MilestoneV.findByStatus", query = "SELECT m FROM MilestoneV m WHERE m.status = :status"),
     @NamedQuery(name = "MilestoneV.findByAuditCBy", query = "SELECT m FROM MilestoneV m WHERE m.auditCBy = :auditCBy"),
@@ -75,13 +74,13 @@ public class MilestoneV implements Serializable {
     @Column(name = "NAME", updatable = false)
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
-    private BigDecimal clonedFrom;
+    private String clonedFrom;
     @Column(name = "REVISION_STATUS", updatable = false)
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", updatable = false)
     private String contributionStatus;
-    @Column(name = "ORIGINAL_REF", updatable = false)
-    private BigDecimal originalRef;
+    @Column(name = "ORIGIN_REF", updatable = false)
+    private String originRef;
     @Column(name = "BASE_REVISION_ID", updatable = false)
     private BigDecimal baseRevisionId;
     @Column(name = "LIVE_DIFFING_REQUIRED", updatable = false)
@@ -106,10 +105,14 @@ public class MilestoneV implements Serializable {
     private String updatedBy;
     @Column(name = "MILESTONE_ID", updatable = false)
     private BigDecimal milestoneId;
+    @Column(name = "JOB_ID", updatable = false)
+    private String jobId;
     @Column(name = "JOB_DATE", updatable = false)
     private LocalDateTime jobDate;
-    @Column(name = "CLONED_MILESTONE_ID", updatable = false)
-    private BigDecimal clonedMilestoneId;
+    @Column(name = "EXPORT_STATUS", length = 30)
+    private String exportStatus;
+    @Column(name = "EXPORT_DATE")
+    private LocalDateTime exportDate;
     @Column(name = "MILESTONE_COMMENTS", updatable = false)
     private String milestoneComments;
     @Lob
@@ -169,11 +172,11 @@ public class MilestoneV implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getClonedFrom() {
+    public String getClonedFrom() {
         return clonedFrom;
     }
 
-    public void setClonedFrom(BigDecimal clonedFrom) {
+    public void setClonedFrom(String clonedFrom) {
         this.clonedFrom = clonedFrom;
     }
 
@@ -193,12 +196,12 @@ public class MilestoneV implements Serializable {
         this.contributionStatus = contributionStatus;
     }
 
-    public BigDecimal getOriginalRef() {
-        return originalRef;
+    public String getOriginRef() {
+        return originRef;
     }
 
-    public void setOriginalRef(BigDecimal originalRef) {
-        this.originalRef = originalRef;
+    public void setOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 
     public BigDecimal getBaseRevisionId() {
@@ -289,28 +292,16 @@ public class MilestoneV implements Serializable {
         this.updatedBy = docAuditLastMBy;
     }
 
-    public BigDecimal getMilestoneId() {
-        return milestoneId;
-    }
-
-    public void setMilestoneId(BigDecimal milestoneId) {
-        this.milestoneId = milestoneId;
+    public String getJobId() {
+        return jobId;
     }
 
     public LocalDateTime getJobDate() {
         return jobDate;
     }
 
-    public void setJobDate(LocalDateTime  jobDate) {
-        this.jobDate = jobDate;
-    }
-
-    public BigDecimal getClonedMilestoneId() {
-        return clonedMilestoneId;
-    }
-
-    public void setClonedMilestoneId(BigDecimal clonedMilestoneId) {
-        this.clonedMilestoneId = clonedMilestoneId;
+    public BigDecimal getMilestoneId() {
+        return milestoneId;
     }
 
     public String getMilestoneComments() {
@@ -368,5 +359,12 @@ public class MilestoneV implements Serializable {
     public void setAuditLastMBy(String  auditLastMBy) {
         this.auditLastMBy = auditLastMBy;
     }
-    
+
+    public String getExportStatus() {
+        return exportStatus;
+    }
+
+    public LocalDateTime getExportDate() {
+        return exportDate;
+    }
 }

@@ -136,11 +136,11 @@ class LeosRepositoryMetadataExtensions {
     }
 
     private static Integer getAnnexIndex(LeosDocument leosDocument) {
-        if (leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)) != null) {
-            Integer value = Integer.parseInt((String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)));
-            return value != null ? value : 0;
+        try {
+            return Integer.parseInt(leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_INDEX)).toString());
+        } catch (Exception e) {
+            return 0;
         }
-        return 0;
     }
 
     private static String getAnnexNumber(LeosDocument leosDocument) {

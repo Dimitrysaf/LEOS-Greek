@@ -13,17 +13,20 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
-import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface MilestoneVRepository extends JpaRepository<MilestoneV, String> {
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.NAME = ?1", nativeQuery = true)
     List<MilestoneV> findMilestonesByName(String Name);
+
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.REF = ?1", nativeQuery = true)
+    Optional<MilestoneV> findMilestonesByRef(String ref);
 
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID = ?1", nativeQuery = true)
     List<MilestoneV> findMilestonesByPackageId(BigDecimal packageId);
@@ -36,9 +39,9 @@ public interface MilestoneVRepository extends JpaRepository<MilestoneV, String> 
             nativeQuery = true)
     List<MilestoneV> findMilestonesByPackageNameAndCategory(String packageName, String category);
 
-    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.NAME LIKE %?1%) AND m.CATEGORY_ID IN (SELECT " +
-            "id FROM DOCUMENT_CATEGORIES c WHERE c.CATEGORY_CODE = ?2)", nativeQuery = true)
-    List<MilestoneV> findMilestonesByPackagePathAndCategory(String packagePath, String categoryCode);
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID IN (SELECT p.ID FROM PACKAGE p WHERE p.REPOSITORY_ID IN (SELECT r.ID FROM REPOSITORY r " +
+            "WHERE r.CMIS_ID = ?1)) AND m.CATEGORY_ID IN (SELECT c.id FROM DOCUMENT_CATEGORIES c WHERE c.CATEGORY_CODE = ?2)", nativeQuery = true)
+    List<MilestoneV> findMilestonesByCategory(String repositoryId, String categoryCode);
 
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.STATUS = ?1", nativeQuery = true)
     List<MilestoneV> findMilestonesByStatus(String Status);

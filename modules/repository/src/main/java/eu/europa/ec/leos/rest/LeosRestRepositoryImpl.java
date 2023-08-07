@@ -44,21 +44,18 @@ import eu.europa.ec.leos.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.xml.SimpleNamespaceContext;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -92,6 +89,10 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     private final SecurityContext securityContext;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
+
+    private static String ADMIN_USER = "admin";
+    @Value("${leos.workspaces.path}")
+    private String workspacesPath;
 
     @Autowired
     public LeosRestRepositoryImpl(RestRepository repository, SecurityContext securityContext,
@@ -167,7 +168,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         }
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromSource(extractRefFromId(templateId), path, name, properties,
-                securityContext.getUserName());
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [template=" + templateId + ", path=" + path + ", name=" + name + ']'));
@@ -182,7 +183,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         Map<String, Object> properties = getCustomPropertiesMap(name, metadata, leosCategory);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
-                securityContext.getUserName());
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
@@ -208,7 +209,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), cloneProposalMetadataVO.isClonedProposal());
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
-                securityContext.getUserName());
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
@@ -242,14 +243,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), LeosCategory.LEG.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_ID), jobId);
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE), Date.from(Instant.now()));
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE),ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS), milestoneComments);
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS), containedDocuments);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, legMimeType, contentBytes, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, legMimeType, contentBytes, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create leg document from content! [path=" + path + ", name=" + name + ']'));
@@ -262,7 +263,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update leg document status! [id=" + id + ", status=" + status.name() + ']'));
@@ -276,7 +277,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS), containedDocuments);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update leg contained files! [id=" + id + "]"));
@@ -290,7 +291,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, contentBytes, versionType, comment,
-                securityContext.getUserName());
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
         return toLeosDocument(doc, LegDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update leg document! [id=" + id + ", status=" + status.name() + ']'));
     }
@@ -301,7 +302,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateDocumentProperties(metadata),
-                securityContext.getUserName());
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
@@ -312,7 +313,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateDocumentProperties(metadata), content, versionType, comment, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateDocumentProperties(metadata), content, versionType, comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
@@ -324,10 +325,21 @@ public class LeosRestRepositoryImpl implements LeosRepository {
                                                      Class<? extends D> type) {
         logger.trace("Updating document content... [id=" + id + ", comment=" + comment + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateMilestoneCommentsProperties(emptyList()), content, versionType, comment, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), updateMilestoneCommentsProperties(emptyList()), content, versionType, comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
+    }
+
+    @Override
+    @PerformanceLogger
+    public <D extends LeosDocument> D moveDocument(String id, String newPackageName, Class<? extends D> type) {
+        logger.trace("Moving document ... [id=" + id + ", newPackageName=" + newPackageName + ']');
+
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.moveDocument(extractRefFromId(id), newPackageName, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", newPackageName=" + newPackageName + ']'));
     }
 
     @Override
@@ -336,7 +348,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
                                                      VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document content and properties... [id=" + id + ", comment=" + comment + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
@@ -347,7 +359,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D updateDocument(String id, Map<String, Object> properties, Class<? extends D> type, boolean latest) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, latest, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, latest, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
@@ -366,7 +378,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COLLABORATORS), collaboratorUsers);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
@@ -379,7 +391,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         Map<String, List<String>> properties = updateMilestoneCommentsProperties(milestoneComments);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
@@ -392,7 +404,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         Map<String, List<String>> properties = updateMilestoneCommentsProperties(milestoneComments);
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
@@ -403,7 +415,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D findDocumentById(String id, Class<? extends D> type, boolean latest) {
         logger.trace("Finding document by ID... [id=" + id + ", latest=" + latest + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentById(extractVersionIdFromId(id), latest);
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc;
+        if (latest) {
+            doc = repository.findDocumentByRef(extractRefFromId(id));
+        } else {
+            doc = repository.findDocumentById(extractVersionIdFromId(id), latest);
+        }
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalArgumentException("Document not found! [id=" + id + ", latest=" + latest + ']'));
@@ -412,7 +429,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     public <D extends LeosDocument> List<D> findDocumentsByUserId(String userId, Class<? extends D> type, String leosAuthority) {
-        throw new NotImplementedException();
+        logger.trace("Finding document by userId... [userId=" + userId + ", role=" + leosAuthority + ']');
+
+        LeosDocumentList docs = repository.findDocumentsByUserId(userId, leosAuthority);
+
+        return toLeosDocuments(docs.getLeosDocumentList(), type, true);
     }
 
     @Override
@@ -420,7 +441,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(path, name).orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path +
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name).orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path +
                     ", name=" + name + ']'));
         if (doc.getCategory().contains("TEMPLATE")) {
             try {
@@ -440,7 +461,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
 
-        LeosDocumentList docs = repository.findDocumentsByPackagePath(path, categories, descendants);
+        LeosDocumentList docs = repository.findDocumentsByPackagePath(extractPackageNameFromPath(path), categories, descendants);
 
         return toLeosDocuments(docs.getLeosDocumentList(), type, fetchContent);
     }
@@ -450,7 +471,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> List<D> findDocumentVersionsById(String id, Class<? extends D> type, boolean fetchContent) {
         logger.trace("Finding document versions by ID... [id=" + id + ']');
 
-        LeosDocumentList docs = repository.findAllVersions(extractVersionIdFromId(id));
+        LeosDocumentList docs = repository.findAllVersions(extractRefFromId(id));
 
         return toLeosDocuments(docs.getLeosDocumentList(), type, fetchContent);
     }
@@ -467,7 +488,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public LeosPackage createPackage(String path, String name) {
         logger.trace("Creating package... [path=" + path + ", name=" + name + ']');
 
-        Package pkg = repository.createPackage(path + "/" + name, securityContext.getUserName());
+        Package pkg = repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
         if (pkg != null) {
             return LeosPackageExtensions.toLeosPackage(pkg);
         }
@@ -479,7 +500,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @PerformanceLogger
     public void deletePackage(String path) {
         logger.trace("Deleting package... [path=" + path + ']');
-        repository.deletePackage(path);
+        repository.deletePackage(extractPackageNameFromPath(path));
     }
 
     @Override
@@ -551,7 +572,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
                                                                              int startIndex, int maxResults, QueryFilter workspaceFilter) {
         logger.trace("Finding documents by parent path... [path=$path, type=${type.simpleName}]");
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
-        LeosDocumentList docs = repository.findPagedDocuments(path, categories, startIndex, maxResults,
+        LeosDocumentList docs = repository.findPagedDocuments(extractPackageNameFromPath(path), categories, startIndex, maxResults,
                 workspaceFilter);
 
         return docs.getLeosDocumentList().stream().map(doc -> LeosDocumentExtensions.toLeosDocument(doc, type, fetchContent));
@@ -563,7 +584,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("Finding documents by parent path... [path=$path, type=${type.simpleName}]");
         int docCount = 0;
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
-        docCount = repository.countDocuments(path, categories, workspaceFilter);
+        docCount = repository.countDocuments(extractPackageNameFromPath(path), categories, workspaceFilter);
 
         return docCount;
     }
@@ -674,7 +695,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), comments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, exportMimeType, contentBytes,
-                securityContext.getUserName());
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create export document from content! [path=" + path + ", name=" + name + ']'));
@@ -689,7 +710,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, contentBytes,
-                versionType, comment, securityContext.getUserName());
+                versionType, comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update export document  [id=" + id + ']'));
@@ -703,7 +724,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.STATUS), status.name());
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update export document  [id=" + id + ']'));
@@ -717,7 +738,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), String.join( ",", comments));
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext.getUserName());
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, ExportDocument.class, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update export document comments! [id=" + id + ", comments=" + comments + ']'));
@@ -726,13 +747,28 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     public Object createFolder(String path, String name) {
-        return repository.createPackage(path + "/" + name, securityContext.getUserName());
+        return repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
     }
 
     @Override
     @PerformanceLogger
     public Object findFolderByPath(String path) {
-        return repository.findPackageByName(path);
+        return repository.findPackageByName(extractPackageNameFromPath(path));
     }
 
+    private String extractPackageNameFromPath(String path) {
+        path = path.replace(workspacesPath, "");
+        if (!StringUtils.hasText(path) || path.equals("/")) {
+            return "%";
+        } else if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        if (path.contains("/")) {
+            path = path.substring(path.lastIndexOf("/") + 1);
+        }
+        return path;
+    }
 }

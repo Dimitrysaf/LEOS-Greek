@@ -424,7 +424,7 @@ public abstract class ApiServiceImpl implements ApiService {
             LOG.error("Unexpected error occurred while notifiying Export Package", e);
         } finally {
             if (exportDocument != null) {
-                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), false);
+                exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
                 if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
                     exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
                 }

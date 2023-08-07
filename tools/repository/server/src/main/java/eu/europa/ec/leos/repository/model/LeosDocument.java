@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
@@ -131,12 +132,16 @@ public class LeosDocument {
             this.setLatestVersion(true);
 
             this.metadata.put("status", documentMilestone.getStatus());
-            this.metadata.put("clonedMilestoneId", documentMilestone.getClonedMilestoneId() != null ?
-                    documentMilestone.getClonedMilestoneId().toString()
-                    : null);
+            this.metadata.put("jobId", documentMilestone.getJobId() != null ? documentMilestone.getJobId() : null);
+            this.metadata.put("jobDate", documentMilestone.getJobDate() != null ?
+                    Date.from(documentMilestone.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.metadata.put("exportStatus", documentMilestone.getExportStatus());
+            this.metadata.put("exportDate", documentMilestone.getExportDate() != null ?
+                    Date.from(documentMilestone.getExportDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
 
             List<String> milestoneComments = Arrays.asList(documentMilestone.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);
+            this.metadata.put("comments", milestoneComments);
 
             List<String> containedDocuments = new ArrayList<>();
             List<DocumentMilestoneList> milestonesDocuments =
@@ -167,9 +172,12 @@ public class LeosDocument {
             this.setLatestVersion(true);
 
             this.metadata.put("status", milestone.getStatus());
-            this.metadata.put("clonedMilestoneId", milestone.getClonedMilestoneId() != null ?
-                    milestone.getClonedMilestoneId().toString()
-                    : null);
+            this.metadata.put("exportStatus", milestone.getExportStatus());
+            this.metadata.put("jobId", milestone.getJobId() != null ? milestone.getJobId() : null);
+            this.metadata.put("jobDate", milestone.getJobDate() != null ?
+                    Date.from(milestone.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.metadata.put("exportDate", milestone.getExportDate() != null ?
+                    Date.from(milestone.getExportDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
 
             List<String> milestoneComments = Arrays.asList(milestone.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);
