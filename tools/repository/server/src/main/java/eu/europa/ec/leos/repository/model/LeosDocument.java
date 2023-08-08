@@ -15,6 +15,8 @@ package eu.europa.ec.leos.repository.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import eu.europa.ec.leos.repository.entities.DocumentContent;
+import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.entities.Config;
@@ -28,6 +30,7 @@ import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
 import eu.europa.ec.leos.repository.utils.DateSerializer;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,30 +70,84 @@ public class LeosDocument {
     public LeosDocument() {}
 
     public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
-        if (doc != null) {
-            this.name = doc.getName();
-            this.createdBy = doc.getCreatedBy();
-            this.createdOn = Date.from(doc.getCreatedOn().atZone(ZoneId.systemDefault()).toInstant());
-            this.updatedBy = doc.getUpdatedBy();
-            this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
-            this.source = doc.getContent().getBytes(StandardCharsets.UTF_8);
-            this.setRef(doc.getRef());
-            this.setVersionId(doc.getVersionId().toString());
+        Validate.notNull(doc, "Document must not be null");
+        this.name = doc.getName();
+        this.createdBy = doc.getCreatedBy();
+        this.createdOn = Date.from(doc.getCreatedOn().atZone(ZoneId.systemDefault()).toInstant());
+        this.updatedBy = doc.getUpdatedBy();
+        this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
+        this.setRef(doc.getRef());
+        this.setVersionId(doc.getVersionId().toString());
 
-            this.isLatestVersion = doc.isLatestVersion();
-            this.versionLabel = doc.getVersionLabel();
-            this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
-            this.comments = doc.getComments();
+        this.isLatestVersion = doc.isLatestVersion();
+        this.versionLabel = doc.getVersionLabel();
+        this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
+        this.comments = doc.getComments();
 
-            this.packageId = doc.getPackageId().toString();
+        this.packageId = doc.getPackageId().toString();
 
-            this.setCategory(doc.getCategoryCode());
+        this.setCategory(doc.getCategoryCode());
 
-            this.metadata.put("documentType", doc.getCategoryCode());
+        this.metadata.put("documentType", doc.getCategoryCode());
 
-            XmlDocumentMetadata xmlDocumentMetadata = new XmlDocumentMetadata(doc, collaborators);
-            this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
-        }
+        XmlDocumentMetadata xmlDocumentMetadata = new XmlDocumentMetadata(doc, collaborators);
+        this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
+    }
+
+    public LeosDocument(DocumentV doc, DocumentContent content, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
+        Validate.notNull(doc, "Document must not be null");
+        this.name = doc.getName();
+        this.createdBy = doc.getCreatedBy();
+        this.createdOn = Date.from(doc.getCreatedOn().atZone(ZoneId.systemDefault()).toInstant());
+        this.updatedBy = doc.getUpdatedBy();
+        this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
+        this.source = content.getContent().getBytes(StandardCharsets.UTF_8);
+        this.setRef(doc.getRef());
+        this.setVersionId(doc.getVersionId().toString());
+
+        this.isLatestVersion = doc.isLatestVersion();
+        this.versionLabel = doc.getVersionLabel();
+        this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
+        this.comments = doc.getComments();
+
+        this.packageId = doc.getPackageId().toString();
+
+        this.setCategory(doc.getCategoryCode());
+
+        this.metadata.put("documentType", doc.getDocType());
+
+        XmlDocumentMetadata xmlDocumentMetadata = new XmlDocumentMetadata(doc, collaborators);
+        this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
+    }
+
+    public LeosDocument(Document doc, DocumentVersion docVersion, DocumentContent docContent, List<Collaborator> collaborators,
+                        List<DocumentPropertyValues> otherMetadata) {
+        Validate.notNull(doc, "Document must not be null");
+        Validate.notNull(docVersion, "Document Version must not be null");
+        Validate.notNull(docContent, "Document Content must not be null");
+        this.name = doc.getName();
+        this.createdBy = doc.getAuditCBy();
+        this.createdOn = Date.from(doc.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant());
+        this.updatedBy = docVersion.getAuditLastMBy();
+        this.updatedOn = docVersion.getAuditLastMDate() != null ? Date.from(docVersion.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) :
+                null;
+        this.source = docContent.getContent().getBytes(StandardCharsets.UTF_8);
+        this.setRef(doc.getRef());
+        this.setVersionId(docVersion.getId().toString());
+
+        this.isLatestVersion = docVersion.isLatestVersion();
+        this.versionLabel = docVersion.getVersionLabel();
+        this.versionType = VersionType.fromValue(Integer.parseInt(docVersion.getVersionType()));
+        this.comments = docVersion.getComments();
+
+        this.packageId = doc.getPackageId().toString();
+
+        this.setCategory(doc.getCategoryId().getCategoryCode());
+
+        this.metadata.put("documentType", docContent.getDocType());
+
+        XmlDocumentMetadata xmlDocumentMetadata = new XmlDocumentMetadata(doc, docContent, collaborators);
+        this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
     }
 
     public LeosDocument(Config doc, ConfigContent configContent) {
@@ -142,6 +199,7 @@ public class LeosDocument {
             List<String> milestoneComments = Arrays.asList(documentMilestone.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);
             this.metadata.put("comments", milestoneComments);
+            this.setComments(documentMilestone.getMilestoneComments());
 
             List<String> containedDocuments = new ArrayList<>();
             List<DocumentMilestoneList> milestonesDocuments =
@@ -181,6 +239,7 @@ public class LeosDocument {
 
             List<String> milestoneComments = Arrays.asList(milestone.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);
+            this.setComments(milestone.getMilestoneComments());
 
             List<String> containedDocuments = new ArrayList<>();
             List<DocumentMilestoneList> milestonesDocuments =

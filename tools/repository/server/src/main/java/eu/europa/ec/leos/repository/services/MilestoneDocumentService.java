@@ -22,7 +22,7 @@ public interface MilestoneDocumentService {
     LeosDocument createMilestoneFromContent(final Document doc, Map<String, ?> metadata,
                                             byte[] contentBytes, final String userId) throws RepositoryException;
 
-    LeosDocument updateMilestoneMetadata(final Document doc, Map<String, ?> properties, String userId) throws RepositoryException;
+    LeosDocument updateMilestoneMetadata(final String milestoneId, Map<String, ?> properties, String userId) throws RepositoryException;
 
     LeosDocument updateMilestone(final Document doc, byte[] content, Map<String, ?> properties, String userId) throws RepositoryException;
 

@@ -95,15 +95,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return ConversionUtils.buildLegDocument(documentMilestone, documentMilestoneListRepository);
     }
 
-    public LeosDocument updateMilestoneMetadata(final Document doc, Map<String, ?> metadata, String userId) throws RepositoryException {
+    public LeosDocument updateMilestoneMetadata(final String milestoneId, Map<String, ?> metadata, String userId) throws RepositoryException {
         try {
-            List<DocumentMilestone> docMilestones = documentMilestoneRepository.findDocumentMilestonesByDocument(doc);
-            DocumentMilestone docMilestone;
-            if (docMilestones.isEmpty()) {
-                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentMilestone.class.getName());
-            } else {
-                docMilestone = docMilestones.get(0);
-            }
+            DocumentMilestone docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(milestoneId))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentMilestone.class.getName()));
             docMilestone.setAuditLastMBy(userId);
             docMilestone.setAuditLastMDate(LocalDateTime.now());
             if (metadata.get("milestoneComments")  != null) {

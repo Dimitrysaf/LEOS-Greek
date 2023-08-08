@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class ArchiveServiceRestImpl implements ArchiveService {
 
     private final LeosRepository leosRepository;
-    private String archiveFolder = "archive";
 
     @Autowired
     public ArchiveServiceRestImpl(LeosRepository leosRepository) {
@@ -22,12 +21,6 @@ public class ArchiveServiceRestImpl implements ArchiveService {
 
     @Override
     public <D extends LeosDocument> void archiveDocument(DocumentVO documentVO, Class<? extends D> type, String packagePath) {
-        String path = packagePath + "/" + archiveFolder;
-        try {
-            leosRepository.findFolderByPath(path);
-        } catch (Exception exception) {
-            leosRepository.createFolder(packagePath, archiveFolder);
-        }
-        leosRepository.moveDocument(documentVO.getId(), path, type);
+        leosRepository.archiveDocument(documentVO.getId(), type);
     }
 }

@@ -250,7 +250,7 @@ public class PackageIntegrationTests {
         String json = mapper.writeValueAsString(findDocumentsRequest);
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
 
-        when(packageService.findDocumentsByPackageName(REPO_ID, TEST_PKG_NAME, findDocumentsRequest.getCategories(), false))
+        when(packageService.findDocumentsByPackageName(REPO_ID, TEST_PKG_NAME, findDocumentsRequest.getCategories(), false, false))
                 .thenReturn(listDocs);
 
         mockMvc.perform(post("/package/find-by-name/{name}/documents", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
@@ -274,7 +274,7 @@ public class PackageIntegrationTests {
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
         String PKG_ID_STR = PKG_ID.toString();
 
-        when(packageService.findDocumentsByPackageId(PKG_ID_STR, findDocumentsRequest.getCategories(), false))
+        when(packageService.findDocumentsByPackageId(PKG_ID_STR, findDocumentsRequest.getCategories(), false, false))
                 .thenReturn(listDocs);
 
         mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID_STR).contentType(MediaType.APPLICATION_JSON)

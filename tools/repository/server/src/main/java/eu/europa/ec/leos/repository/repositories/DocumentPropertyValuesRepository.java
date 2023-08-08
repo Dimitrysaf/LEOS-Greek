@@ -14,7 +14,6 @@
 package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.DocumentProperties;
-import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

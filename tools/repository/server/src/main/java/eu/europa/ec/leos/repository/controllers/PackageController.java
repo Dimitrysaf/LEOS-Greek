@@ -114,10 +114,11 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<LeosDocumentList> findDocumentsByPackageName(@PathVariable("name") String name,
                                                                    @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
+                                                                       @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
                                                                   @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) throws Exception {
         name = decode(name);
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageName(repositoryId, name, findDocumentsRequest.getCategories(),
-                descendants));
+                descendants, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }
@@ -131,9 +132,10 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") String id,
                                                            @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
+                                                                     @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
                                                                 @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, findDocumentsRequest.getCategories(),
-                descendants));
+                descendants, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }
@@ -143,8 +145,9 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") String id) {
-        LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false));
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") String id, @RequestParam(value = "fetchContent", required = false,
+            defaultValue = "false") Boolean fetchContent) {
+        LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }

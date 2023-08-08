@@ -179,10 +179,9 @@ public interface LeosRepository {
      *
      * @param id     the ID of the document to retrieve.
      * @param type   the type class of the document.
-     * @param newPackageName retrieves the *latest version* of the document, when *true*.
      * @return the moved document.
      */
-    <D extends LeosDocument> D moveDocument(String id, String newPackageName, Class<? extends D> type);
+    <D extends LeosDocument> D archiveDocument(String id, Class<? extends D> type);
 
     /**
      * Finds a document with the specified characteristics.

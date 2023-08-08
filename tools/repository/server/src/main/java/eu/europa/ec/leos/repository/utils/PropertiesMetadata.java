@@ -2,6 +2,7 @@ package eu.europa.ec.leos.repository.utils;
 
 public enum PropertiesMetadata {
     CATEGORY("category", true),
+    COMMENTS("comments", false),
     COLLABORATORS("collaborators", false),
     DOC_PURPOSE("docPurpose", false),
     DOC_STAGE("docStage", false),

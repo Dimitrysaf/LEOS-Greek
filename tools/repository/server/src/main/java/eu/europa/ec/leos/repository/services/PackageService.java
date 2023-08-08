@@ -30,9 +30,9 @@ public interface PackageService {
     eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException;
 
     List<LeosDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
-                                                  final boolean descendants) throws RepositoryException;
+                                                  final boolean descendants, boolean fetchContent) throws RepositoryException;
 
-    List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories, final boolean allVersion);
+    List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories, final boolean allVersion, boolean fetchContent);
 
     Integer getDocumentCountByPackageName(final String packageName, Set<String> categories);
 
