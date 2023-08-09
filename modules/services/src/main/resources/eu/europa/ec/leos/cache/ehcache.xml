@@ -104,4 +104,52 @@
            timeToLiveSeconds="3600"
            memoryStoreEvictionPolicy="LFU"/>
 
+    <!-- rest repository cache -->
+    <cache name="documentByVersionCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
+    <cache name="restRepositoryFolderCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
+    <cache name="documentFirstVersionCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
+    <cache name="documentCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
+    <cache name="documentByIdCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
+    <cache name="documentByNameCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
 </ehcache>

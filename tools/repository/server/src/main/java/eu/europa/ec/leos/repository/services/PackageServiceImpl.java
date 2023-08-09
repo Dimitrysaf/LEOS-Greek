@@ -27,7 +27,9 @@ import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +75,11 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @Caching(evict = {
+            @CacheEvict(value = "getPackageByName", allEntries = true),
+            @CacheEvict(value = "getPackageById", allEntries = true),
+            @CacheEvict(value = "findPackageByDocumentRef", allEntries = true)
+    })
     public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName, final String userId) {
             Package pkg = new Package();
             pkg.setObjectId(new BigDecimal(0));
@@ -84,14 +91,14 @@ public class PackageServiceImpl implements PackageService {
             return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
     }
 
-    @Cacheable(cacheNames = "getPackageByName")
+    @Cacheable(cacheNames = "getPackageByName", key = "{#repositoryId, #name}")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByName(name).orElse(null);
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
-    @Cacheable(cacheNames = "getPackageById")
+    @Cacheable(cacheNames = "getPackageById", key = "#id")
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
             Package pkg =
@@ -104,6 +111,11 @@ public class PackageServiceImpl implements PackageService {
 
 
     @Transactional(rollbackFor = Exception.class)
+    @Caching(evict = {
+            @CacheEvict(value = "getPackageByName", allEntries = true),
+            @CacheEvict(value = "getPackageById", allEntries = true),
+            @CacheEvict(value = "findPackageByDocumentRef", allEntries = true)
+    })
     public void deletePackage(final String packageName) throws RepositoryException {
         try {
             Optional<Package> pkg = packageRepository.findPackageByName(packageName);
@@ -211,6 +223,7 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
+    @Cacheable(cacheNames = "findPackageByDocumentRef", key = "#documentRefId")
     public eu.europa.ec.leos.repository.model.Package findPackageByDocumentRef(final String documentRefId) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByDocumentRef(documentRefId)

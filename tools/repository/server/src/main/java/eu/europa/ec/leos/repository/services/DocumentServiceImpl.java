@@ -16,7 +16,6 @@ package eu.europa.ec.leos.repository.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
-import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
@@ -340,14 +339,16 @@ public class DocumentServiceImpl implements DocumentService {
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
     }
 
-    @Cacheable("findFirstVersion")
+    @Cacheable(value = "findFirstVersion", key = "#docRef")
     public LeosDocument findFirstVersion(final String docRef) {
+        LOG.info("Find first version: docRef={}", docRef);
         Optional<DocumentV> docView = documentVRepository.findFirstVersion(docRef);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
     }
 
-    @Cacheable("findDocumentByVersion")
+    @Cacheable(value = "findDocumentByVersion", key = "{#docRef, #versionLabel }")
     public LeosDocument findDocumentByVersion(final String docRef, final String versionLabel) {
+        LOG.info("Find Document by version: docRef={}, versionLabel={}", docRef, versionLabel);
         Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
     }
@@ -555,6 +556,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Cacheable("findTemplateByName")
     public LeosDocument findTemplateByName(String name) throws RepositoryException {
+        LOG.info("Find template by name: name={}",name);
         List<LeosDocument> docs = configService.findConfigByName(name);
         if (docs.isEmpty()) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Template " + name + " not found");
