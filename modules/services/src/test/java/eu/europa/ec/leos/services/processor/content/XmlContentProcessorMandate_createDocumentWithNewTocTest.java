@@ -50,7 +50,7 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
         byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_explanatory_createDocumentContentWithNewTocList.xml");
         List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlDocument, TocMode.NOT_SIMPLIFIED);
 
-        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser());
+        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser(), false);
 
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_explanatory_createDocumentContentWithNewTocList_expected.xml");
         String result = new String(xmlResult);
@@ -80,7 +80,7 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
         byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC.xml");
         List<TableOfContentItemVO> tocList = (List<TableOfContentItemVO>) TestUtils.getDeserializeObject(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_TocObject.obj");
 
-        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser());
+        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser(), false);
         xmlResult = xercesXmlContentProcessor.doXMLPostProcessing(xmlResult);
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_addSubParagraphInPointAUsingTOC_expected.xml");
 

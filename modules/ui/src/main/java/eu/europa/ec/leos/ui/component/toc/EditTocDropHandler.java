@@ -40,6 +40,9 @@ import java.util.Map;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getFirstAscendant;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_TO_ORIGIN_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 
 public class EditTocDropHandler implements TreeGridDropListener<TableOfContentItemVO> {
@@ -75,7 +78,16 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
         final List<CheckinElement> checkinElements = new ArrayList<>();
         if (position != null) {
             final boolean isAdd = dropEvent.getDragSourceComponent().orElse(null) instanceof Label;
-            droppedItems.forEach(tocItem -> checkPointTypeOnDrop(tocItem, targetItem));
+            droppedItems.forEach(tocItem -> {
+                checkPointTypeOnDrop(tocItem, targetItem);
+                if (isAdd) {
+                    tocItem.setTrackChangeAction(LEOS_TC_INSERT_ACTION);
+                } else if (targetItem.getSoftMoveTo() == null || !targetItem.getSoftMoveTo().equals(tocItem.getId())) {
+                    tocItem.setTrackChangeAction(LEOS_TC_MOVE_ACTION);
+                } else if (targetItem.getSoftMoveTo() != null && targetItem.getSoftMoveTo().equals(tocItem.getId())) {
+                    tocItem.setTrackChangeAction(LEOS_TC_MOVE_TO_ORIGIN_ACTION);
+                }
+            });
             final TocDropResult tocDropResult = tocEditor.addOrMoveItems(isAdd, tocTree, tocRules, droppedItems, targetItem, position);
             if (tocDropResult.isSuccess()) {
                 scrollToDroppedItem(tocTree.getTreeData(), droppedItems.get(0));

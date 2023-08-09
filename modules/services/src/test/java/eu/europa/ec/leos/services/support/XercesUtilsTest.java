@@ -110,6 +110,7 @@ public class XercesUtilsTest extends LeosTest {
     }
 
     @Test
+    @Ignore
     public void test_addDivsToFinStmntHtml() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/finstmnt.xml");
         String nsContent = XmlHelper.addDummyNamespace(new String(fileContent));

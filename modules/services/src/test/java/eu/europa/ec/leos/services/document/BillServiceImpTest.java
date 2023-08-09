@@ -46,6 +46,7 @@ import java.util.List;
 
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -124,7 +125,7 @@ public class BillServiceImpTest {
 
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);
-        when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any())).thenReturn(byteContent);
+        when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean())).thenReturn(byteContent);
         when(numberService.renumberArticles(any(), eq(true))).thenReturn(byteContent);
         when(numberService.renumberRecitals(any())).thenReturn(byteContent);
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenReturn(byteContent);
@@ -133,7 +134,7 @@ public class BillServiceImpTest {
         billService.saveTableOfContent(bill, Collections.emptyList(), "test", getJohnTestUser());
 
         // Then
-        verify(xmlContentProcessor, times(1)).createDocumentContentWithNewTocList(any(), any(), any());
+        verify(xmlContentProcessor, times(1)).createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean());
         verify(numberService, times(1)).renumberArticles(any(), eq(true));
         verify(numberService, times(1)).renumberRecitals(any());
         verify(xmlContentProcessor, times(1)).doXMLPostProcessing(any());

@@ -53,7 +53,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         byte[] xmlDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_createDocumentContentWithNewTocList.xml");
         List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(BILL, xmlDocument, TocMode.NOT_SIMPLIFIED);
 
-        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser());
+        byte[] xmlResult = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tocList, xmlDocument, getJohnTestUser(), false);
 
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_createDocumentContentWithNewTocList_expected.xml");
         String result = new String(xmlResult);
@@ -82,7 +82,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(UTF_8), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(UTF_8), getJohnTestUser(), false);
 
         assertThat(new String(result, UTF_8), is(xml));
     }
@@ -108,7 +108,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(UTF_8), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(UTF_8), getJohnTestUser(), false);
 
         assertThat(new String(result, UTF_8), is(xml));
     }
@@ -143,7 +143,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" + "<num>Article 486</num>" + "<heading>1ste article</heading>" +
                 "<subparagraph xml:id=\"art486-aln1\">bla bla</subparagraph>" + "</article>" +
@@ -190,7 +190,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><preface id =\"1\"><p>preface</p></preface>" + "<body><article xml:id=\"art487\">" +
                 "<num>Article 487</num>" +
@@ -219,7 +219,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         bodyVO.addAllChildItems(articleVOs);
         tableOfContentItemVOList.add(bodyVO);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "</section>" +
                 "</body></bill></akomaNtoso>";
@@ -261,7 +261,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec2.addChildItem(art3);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading>Paragraphs</heading>" +
                 "<article xml:id=\"art486\">" +
@@ -314,7 +314,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec2.addChildItem(art3);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "</section>" +
                 "<section xml:id=\"sect2\">" + "<num>Section 2</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art487\">" +
@@ -359,7 +359,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec2.addChildItem(art3);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" + "<num>Article 486</num>" +
@@ -409,7 +409,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec2.addChildItem(art3);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
@@ -449,7 +449,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         bodyVO.addChildItem(artNew);
         bodyVO.addChildItem(art1);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\"><bill><body>"
 
@@ -494,7 +494,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec1.addChildItem(art1);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
                 "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<section xml:id=\"Section 2\">" + "<num>Section 2</num>" +
@@ -541,7 +541,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec2.addChildItem(art3);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<article xml:id=\"art486\">" +
                 "<num>Article 486</num>" +
@@ -595,7 +595,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         sec2.addChildItem(art2);
         sec2.addChildItem(art3);
 
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill><body>" + "<part xml:id=\"part1\">" + "<num>Part 1</num>" + "<heading>part1</heading>" +
                 "<section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading>Paragraphs</heading>" + "<article xml:id=\"art486\">" +
@@ -651,7 +651,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         body1.addChildItem(part1);
         part1.addChildItem(title1);
         title1.addChildItem(ch1);
-        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser());
+        byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, xml.getBytes(), getJohnTestUser(), false);
 
         String expected = "<akomaNtoso><bill>" +
                 "<body id =\"body1\">" +
@@ -689,7 +689,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
                 "</article>" + "<hcontainer><content><p>test</p></content>" + "</hcontainer>" + "</blabla></akomaNtoso>";
 
         byte[] result = xercesXmlContentProcessor.createDocumentContentWithNewTocList(Collections.<TableOfContentItemVO>emptyList(), xml.getBytes(),
-                getJohnTestUser());
+                getJohnTestUser(), false);
 
         assertThat(new String(result), is(xml));
     }

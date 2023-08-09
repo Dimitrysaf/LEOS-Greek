@@ -208,7 +208,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Validate.notNull(tocList, "Table of content list is required");
         byte[] newXmlContent;
 
-        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(annex), user);
+        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(annex), user, annex.isTrackChangesEnabled());
         switch(structureType) {
             case ARTICLE:
                 newXmlContent = numberService.renumberArticles(newXmlContent, true);

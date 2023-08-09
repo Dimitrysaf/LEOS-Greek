@@ -141,6 +141,12 @@ public class XmlHelper {
     public static final String LEOS_CROSS_HEADING_BLOCK_NAME = "leos:name";
     public static final String LEOS_REF_BROKEN_ATTR = "leos:broken";
     public static final String LEOS_DEPTH_ATTR = "leos:depth";
+
+    public static final String LEOS_ACTION_ATTR = "leos:action";
+    public static final String LEOS_TC_INSERT_ACTION = "insert";
+    public static final String LEOS_TC_DELETE_ACTION = "delete";
+    public static final String LEOS_TC_MOVE_ACTION = "move";
+    public static final String LEOS_TC_MOVE_TO_ORIGIN_ACTION = "move-to-origin";
     public static final String LEOS_LIST_TYPE_ATTR = "leos:list-type";
     public static final String LEOS_CROSSHEADING_TYPE = "leos:crossheading-type";
 

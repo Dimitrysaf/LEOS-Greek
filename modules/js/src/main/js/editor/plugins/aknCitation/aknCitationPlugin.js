@@ -100,6 +100,15 @@ define(function aknCitationPluginModule(require) {
             html : "data-akn-attr-softdate"
         }, {
             html : ["data-akn-name", CITATION_NAME].join("=")
+        }, {
+            akn : "leos:action",
+            html : "data-akn-action"
+        }, {
+            akn : "leos:uid",
+            html : "data-akn-uid"
+        }, {
+            akn : "leos:title",
+            html : "title"
         }],
         sub: {
             akn: "mp",
