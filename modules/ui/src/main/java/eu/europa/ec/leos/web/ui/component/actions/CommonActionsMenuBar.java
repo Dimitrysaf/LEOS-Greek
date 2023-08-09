@@ -22,6 +22,7 @@ import eu.europa.ec.leos.web.event.view.document.ShowImportWindowEvent;
 import eu.europa.ec.leos.web.event.view.document.ShowIntermediateVersionWindowEvent;
 import eu.europa.ec.leos.web.event.view.document.UserGuidanceRequest;
 import eu.europa.ec.leos.web.event.window.ShowTimeLineWindowEvent;
+import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
 import eu.europa.ec.leos.web.ui.themes.LeosTheme;
 import org.slf4j.Logger;
@@ -49,8 +50,11 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
     private MenuItem renumberingItem;
     private MenuItem renumberingGroup;
 
-    protected CommonActionsMenuBar(MessageHelper messageHelper, EventBus eventBus) {
+    protected transient ConfigurationHelper cfgHelper;
+
+    protected CommonActionsMenuBar(MessageHelper messageHelper, EventBus eventBus, ConfigurationHelper cfgHelper) {
         super(messageHelper, eventBus, LeosTheme.LEOS_HAMBURGUER_16);
+        this.cfgHelper = cfgHelper;
         initDownloader();
     }
     
@@ -129,7 +133,8 @@ public abstract class CommonActionsMenuBar extends ActionsMenuBarComponent{
     @Subscribe
     public void addChangeDetailsActionMenu(AddChangeDetailsMenuEvent event) {
         //Change details
-        if(changeDetails == null) {
+        boolean seeChangeDetailsEnabled = Boolean.valueOf(cfgHelper.getProperty("leos.trackchanges.see.change.details.enabled"));
+        if(changeDetails == null && seeChangeDetailsEnabled) {
             changeDetails = createCheckMenuItemBefore(messageHelper.getMessage("menu.actions.see.change.details"),
                     new ChangeDetailsCommand(), guidance  != null ? guidance : tocOffItem);
         }

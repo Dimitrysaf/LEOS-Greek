@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.web.ui.component.actions;
 
+import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,8 @@ public class AnnexActionsMenuBar extends CommonActionsMenuBar {
 
     private boolean isSwitchStructureVisible;
     @Autowired
-    public AnnexActionsMenuBar(MessageHelper messageHelper, EventBus eventBus) {
-        super(messageHelper, eventBus);
+    public AnnexActionsMenuBar(MessageHelper messageHelper, EventBus eventBus, ConfigurationHelper cfgHelper) {
+        super(messageHelper, eventBus, cfgHelper);
     }
 
     @Subscribe

@@ -5,6 +5,7 @@ import com.vaadin.ui.UI;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.ui.window.export.ExportPackageWindow;
 import eu.europa.ec.leos.ui.window.export.LegalTextExportPackageWindow;
+import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class LegalTextActionsMenuBar extends CommonActionsMenuBar {
 
 
     @Autowired
-    public LegalTextActionsMenuBar(MessageHelper messageHelper, EventBus eventBus) {
-        super(messageHelper, eventBus);
+    public LegalTextActionsMenuBar(MessageHelper messageHelper, EventBus eventBus, ConfigurationHelper cfgHelper) {
+        super(messageHelper, eventBus, cfgHelper);
     }
 
     @Override
