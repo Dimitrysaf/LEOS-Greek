@@ -123,7 +123,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_createDocumentFromContent() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
@@ -252,7 +252,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_createDocumentMilestoneFromContent() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");
@@ -279,7 +279,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_createDocumentFromSource() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");
@@ -326,7 +326,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_searchDocument() throws RepositoryException {
         LeosDocument doc = docCreation();
         Optional<LeosDocument> docOpt = documentService.findDocumentByName(doc.getName());
@@ -341,7 +341,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_searchDocumentWithFilter() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
@@ -357,7 +357,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_searchDocumentWithFilterRole() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
@@ -378,7 +378,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_updateDocument() throws Exception {
         String newTitle = "New Title";
         LeosDocument doc = docCreation();
@@ -487,7 +487,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_updateDocumentMetadata() throws Exception {
         String newTitle = "New Title";
         LeosDocument doc = docCreation();
@@ -571,7 +571,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_findDocumentsByRef() throws Exception {
         LeosDocument doc = docCreation();
         String firstVersionId = doc.getVersionId();
@@ -627,7 +627,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_getNextVersionLabel() throws RepositoryException {
         String version = documentService.getNextVersionLabel(VersionType.MINOR,"1.0.0");
         assertEquals(version, "1.0.1");
@@ -636,7 +636,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_findAllMinorsForIntermediate() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
@@ -654,41 +654,28 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_findAllMinorsForIntermediate_2() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Third Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MAJOR,
-                "Major Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Fifth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Sixth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Seventh Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Eighth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Ninth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Tenth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Eleventh Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Twelveth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Thirteenth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Fourteenth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Fifteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Second Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Third Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MAJOR, "Major Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Fifth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Sixth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Seventh Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Eighth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Ninth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Tenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Eleventh Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Twelveth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Thirteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Fourteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Fifteenth Version", pkg.getName());
+
         List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.0.0",0, 10);
         assertEquals(docs.size(), 2);
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
@@ -711,15 +698,14 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_getAllMinorsCountForIntermediate() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                "Second Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Second Version", pkg.getName());
         doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
                 "Third Version", pkg.getName());
         Integer minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
@@ -727,14 +713,14 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_getAllMajorsCount() throws RepositoryException {
         Integer majorsCount = documentService.getAllMajorsCount("annex_test");
         assertEquals(majorsCount, new Integer(1));
     }
 
     @Test
-    @Transactional
+   
     public void test_findRecentMinorVersions() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
@@ -756,7 +742,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-    @Transactional
+   
     public void test_getRecentMinorVersionsCount() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();

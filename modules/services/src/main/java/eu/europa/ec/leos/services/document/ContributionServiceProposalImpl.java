@@ -125,7 +125,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             try {
                 clonedProposal = leosRepository.findDocumentByRef(proposalRef, Proposal.class);
             } catch (Exception e) {
-                LOG.error("Error retrieving cloned proposal with reference " + proposalRef, e);
+                LOG.error("Error retrieving cloned proposal with reference " + proposalRef, e.getMessage());
                 continue;
             }
             LeosPackage clonedPackage = packageService.findPackageByDocumentId(clonedProposal.getId());

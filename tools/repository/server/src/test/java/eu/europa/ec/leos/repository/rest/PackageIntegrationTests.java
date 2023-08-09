@@ -217,7 +217,7 @@ public class PackageIntegrationTests {
                 ArgumentMatchers.eq(createPackageRequest.getIsCloned()),
                 ArgumentMatchers.eq(createPackageRequest.getClonedPackageName()), ArgumentMatchers.eq(createPackageRequest.getUserId()))).thenReturn(pkg);
 
-        mockMvc.perform(put("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(PKG_ID.toString())))
