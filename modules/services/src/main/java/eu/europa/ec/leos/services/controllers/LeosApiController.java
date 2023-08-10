@@ -113,7 +113,7 @@ public class LeosApiController {
     private static final String BEARER_PARAMETER = "assertion";
 
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
-    private int accessTokenExpirationInMin;
+    private String accessTokenExpirationInMin;
 
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
@@ -169,7 +169,8 @@ public class LeosApiController {
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
             String user = tokenService.extractUserFromToken(token);
-            long expiresInMilliSec = System.currentTimeMillis() + accessTokenExpirationInMin * 60 * 1000;
+            int accessTokenExpirationInMinInt = getAccessTokenExpirationInMinInt();
+            long expiresInMilliSec = System.currentTimeMillis() + accessTokenExpirationInMinInt * 60 * 1000;
             JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt", expiresInMilliSec, null, null);
             LOG.debug("Created accessToken for the Client '{}", authClient.getName());
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
@@ -180,6 +181,14 @@ public class LeosApiController {
             response.setHeader("Set-Cookie", "JSESSIONID=; Path=" + contextPath + "; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
             return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
         }
+    }
+
+    private int getAccessTokenExpirationInMinInt() {
+        int accessTokenExpirationInMinInt = 60;
+        try {
+            accessTokenExpirationInMinInt = Integer.parseInt(accessTokenExpirationInMin);
+        } catch(Exception e){}
+        return accessTokenExpirationInMinInt;
     }
 
     @RequestMapping(value = "/secured/compare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
