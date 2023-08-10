@@ -29,7 +29,7 @@ public interface MilestoneDocumentService {
     List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex,
                                                  final int maxResults);
 
-    Long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
+    long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     void deleteMilestoneByRef(Document doc);
 }

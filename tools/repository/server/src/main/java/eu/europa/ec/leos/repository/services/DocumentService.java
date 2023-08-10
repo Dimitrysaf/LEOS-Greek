@@ -53,15 +53,15 @@ public interface DocumentService {
 
     List<LeosDocument> findAllMinorsForIntermediate(final String docRef, final String currIntVersion, final int startIndex, final int maxResults);
 
-    Integer getAllMinorsCountForIntermediate(final String docRef, final String currIntVersion);
+    long getAllMinorsCountForIntermediate(final String docRef, final String currIntVersion);
 
-    Integer getAllMajorsCount(final String docRef);
+    long getAllMajorsCount(final String docRef);
 
     List<LeosDocument> findAllMajors(final String docRef, final int startIndex, final int maxResult);
 
     List<LeosDocument> findRecentMinorVersions(final String docRef, String lastMajorVersion, final int startIndex, final int maxResults);
 
-    Integer getRecentMinorVersionsCount(final String docRef, final String versionLabel);
+    long getRecentMinorVersionsCount(final String docRef, final String versionLabel);
 
     List<LeosDocument> findDocumentsByUserId(final String userId, final String role);
 
@@ -77,7 +77,7 @@ public interface DocumentService {
 
     List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults, final boolean fetchContent);
 
-    Long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
+    long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
 }

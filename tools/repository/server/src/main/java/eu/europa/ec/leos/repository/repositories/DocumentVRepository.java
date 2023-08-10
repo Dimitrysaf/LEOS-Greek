@@ -77,10 +77,10 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
 
     @Query(value = "SELECT COUNT(d) FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel < ?2 AND d.versionLabel > ?3 ORDER BY d" +
             ".createdOn DESC")
-    Integer getAllMinorsCountForIntermediate(String docRef, String currIntVersion, String previousMajorVersion);
+    long getAllMinorsCountForIntermediate(String docRef, String currIntVersion, String previousMajorVersion);
 
     @Query(value = "SELECT COUNT(DISTINCT VERSION_ID) MINORS_COUNT FROM DOCUMENT_V d WHERE IS_MAJOR_VERSION = 1 and d.ref = ?1", nativeQuery = true)
-    Integer getAllMajorsCount(String docRef);
+    long getAllMajorsCount(String docRef);
 
     @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1")
     Page<DocumentV> findAllMajors(String docRef, Pageable pageable);
@@ -90,11 +90,11 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
 
     @Query(value = "SELECT * FROM (SELECT COUNT(DISTINCT VERSION_ID) mvc FROM DOCUMENT_V d WHERE d.is_major_version = 0 and d.ref = ?1 and version_label LIKE" +
             " ?2) ", nativeQuery = true)
-    Integer getRecentMinorVersionsCount(String docRef, String versionLabel);
+    long getRecentMinorVersionsCount(String docRef, String versionLabel);
 
     @Query(value = "SELECT COUNT(*) FROM DOCUMENT_V d WHERE (d.IS_ARCHIVED IS NULL OR d.IS_ARCHIVED = 0) AND d.PACKAGE_ID in (SELECT p.ID from PACKAGE p " +
             "WHERE p.NAME = ?1) and d" +
             ".CATEGORY_CODE =" +
             " nvl(?2, category_code)", nativeQuery = true)
-    Integer getDocumentCountByPackageName(String packageName, String categoryCode);
+    long getDocumentCountByPackageName(String packageName, String categoryCode);
 }

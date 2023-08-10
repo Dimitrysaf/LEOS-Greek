@@ -498,18 +498,17 @@ public class DocumentServiceImpl implements DocumentService {
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docViews.toList(), false);
     }
 
-    public Integer getAllMinorsCountForIntermediate(final String docRef, String currIntVersion) {
+    public long getAllMinorsCountForIntermediate(final String docRef, String currIntVersion) {
         Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
         String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
         return documentVRepository.getAllMinorsCountForIntermediate(docRef, currIntVersion, prevMajorVersion);
     }
 
-    public Integer getAllMajorsCount(final String docRef) {
+    public long getAllMajorsCount(final String docRef) {
         return documentVRepository.getAllMajorsCount(docRef);
     }
 
-
-    public Integer getRecentMinorVersionsCount(final String docRef, String currIntVersion) {
+    public long  getRecentMinorVersionsCount(final String docRef, String currIntVersion) {
         currIntVersion = buildMinorVersionsGreaterThanMajorRegularExp(currIntVersion, true);
         return documentVRepository.getRecentMinorVersionsCount(docRef, currIntVersion);
     }
@@ -586,7 +585,7 @@ public class DocumentServiceImpl implements DocumentService {
         return xmlDocs;
     }
 
-    public Long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
+    public long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
         StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
         if (!packageName.equals("%")) {

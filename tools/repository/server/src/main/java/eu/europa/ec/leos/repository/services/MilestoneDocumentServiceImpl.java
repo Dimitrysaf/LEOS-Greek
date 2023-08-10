@@ -314,7 +314,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return xmlDocs;
     }
 
-    public Long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
+    public long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
         StringBuilder queryBuild = new StringBuilder(
                 String.format("SELECT COUNT(m) FROM MilestoneV m WHERE", packageName));
@@ -327,7 +327,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
-        return (Long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
+        return (long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
     }
 
     private void buildQueryWithFilterQuery(StringBuilder queryBuild, final Set<String> categories, final QueryFilter queryFilter) {
