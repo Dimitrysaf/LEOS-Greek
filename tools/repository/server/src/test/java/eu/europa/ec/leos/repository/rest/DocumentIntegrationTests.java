@@ -380,27 +380,23 @@ public class DocumentIntegrationTests {
     @Test
     public void test_updateDocumentMetadata() throws Exception {
         String newTitle = "New Title";
-        String nextVersion = documentService.getNextVersionLabel(VersionType.MINOR, xmlDoc.getVersionLabel());
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
         Map<String, Object> properties = (Map<String, Object>) DOC_PROPERTIES;
         properties.put("title", newTitle);
         updateDocumentRequest.setMetadata(DOC_PROPERTIES);
-        updateDocumentRequest.setVersionType(VersionType.MINOR);
         updateDocumentRequest.setUserId(USER);
+        boolean latest = true;
         String json = mapper.writeValueAsString(updateDocumentRequest);
-        when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getRef()),
+        when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getRef()), ArgumentMatchers.eq(xmlDoc.getVersionId()),
                 anyMap(),
-                ArgumentMatchers.eq(updateDocumentRequest.getVersionType()),
-                ArgumentMatchers.eq(updateDocumentRequest.getComments()), ArgumentMatchers.eq(updateDocumentRequest.getUserId()))).thenReturn(xmlDoc);
+                ArgumentMatchers.eq(updateDocumentRequest.getUserId()),ArgumentMatchers.eq(latest))).thenReturn(xmlDoc);
 
-        mockMvc.perform(put("/document/update-metadata/{ref}", xmlDoc.getRef()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/document/update-metadata/{docRef}/{versionId}?latest={latest}", xmlDoc.getRef(), xmlDoc.getVersionId(), latest).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
-                .andExpect(jsonPath("$.createdBy", is(USER)))
-                .andExpect(jsonPath("$.createdOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(jsonPath("$.updatedBy", is(USER)))
                 .andExpect(jsonPath("$.updatedOn", is(ConversionUtils.getLeosDateAsString(currentTimeStamp, ConversionUtils.LEOS_REPO_DATE_FORMAT))))
                 .andExpect(jsonPath("$.metadata.title", is(newTitle)))
@@ -465,7 +461,7 @@ public class DocumentIntegrationTests {
 
         when(documentService.findDocumentsUsingFilter(ArgumentMatchers.eq(PKG_NAME),
                 ArgumentMatchers.eq(findDocumentsRequest.getCategories()),
-                any(), ArgumentMatchers.eq(startIndex), ArgumentMatchers.eq(maxResults))).thenReturn(xmlDocs);
+                any(), ArgumentMatchers.eq(startIndex), ArgumentMatchers.eq(maxResults), ArgumentMatchers.eq(false))).thenReturn(xmlDocs);
 
         mockMvc.perform(post("/documents/find-by-filter/{packageName}?startIndex={startIndex}&maxResults={maxResults}", encodeUriVariables(PKG_NAME)[0],
                         startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)

@@ -20,6 +20,7 @@ import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
@@ -33,9 +34,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -47,26 +50,31 @@ public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final RepositoryRepository repositoryRepository;
     private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
+    private final DocumentContentRepository documentContentRepository;
     private final CollaboratorsService collaboratorsService;
     private final DocumentMilestoneListRepository documentMilestoneListRepository;
     private final DocumentCategoriesRepository documentCategoriesRepository;
     private final DocumentService documentService;
+    private final EntityManager entityManager;
 
     @Autowired
     public PackageServiceImpl(DocumentVRepository documentVRepository, MilestoneVRepository milestoneVRepository, PackageRepository packageRepository,
                               RepositoryRepository repositoryRepository, DocumentPropertyValuesRepository documentPropertyValuesRepository,
-                              CollaboratorsService collaboratorsService,
+                              DocumentContentRepository documentContentRepository, CollaboratorsService collaboratorsService,
                               DocumentMilestoneListRepository documentMilestoneListRepository, DocumentCategoriesRepository documentCategoriesRepository,
+                              EntityManager entityManager,
                               @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
         this.milestoneVRepository = milestoneVRepository;
         this.packageRepository = packageRepository;
         this.repositoryRepository = repositoryRepository;
+        this.documentContentRepository = documentContentRepository;
         this.documentPropertyValuesRepository = documentPropertyValuesRepository;
         this.collaboratorsService = collaboratorsService;
         this.documentMilestoneListRepository = documentMilestoneListRepository;
         this.documentCategoriesRepository = documentCategoriesRepository;
         this.documentService = documentService;
+        this.entityManager = entityManager;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -132,23 +140,29 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public List<LeosDocument> findDocumentsByPackageName(final String repositoryId, final String packageName, final Set<String> categories,
-                                                         final boolean descendants) throws RepositoryException {
-        List<DocumentV> docs = new ArrayList<>();
-        List<MilestoneV> milestones = new ArrayList<>();
-        for (String categoryCode : categories) {
-            if (descendants) {
-                docs.addAll(documentVRepository.findDocumentsByCategory(repositoryId, categoryCode));
-                milestones.addAll(milestoneVRepository.findMilestonesByCategory(repositoryId, categoryCode));
-            } else {
-                docs.addAll(documentVRepository.findDocumentsByPackageNameAndCategory(packageName, categoryCode));
-                milestones.addAll(milestoneVRepository.findMilestonesByPackageNameAndCategory(packageName, categoryCode));
-            }
+    public List<LeosDocument> findDocumentsByPackageName(final String repositoryId, String packageName, final Set<String> categories,
+                                                         final boolean descendants, boolean fetchContent) {
+        StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = " +
+                "true");
+        StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE");
+        if (!descendants) {
+            docQuery.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM Repository r WHERE r" +
+                    ".cmisId = '%s') AND p.name = '%s')", repositoryId, packageName));
+            milestoneQuery.append(String.format(" d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM Repository r WHERE r" +
+                            ".cmisId = '%s') AND p.name = '%s')", repositoryId, packageName));
         }
-        List<LeosDocument> xmlDocs = new ArrayList<>();
-        for (DocumentV doc : docs) {
-            xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, doc));
+        docQuery.append(" AND");
+        if (!descendants && categories != null) {
+            milestoneQuery.append(" AND");
         }
+        if (categories != null) {
+            docQuery.append(" ").append(buildQueryFromCategories(categories));
+            milestoneQuery.append(" ").append(buildQueryFromCategoriesUsingId(categories));
+        }
+
+        List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
+        List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
+        List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs, false);
         for (MilestoneV m : milestones) {
             xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
         }
@@ -156,34 +170,50 @@ public class PackageServiceImpl implements PackageService {
     }
 
     public List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories,
-                                                      final boolean allVersion) {
-        List<DocumentV> docs = new ArrayList<>();
-        List<MilestoneV> milestones = new ArrayList<>();
-        if (categories == null) {
-            docs.addAll(documentVRepository.findDocumentsByPackageId(new BigDecimal(Long.parseLong(packageId))));
-            milestones.addAll(milestoneVRepository.findMilestonesByPackageId(new BigDecimal(Long.parseLong(packageId))));
-        } else {
-            if (allVersion) {
-                for (String categoryCode : categories) {
-                    docs.addAll(documentVRepository.findAllVersionsByPackageIdAndCategoryCode(new BigDecimal(Long.parseLong(packageId)), categoryCode));
-                }
-            } else {
-                for (String categoryCode : categories) {
-                    docs.addAll(documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(Long.parseLong(packageId)), categoryCode));
-                }
-            }
-            for (String categoryCode : categories) {
-                milestones.addAll(milestoneVRepository.findMilestonesByPackageIdAndCategory(new BigDecimal(Long.parseLong(packageId)), categoryCode));
-            }
+                                                      final boolean allVersion, boolean fetchContent) {
+        StringBuilder docQuery = new StringBuilder(String.format("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.packageId=%s", packageId));
+        if (!allVersion && categories != null) {
+            docQuery.append(" AND d.isLatestVersion = true");
         }
-        List<LeosDocument> xmlDocs = new ArrayList<>();
-        for (DocumentV doc : docs) {
-            xmlDocs.add(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, doc));
+        StringBuilder milestoneQuery = new StringBuilder(String.format("SELECT d FROM MilestoneV d WHERE d.packageId=%s", packageId));
+        if (categories!=null) {
+            docQuery.append(" AND ").append(buildQueryFromCategories(categories));
+            milestoneQuery.append(" AND ").append(buildQueryFromCategoriesUsingId(categories));
         }
+
+        List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
+        List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
+        List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs, false);
         for (MilestoneV m : milestones) {
             xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
         }
         return xmlDocs;
+    }
+
+    private StringBuilder buildQueryFromCategories(final Set<String> categories) {
+        StringBuilder query = new StringBuilder("d.categoryCode IN (");
+        Iterator<String> iterator = categories.iterator();
+        while (iterator.hasNext()) {
+            String categoryCode = iterator.next();
+            query.append("'" + categoryCode + "'");
+            if (iterator.hasNext()) {
+                query.append(",");
+            }
+        }
+        return query.append(")");
+    }
+
+    private StringBuilder buildQueryFromCategoriesUsingId(final Set<String> categories) {
+        StringBuilder query = new StringBuilder("d.categoryId IN (SELECT c.id FROM DocumentCategories c WHERE c.categoryCode IN (");
+        Iterator<String> iterator = categories.iterator();
+        while (iterator.hasNext()) {
+            String categoryCode = iterator.next();
+            query.append("'" + categoryCode + "'");
+            if (iterator.hasNext()) {
+                query.append(",");
+            }
+        }
+        return query.append("))");
     }
 
     public Integer getDocumentCountByPackageName(final String packageName, final Set<String> categories) {

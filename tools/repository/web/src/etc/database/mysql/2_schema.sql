@@ -57,18 +57,13 @@ CREATE TABLE CHANGE_EVENT
 CREATE TABLE PACKAGE
 ( ID INT NOT NULL AUTO_INCREMENT,
   OBJECT_ID DECIMAL COMMENT "Object id from CMIS in case of migration",
-  ORIGINAL_ID DECIMAL COMMENT "Original ID from CMIS in case of migration",
   NAME VARCHAR(400) NOT NULL COMMENT "Name of the package",
   REPOSITORY_ID DECIMAL NOT NULL COMMENT "ID of the repository that this package belongs to",
-  IS_CLONED DECIMAL(1,0) DEFAULT 0 COMMENT "Package is cloned 1/0",
-  CLONED_PACKAGE_NAME VARCHAR(100) COMMENT "Cloned package name",
-  CLONED_PACKAGE_ID INT COMMENT "Cloned package id",
   AUDIT_C_BY VARCHAR(30) NOT NULL COMMENT "Audit column holding the user that created this record",
   AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
   AUDIT_LAST_M_BY VARCHAR(30) COMMENT "Audit column holding the user of the last update on this record",
   AUDIT_LAST_M_DATE TIMESTAMP COMMENT "Audit column holding the date of the last update on this record",
   CONSTRAINT PACKAGE_PK PRIMARY KEY (ID),
-  CONSTRAINT PACKAGE_FK FOREIGN KEY (CLONED_PACKAGE_ID) REFERENCES PACKAGE(ID),
   CONSTRAINT PACKAGE_UQ UNIQUE (NAME, REPOSITORY_ID)
 ) COMMENT "Package table" TABLESPACE leos_repository;
 
@@ -138,10 +133,10 @@ CREATE TABLE DOCUMENT
   PACKAGE_ID INT NOT NULL COMMENT "The package id that document id belongs to",
   CATEGORY_ID INT NOT NULL COMMENT "Category ID for this document",
   NAME VARCHAR(100) NOT NULL COMMENT "Name of the document",
-  CLONED_FROM DECIMAL COMMENT "Cloned from this source",
+  CLONED_FROM VARCHAR(400) COMMENT "Cloned from this source",
   REVISION_STATUS VARCHAR(30) COMMENT "Revision status",
   CONTRIBUTION_STATUS VARCHAR(30) COMMENT "Contribution status",
-  ORIGINAL_REF DECIMAL COMMENT "Original REF",
+  ORIGIN_REF VARCHAR(30) COMMENT "Origin REF",
   BASE_REVISION_ID DECIMAL COMMENT "Base Revision ID",
   LIVE_DIFFING_REQUIRED DECIMAL COMMENT "Live diffing required flag",
   REF VARCHAR(100) NOT NULL COMMENT "REF string to identify the document",
@@ -154,6 +149,7 @@ CREATE TABLE DOCUMENT
   AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
   AUDIT_LAST_M_DATE TIMESTAMP COMMENT "Audit column holding the date of the last update on this record",
   AUDIT_LAST_M_BY VARCHAR(30) COMMENT "Audit column holding the user of the last update on this record",
+  IS_ARCHIVED DECIMAL COMMENT "Is this document archived",
   CONSTRAINT DOCUMENT_PK PRIMARY KEY (ID),
   CONSTRAINT DOCUMENT_FK FOREIGN KEY (PACKAGE_ID) REFERENCES PACKAGE (ID),
   CONSTRAINT DOCUMENT_FK2 FOREIGN KEY (CATEGORY_ID) REFERENCES DOCUMENT_CATEGORIES (ID),
@@ -185,8 +181,7 @@ CREATE TABLE DOCUMENT_MILESTONE
 ( ID INT NOT NULL AUTO_INCREMENT,
   DOCUMENT_ID INT NOT NULL COMMENT "This milestone ID is for this document id",
   JOB_DATE DATE NOT NULL COMMENT "Date of the job when milestone was created",
-  MILESTONE_ID DECIMAL NOT NULL COMMENT "Milestone ID",
-  CLONED_MILESTONE_ID DECIMAL NOT NULL COMMENT "Cloned from this milestone ID",
+  JOB_ID VARCHAR(100) NOT NULL COMMENT "Job ID",
   MILESTONE_COMMENTS VARCHAR(4000) COMMENT "Comments for this milestone",
   CONTENT BLOB NOT NULL COMMENT "The content of the milestone zip file",
   STATUS VARCHAR(30) NOT NULL COMMENT "Status for milestone",
@@ -307,8 +302,6 @@ CREATE TABLE PACKAGE_COLLABORATORS
 
 CREATE INDEX DOC_MILESTONE_DOC_IDX ON DOCUMENT_MILESTONE (DOCUMENT_ID);
 
-CREATE INDEX DOC_MILESTONE_CLO_IDX ON DOCUMENT_MILESTONE (CLONED_MILESTONE_ID);
-
 CREATE INDEX DOC_MIL_LIST_MIL_IDX ON DOCUMENT_MILESTONE_LIST (MILESTONE_ID);
 
 CREATE INDEX DOC_VERSIONS_LMV_IDX ON DOCUMENT_VERSION (IS_LATEST_MAJOR_VERSION);
@@ -338,18 +331,20 @@ SELECT CONCAT(doc.id,docver.id,docxml.id,doccat.id) unique_id
      , doc.id document_id,doc.object_id doc_object_id,doc.category_id
      , doc.package_id, docxml.version_id
      , doccat.category_code, doccat.category_desc
-     , doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
+     , doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
-     , docxml.content, docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments
+     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived
 FROM document doc, document_version docver, document_content docxml, document_categories_v doccat
 WHERE doc.id = docver.document_id
   AND docver.id = docxml.version_id
   AND doc.category_id = doccat.id;
 
 CREATE OR REPLACE VIEW MILESTONE_V as
-SELECT doc.id,docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
-     , docmil.id milestone_id, docmil.job_date, docmil.cloned_milestone_id, docmil.milestone_comments, docmil.content, docmil.status, docmil.audit_c_by, docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
+SELECT doc.id,docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+     , docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.export_status, docmil.export_date, docmil.milestone_comments, docmil.content, docmil
+    .status, docmil
+    .audit_c_by, docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
 FROM document doc, document_milestone docmil
 WHERE doc.id = docmil.document_id;
 
@@ -370,7 +365,7 @@ WHERE conf.id = ver.config_id
 
 CREATE OR REPLACE VIEW PACKAGE_V AS
 SELECT concat(pkg.id,doc.id,docver.id,docxml.id) unique_id, pkg.id package_id, pkg.object_id pkg_object_id, pkg.name package_name, pkg.repository_id, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date, pkg.audit_last_m_by
-     , doc.id document_id,doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+     , doc.id document_id,doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.content, docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title
 FROM PACKAGE pkg, document doc, document_version docver, document_content docxml

@@ -89,6 +89,8 @@ public class Document implements Serializable {
     private String docStage;
     @Column(name = "IS_PRIVATE_WORKING_COPY")
     private Boolean isPrivateWorkingCopy;
+    @Column(name = "IS_ARCHIVED")
+    private Boolean isArchived;
     @Basic(optional = false)
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
@@ -243,6 +245,14 @@ public class Document implements Serializable {
 
     public void setIsPrivateWorkingCopy(Boolean isPrivateWorkingCopy) {
         this.isPrivateWorkingCopy = isPrivateWorkingCopy;
+    }
+
+    public Boolean isArchived() {
+        return isArchived;
+    }
+
+    public void setIsArchived(Boolean isArchived) {
+        this.isArchived = isArchived;
     }
 
     public String getAuditCBy() {

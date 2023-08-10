@@ -218,6 +218,7 @@ CREATE TABLE DOCUMENT
      LANGUAGE VARCHAR2(10 BYTE),
      DOC_STAGE VARCHAR2(400 BYTE),
      IS_PRIVATE_WORKING_COPY NUMBER(1,0),
+     IS_ARCHIVED NUMBER(1,0),
      AUDIT_C_BY VARCHAR2(30 BYTE),
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSTIMESTAMP,
      AUDIT_LAST_M_DATE TIMESTAMP (6),
@@ -281,8 +282,8 @@ CREATE VIEW DOCUMENT_V AS SELECT doc.id||'_'||docver.id||'_'||docxml.id||'_'||do
                                  doc.doc_stage, doc.is_private_working_copy, doc.audit_c_by doc_audit_c_by, doc.audit_c_date doc_audit_c_date,
                                  docver.audit_last_m_date doc_audit_last_m_date, docver.audit_last_m_by doc_audit_last_m_by , docver.version_label,
                                  docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version,
-                                 docver.is_major_version, docver.is_version_series_checked_out , docxml.content, docxml.act_type,
-                                 docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments
+                                 docver.is_major_version, docver.is_version_series_checked_out, docxml.act_type,
+                                 docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived
                           FROM document doc, document_version docver, document_content docxml, document_categories_v doccat
                                WHERE doc.id = docver.document_id AND docver.id = docxml.version_id AND doc.category_id = doccat.id;
 

@@ -13,9 +13,12 @@
  */
 package eu.europa.ec.leos.repository.model;
 
+import eu.europa.ec.leos.repository.entities.Document;
+import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
+import eu.europa.ec.leos.repository.entities.DocumentVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +67,27 @@ public class XmlDocumentMetadata {
         this.revisionStatus = doc.getRevisionStatus();
         this.contributionStatus = doc.getContributionStatus();
         this.isLiveDiffingRequired = doc.isLiveDiffingRequired();
+        this.originRef = doc.getOriginRef() != null ? doc.getOriginRef() : null;
+        this.baseRevisionId = doc.getBaseRevisionId() != null ? doc.getBaseRevisionId().toString() : null;
+        this.setCollaborators(collaborators);
+    }
+
+    public XmlDocumentMetadata(Document doc, DocumentContent docContent, List<Collaborator> collaborators) {
+        this.docStage = doc.getDocStage();
+        this.docType = docContent.getDocType();
+        this.docPurpose = docContent.getDocPurpose();
+        this.procedureType = doc.getProcedureType();
+        this.template = docContent.getTemplate();
+        this.language = doc.getLanguage();
+        this.eeaRelevance = docContent.getEeaRelevance();
+        this.title = docContent.getTitle();
+        this.category = doc.getCategoryId().getCategoryCode();
+        this.docTemplate = doc.getDocTemplate();
+        this.ref = doc.getRef();
+        this.clonedFrom = doc.getClonedFrom() != null ? doc.getClonedFrom() : null;
+        this.revisionStatus = doc.getRevisionStatus();
+        this.contributionStatus = doc.getContributionStatus();
+        this.isLiveDiffingRequired = doc.getLiveDiffingRequired();
         this.originRef = doc.getOriginRef() != null ? doc.getOriginRef() : null;
         this.baseRevisionId = doc.getBaseRevisionId() != null ? doc.getBaseRevisionId().toString() : null;
         this.setCollaborators(collaborators);

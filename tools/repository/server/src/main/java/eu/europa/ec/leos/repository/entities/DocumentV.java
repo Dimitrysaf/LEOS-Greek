@@ -65,7 +65,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DocumentV.findByIsLatestVersion", query = "SELECT d FROM DocumentV d WHERE d.isLatestVersion = :isLatestVersion"),
     @NamedQuery(name = "DocumentV.findByIsMajorVersion", query = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = :isMajorVersion"),
     @NamedQuery(name = "DocumentV.findByIsVersionSeriesCheckedOut", query = "SELECT d FROM DocumentV d WHERE d.isVersionSeriesCheckedOut = :isVersionSeriesCheckedOut"),
-    @NamedQuery(name = "DocumentV.findByContent", query = "SELECT d FROM DocumentV d WHERE d.content = :content"),
     @NamedQuery(name = "DocumentV.findByActType", query = "SELECT d FROM DocumentV d WHERE d.actType = :actType"),
     @NamedQuery(name = "DocumentV.findByDocPurpose", query = "SELECT d FROM DocumentV d WHERE d.docPurpose = :docPurpose"),
     @NamedQuery(name = "DocumentV.findByDocType", query = "SELECT d FROM DocumentV d WHERE d.docType = :docType"),
@@ -138,11 +137,10 @@ public class DocumentV implements Serializable {
     private Boolean isMajorVersion;
     @Column(name = "IS_VERSION_SERIES_CHECKED_OUT", updatable = false)
     private Boolean isVersionSeriesCheckedOut;
+    @Column(name = "IS_ARCHIVED", updatable = false)
+    private Boolean isArchived;
     @Column(name = "COMMENTS", updatable = false)
     private String comments;
-    @Lob
-    @Column(name = "CONTENT", updatable = false)
-    private String content;
     @Column(name = "ACT_TYPE", updatable = false)
     private String actType;
     @Column(name = "DOC_PURPOSE", updatable = false)
@@ -415,14 +413,9 @@ public class DocumentV implements Serializable {
         this.isVersionSeriesCheckedOut = isVersionSeriesCheckedOut;
     }
 
-    public String getContent() {
-        return content;
+    public Boolean isArchived() {
+        return isArchived;
     }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public String getActType() {
         return actType;
     }

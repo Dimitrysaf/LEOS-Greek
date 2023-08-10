@@ -350,7 +350,7 @@ public class DocumentServiceTests {
         filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
                 , "SJ-023"));
         Set<String> categories = Sets.set("PROPOSAL");
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5, false);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
         assertEquals(docs.get(0).getCategory(), "PROPOSAL");
@@ -371,7 +371,7 @@ public class DocumentServiceTests {
         Set<String> categories = Sets.set("PROPOSAL");
         filter.addSortOrder(new QueryFilter.SortOrder(QueryFilter.FilterType.lastModificationDate.name(), QueryFilter.SORT_DESCENDING));
 
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5, false);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
         assertEquals(docs.get(0).getCategory(), "PROPOSAL");
@@ -487,7 +487,6 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
     public void test_updateDocumentMetadata() throws Exception {
         String newTitle = "New Title";
         LeosDocument doc = docCreation();
@@ -498,21 +497,20 @@ public class DocumentServiceTests {
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         collaborators.add(new Collaborator(pkg.getName(), "REVIEWER", "DIGIT"));
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
-                    "Second Version", pkg.getName());
-        assertNotNull(doc);
+        LeosDocument updatedDoc = documentService.updateDocument(doc.getRef(), doc.getVersionId(), properties, USER_ID, true);
+        assertNotNull(updatedDoc);
         List<DocumentV> docV = documentVRepository.findAllVersionsByRef(doc.getRef());
-        assertEquals(2, docV.size());
-        doc = documentService.findDocumentById(doc.getVersionId(), true);
-        assertEquals(pkg.getName(), doc.getUpdatedBy());
-        assertEquals("0.1.1", doc.getVersionLabel());
-        assertEquals("Second Version", doc.getComments());
-        assertEquals(doc.getMetadata().get("title"), newTitle);
-        assertNotNull(doc.getMetadata().get("collaborators"));
+        assertEquals(1, docV.size());
+        updatedDoc = documentService.findDocumentById(doc.getVersionId(), true);
+        assertEquals(USER_ID, updatedDoc.getUpdatedBy());
+        assertEquals(doc.getVersionLabel(), updatedDoc.getVersionLabel());
+        assertEquals(doc.getComments(), updatedDoc.getComments());
+        assertEquals(updatedDoc.getMetadata().get("title"), newTitle);
+        assertNotNull(updatedDoc.getMetadata().get("collaborators"));
         collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         assertEquals(collaborators.size(), 2);
-        assertTrue(doc.getUpdatedOn().compareTo(doc.getCreatedOn()) > 0);
-        assertTrue(new String(doc.getSource()).equals(new String(docBeforeUpdate.getSource())));
+        assertTrue(updatedDoc.getUpdatedOn().compareTo(updatedDoc.getCreatedOn()) > 0);
+        assertTrue(new String(updatedDoc.getSource()).equals(new String(docBeforeUpdate.getSource())));
     }
 
     @Test
@@ -536,7 +534,7 @@ public class DocumentServiceTests {
         LeosDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", pkg.getName(),
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version", USER_ID);
 
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Second Version", pkg.getName());
         assertNotNull(doc);
         List<DocumentV> docVersionsBeforeDelete =
@@ -560,7 +558,7 @@ public class DocumentServiceTests {
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
 
-        LeosDocument updatedDoc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        LeosDocument updatedDoc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Second Version", pkg.getName());
         assertNotNull(updatedDoc);
         assertFalse(doc.getVersionId().equals(updatedDoc.getVersionId()));
@@ -579,7 +577,7 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Second Version", pkg.getName());
         assertNotNull(doc);
         List<LeosDocument> docs = documentService.findAllVersionsByRef("REG-clh5v2p720007ng28khrr03h7-en");
@@ -643,9 +641,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Third Version", pkg.getName());
         List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0",0, 10);
         assertEquals(docs.size(), 2);
@@ -661,21 +659,34 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Third Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MAJOR, "Major Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Fifth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Sixth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Seventh Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Eighth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Ninth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Tenth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Eleventh Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Twelveth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Thirteenth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Fourteenth Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Fifteenth Version", pkg.getName());
-
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Second Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Third Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MAJOR, doc.getSource(),
+                "Major Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Fifth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Sixth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Seventh Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Eighth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Ninth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Tenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Eleventh Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Twelveth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Thirteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Fourteenth Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Fifteenth Version", pkg.getName());
         List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.0.0",0, 10);
         assertEquals(docs.size(), 2);
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
@@ -705,8 +716,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
+                "Second Version", pkg.getName());
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Third Version", pkg.getName());
         Integer minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
         assertEquals(minorsCount, new Integer(2));
@@ -727,9 +739,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Third Version", pkg.getName());
         List<LeosDocument> docs = documentService.findRecentMinorVersions("REG-clh5v2p720007ng28khrr03h7-en", "0.1.0",0, 10);
         assertEquals(docs.size(), 2);
@@ -749,9 +761,9 @@ public class DocumentServiceTests {
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         properties.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(collaborators));
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Second Version", pkg.getName());
-        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR,
+        doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Third Version", pkg.getName());
         Integer recentMinorVersionCount = documentService.getRecentMinorVersionsCount("REG-clh5v2p720007ng28khrr03h7-en","0.1.0");
         assertEquals(recentMinorVersionCount, new Integer(2));

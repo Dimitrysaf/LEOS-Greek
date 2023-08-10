@@ -357,7 +357,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument> D moveDocument(String id, String newPackageName, Class<? extends D> type) {
+    public <D extends LeosDocument> D archiveDocument(String id, Class<? extends D> type) {
         return null;
     }
 

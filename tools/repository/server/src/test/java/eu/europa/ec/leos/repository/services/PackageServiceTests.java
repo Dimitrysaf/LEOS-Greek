@@ -67,9 +67,9 @@ public class PackageServiceTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageId() {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "BILL"), false);
+        List<LeosDocument> docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "BILL"), false, false);
         assertEquals(2, docs.size());
-        docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "ANNEX"), false);
+        docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "ANNEX"), false, false);
         assertEquals(2, docs.size());
     }
 
@@ -78,13 +78,12 @@ public class PackageServiceTests {
     public void test_documentsByPackageName() throws RepositoryException {
         List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
                 Sets.set(
-                "PROPOSAL", "BILL"), true);
+                "PROPOSAL", "BILL"), true, false);
         assertEquals(2, docs.size());
         docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
-                Sets.set(
-                        "PROPOSAL", "BILL"), false);
+                Sets.set("PROPOSAL", "BILL"), false, false);
         assertEquals(0, docs.size());
-        docs = packageService.findDocumentsByPackageName(REPO_ID, "package_leos", Sets.set("PROPOSAL", "ANNEX"), false);
+        docs = packageService.findDocumentsByPackageName(REPO_ID, "package_leos", Sets.set("PROPOSAL", "ANNEX"), false, false);
         assertEquals(2, docs.size());
     }
 }

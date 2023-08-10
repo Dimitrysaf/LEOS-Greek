@@ -124,15 +124,9 @@ CREATE TABLE "PACKAGE"
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSDATE,
      AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
      AUDIT_LAST_M_DATE TIMESTAMP (6),
-     ORIGINAL_ID NUMBER,
-     IS_CLONED NUMBER(1,0) DEFAULT 0,
-     CLONED_PACKAGE_NAME VARCHAR2(100 BYTE),
-     CLONED_PACKAGE_ID NUMBER
 ) ;
 
 ALTER TABLE "PACKAGE" ADD CONSTRAINT PACKAGE_PK PRIMARY KEY (ID);
-ALTER TABLE "PACKAGE" ADD CONSTRAINT PACKAGE_CLONED_FK FOREIGN KEY (CLONED_PACKAGE_ID)
-    REFERENCES "PACKAGE" (ID) ENABLE;
 ALTER TABLE "PACKAGE" ADD CONSTRAINT PACKAGE_UQ UNIQUE (NAME, REPOSITORY_ID);
 
 CREATE TABLE DOCUMENT_CATEGORIES
@@ -163,7 +157,6 @@ CREATE TABLE DOCUMENT_MILESTONE
 (	ID NUMBER,
      DOCUMENT_ID NUMBER,
      JOB_DATE DATE,
-     CLONED_MILESTONE_ID NUMBER,
      MILESTONE_COMMENTS VARCHAR2(4000 BYTE),
      CONTENT BLOB,
      STATUS VARCHAR2(30 BYTE),
@@ -171,7 +164,7 @@ CREATE TABLE DOCUMENT_MILESTONE
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSDATE,
      AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
      AUDIT_LAST_M_DATE TIMESTAMP (6),
-     MILESTONE_ID NUMBER,
+     JOB_ID VARCHAR2(400 BYTE),
      EXPORT_STATUS VARCHAR2(30 BYTE),
      EXPORT_DATE TIMESTAMP (6)
 )
@@ -181,7 +174,7 @@ CREATE TABLE DOCUMENT_MILESTONE
 
 ALTER TABLE DOCUMENT_MILESTONE ADD CONSTRAINT DOCUMENT_MILESTONE_PK PRIMARY KEY (ID);
 
-ALTER TABLE DOCUMENT_MILESTONE MODIFY (MILESTONE_ID NOT NULL ENABLE);
+ALTER TABLE DOCUMENT_MILESTONE MODIFY (JOB_ID NOT NULL ENABLE);
 
 ALTER TABLE DOCUMENT_MILESTONE MODIFY (ID NOT NULL ENABLE);
 
@@ -307,10 +300,10 @@ CREATE TABLE DOCUMENT
      PACKAGE_ID NUMBER(22,0),
      CATEGORY_ID NUMBER(22,0),
      NAME VARCHAR2(400 BYTE),
-     CLONED_FROM NUMBER(22,0),
+     CLONED_FROM VARCHAR2(400 BYTE),
      REVISION_STATUS VARCHAR2(30 BYTE),
      CONTRIBUTION_STATUS VARCHAR2(30 BYTE),
-     ORIGINAL_REF NUMBER(22,0),
+     ORIGIN_REF VARCHAR2(30 BYTE),
      BASE_REVISION_ID NUMBER(22,0),
      LIVE_DIFFING_REQUIRED NUMBER(*,0),
      REF VARCHAR2(400 BYTE),
@@ -322,7 +315,8 @@ CREATE TABLE DOCUMENT
      AUDIT_C_BY VARCHAR2(30 BYTE),
      AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSTIMESTAMP,
      AUDIT_LAST_M_DATE TIMESTAMP (6),
-     AUDIT_LAST_M_BY VARCHAR2(30 BYTE)
+     AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
+     IS_ARCHIVED NUMBER(*,0)
 );
 
 ALTER TABLE DOCUMENT ADD CONSTRAINT DOCUMENT_PK PRIMARY KEY (ID);
@@ -604,8 +598,6 @@ ALTER TABLE DOCUMENT_CONTENT MODIFY (VERSION_ID NOT NULL ENABLE);
 
 CREATE INDEX DOC_MILESTONE_DOC_IDX ON DOCUMENT_MILESTONE (DOCUMENT_ID);
 
-CREATE INDEX DOC_MILESTONE_CLO_IDX ON DOCUMENT_MILESTONE (CLONED_MILESTONE_ID);
-
 CREATE INDEX DOC_MIL_LIST_MIL_IDX ON DOCUMENT_MILESTONE_LIST (MILESTONE_ID);
 
 CREATE INDEX DOC_VERSIONS_LMV_IDX ON DOCUMENT_VERSION (IS_LATEST_MAJOR_VERSION);
@@ -626,28 +618,27 @@ CREATE INDEX PACKAGE_COLLABORATORS_IDX ON PACKAGE_COLLABORATORS (PACKAGE_ID);
 
 CREATE INDEX PACKAGE_COLLABORATORS_IDX2 ON PACKAGE_COLLABORATORS (COLLABORATOR_ID);
 
-
 CREATE OR REPLACE FORCE EDITIONABLE VIEW DOCUMENT_V  AS
 SELECT doc.id||'_'||docver.id||'_'||docxml.id||'_'||doccat.id unique_id
      , doc.id document_id,doc.object_id doc_object_id,doc.category_id
      , doc.package_id, docxml.version_id
      , doccat.category_code, doccat.category_desc
-     , doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
+     , doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
-     , docxml.content, docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments
+     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived
 FROM document doc, document_version docver, document_content docxml, document_categories_v doccat
 WHERE doc.id = docver.document_id
   AND docver.id = docxml.version_id
   AND doc.category_id = doccat.id;
 
-
 CREATE OR REPLACE FORCE EDITIONABLE VIEW DOCUMENT_CATEGORIES_V (ID, CATEGORY_CODE, CATEGORY_DESC, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE) AS
 SELECT ID,CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE FROM DOCUMENT_CATEGORIES;
 
 CREATE OR REPLACE FORCE EDITIONABLE VIEW MILESTONE_V as
-SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
-     , docmil.id milestone_id, docmil.job_date, docmil.cloned_milestone_id, docmil.milestone_comments, docmil.content, docmil.status, docmil.audit_c_by, docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
+SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+        , docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.export_date, docmil.export_status, docmil.milestone_comments,
+       docmil.content, docmil.status, docmil.audit_c_by, docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
 FROM document doc, document_milestone docmil
 WHERE doc.id = docmil.document_id;
 
@@ -669,7 +660,7 @@ WHERE
 
 CREATE OR REPLACE FORCE EDITIONABLE VIEW PACKAGE_V AS
 SELECT pkg.id||'_'||doc.id||'_'||docver.id||'_'||docxml.id unique_id, pkg.id package_id, pkg.object_id pkg_object_id, pkg.name package_name, pkg.repository_id, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date, pkg.audit_last_m_by
-     , doc.id document_id,doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.original_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
+     , doc.id document_id,doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.content, docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title
 FROM PACKAGE pkg, document doc, document_version docver, document_content docxml
@@ -1109,7 +1100,7 @@ COMMENT ON COLUMN DOCUMENT.NAME IS '';
 COMMENT ON COLUMN DOCUMENT.CLONED_FROM IS '';
 COMMENT ON COLUMN DOCUMENT.REVISION_STATUS IS '';
 COMMENT ON COLUMN DOCUMENT.CONTRIBUTION_STATUS IS '';
-COMMENT ON COLUMN DOCUMENT.ORIGINAL_REF IS '';
+COMMENT ON COLUMN DOCUMENT.ORIGIN_REF IS '';
 COMMENT ON COLUMN DOCUMENT.BASE_REVISION_ID IS '';
 COMMENT ON COLUMN DOCUMENT.LIVE_DIFFING_REQUIRED IS '';
 COMMENT ON COLUMN DOCUMENT.REF IS '';
@@ -1147,7 +1138,7 @@ COMMENT ON COLUMN DOCUMENT_CONTENT.AUDIT_LAST_M_BY IS 'Audit column showing user
 COMMENT ON COLUMN DOCUMENT_CONTENT.AUDIT_LAST_M_DATE IS 'Audit column showing the last modification timestamp for this record';
 COMMENT ON COLUMN DOCUMENT_MILESTONE.EXPORT_STATUS IS '';
 COMMENT ON COLUMN DOCUMENT_MILESTONE.EXPORT_DATE IS '';
-COMMENT ON COLUMN DOCUMENT_MILESTONE.MILESTONE_ID IS '';
+COMMENT ON COLUMN DOCUMENT_MILESTONE.JOB_ID IS '';
 COMMENT ON COLUMN DOCUMENT_MILESTONE.ID IS 'Technical ID';
 COMMENT ON COLUMN DOCUMENT_MILESTONE.DOCUMENT_ID IS 'Document ID for which milestone is created';
 COMMENT ON COLUMN DOCUMENT_MILESTONE.JOB_DATE IS 'Job id that creates this milestone';
@@ -1210,7 +1201,7 @@ COMMENT ON COLUMN DOCUMENT_V.NAME IS '';
 COMMENT ON COLUMN DOCUMENT_V.CLONED_FROM IS '';
 COMMENT ON COLUMN DOCUMENT_V.REVISION_STATUS IS '';
 COMMENT ON COLUMN DOCUMENT_V.CONTRIBUTION_STATUS IS '';
-COMMENT ON COLUMN DOCUMENT_V.ORIGINAL_REF IS '';
+COMMENT ON COLUMN DOCUMENT_V.ORIGIN_REF IS '';
 COMMENT ON COLUMN DOCUMENT_V.BASE_REVISION_ID IS '';
 COMMENT ON COLUMN DOCUMENT_V.LIVE_DIFFING_REQUIRED IS '';
 COMMENT ON COLUMN DOCUMENT_V.REF IS '';
@@ -1268,7 +1259,7 @@ COMMENT ON COLUMN MILESTONE_V.NAME IS '';
 COMMENT ON COLUMN MILESTONE_V.CLONED_FROM IS '';
 COMMENT ON COLUMN MILESTONE_V.REVISION_STATUS IS '';
 COMMENT ON COLUMN MILESTONE_V.CONTRIBUTION_STATUS IS '';
-COMMENT ON COLUMN MILESTONE_V.ORIGINAL_REF IS '';
+COMMENT ON COLUMN MILESTONE_V.ORIGIN_REF IS '';
 COMMENT ON COLUMN MILESTONE_V.BASE_REVISION_ID IS '';
 COMMENT ON COLUMN MILESTONE_V.LIVE_DIFFING_REQUIRED IS '';
 COMMENT ON COLUMN MILESTONE_V.REF IS '';
@@ -1319,7 +1310,7 @@ COMMENT ON COLUMN PACKAGE_V.NAME IS '';
 COMMENT ON COLUMN PACKAGE_V.CLONED_FROM IS '';
 COMMENT ON COLUMN PACKAGE_V.REVISION_STATUS IS '';
 COMMENT ON COLUMN PACKAGE_V.CONTRIBUTION_STATUS IS '';
-COMMENT ON COLUMN PACKAGE_V.ORIGINAL_REF IS '';
+COMMENT ON COLUMN PACKAGE_V.ORIGIN_REF IS '';
 COMMENT ON COLUMN PACKAGE_V.BASE_REVISION_ID IS '';
 COMMENT ON COLUMN PACKAGE_V.LIVE_DIFFING_REQUIRED IS '';
 COMMENT ON COLUMN PACKAGE_V.REF IS '';

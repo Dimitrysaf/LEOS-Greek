@@ -129,33 +129,30 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
-    @PutMapping(path = "/document/update-metadata/{docRef}",
+    @PutMapping(path = "/document/update-metadata/{docRef}/{versionId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "update metadata of a document (Milestone or Xml Document)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("docRef") String docRef,
-                                                         @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
+    public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("versionId") String versionId, @PathVariable("docRef") String docRef,
+                                                         @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest, @RequestParam("latest") Boolean latest)
             throws Exception {
-        LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(),
-                updateDocumentRequest.getVersionType(),
-                updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
+        LeosDocument xmlDoc = documentService.updateDocument(docRef, versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getUserId(), latest);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
-    @GetMapping(path = "/document/{docRef}/move/{packageName}",
+    @GetMapping(path = "/document/archive/{docRef}",
             consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Move a document in a new package (Milestone or Xml Document)r")
+            produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @Operation(summary = "Archive a document (Milestone or Xml Document)r")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Moved", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> moveDocument(@PathVariable("docRef") String docRef, @PathVariable("packageName") String packageName,
+            @ApiResponse(responseCode = "200", description = "Documents Moved", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> archiveDocument(@PathVariable("docRef") String docRef,
                                                @RequestParam("userId") String userId) throws Exception {
-        packageName = decode(packageName);
-        LeosDocument xmlDoc = documentService.moveDocument(docRef, packageName, userId);
+        LeosDocument xmlDoc = documentService.archiveDocument(docRef, userId);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
@@ -379,11 +376,12 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> findDocumentsUsingFilter(@PathVariable("packageName") String packageName, @RequestBody FindDocumentsRequest findDocumentsRequest,
-                                                           @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults)
+                                                               @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
+                                                           @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
             throws MalformedURLException {
         packageName = decode(packageName);
         List<LeosDocument> xmlDocs = documentService.findDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(),
-                findDocumentsRequest.getQueryFilter(), startIndex, maxResults);
+                findDocumentsRequest.getQueryFilter(), startIndex, maxResults, fetchContent);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 

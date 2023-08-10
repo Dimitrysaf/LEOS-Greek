@@ -24,6 +24,7 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.assertj.core.util.Sets;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -100,6 +101,11 @@ public class MilestonesServiceTests {
         assertEquals(milestonesDocuments.size(), 5);
     }
 
+    @After
+    public void after() throws RepositoryException {
+        packageService.deletePackage(REPO_ID, PKG_NAME);
+    }
+
     @Test
     @Transactional
     public void test_searchMilestone() throws RepositoryException {
@@ -133,14 +139,12 @@ public class MilestonesServiceTests {
     }
 
     @Test
-    @Transactional
     public void test_updateMilestone() throws Exception {
         Map<String, ?> properties = new HashMap() {
             {
                 put("status", "FILE_READY");
             }};
-        LeosDocument updatedMilestone = documentService.updateDocument(milestone.getRef(), properties, VersionType.MINOR,
-                "Second Version", "test");
+        LeosDocument updatedMilestone = documentService.updateDocument(milestone.getRef(), milestone.getVersionId(), properties, "demo", true);
         assertEquals(updatedMilestone.getName(), MILESTONE_NAME);
         assertTrue(Arrays.equals(updatedMilestone.getSource(), content));
         assertEquals(updatedMilestone.getRef(), MILESTONE_NAME.substring(0, MILESTONE_NAME.lastIndexOf('.')));
@@ -158,7 +162,7 @@ public class MilestonesServiceTests {
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
                 "-en.xml"));
         Set<String> categories = Sets.set("LEG");
-        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5);
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5, false);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getCategory(), "LEG");
     }
@@ -167,7 +171,7 @@ public class MilestonesServiceTests {
     @Transactional(readOnly = true)
     public void test_documentsByPackageName() throws RepositoryException {
         List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
-                Sets.set("LEG"), true);
+                Sets.set("LEG"), true, false);
         assertEquals(1, docs.size());
     }
 }

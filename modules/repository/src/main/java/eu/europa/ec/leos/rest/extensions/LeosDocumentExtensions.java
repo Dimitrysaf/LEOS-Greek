@@ -153,7 +153,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d),
                 getVersionType(d),
                 d.isLatestVersion(),
                 getTitle(d),
@@ -178,7 +178,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -195,7 +195,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -212,7 +212,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -230,7 +230,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -249,7 +249,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 getTitle(d),
                 getCollaborators(d),
                 getMilestoneComments(d),
@@ -267,7 +267,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent));
     }
 
@@ -277,7 +277,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent));
     }
 
@@ -287,7 +287,7 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getStructureMetadataOption(d));
     }
@@ -298,8 +298,8 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
-                getMilestoneComments(d),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
+                getMilestoneCommentsForLegDocument(d),
                 contentOption(d, fetchContent),
                 getInitialCreatedBy(d),
                 getInitialCreationInstant(d),
@@ -315,12 +315,12 @@ public class LeosDocumentExtensions {
                 getCreationInstant(d),
                 d.getUpdatedBy(),
                 getLastModificationInstant(d),
-                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), d.getComments(), getVersionType(d), d.isLatestVersion(),
+                Integer.toString(Objects.hash(id, d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 getInitialCreatedBy(d),
                 getInitialCreationInstant(d),
                 contentOption(d, fetchContent),
                 getExportStatus(d),
-                getComments(d));
+                getMilestoneCommentsForLegDocument(d));
     }
 
     private static LeosCategory getCategory(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -368,10 +368,23 @@ public class LeosDocumentExtensions {
     }
 
     private static List<String> getMilestoneComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)) != null && document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS)) instanceof List) {
-            return (List<String>) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS));
+        try {
+            String comment = document.getComments();
+            String[] comments = comment.split("::");
+            if (comments.length == 2) {
+                ObjectMapper mapper = new ObjectMapper();
+                String milestoneComments = comments[1];
+                try {
+                    return mapper.readValue(milestoneComments, List.class);
+                } catch (JsonProcessingException e) {
+                    return Arrays.asList(milestoneComments);
+                }
+            } else {
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            return new ArrayList<>();
         }
-        return new ArrayList<String>();
     }
 
     private static String getJobId(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -462,20 +475,33 @@ public class LeosDocumentExtensions {
         return contributionStatus != null ? contributionStatus : "";
     }
 
-    private static List<String> getComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+    private static String getComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
         try {
-            if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) != null) {
-                if (document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS)) instanceof List) {
-                    return (List<String>) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS));
-                } else {
-                    String comments = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS));
-                    return Arrays.asList(comments);
-                }
+            String comment = document.getComments();
+            String[] comments = comment.split("::");
+            if (comments.length >= 1) {
+                String currentComments = comments[0];
+                return currentComments;
             } else {
-                return Arrays.asList();
+                return comment;
             }
         } catch (Exception e) {
-            return Arrays.asList();
+            return document.getComments();
+        }
+    }
+
+    private static List<String> getMilestoneCommentsForLegDocument(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        try {
+            String comment = document.getComments();
+            String[] comments = comment.split("::");
+            if (comments.length >= 1) {
+                String currentComments = comments[0];
+                return Arrays.asList(currentComments);
+            } else {
+                return Arrays.asList(comment);
+            }
+        } catch (Exception e) {
+            return Arrays.asList(document.getComments());
         }
     }
 

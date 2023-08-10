@@ -33,10 +33,9 @@ public interface DocumentService {
     LeosDocument updateDocument(final String ref, Map<String, ?> properties,
                             VersionType versionType, byte[] contentBytes, String comments, String userId) throws Exception;
 
-    LeosDocument updateDocument(final String ref, Map<String, ?> properties,
-                                VersionType versionType, String comments, String userId) throws Exception;
+    LeosDocument updateDocument(final String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
 
-    LeosDocument moveDocument(final String ref, final String newPackageName, String userId) throws Exception;
+    LeosDocument archiveDocument(final String ref, String userId) throws Exception;
 
     void deleteDocumentById(String id) throws RepositoryException;
 
@@ -76,7 +75,7 @@ public interface DocumentService {
 
     List<LeosDocument> findAllVersionsByRef(final String ref);
 
-    List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults);
+    List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults, final boolean fetchContent);
 
     Long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 
