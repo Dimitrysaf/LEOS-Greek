@@ -54,7 +54,7 @@ public class PackageController {
     @Value("${repository.default.id}")
     private String repositoryId;
 
-    @PutMapping(path = "/package/create/{name}",
+    @PostMapping(path = "/package/create/{name}",
     consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE} )
     @Operation(summary = "create a Package by name")

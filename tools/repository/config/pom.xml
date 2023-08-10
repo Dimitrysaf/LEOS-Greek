@@ -194,6 +194,10 @@
                                     <sourceFile>${project.output.directory}/application-h2.properties</sourceFile>
                                     <destinationFile>${project.output.directory}/leos-repository-h2.properties</destinationFile>
                                 </fileSet>
+                                <fileSet>
+                                    <sourceFile>${project.output.directory}/application-oracle.properties</sourceFile>
+                                    <destinationFile>${project.output.directory}/leos-repository-oracle.properties</destinationFile>
+                                </fileSet>
                             </fileSets>
                         </configuration>
                     </execution>
