@@ -15,12 +15,12 @@
 package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.eventbus.EventBus;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -55,7 +55,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -72,7 +78,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.*;
+import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
+import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
+import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 
 @RestController
 @RequestMapping
