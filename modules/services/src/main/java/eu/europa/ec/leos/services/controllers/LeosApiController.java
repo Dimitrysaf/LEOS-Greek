@@ -49,6 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -111,6 +112,9 @@ public class LeosApiController {
     private static final String BEARER_GRANT_TYPE = "jwt-bearer";
     private static final String BEARER_PARAMETER = "assertion";
 
+    @Value("${leos.api.jwt.auth.access.token.expire.min}")
+    private int accessTokenExpirationInMin;
+
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
                              TransformationService transformationService, ContentComparatorService comparatorService,
@@ -165,8 +169,8 @@ public class LeosApiController {
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
             String user = tokenService.extractUserFromToken(token);
-            JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt",
-                    System.currentTimeMillis() + 3600000, null, null);
+            long expiresInMilliSec = System.currentTimeMillis() + accessTokenExpirationInMin * 60 * 1000;
+            JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt", expiresInMilliSec, null, null);
             LOG.debug("Created accessToken for the Client '{}", authClient.getName());
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
         } else {
