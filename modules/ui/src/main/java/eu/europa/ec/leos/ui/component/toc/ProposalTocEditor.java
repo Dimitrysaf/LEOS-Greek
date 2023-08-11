@@ -37,6 +37,7 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.resetUserInfo;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
@@ -159,7 +160,7 @@ public class ProposalTocEditor extends AbstractTocEditor {
 
         moveToItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.getId(), originalItem.getOriginAttr(), originalItem.getNumber(),
                 EC, originalItem.getHeading(), originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
-                MOVE_TO, isSoftActionRoot,null, null);
+                MOVE_TO, isSoftActionRoot,null, null, LEOS_TC_DELETE_ACTION);
 
         moveToItem.setSoftMoveTo(originalItem.getId());
         moveToItem.setItemDepth(originalItem.getItemDepth());

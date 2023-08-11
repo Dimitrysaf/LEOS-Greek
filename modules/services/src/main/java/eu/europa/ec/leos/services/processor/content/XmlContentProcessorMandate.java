@@ -158,7 +158,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     private IndentConversionHelper indentConversionHelper;
 
     protected Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
-            Document document, Node parentNode, TableOfContentItemVO tocVo, User user) {
+            Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
         String tagName = tocVo.getTocItem().getAknTag().value();
         if (tagName.equals(LIST) && !tocVo.getChildItemsView().isEmpty() && TableOfContentHelper.containsOnlySubpoints(tocVo)) {
             int index = tocVo.getParentItem().getChildItemsView().indexOf(tocVo);
@@ -182,28 +182,28 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
 
         if (Arrays.asList(PARAGRAPH, LEVEL).contains(tagName) && skipParagraphContent(tocVo)) {
-            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             buildParagraphOrLevelContent(tocItems, node, newNode, tocVo, user);
         } else if (Arrays.asList(POINT, INDENT).contains(tagName) && shouldWrapWithList(tocVo.getParentItem())) {
-            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             newNode = buildPointContentAndWrapWithPoint(tocItems, numberingConfigs, node, newNode, tocVo, user);
             return constructListStructure(newNode, parentNode, tocVo, user);
         } else if (Arrays.asList(POINT, INDENT).contains(tagName) && skipPointContent(tocVo)) {
-            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             buildPointContent(tocItems, node, newNode, tocVo, user);
         } else if (Arrays.asList(SUBPARAGRAPH, SUBPOINT).contains(tagName) && isSingleSubElement(tocVo) && !isSoftDeletedOrMoved(tocVo)) {
-            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             return getFirstChild(node, CONTENT).cloneNode(true);
         } else if (tagName.equals(LIST) && isEmptyElement(tocVo)) {
-            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+            buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             return null; // remove list content if there is no child
         } else {
             if (!Arrays.asList(POINT, INDENT).contains(tagName)) {
-                buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+                buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             }
             newNode = buildExistingNode(tocItems, numberingConfigs, tocRules, document, node, newNode, tocVo, user);
             if (Arrays.asList(POINT, INDENT).contains(tagName)) {
-                buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode);
+                buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             }
         }
         buildNodeAttributes(newNode, tocVo, user);
@@ -219,9 +219,9 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     private void buildTocItemContentForChildren(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules, Document document,
-            TableOfContentItemVO tocVo, User user, Node newNode) {
+            TableOfContentItemVO tocVo, User user, Node newNode, boolean isTrackChangesEnabled) {
         for (TableOfContentItemVO child : tocVo.getChildItemsView()) {
-            Node newChild = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, newNode, child, user);
+            Node newChild = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, newNode, child, user, isTrackChangesEnabled);
             appendChildIfNotNull(newChild, newNode);
         }
     }
@@ -998,7 +998,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
         indentedItem = indentHelper.doIndentForTargetIndentLevel(targetLevel, isNumbered, indentedItem, tocItems, numberingConfigs);
 
-        xmlContent = createDocumentContentWithNewTocList(toc, xmlContent, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        xmlContent = createDocumentContentWithNewTocList(toc, xmlContent, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), false);
 
         xmlContent = insertAffectedAttributeIntoParentElements(xmlContent, indentedItem.getId());
 

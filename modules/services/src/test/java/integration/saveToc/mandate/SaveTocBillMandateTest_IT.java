@@ -36,7 +36,7 @@ public abstract class SaveTocBillMandateTest_IT extends SaveTocMandateTest_IT {
     }
 
     protected byte[] processSaveTocBill(byte[] xmlInput, List<TableOfContentItemVO> toc) {
-        byte[] xmlResult = xmlContentProcessor.createDocumentContentWithNewTocList(toc, xmlInput, getJaneTestUser());
+        byte[] xmlResult = xmlContentProcessor.createDocumentContentWithNewTocList(toc, xmlInput, getJaneTestUser(), false);
         //xmlResult = numberService.renumberArticles(xmlResult);
         //xmlResult = numberService.renumberRecitals(xmlResult);
         //xmlResult = xmlContentProcessor.doXMLPostProcessing(xmlResult);

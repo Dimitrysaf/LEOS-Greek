@@ -36,7 +36,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_add_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -51,7 +51,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_addTyp1BeforeType4_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -66,7 +66,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_addTyp1BetweenType2AndType3_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -106,7 +106,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_move_At_Top_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -147,7 +147,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_move_at_last_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -173,7 +173,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_move_theTop_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -208,7 +208,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_remove_topType1_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -250,7 +250,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         for(TableOfContentItemVO i : tableOfContentItemVOList) {
             System.out.println(i);
         }
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_remove_expected.xml");
         String expectedStr = new String(expected, UTF_8);
@@ -279,7 +279,7 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
         List<TableOfContentItemVO> tableOfContentItemVOList = tableOfContentProcessor
                 .buildTableOfContent("doc", testXml, TocMode.SIMPLIFIED).get(0).getChildItems();
         updateStyleClassOfTocItems(tableOfContentItemVOList, DIVISION);
-        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser());
+        byte[] resultXml = xmlContentProcessor.createDocumentContentWithNewTocList(tableOfContentItemVOList, testXml, getJaneTestUser(), false);
         String resultStr = new String(resultXml, UTF_8);
         byte[] expected = TestUtils.getFileContent(DIVISION_NUMBERING + "/test_updateStyleClassOfToc_division_correctWrongStructure_expected.xml");
         String expectedStr = new String(expected, UTF_8);

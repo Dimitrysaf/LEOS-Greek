@@ -135,6 +135,15 @@ define(function aknArticlePluginModule(require) {
             html : "data-akn-attr-softmove_label"
         }, {
             html : "data-akn-name=article"
+        }, {
+            akn : "leos:action",
+            html : "data-akn-action"
+        }, {
+            akn : "leos:uid",
+            html : "data-akn-uid"
+        }, {
+            akn : "leos:title",
+            html : "title"
         } ],
         sub : [ {
             akn : "num",

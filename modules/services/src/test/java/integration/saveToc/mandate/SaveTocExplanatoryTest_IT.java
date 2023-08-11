@@ -36,7 +36,7 @@ public abstract class SaveTocExplanatoryTest_IT extends SaveTocMandateTest_IT {
     }
 
     protected byte[] processSaveTocExplanatory(byte[] xmlInput, List<TableOfContentItemVO> toc) {
-        byte[] xmlResult = xmlContentProcessor.createDocumentContentWithNewTocList(toc, xmlInput, getJaneTestUser());
+        byte[] xmlResult = xmlContentProcessor.createDocumentContentWithNewTocList(toc, xmlInput, getJaneTestUser(), false);
         return xmlResult;
     }
 

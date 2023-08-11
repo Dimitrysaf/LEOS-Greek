@@ -46,6 +46,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
@@ -114,14 +115,16 @@ public abstract class AbstractTocEditor implements TocEditor {
                     EC, originalItem.getHeading(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     UNDELETE, null, null, null,
-                    null, null, null, true, originalItem.getNumSoftActionAttr());
+                    null, null, null, true,
+                    originalItem.getNumSoftActionAttr());
         } else {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX +originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     originalItem.getOriginNumAttr(), originalItem.getHeading(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
-                    originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
+                    originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),
+                    originalItem.getNumSoftActionAttr(), LEOS_TC_DELETE_ACTION);
         }
 
         tempDeletedItem.setContent(originalItem.getContent());
@@ -506,7 +509,8 @@ public abstract class AbstractTocEditor implements TocEditor {
                 tempItem.getOriginNumAttr(), tempItem.getHeading(),
                 tempItem.getNode(), tempItem.getList(), tempItem.getContent(),
                 tempItem.getSoftActionAttr(), tempItem.isSoftActionRoot(), tempItem.getSoftUserAttr(), tempItem.getSoftDateAttr(),
-                tempItem.getSoftMoveFrom(), tempItem.getSoftMoveTo(), tempItem.getSoftTransFrom(), tempItem.isUndeleted(), tempItem.getNumSoftActionAttr());
+                tempItem.getSoftMoveFrom(), tempItem.getSoftMoveTo(), tempItem.getSoftTransFrom(), tempItem.isUndeleted(),
+                tempItem.getNumSoftActionAttr(), tempItem.getTrackChangeAction());
 
         finalItem.setContent(tempItem.getContent());
         finalItem.setItemDepth(tempItem.getItemDepth());
@@ -823,14 +827,17 @@ public abstract class AbstractTocEditor implements TocEditor {
                     EC, originalItem.getHeading(), originalItem.getNode(),
                     originalItem.getList(),
                     originalItem.getContent(),
-                    DELETE, isSoftActionRoot, null, null, originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
+                    DELETE, isSoftActionRoot, null, null, originalItem.getSoftMoveFrom(),
+                    originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),
+                    originalItem.getNumSoftActionAttr(), originalItem.getTrackChangeAction());
         } else {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     originalItem.getOriginNumAttr(), originalItem.getHeading(),
                     originalItem.getNode(), originalItem.getList(), originalItem.getContent(),
                     originalItem.getSoftActionAttr(), originalItem.isSoftActionRoot(), originalItem.getSoftUserAttr(), originalItem.getSoftDateAttr(),
-                    originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(), originalItem.getNumSoftActionAttr());
+                    originalItem.getSoftMoveFrom(), originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),
+                    originalItem.getNumSoftActionAttr(), originalItem.getTrackChangeAction());
         }
 
         tempDeletedItem.setContent(originalItem.getContent());

@@ -267,7 +267,7 @@ public abstract class BillServiceImpl implements BillService {
         Validate.notNull(tocList, "Table of content list is required");
 
         byte[] newXmlContent;
-        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(bill), user);
+        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(bill), user, bill.isTrackChangesEnabled());
         
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);

@@ -63,7 +63,7 @@ public interface XmlContentProcessor {
 
     byte[] addChildToParent(byte[] xmlContent, String elementContent, String parentId);
 
-    byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user);
+    byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user, boolean isTrackChangesEnabled);
 
     byte[] appendElementToTag(byte[] xmlContent, String tagName, String newContent, boolean asFirstChild);
 

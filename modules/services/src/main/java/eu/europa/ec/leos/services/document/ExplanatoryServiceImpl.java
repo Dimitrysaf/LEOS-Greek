@@ -217,7 +217,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         Validate.notNull(tocList, "Table of content list is required");
         byte[] newXmlContent;
 
-        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(explanatory), user);
+        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(explanatory), user, explanatory.isTrackChangesEnabled());
         if (explanatoryStructureType != null && LEVEL.equals(explanatoryStructureType.getType())) {
             newXmlContent = numberService.renumberLevel(newXmlContent);
         }

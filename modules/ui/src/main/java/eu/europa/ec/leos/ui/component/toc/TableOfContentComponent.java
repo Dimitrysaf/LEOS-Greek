@@ -139,6 +139,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.HASH_NUM_VALUE;
@@ -1377,6 +1378,11 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                         // - if has not been deleted => check if it can be deleted (Ex: when mixed EC/CN element are present)
                         isDeleteButtonEnabled = tocItem.isDeletable() &&
                                 (isDeletedItem ? tocEditor.isUndeletableItem(item) : tocEditor.isDeletableItem(tocTree.getTreeData(), item));
+                        if ((item.getNode() != null && item.getNode().getAttributes() != null && item.getNode().getAttributes().getNamedItem("leos:action") != null)
+                                || (item.getNode() != null && item.getNode().getFirstChild() != null && item.getNode().getFirstChild().getAttributes() != null
+                                && item.getNode().getFirstChild().getAttributes().getNamedItem("leos:action") != null)) {
+                            isDeleteButtonEnabled = false;
+                        }
                         final String caption = isDeletedItem ? messageHelper.getMessage("toc.edit.window.item.selected.undelete") : messageHelper.getMessage("toc.edit.window.item.selected.delete");
                         final String description = isDeletedItem ? messageHelper.getMessage("toc.edit.window.undelete.confirmation.not") : messageHelper.getMessage(tocEditor.getNotDeletableMessageKey());
                         renderDeleteButton(caption, description, isDeleteButtonEnabled);
@@ -1899,6 +1905,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         }
 
         private void deleteItem(TableOfContentItemVO item) {
+            item.setTrackChangeAction(LEOS_TC_DELETE_ACTION);
             final ActionType actionType = tocEditor.deleteItem(tocTree, item);
             final CheckinElement checkinElement = new CheckinElement(actionType, item.getId(), item.getTocItem().getAknTag().name());
             final String statusMsg = messageHelper.getMessage("toc.edit.window.delete.message", TableOfContentHelper.getDisplayableTocItem(item.getTocItem(), messageHelper));

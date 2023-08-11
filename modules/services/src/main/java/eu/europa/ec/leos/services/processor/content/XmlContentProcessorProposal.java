@@ -20,7 +20,6 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
-import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -42,26 +41,29 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ELEMENTS_TO_BE_NUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.ID_PLACEHOLDER;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_HTML_OL_ID_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
@@ -70,6 +72,11 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_TO_ORIGIN_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
@@ -109,7 +116,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     private NumberProcessorHandler numberProcessorHandler;
 
     public Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
-                                    Document document, Node parentNode, TableOfContentItemVO tocVo, User user) {
+                                    Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
 
         // 1. Get the corresponding node from the XML, or create a new one using the template
         Node node = getNode(document, tocVo);
@@ -124,19 +131,24 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         // 3. clean the node and build it again.
         node.setTextContent(EMPTY_STRING);
         updateDepthAttribute(tocVo, node);
+        addTrackChangeAttributes(tocVo, node, numNode, isTrackChangesEnabled);
         appendChildIfNotNull(numNode, node);
-        appendChildIfNotNull(headingNode, node);
-        appendChildIfNotNull(introNode, node);
 
-        // 4. Propagate to children
-        for (TableOfContentItemVO child : tocVo.getChildItemsView()) {
-            Node newChild = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, node, child, user);
-            LOG.debug("buildTocItemContent adding {} '{}' as child of {}", newChild.getNodeName(), getId(newChild), node.getNodeName());
-            XercesUtils.addChild(newChild, node);
+        if (!(ELEMENTS_WITHOUT_CONTENT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) &&
+                tocVo.getTrackChangeAction().equals(LEOS_TC_DELETE_ACTION) &&
+                tocVo.getId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX))) {
+            appendChildIfNotNull(headingNode, node);
+            appendChildIfNotNull(introNode, node);
+
+            // 4. Propagate to children
+            for (TableOfContentItemVO child : tocVo.getChildItemsView()) {
+                Node newChild = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, node, child, user, isTrackChangesEnabled);
+                LOG.debug("buildTocItemContent adding {} '{}' as child of {}", newChild.getNodeName(), getId(newChild), node.getNodeName());
+                XercesUtils.addChild(newChild, node);
+            }
+            appendChildrenIfNotNull(childrenNode, node); // only for part of the body which is not configured in structure.xml, like CLAUSE tag
         }
         String tagName = tocVo.getTocItem().getAknTag().value();
-
-        appendChildrenIfNotNull(childrenNode, node); // only for part of the body which is not configured in structure.xml, like CLAUSE tag
 
         if (isClonedProposal()) {
             if (SoftActionType.MOVE_TO.equals(tocVo.getSoftActionAttr())) {
@@ -183,6 +195,26 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     private void updateDepthAttribute(TableOfContentItemVO tocVo, Node node) {
         if (tocVo.getItemDepth() > 0) {
             addAttribute(node, LEOS_DEPTH_ATTR, String.valueOf(tocVo.getItemDepth()));
+        }
+    }
+
+    private void addTrackChangeAttributes(TableOfContentItemVO tocVo, Node node, Node numNode, boolean isTrackChangesEnabled) {
+        if (isTrackChangesEnabled && securityContext.getUser() != null && StringUtils.isNotEmpty(tocVo.getTrackChangeAction())) {
+            if (!tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
+                ZonedDateTime localDateTime = ZonedDateTime.now();
+                Node nodeToAddOrRemoveAttribute = node;
+                if (tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_ACTION)) {
+                    nodeToAddOrRemoveAttribute = numNode;
+                }
+                addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, tocVo.getTrackChangeAction());
+                addAttribute(nodeToAddOrRemoveAttribute, LEOS_UID, securityContext.getUser().getLogin());
+                addAttribute(nodeToAddOrRemoveAttribute, LEOS_TITLE,
+                        securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+            } else if (numNode != null) {
+                removeAttribute(numNode, LEOS_ACTION_ATTR);
+                removeAttribute(numNode, LEOS_UID);
+                removeAttribute(numNode, LEOS_TITLE);
+            }
         }
     }
 

@@ -303,7 +303,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                                  FinancialStatementStructureType financialStatementStructureType, String actionMsg, User user) {
         Validate.notNull(financialStatement, "FinancialStatement is required");
         Validate.notNull(tocList, "Table of content list is required");
-        byte[] newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user);
+        byte[] newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user, financialStatement.isTrackChangesEnabled());
         if (financialStatementStructureType != null && LEVEL.equals(financialStatementStructureType.getType())) {
             newXmlContent = numberService.renumberLevel(newXmlContent);
         }

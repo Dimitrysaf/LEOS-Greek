@@ -250,7 +250,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user) {
+    public byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user, boolean isTrackChangesEnabled) {
         LOG.trace("Start building the document content for the new toc list");
         long startTime = System.currentTimeMillis();
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
@@ -261,7 +261,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (TableOfContentItemVO tocVo : tableOfContentItemVOs) {
             Node node = navigateToTocElement(tocVo, document);
             LOG.trace("Build content for parent TOC item '{}', node '{}'", tocVo.getTocItem().getAknTag().value(), node.getNodeName());
-            Node newNode = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, null, tocVo, user);
+            Node newNode = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, null, tocVo, user, isTrackChangesEnabled);
             newNode = importNodeInDocument(document, newNode);
             XercesUtils.replaceElement(newNode, node);
         }
@@ -275,7 +275,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected abstract Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
-                                                Document document, Node parentNode, TableOfContentItemVO tocVo, User user);
+                                                Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled);
 
     @Override
     public String getElementValue(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
