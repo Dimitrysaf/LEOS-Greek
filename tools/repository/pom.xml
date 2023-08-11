@@ -47,13 +47,103 @@
     </modules>
 
     <build>
-        <extensions>
-            <!-- Enabling the use of FTP for deployment -->
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>${wagon-ftp-extension.version}</version>
-            </extension>
-        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-timestamp</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <timestampPropertyName>buildnumber.timestamp</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
+
+    <profiles>
+        <!-- SET build env -->
+        <profile>
+            <id>env-default</id>
+            <activation>
+                <property>
+                    <name>!env</name>
+                </property>
+            </activation>
+            <properties>
+                <leos.build.env>local</leos.build.env>
+                <project.java.debug>true</project.java.debug>
+                <project.java.optimize>false</project.java.optimize>
+                <project.vaadin.draftCompile>true</project.vaadin.draftCompile>
+                <js.skipTests>false</js.skipTests>
+                <skipTests>false</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>env</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                </property>
+            </activation>
+            <properties>
+                <leos.build.env>${env}</leos.build.env>
+                <project.java.debug>true</project.java.debug><!-- needed for spring security -->
+            </properties>
+        </profile>
+
+        <!-- OS Instance -->
+        <profile>
+            <id>instance-default</id>
+            <activation>
+                <property>
+                    <name>!instance</name>
+                </property>
+            </activation>
+            <properties>
+                <leos.build.instance>os</leos.build.instance>
+                <leos.web.context.path>repository</leos.web.context.path>
+            </properties>
+        </profile>
+        <!-- EC Instance -->
+        <profile>
+            <id>instance-ec</id>
+            <activation>
+                <property>
+                    <name>instance</name>
+                    <value>ec</value>
+                </property>
+            </activation>
+            <properties>
+                <leos.build.instance>ec</leos.build.instance>
+                <leos.web.context.path>repository</leos.web.context.path>
+            </properties>
+        </profile>
+        <!-- CN Instance -->
+        <profile>
+            <id>instance-cn</id>
+            <activation>
+                <property>
+                    <name>instance</name>
+                    <value>cn</value>
+                </property>
+            </activation>
+            <properties>
+                <leos.build.instance>cn</leos.build.instance>
+                <leos.source.revision>EdiT Revision</leos.source.revision>
+                <leos.web.context.path>leos-pilot-cn</leos.web.context.path>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
