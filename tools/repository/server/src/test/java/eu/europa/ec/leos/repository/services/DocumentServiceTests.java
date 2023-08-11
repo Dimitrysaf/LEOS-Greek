@@ -692,7 +692,7 @@ public class DocumentServiceTests {
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
         assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
         docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.1.0",0, 40);
-        int count = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.1.0");
+        long count = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.1.0");
         assertEquals(docs.size(), 11);
         assertEquals(count, 11);
         assertEquals(docs.get(0).getVersionLabel(), "1.0.11");
@@ -720,15 +720,15 @@ public class DocumentServiceTests {
                 "Second Version", pkg.getName());
         doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Third Version", pkg.getName());
-        Integer minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
-        assertEquals(minorsCount, new Integer(2));
+        long minorsCount = documentService.getAllMinorsCountForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "0.2.0");
+        assertEquals(minorsCount, 2);
     }
 
     @Test
    
     public void test_getAllMajorsCount() throws RepositoryException {
-        Integer majorsCount = documentService.getAllMajorsCount("annex_test");
-        assertEquals(majorsCount, new Integer(1));
+        long majorsCount = documentService.getAllMajorsCount("annex_test");
+        assertEquals(majorsCount, 1);
     }
 
     @Test
@@ -765,8 +765,8 @@ public class DocumentServiceTests {
                 "Second Version", pkg.getName());
         doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Third Version", pkg.getName());
-        Integer recentMinorVersionCount = documentService.getRecentMinorVersionsCount("REG-clh5v2p720007ng28khrr03h7-en","0.1.0");
-        assertEquals(recentMinorVersionCount, new Integer(2));
+        long recentMinorVersionCount = documentService.getRecentMinorVersionsCount("REG-clh5v2p720007ng28khrr03h7-en","0.1.0");
+        assertEquals(recentMinorVersionCount, 2);
     }
 
     @Test

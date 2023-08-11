@@ -251,10 +251,9 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Integer> getAllMinorsCountForIntermediate(@PathVariable("docRef") String docRef,
-                                                                    @RequestParam("currIntVersion") String currIntVersion) {
-        Integer result = RestPreconditions.checkFound(documentService.getAllMinorsCountForIntermediate(docRef, currIntVersion),
-                HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
+    public ResponseEntity<Long> getAllMinorsCountForIntermediate(@PathVariable("docRef") String docRef,
+                                                                 @RequestParam("currIntVersion") String currIntVersion) {
+        long result = documentService.getAllMinorsCountForIntermediate(docRef, currIntVersion);
         return ResponseEntity.ok(result);
     }
 
@@ -267,8 +266,7 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Integer> getAllMajorsCount(@PathVariable("docRef") String docRef) {
-        Integer result = RestPreconditions.checkFound(documentService.getAllMajorsCount(docRef),
-                HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
+        long result = documentService.getAllMajorsCount(docRef);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
@@ -293,9 +291,8 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Integer> getRecentMinorVersionsCount(@PathVariable("docRef") String docRef, @RequestParam("versionLabel") String versionLabel) {
-        Integer result = RestPreconditions.checkFound(documentService.getRecentMinorVersionsCount(docRef, versionLabel),
-                HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
+    public ResponseEntity<Long> getRecentMinorVersionsCount(@PathVariable("docRef") String docRef, @RequestParam("versionLabel") String versionLabel) {
+        long result = documentService.getRecentMinorVersionsCount(docRef, versionLabel);
         return ResponseEntity.ok(result);
     }
 

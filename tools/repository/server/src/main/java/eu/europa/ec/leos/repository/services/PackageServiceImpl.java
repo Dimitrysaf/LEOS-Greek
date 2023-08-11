@@ -216,8 +216,8 @@ public class PackageServiceImpl implements PackageService {
         return query.append("))");
     }
 
-    public Integer getDocumentCountByPackageName(final String packageName, final Set<String> categories) {
-        Integer documentCount = 0;
+    public long getDocumentCountByPackageName(final String packageName, final Set<String> categories) {
+        long documentCount = 0;
         for (String categoryCode : categories) {
             documentCount += documentVRepository.getDocumentCountByPackageName(packageName, categoryCode);
         }
