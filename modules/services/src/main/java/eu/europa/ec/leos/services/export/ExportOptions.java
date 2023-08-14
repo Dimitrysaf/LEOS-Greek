@@ -26,6 +26,8 @@ public abstract class ExportOptions {
     protected boolean withAnonymization = false;
     protected boolean withTrackChangesAnonymization = false;
 
+    protected boolean withAutoNumbering = true;
+
     public boolean isWithCoverPage() {
         return withCoverPage;
     }
@@ -184,4 +186,6 @@ public abstract class ExportOptions {
     public boolean isWithSuggestions() {
         return withSuggestions;
     }
+
+    public boolean isWithAutoNumbering() { return withAutoNumbering; }
 }
