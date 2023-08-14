@@ -203,7 +203,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             if (!tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
                 ZonedDateTime localDateTime = ZonedDateTime.now();
                 Node nodeToAddOrRemoveAttribute = node;
-                if (tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_ACTION)) {
+                if (numNode != null && tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_ACTION)) {
                     nodeToAddOrRemoveAttribute = numNode;
                 }
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, tocVo.getTrackChangeAction());
