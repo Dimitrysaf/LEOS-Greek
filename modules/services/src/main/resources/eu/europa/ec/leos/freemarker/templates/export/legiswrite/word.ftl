@@ -40,7 +40,9 @@
 <@compress>
     <importOptions technicalKey="${proposal.getExportOptions().getTechnicalKey()}">
         <importJob filename="${bill.getLeosCategory().name()?capitalize}"
-            convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}" comparisonType="${proposal.getExportOptions().getComparisonType()?lower_case}">
+            convertAnnotations="${proposal.getExportOptions().isWithAnnotations()?c}"
+                   comparisonType="${proposal.getExportOptions().getComparisonType()?lower_case}"
+                   createAutoNumbering="${proposal.getExportOptions().isWithAutoNumbering()?c}">
             <leos>
                 <resource ref="${proposalRef}">
                     <includes>
