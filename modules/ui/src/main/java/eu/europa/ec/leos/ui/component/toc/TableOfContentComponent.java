@@ -1370,7 +1370,6 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                         isNumberFieldEnabled = tocItem.isNumberEditable();
                         hasItemNumber = OptionsType.MANDATORY.equals(tocItem.getItemNumber()) || OptionsType.OPTIONAL.equals(tocItem.getItemNumber());
                         isItemHeadingVisible = OptionsType.MANDATORY.equals(tocItem.getItemHeading()) || OptionsType.OPTIONAL.equals(tocItem.getItemHeading());
-                        isItemHeadingEnabled = getTagValueFromTocItemVo(item).equals(DIVISION) ? false : isItemHeadingVisible;
                         isEditionEnabled = !tocItem.isRoot() && tocItem.isDraggable();
                         boolean isDeletedItem = tocEditor.isDeletedItem(item) || tocEditor.isMoveToItem(item);
                         // If toc item is configured to be deletable, then check:
