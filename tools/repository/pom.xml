@@ -126,7 +126,7 @@
             </activation>
             <properties>
                 <leos.build.instance>ec</leos.build.instance>
-                <leos.web.context.path>repository</leos.web.context.path>
+                <leos.web.context.path>repository-ec</leos.web.context.path>
             </properties>
         </profile>
         <!-- CN Instance -->
@@ -140,8 +140,7 @@
             </activation>
             <properties>
                 <leos.build.instance>cn</leos.build.instance>
-                <leos.source.revision>EdiT Revision</leos.source.revision>
-                <leos.web.context.path>leos-pilot-cn</leos.web.context.path>
+                <leos.web.context.path>repository-cn</leos.web.context.path>
             </properties>
         </profile>
     </profiles>
