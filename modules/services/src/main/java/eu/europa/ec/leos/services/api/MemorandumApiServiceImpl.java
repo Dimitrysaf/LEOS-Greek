@@ -249,7 +249,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
     @Override
     public DocumentViewResponse restoreToVersion(String documentRef, String versionId) {
-        return null;
+        Memorandum version = memorandumService.findMemorandumVersion(versionId);
+        Memorandum memo = memorandumService.findMemorandumByRef(documentRef);
+        byte[] resultXmlContent = getContent(version);
+        Memorandum updatedMemo = memorandumService.updateMemorandum(memo, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+        return this.documentViewService.updateDocumentView(updatedMemo);
     }
 
     @Override
@@ -373,7 +377,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(), "guidance");
     }
 
-    private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations){
+    private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Memorandum currentDocument = memorandumService.findMemorandumByRef(documentRef);
