@@ -54,49 +54,6 @@
                 >
                   {{ 'page.collection.exports.table.actions.edit' | translate }}
                 </button>
-
-                <eui-dialog
-                  #editTitleExport
-                  [title]="
-                    'page.collection.exports.table.dialog.edit-title.title'
-                      | translate
-                  "
-                >
-                  <div euiInputGroup class="flex-row align-items-center">
-                    <label class="label">
-                      {{
-                        'page.collection.drafts.annex.title-dialog.label'
-                          | translate
-                      }}</label
-                    >
-                    <input euiInputText [(ngModel)]="titleToEdit" />
-                  </div>
-                  <eui-dialog-footer>
-                    <div class="app-dialog-footer-content">
-                      <button
-                        euiButton
-                        euiSecondary
-                        (click)="closeEditExportDialog()"
-                      >
-                        {{
-                          'page.collection.drafts.annex.title-dialog.cancel'
-                            | translate
-                        }}
-                      </button>
-                      <button
-                        euiButton
-                        euiPrimary
-                        class="save-button"
-                        (click)="handleTitleChange(row)"
-                      >
-                        <span>{{
-                          'page.collection.drafts.annex.title-dialog.save'
-                            | translate
-                        }}</span>
-                      </button>
-                    </div>
-                  </eui-dialog-footer>
-                </eui-dialog>
               </ng-container>
               <button
                 euiListItem
@@ -146,3 +103,32 @@
   "
   (confirmDeletion)="hanldeConfirmationDelete()"
 ></app-confirm-delete-dialog>
+
+<eui-dialog
+  #editTitleExport
+  [title]="'page.collection.exports.table.dialog.edit-title.title' | translate"
+>
+  <div euiInputGroup class="flex-row align-items-center">
+    <label class="label">
+      {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}</label
+    >
+    <input euiInputText [(ngModel)]="titleToEdit" />
+  </div>
+  <eui-dialog-footer>
+    <div class="app-dialog-footer-content">
+      <button euiButton euiSecondary (click)="closeEditExportDialog()">
+        {{ 'page.collection.drafts.annex.title-dialog.cancel' | translate }}
+      </button>
+      <button
+        euiButton
+        euiPrimary
+        class="save-button"
+        (click)="handleTitleChange()"
+      >
+        <span>{{
+          'page.collection.drafts.annex.title-dialog.save' | translate
+        }}</span>
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

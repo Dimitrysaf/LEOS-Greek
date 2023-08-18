@@ -22,6 +22,7 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
   exportToDelete: ExportPackageVO;
   exportDocuments: ExportPackageVO[];
   destroy$: Subject<any> = new Subject<any>();
+  selectedExportPackage: ExportPackageVO;
 
   @ViewChild('confirmationForDelete')
   confirmDeleteComp: ConfirmDeleteDialogComponent;
@@ -38,10 +39,13 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  handleTitleChange(data: ExportPackageVO) {
-    data.comments[0] = this.titleToEdit;
+  handleTitleChange() {
+    this.selectedExportPackage.comments[0] = this.titleToEdit;
     this.proposalDetailsService
-      .updateExportDocument(data.id, data.comments)
+      .updateExportDocument(
+        this.selectedExportPackage.id,
+        this.selectedExportPackage.comments,
+      )
       .pipe(debounceTime(DEBOUNCE_TIME), takeUntil(this.destroy$))
       .subscribe((res) => {
         this.exportDocuments = res;
@@ -77,11 +81,13 @@ export class ProposalExportsComponent implements OnInit, OnDestroy {
 
   openEditExportDialog(data: ExportPackageVO) {
     this.titleToEdit = data.comments[0];
+    this.selectedExportPackage = data;
     this.editExporTittleDialog.openDialog();
   }
 
   closeEditExportDialog() {
     this.titleToEdit = null;
+    this.selectedExportPackage = null;
     this.editExporTittleDialog.closeDialog();
   }
 
