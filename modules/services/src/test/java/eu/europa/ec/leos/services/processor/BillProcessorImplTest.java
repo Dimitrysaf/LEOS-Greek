@@ -131,7 +131,7 @@ public class BillProcessorImplTest extends LeosTest {
         final String articleId = "486";
 
         when(xmlContentProcessor.insertElementByTagNameAndId(argThat(is(originalByteContent)), argThat(is(any(String.class))), argThat(is(articleTag)),
-                argThat(is(articleId)), eq(before))).thenReturn(
+                argThat(is(articleId)), eq(before), eq(false))).thenReturn(
                 updatedByteContent);
         when(numberService.renumberArticles(updatedByteContent)).thenReturn(renumberdContent);
         when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);

@@ -219,7 +219,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
     @Test
     public void test_removeElementByTagNameAndId() {
-        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(docContent, "art486");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(docContent, "art486", false);
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_deleteElementByTagNameAndId.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));
     }
@@ -263,7 +263,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "              </paragraph>" +
                 "             </article>";
 
-        byte[] returnedElement = xercesXmlContentProcessor.insertElementByTagNameAndId(docContent, template, ARTICLE, "art486", false);
+        byte[] returnedElement = xercesXmlContentProcessor.insertElementByTagNameAndId(docContent, template, ARTICLE, "art486", false, false);
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_insertElementByTagNameAndId_when_insert_after.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));
     }
@@ -281,7 +281,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "              </paragraph>" +
                 "             </article>";
 
-        byte[] returnedElement = xercesXmlContentProcessor.insertElementByTagNameAndId(docContent, template, ARTICLE, "art486", true);
+        byte[] returnedElement = xercesXmlContentProcessor.insertElementByTagNameAndId(docContent, template, ARTICLE, "art486", true, false);
 
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_insertElementByTagNameAndId_when_insert_before.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));

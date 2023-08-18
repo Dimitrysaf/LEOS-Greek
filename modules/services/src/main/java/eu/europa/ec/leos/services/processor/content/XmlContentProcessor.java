@@ -57,9 +57,9 @@ public interface XmlContentProcessor {
 
     byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId);
 
-    byte[] removeElementById(byte[] xmlContent, String elementId);
+    byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled);
 
-    byte[] insertElementByTagNameAndId(byte[] xmlContent, String articleTemplate, String tagName, String idAttributeValue, boolean before);
+    byte[] insertElementByTagNameAndId(byte[] xmlContent, String articleTemplate, String tagName, String idAttributeValue, boolean before, boolean isTrackChangesEnabled);
 
     byte[] addChildToParent(byte[] xmlContent, String elementContent, String parentId);
 

@@ -190,7 +190,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_rec_1";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -205,7 +205,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "par3_sub";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -255,7 +255,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_1_0IxItO";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -285,7 +285,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_2_RaenZD";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -300,7 +300,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_1_0IxItO";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -315,7 +315,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "transformed___akn_article_MSaviI-par1";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -330,7 +330,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_1_9Xrkmo";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -345,7 +345,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_1_9Xrkmo";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -360,7 +360,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_1_8YVMWK";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -375,7 +375,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_2_tmKcQk";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -390,7 +390,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "transformed__art_2_SFQ4X0";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -405,7 +405,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_2_82v7Fg";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -420,7 +420,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_art_2_XZ1wQb";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -435,7 +435,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "pointNew";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -450,7 +450,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "transformed___akn_article_Vh2NWC-par1";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -465,7 +465,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "__akn_article_Vh2NWC_nnPENY";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -480,7 +480,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_body_level_2";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -495,7 +495,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "_akn_level_YuxqgR";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);
@@ -510,7 +510,7 @@ public class ElementProcessorTest_IT extends LeosTest {
 
         final String elementId = "akn_paragraph_6y0dox";
 
-        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId);
+        byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
         String expectedStr = new String(xmlExpected);
         result = squeezeXml(result);

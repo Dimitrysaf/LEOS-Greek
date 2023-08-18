@@ -152,7 +152,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         Validate.notNull(elementId, "Element id is required.");
     
         byte[] byteXmlContent = getContent(document);
-        byteXmlContent = xmlContentProcessor.removeElementById(byteXmlContent, elementId);
+        byteXmlContent = xmlContentProcessor.removeElementById(byteXmlContent, elementId, document.isTrackChangesEnabled());
         return byteXmlContent;
     }
 

@@ -50,6 +50,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -342,7 +343,7 @@ public class ElementProcessorImplTest extends LeosTest {
         final String elementTag = ARTICLE;
         final String elementId = "486";
 
-        when(xmlContentProcessor.removeElementById(argThat(is(originalByteContent)), argThat(is(elementId))))
+        when(xmlContentProcessor.removeElementById(argThat(is(originalByteContent)), argThat(is(elementId)), anyBoolean()))
                 .thenReturn(updatedByteContent);
 
         // DO THE ACTUAL CALL

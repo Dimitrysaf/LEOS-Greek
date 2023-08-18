@@ -296,13 +296,13 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     @Override
-    public byte[] removeElementById(byte[] xmlContent, String elementId) {
+    public byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled) {
         if (isClonedProposal()) {
             Element element = getElementById(xmlContent, elementId);
             if (element == null) {
                 return xmlContent;
             }
-            return removeElement(xmlContent, element, LS);
+            return removeElement(xmlContent, element, LS, isTrackChangesEnabled);
         }
         return deleteElementById(xmlContent, elementId);
     }
