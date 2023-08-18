@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.xml.Element;
@@ -61,7 +62,7 @@ public class MergeContributionHelperService {
         this.contributionService = contributionService;
     }
 
-    public byte[] updateDocumentWithContributions(ApplyContributionsRequest request, LeosDocument xmlDocument, List<TocItem> tocItemList, List<InternalRefMap> intRefMap) throws IOException {
+    public byte[] updateDocumentWithContributions(ApplyContributionsRequest request, XmlDocument xmlDocument, List<TocItem> tocItemList, List<InternalRefMap> intRefMap) throws IOException {
 
         byte[] xmlContent = xmlDocument.getContent().get().getSource().getBytes();
         byte[] contributionXmlContent = null;
@@ -75,11 +76,11 @@ public class MergeContributionHelperService {
             if (MergeAction.ACCEPT.equals(mergeActionVO.getAction())) {
                 if (ElementState.MOVE.equals(mergeActionVO.getElementState())) {
                     movedElementIds.add(mergeActionVO.getElementId());
-                    xmlContent = acceptMove(xmlContent, mergeActionVO, tocItemList);
+                    xmlContent = acceptMove(xmlContent, mergeActionVO, tocItemList, xmlDocument.isTrackChangesEnabled());
                 } else if (ElementState.DELETE.equals(mergeActionVO.getElementState())) {
-                    xmlContent = acceptDeletion(xmlContent, mergeActionVO);
+                    xmlContent = acceptDeletion(xmlContent, mergeActionVO, xmlDocument.isTrackChangesEnabled());
                 } else {
-                    xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, intRefMap);
+                    xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, intRefMap, xmlDocument.isTrackChangesEnabled());
                 }
             } else if (MergeAction.UNDO.equals(mergeActionVO.getAction())) {
                 String contributionFragment = xmlContentProcessor.getElementById(mergeActionVO.getContributionVO().getXmlContent(), mergeActionVO.getElementId()).getElementFragment();
@@ -87,18 +88,18 @@ public class MergeContributionHelperService {
                 if (!isUndoReject) {
                     if (ElementState.MOVE.equals(mergeActionVO.getElementState())) {
                         movedElementIds.add(mergeActionVO.getElementId());
-                        xmlContent = undoMove(xmlContent, mergeActionVO, tocItemList);
+                        xmlContent = undoMove(xmlContent, mergeActionVO, tocItemList, xmlDocument.isTrackChangesEnabled());
                     } else if (ElementState.DELETE.equals(mergeActionVO.getElementState())) {
-                        xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, intRefMap);
+                        xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, intRefMap, xmlDocument.isTrackChangesEnabled());
                     } else if (ElementState.ADD.equals(mergeActionVO.getElementState())) {
-                        xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId(), true);
+                        xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId(), xmlDocument.isTrackChangesEnabled());
                     } else if (ElementState.CONTENT_CHANGE.equals(mergeActionVO.getElementState())) {
                         xmlContent = undoContentChange(xmlContent, mergeActionVO, tocItemList, intRefMap);
                     }
                 }
             } else if (MergeAction.REJECT.equals(mergeActionVO.getAction()) && isMovedElementChild) {
                 if (ElementState.ADD.equals(mergeActionVO.getElementState())) {
-                    xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId(), true);
+                    xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId(), xmlDocument.isTrackChangesEnabled());
                 } else if (ElementState.CONTENT_CHANGE.equals(mergeActionVO.getElementState())) {
                     xmlContent = undoContentChange(xmlContent, mergeActionVO, tocItemList, intRefMap);
                 }
@@ -134,28 +135,28 @@ public class MergeContributionHelperService {
         return xmlContent;
     }
 
-    private byte[] acceptMove(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList) {
+    private byte[] acceptMove(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList, boolean isTrackChangesEnabled) {
         String elementId = getMovedOrDeletedElementId(mergeActionVO);
         String addedFragment = xmlContentProcessor.getElementById(xmlContent, elementId).getElementFragment();
-        xmlContent = acceptDeletion(xmlContent, mergeActionVO);
-        xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, elementId, addedFragment);
+        xmlContent = acceptDeletion(xmlContent, mergeActionVO, isTrackChangesEnabled);
+        xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, elementId, addedFragment, isTrackChangesEnabled);
         xmlContent = removeSoftMoveAttributes(xmlContent, mergeActionVO.getElementId());
         return xmlContent;
     }
 
-    private byte[] undoMove(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList) {
+    private byte[] undoMove(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList, boolean isTrackChangesEnabled) {
         String elementId = getMovedOrDeletedElementId(mergeActionVO);
         String addedFragment = xmlContentProcessor.getElementById(xmlContent, mergeActionVO.getElementId()).getElementFragment();
-        xmlContent = acceptDeletion(xmlContent, mergeActionVO);
-        xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList,SOFT_MOVE_PLACEHOLDER_ID_PREFIX + mergeActionVO.getElementId(), addedFragment);
+        xmlContent = acceptDeletion(xmlContent, mergeActionVO, isTrackChangesEnabled);
+        xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList,SOFT_MOVE_PLACEHOLDER_ID_PREFIX + mergeActionVO.getElementId(), addedFragment, isTrackChangesEnabled);
         xmlContent = removeSoftMoveAttributes(xmlContent, mergeActionVO.getElementId());
         return xmlContent;
     }
 
-    private byte[] acceptAddition(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList, List<InternalRefMap> intRefMap) {
+    private byte[] acceptAddition(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList, List<InternalRefMap> intRefMap, boolean isTrackChangesEnabled) {
         String addedFragment = xmlContentProcessor.getElementById(mergeActionVO.getContributionVO().getXmlContent(), mergeActionVO.getElementId()).getElementFragment();
         addedFragment = updateInternalReferences(addedFragment, intRefMap);
-        return this.acceptAddition(xmlContent, mergeActionVO, tocItemList, mergeActionVO.getElementId(), addedFragment);
+        return this.acceptAddition(xmlContent, mergeActionVO, tocItemList, mergeActionVO.getElementId(), addedFragment, isTrackChangesEnabled);
     }
 
     private String updateInternalReferences(String xmlContentStr, List<InternalRefMap> map) {
@@ -165,7 +166,7 @@ public class MergeContributionHelperService {
         return xmlContentStr;
     }
 
-    private byte[] acceptAddition(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList, String contributionElementId, String addedFragment) {
+    private byte[] acceptAddition(byte[] xmlContent, MergeActionVO mergeActionVO, List<TocItem> tocItemList, String contributionElementId, String addedFragment, boolean isTrackChangesEnabled) {
         byte[] contributionXMLContent = mergeActionVO.getContributionVO().getXmlContent();
         String tagName = mergeActionVO.getElementTagName();
         String elementId = mergeActionVO.getElementId();
@@ -183,29 +184,29 @@ public class MergeContributionHelperService {
         if (documentElement != null) {
             xmlContent = xmlContentProcessor.replaceElementById(xmlContent, contributionElementFragment, elementId);
         } else if (xmlPreviousSibling != null && xmlPreviousSibling.getElementId() != null) {
-            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionPreviousSibling.getElementTagName(), contributionPreviousSibling.getElementId(),false, true);
+            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionPreviousSibling.getElementTagName(), contributionPreviousSibling.getElementId(),false, isTrackChangesEnabled);
         } else if (xmlNextSibling !=null && xmlNextSibling.getElementId() != null) {
-            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionNextSibling.getElementTagName(), contributionNextSibling.getElementId(),true, true);
+            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionNextSibling.getElementTagName(), contributionNextSibling.getElementId(),true, isTrackChangesEnabled);
         } else if (xmlParentSibling != null && xmlParentSibling.getElementId() != null) {
             xmlContent = xmlContentProcessor.addChildToParent(xmlContent, contributionElementFragment, contributionParentElement.getElementId());
         }
         return xmlContent;
     }
 
-    private byte[] acceptDeletion(byte[] xmlContent, MergeActionVO mergeActionVO) {
+    private byte[] acceptDeletion(byte[] xmlContent, MergeActionVO mergeActionVO, boolean isTrackChangesEnabled) {
         try {
             String elementId = getMovedOrDeletedElementId(mergeActionVO);
-            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId, true);
+            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId, isTrackChangesEnabled);
         } catch (Exception e) {
             LOG.debug("could not accept this action", e);
         }
         return xmlContent;
     }
 
-    private byte[] undoAddition(byte[] xmlContent, MergeActionVO mergeActionVO) {
+    private byte[] undoAddition(byte[] xmlContent, MergeActionVO mergeActionVO, boolean isTrackChangesEnabled) {
         try {
             String elementId = getMovedOrDeletedElementId(mergeActionVO);
-            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId, true);
+            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId, isTrackChangesEnabled);
         } catch (Exception e) {
             LOG.debug("could not accept this action", e);
         }
