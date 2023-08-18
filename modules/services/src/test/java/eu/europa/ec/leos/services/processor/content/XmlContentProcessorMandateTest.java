@@ -75,7 +75,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_removeElementByTagNameAndId() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/docContentCn.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_removeElementByTagNameAndId_cn_expected.xml");
-        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "art486");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "art486", false);
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(returnedElement)));
     }
@@ -84,7 +84,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_remove_cn_point() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_cn_point_expected.xml");
-        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
         xercesXmlContentProcessor.doXMLPostProcessing(doc);
@@ -97,7 +97,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_remove_cn_indented_point() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_indented_cn_point_expected.xml");
-        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
         xercesXmlContentProcessor.doXMLPostProcessing(doc);
@@ -110,7 +110,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_remove_cn_indented_point_with_several_lists() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point_and_several_lists.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_indented_cn_point_and_several_lists_expected.xml");
-        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad2");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad2", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
         xercesXmlContentProcessor.doXMLPostProcessing(doc);
@@ -123,7 +123,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_remove_cn_added_point_with_several_lists() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_indented_point_and_several_lists.xml");
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_cn_point_removed_added_cn_point_and_several_lists_expected.xml");
-        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad");
+        byte[] returnedElement = xercesXmlContentProcessor.removeElementById(xmlInput, "cldvd5zlw0005xo286i1lfuad", false);
 
         Document doc = XercesUtils.createXercesDocument(returnedElement);
         xercesXmlContentProcessor.doXMLPostProcessing(doc);

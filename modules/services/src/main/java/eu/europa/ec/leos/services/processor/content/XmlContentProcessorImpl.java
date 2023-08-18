@@ -53,6 +53,8 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -399,7 +401,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] insertElementByTagNameAndId(byte[] xmlContent, String elementTemplate, String tagName, String idAttributeValue, boolean before) {
+    public byte[] insertElementByTagNameAndId(byte[] xmlContent, String elementTemplate, String tagName, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, idAttributeValue);
         if (node != null) {
@@ -425,6 +427,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 XercesUtils.addAttribute(newNode, REFERS_TO_ATTR, ENDING_PART);
             }
             XercesUtils.addSibling(newNode, node, before);
+
+            if(isTrackChangesEnabled) {
+                ZonedDateTime localDateTime = ZonedDateTime.now();
+                addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
+                addAttribute(newNode, LEOS_UID, securityContext.getUser().getLogin());
+                addAttribute(newNode, LEOS_TITLE,
+                        securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+            }
         }
         return nodeToByteArray(document);
     }
@@ -1715,7 +1725,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return buildSplittedElementPair(xmlContent, splitElement);
     }
 
-    protected byte[] removeElement(byte[] xmlContent, Element element, String currentOrigin) {
+    protected byte[] removeElement(byte[] xmlContent, Element element, String currentOrigin, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(xmlContent);
         String tagName = element.getElementTagName();
         String elementId = element.getElementId();
@@ -1744,12 +1754,12 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         Node list = is(node.getParentNode(),LIST) ? node.getParentNode() : null;
         if (isSoftMovedFrom) {
-            softDeleteOriginalNode(node);
+            softDeleteOriginalNode(node, isTrackChangesEnabled);
             restoreTransformedNodeToContent(node);
             XercesUtils.deleteElement(node);
         } else if (isProposalElement) {
-            removeMovedInElements(node);
-            softDeleteElementForNode(node);
+            removeMovedInElements(node, isTrackChangesEnabled);
+            softDeleteElementForNode(node, isTrackChangesEnabled);
         } else {
             restoreTransformedNodeToContent(node);
             XercesUtils.deleteElement(node);
@@ -1764,29 +1774,29 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return nodeToByteArray(document);
     }
 
-    private void softDeleteOriginalNode(Node node) {
-        doSoftDeleteOriginalNode(node);
+    private void softDeleteOriginalNode(Node node, boolean isTrackChangesEnabled) {
+        doSoftDeleteOriginalNode(node, isTrackChangesEnabled);
         List<Node> children = XercesUtils.getChildren(node);
         for (int i = 0; i < children.size(); i++) {
-            softDeleteOriginalNode(children.get(i));
+            softDeleteOriginalNode(children.get(i), isTrackChangesEnabled);
         }
     }
 
-    private void doSoftDeleteOriginalNode(Node node) {
+    private void doSoftDeleteOriginalNode(Node node, boolean isTrackChangesEnabled) {
         String originalId = XercesUtils.getAttributeValue(node, LEOS_SOFT_MOVE_FROM);
         Boolean originalActionRoot = XercesUtils.getAttributeValueAsBoolean(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         LOG.debug("Setting original node {} as MOVED. Actual node {}", originalId, getId(node));
         if (originalId != null && Boolean.TRUE.equals(originalActionRoot)) {
             Node originalNode = XercesUtils.getElementById(node.getOwnerDocument(), originalId);
             if (originalNode != null) {
-                softDeleteElementForNode(originalNode);
+                softDeleteElementForNode(originalNode, isTrackChangesEnabled);
             } else {
                 LOG.warn("Original Node with id {} cannot be set to softdelete" , originalId);
             }
         }
     }
 
-    private void removeMovedInElements(Node node) {
+    private void removeMovedInElements(Node node, boolean isTrackChangesEnabled) {
         List<Node> children = XercesUtils.getChildren(node);
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
@@ -1795,9 +1805,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 LOG.debug("Deleting MOVED node {}. The original {} will be set to sofdelete ", getId(child), originalId);
                 XercesUtils.deleteElement(child);
                 Node originNode  = XercesUtils.getElementById(node.getOwnerDocument(), originalId);
-                softDeleteElementForNode(originNode);
+                softDeleteElementForNode(originNode, isTrackChangesEnabled);
             } else {
-                removeMovedInElements(child);
+                removeMovedInElements(child, isTrackChangesEnabled);
                 // If all children of LIST are removed remove LIST also
                 if(LIST.equals(child.getNodeName()) && XercesUtils.getChildren(child).size() == 0) {
                     XercesUtils.deleteElement(child);
@@ -1987,7 +1997,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return XercesUtils.nodeToString(node);
     }
 
-    protected void softDeleteElementForNode(Node node) {
+    protected void softDeleteElementForNode(Node node, boolean isTrackChangesEnabled) {
         XercesUtils.insertOrUpdateAttributeValue(node, LEOS_EDITABLE_ATTR, Boolean.FALSE.toString());
         XercesUtils.insertOrUpdateAttributeValue(node, LEOS_DELETABLE_ATTR, Boolean.FALSE.toString());
         SoftActionType actionType;
@@ -2000,6 +2010,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         cleanMoveFromAttributes(node);
         updateXMLIDAttributeFullStructureNode(node, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
+
+        if(isTrackChangesEnabled) {
+            ZonedDateTime localDateTime = ZonedDateTime.now();
+            addAttribute(node, LEOS_ACTION_ATTR, "delete");
+            addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
+            addAttribute(node, LEOS_TITLE,
+                    securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        }
 
         propagateSoftDeleteToChildren(XercesUtils.getChildren(node), actionType);
     }

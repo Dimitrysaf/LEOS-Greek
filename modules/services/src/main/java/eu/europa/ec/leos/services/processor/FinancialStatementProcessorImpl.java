@@ -78,7 +78,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
                 template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(financialStatement), template,
-                        tagName, elementId, before);
+                        tagName, elementId, before, financialStatement.isTrackChangesEnabled());
                 break;
             case CONTENT:
                 content = getContent(financialStatement);
@@ -107,7 +107,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         byte[] updatedContent = getContent(financialStatement);
         if(tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
             //TODO: Check for last element deletion
-            updatedContent = xmlContentProcessor.removeElementById(updatedContent, elementId);
+            updatedContent = xmlContentProcessor.removeElementById(updatedContent, elementId, financialStatement.isTrackChangesEnabled());
         } else {
             throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
         }

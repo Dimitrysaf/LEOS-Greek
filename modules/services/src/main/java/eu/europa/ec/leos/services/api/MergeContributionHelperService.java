@@ -91,14 +91,14 @@ public class MergeContributionHelperService {
                     } else if (ElementState.DELETE.equals(mergeActionVO.getElementState())) {
                         xmlContent = acceptAddition(xmlContent, mergeActionVO, tocItemList, intRefMap);
                     } else if (ElementState.ADD.equals(mergeActionVO.getElementState())) {
-                        xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId());
+                        xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId(), true);
                     } else if (ElementState.CONTENT_CHANGE.equals(mergeActionVO.getElementState())) {
                         xmlContent = undoContentChange(xmlContent, mergeActionVO, tocItemList, intRefMap);
                     }
                 }
             } else if (MergeAction.REJECT.equals(mergeActionVO.getAction()) && isMovedElementChild) {
                 if (ElementState.ADD.equals(mergeActionVO.getElementState())) {
-                    xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId());
+                    xmlContent = xmlContentProcessor.removeElementById(xmlContent, mergeActionVO.getElementId(), true);
                 } else if (ElementState.CONTENT_CHANGE.equals(mergeActionVO.getElementState())) {
                     xmlContent = undoContentChange(xmlContent, mergeActionVO, tocItemList, intRefMap);
                 }
@@ -183,9 +183,9 @@ public class MergeContributionHelperService {
         if (documentElement != null) {
             xmlContent = xmlContentProcessor.replaceElementById(xmlContent, contributionElementFragment, elementId);
         } else if (xmlPreviousSibling != null && xmlPreviousSibling.getElementId() != null) {
-            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionPreviousSibling.getElementTagName(), contributionPreviousSibling.getElementId(),false);
+            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionPreviousSibling.getElementTagName(), contributionPreviousSibling.getElementId(),false, true);
         } else if (xmlNextSibling !=null && xmlNextSibling.getElementId() != null) {
-            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionNextSibling.getElementTagName(), contributionNextSibling.getElementId(),true);
+            xmlContent = xmlContentProcessor.insertElementByTagNameAndId(xmlContent,  contributionElementFragment, contributionNextSibling.getElementTagName(), contributionNextSibling.getElementId(),true, true);
         } else if (xmlParentSibling != null && xmlParentSibling.getElementId() != null) {
             xmlContent = xmlContentProcessor.addChildToParent(xmlContent, contributionElementFragment, contributionParentElement.getElementId());
         }
@@ -195,7 +195,7 @@ public class MergeContributionHelperService {
     private byte[] acceptDeletion(byte[] xmlContent, MergeActionVO mergeActionVO) {
         try {
             String elementId = getMovedOrDeletedElementId(mergeActionVO);
-            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId);
+            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId, true);
         } catch (Exception e) {
             LOG.debug("could not accept this action", e);
         }
@@ -205,7 +205,7 @@ public class MergeContributionHelperService {
     private byte[] undoAddition(byte[] xmlContent, MergeActionVO mergeActionVO) {
         try {
             String elementId = getMovedOrDeletedElementId(mergeActionVO);
-            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId);
+            xmlContent = xmlContentProcessor.removeElementById(xmlContent, elementId, true);
         } catch (Exception e) {
             LOG.debug("could not accept this action", e);
         }

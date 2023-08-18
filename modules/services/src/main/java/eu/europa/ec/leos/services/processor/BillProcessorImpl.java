@@ -119,7 +119,7 @@ public class BillProcessorImpl implements BillProcessor {
                     updatedContent = insertNewElement(document, parentElement.getElementId(), before, parentElement.getElementTagName());
                 } else if (!PARAGRAPH.equals(parentElement.getElementTagName()) || isNumberedParagraph(document, parentElement.getElementId())) {
                     template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
-                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before);
+                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 } else {
                     throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
                 }
@@ -171,23 +171,23 @@ public class BillProcessorImpl implements BillProcessor {
 
         switch (tagName) {
             case CITATION:
-                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before);
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 break;
             case RECITAL:
-                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before);
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = numberService.renumberRecitals(updatedContent);
                 break;
             case ARTICLE:
-                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before);
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case PARAGRAPH:
                 if (isNumberedParagraph(document, elementId)) {
-                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before);
+                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                     updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
                     updatedContent = numberService.renumberArticles(updatedContent);
                 } else {
-                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before);
+                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 }
                 break;
             case SUBPARAGRAPH:
@@ -197,14 +197,14 @@ public class BillProcessorImpl implements BillProcessor {
                 } else if (Arrays.asList(POINT, INDENT).contains(parentElement.getElementTagName())) {
                     updatedContent = insertNewElement(document, parentElement.getElementId(), before, parentElement.getElementTagName());
                 } else if (!PARAGRAPH.equals(parentElement.getElementTagName()) || isNumberedParagraph(document, parentElement.getElementId())) {
-                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), content, tagName, elementId, before);
+                    updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), content, tagName, elementId, before, document.isTrackChangesEnabled());
                 } else {
                     throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
                 }
                 break;
             case POINT:
             case INDENT:
-                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before);
+                updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
@@ -259,7 +259,7 @@ public class BillProcessorImpl implements BillProcessor {
     private byte[] insertNewElement(Bill document, String elementId, boolean before, String tagName, String template) {
         final byte[] contentBytes = getContent(document);
         template  = this.addDocTypeToTemplateXmlId(template);
-        byte[] updatedBytes = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, template, tagName, elementId, before);
+        byte[] updatedBytes = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, template, tagName, elementId, before, document.isTrackChangesEnabled());
         return updatedBytes;
     }
 

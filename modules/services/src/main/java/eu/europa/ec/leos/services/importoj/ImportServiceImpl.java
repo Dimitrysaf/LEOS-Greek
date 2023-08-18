@@ -98,7 +98,7 @@ public class ImportServiceImpl implements ImportService {
             // Insert selected element to the document
             if (elementId != null) {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
-                        element.getElementTagName(), elementId, checkIfLastArticleIsEntryIntoForce(documentContent, element, elementId, language));
+                        element.getElementTagName(), elementId, checkIfLastArticleIsEntryIntoForce(documentContent, element, elementId, language), bill.isTrackChangesEnabled());
             } else if (elementType.equalsIgnoreCase(ARTICLE)) {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {

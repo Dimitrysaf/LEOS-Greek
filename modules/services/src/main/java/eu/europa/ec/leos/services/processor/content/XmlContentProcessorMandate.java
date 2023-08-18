@@ -1033,7 +1033,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     @Override
-    public byte[] removeElementById(byte[] xmlContent, String elementId) {
+    public byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled) {
         Element element = getElementById(xmlContent, elementId);
         if (element == null) {
             return xmlContent;
@@ -1042,7 +1042,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         if (ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.contains(element.getElementTagName())) {
             xmlContent = insertAffectedAttributeIntoParentElements(xmlContent, elementId);
         }
-        return removeElement(xmlContent, element, CN);
+        return removeElement(xmlContent, element, CN, isTrackChangesEnabled);
     }
 
     @Override
@@ -1115,12 +1115,12 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         if (splitElement != null) {
             Element siblingElement = getSiblingElement(xmlContent, splitElement.getElementTagName(), splitElement.getElementId(), Collections.emptyList(), false);
             if (siblingElement != null && isSiblingPresentWithSameContent(splitElement, siblingElement) && isElementSoftDelete(siblingElement)) {
-                xmlContent = removeElementById(xmlContent, splitElement.getElementId());
+                xmlContent = removeElementById(xmlContent, splitElement.getElementId(), false);
                 Pair<byte[], Element> result = recoverDeletedSibling(xmlContent, siblingElement.getElementId());
                 xmlContent = result.left();
                 splitElement = result.right();
             } else if (siblingElement != null && isSiblingPresentWithNoContent(siblingElement)) {
-                xmlContent = removeElementById(xmlContent, siblingElement.getElementId());
+                xmlContent = removeElementById(xmlContent, siblingElement.getElementId(), false);
             }
         } else {
             return null;
