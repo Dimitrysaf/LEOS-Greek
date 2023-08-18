@@ -432,13 +432,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
           );
     if (targetItem.tocItem.childrenAllowed) {
       const targetTocItem: TocItem = targetItem.tocItem;
-
+      const targetRules = [
+        targetTocItem.aknTag.toUpperCase(),
+        targetTocItem.numberingType.toUpperCase(),
+      ].join('_');
+      const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
       if (
         isSourceDivision(sourceItem) ||
         isCrossheading(sourceItem) ||
         isDroppedOnPointOrIndent(sourceItem, targetItem) ||
-        sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag
-        // || !(targetTocItems && targetTocItems.includes(sourceItem.tocItem))
+        sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag ||
+        !(
+          targetTocAllowedItems != null &&
+          targetTocAllowedItems.length > 0 &&
+          targetTocAllowedItems.includes(sourceItem.tocItem)
+        )
       ) {
         // If items have the same type or if child elements are not allowed in target add it to its parent
         const actualTargetItem = getActualTargetItem(
@@ -1628,28 +1636,29 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       this.removeNode(tocTree, sourceItem);
       sourceItem.originalDepthLevel = sourceItem.itemDepth;
     }
-
-    if (actualTargetItem !== targetItem) {
-      if ('BEFORE' === position) {
-        this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
+    if (actualTargetItem) {
+      sourceItem.parentItem = actualTargetItem.id;
+      if (actualTargetItem.id !== targetItem.id) {
+        if ('BEFORE' === position) {
+          this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
+        }
+        if ('AFTER' === position) {
+          this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
+        }
+      } else if (
+        actualTargetItem === targetItem &&
+        LEVEL === sourceItem.tocItem.aknTag
+      ) {
+        /*
+         * This else is when we add level as child or after a Part, Title, Chapter or Section,
+         * because in this case the actualTargetItem is equal to targetItem, and we need to set
+         * the level as the first of list of children
+         */
+        actualTargetItem.childItems.splice(0, 0, sourceItem);
+      } else {
+        this.insertChild(tocTree, targetItem, sourceItem, isAdd);
       }
-      if ('AFTER' === position) {
-        this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
-      }
-    } else if (
-      actualTargetItem === targetItem &&
-      LEVEL === sourceItem.tocItem.aknTag
-    ) {
-      /*
-       * This else is when we add level as child or after a Part, Title, Chapter or Section,
-       * because in this case the actualTargetItem is equal to targetItem, and we need to set
-       * the level as the first of list of children
-       */
-      actualTargetItem.childItems.splice(0, 0, sourceItem);
-    } else {
-      this.insertChild(tocTree, targetItem, sourceItem, isAdd);
     }
-
     setItemDepth(sourceItem, targetItem, position);
     setItemLevel(tocTree, sourceItem, targetItem, position);
   }
