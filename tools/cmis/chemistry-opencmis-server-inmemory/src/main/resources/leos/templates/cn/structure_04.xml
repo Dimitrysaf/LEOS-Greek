@@ -85,7 +85,8 @@
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>ROMAN_UPPER</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
+            <template>
+                <![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
         </tocItem>
 
         <tocItem>
@@ -106,7 +107,8 @@
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
+            <template>
+                <![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
 
         <tocItem>
@@ -127,7 +129,8 @@
             <sameParentAsChild>false</sameParentAsChild>
             <numberingType>ARABIC_PARENTHESIS</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
+            <template>
+                <![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
         </tocItem>
 
         <tocItem>
@@ -211,7 +214,8 @@
                 </profile>
             </profiles>
             <editable>true</editable>
-            <template><![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
+            <template>
+                <![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
         </tocItem>
 
         <tocItem>
@@ -365,7 +369,9 @@
             <suffix></suffix>
             <sequence>1</sequence>
             <description>1, 2, etc</description>
-            <regex>#|^(?!([a-z]))((^-?(([0-9]+)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})))([a-z])*)</regex>
+            <regex>#|^(?!([a-z]))((^-?(([0-9]+)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})))([a-z])*)
+            </regex>
+            <regexJS>^(?:[MDCLXVI]+[a-zA-Z]?|\d+[a-zA-Z]?)$</regexJS>
             <msgValidationError>subdivision.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -376,6 +382,7 @@
             <sequence>1</sequence>
             <description>1, 2, etc</description>
             <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -386,6 +393,7 @@
             <sequence>1</sequence>
             <description>1., 2., etc</description>
             <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -396,6 +404,7 @@
             <sequence>1</sequence>
             <description>(1), (2), etc</description>
             <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -425,6 +434,7 @@
             <sequence>I</sequence>
             <description>I, II, etc</description>
             <regex>M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$|#</regex>
+            <regexJS>^(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$</regexJS>
             <msgValidationError>roman.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
