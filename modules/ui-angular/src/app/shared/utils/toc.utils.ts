@@ -15,6 +15,7 @@ import {
   EC,
   ELEMENTS_TO_REMOVE_FROM_CONTENT,
   INDENT,
+  LEOS_TC_DELETE_ACTION,
   LEVEL,
   LIST,
   MAX_INDENT_LEVEL,
@@ -688,7 +689,8 @@ export const containsItemOfOrigin = (
   if (
     (tableOfContentItemVO.originAttr?.length &&
       tableOfContentItemVO.originAttr === origin) ||
-    (!tableOfContentItemVO.originAttr && origin === elementOrigin)
+    (!tableOfContentItemVO.originAttr &&
+      origin.toLowerCase() === elementOrigin.toLowerCase())
   ) {
     return true;
   }
@@ -747,6 +749,10 @@ export const copyDeletedItemToTempForUndelete = (
     tempDeletedItem.softMoveTo = null;
     tempDeletedItem.softTransFrom = null;
     tempDeletedItem.undeleted = true;
+    tempDeletedItem.numSoftActionAttr = originalItem.numSoftActionAttr;
+  } else {
+    tempDeletedItem.id = originalItem.id;
+    tempDeletedItem.trackChangesAction = LEOS_TC_DELETE_ACTION;
   }
   tempDeletedItem.childItems = originalItem.childItems.map((child) =>
     copyDeletedItemToTempForUndelete(originalItem),
@@ -757,20 +763,28 @@ export const copyDeletedItemToTempForUndelete = (
 export const softDeleteMovedRootItems = (
   tocTree: TableOfContentItemVO[],
   item: TableOfContentItemVO,
-) => {
-  let index = 0;
-  while (index < item.childItems.length) {
-    index += softDeleteMovedRootItems(tocTree, item.childItems.at(index));
+): number => {
+  let totalDeletedItems = 0;
+
+  for (const childItem of item.childItems) {
+    totalDeletedItems += softDeleteMovedRootItems(tocTree, childItem);
   }
-  if (isRootElement(item) && MOVE_FROM === item.softActionAttr) {
+
+  if (
+    isRootElement(item) &&
+    MOVE_FROM.toLowerCase() === item.softActionAttr.toLowerCase()
+  ) {
     revertMoveAndTransformToSoftDeleted(tocTree, item);
-    return 0;
-  } else if (CN === item.originAttr && item.softActionAttr == null) {
-    // tocTree.getTreeData().removeItem(item);
-    // TableOfContentHelper.removeChildItem(item.getParentItem(), item);
-    return 0;
+    totalDeletedItems++;
+  } else if (
+    CN === item.originAttr.toLowerCase() &&
+    item.softActionAttr == null
+  ) {
+    removeNode(tocTree, item);
+    totalDeletedItems++;
   }
-  return 1;
+
+  return totalDeletedItems;
 };
 
 export const revertMoveAndTransformToSoftDeleted = (
@@ -837,14 +851,15 @@ export const copyDeletedItemToTemp = (
     tempDeletedItem.id = TEMP_PREFIX + originalItem.id;
   }
   tempDeletedItem.childItems = [];
-  originalItem.childItems.forEach((c) =>
-    tempDeletedItem.childItems.push(copyDeletedItemToTemp(c, false)),
-  );
+  originalItem.childItems.forEach((c) => {
+    c.parentItem = tempDeletedItem.id;
+    tempDeletedItem.childItems.push(copyDeletedItemToTemp(c, false));
+  });
   return tempDeletedItem;
 };
 
 export const isRootElement = (element: TableOfContentItemVO) =>
-  element.softActionAttr;
+  element.softActionRoot;
 
 export const isSourceDivision = (sourceItem: TableOfContentItemVO) =>
   sourceItem.tocItem.aknTag === DIVISION;

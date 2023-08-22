@@ -364,12 +364,3 @@
     </div>
   </eui-card-content>
 </eui-card>
-
-<app-confirm-delete-dialog
-  #deleteTocConfirmation
-  [title]="'toc.edit.window.item.selecdted.delete-dialog.title' | translate"
-  [description]="
-    'toc.edit.window.item.selecdted.delete-dialog.desc' | translate
-  "
-  (confirmDeletion)="this.handleTocRemove.emit()"
-></app-confirm-delete-dialog>

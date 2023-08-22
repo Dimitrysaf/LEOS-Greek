@@ -32,7 +32,6 @@ import {
 } from '@/shared/models';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import {
-  checkIfConfirmDeletion,
   convertArticle,
   findNodeById,
   getItemIndentLevel,
@@ -63,9 +62,6 @@ export class TocEditorComponent implements OnInit, OnChanges {
   @Output() handleTocRemove = new EventEmitter<TableOfContentItemVO>();
   @Output() handleNodeChangesEvent = new EventEmitter<any>();
   @Output() handleInvalidNodes = new EventEmitter<Set<TableOfContentItemVO>>();
-
-  @ViewChild('deleteTocConfirmation')
-  deleteDialog: ConfirmDeleteDialogComponent;
 
   isTocEditionInvalid: boolean;
 
@@ -122,12 +118,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {}
 
-  onTocDeleteWithChildren() {
-    this.deleteDialog.deleteDialog.openDialog();
-  }
-
   onTocRemove(node: TableOfContentItemVO) {
-    this.deleteWithConfirmationCheck(this.toc, node);
+    this.handleTocRemove.emit(node);
   }
 
   isArticle(tocItem: TocItem) {
@@ -290,17 +282,6 @@ export class TocEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  deleteWithConfirmationCheck(
-    tocTree: TableOfContentItemVO[],
-    item: TableOfContentItemVO,
-  ) {
-    if (checkIfConfirmDeletion(tocTree, item)) {
-      this.onTocDeleteWithChildren();
-    } else {
-      this.handleTocRemove.emit();
-    }
-  }
-
   handleHeadingChange(value: string) {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
@@ -353,6 +334,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
       const numberRegex = RegExp(this.numberConfig.regexJS);
+      console.log(this.numberConfig);
       if (number && numberRegex.test(number)) {
         //clear invalid
         if (!this.headingInvalid) {

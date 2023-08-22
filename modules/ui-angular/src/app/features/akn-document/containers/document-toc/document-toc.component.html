@@ -144,3 +144,11 @@
     ></app-toc-editor>
   </div>
 </div>
+
+<app-confirm-delete-dialog
+  #deleteTocConfirmation
+  [title]="'toc.edit.window.item.selecdted.delete-dialog.title' | translate"
+  [description]="
+    'toc.edit.window.item.selecdted.delete-dialog.desc' | translate
+  "
+></app-confirm-delete-dialog>

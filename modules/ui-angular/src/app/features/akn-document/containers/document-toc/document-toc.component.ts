@@ -11,6 +11,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
@@ -20,6 +21,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep, result, some, truncate, update } from 'lodash-es';
 import { Subject, take, takeUntil } from 'rxjs';
 
+import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   ADD,
   ARTICLE,
@@ -33,6 +36,7 @@ import {
   ELEMENTS_WITHOUT_CONTENT,
   HASH_NUM_VALUE,
   INDENT,
+  LEOS_TC_DELETE_ACTION,
   LEVEL,
   LS,
   MAX_TRUNCATION_LIMIT,
@@ -61,11 +65,13 @@ import {
   NodeValidation,
   NodeValidationResponse,
 } from '@/shared/models/drop-response.model';
+import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { scrollInParent } from '@/shared/utils';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
   checkDeleteOnLastItemInList,
+  checkIfConfirmDeletion,
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
   containsItem,
@@ -143,6 +149,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<any> = new Subject();
 
+  @ViewChild('deleteTocConfirmation')
+  deleteDialog: ConfirmDeleteDialogComponent;
+
   constructor(
     private documentService: DocumentService,
     private dialogService: EuiDialogService,
@@ -151,6 +160,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     public elementRef: ElementRef,
     private cdRef: ChangeDetectorRef,
     private store: Store,
+    private coEditionService: CoEditionServiceWS,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
@@ -316,6 +326,47 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     );
   }
 
+  deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
+    item.trackChangesAction = LEOS_TC_DELETE_ACTION;
+    if (this.environment === CN) {
+      this.setAffectedAttribute(item, newTree);
+      const parentItem = checkDeleteOnLastItemInList(newTree, item);
+      // LEOS-5958: Delete selected item element.
+      if (!containsItemOfOrigin(item, EC, CN)) {
+        this.removeNode(newTree, item);
+      } else {
+        softDeleteItem(newTree, item, CN);
+      }
+      // LEOS-5958: If parentItem is not null, means it is a list without any points. Then delete parentItem as well.
+      if (parentItem) {
+        if (!containsItemOfOrigin(parentItem, EC, CN)) {
+          this.removeNode(newTree, parentItem);
+        } else {
+          softDeleteItem(newTree, parentItem, CN);
+        }
+      } else {
+        const parent = this.findNodeById(newTree, item.parentItem);
+        updateDepthOfTocItems(parent.childItems);
+      }
+    } else {
+      if (!containsItemOfOrigin(item, EC, LS)) {
+        this.removeNode(newTree, item);
+      } else {
+        softDeleteItem(newTree, item, LS);
+      }
+      const parent = this.findNodeById(newTree, item.parentItem);
+      updateDepthOfTocItems(parent.childItems);
+
+      this.treeHistory.push(this.treeControl.dataNodes);
+      this.setTree(newTree);
+      this.selectedNodeToMove = null;
+    }
+
+    this.treeHistory.push(this.treeControl.dataNodes);
+    this.setTree(newTree);
+    this.selectedNodeToMove = null;
+  }
+
   handleTocRemove() {
     const newTree = cloneDeep(this.treeControl.dataNodes);
     const item = this.findNodeById(newTree, this.selectedNode.id);
@@ -323,52 +374,25 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       newTree,
       item,
     );
-    const deleteTocElement = () => {
-      if (this.environment === CN) {
-        this.setAffectedAttribute(item, newTree);
-        // LEOS-5958: Delete selected item element.
-        if (!containsItemOfOrigin(item, EC, CN)) {
-          this.removeNode(newTree, item);
-        } else {
-          softDeleteItem(newTree, item, CN);
-        }
-        // LEOS-5958: If parentItem is not null, means it is a list without any points. Then delete parentItem as well.
-        if (parentItem != null) {
-          if (!containsItemOfOrigin(parentItem, EC, CN)) {
-            this.removeNode(newTree, parentItem);
-          } else {
-            softDeleteItem(newTree, parentItem, CN);
-          }
-        } else {
-          const parent = this.findNodeById(newTree, item.parentItem);
-          updateDepthOfTocItems(parent.childItems);
-        }
+
+    if (item) {
+      if (item.softActionAttr === DELETE) {
+        this.undeleteItem(newTree, item);
       } else {
-        if (!containsItemOfOrigin(item, EC, LS)) {
-          this.removeNode(newTree, item);
+        if (this.coEditionService.checkForCoEdition('EDIT_TOC')) {
+          // co edition dialog
+          this.dialogService.openDialog({
+            title: this.translateService.instant(
+              'page.editor.co-edition-detected.title',
+            ),
+            bodyComponent: {
+              component: CoEditionDetectedDialogComponent,
+            },
+            accept: () => this.deleteWithConfirmationCheck(newTree, item),
+          });
         } else {
-          softDeleteItem(newTree, item, LS);
+          this.deleteWithConfirmationCheck(newTree, item);
         }
-        const parent = this.findNodeById(newTree, item.parentItem);
-        updateDepthOfTocItems(parent.childItems);
-
-        this.treeHistory.push(this.treeControl.dataNodes);
-        this.setTree(newTree);
-        this.selectedNodeToMove = null;
-      }
-
-      this.treeHistory.push(this.treeControl.dataNodes);
-      this.setTree(newTree);
-      this.selectedNodeToMove = null;
-    };
-
-    if (isDeletedItem(item)) {
-      this.undeleteItem(newTree, item);
-    } else {
-      if (isNodeLastElement(this.treeControl.dataNodes, item.id)) {
-        this.openLastElementDeleteConfirmation(deleteTocElement);
-      } else {
-        deleteTocElement();
       }
     }
   }
@@ -400,6 +424,25 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     );
     this.removeNode(tocTree, tableOfContentItemVO);
   };
+
+  deleteWithConfirmationCheck(
+    newTree: TableOfContentItemVO[],
+    item: TableOfContentItemVO,
+  ) {
+    if (checkIfConfirmDeletion(newTree, item)) {
+      this.onTocDeleteWithChildren();
+      this.deleteDialog.deleteDialog.accept.subscribe(() => {
+        console.log('deleting');
+        this.deleteItem(newTree, item);
+      });
+    } else {
+      this.deleteItem(newTree, item);
+    }
+  }
+
+  onTocDeleteWithChildren() {
+    this.deleteDialog.deleteDialog.openDialog();
+  }
 
   performAddOrMoveAction(
     isAdd: boolean,
