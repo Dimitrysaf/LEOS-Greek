@@ -14,7 +14,6 @@
 package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.TestUtils;
-import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
@@ -37,25 +36,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public class MilestonesServiceTests {
-    private static final Logger LOG = LoggerFactory.getLogger(MilestonesServiceTests.class);
-
     @Autowired
     PackageService packageService;
     @Autowired
@@ -66,7 +55,6 @@ public class MilestonesServiceTests {
     DocumentMilestoneListRepository documentMilestoneListRepository;
 
     private LeosDocument milestone;
-    private final String REPO_ID = "leos_dev";
     private final String PKG_NAME = "testMilestone";
     private final String MILESTONE_NAME = "PROP_ACT-clilif9gy0000ro28zt8al0yh-en.leg";
     private final String CAT = "LEG";
@@ -75,7 +63,7 @@ public class MilestonesServiceTests {
 
     @Before
     public void setup() throws RepositoryException {
-        pkg = packageService.createPackage(PKG_NAME, REPO_ID, false, null, "demo");
+        pkg = packageService.createPackage(PKG_NAME, null,null, "demo");
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");
             put("containedDocuments", Arrays.asList("ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z-en.xml",
@@ -89,7 +77,7 @@ public class MilestonesServiceTests {
             put("jobId", "230607113102710TBXAVVHGGP");
         }};
         content = TestUtils.getFileContent("/milestone/PROP_ACT-TEST-EN.leg");
-        milestone = documentService.createDocumentFromContent(REPO_ID, PKG_NAME,
+        milestone = documentService.createDocumentFromContent(PKG_NAME,
                 MILESTONE_NAME, properties, "0.1.1", 3,
                 content, "First version", "jane");
         assertNotNull(milestone);
@@ -103,7 +91,7 @@ public class MilestonesServiceTests {
 
     @After
     public void after() throws RepositoryException {
-        packageService.deletePackage(REPO_ID, PKG_NAME);
+        packageService.deletePackage(PKG_NAME);
     }
 
     @Test
@@ -170,7 +158,7 @@ public class MilestonesServiceTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageName() throws RepositoryException {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
+        List<LeosDocument> docs = packageService.findDocumentsByPackageName( "%",
                 Sets.set("LEG"), true, false);
         assertEquals(1, docs.size());
     }

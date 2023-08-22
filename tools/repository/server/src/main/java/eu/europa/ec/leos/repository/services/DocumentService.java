@@ -24,10 +24,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface DocumentService {
-    LeosDocument createDocumentFromContent(final String repositoryId, final String packageName, final String name, Map<String, ?> metadata,
+    LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> metadata,
                                            final String labelVersion, int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException;
 
-    LeosDocument createDocumentFromSource(final String repositoryId, final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
+    LeosDocument createDocumentFromSource(final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
                                         final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
     LeosDocument updateDocument(final String ref, Map<String, ?> properties,

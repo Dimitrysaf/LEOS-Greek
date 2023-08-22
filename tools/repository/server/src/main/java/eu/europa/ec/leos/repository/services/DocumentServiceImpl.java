@@ -90,9 +90,6 @@ public class DocumentServiceImpl implements DocumentService {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${repository.default.id}")
-    private String repositoryId;
-
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
                                DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
@@ -119,7 +116,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public LeosDocument createDocumentFromContent(final String repositoryId, final String packageName, final String name, Map<String, ?> metadata,
+    public LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> metadata,
                                                   final String labelVersion,
                                                   int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException {
         try {
@@ -132,7 +129,7 @@ public class DocumentServiceImpl implements DocumentService {
                             , ConversionUtils.LEOS_REPO_DATE_FORMAT)) : LocalDateTime.now();
 
             // FIRST STEP: get package
-            Package pkg = packageRepository.findPackageByName(repositoryId, packageName).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
+            Package pkg = packageRepository.findPackageByName(packageName).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
             DocumentCategories docCat
                     =
                     documentCategoriesRepository.findDocumentCategoriesByCategoryCode((String) metadata.get(PropertiesMetadata.CATEGORY.getLeosName())).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentCategories.class.getName()));
@@ -202,11 +199,11 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public LeosDocument createDocumentFromSource(final String repositoryId, final String sourceDocumentName, final String packageName, final String name, Map<String, ?> metadata,
+    public LeosDocument createDocumentFromSource(final String sourceDocumentName, final String packageName, final String name, Map<String, ?> metadata,
                                        final String labelVersion, int versionType, String comments, String userId)  throws RepositoryException {
         LeosDocument template = findTemplateByName(sourceDocumentName);
         metadata = mergeDocMetadataWithTemplateMetadata(metadata, template);
-        return createDocumentFromContent(repositoryId, packageName, name, metadata, labelVersion, versionType, template.getSource(), comments, userId);
+        return createDocumentFromContent(packageName, name, metadata, labelVersion, versionType, template.getSource(), comments, userId);
     }
 
     private Map<String, ?> mergeDocMetadataWithTemplateMetadata(Map<String, ?> metadata, LeosDocument template) {
@@ -569,11 +566,9 @@ public class DocumentServiceImpl implements DocumentService {
         //Build query
         StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         } else {
-            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+            queryBuild.append(String.format(" "));
         }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 
@@ -589,11 +584,9 @@ public class DocumentServiceImpl implements DocumentService {
         //Build query
         StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         } else {
-            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+            queryBuild.append(String.format(" "));
         }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 

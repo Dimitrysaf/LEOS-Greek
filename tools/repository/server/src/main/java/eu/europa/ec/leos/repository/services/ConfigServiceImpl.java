@@ -10,7 +10,6 @@ import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +27,9 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ConfigContentRepository configContentRepository;
 
-    @Value("${repository.default.id}")
-    private String repositoryId;
-
     @Cacheable(cacheNames = "findConfigByName")
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
-        Optional<Config> hasDoc = configRepository.findConfigByNameAndRepositoryId(repositoryId, name);
+        Optional<Config> hasDoc = configRepository.findConfigByNameAndRepositoryId(name);
         if (hasDoc.isPresent()) {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(hasDoc.get().getId());
             if (version == null) {

@@ -43,8 +43,6 @@ public class CollaboratorsRepositoryTests {
     @Autowired
     PackageRepository packageRepository;
 
-    private final String REPO_ID = "leos_dev";
-
     @Test
     @Transactional
     public void test_getCollaboratorsFromPackageId() {
@@ -57,7 +55,7 @@ public class CollaboratorsRepositoryTests {
     @Test
     @Transactional
     public void test_getCollaboratorsFromPackage() {
-        Optional<Package> pkg = packageRepository.findPackageByName(REPO_ID, "package_leos");
+        Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
         assertTrue(pkg.isPresent());
         List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg.get());
         assertEquals(collaboratorsList.size(), 1);

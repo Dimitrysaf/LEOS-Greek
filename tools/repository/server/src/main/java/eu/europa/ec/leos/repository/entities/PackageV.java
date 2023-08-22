@@ -39,7 +39,6 @@ import javax.xml.bind.annotation.XmlRootElement;
         @NamedQuery(name = "PackageV.findByPackageId", query = "SELECT p FROM PackageV p WHERE p.packageId = :packageId"),
         @NamedQuery(name = "PackageV.findByPkgObjectId", query = "SELECT p FROM PackageV p WHERE p.pkgObjectId = :pkgObjectId"),
         @NamedQuery(name = "PackageV.findByPackageName", query = "SELECT p FROM PackageV p WHERE p.packageName = :packageName"),
-        @NamedQuery(name = "PackageV.findByRepositoryId", query = "SELECT p FROM PackageV p WHERE p.repositoryId = :repositoryId"),
         @NamedQuery(name = "PackageV.findByAuditCDate", query = "SELECT p FROM PackageV p WHERE p.auditCDate = :auditCDate"),
         @NamedQuery(name = "PackageV.findByAuditCBy", query = "SELECT p FROM PackageV p WHERE p.auditCBy = :auditCBy"),
         @NamedQuery(name = "PackageV.findByAuditLastMDate", query = "SELECT p FROM PackageV p WHERE p.auditLastMDate = :auditLastMDate"),
@@ -89,8 +88,6 @@ public class PackageV implements Serializable {
     private BigDecimal pkgObjectId;
     @Column(name = "PACKAGE_NAME", updatable = false)
     private String packageName;
-    @Column(name = "REPOSITORY_ID", updatable = false)
-    private BigDecimal repositoryId;
     @Column(name = "AUDIT_C_DATE", updatable = false)
     private LocalDateTime auditCDate;
     @Column(name = "AUDIT_C_BY", updatable = false)
@@ -202,14 +199,6 @@ public class PackageV implements Serializable {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
-    }
-
-    public BigDecimal getRepositoryId() {
-        return repositoryId;
-    }
-
-    public void setRepositoryId(BigDecimal repositoryId) {
-        this.repositoryId = repositoryId;
     }
 
     public LocalDateTime getAuditCDate() {
