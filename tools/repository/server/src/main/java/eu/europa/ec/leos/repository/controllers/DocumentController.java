@@ -31,10 +31,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,13 +47,9 @@ import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 @RestController
 @Tag(name = "Document API", description = "Document API")
 public class DocumentController {
-    private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     DocumentService documentService;
-
-    @Value("${repository.default.id}")
-    private String repositoryId;
 
     @PutMapping(path = "/document/create-with-content",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -68,7 +61,7 @@ public class DocumentController {
     public ResponseEntity<Object> createDocumentFromContent(@Validated(OnCreateFromContent.class)
                                                             @Valid @RequestBody CreateDocumentRequest createDocumentRequest)
             throws RepositoryException {
-        LeosDocument xmlDoc = documentService.createDocumentFromContent(repositoryId, createDocumentRequest.getPackageName(),
+        LeosDocument xmlDoc = documentService.createDocumentFromContent(createDocumentRequest.getPackageName(),
                 createDocumentRequest.getName(),
                 createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),
                 createDocumentRequest.getContent(), createDocumentRequest.getComments(), createDocumentRequest.getUserId());
@@ -85,7 +78,7 @@ public class DocumentController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> createDocumentFromSource(@Validated(OnCreateFromSource.class) @Valid @RequestBody CreateDocumentRequest createDocumentRequest)
             throws RepositoryException {
-        LeosDocument xmlDoc = documentService.createDocumentFromSource(repositoryId, createDocumentRequest.getSourceDocumentId(),
+        LeosDocument xmlDoc = documentService.createDocumentFromSource(createDocumentRequest.getSourceDocumentId(),
                 createDocumentRequest.getPackageName(),
                 createDocumentRequest.getName(),
                 createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),

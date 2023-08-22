@@ -51,9 +51,6 @@ public class PackageController {
     @Autowired
     PackageService packageService;
 
-    @Value("${repository.default.id}")
-    private String repositoryId;
-
     @PostMapping(path = "/package/create/{name}",
     consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE} )
@@ -65,7 +62,7 @@ public class PackageController {
                                                  @Valid @RequestBody CreatePackageRequest createPackageRequest) throws Exception
     {
         name = decode(name);
-        Package p = packageService.createPackage(name, repositoryId, createPackageRequest.getIsCloned(),
+        Package p = packageService.createPackage(name, createPackageRequest.getIsCloned(),
                 createPackageRequest.getClonedPackageName(), createPackageRequest.getUserId());
         p =  RestPreconditions.checkFound(p, HttpStatus.NOT_FOUND ,"Error while creating package");
         return ResponseEntity.ok(p);
@@ -78,7 +75,7 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity deletePackage(@PathVariable("name") String packageName) throws Exception {
         packageName = decode(packageName);
-        packageService.deletePackage(repositoryId, packageName);
+        packageService.deletePackage(packageName);
         return ResponseEntity.ok().build();
     }
 
@@ -89,7 +86,7 @@ public class PackageController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getPackageByName(@PathVariable("name") String name) throws MalformedURLException, RepositoryException{
         name = decode(name);
-        Package pkg = packageService.getPackageByName(repositoryId, name);
+        Package pkg = packageService.getPackageByName(name);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
         return ResponseEntity.ok(pkg);
     }
@@ -117,7 +114,7 @@ public class PackageController {
                                                                        @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
                                                                   @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) throws Exception {
         name = decode(name);
-        LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageName(repositoryId, name, findDocumentsRequest.getCategories(),
+        LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageName(name, findDocumentsRequest.getCategories(),
                 descendants, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);

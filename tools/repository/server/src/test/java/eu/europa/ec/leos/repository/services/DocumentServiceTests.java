@@ -88,18 +88,17 @@ public class DocumentServiceTests {
     @Autowired
     DocumentMilestoneListRepository documentMilestoneListRepository;
 
-    private final String REPO_ID = "leos_dev";
     private final String USER_ID = "jane";
     private eu.europa.ec.leos.repository.model.Package pkg;
 
     @Before
     public void setup() {
-        pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
+        pkg = packageService.createPackage("test", false, null, "demo");
     }
 
     @After
     public void clean() throws RepositoryException {
-        packageService.deletePackage(REPO_ID, pkg.getName());
+        packageService.deletePackage(pkg.getName());
     }
 
     private LeosDocument docCreation() throws RepositoryException {
@@ -118,7 +117,7 @@ public class DocumentServiceTests {
             put("template", "SJ-023");
             put("docStage", "Proposal for a");
         }};
-        return documentService.createDocumentFromSource(REPO_ID, "BL-023", pkg.getName(),
+        return documentService.createDocumentFromSource("BL-023", pkg.getName(),
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.0", 1, "First version", USER_ID);
     }
 
@@ -225,7 +224,7 @@ public class DocumentServiceTests {
                 "            </block></conclusions>\n" +
                 "    </bill>\n" +
                 "</akomaNtoso>";
-        LeosDocument doc = documentService.createDocumentFromContent(REPO_ID, pkg.getName(),
+        LeosDocument doc = documentService.createDocumentFromContent(pkg.getName(),
                     "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3,
                     content.getBytes(StandardCharsets.UTF_8), "First version", USER_ID);
         assertNotNull(doc);
@@ -267,7 +266,7 @@ public class DocumentServiceTests {
             put("jobId", "230607113102710TBXAVVHGGP");
         }};
         byte[] content = TestUtils.getFileContent("/milestone/PROP_ACT-TEST-EN.leg");
-        LeosDocument doc = documentService.createDocumentFromContent(REPO_ID, pkg.getName(),
+        LeosDocument doc = documentService.createDocumentFromContent(pkg.getName(),
                 "PROP_ACT-clilif9gy0000ro28zt8al0yh-en.leg", properties, "0.1.1", 3,
                 content, "First version", USER_ID);
         assertNotNull(doc);
@@ -300,7 +299,7 @@ public class DocumentServiceTests {
         }};
         LeosDocument t = documentService.findTemplateByName("BL-023");
         assertNotNull(t);
-        LeosDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", pkg.getName(),
+        LeosDocument doc = documentService.createDocumentFromSource("BL-023", pkg.getName(),
                     "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version", USER_ID);
         assertNotNull(doc);
         Optional<Document> docT = documentRepository.findDocumentByRef(doc.getRef());
@@ -531,7 +530,7 @@ public class DocumentServiceTests {
             put("category", "BILL");
             put("docStage", "Proposal for a");
         }};
-        LeosDocument doc = documentService.createDocumentFromSource(REPO_ID,"BL-023", pkg.getName(),
+        LeosDocument doc = documentService.createDocumentFromSource("BL-023", pkg.getName(),
                 "REG-clh5v2p720007ng28khrr03h7-en.xml", properties, "0.1.1", 3, "First version", USER_ID);
 
         doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),

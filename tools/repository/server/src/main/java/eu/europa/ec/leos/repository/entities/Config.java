@@ -40,7 +40,6 @@ import javax.persistence.Table;
         @NamedQuery(name = "Config.findByAuditLastMBy", query = "SELECT c FROM Config c WHERE c.auditLastMBy = :auditLastMBy"),
         @NamedQuery(name = "Config.findByAuditLastMDate", query = "SELECT c FROM Config c WHERE c.auditLastMDate = :auditLastMDate"),
         @NamedQuery(name = "Config.findByOriginalId", query = "SELECT c FROM Config c WHERE c.originalId = :originalId"),
-        @NamedQuery(name = "Config.findByRepositoryId", query = "SELECT c FROM Config c WHERE c.repositoryId = :repositoryId"),
         @NamedQuery(name = "Config.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language")})
 public class Config implements Serializable {
 
@@ -65,8 +64,6 @@ public class Config implements Serializable {
     private String auditLastMBy;
     @Column(name = "ORIGINAL_ID", precision = 22, scale = 0)
     private BigDecimal originalId;
-    @Column(name = "REPOSITORY_ID", precision = 22, scale = 0)
-    private BigDecimal repositoryId;
     @Column(name = "LANGUAGE")
     private String language;
     @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
@@ -134,14 +131,6 @@ public class Config implements Serializable {
 
     public void setAuditLastMDate(LocalDateTime auditLastMDate) {
         this.auditLastMDate = auditLastMDate;
-    }
-
-    public BigDecimal getRepositoryId() {
-        return repositoryId;
-    }
-
-    public void setRepositoryId(BigDecimal repositoryId) {
-        this.repositoryId = repositoryId;
     }
 
     public String getLanguage() {

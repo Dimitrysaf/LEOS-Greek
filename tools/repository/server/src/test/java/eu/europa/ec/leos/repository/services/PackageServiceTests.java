@@ -20,8 +20,6 @@ import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,25 +38,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("test")
 public class PackageServiceTests {
 
-    private static Logger LOG = LoggerFactory.getLogger(PackageServiceTests.class);
-
     @Autowired
     private PackageService packageService;
     @Autowired
     private PackageRepository packageRepository;
 
-    private final String REPO_ID = "leos_dev";
-
     @Test
     @Transactional
     public void test_createAndDeletePackage() throws RepositoryException {
-        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", "leos_dev", false, null, "demo");
-        Optional<Package> pkgO = packageRepository.findPackageByName(REPO_ID, "test");
+        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", false,null, "demo");
+        Optional<Package> pkgO = packageRepository.findPackageByName( "test");
         assertTrue(pkgO.isPresent());
         long count = packageRepository.count();
         assertEquals(2, count);
-        packageService.deletePackage(REPO_ID, pkg.getName());
-        pkgO = packageRepository.findPackageByName(REPO_ID, "test");
+        packageService.deletePackage( pkg.getName());
+        pkgO = packageRepository.findPackageByName("test");
         assertFalse(pkgO.isPresent());
         count = packageRepository.count();
         assertEquals(1, count);
@@ -76,14 +70,14 @@ public class PackageServiceTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageName() throws RepositoryException {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
+        List<LeosDocument> docs = packageService.findDocumentsByPackageName( "%",
                 Sets.set(
                 "PROPOSAL", "BILL"), true, false);
         assertEquals(2, docs.size());
-        docs = packageService.findDocumentsByPackageName(REPO_ID, "%",
+        docs = packageService.findDocumentsByPackageName( "%",
                 Sets.set("PROPOSAL", "BILL"), false, false);
         assertEquals(0, docs.size());
-        docs = packageService.findDocumentsByPackageName(REPO_ID, "package_leos", Sets.set("PROPOSAL", "ANNEX"), false, false);
+        docs = packageService.findDocumentsByPackageName( "package_leos", Sets.set("PROPOSAL", "ANNEX"), false, false);
         assertEquals(2, docs.size());
     }
 }

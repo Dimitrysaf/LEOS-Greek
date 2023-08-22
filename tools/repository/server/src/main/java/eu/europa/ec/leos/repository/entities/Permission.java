@@ -13,20 +13,10 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "PERMISSION")
@@ -60,9 +50,6 @@ public class Permission implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "AUDIT_LAST_M_BY")
     private String auditLastMBy;
-    @JoinColumn(name = "REPOSITORY_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Repository repositoryId;
 
     public Permission() {
     }
@@ -133,14 +120,6 @@ public class Permission implements Serializable {
 
     public void setAuditLastMBy(String auditLastMBy) {
         this.auditLastMBy = auditLastMBy;
-    }
-
-    public Repository getRepositoryId() {
-        return repositoryId;
-    }
-
-    public void setRepositoryId(Repository repositoryId) {
-        this.repositoryId = repositoryId;
     }
 
     @Override

@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Package.findById", query = "SELECT p FROM Package p WHERE p.id = :id"),
     @NamedQuery(name = "Package.findByObjectId", query = "SELECT p FROM Package p WHERE p.objectId = :objectId"),
     @NamedQuery(name = "Package.findByName", query = "SELECT p FROM Package p WHERE p.name = :name"),
-    @NamedQuery(name = "Package.findByRepositoryId", query = "SELECT p FROM Package p WHERE p.repositoryId = :repositoryId"),
     @NamedQuery(name = "Package.findByAuditCBy", query = "SELECT p FROM Package p WHERE p.auditCBy = :auditCBy"),
     @NamedQuery(name = "Package.findByAuditCDate", query = "SELECT p FROM Package p WHERE p.auditCDate = :auditCDate"),
     @NamedQuery(name = "Package.findByAuditLastMBy", query = "SELECT p FROM Package p WHERE p.auditLastMBy = :auditLastMBy"),
@@ -54,8 +53,6 @@ public class Package implements Serializable {
     private BigDecimal objectId;
     @Column(name = "NAME", nullable = false)
     private String name;
-    @Column(name = "REPOSITORY_ID", nullable = false, precision = 22, scale = 0)
-    private BigDecimal repositoryId;
     @Column(name = "AUDIT_C_BY", nullable = false)
     private String auditCBy;
     @Column(name = "AUDIT_C_DATE", nullable = false)
@@ -76,11 +73,10 @@ public class Package implements Serializable {
         this.id = id;
     }
 
-    public Package(BigDecimal id, BigDecimal objectId, String name, BigDecimal repositoryId, String auditCBy, LocalDateTime auditCDate) {
+    public Package(BigDecimal id, BigDecimal objectId, String name, String auditCBy, LocalDateTime auditCDate) {
         this.id = id;
         this.objectId = objectId;
         this.name = name;
-        this.repositoryId = repositoryId;
         this.auditCBy = auditCBy;
         this.auditCDate = auditCDate;
     }
@@ -107,14 +103,6 @@ public class Package implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public BigDecimal getRepositoryId() {
-        return repositoryId;
-    }
-
-    public void setRepositoryId(BigDecimal repositoryId) {
-        this.repositoryId = repositoryId;
     }
 
     public String getAuditCBy() {

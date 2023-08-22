@@ -45,9 +45,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     @Autowired
     private EntityManager entityManager;
 
-    @Value("${repository.default.id}")
-    private String repositoryId;
-
     public List<LeosDocument> findMilestonesByStatus(String status) {
         List<LeosDocument> legDocuments = new ArrayList<>();
         List<MilestoneV> milestones = milestoneVRepository.findMilestonesByStatus(status);
@@ -298,11 +295,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         StringBuilder queryBuild = new StringBuilder(
                 String.format("SELECT m FROM MilestoneV m WHERE ", packageName));
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         } else {
-            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+            queryBuild.append(String.format(" "));
         }
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
@@ -319,11 +314,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         StringBuilder queryBuild = new StringBuilder(
                 String.format("SELECT COUNT(m) FROM MilestoneV m WHERE", packageName));
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s' AND p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", packageName, repositoryId));
+            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         } else {
-            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM " +
-                    "Repository r WHERE r.cmisId = '%s'))", repositoryId));
+            queryBuild.append(String.format(" "));
         }
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
@@ -332,7 +325,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
 
     private void buildQueryWithFilterQuery(StringBuilder queryBuild, final Set<String> categories, final QueryFilter queryFilter) {
         if (!categories.isEmpty()) {
-            queryBuild.append(" AND ");
             String categoryStr = categories.stream()
                     .map(a -> "'" + a + "'")
                     .collect(Collectors.joining(","));

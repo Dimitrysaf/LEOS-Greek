@@ -15,7 +15,6 @@ package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
-import eu.europa.ec.leos.repository.entities.Repository;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
@@ -26,7 +25,6 @@ import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepositor
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
-import eu.europa.ec.leos.repository.repositories.RepositoryRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +45,6 @@ public class PackageServiceImpl implements PackageService {
     private final DocumentVRepository documentVRepository;
     private final MilestoneVRepository milestoneVRepository;
     private final PackageRepository packageRepository;
-    private final RepositoryRepository repositoryRepository;
     private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
     private final DocumentContentRepository documentContentRepository;
     private final CollaboratorsService collaboratorsService;
@@ -59,7 +55,7 @@ public class PackageServiceImpl implements PackageService {
 
     @Autowired
     public PackageServiceImpl(DocumentVRepository documentVRepository, MilestoneVRepository milestoneVRepository, PackageRepository packageRepository,
-                              RepositoryRepository repositoryRepository, DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                              DocumentPropertyValuesRepository documentPropertyValuesRepository,
                               DocumentContentRepository documentContentRepository, CollaboratorsService collaboratorsService,
                               DocumentMilestoneListRepository documentMilestoneListRepository, DocumentCategoriesRepository documentCategoriesRepository,
                               EntityManager entityManager,
@@ -67,7 +63,6 @@ public class PackageServiceImpl implements PackageService {
         this.documentVRepository = documentVRepository;
         this.milestoneVRepository = milestoneVRepository;
         this.packageRepository = packageRepository;
-        this.repositoryRepository = repositoryRepository;
         this.documentContentRepository = documentContentRepository;
         this.documentPropertyValuesRepository = documentPropertyValuesRepository;
         this.collaboratorsService = collaboratorsService;
@@ -78,28 +73,21 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final String repository, final Boolean isCloned, final String clonedPackageName
-            , final String userId) {
-        Repository repo = repositoryRepository.findRepositoryByCmisId(repository);
-        if (repo != null) {
+    public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName, final String userId) {
             Package pkg = new Package();
             pkg.setObjectId(new BigDecimal(0));
             pkg.setName(name);
-            pkg.setRepositoryId(repo.getId());
             pkg.setAuditCBy(userId);
             pkg.setAuditCDate(LocalDateTime.now());
             pkg.setAuditLastMBy(userId);
             pkg.setAuditLastMDate(LocalDateTime.now());
             return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
-        } else {
-            return null;
-        }
     }
 
     @Cacheable(cacheNames = "getPackageByName")
-    public eu.europa.ec.leos.repository.model.Package getPackageByName(final String repositoryId, final String name) throws RepositoryException {
+    public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
-                packageRepository.findPackageByName(repositoryId, name).orElse(null);
+                packageRepository.findPackageByName(name).orElse(null);
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
@@ -116,9 +104,9 @@ public class PackageServiceImpl implements PackageService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public void deletePackage(final String repositoryId, final String packageName) throws RepositoryException {
+    public void deletePackage(final String packageName) throws RepositoryException {
         try {
-            Optional<Package> pkg = packageRepository.findPackageByName(repositoryId, packageName);
+            Optional<Package> pkg = packageRepository.findPackageByName(packageName);
             if (pkg.isPresent()) {
                 // Remove all docs inside package
                 List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.get().getId().toString());
@@ -140,16 +128,14 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public List<LeosDocument> findDocumentsByPackageName(final String repositoryId, String packageName, final Set<String> categories,
+    public List<LeosDocument> findDocumentsByPackageName(String packageName, final Set<String> categories,
                                                          final boolean descendants, boolean fetchContent) {
         StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = " +
                 "true");
         StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE");
         if (!descendants) {
-            docQuery.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM Repository r WHERE r" +
-                    ".cmisId = '%s') AND p.name = '%s')", repositoryId, packageName));
-            milestoneQuery.append(String.format(" d.packageId IN (SELECT p.id FROM Package p WHERE p.repositoryId IN (SELECT r.id FROM Repository r WHERE r" +
-                            ".cmisId = '%s') AND p.name = '%s')", repositoryId, packageName));
+            docQuery.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
+            milestoneQuery.append(String.format(" d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         }
         docQuery.append(" AND");
         if (!descendants && categories != null) {

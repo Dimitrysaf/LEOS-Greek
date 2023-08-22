@@ -66,7 +66,6 @@ public class PackageIntegrationTests {
     private final BigDecimal PKG_ID = new BigDecimal(3);
     private final String PKG_NAME = "package-test";
     private final String TEST_PKG_NAME = "package_test";
-    private final String REPO_ID = "leos_dev";
     private final Date currentTimeStamp = new Date();
     private eu.europa.ec.leos.repository.model.Package pkg;
     private eu.europa.ec.leos.repository.model.Package clonedPkg;
@@ -185,7 +184,6 @@ public class PackageIntegrationTests {
         pkgEntity.setAuditCDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
         pkgEntity.setAuditLastMBy(USER);
         pkgEntity.setAuditLastMDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
-        pkgEntity.setRepositoryId(new BigDecimal(10000));
         pkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
 
         clonedPkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
@@ -213,7 +211,7 @@ public class PackageIntegrationTests {
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
         createPackageRequest.setUserId(USER);
         String json = mapper.writeValueAsString(createPackageRequest);
-        when(packageService.createPackage(ArgumentMatchers.eq(PKG_NAME), ArgumentMatchers.eq(REPO_ID),
+        when(packageService.createPackage(ArgumentMatchers.eq(PKG_NAME),
                 ArgumentMatchers.eq(createPackageRequest.getIsCloned()),
                 ArgumentMatchers.eq(createPackageRequest.getClonedPackageName()), ArgumentMatchers.eq(createPackageRequest.getUserId()))).thenReturn(pkg);
 
@@ -235,7 +233,7 @@ public class PackageIntegrationTests {
     @Test
     public void deletePackage() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
-                "Package Not Found")).when(packageService).deletePackage(REPO_ID, PKG_NAME);
+                "Package Not Found")).when(packageService).deletePackage( PKG_NAME);
 
         mockMvc.perform(delete("/package/delete/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -250,7 +248,7 @@ public class PackageIntegrationTests {
         String json = mapper.writeValueAsString(findDocumentsRequest);
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
 
-        when(packageService.findDocumentsByPackageName(REPO_ID, TEST_PKG_NAME, findDocumentsRequest.getCategories(), false, false))
+        when(packageService.findDocumentsByPackageName(TEST_PKG_NAME, findDocumentsRequest.getCategories(), false, false))
                 .thenReturn(listDocs);
 
         mockMvc.perform(post("/package/find-by-name/{name}/documents", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)

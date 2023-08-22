@@ -3,12 +3,12 @@ package eu.europa.ec.leos.repository.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.DocumentController;
+import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
+import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
-import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
-import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.services.DocumentService;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
@@ -31,35 +31,22 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = DocumentController.class)
 @ActiveProfiles("test")
 public class DocumentIntegrationTests {
-    private static Logger LOG = LoggerFactory.getLogger(DocumentIntegrationTests.class);
-
     @Autowired
     protected MockMvc mockMvc;
 
@@ -78,7 +65,6 @@ public class DocumentIntegrationTests {
     private final String PKG_NAME = "package-test";
     private final BigDecimal PKG_ID = new BigDecimal(3);
     private final BigDecimal DOC_ID = new BigDecimal(6);
-    private final String REPO_ID = "leos_dev";
     private eu.europa.ec.leos.repository.model.Package pkg;
     private final Date currentTimeStamp = new Date();
     private LeosDocument xmlDoc;
@@ -189,7 +175,6 @@ public class DocumentIntegrationTests {
         pkgEntity.setAuditCDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
         pkgEntity.setAuditLastMBy(USER);
         pkgEntity.setAuditLastMDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
-        pkgEntity.setRepositoryId(new BigDecimal(10000));
         pkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
     }
 
@@ -227,7 +212,7 @@ public class DocumentIntegrationTests {
         createDocumentRequest.setVersionType(xmlDoc.getVersionType());
         createDocumentRequest.setUserId(USER);
         String json = mapper.writeValueAsString(createDocumentRequest);
-        when(documentService.createDocumentFromContent(ArgumentMatchers.eq(REPO_ID), ArgumentMatchers.eq(createDocumentRequest.getPackageName()),
+        when(documentService.createDocumentFromContent(ArgumentMatchers.eq(createDocumentRequest.getPackageName()),
                 ArgumentMatchers.eq(createDocumentRequest.getName()),
                 anyMap(),
                 ArgumentMatchers.eq(createDocumentRequest.getLabelVersion()),
@@ -278,7 +263,7 @@ public class DocumentIntegrationTests {
         createDocumentRequest.setVersionType(xmlDoc.getVersionType());
         createDocumentRequest.setUserId(USER);
         String json = mapper.writeValueAsString(createDocumentRequest);
-        when(documentService.createDocumentFromSource(ArgumentMatchers.eq(REPO_ID),
+        when(documentService.createDocumentFromSource(
                 ArgumentMatchers.eq(createDocumentRequest.getSourceDocumentId()),
                 ArgumentMatchers.eq(createDocumentRequest.getPackageName()), ArgumentMatchers.eq(createDocumentRequest.getName()),
                 anyMap(),
