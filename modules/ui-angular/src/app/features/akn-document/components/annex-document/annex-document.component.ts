@@ -60,8 +60,16 @@ export class AnnexDocumentComponent
   ngOnChanges(changes: SimpleChanges): void {
     if ('xml' in changes && changes.xml.currentValue !== undefined) {
       const rootEl = this.rootElementRef.nativeElement;
+      rootEl.innerHTML = '';
+      rootEl.classList.add('leos');
       this.xml = changes.xml.currentValue;
-      rootEl.innerHTML = this.xml;
+      const leosDocumentView = this.document.createElement('div');
+      leosDocumentView.classList.add('leos-document-view');
+      const leosDocumentContent = this.document.createElement('div');
+      leosDocumentContent.classList.add('leos-doc-content');
+      leosDocumentContent.innerHTML = this.xml;
+      leosDocumentView.appendChild(leosDocumentContent);
+      rootEl.appendChild(leosDocumentView);
       this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (

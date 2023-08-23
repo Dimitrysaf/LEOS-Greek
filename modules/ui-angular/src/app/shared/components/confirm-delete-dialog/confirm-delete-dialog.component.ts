@@ -27,11 +27,13 @@ export class ConfirmDeleteDialogComponent implements OnInit {
 
   handleConfirm() {
     this.confirmDeletion.emit();
+    this.deleteDialog.accept.emit();
     this.deleteDialog.closeDialog();
   }
 
   handleCancel() {
     this.cancelDelete.emit();
+    this.deleteDialog.dismiss.emit();
     this.deleteDialog.closeDialog();
   }
 }

@@ -48,6 +48,7 @@ export class TableOfContentItemVO {
   label?: string;
   itemDescription?: string;
   tocStyling?: string;
+  trackChangesAction: string;
 }
 
 export type AknTag =
