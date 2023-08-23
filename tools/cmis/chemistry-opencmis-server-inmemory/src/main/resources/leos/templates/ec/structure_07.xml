@@ -206,7 +206,9 @@
             <suffix></suffix>
             <sequence>1</sequence>
             <description>1, 2, etc</description>
-            <regex>#|^(?!([a-z]))((^([1-9][0-9]*)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([a-z])*)</regex>
+            <regex>#|^(?!([a-z]))((^([1-9][0-9]*)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([a-z])*)
+            </regex>
+            <regexJS>^(?:[MDCLXVI]+[a-zA-Z]?|\d+[a-zA-Z]?)$</regexJS>
             <msgValidationError>subdivision.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -217,6 +219,7 @@
             <sequence>1</sequence>
             <description>1, 2, etc</description>
             <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -227,6 +230,7 @@
             <sequence>1</sequence>
             <description>1., 2., etc</description>
             <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -237,6 +241,7 @@
             <sequence>1</sequence>
             <description>(1), (2), etc</description>
             <regex>\d+$|#</regex>
+            <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -266,6 +271,7 @@
             <sequence>I</sequence>
             <description>I, II, etc</description>
             <regex>M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$|#</regex>
+            <regexJS>^(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$</regexJS>
             <msgValidationError>roman.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>

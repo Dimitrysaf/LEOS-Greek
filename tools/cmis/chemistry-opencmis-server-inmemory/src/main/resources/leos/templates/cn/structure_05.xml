@@ -91,7 +91,8 @@
             <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
-            <template><![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
+            <template>
+                <![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
         </tocItem>
 
         <tocItem>
@@ -114,7 +115,8 @@
             <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
-            <template><![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
+            <template>
+                <![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
 
         <tocItem>
@@ -137,7 +139,8 @@
             <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
-            <template><![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
+            <template>
+                <![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
         </tocItem>
 
         <tocItem>
@@ -160,7 +163,8 @@
             <numberingType>DIVISION_NUM</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
-            <template><![CDATA[<division xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></division>]]></template>
+            <template>
+                <![CDATA[<division xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></division>]]></template>
         </tocItem>
 
         <tocItem>
@@ -211,7 +215,8 @@
                     <profileName>inlineAknDivisionHeading</profileName>
                 </profile>
                 <profile>
-                    <elementSelector>heading:not(level[leos\:origin='cn'] heading):not(division heading)</elementSelector>
+                    <elementSelector>heading:not(level[leos\:origin='cn'] heading):not(division heading)
+                    </elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>
@@ -568,7 +573,9 @@
             <type>HIGHER_ELEMENT_NUM</type>
             <numbered>true</numbered>
             <description>Number config used for error message of the higher elements</description>
-            <regex>#|^(?!([a-z]))((^-?(([0-9]+)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})))([a-z])*)</regex>
+            <regex>#|^(?!([a-z]))((^-?(([0-9]+)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})))([a-z])*)
+            </regex>
+            <regexJS>^(?:[MDCLXVI]+[a-zA-Z]?|\d+[a-zA-Z]?)$</regexJS>
             <msgValidationError>subdivision.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -628,6 +635,7 @@
             <sequence>I</sequence>
             <description>I, II, etc</description>
             <regex>M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$|#</regex>
+            <regexJS>^(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$</regexJS>
             <msgValidationError>roman.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
