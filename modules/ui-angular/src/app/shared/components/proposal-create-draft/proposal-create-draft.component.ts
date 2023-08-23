@@ -22,6 +22,7 @@ import {
 } from '../../../features/proposals/models';
 import { ProposalService } from '../../../features/proposals/services/proposal.service';
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proposal-create-draft',
@@ -51,6 +52,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     private proposalDetailsService: ProposalDetailsService,
     private router: Router,
     private route: ActivatedRoute,
+    private translateService: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -72,7 +74,12 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
           { validators: Validators.required },
         ),
         documentLanguage: new FormControl({ value: '', disabled: true }),
-        confidentialityLevel: new FormControl({ value: '', disabled: true }),
+        confidentialityLevel: new FormControl({
+          value: this.translateService.instant(
+            'page.workspace.create-form.document.confidentiality-level-predefined-value',
+          ),
+          disabled: true,
+        }),
         docPurpose: new FormControl('', {
           validators: [Validators.required, noWhitespaceValidator],
         }),
