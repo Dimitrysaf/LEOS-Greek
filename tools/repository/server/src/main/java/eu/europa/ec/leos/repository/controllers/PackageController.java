@@ -159,4 +159,7 @@ public class PackageController {
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"No packages found");
         return ResponseEntity.ok(pkg);
     }
+
+    @RequestMapping("/test")
+    public String test() { return "Test RESTful service"; }
 }

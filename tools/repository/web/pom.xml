@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2022 European Commission
+    Copyright 2023 European Commission
 
     Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
     You may not use this work except in compliance with the Licence.
@@ -25,15 +25,11 @@
     </parent>
 
     <groupId>eu.europa.ec.leos.repository</groupId>
-    <artifactId>repository-${leos.build.instance}</artifactId>
+    <artifactId>web</artifactId>
     <packaging>war</packaging>
 
     <name>Web</name>
     <description>Repository war generation</description>
-
-    <properties>
-        <project.final.name>repository</project.final.name>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -43,71 +39,9 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <!-- OS Instance -->
-        <profile>
-            <id>instance-default</id>
-            <activation>
-                <property>
-                    <name>!instance</name>
-                </property>
-            </activation>
-            <properties>
-                <leos.build.instance>os</leos.build.instance>
-            </properties>
-        </profile>
-        <!-- EC Instance -->
-        <profile>
-            <id>instance-ec</id>
-            <activation>
-                <property>
-                    <name>instance</name>
-                    <value>ec</value>
-                </property>
-            </activation>
-            <properties>
-                <leos.build.instance>ec</leos.build.instance>
-            </properties>
-        </profile>
-        <!-- CN Instance -->
-        <profile>
-            <id>instance-cn</id>
-            <activation>
-                <property>
-                    <name>instance</name>
-                    <value>cn</value>
-                </property>
-            </activation>
-            <properties>
-                <leos.build.instance>cn</leos.build.instance>
-            </properties>
-        </profile>
-    </profiles>
-
     <build>
-        <finalName>${project.final.name}-${leos.build.instance}</finalName>
-        <resources>
-            <resource>
-                <!-- Filtered resource files. -->
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-            <resource>
-                <!-- Non-filtered resource files. -->
-                <filtering>false</filtering>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                    <exclude>**/*.xml</exclude>
-                </excludes>
-            </resource>
-        </resources>
+        <finalName>repository</finalName>
         <plugins>
-            <!-- CLEAN -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -124,8 +58,6 @@
                     </filesets>
                 </configuration>
             </plugin>
-
-            <!-- INSTALL -->
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>
                 <executions>
@@ -135,79 +67,14 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- WAR -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <webResources>
-                        <resource>
-                            <filtering>true</filtering>
-                            <directory>src/main/webapp/WEB-INF</directory>
-                            <includes>
-                                <include>weblogic.xml</include>
-                                <include>dispatcher-servlet.xml</include>
-                            </includes>
-                            <targetPath>WEB-INF</targetPath>
-                        </resource>
-                        <!--<resource>-->
-                            <!--<filtering>true</filtering>-->
-                            <!--<directory>${leos.web.descriptor.folder}</directory>-->
-                            <!--<includes>-->
-                                <!--<include>web.xml</include>-->
-                            <!--</includes>-->
-                            <!--<targetPath>WEB-INF</targetPath>-->
-                        <!--</resource>-->
-                    </webResources>
-                    <overlays>
-                        <overlay>
-                            <!-- empty overlay represents the current build -->
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
-
-            <!-- JETTY -->
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <configuration>
-                    <httpConnector>
-                        <port>8080</port>
-                    </httpConnector>
-                    <jettyXml>src/etc/jetty/jetty.xml</jettyXml>
-                    <contextXml>src/etc/jetty/jetty-context.xml</contextXml>
-                    <webApp>
-                        <contextPath>/${leos.web.context.path}</contextPath>
-                        <extraClasspath>../config/target/generated-config</extraClasspath>
-                        <descriptor>target/${project.build.finalName}/WEB-INF/web.xml</descriptor>
-                    </webApp>
-                    <war>target/${project.build.finalName}</war>
-                </configuration>
-            </plugin>
-
-            <!-- TOMCAT -->
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <configuration>
-                    <path>/${leos.web.context.path}</path>
-                    <server>leosServer</server>
-                    <contextFile>src/etc/tomcat/context.xml</contextFile>
-                    <tomcatUsers>src/etc/tomcat/tomcat-users.xml</tomcatUsers>
-                    <additionalClasspathDirs>../config/target/generated-config</additionalClasspathDirs>
+                    <mainClass>eu.europa.ec.leos.repository.Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>
-        <extensions>
-            <!-- Enabling the use of FTP for deployment -->
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>${wagon-ftp-extension.version}</version>
-            </extension>
-        </extensions>
     </build>
 
 </project>

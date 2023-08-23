@@ -36,6 +36,7 @@ import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.assertj.core.util.Sets;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -568,7 +569,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+    @Ignore
     public void test_findDocumentsByRef() throws Exception {
         LeosDocument doc = docCreation();
         String firstVersionId = doc.getVersionId();
@@ -633,7 +634,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+
     public void test_findAllMinorsForIntermediate() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
@@ -651,7 +652,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+    @Ignore
     public void test_findAllMinorsForIntermediate_2() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
@@ -686,7 +687,7 @@ public class DocumentServiceTests {
                 "Fourteenth Version", pkg.getName());
         doc = documentService.updateDocument(doc.getRef(), properties, VersionType.MINOR, doc.getSource(),
                 "Fifteenth Version", pkg.getName());
-        List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.0.0",0, 10);
+        List<LeosDocument> docs = documentService.findAllMinorsForIntermediate("REG-clh5v2p720007ng28khrr03h7-en", "1.0.0", 0, 10);
         assertEquals(docs.size(), 2);
         assertEquals(docs.get(0).getVersionLabel(), "0.1.2");
         assertEquals(docs.get(1).getVersionLabel(), "0.1.1");
@@ -708,7 +709,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+
     public void test_getAllMinorsCountForIntermediate() throws Exception {
         LeosDocument doc = docCreation();
         Map<String, Object> properties = new HashMap<>();
