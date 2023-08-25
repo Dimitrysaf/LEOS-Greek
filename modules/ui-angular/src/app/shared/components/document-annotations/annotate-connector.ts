@@ -1,10 +1,9 @@
-import { distinctUntilChanged, Observable, of, take } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import type {
   AnnotateConnectorState,
-  AnnotateMetadata,
   MergeSuggestionRequest,
   Permission,
 } from '@/shared';
@@ -20,6 +19,8 @@ export type AnnotateConnectorOptions = {
   responseFilteredAnnotations?: (annotations: string) => void;
 };
 
+const CACHE_TIME = 1000;
+
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
   target?: Element;
@@ -31,6 +32,20 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   receiveSearchMetadata?: (metadatasets: string) => void;
   stateChangeHandler?: (state: 'OPEN' | 'CLOSE') => void;
   requestFilteredAnnotations?: () => void;
+  dbg = Math.random();
+
+  private requestDocumentMetadataCache$: ReturnType<
+    AnnotateService['getDocumentsMetadata']
+  >;
+  private requestUserPermissionsCache$: ReturnType<
+    AnnotateService['getUserPermissions']
+  >;
+  private requestSearchMetadataCache$: ReturnType<
+    AnnotateService['fetchSearchMetadata']
+  >;
+  private requestSecurityTokenCache$: ReturnType<
+    AnnotateService['getSecurityAnnotateToken']
+  >;
 
   constructor(
     state: AnnotateConnectorInitialState,
@@ -42,16 +57,26 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   }
 
   requestDocumentMetadata(...args) {
-    this.annotateService
+    if (this.requestDocumentMetadataCache$) return;
+    this.requestDocumentMetadataCache$ = this.annotateService
       .getDocumentsMetadata()
-      .pipe(take(1))
-      .subscribe((metadata) => {
-        this.receiveDocumentMetadata(JSON.stringify(metadata));
-      });
+      .pipe(shareReplay());
+    this.clearRequestCache('requestDocumentMetadataCache$');
+
+    this.requestDocumentMetadataCache$.subscribe((metadata) => {
+      this.receiveDocumentMetadata(JSON.stringify(metadata));
+    });
   }
 
   requestUserPermissions(...args) {
-    this.annotateService.getUserPermissions().subscribe((perms) => {
+    if (this.requestUserPermissionsCache$) return;
+    const hasFullDocumentService = !!this.documentService.permissions$;
+    this.requestUserPermissionsCache$ = hasFullDocumentService
+      ? this.documentService.permissions$
+      : this.annotateService.getUserPermissions().pipe(shareReplay());
+    this.clearRequestCache('requestUserPermissionsCache$');
+
+    this.requestUserPermissionsCache$.subscribe((perms) => {
       this.receiveUserPermissions(...perms);
     });
   }
@@ -79,7 +104,6 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
 
     this.annotateService
       .requestMergeSuggestion(mergeRequests[0])
-      .pipe(take(1))
       .subscribe((res) => {
         this.receiveMergeSuggestion(res);
       });
@@ -107,32 +131,61 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     );
     this.annotateService
       .requestMergeSuggestions(mergeRequests)
-      .pipe(take(1))
       .subscribe((res) => {
         this.receiveMergeSuggestions(...res);
       });
   }
 
   requestSearchMetadata() {
-    this.annotateService
-      .fetchSearchMetada()
-      .pipe(take(1), distinctUntilChanged())
-      .subscribe((res) => {
-        this.receiveSearchMetadata(JSON.stringify([{ status: res[0].status }]));
-      });
+    if (this.requestSearchMetadataCache$) return;
+    this.requestSearchMetadataCache$ = this.annotateService
+      .fetchSearchMetadata()
+      .pipe(shareReplay());
+    this.clearRequestCache('requestSearchMetadataCache$');
+
+    this.requestSearchMetadataCache$.subscribe((res) => {
+      this.receiveSearchMetadata?.(JSON.stringify([{ status: res[0].status }]));
+    });
   }
 
   requestSecurityToken() {
-    this.annotateService
+    if (this.requestSecurityTokenCache$) return;
+    this.requestSecurityTokenCache$ = this.annotateService
       .getSecurityAnnotateToken()
-      .pipe(take(1))
-      .subscribe((token) => {
-        this.receiveSecurityToken?.(token as string);
-      });
+      .pipe(shareReplay());
+    this.clearRequestCache('requestSecurityTokenCache$');
+
+    this.requestSecurityTokenCache$.subscribe((token) => {
+      this.receiveSecurityToken?.(token);
+    });
   }
 
   responseFilteredAnnotations(annotations: string) {
     this.options.responseFilteredAnnotations?.(annotations);
+  }
+
+  /** Forget the cached value some time after it has been completed. */
+  private clearRequestCache(
+    key:
+      | 'requestDocumentMetadataCache$'
+      | 'requestUserPermissionsCache$'
+      | 'requestSearchMetadataCache$'
+      | 'requestSecurityTokenCache$',
+  ) {
+    const observable = this[key] as Observable<any>;
+    if (!observable) return;
+
+    const clearCache = () => {
+      setTimeout(() => {
+        if (this[key] === observable) {
+          this[key] = undefined;
+        }
+      }, CACHE_TIME);
+    };
+    observable.subscribe({
+      next: clearCache,
+      error: clearCache,
+    });
   }
 }
 

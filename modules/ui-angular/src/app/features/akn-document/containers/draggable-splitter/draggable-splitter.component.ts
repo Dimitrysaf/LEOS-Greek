@@ -40,6 +40,7 @@ export class DraggableSplitterComponent implements OnChanges {
         this.leftArea.nativeElement.style.flexShrink = '';
         if (
           changes.isLeftAreaCollapsed &&
+          changes.leftArea &&
           changes.leftArea.currentValue.nativeElement.className.includes(
             'document-pane',
           ) &&
@@ -48,7 +49,7 @@ export class DraggableSplitterComponent implements OnChanges {
           )
         )
           this.leftArea.nativeElement.style.flexBasis = '';
-        this.hideSplitter.emit(true);
+        setTimeout(() => this.hideSplitter.emit(true));
       }
     }
   }
@@ -56,18 +57,12 @@ export class DraggableSplitterComponent implements OnChanges {
   onMouseDown(event: MouseEvent) {
     this.isDragging = true;
     event.preventDefault();
+    this.togglePointerEventsNone(true);
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
     if (!this.isDragging || !this.leftArea || !this.rightArea) return;
-
-    if (
-      this.rightArea.nativeElement.className.includes('annotations-pane') &&
-      document.getElementsByClassName('annotator-frame')
-    ) {
-      this.annotatorFramePointerEvent('none');
-    }
 
     const containerRect = this.leftArea.nativeElement.getBoundingClientRect();
     const totalWidth =
@@ -105,18 +100,17 @@ export class DraggableSplitterComponent implements OnChanges {
         this.rightArea.nativeElement.style.flex = '';
       }
     }
+    this.togglePointerEventsNone(false);
   }
 
-  private annotatorFramePointerEvent(stylePropValue: string) {
-    const parentElement = document.getElementsByClassName(
-      'annotator-frame',
-    )[0] as HTMLElement;
-    parentElement.style.pointerEvents = stylePropValue;
-    const childrenElements = parentElement.querySelectorAll(
-      '*',
-    ) as NodeListOf<HTMLElement>;
-    for (const childElement of childrenElements) {
-      childElement.style.pointerEvents = stylePropValue;
-    }
+  private togglePointerEventsNone(disableEvents = true) {
+    [this.leftArea?.nativeElement, this.rightArea?.nativeElement]
+      .filter(Boolean)
+      .forEach((el) => {
+        (el as HTMLElement).classList.toggle(
+          'app-u-pointer-events-none',
+          disableEvents,
+        );
+      });
   }
 }

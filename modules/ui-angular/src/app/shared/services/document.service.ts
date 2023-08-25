@@ -117,7 +117,6 @@ export class DocumentService implements OnDestroy {
   contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
   contributionSelections$: Observable<number>;
   contributionViewAndMergeCollapsed$: Observable<boolean>;
-  annexDocNumber$: Observable<number>;
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
   contributionDocumentRef$: Observable<string>;
@@ -164,7 +163,8 @@ export class DocumentService implements OnDestroy {
   private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
     true,
   );
-  private annexDocNumberBS = new BehaviorSubject<number>(-1);
+  /* 1-indexed */
+  private annexDocNumber = 0;
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
   private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
     false,
@@ -186,7 +186,6 @@ export class DocumentService implements OnDestroy {
   ) {
     this.contributionDocumentRef$ =
       this.contributionDocumentRefBS.asObservable();
-    this.annexDocNumber$ = this.annexDocNumberBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
       this.isContributionDeclinedOrProcessedBS.asObservable();
@@ -229,6 +228,12 @@ export class DocumentService implements OnDestroy {
       ),
       shareReplay(1),
     );
+    this.documentConfig$.subscribe((config) => {
+      this.annexDocNumber =
+        config.documentsMetadata
+          .filter((d) => d.category === 'ANNEX')
+          .findIndex((d) => d.ref === this.documentRef) + 1;
+    });
 
     this.recentChanges$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
@@ -1003,10 +1008,6 @@ export class DocumentService implements OnDestroy {
     this.contributionDocumentRefBS.next(ref);
   }
 
-  setAnnexDocNumber(num: number) {
-    this.annexDocNumberBS.next(num);
-  }
-
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
   }
@@ -1025,14 +1026,11 @@ export class DocumentService implements OnDestroy {
     return this.permissionsBS.value;
   }
 
-  getContributions(annexIndex?: number) {
+  getContributions() {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    let queryString = '';
-    this.annexDocNumber$.subscribe((num) => {
-      queryString = '?annexIndex=' + num;
-    });
+    const queryString = `?annexIndex=${this.annexDocNumber}`;
     return this.http
       .get<ContributionVO[]>(
         `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,

@@ -169,4 +169,17 @@ public class FinancialStatementController {
             List<SearchMatchVO> searchMatch = this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
             return searchMatch;
     }
+
+    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> compareDocumentVersions(@PathVariable("newVersionId") String newVersionId,
+                                                      @PathVariable("oldVersionId") String oldVersionId) {
+        try {
+            String contentHtml = this.genericDocumentApiService.compare(newVersionId, oldVersionId);
+            return ResponseEntity.ok().body(contentHtml);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Unexpected error while trying to get document version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 }

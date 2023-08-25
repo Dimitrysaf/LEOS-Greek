@@ -11,7 +11,13 @@ import {
   Optional,
   Output,
 } from '@angular/core';
-import { merge, Subject, takeUntil } from 'rxjs';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  skip,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
@@ -85,11 +91,17 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     this.documentService.setAnnotationGetter(() =>
       this.annotate.getAnnotations(),
     );
-    merge(
+    combineLatest([
       this.documentService.documentView$,
       this.documentService.reloadTrigger$,
-    )
-      .pipe(takeUntil(this.destroy$))
+    ])
+      .pipe(
+        takeUntil(this.destroy$),
+        distinctUntilChanged(
+          (a, b) => a.length === b.length && a.every((v, i) => v === b[i]),
+        ),
+        skip(1),
+      )
       .subscribe(() => this.annotate.refresh());
     this.documentService.setAnnotationsReadOnlySetter(
       (mode: AnnotateOperationMode) => {

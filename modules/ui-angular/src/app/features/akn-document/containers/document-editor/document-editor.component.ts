@@ -61,8 +61,8 @@ import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
-import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
+import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -176,7 +176,6 @@ export class DocumentEditorComponent
   private destroy$: Subject<any> = new Subject();
   private scrollables = new Map<Element, () => void>();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
-  private annexDocNumber = -1;
   private contributionChangesBS = new BehaviorSubject<NodeListOf<HTMLElement>>(
     null,
   );
@@ -212,11 +211,6 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
-        if (data.category === 'annex') {
-          this.documentService.setAnnexDocNumber(
-            this.router.getCurrentNavigation().extras.state.annexRow.docNumber,
-          );
-        }
       });
     this.versionSearchForm.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -543,7 +537,6 @@ export class DocumentEditorComponent
   editInlineToC() {
     this.isEditMode = true;
     //set the styling for the toc
-    this.documentTocComponent.handleTocStylingOnInlineEdit(true);
     this.documentService.setAnnotationMode('READ_ONLY');
     this.coEditionWSService.sendTocInlineEdit(this.documentRef);
   }
@@ -714,15 +707,6 @@ export class DocumentEditorComponent
       return;
     }
     this.documentTocComponent.expandAll();
-  }
-
-  getTooltipForToggleTree() {
-    if (this.isCollapseToc) {
-      return this.translate.instant(
-        'page.editor.toc.toc-pane.actions.collapseAll',
-      );
-    }
-    return this.translate.instant('page.editor.toc.toc-pane.actions.expandAll');
   }
 
   closeVersionView() {
@@ -1202,7 +1186,6 @@ export class DocumentEditorComponent
     this.documentTocComponent.isDropValid = null;
     this.isEditMode = false;
     this.documentTocComponent.resetTreeState();
-    this.documentTocComponent.handleTocStylingOnInlineEdit(false);
     this.documentTocComponent.clearHighlightInvalidNodes();
     this.coEditionWSService.removeTocInlineEdit(this.documentRef);
     this.documentService.setAnnotationMode('NORMAL');
@@ -1287,9 +1270,9 @@ export class DocumentEditorComponent
     if (akomantosoId) {
       xmlDoc.querySelector('akomantoso').id = akomantosoId;
     }
-    return new XMLSerializer()
-      .serializeToString(xmlDoc)
-      .replace(/<\?xml(-stylesheet)?.+\?>/g, '');
+    return new XMLSerializer().serializeToString(
+      xmlDoc.querySelector('akomantoso'),
+    );
   }
 
   private setPageSubTitle(versionInfo: VersionInfoVO) {

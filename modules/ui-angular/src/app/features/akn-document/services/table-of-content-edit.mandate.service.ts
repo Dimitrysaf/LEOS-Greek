@@ -37,8 +37,8 @@ import {
   validateAgainstOtherIndentsInList,
 } from '@/shared/utils/toc.utils';
 
-import { TableOfContentEditService } from './table-of-content-edit.service';
 import { TableOfContentService } from './table-of-content.service';
+import { TableOfContentEditService } from './table-of-content-edit.service';
 
 @Injectable()
 export class TableOfContentMandateEditService extends TableOfContentEditService {

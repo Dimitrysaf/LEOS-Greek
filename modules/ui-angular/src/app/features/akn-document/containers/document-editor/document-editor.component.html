@@ -36,12 +36,6 @@
         isCollapsible
         [isCollapsed]="documentService.navigationPaneCollapse$ | async"
         (collapsed)="onToggleTocPaneCollapsed()"
-        [title]="
-          (this.isTocPaneCollapsed
-            ? 'global.actions.show'
-            : 'global.actions.hide'
-          ) | translate
-        "
         style="flex-basis: 400px"
       >
         <eui-page-column-body>
@@ -60,7 +54,12 @@
                 euiSizeS
                 class=""
                 *ngIf="!isEditMode"
-                [euiTooltip]="getTooltipForToggleTree()"
+                [euiTooltip]="
+                  (isCollapseToc
+                    ? 'page.editor.toc.toc-pane.actions.expandAll'
+                    : 'page.editor.toc.toc-pane.actions.collapseAll'
+                  ) | translate
+                "
                 [position]="'right'"
                 (click)="expandAll()"
               >

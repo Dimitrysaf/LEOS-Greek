@@ -77,12 +77,15 @@
           *ngIf="toggleUserGuidanceVisible"
         >
           <button euiListItem>
-            {{
-              (doc.userGuidanceVisible$ | async) === false
-                ? ('page.editor.actions-dropdown.see-user-guidance' | translate)
-                : ('page.editor.actions-dropdown.hide-user-guidance'
-                  | translate)
-            }}
+            <eui-icon
+              euiSizeS
+              [iconClass]="
+                (doc.userGuidanceVisible$ | async)
+                  ? 'eui-icon-checkbox'
+                  : 'eui-icon-checkbox-outline'
+              "
+            ></eui-icon>
+            {{ 'page.editor.actions-dropdown.see-user-guidance' | translate }}
           </button>
         </li>
         <!-- See navigation panel -->
@@ -91,11 +94,17 @@
           (click)="doc.seeNavigation()"
           *ngIf="seeNavigationPanelVisible"
         >
-          <button
-            euiListItem
-            translate="page.editor.actions-dropdown.see-navigation"
-            [disabled]="(doc.navigationPaneCollapse$ | async) === false"
-          ></button>
+          <button euiListItem>
+            <eui-icon
+              euiSizeS
+              [iconClass]="
+                (doc.navigationPaneCollapse$ | async)
+                  ? 'eui-icon-checkbox-outline'
+                  : 'eui-icon-checkbox'
+              "
+            ></eui-icon>
+            {{ 'page.editor.actions-dropdown.see-navigation' | translate }}
+          </button>
         </li>
         <!-- Renumber Document -->
         <li

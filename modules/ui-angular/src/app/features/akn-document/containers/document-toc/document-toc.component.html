@@ -1,5 +1,5 @@
 <div class="toc-container">
-  <div id="treeContainer" class="tree-container" cdkScrollable>
+  <div id="treeContainer" class="tree-container" cdkScrollable #treeContainer>
     <mat-tree
       id="tree"
       cdkDropList
@@ -26,17 +26,21 @@
       >
         <div class="drop-placeholder"></div>
         <li class="node-li">
-          <div class="mat-tree-node">
+          <div
+            class="mat-tree-node"
+            [class]="{ 'selected-node': selectedNode?.id === node.id }"
+            (click)="handleNodeSelect(node)"
+          >
+            <eui-icon
+              euiSizeS
+              iconClass="eui-icon-angle-right"
+              class="eui-u-visibility-hidden"
+            ></eui-icon>
             <div
-              #label
+              [id]="'node-label-' + node.id"
               [class]="'label' + ' ' + node.tocStyling"
-              (click)="handleNodeSelect(node)"
               [innerHTML]="node.label"
-              euiTooltip="{{
-                isLabelTextTruncated(label)
-                  ? truncateLabelText(node.label)
-                  : null
-              }}"
+              [euiTooltip]="getNodeTooltip(node)"
               [position]="
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
               "
@@ -70,7 +74,10 @@
       >
         <div class="drop-placeholder"></div>
         <li>
-          <div class="mat-tree-node">
+          <div
+            class="mat-tree-node"
+            [class]="{ 'selected-node': selectedNode?.id === node.id }"
+          >
             <eui-icon
               euiSizeS
               *ngIf="!treeControl.isExpanded(node)"
@@ -84,15 +91,11 @@
               (click)="nodeCollapsed(node)"
             ></eui-icon>
             <div
-              #labelExt
+              [id]="'node-label-' + node.id"
               [class]="'label-extended' + ' ' + node.tocStyling"
               (click)="handleNodeSelect(node)"
               [innerHTML]="node.label"
-              euiTooltip="{{
-                isLabelTextTruncated(labelExt)
-                  ? truncateLabelText(node.label)
-                  : null
-              }}"
+              [euiTooltip]="getNodeTooltip(node)"
               [position]="
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
               "

@@ -22,6 +22,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -96,6 +97,7 @@ public class GenericDocumentApiService {
     private final UserHelper userHelper;
     private final LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     private final DocumentVOProvider documentVOProvider;
+    private final ComparisonDelegateAPI comparisonDelegate;
 
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull TableOfContentProcessor tableOfContentProcessor,
@@ -116,7 +118,8 @@ public class GenericDocumentApiService {
                                      @NotNull MessageHelper messageHelper,
                                      @NotNull UserHelper userHelper,
                                      @NotNull LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper,
-                                     @NotNull DocumentVOProvider documentVOProvider) {
+                                     @NotNull DocumentVOProvider documentVOProvider,
+                                     @NotNull ComparisonDelegateAPI comparisonDelegate) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
@@ -137,6 +140,7 @@ public class GenericDocumentApiService {
         this.userHelper = Objects.requireNonNull(userHelper);
         this.leosPermissionAuthorityMapHelper = Objects.requireNonNull(leosPermissionAuthorityMapHelper);
         this.documentVOProvider = Objects.requireNonNull(documentVOProvider);
+        this.comparisonDelegate = Objects.requireNonNull(comparisonDelegate);
     }
 
     private StructureContext getStructureContext() {
@@ -347,6 +351,13 @@ public class GenericDocumentApiService {
         this.validationService.validateDocumentAsync(this.documentVOProvider.createDocumentVO(document, restoreContent));
 
         return this.documentViewService.updateDocumentView(document);
+    }
+
+     public String compare(String newVersionId, String oldVersionId) {
+        XmlDocument oldVersion = this.findDocumentById(oldVersionId);
+        XmlDocument newVersion = this.findDocumentById(newVersionId);
+        
+        return this.comparisonDelegate.getMarkedContent(oldVersion, newVersion);
     }
 
     // -------------- ELEMENT METHODS

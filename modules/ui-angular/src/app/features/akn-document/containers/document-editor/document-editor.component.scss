@@ -177,17 +177,17 @@ app-annex-document {
 .tree-drag-content {
   background-color: var(--eui-app-body-bg-color);
   border-radius: 1rem;
-  gap: 0.5rem;
-  left: 0%;
+  left: 0;
   margin-left: 1rem;
   opacity: 1;
   padding: 0.3rem;
   position: absolute;
   top: 1%;
-  z-index: 9999;
+  z-index: 1;
 
   h3 {
     font-size: var(--eui-base-font-size-s);
+    margin-bottom: var(--eui-base-spacing-xs);
     padding: 0.2rem;
   }
 
@@ -198,9 +198,12 @@ app-annex-document {
     border-radius: 1rem;
     border-width: 2px;
     font-size: 12px;
-    margin: 0.25rem;
     padding: 0.3rem;
     text-align: center;
+  }
+
+  .eui-list > :not(:last-child) {
+    margin-bottom: var(--eui-base-spacing-2xs);
   }
 }
 
