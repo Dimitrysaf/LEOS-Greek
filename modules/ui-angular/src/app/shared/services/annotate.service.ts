@@ -54,7 +54,7 @@ export class AnnotateService {
       .pipe(finalize(() => this.reloadDocument()));
   }
 
-  fetchSearchMetada() {
+  fetchSearchMetadata() {
     return this.httpClient.get<AnnotateMetadata[]>(
       `${apiBaseUrl}/secured/annotation/requestSearchMetadata`,
     );

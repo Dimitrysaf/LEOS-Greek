@@ -1,4 +1,4 @@
-<div class="filters-container eui-u-ph-m">
+<div class="filters-container eui-u-ph-m" #filtersContainer>
   <form class="filters-form" [formGroup]="form" *ngIf="form">
     <!-- Search Title Row -->
 
@@ -54,18 +54,13 @@
             [formControlName]="filterOption.fieldName"
           />
           <label
-            #filterOptionLabel
             class="align-items-start"
             [for]="filterOption.id"
-            [euiTooltip]="
-              isLabelTextTruncated(filterOptionLabel)
-                ? truncateLabelText(filterOption.label | translate)
-                : null
-            "
+            [euiTooltip]="filterOption.tooltip"
             [position]="
               isLabelTextMoreThanOneLine(filterOption.label) ? 'right' : 'above'
             "
-            >{{ filterOption.label | translate }}</label
+            >{{ filterOption.label }}</label
           >
         </div>
       </div>

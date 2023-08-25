@@ -56,15 +56,4 @@ export class TocActionsButtonsComponent implements OnInit {
   onExpandAll() {
     return this.handleExpandAll.emit();
   }
-
-  getTooltipForToggleTree() {
-    if (this.isCollapseToc) {
-      return this.translateService.instant(
-        'page.editor.toc.toc-pane.actions.collapseAll',
-      );
-    }
-    return this.translateService.instant(
-      'page.editor.toc.toc-pane.actions.expandAll',
-    );
-  }
 }

@@ -9,7 +9,12 @@
     >
       <span
         *ngIf="isEditMode"
-        [euiTooltip]="getTooltipForToggleTree()"
+        [euiTooltip]="
+          (isCollapseToc
+            ? 'page.editor.toc.toc-pane.actions.expandAll'
+            : 'page.editor.toc.toc-pane.actions.collapseAll'
+          ) | translate
+        "
         [position]="'right'"
         class="eui-icon eui-icon-sitemap"
       ></span>

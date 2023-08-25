@@ -55,6 +55,14 @@ eui-icon-svg > svg > use {
   flex-basis: auto !important;
 }
 
+.app-u-pointer-events-none {
+  pointer-events: none;
+}
+
+.app-u-pointer-events-auto {
+  pointer-events: auto;
+}
+
 .eui-u-text-wrap {
   white-space: normal !important;
 }

@@ -92,4 +92,18 @@
   akomantoso aknp a {
     text-decoration: underline;
   }
+
+  akomantoso button.ui-datepicker-trigger {
+    background-color: rgb(239 239 239);
+    border: none;
+    border-radius: 2px;
+    margin-left: 2px;
+    outline: 1px solid rgb(0 0 0 / 20%);
+    padding: 0 4px;
+
+    &:hover {
+      background-color: rgb(220 220 220);
+      outline-color: rgb(0 0 0 / 40%);
+    }
+  }
 }

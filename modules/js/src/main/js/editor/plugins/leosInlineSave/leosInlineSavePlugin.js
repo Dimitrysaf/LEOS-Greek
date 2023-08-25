@@ -95,6 +95,17 @@ define(function leosInlineSavePluginModule(require) {
                 saveCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
                 saveCloseCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
             }, null, null, 100); //listen to the event as late as possible
+
+            // instanceReady is fired after everything is ready.
+            // This is a workaround to detect actual changes because after
+            // initialization, the last handled event above happens while for
+            // some reason checkDirty() returns true. The selection plugin fixes
+            // this by overriding getSnapshot() in the beginning of
+            // `instanceReady`.
+            editor.once('instanceReady', function(event) {
+                saveCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
+                saveCloseCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
+            }, null, null, 100); //listen to the event as late as possible
         }
     };
     

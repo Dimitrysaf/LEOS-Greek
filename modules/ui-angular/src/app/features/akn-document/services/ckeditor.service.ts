@@ -104,8 +104,8 @@ export class CKEditorService implements OnDestroy {
         this.initMathJax(require, leosState, rootElement);
         this.initTrackChanges(require, leosState, rootElement);
         this.initMergeContribution(require, leosState, rootElement);
-        this.initDatePicker(require, leosState, rootElement);
         if (this.documentService.documentType === 'stat_financ_legis') {
+          this.initDatePicker(require, leosState, rootElement);
           this.initCheckBoxes(require, rootElement);
         }
       });
@@ -127,6 +127,17 @@ export class CKEditorService implements OnDestroy {
     this.mathJaxConnector?.$triggerStateChange();
     this.trackChangesConnector?.$triggerStateChange();
     this.mergeContributionConnector?.$triggerStateChange();
+    if (this.datePickerConnector) {
+      // TODO: clean this up
+      const rootElement = this.domDocument.getElementById('docContainer');
+
+      combineLatest([this.leosLegacyService.require$, this.getLeosState()])
+        .pipe(take(1))
+        .subscribe(([require, leosState]) => {
+          require(['js/leosModulesBootstrap']);
+          this.initDatePicker(require, leosState, rootElement);
+        });
+    }
     this.datePickerConnector?.$triggerStateChange();
     this.checkBoxesConnector?.$triggerStateChange();
   }
@@ -392,27 +403,12 @@ export class CKEditorService implements OnDestroy {
   private getLeosState() {
     return combineLatest([
       this.appConfig.config,
-      this.getConnectorExtraConfig(),
+      this.documentService.documentConfig$,
     ]).pipe(
       takeUntil(this.destroy$),
       take(1),
       map(([config, extraConfig]) =>
         this.renameConfigKeysForEditor({ ...config, ...extraConfig }),
-      ),
-    );
-  }
-
-  // called from constructor
-  private getConnectorExtraConfig() {
-    return this.documentService.documentRefAndCategory$.pipe(
-      takeUntil(this.destroy$),
-      filter((x) => Boolean(x?.ref && x?.category)),
-      switchMap((options) =>
-        this.http.get<DocumentConfig>(
-          `${apiBaseUrl}/secured/${
-            options.category === 'coverpage' ? 'coverPage' : options.category
-          }/${options.ref}/document-config`,
-        ),
       ),
     );
   }

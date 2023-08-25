@@ -2,11 +2,13 @@ import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT } from '@angular/common';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   Inject,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   Output,
@@ -15,8 +17,15 @@ import {
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { cloneDeep, debounce } from 'lodash-es';
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -64,8 +73,8 @@ import {
   TableOfContentItemVO,
   TocItem,
 } from '../../../../shared/models/toc.model';
-import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
+import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 import { ValidateTocService } from '../../services/validate-node-drop.service';
 
 @Component({
@@ -73,7 +82,7 @@ import { ValidateTocService } from '../../services/validate-node-drop.service';
   templateUrl: './document-toc.component.html',
   styleUrls: ['./document-toc.component.scss'],
 })
-export class DocumentTocComponent implements OnInit, OnDestroy {
+export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() isEdit: boolean;
   @Input() documentType: string;
   @Input() documentRef: string;
@@ -81,6 +90,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   @Input() tocItems: TocItem[];
   @Output() reBuildTocItems: EventEmitter<boolean> = new EventEmitter();
 
+  @ViewChild('treeContainer') treeContainer: ElementRef<HTMLElement>;
+  @ViewChild('tree', { read: ElementRef }) treeElRef: ElementRef<HTMLElement>;
   documentConfig: DocumentConfig;
 
   //toc related
@@ -90,7 +101,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   messageFromValidation: string;
   isDropValid: boolean;
   dragAction: DragAction;
-  expandedNodes: string[] = [];
+  expandedNodeIds = new Set<string>();
   invalidNodes: Set<TableOfContentItemVO>;
 
   //related to drag and drop ui actions
@@ -102,7 +113,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   environment = process.env.NG_APP_LEOS_INSTANCE;
 
   treeControl: NestedTreeControl<TableOfContentItemVO>;
-  levels = new Map<TableOfContentItemVO, number>();
   dataSource: MatTreeNestedDataSource<TableOfContentItemVO>;
 
   draggedItem: TableOfContentItemVO = null;
@@ -110,18 +120,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   @ViewChild('deleteTocConfirmation')
   deleteDialog: ConfirmDeleteDialogComponent;
 
+  private tooltips = new Map<TableOfContentItemVO, string>();
+  private resizeObserver: ResizeObserver;
+  private cancelPendingPersistTreeHeight: () => void;
   private destroy$: Subject<any> = new Subject();
 
   constructor(
     private documentService: DocumentService,
     private dialogService: EuiDialogService,
     public translateService: TranslateService,
-    public elementRef: ElementRef,
     private coEditionService: CoEditionServiceWS,
     private validateTocService: ValidateTocService,
     private tocEditService: TableOfContentEditService,
     private tocService: TableOfContentService,
     @Inject(DOCUMENT) private document: Document,
+    private zone: NgZone,
   ) {
     this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
       this.getChildren,
@@ -134,29 +147,22 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         this.tocEditService.setDocumentConfig(dConfig);
         this.documentConfig = dConfig;
       });
-
-    this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
-      this.getChildren,
-    );
-    this.dataSource = new MatTreeNestedDataSource();
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver.disconnect();
     this.destroy$.next(null);
     this.destroy$.complete();
   }
 
   ngOnInit() {
     this.tocService.toc$.pipe(takeUntil(this.destroy$)).subscribe((toc) => {
-      this.setTree(toc);
       //expand the default nodes if the expanded state is empty
-      setTimeout(() => {
-        if (this.expandedNodes.length > 0) {
-          this.expandNodesFromHistory(this.treeControl.dataNodes);
-        } else
-          for (const nodes of this.treeControl.dataNodes)
-            this.defaultExpanded(nodes);
-      });
+      if (!this.expandedNodeIds.size) {
+        this.setByDefaultExpandedNodes(toc);
+      }
+      this.expandNodesFromHistory(toc);
+      this.setTree(toc);
     });
 
     this.validateTocService.dropValidationResult$
@@ -166,15 +172,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       });
   }
 
-  isLabelTextTruncated(element: HTMLDivElement): boolean {
-    return element.offsetWidth < element.scrollWidth;
+  ngAfterViewInit() {
+    this.setupResizeObserver();
   }
 
-  truncateLabelText(label: string): string {
-    if (label.length > MAX_TRUNCATION_LIMIT) {
-      return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
-    }
-    return label;
+  getNodeTooltip(node: TableOfContentItemVO): string {
+    return this.tooltips.get(node) ?? '';
   }
 
   isLabelTextMoreThanOneLine(label: string) {
@@ -405,10 +408,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.selectedNodeToMove = null;
   }
 
-  handleNodeSelect(node: TableOfContentItemVO) {
+  handleNodeSelect(node: TableOfContentItemVO, scrollTo = true) {
     this.selectedNode = node;
-    this.handleTocStylingOnInlineEdit(this.isEdit);
 
+    if (!scrollTo) return;
+
+    this.scrollNodeIntoView(node);
     this.scrollToDocumentElement(node, 'docContainer');
     const syncScrollElements =
       document.querySelectorAll(`.sync-scroll-enabled`);
@@ -514,6 +519,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   nodeExpanded(node: TableOfContentItemVO) {
     this.treeControl.expand(node);
     node.expanded = true;
+    this.expandedNodeIds.add(node.id);
     //wait for the node to render and then show if invalid
     setTimeout(() => {
       this.highlightInvalidNodes();
@@ -523,22 +529,24 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   nodeCollapsed(node: TableOfContentItemVO) {
     this.treeControl.collapse(node);
     node.expanded = false;
-    this.expandedNodes = this.expandedNodes.filter((n) => n !== node.id);
+    this.expandedNodeIds.delete(node.id);
   }
 
-  setTree(toc: TableOfContentItemVO[]) {
+  setTree(toc: TableOfContentItemVO[] | null) {
+    if (!Array.isArray(toc)) toc = [];
+    this.persistTreeHeight(); // hack to maintain scroll position
     this.prepareTreeForDisplay(toc);
     this.dataSource.data = toc;
     this.treeControl.dataNodes = toc;
 
     this.checkForDraft();
+    this.restoreExpanded(toc);
 
     setTimeout(() => {
-      if (this.selectedNode) this.handleNodeSelect(this.selectedNode);
+      if (this.selectedNode) this.handleNodeSelect(this.selectedNode, false);
       this.highlightInvalidNodes();
+      this.updateNodeTooltips();
     });
-
-    this.restoreExpanded(toc);
   }
 
   checkForDraft() {
@@ -557,42 +565,16 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.invalidNodes?.clear();
   }
 
-  saveExpanded(node: TableOfContentItemVO) {
-    if (this.treeControl.isExpanded(node)) {
-      this.expandedNodes.push(node.id);
-      const children = this.treeControl.getChildren(node);
-      children.forEach((child) => {
-        this.saveExpanded(child);
-      });
-    }
-  }
-
-  handleTocStylingOnInlineEdit(isEditMode: boolean) {
-    setTimeout(() => {
-      this.hilightSelectedNode(this.selectedNode);
-    });
-  }
-
-  private hilightSelectedNode(node: TableOfContentItemVO) {
-    this.elementRef.nativeElement
-      .querySelectorAll('.selected-node')
-      .forEach((el) => el.classList.remove('selected-node'));
+  private scrollNodeIntoView(node: TableOfContentItemVO) {
     if (node) {
-      const element = document.querySelector(`[data-id="${node.id}"]`);
-      if (element) {
-        element.children[1].children[0].classList.add('selected-node');
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        });
-      }
+      document
+        .querySelector(`[data-id="${node.id}"]`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 
   private clearSelectedNode() {
     this.selectedNode = null;
-    this.document
-      .querySelectorAll('.selected-node')
-      .forEach((el) => el.classList.remove('selected-node'));
   }
 
   private populateValidationMessage(validationResult: NodeValidation) {
@@ -945,27 +927,23 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  private defaultExpanded(node: TableOfContentItemVO) {
-    if (node.tocItem.expandedByDefault && node.childItems) {
-      this.treeControl.expand(node);
-      this.expandedNodes.push(node.id);
-      node.expanded = true;
-    }
-    if (node.childItems) {
-      for (const n of node.childItems) this.defaultExpanded(n);
+  private setByDefaultExpandedNodes(toc: TableOfContentItemVO[] | null) {
+    if (!Array.isArray(toc)) return;
+    for (const node of toc) {
+      if (node.childItems) {
+        if (node.tocItem.expandedByDefault) {
+          this.expandedNodeIds.add(node.id);
+        }
+        this.setByDefaultExpandedNodes(node.childItems);
+      }
     }
   }
 
   //used for restoring nodes after save
-  private expandNodesFromHistory(root: TableOfContentItemVO[]) {
-    for (const node of root) {
-      if (this.expandedNodes.includes(node.id)) {
-        this.treeControl.expand(node);
-        node.expanded = true;
-      } else {
-        this.treeControl.collapse(node);
-        node.expanded = false;
-      }
+  private expandNodesFromHistory(toc: TableOfContentItemVO[] | null) {
+    if (!Array.isArray(toc)) return;
+    for (const node of toc) {
+      node.expanded = this.expandedNodeIds.has(node.id);
       this.expandNodesFromHistory(node.childItems);
     }
   }
@@ -1005,5 +983,72 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       parent,
       position,
     );
+  }
+
+  private setupResizeObserver() {
+    const widthBS = new BehaviorSubject<number>(0);
+    this.resizeObserver = new ResizeObserver((entries) => {
+      widthBS.next(entries[0].contentRect.width);
+    });
+
+    widthBS
+      .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.updateNodeTooltips());
+    this.resizeObserver.observe(this.treeContainer.nativeElement);
+  }
+
+  private updateNodeTooltips() {
+    this.tooltips.clear();
+    const updateTooltip = (node: TableOfContentItemVO) => {
+      this.tooltips.set(node, this.createNodeTooltip(node));
+      node.childItems?.forEach(updateTooltip);
+    };
+    this.dataSource?.data?.forEach(updateTooltip);
+  }
+
+  private createNodeTooltip(node: TableOfContentItemVO) {
+    const labelEl = this.treeContainer.nativeElement.querySelector(
+      `#node-label-${node.id}`,
+    ) as HTMLElement;
+    const isLabelTextTruncated =
+      labelEl && labelEl.offsetWidth < labelEl.scrollWidth;
+    return isLabelTextTruncated ? this.truncateLabelText(node.label) : '';
+  }
+
+  private truncateLabelText(label: string): string {
+    if (label.length > MAX_TRUNCATION_LIMIT) {
+      return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
+    }
+    return label;
+  }
+
+  /** Persist the height of the tree while it is being rendered. */
+  private persistTreeHeight() {
+    this.cancelPendingPersistTreeHeight?.();
+
+    const treeEl = this.treeElRef?.nativeElement;
+    if (!treeEl) {
+      return;
+    }
+
+    const height = treeEl.getBoundingClientRect().height;
+    treeEl.style.minHeight = height + 'px';
+
+    // Wait until angular zone has no more tasks in queue - ie tree has
+    // finished rendering - before restoring height
+    const callback = debounce(() => {
+      this.cancelPendingPersistTreeHeight?.();
+      treeEl.style.minHeight = '';
+    }, 100);
+
+    const sub = this.zone.onStable
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(callback);
+
+    this.cancelPendingPersistTreeHeight = () => {
+      sub.unsubscribe();
+      callback.cancel();
+      this.cancelPendingPersistTreeHeight = undefined;
+    };
   }
 }

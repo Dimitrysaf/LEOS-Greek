@@ -92,6 +92,7 @@
 
 .label {
   display: inline-block;
+  flex-grow: 1;
   font-size: var(--eui-base-font-size-s) !important;
   max-width: 100%;
   overflow: hidden;
@@ -115,6 +116,18 @@ mat-nested-tree-node {
   display: flex;
   flex-direction: column;
   max-width: inherit;
+}
+
+mat-nested-tree-node.cdk-drag-preview .mat-tree-node {
+  max-width: 400px;
+
+  .node-li {
+    max-width: fit-content;
+  }
+
+  app-node-toc-actions {
+    display: none;
+  }
 }
 
 .mat-tree-node {
