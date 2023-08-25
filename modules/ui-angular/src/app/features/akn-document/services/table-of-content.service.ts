@@ -112,6 +112,10 @@ export class TableOfContentService implements OnDestroy {
     return this.tocBS.value;
   }
 
+  setToc(toc: TableOfContentItemVO[]) {
+    this.tocBS.next(toc);
+  }
+
   private getTocItems(
     documentRef: string,
     documentType: string,

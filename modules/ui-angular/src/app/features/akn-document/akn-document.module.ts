@@ -10,6 +10,7 @@ import { RevisionActionsDropdownComponent } from '@/features/akn-document/compon
 import { RevisionPaneGroupComponent } from '@/features/akn-document/components/revision-pane-group/revision-pane-group.component';
 import { RevisionPaneComponent } from '@/features/akn-document/containers/revision-pane/revision-pane.component';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
+import { CN } from '@/shared/constants';
 import { SharedModule } from '@/shared/shared.module';
 
 import { AknRouteReUseStrategy } from './akn-route-strategy';
@@ -28,6 +29,12 @@ import { DocumentEditorComponent } from './containers/document-editor/document-e
 import { DocumentTocComponent } from './containers/document-toc/document-toc.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
 import { CKEditorService } from './services/ckeditor.service';
+import { TableOfContentMandateEditService } from './services/table-of-content-edit.mandate.service';
+import { TableOfContentProposalEditService } from './services/table-of-content-edit.proposal.service';
+import { TableOfContentEditService } from './services/table-of-content-edit.service';
+import { ValidateTocMandateService } from './services/validate-node-drop.mandate.service';
+import { ValidateTocProposalService } from './services/validate-node-drop.proposal.service';
+import { ValidateTocService } from './services/validate-node-drop.service';
 
 @NgModule({
   declarations: [
@@ -62,6 +69,20 @@ import { CKEditorService } from './services/ckeditor.service';
   providers: [
     CKEditorService,
     { provide: RouteReuseStrategy, useClass: AknRouteReUseStrategy },
+    {
+      provide: ValidateTocService,
+      useClass:
+        process.env.NG_APP_LEOS_INSTANCE.toLowerCase() === CN.toLowerCase()
+          ? ValidateTocMandateService
+          : ValidateTocProposalService,
+    },
+    {
+      provide: TableOfContentEditService,
+      useClass:
+        process.env.NG_APP_LEOS_INSTANCE.toLowerCase() === CN.toLowerCase()
+          ? TableOfContentMandateEditService
+          : TableOfContentProposalEditService,
+    },
   ],
 })
 export class AknDocumentModule {}

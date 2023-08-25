@@ -966,7 +966,12 @@
       >
         {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
       </button>
-      <button class="" euiPrimary (click)="hanldeUnSaveDialogClose(true)">
+      <button
+        class=""
+        euiButton
+        euiPrimary
+        (click)="hanldeUnSaveDialogClose(true)"
+      >
         {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
       </button>
     </div>

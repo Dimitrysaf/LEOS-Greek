@@ -21,6 +21,7 @@ export class TableOfContentItemVO {
   isCrossHeadingInList: boolean;
   tocItemType: string;
   childItems: TableOfContentItemVO[];
+  childItemsView: string[];
   parentItem: string;
   softActionAttr: string;
   softActionRoot: boolean;
@@ -48,7 +49,7 @@ export class TableOfContentItemVO {
   label?: string;
   itemDescription?: string;
   tocStyling?: string;
-  trackChangesAction: string;
+  trackChangeAction: string;
 }
 
 export type AknTag =

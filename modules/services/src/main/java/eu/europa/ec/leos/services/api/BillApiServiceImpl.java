@@ -182,6 +182,8 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         User user = securityContext.getUser();
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(bill));
+        this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc, messageHelper.getMessage("operation.toc.updated"), user);
         documentViewService.updateProposalAsync(bill);
         return billService.getTableOfContent(updatedBill, TocMode.SIMPLIFIED);
@@ -207,7 +209,7 @@ public class BillApiServiceImpl implements BillApiService {
     public String compare(String newVersionId, String oldVersionId) {
         Bill oldVersion = billService.findBillVersion(oldVersionId);
         Bill newVersion = billService.findBillVersion(newVersionId);
-        return  comparisonDelegate.getMarkedContent(oldVersion, newVersion);
+        return comparisonDelegate.getMarkedContent(oldVersion, newVersion);
     }
 
     @Override

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-import { TableOfContentService } from '@/features/akn-document/services/tableOfContent.service';
+import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import { RefreshElementResponse } from '@/shared/models/document-view-response.model';

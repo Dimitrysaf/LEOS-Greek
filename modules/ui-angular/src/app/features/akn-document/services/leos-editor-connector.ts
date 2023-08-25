@@ -17,7 +17,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import { findNodeById, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
-import { TableOfContentService } from './tableOfContent.service';
+import { TableOfContentService } from './table-of-content.service';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state

@@ -13,7 +13,7 @@ import { consumeEvent } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Version } from '@/features/akn-document/models/versions';
-import { TableOfContentService } from '@/features/akn-document/services/tableOfContent.service';
+import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({

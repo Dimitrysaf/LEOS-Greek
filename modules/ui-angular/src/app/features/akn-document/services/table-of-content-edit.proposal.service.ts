@@ -1,0 +1,140 @@
+import { Injectable } from '@angular/core';
+import { cloneDeep } from 'lodash-es';
+
+import {
+  ADD,
+  DELETE,
+  EC,
+  LS,
+  MOVE_FROM,
+  MOVE_TO,
+  SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
+} from '@/shared/constants';
+import { NodeValidation } from '@/shared/models/drop-response.model';
+import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import {
+  containsItemOfOrigin,
+  findNodeById,
+  softDeleteItem,
+} from '@/shared/utils/toc.utils';
+
+import { TableOfContentEditService } from './table-of-content-edit.service';
+import { TableOfContentService } from './table-of-content.service';
+
+@Injectable()
+export class TableOfContentProposalEditService extends TableOfContentEditService {
+  constructor(tocService: TableOfContentService) {
+    super(tocService);
+  }
+
+  validateAddingToItem(
+    validationResult: NodeValidation,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    return true;
+  }
+
+  addOrMoveItem(
+    isAdd: boolean,
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    actualTargetItem: TableOfContentItemVO,
+    position: string,
+  ) {
+    if (isAdd) {
+      super.addOrMoveItem(
+        isAdd,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+      this.moveOriginAttribute(sourceItem, targetItem);
+      this.setNumber(tocTree, sourceItem, targetItem);
+      sourceItem.softActionAttr = ADD;
+      sourceItem.softActionRoot = true;
+    } else {
+      this.handleMoveAction(sourceItem, tocTree);
+      super.addOrMoveItem(
+        isAdd,
+        sourceItem,
+        targetItem,
+        tocTree,
+        actualTargetItem,
+        position,
+      );
+    }
+    const paretnNode = findNodeById(tocTree, sourceItem.parentItem);
+    this.handleLevelMove(sourceItem, targetItem);
+    this.updateDepthOfTocItems(paretnNode?.childItems ?? []);
+    this.resetUserInfo(sourceItem);
+    this.setTree(tocTree);
+  }
+
+  handleMoveAction(
+    moveFromItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    if (
+      moveFromItem.originAttr === EC &&
+      (moveFromItem.softActionAttr == null ||
+        (!this.hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
+          !this.hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
+          !this.hasTocItemSoftAction(moveFromItem, ADD) &&
+          !this.hasTocItemSoftAction(moveFromItem, DELETE)))
+    ) {
+      const moveTemp = this.copyMovingItemToTemp(moveFromItem, true, tocTree);
+      moveFromItem.originNumAttr = LS;
+      moveFromItem.softActionRoot = true;
+
+      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
+    }
+    moveFromItem.originNumAttr = LS;
+    moveFromItem.softActionRoot = true;
+    if (moveFromItem.softActionAttr === MOVE_FROM) {
+      moveFromItem.softMoveFrom =
+        SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveFromItem.id;
+      const moveToItem: TableOfContentItemVO = this.getTableOfContentItemVOById(
+        moveFromItem.softMoveFrom,
+        tocTree,
+      );
+      if (moveToItem != null) {
+        moveToItem.softActionRoot = true;
+      }
+    }
+  }
+
+  copyMovingItemToTemp(
+    originalItem: TableOfContentItemVO,
+    isSoftActionRoot: boolean,
+    tocTree: TableOfContentItemVO[],
+  ) {
+    const moveToItem = cloneDeep(originalItem);
+    moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    moveToItem.originNumAttr = EC;
+    moveToItem.softUserAttr = null;
+    moveToItem.softDateAttr = null;
+    originalItem.softActionAttr = MOVE_FROM;
+    originalItem.softActionRoot = isSoftActionRoot;
+    originalItem.softMoveFrom =
+      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    return moveToItem;
+  }
+
+  deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
+    if (!containsItemOfOrigin(item, EC, LS)) {
+      this.removeNode(newTree, item);
+    } else {
+      softDeleteItem(newTree, item, LS);
+    }
+    const parent = findNodeById(newTree, item.parentItem);
+    this.updateDepthOfTocItems(parent.childItems);
+    this.setTree(newTree);
+  }
+}
