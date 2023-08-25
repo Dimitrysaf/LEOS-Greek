@@ -61,7 +61,8 @@ import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
-import { TableOfContentService } from '../../services/tableOfContent.service';
+import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import { TableOfContentService } from '../../services/table-of-content.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -197,6 +198,7 @@ export class DocumentEditorComponent
     private tableOfContentService: TableOfContentService,
     private domSatinizer: DomSanitizer,
     private loadingService: LoadingService,
+    private tocEditService: TableOfContentEditService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -451,7 +453,7 @@ export class DocumentEditorComponent
 
   disableUndoButton() {
     if (this.documentTocComponent)
-      return this.documentTocComponent.treeHistory.length === 0;
+      return this.tocEditService.getTreeHistorySize() === 0;
     return false;
   }
 
@@ -547,9 +549,9 @@ export class DocumentEditorComponent
   }
 
   handleUndo() {
-    const oldToc = this.documentTocComponent.treeHistory.pop();
+    const oldToc = this.tocEditService.popTreeHistory();
     if (oldToc.length > 0) {
-      this.documentTocComponent.setTree(oldToc);
+      this.tocEditService.setTree(oldToc);
       if (this.documentTocComponent.isNodeSelected()) {
         const newSelectedNode = findNodeById(
           oldToc,
@@ -641,7 +643,7 @@ export class DocumentEditorComponent
       .subscribe({
         next: (res) => {
           this.documentTocComponent.isToCDraft = false;
-          this.documentTocComponent.treeHistory = [];
+          this.tocEditService.resetTreeHistory();
           this.documentService.reloadDocument();
           this.tableOfContentService.reload();
         },
@@ -1238,8 +1240,8 @@ export class DocumentEditorComponent
         }
         if (item.contentDisplayed) {
           content =
-            item.aknTag.toLocaleLowerCase() === 'recital' ||
-            item.aknTag.toLocaleLowerCase() === 'citation'
+            item.aknTag.toLowerCase() === 'recital' ||
+            item.aknTag.toLowerCase() === 'citation'
               ? capitalizeFirstLetter(item.aknTag) + '...'
               : 'Text...';
         }

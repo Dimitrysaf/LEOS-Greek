@@ -1,8 +1,7 @@
-import { CdkDragDrop, CdkDragEnter, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -15,11 +14,9 @@ import {
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
-import { getUserDetails, UserDetails } from '@eui/core';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep, result, some, truncate, update } from 'lodash-es';
-import { Subject, take, takeUntil } from 'rxjs';
+import { cloneDeep } from 'lodash-es';
+import { filter, Subject, takeUntil } from 'rxjs';
 
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -27,44 +24,28 @@ import {
   ADD,
   ARTICLE,
   BULLET_NUM,
-  CN,
   CONTENT_SEPARATOR,
   DELETE,
-  DIVISION,
   EC,
-  ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING,
-  ELEMENTS_WITHOUT_CONTENT,
   HASH_NUM_VALUE,
-  INDENT,
   LEOS_TC_DELETE_ACTION,
-  LEVEL,
-  LS,
   MAX_TRUNCATION_LIMIT,
   MOVE_FROM,
   MOVE_LABEL_SPAN_START_TAG,
   MOVE_TO,
-  MOVED_LABEL_SIZE,
   MOVED_TITLE_SPAN_START_TAG,
   NUM_HEADING_SEPARATOR,
   ONE_LINE_NODE_LABEL_LENGTH,
   PARAGRAPH,
-  POINT,
-  POINT_ROOT_PARENT_ELEMENTS,
   RESTORED,
-  SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
   SPACE,
   SPAN_END_TAG,
-  SUBPARAGRAPH,
   TBLOCK,
-  TEMP_PREFIX,
   TIME_TO_CLEAR_INVALID,
 } from '@/shared/constants/toc.constant';
 import { DocumentConfig } from '@/shared/models';
 import { DragAction } from '@/shared/models/drag-action.model';
-import {
-  NodeValidation,
-  NodeValidationResponse,
-} from '@/shared/models/drop-response.model';
+import { NodeValidation } from '@/shared/models/drop-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { scrollInParent } from '@/shared/utils';
@@ -74,37 +55,18 @@ import {
   checkIfConfirmDeletion,
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
-  containsItem,
-  containsItemOfOrigin,
-  copyDeletedItemToTempForUndelete,
-  getActualTargetItem,
+  findNodeById,
   getItemSoftStyle,
-  getTableOfContentItemVOById,
-  handleLevelMove,
-  hasTocItemSoftAction,
-  isCrossheading,
-  isDeletedItem,
-  isDroppedOnPointOrIndent,
-  isNodeLastElement,
-  isNumbered,
-  isRootElement,
-  isSourceDivision,
   removeTag,
-  setBlockOrCrossHeading,
-  setItemDepth,
-  setItemLevel,
-  softDeleteItem,
-  updateDepthOfTocItems,
-  validateAddingToItem,
-  validateMaxDepth,
 } from '@/shared/utils/toc.utils';
-import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
 
 import {
   TableOfContentItemVO,
   TocItem,
 } from '../../../../shared/models/toc.model';
-import { TableOfContentService } from '../../services/tableOfContent.service';
+import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import { TableOfContentService } from '../../services/table-of-content.service';
+import { ValidateTocService } from '../../services/validate-node-drop.service';
 
 @Component({
   selector: 'app-document-toc',
@@ -120,7 +82,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   @Output() reBuildTocItems: EventEmitter<boolean> = new EventEmitter();
 
   documentConfig: DocumentConfig;
-  user: UserDetails;
 
   //toc related
   selectedNode: TableOfContentItemVO = null;
@@ -140,27 +101,26 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   //environment var
   environment = process.env.NG_APP_LEOS_INSTANCE;
 
-  //keep track of changes done on tree, used mainly from undo
-  treeHistory: Array<TableOfContentItemVO[]> = [];
-
   treeControl: NestedTreeControl<TableOfContentItemVO>;
   levels = new Map<TableOfContentItemVO, number>();
   dataSource: MatTreeNestedDataSource<TableOfContentItemVO>;
 
-  destroy$: Subject<any> = new Subject();
+  draggedItem: TableOfContentItemVO = null;
 
   @ViewChild('deleteTocConfirmation')
   deleteDialog: ConfirmDeleteDialogComponent;
 
+  private destroy$: Subject<any> = new Subject();
+
   constructor(
     private documentService: DocumentService,
     private dialogService: EuiDialogService,
-    private tableOfContentService: TableOfContentService,
     public translateService: TranslateService,
     public elementRef: ElementRef,
-    private cdRef: ChangeDetectorRef,
-    private store: Store,
     private coEditionService: CoEditionServiceWS,
+    private validateTocService: ValidateTocService,
+    private tocEditService: TableOfContentEditService,
+    private tocService: TableOfContentService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
@@ -169,12 +129,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTreeNestedDataSource();
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((dConfig) => (this.documentConfig = dConfig));
-
-    this.store
-      .select(getUserDetails)
-      .pipe(take(1))
-      .subscribe((state) => (this.user = state));
+      .subscribe((dConfig) => {
+        this.validateTocService.setDocumentConfig(dConfig);
+        this.tocEditService.setDocumentConfig(dConfig);
+        this.documentConfig = dConfig;
+      });
 
     this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
       this.getChildren,
@@ -188,18 +147,22 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tableOfContentService.toc$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((toc) => {
-        this.setTree(toc);
-        //expand the default nodes if the expanded state is empty
-        setTimeout(() => {
-          if (this.expandedNodes.length > 0) {
-            this.expandNodesFromHistory(this.treeControl.dataNodes);
-          } else
-            for (const nodes of this.treeControl.dataNodes)
-              this.defaultExpanded(nodes);
-        });
+    this.tocService.toc$.pipe(takeUntil(this.destroy$)).subscribe((toc) => {
+      this.setTree(toc);
+      //expand the default nodes if the expanded state is empty
+      setTimeout(() => {
+        if (this.expandedNodes.length > 0) {
+          this.expandNodesFromHistory(this.treeControl.dataNodes);
+        } else
+          for (const nodes of this.treeControl.dataNodes)
+            this.defaultExpanded(nodes);
+      });
+    });
+
+    this.validateTocService.dropValidationResult$
+      .pipe(takeUntil(this.destroy$), filter(Boolean))
+      .subscribe((result) => {
+        this.handleNodeValidationResult(result);
       });
   }
 
@@ -230,6 +193,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
         MOVE_FROM === tocItem.softActionAttr)
     );
   }
+
   getLabel(node: TableOfContentItemVO) {
     if (node != null) {
       if (node.tocItem.numberingType === BULLET_NUM) {
@@ -244,16 +208,16 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   handleNodeChanges(event) {
     if (event.saveSnapshot) {
-      this.treeHistory.push(event.newTree);
+      this.tocEditService.setTreeHistory(event.newTree);
       return;
     }
-    this.setTree(event.newTree);
+    this.tocEditService.setTree(event.newTree);
     this.isToCDraft = true;
     this.highlightInvalidNodes();
   }
 
   handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
-    const nodeTargetParent = this.findNodeById(
+    const nodeTargetParent = findNodeById(
       this.treeControl.dataNodes,
       nodeTarget.parentItem,
     );
@@ -310,6 +274,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       tocItem.itemHeading === 'MANDATORY' || tocItem.itemHeading === 'OPTIONAL'
     );
   }
+
   isItemHeadingEditable(tocItem: TocItem) {
     return tocItem.aknTag === 'DIVISION'
       ? false
@@ -327,49 +292,17 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
-    item.trackChangesAction = LEOS_TC_DELETE_ACTION;
-    if (this.environment === CN) {
-      this.setAffectedAttribute(item, newTree);
-      const parentItem = checkDeleteOnLastItemInList(newTree, item);
-      // LEOS-5958: Delete selected item element.
-      if (!containsItemOfOrigin(item, EC, CN)) {
-        this.removeNode(newTree, item);
-      } else {
-        softDeleteItem(newTree, item, CN);
-      }
-      // LEOS-5958: If parentItem is not null, means it is a list without any points. Then delete parentItem as well.
-      if (parentItem) {
-        if (!containsItemOfOrigin(parentItem, EC, CN)) {
-          this.removeNode(newTree, parentItem);
-        } else {
-          softDeleteItem(newTree, parentItem, CN);
-        }
-      } else {
-        const parent = this.findNodeById(newTree, item.parentItem);
-        updateDepthOfTocItems(parent.childItems);
-      }
-    } else {
-      if (!containsItemOfOrigin(item, EC, LS)) {
-        this.removeNode(newTree, item);
-      } else {
-        softDeleteItem(newTree, item, LS);
-      }
-      const parent = this.findNodeById(newTree, item.parentItem);
-      updateDepthOfTocItems(parent.childItems);
+    item.trackChangeAction = LEOS_TC_DELETE_ACTION;
+    this.tocEditService.deleteItem(newTree, item);
 
-      this.treeHistory.push(this.treeControl.dataNodes);
-      this.setTree(newTree);
-      this.selectedNodeToMove = null;
-    }
-
-    this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(newTree);
+    this.tocEditService.setTreeHistory(this.treeControl.dataNodes);
+    this.tocEditService.setTree(newTree);
     this.selectedNodeToMove = null;
   }
 
   handleTocRemove() {
     const newTree = cloneDeep(this.treeControl.dataNodes);
-    const item = this.findNodeById(newTree, this.selectedNode.id);
+    const item = findNodeById(newTree, this.selectedNode.id);
     const parentItem: TableOfContentItemVO = checkDeleteOnLastItemInList(
       newTree,
       item,
@@ -377,7 +310,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
     if (item) {
       if (item.softActionAttr === DELETE) {
-        this.undeleteItem(newTree, item);
+        this.tocEditService.undeleteItem(newTree, item);
       } else {
         if (this.coEditionService.checkForCoEdition('EDIT_TOC')) {
           // co edition dialog
@@ -411,20 +344,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     });
   }
 
-  undeleteItem = (
-    tocTree: TableOfContentItemVO[],
-    tableOfContentItemVO: TableOfContentItemVO,
-  ) => {
-    const tempDeletedItem =
-      copyDeletedItemToTempForUndelete(tableOfContentItemVO);
-    this.dropItemAtOriginalPosition(
-      tempDeletedItem,
-      tableOfContentItemVO,
-      tocTree,
-    );
-    this.removeNode(tocTree, tableOfContentItemVO);
-  };
-
   deleteWithConfirmationCheck(
     newTree: TableOfContentItemVO[],
     item: TableOfContentItemVO,
@@ -442,382 +361,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
 
   onTocDeleteWithChildren() {
     this.deleteDialog.deleteDialog.openDialog();
-  }
-
-  performAddOrMoveAction(
-    isAdd: boolean,
-    tocTree: TableOfContentItemVO[],
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    parentItem: TableOfContentItemVO,
-    position: string,
-  ) {
-    const addOrMoveItem = (
-      actualTargetItem: TableOfContentItemVO,
-      clauseItem?: TableOfContentItemVO,
-    ) =>
-      this.environment === CN
-        ? this.addOrMoveItemCN(
-            isAdd,
-            sourceItem,
-            clauseItem ? clauseItem : targetItem,
-            tocTree,
-            actualTargetItem,
-            position,
-          )
-        : this.addOrMoveItemProposal(
-            isAdd,
-            sourceItem,
-            clauseItem ? clauseItem : targetItem,
-            tocTree,
-            actualTargetItem,
-            position,
-          );
-    if (targetItem.tocItem.childrenAllowed) {
-      const targetTocItem: TocItem = targetItem.tocItem;
-      const targetRules = [
-        targetTocItem.aknTag.toUpperCase(),
-        targetTocItem.numberingType.toUpperCase(),
-      ].join('_');
-      const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
-      if (
-        isSourceDivision(sourceItem) ||
-        isCrossheading(sourceItem) ||
-        isDroppedOnPointOrIndent(sourceItem, targetItem) ||
-        sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag ||
-        !(
-          targetTocAllowedItems != null &&
-          targetTocAllowedItems.length > 0 &&
-          targetTocAllowedItems.includes(sourceItem.tocItem)
-        )
-      ) {
-        // If items have the same type or if child elements are not allowed in target add it to its parent
-        const actualTargetItem = getActualTargetItem(
-          sourceItem,
-          targetItem,
-          parentItem,
-          position,
-          true,
-        );
-        addOrMoveItem(actualTargetItem);
-      } else if (!targetTocItem.root) {
-        const actualTargetItem = getActualTargetItem(
-          sourceItem,
-          targetItem,
-          parentItem,
-          position,
-          false,
-        );
-        addOrMoveItem(actualTargetItem);
-      } else {
-        if (containsItem(targetItem, 'CLAUSE')) {
-          const clauseItem: TableOfContentItemVO =
-            targetItem.childItems.filter(
-              (x) => x.tocItem.aknTag === 'CLAUSE',
-            )[0] ?? null;
-          if (clauseItem != null) {
-            const parent = this.findNodeById(tocTree, clauseItem.parentItem);
-            const actualTargetItem = getActualTargetItem(
-              sourceItem,
-              clauseItem,
-              parent,
-              'BEFORE',
-              true,
-            );
-            addOrMoveItem(actualTargetItem, clauseItem);
-          }
-        } else {
-          addOrMoveItem(targetItem);
-        }
-      }
-    } else {
-      const actualTargetItem: TableOfContentItemVO = getActualTargetItem(
-        sourceItem,
-        targetItem,
-        parentItem,
-        position,
-        true,
-      );
-      addOrMoveItem(actualTargetItem);
-    }
-  }
-
-  addOrMoveItemCN(
-    isAdd: boolean,
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-    actualTargetItem: TableOfContentItemVO,
-    position: string,
-  ) {
-    if (isAdd) {
-      this.addOrMoveItem(
-        isAdd,
-        sourceItem,
-        targetItem,
-        tocTree,
-        actualTargetItem,
-        position,
-      );
-      this.moveOriginAttribute(sourceItem, targetItem);
-      this.setNumber(sourceItem, targetItem);
-      if (!sourceItem.tocItem.addSoftAttr) {
-        sourceItem.softActionAttr = ADD;
-        sourceItem.softActionRoot = true;
-      }
-      if (sourceItem.tocItem.aknTag === 'DIVISION') {
-        sourceItem.style = 'type_1';
-      }
-    } else {
-      this.updateMovedOnEmptyParent(
-        sourceItem,
-        actualTargetItem,
-        PARAGRAPH,
-        SUBPARAGRAPH,
-      );
-      this.updateMovedOnEmptyParent(
-        sourceItem,
-        actualTargetItem,
-        POINT,
-        SUBPARAGRAPH,
-      );
-      this.updateMovedOnEmptyParent(
-        sourceItem,
-        actualTargetItem,
-        INDENT,
-        SUBPARAGRAPH,
-      );
-      this.updateMovedOnEmptyParent(
-        sourceItem,
-        actualTargetItem,
-        LEVEL,
-        SUBPARAGRAPH,
-      );
-      //handle the logic for original item
-      this.handleMoveActionCN(sourceItem, tocTree);
-      //insert the moved node to the target position
-      this.addOrMoveItem(
-        isAdd,
-        sourceItem,
-        targetItem,
-        tocTree,
-        actualTargetItem,
-        position,
-      );
-    }
-    const paretnNode = this.findNodeById(tocTree, sourceItem.parentItem);
-    handleLevelMove(sourceItem, targetItem);
-    updateDepthOfTocItems(paretnNode?.childItems ?? []);
-    this.setAffectedAttribute(sourceItem, tocTree);
-    setBlockOrCrossHeading(tocTree, sourceItem);
-
-    this.resetUserInfo(sourceItem);
-  }
-
-  addOrMoveItemProposal(
-    isAdd: boolean,
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-    actualTargetItem: TableOfContentItemVO,
-    position: string,
-  ) {
-    if (isAdd) {
-      this.addOrMoveItem(
-        isAdd,
-        sourceItem,
-        targetItem,
-        tocTree,
-        actualTargetItem,
-        position,
-      );
-      sourceItem.softActionAttr = ADD;
-      sourceItem.softActionRoot = true;
-      this.moveOriginAttribute(sourceItem, targetItem);
-      this.setNumber(sourceItem, targetItem);
-    } else {
-      this.handleMoveActionEC(sourceItem, tocTree);
-      this.addOrMoveItem(
-        isAdd,
-        sourceItem,
-        targetItem,
-        tocTree,
-        actualTargetItem,
-        position,
-      );
-    }
-    const paretnNode = this.findNodeById(tocTree, sourceItem.parentItem);
-    handleLevelMove(sourceItem, targetItem);
-    updateDepthOfTocItems(paretnNode?.childItems ?? []);
-    this.resetUserInfo(sourceItem);
-  }
-
-  copyMovingItemToTempCN(
-    originalItem: TableOfContentItemVO,
-    isSoftActionRoot: boolean,
-    tocTree: TableOfContentItemVO[],
-  ) {
-    const moveToItem = cloneDeep(originalItem);
-    moveToItem.childItems = [];
-    if (!ELEMENTS_WITHOUT_CONTENT.includes(originalItem.tocItem.aknTag)) {
-      moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
-      moveToItem.originNumAttr = EC;
-      moveToItem.softActionAttr = MOVE_TO;
-      moveToItem.softActionRoot = isSoftActionRoot;
-      moveToItem.softUserAttr = null;
-      moveToItem.softDateAttr = null;
-    } else {
-      moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
-      moveToItem.softActionAttr = MOVE_TO;
-      moveToItem.softActionRoot = isSoftActionRoot;
-
-      originalItem.childItems.forEach((child) => {
-        if (
-          child.originAttr === EC &&
-          child.softActionAttr !== MOVE_FROM &&
-          child.softActionAttr !== MOVE_TO &&
-          child.softActionAttr !== ADD &&
-          child.softActionAttr !== DELETE
-        ) {
-          moveToItem.childItems.push(
-            this.copyMovingItemToTempCN(child, false, tocTree),
-          );
-        } else if (
-          child.originAttr === EC &&
-          (child.softActionAttr === MOVE_TO || child.softActionAttr === DELETE)
-        ) {
-          this.setAffectedAttribute(child, tocTree);
-        }
-      });
-    }
-    moveToItem.softMoveTo = originalItem.id;
-    moveToItem.itemDepth = originalItem.itemDepth;
-    moveToItem.originalDepthLevel = originalItem.originalDepthLevel;
-    originalItem.softActionAttr = MOVE_FROM;
-    originalItem.softActionRoot = isSoftActionRoot;
-    originalItem.softMoveFrom =
-      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
-    return moveToItem;
-  }
-
-  copyMovingItemToTempEC(
-    originalItem: TableOfContentItemVO,
-    isSoftActionRoot: boolean,
-    tocTree: TableOfContentItemVO[],
-  ) {
-    const moveToItem = cloneDeep(originalItem);
-    moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
-    moveToItem.originNumAttr = EC;
-    moveToItem.softUserAttr = null;
-    moveToItem.softDateAttr = null;
-    originalItem.softActionAttr = MOVE_FROM;
-    originalItem.softActionRoot = isSoftActionRoot;
-    originalItem.softMoveFrom =
-      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
-    return moveToItem;
-  }
-
-  handleMoveActionCN(
-    moveFromItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-  ) {
-    if (
-      moveFromItem.originAttr === EC &&
-      (moveFromItem.softActionAttr == null ||
-        (!hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
-          !hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
-          !hasTocItemSoftAction(moveFromItem, ADD) &&
-          !hasTocItemSoftAction(moveFromItem, DELETE)))
-    ) {
-      //skips the copyMovingItemFinal since it only does replace the temp from the id not necessary here
-      const moveTemp = this.copyMovingItemToTempCN(moveFromItem, true, tocTree);
-      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
-
-      // Handles specific case while moving unnumbered paragraph together with numbered paragraphs
-      if (
-        [PARAGRAPH, LEVEL].includes(moveFromItem.tocItem.aknTag) &&
-        moveFromItem.number === ''
-      ) {
-        const moveFromSiblings = this.findNodeById(
-          tocTree,
-          moveTemp.parentItem,
-        ).childItems;
-        if (moveFromSiblings?.length > 0) {
-          const refItem = moveFromSiblings[0];
-          if (refItem.number !== '') {
-            moveFromItem.number = HASH_NUM_VALUE;
-          }
-        }
-      }
-      moveFromItem.originNumAttr = CN;
-      moveFromItem.softActionRoot = true;
-
-      // dropItemAtOriginalPosition(moveToTemp, moveToFinal, container);
-
-      this.setAffectedAttribute(moveFromItem, tocTree);
-
-      if (moveFromItem.softActionAttr === MOVE_FROM) {
-        moveFromItem.softMoveFrom =
-          SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveFromItem.id;
-        const moveToItem = this.findNodeById(
-          tocTree,
-          moveFromItem.softMoveFrom,
-        );
-        if (moveToItem) {
-          moveToItem.softActionRoot = true;
-          this.setAffectedAttribute(moveToItem, tocTree);
-        }
-      }
-    }
-  }
-
-  handleMoveActionEC(
-    moveFromItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-  ) {
-    if (
-      moveFromItem.originAttr === EC &&
-      (moveFromItem.softActionAttr == null ||
-        (!hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
-          !hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
-          !hasTocItemSoftAction(moveFromItem, ADD) &&
-          !hasTocItemSoftAction(moveFromItem, DELETE)))
-    ) {
-      const moveTemp = this.copyMovingItemToTempEC(moveFromItem, true, tocTree);
-      moveFromItem.originNumAttr = LS;
-      moveFromItem.softActionRoot = true;
-
-      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
-    }
-    moveFromItem.originNumAttr = LS;
-    moveFromItem.softActionRoot = true;
-    if (moveFromItem.softActionAttr === MOVE_FROM) {
-      moveFromItem.softMoveFrom =
-        SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveFromItem.id;
-      const moveToItem: TableOfContentItemVO = getTableOfContentItemVOById(
-        moveFromItem.softMoveFrom,
-        tocTree,
-      );
-      if (moveToItem != null) {
-        moveToItem.softActionRoot = true;
-      }
-    }
-  }
-  //copy the source item, to a temp moved
-  copyMovingItemToTemp(
-    originalItem: TableOfContentItemVO,
-    isSoftActionRoot: boolean,
-  ) {
-    const moveToItem: TableOfContentItemVO = cloneDeep(originalItem);
-    moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
-    moveToItem.originNumAttr = EC;
-    moveToItem.softActionAttr = MOVE_TO;
-    moveToItem.softMoveTo = originalItem.id;
-    originalItem.softActionAttr = MOVE_FROM;
-    originalItem.softActionRoot = isSoftActionRoot;
-    originalItem.softMoveFrom =
-      SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
-    return moveToItem;
   }
 
   handleInvalidNodes(event: Set<TableOfContentItemVO>) {
@@ -876,6 +419,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     });
   }
 
+  cancelDrop() {
+    this.restoreExpanded(this.treeControl.dataNodes);
+    this.clearDragInfo();
+  }
+
   //a node can be dropped from two sources
   //1) the ToC itself
   //2) the drag elements found on the left
@@ -885,7 +433,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const nodeTarget = this.findNodeById(
+    const nodeTarget = findNodeById(
       this.treeControl.dataNodes,
       this.dragAction.targetId,
     );
@@ -896,7 +444,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       nodeTarget.parentItem = nodeTarget.id;
     }
 
-    const parentNode = this.findNodeById(
+    const parentNode = findNodeById(
       this.treeControl.dataNodes,
       nodeTarget.parentItem,
     );
@@ -981,7 +529,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   setTree(toc: TableOfContentItemVO[]) {
     this.prepareTreeForDisplay(toc);
     this.dataSource.data = toc;
-    this.treeControl.dataNodes = this.dataSource.data;
+    this.treeControl.dataNodes = toc;
 
     this.checkForDraft();
 
@@ -994,22 +542,17 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
   }
 
   checkForDraft() {
-    if (this.treeHistory && this.treeHistory.length === 0)
-      this.isToCDraft = false;
-    if (this.treeHistory && this.treeHistory.length > 0) {
+    if (this.tocEditService.getTreeHistorySize() === 0) this.isToCDraft = false;
+    if (this.tocEditService.getTreeHistorySize() > 0) {
       this.isToCDraft = true;
     }
   }
 
   resetTreeState() {
-    if (this.treeHistory.length > 0) {
-      const beforeEditTree = this.treeHistory.shift();
-      this.setTree(beforeEditTree);
-    }
     this.clearSelectedNode();
     this.isDropValid = false;
     this.selectedNodeToMove = null;
-    this.treeHistory = [];
+    this.tocEditService.resetTreeHistory();
     this.isToCDraft = false;
     this.invalidNodes?.clear();
   }
@@ -1176,220 +719,125 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     position: string,
     isAdd: boolean = false,
   ) {
-    this.documentService
-      .validateNodeDrop(
-        [nodeDragged.id],
-        nodeDragged.tocItem.aknTag,
-        nodeTarget.id,
-        nodeTarget.tocItem.aknTag,
-        parentNode.id,
-        parentNode.tocItem.aknTag,
+    this.draggedItem = nodeDragged;
+    this.validateTocService.validateNodeDrop(
+      this.treeControl.dataNodes,
+      parentNode,
+      nodeTarget,
+      nodeDragged,
+      [nodeDragged.id],
+      nodeDragged.tocItem.aknTag,
+      nodeTarget.id,
+      nodeTarget.tocItem.aknTag,
+      parentNode.id,
+      parentNode.tocItem.aknTag,
+      position,
+      this.documentType,
+      this.documentRef,
+    );
+  }
+
+  private handleNodeValidationResult(result: NodeValidation) {
+    this.populateValidationMessage(result);
+    setTimeout(() => {
+      this.clearValidationMessage();
+    }, TIME_TO_CLEAR_INVALID);
+
+    if (!result.success) {
+      return;
+    }
+
+    this.handleAddNodeAfterValidation(
+      result.targetItem,
+      this.draggedItem,
+      this.dragAction.isAdd,
+      this.dragAction.action,
+    );
+
+    this.draggedItem = null;
+  }
+
+  private handleAddNodeAfterValidation(
+    nodeTarget: TableOfContentItemVO,
+    nodeDragged: TableOfContentItemVO,
+    isAdd: boolean,
+    position: string,
+  ) {
+    // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
+    if (position === 'AS_CHILDREN') {
+      const validationResult: NodeValidation = {
+        success: true,
+        targetItem: nodeTarget,
+        sourceItem: nodeDragged,
+        messageKey: 'toc.edit.window.drop.success.message',
+      };
+
+      const parentNode = findNodeById(
+        this.treeControl.dataNodes,
+        nodeTarget.parentItem,
+      );
+
+      const resultOfValidation =
+        this.validateTocService.validateAddingItemAsChildOrSibling(
+          validationResult,
+          nodeDragged,
+          nodeTarget,
+          this.treeControl.dataNodes,
+          parentNode,
+          position,
+        );
+      if (!validationResult?.success) {
+        this.populateValidationMessage(validationResult);
+        return;
+      }
+    }
+    // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
+    // so the resutl.success will now mean that it can be dropped as a sibling
+    if (position === 'AS_CHILDREN') {
+      switch (this.documentType) {
+        case 'council_explanatory':
+          position = checkPositionAfterValidationExplanatory(
+            nodeTarget,
+            nodeDragged,
+            position,
+          );
+          break;
+        default:
+          position = checkPositionAfterValidation(
+            nodeTarget,
+            nodeDragged,
+            position,
+          );
+      }
+    }
+
+    try {
+      this.tocEditService.setTreeHistory(this.treeControl.dataNodes);
+      const newTree = cloneDeep(this.treeControl.dataNodes);
+      const newEventItem = isAdd
+        ? nodeDragged
+        : findNodeById(newTree, nodeDragged.id);
+      const newTargetItem = findNodeById(newTree, nodeTarget.id);
+      this.addDefaultToNewItem(
+        newTree,
+        isAdd,
+        newEventItem,
+        newTargetItem,
         position,
-        this.documentType,
-        this.documentRef,
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.populateValidationMessage(response.result);
-          setTimeout(() => {
-            this.clearValidationMessage();
-          }, TIME_TO_CLEAR_INVALID);
-          if (response.result.success) {
-            if (position === 'AS_CHILDREN') {
-              const validationResult: NodeValidation = {
-                success: true,
-                targetItem: nodeTarget,
-                sourceItem: nodeDragged,
-                messageKey: 'toc.edit.window.drop.success.message',
-              };
-              const resultOfValidation =
-                this.validateAddingItemAsChildOrSibling(
-                  validationResult,
-                  nodeDragged,
-                  nodeTarget,
-                  this.treeControl.dataNodes,
-                  parentNode,
-                  position,
-                );
-              if (!validationResult?.success) {
-                this.populateValidationMessage(validationResult);
-                return;
-              }
-            }
-            // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
-            // so the resutl.success will now mean that it can be dropped as a sibling
-            if (position === 'AS_CHILDREN') {
-              switch (this.documentType) {
-                case 'council_explanatory':
-                  position = checkPositionAfterValidationExplanatory(
-                    nodeTarget,
-                    nodeDragged,
-                    position,
-                  );
-                  break;
-                default:
-                  position = checkPositionAfterValidation(
-                    nodeTarget,
-                    nodeDragged,
-                    position,
-                  );
-              }
-            }
-            try {
-              const newTree = cloneDeep(this.treeControl.dataNodes);
-              const newEventItem = isAdd
-                ? nodeDragged
-                : this.findNodeById(newTree, nodeDragged.id);
-              const newTargetItem = this.findNodeById(newTree, nodeTarget.id);
-              this.addDefaultToNewItem(
-                newTree,
-                isAdd,
-                newEventItem,
-                newTargetItem,
-                position,
-              );
-              if (isAdd) {
-                this.reBuildTocItems.emit(true);
-              }
-              this.isToCDraft = true;
-              this.selectedNodeToMove = null;
-              setTimeout(() => {
-                this.handleNodeSelect(nodeDragged);
-              });
-            } catch (e) {
-              this.clearDragInfo(true);
-              return;
-            }
-          } else {
-            this.clearDragInfo(false);
-          }
-        },
-        error: (err) => {
-          this.clearDragInfo(true);
-        },
+      );
+      if (isAdd) {
+        this.reBuildTocItems.emit(true);
+      }
+      this.isToCDraft = true;
+      this.selectedNodeToMove = null;
+      setTimeout(() => {
+        this.handleNodeSelect(nodeDragged);
       });
-  }
-
-  private resetUserInfo(sourceItem: TableOfContentItemVO) {
-    sourceItem.softUserAttr = null;
-    sourceItem.softUserAttr = null;
-  }
-  private handleLevelMove(
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-  ) {
-    // when moving back a LEVEL restore the initial depth
-    if (
-      sourceItem.tocItem.aknTag === 'LEVEL' &&
-      targetItem.tocItem.aknTag === 'LEVEL'
-    ) {
-      sourceItem.itemDepth = targetItem.itemDepth;
+    } catch (e) {
+      this.tocEditService.popTreeHistory();
+      this.clearDragInfo(true);
+      return;
     }
-  }
-
-  private moveOriginAttribute(
-    droppedElement: TableOfContentItemVO,
-    targetElement: TableOfContentItemVO,
-  ) {
-    if (this.isElementAndTargetOriginDifferent(droppedElement, targetElement)) {
-      droppedElement.originAttr = this.environment === CN ? CN : LS;
-    }
-    droppedElement.originAttr = this.environment === CN ? CN : LS;
-  }
-
-  private setNumber(
-    droppedElement: TableOfContentItemVO,
-    targetElement: TableOfContentItemVO,
-  ) {
-    if (isNumbered(this.treeControl.dataNodes, droppedElement, targetElement)) {
-      if (!droppedElement.isAutoNumOverwritten) {
-        droppedElement.number = HASH_NUM_VALUE;
-      }
-      if (this.isNumSoftDeleted(droppedElement.numSoftActionAttr)) {
-        droppedElement.numSoftActionAttr = null;
-      } else {
-        droppedElement.number = HASH_NUM_VALUE;
-      }
-    } else {
-      droppedElement.number = null;
-    }
-  }
-
-  private isNumSoftDeleted(numSoftACtionAttr: string) {
-    return numSoftACtionAttr === DELETE;
-  }
-  private cancelDrop() {
-    this.restoreExpanded(this.treeControl.dataNodes);
-    this.clearDragInfo();
-  }
-
-  private updateMovedOnEmptyParent(
-    dropData: TableOfContentItemVO,
-    targetItemVO: TableOfContentItemVO,
-    movedOntoType: string,
-    movedElementType: string,
-  ) {
-    if (
-      targetItemVO != null &&
-      targetItemVO.tocItem.aknTag === movedOntoType &&
-      dropData != null &&
-      dropData.tocItem.aknTag === movedElementType &&
-      !this.containsMovedElement(targetItemVO.childItems, movedElementType)
-    ) {
-      dropData.movedOnEmptyParent = true;
-    }
-  }
-
-  private containsMovedElement(
-    childItems: TableOfContentItemVO[],
-    movedElementType: string,
-  ) {
-    for (const child of childItems) {
-      if (child.tocItem.aknTag === movedElementType && child.node != null) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private setAffectedAttribute(
-    dropData: TableOfContentItemVO,
-    treeData: TableOfContentItemVO[],
-  ) {
-    if (
-      ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(dropData.tocItem.aknTag)
-    ) {
-      let parentItemVO = this.findNodeById(treeData, dropData.parentItem);
-      while (parentItemVO != null) {
-        if (
-          ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING.includes(
-            parentItemVO.tocItem.aknTag,
-          )
-        ) {
-          parentItemVO.isAffected = true;
-          if (
-            POINT_ROOT_PARENT_ELEMENTS.includes(parentItemVO.tocItem.aknTag)
-          ) {
-            break;
-          }
-        }
-        parentItemVO = this.findNodeById(treeData, parentItemVO.parentItem);
-      }
-    }
-  }
-
-  private dropItemAtOriginalPosition(
-    nodeToAdd: TableOfContentItemVO,
-    originalNode: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-  ) {
-    const originalParent = this.findNodeById(tocTree, originalNode.parentItem);
-    const indexOfOriginalNode = originalParent.childItems.indexOf(originalNode);
-    if (indexOfOriginalNode !== -1) {
-      originalParent.childItems.splice(indexOfOriginalNode, 0, nodeToAdd);
-    }
-    //handle not found, edge case senario the previous code won't be able to reach here
   }
 
   private showNodeInsertion(node: HTMLElement, invalid = false) {
@@ -1490,101 +938,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  private removeNode(
-    root: TableOfContentItemVO[],
-    target: TableOfContentItemVO,
-  ) {
-    const parentNode = this.findNodeById(root, target.parentItem);
-    parentNode.childItems = parentNode.childItems.filter(
-      (n) => target.id !== n.id,
-    );
-  }
-
-  private insertAfter(
-    tree: TableOfContentItemVO[],
-    target: TableOfContentItemVO,
-    eventItem: TableOfContentItemVO,
-    isAdd: boolean,
-  ) {
-    //remove the node from the tree
-    // if (!isAdd) this.removeNode(newTree, eventItem);
-    //get parent of the node droped / to moved at
-    const parentNode = this.findNodeById(tree, target.parentItem);
-
-    //set the selected / dragged  node to have the same id as the node droped/moved at
-    eventItem.parentItem = parentNode.id;
-    const targetIndex = parentNode.childItems.findIndex(
-      (x) => x.id === target.id,
-    );
-    parentNode.childItems.splice(targetIndex + 1, 0, eventItem);
-    //set the new tree
-    this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(tree);
-  }
-
-  private insertBefore(
-    tree: TableOfContentItemVO[],
-    target: TableOfContentItemVO,
-    eventItem: TableOfContentItemVO,
-    isAdd: boolean,
-  ) {
-    // if (!isAdd) this.removeNode(tree, eventItem);
-    const parentNode = this.findNodeById(tree, target.parentItem);
-    const targetIndex = parentNode.childItems.findIndex(
-      (x) => x.id === target.id,
-    );
-    //set the selected / dragged  node to have the same id as the node droped/moved at
-    eventItem.parentItem = parentNode.id;
-
-    if (targetIndex === 0) {
-      parentNode.childItems.unshift(eventItem);
-    } else {
-      parentNode.childItems.splice(targetIndex, 0, eventItem);
-    }
-    this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(tree);
-  }
-
-  private insertChild(
-    tree: TableOfContentItemVO[],
-    target: TableOfContentItemVO,
-    eventItem: TableOfContentItemVO,
-    isAdd: boolean,
-  ) {
-    // if (!isAdd) this.removeNode(tree, eventItem);
-    //get node to insert to as child
-    const parentToBeNode = this.findNodeById(tree, target.id);
-    //set the selected / dragged  node to have the same id as the node droped/moved at
-    eventItem.parentItem = parentToBeNode.id;
-    parentToBeNode.childItems.push(eventItem);
-    this.treeHistory.push(this.treeControl.dataNodes);
-    this.setTree(tree);
-  }
-
   private restoreExpanded(root: TableOfContentItemVO[]) {
     for (const node of root) {
       if (node.expanded) this.treeControl.expand(node);
       this.restoreExpanded(node.childItems);
     }
-  }
-
-  private findNodeById(
-    root: TableOfContentItemVO[],
-    id: string,
-  ): TableOfContentItemVO | null {
-    const stack: TableOfContentItemVO[] = [...root];
-
-    while (stack.length) {
-      const node = stack.pop();
-      if (node?.id === id) {
-        return node;
-      }
-      if (node?.childItems) {
-        stack.push(...node.childItems);
-      }
-    }
-
-    return undefined;
   }
 
   private defaultExpanded(node: TableOfContentItemVO) {
@@ -1612,19 +970,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     }
   }
 
-  private isElementAndTargetOriginDifferent(
-    element: TableOfContentItemVO,
-    parent: TableOfContentItemVO,
-  ): boolean {
-    let isDifferent = false;
-    if (element.originAttr === null) {
-      isDifferent = true;
-    } else if (element.originAttr !== parent.originAttr) {
-      isDifferent = true;
-    }
-    return isDifferent;
-  }
-
   private addDefaultToNewItem(
     tree: TableOfContentItemVO[],
     isAdd: boolean,
@@ -1632,7 +977,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
     targetElement: TableOfContentItemVO,
     position: string,
   ) {
-    const parent = this.findNodeById(tree, targetElement.parentItem);
+    const parent = findNodeById(tree, targetElement.parentItem);
     if (isAdd) {
       eventItem.indentOriginIndentLevel = '-1';
       switch (eventItem.tocItem.aknTag) {
@@ -1652,7 +997,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.performAddOrMoveAction(
+    this.tocEditService.performAddOrMoveAction(
       isAdd,
       tree,
       eventItem,
@@ -1661,171 +1006,4 @@ export class DocumentTocComponent implements OnInit, OnDestroy {
       position,
     );
   }
-
-  private addOrMoveItem(
-    isAdd: boolean,
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-    actualTargetItem: TableOfContentItemVO,
-    position: string,
-  ) {
-    if (isAdd) {
-      if (actualTargetItem == null) {
-        sourceItem.parentItem = null;
-        sourceItem.itemDepth = 1;
-      }
-    } else if (sourceItem.parentItem != null) {
-      this.removeNode(tocTree, sourceItem);
-      sourceItem.originalDepthLevel = sourceItem.itemDepth;
-    }
-    if (actualTargetItem) {
-      sourceItem.parentItem = actualTargetItem.id;
-      if (actualTargetItem.id !== targetItem.id) {
-        if ('BEFORE' === position) {
-          this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
-        }
-        if ('AFTER' === position) {
-          this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
-        }
-      } else if (
-        actualTargetItem === targetItem &&
-        LEVEL === sourceItem.tocItem.aknTag
-      ) {
-        /*
-         * This else is when we add level as child or after a Part, Title, Chapter or Section,
-         * because in this case the actualTargetItem is equal to targetItem, and we need to set
-         * the level as the first of list of children
-         */
-        actualTargetItem.childItems.splice(0, 0, sourceItem);
-      } else {
-        this.insertChild(tocTree, targetItem, sourceItem, isAdd);
-      }
-    }
-    setItemDepth(sourceItem, targetItem, position);
-    setItemLevel(tocTree, sourceItem, targetItem, position);
-  }
-
-  private validateAddingItemAsChildOrSibling(
-    validationResult: NodeValidation,
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-    parentItem: TableOfContentItemVO,
-    position: string,
-  ): boolean {
-    const targetTocItem = targetItem.tocItem;
-    const targetRules = [
-      targetTocItem.aknTag.toUpperCase(),
-      targetTocItem.numberingType.toUpperCase(),
-    ].join('_');
-    const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
-
-    if (
-      isSourceDivision(sourceItem) ||
-      isCrossheading(sourceItem) ||
-      isDroppedOnPointOrIndent(sourceItem, targetItem) ||
-      sourceItem.tocItem.aknTag === targetItem.tocItem.aknTag
-    ) {
-      const actualTargetItem = getActualTargetItem(
-        sourceItem,
-        targetItem,
-        parentItem,
-        position,
-        true,
-      );
-      return this.validateAddingToActualTargetItem(
-        validationResult,
-        sourceItem,
-        targetItem,
-        tocTree,
-        actualTargetItem,
-        position,
-      );
-    }
-    //TODO : Add toc rules current problem rules are of type -> Map<TocItem,List<TocItem>> this cant't be parsed as json , and because some values have the same toc item key (aknTag) we can't map them by this identifier
-    else if (
-      targetTocItems?.length > 0 &&
-      targetTocItems.some((item) => isTocItemsEqual(item, sourceItem.tocItem))
-    ) {
-      //If target item type is root, source item will be added as child, else validate dropping item at dragged location
-      const actualTargetItem = getActualTargetItem(
-        sourceItem,
-        targetItem,
-        parentItem,
-        position,
-        false,
-      );
-      return (
-        // isRootElement(targetItem) ||
-        this.validateAddingToActualTargetItem(
-          validationResult,
-          sourceItem,
-          targetItem,
-          tocTree,
-          actualTargetItem,
-          position,
-        )
-      );
-    } else {
-      // If child elements not allowed in target validate adding it to its parent
-      return this.validateAddingItemAsSibling(
-        validationResult,
-        sourceItem,
-        targetItem,
-        tocTree,
-        parentItem,
-        position,
-      );
-    }
-  }
-
-  private validateAddingItemAsSibling(
-    validationResult: NodeValidation,
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-    parentItem: TableOfContentItemVO,
-    position: string,
-  ) {
-    const actualTargetItem = getActualTargetItem(
-      sourceItem,
-      targetItem,
-      parentItem,
-      position,
-      true,
-    );
-    return this.validateAddingToActualTargetItem(
-      validationResult,
-      sourceItem,
-      targetItem,
-      tocTree,
-      actualTargetItem,
-      position,
-    );
-  }
-
-  private validateAddingToActualTargetItem = (
-    validationResult: NodeValidation,
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-    actualTargetItem: TableOfContentItemVO,
-    position: string,
-  ): boolean => {
-    const validAddingToItem = validateAddingToItem(
-      validationResult,
-      sourceItem,
-      targetItem,
-      tocTree,
-      actualTargetItem,
-      position,
-    );
-    const maxDepthReached = validateMaxDepth(
-      validationResult,
-      sourceItem,
-      targetItem,
-    );
-    return validAddingToItem && !maxDepthReached;
-  };
 }

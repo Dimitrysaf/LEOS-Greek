@@ -36,7 +36,7 @@ import { TocItem } from '../models/toc.model';
 import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
-import { TableOfContentService } from './tableOfContent.service';
+import { TableOfContentService } from './table-of-content.service';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 

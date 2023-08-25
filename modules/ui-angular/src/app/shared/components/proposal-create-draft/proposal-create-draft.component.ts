@@ -8,6 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
+import { TranslateService } from '@ngx-translate/core';
 import { from, Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
@@ -22,7 +23,6 @@ import {
 } from '../../../features/proposals/models';
 import { ProposalService } from '../../../features/proposals/services/proposal.service';
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proposal-create-draft',

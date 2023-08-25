@@ -158,7 +158,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public String getElement(String documentRef, String elementName, String elementId) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        return  this.elementProcessor.getElement(annex, elementName, elementId);
+        return this.elementProcessor.getElement(annex, elementName, elementId);
     }
 
     @Override
@@ -215,7 +215,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
         List<Annex> annexes = this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
-        return  VersionsUtil.buildVersionResponse(annexes, messageHelper, userHelper);
+        return VersionsUtil.buildVersionResponse(annexes, messageHelper, userHelper);
 
     }
 
@@ -269,6 +269,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(annex));
+        this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         AnnexStructureType structureType = getStructureType(structureContext1);
         Annex updatedAnnex = annexService.saveTableOfContent(annex, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.annexService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);

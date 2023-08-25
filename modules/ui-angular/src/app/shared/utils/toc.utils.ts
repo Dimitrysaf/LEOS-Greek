@@ -1,6 +1,6 @@
-import { cloneDeep, remove } from 'lodash-es';
+import { cloneDeep, drop, remove } from 'lodash-es';
 
-import { TableOfContentService } from '@/features/akn-document/services/tableOfContent.service';
+import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 
 import {
   ADD,
@@ -14,6 +14,7 @@ import {
   DIVISION,
   EC,
   ELEMENTS_TO_REMOVE_FROM_CONTENT,
+  HASH_NUM_VALUE,
   INDENT,
   LEOS_TC_DELETE_ACTION,
   LEVEL,
@@ -432,18 +433,17 @@ export const checkPositionAfterValidation = (
       return position;
   }
 };
-
 export const setNumber = (
-  toc: TableOfContentItemVO[],
+  newTree: TableOfContentItemVO[],
   droppedElement: TableOfContentItemVO,
   targetElement: TableOfContentItemVO,
 ) => {
-  if (isNumbered(toc, droppedElement, targetElement)) {
+  if (isNumbered(newTree, droppedElement, targetElement)) {
     if (!droppedElement.isAutoNumOverwritten) {
-      droppedElement.number = '#';
+      droppedElement.number = HASH_NUM_VALUE;
     }
-    if (droppedElement.numSoftActionAttr === 'DELETE') {
-      droppedElement.softActionAttr = null;
+    if (isNumSoftDeleted(droppedElement.numSoftActionAttr)) {
+      droppedElement.numSoftActionAttr = null;
     }
   } else {
     droppedElement.number = null;
@@ -752,7 +752,7 @@ export const copyDeletedItemToTempForUndelete = (
     tempDeletedItem.numSoftActionAttr = originalItem.numSoftActionAttr;
   } else {
     tempDeletedItem.id = originalItem.id;
-    tempDeletedItem.trackChangesAction = LEOS_TC_DELETE_ACTION;
+    tempDeletedItem.trackChangeAction = LEOS_TC_DELETE_ACTION;
   }
   tempDeletedItem.childItems = originalItem.childItems.map((child) =>
     copyDeletedItemToTempForUndelete(originalItem),
@@ -812,24 +812,34 @@ export const transformToSoftDeleted = (
   item: TableOfContentItemVO,
 ) => {
   const tempDeletedItem = copyDeletedItemToTemp(item, true);
-  return movingItem(tempDeletedItem, item, treeData);
+  return movingItem(item, item, treeData, tempDeletedItem);
 };
 
 export const movingItem = (
   item: TableOfContentItemVO,
   moveBefore: TableOfContentItemVO,
   tocTree: TableOfContentItemVO[],
+  finalItem: TableOfContentItemVO,
 ) => {
-  const originalParent = findNodeById(tocTree, moveBefore.parentItem);
-  const indexOfOriginalNode = originalParent.childItems.indexOf(moveBefore);
-  if (indexOfOriginalNode !== -1) {
-    originalParent.childItems.splice(indexOfOriginalNode, 0, item);
-  }
-  originalParent.childItems = originalParent.childItems.filter(
-    (n) => n.id !== moveBefore.id,
-  );
+  dropItemAtOriginalPosition(finalItem, item, tocTree);
+  removeNode(tocTree, item);
   //TODO : handle not found, edge case senario the previous code won't be able to reach here
   return item;
+};
+
+export const dropItemAtOriginalPosition = (
+  nodeToAdd: TableOfContentItemVO,
+  originalNode: TableOfContentItemVO,
+  tocTree: TableOfContentItemVO[],
+) => {
+  const originalParent = findNodeById(tocTree, originalNode.parentItem);
+  const indexOfOriginalNode = originalParent.childItemsView.indexOf(
+    originalNode.id,
+  );
+  if (indexOfOriginalNode !== -1) {
+    originalParent.childItems.splice(indexOfOriginalNode, 0, nodeToAdd);
+  }
+  //handle not found, edge case senario the previous code won't be able to reach here
 };
 
 export const copyDeletedItemToTemp = (
@@ -946,14 +956,18 @@ export const isDroppedOnPointOrIndent = (
 };
 
 export const removeTag = (itemContent: string) => {
-  for (const element of ELEMENTS_TO_REMOVE_FROM_CONTENT) {
-    itemContent = itemContent.replaceAll(
-      '<' + element + '.*?</' + element + '>',
-      '',
-    );
+  try {
+    for (const element of ELEMENTS_TO_REMOVE_FROM_CONTENT) {
+      itemContent = itemContent?.replaceAll(
+        '<' + element + '.*?</' + element + '>',
+        '',
+      );
+    }
+    itemContent = itemContent?.replaceAll('<[^>]+>', '');
+  } catch (e) {
+    console.log(e);
   }
-  itemContent = itemContent.replaceAll('<[^>]+>', '');
-  return itemContent.replaceAll('\\s+', ' ').trim();
+  return itemContent?.replaceAll('\\s+', ' ').trim();
 };
 
 export const getItemSoftStyle = (
@@ -1302,4 +1316,54 @@ export const isNodeLastElement = (
   const parentNode = findNodeById(toc, targetNode.parentItem);
 
   return parentNode?.childItems?.length === 1;
+};
+
+export const restoreMovedItemOrSetNumber = (
+  tocTree: TableOfContentItemVO[],
+  droppedItem: TableOfContentItemVO,
+  newPosition: TableOfContentItemVO,
+  position: string,
+) => {
+  const siblings =
+    position === 'as_children'
+      ? newPosition.childItems
+      : findNodeById(tocTree, newPosition.parentItem)?.childItems;
+
+  const droppedItemIndex = siblings.indexOf(droppedItem);
+  const previousSibling =
+    droppedItemIndex > 0 ? siblings.at(droppedItemIndex - 1) : null;
+  const nextSibling =
+    droppedItemIndex < siblings.length - 1
+      ? siblings.at(droppedItemIndex + 1)
+      : null;
+
+  if (isPlaceholderForDroppedItem(tocTree, newPosition, droppedItem)) {
+    // restoreOriginal(droppedItem, newPosition, tocTree);
+    if (newPosition.parentItem) {
+      // removeNode(tocTree, newPosition);
+    }
+  } else if (
+    isPlaceholderForDroppedItem(tocTree, previousSibling, droppedItem)
+  ) {
+    // restoreOriginal(droppedItem, previousSibling, tocTree);
+    // if (newPosition.getParentItem() != null) {
+    //     TableOfContentHelper.removeChildItem(newPosition.getParentItem(), previousSibling);
+  } else {
+    setNumber(tocTree, droppedItem, newPosition);
+  }
+};
+
+const isPlaceholderForDroppedItem = (
+  tocTree: TableOfContentItemVO[],
+  candidate: TableOfContentItemVO,
+  droppedItem: TableOfContentItemVO,
+) => {
+  const parentItemOfCandiate = findNodeById(tocTree, candidate.parentItem);
+  if (candidate && hasTocItemSoftAction(parentItemOfCandiate, MOVE_TO)) {
+    return false;
+  }
+  return (
+    candidate &&
+    candidate.id === SOFT_MOVE_PLACEHOLDER_ID_PREFIX + droppedItem.id
+  );
 };
