@@ -41,6 +41,7 @@ define(function aknDivisionHeadingProfileModule(require) {
 	plugins.push(require("plugins/aknHtmlSuperScript/aknHtmlSuperScriptPlugin"));
     plugins.push(require("plugins/aknHtmlSubScript/aknHtmlSubScriptPlugin"));
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -66,7 +67,7 @@ define(function aknDivisionHeadingProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,button,dialog,dialogui,"
             + "widget,lineutils,basicstyles," + "indent,"
-            + "fakeobjects,specialchar,menubutton,mathjax,pastetext",
+            + "fakeobjects,specialchar,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -86,6 +87,7 @@ define(function aknDivisionHeadingProfileModule(require) {
             {name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
             {name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher']},
             {name: 'insert', items: ['SpecialChar']},
+            {name: 'colors', items: ['BGColor']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

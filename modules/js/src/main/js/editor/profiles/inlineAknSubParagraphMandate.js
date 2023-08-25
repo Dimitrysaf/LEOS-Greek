@@ -56,6 +56,7 @@ define(function aknSubParagraphMandateProfileModule(require) {
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/leosAnnexOrderedList/leosAnnexOrderedListPlugin"));
     plugins.push(require("plugins/leosIndentMandate/leosIndentMandatePlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={
@@ -83,7 +84,7 @@ define(function aknSubParagraphMandateProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
         + "widget,lineutils,basicstyles," + "indent,"
-        + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
+        + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -108,7 +109,8 @@ define(function aknSubParagraphMandateProfileModule(require) {
         	{ name: 'tools', items: [ 'LeosShowBlocks' ] },
         	'/',
         	{ name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandler', 'leosElementMerge', 'Table' ] },
-        	{ name : "mode" , items: [ 'Sourcedialog' ] }
+        	{ name : "mode" , items: [ 'Sourcedialog' ] },
+            { name : "colors" , items: [ 'BGColor' ] }
     	],
         //show toolbar on startup
         startupFocus: 'end',

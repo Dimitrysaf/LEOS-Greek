@@ -58,6 +58,7 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
     plugins.push(require("plugins/leosToolbar/leosToolbarPlugin"));
     plugins.push(require("plugins/leosAlternatives/leosAlternativesPlugin"));
     plugins.push(require("plugins/aknAlternativeArticle/aknAlternativeArticlePlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -83,7 +84,7 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
             // comma-separated list of plugins to be loaded
             plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
                     + "widget,lineutils,basicstyles," + "indent,"
-                    + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
+                    + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
             // comma-separated list of plugins that must not be loaded
             removePlugins: "",
             // comma-separated list of additional plugins to be loaded
@@ -109,7 +110,8 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
                 {name: 'insert'},
                 {name: 'tools'},
                 {name : 'alternatives'},
-                {name: 'mode'}
+                {name: 'mode'},
+                {name : 'colors'}
             ],
             
             //show toolbar on startup

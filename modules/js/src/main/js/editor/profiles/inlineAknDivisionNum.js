@@ -40,6 +40,7 @@ define(function aknDivisionNumProfileModule(require) {
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig = {};
@@ -63,7 +64,7 @@ define(function aknDivisionNumProfileModule(require) {
         // custom configuration to load (none if empty)
         customConfig: "",
         // comma-separated list of plugins to be loaded
-        plugins: "toolbar,wysiwygarea,elementspath,basicstyles,undo",
+        plugins: "toolbar,wysiwygarea,elementspath,basicstyles,undo,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -82,6 +83,7 @@ define(function aknDivisionNumProfileModule(require) {
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
             { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
+            {name: 'colors', items: ['BGColor']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

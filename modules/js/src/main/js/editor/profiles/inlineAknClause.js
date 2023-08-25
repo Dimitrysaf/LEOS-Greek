@@ -34,6 +34,7 @@ define(function aknInlineClauseProfileModule(require) {
     plugins.push(require("plugins/leosFixNestedPs/leosFixNestedPsPlugin"));
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -59,9 +60,9 @@ define(function aknInlineClauseProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "wysiwygarea,elementspath,undo,"
-                 + "button,dialog,dialogui",
+                 + "button,dialog,dialogui,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
-        removeButtons: "",
+        removeButtons: "TextColor",
         // comma-separated list of additional plugins to be loaded
         extraPlugins: extraPlugins,
         // disable Advanced Content Filter (allow all content)
@@ -78,6 +79,8 @@ define(function aknInlineClauseProfileModule(require) {
             name : "save"
         }, {
             name : "alternatives"
+        }, {
+            name : "colors"
         }],
         // LEOS-3418 : to save modification in the Alternatives clause.
         isClause: true

@@ -53,6 +53,7 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -78,7 +79,7 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath," +
                  "clipboard,undo,basicstyles,enterkey," + "list,indent," +
-                 "specialchar,table,tableresize,tabletools,tableselection,button,dialog,dialogui,contextmenu,menubutton,widget,pastetext",
+                 "specialchar,table,tableresize,tabletools,tableselection,button,dialog,dialogui,contextmenu,menubutton,widget,pastetext,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
         removeButtons: "Strike,TextColor,PasteText",
         // comma-separated list of additional plugins to be loaded
@@ -116,6 +117,8 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
             name : "tools"    //Toolbar group containing show blocks
         }, {
             name : "mode"       //Toolbar group containing Source button
+        }, {
+            name : "colors"
         } ]
     };
     // adding the specific configs coming from the plugins.
