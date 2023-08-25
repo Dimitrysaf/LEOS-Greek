@@ -267,7 +267,11 @@ define(function listItemNumberModule(require) {
                 if (!!originNumID) {
                     listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, originNumID);
                 }
+                var previousNumber = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
                 sequence && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(orderedList, listItems[idx], newIdx)) && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
+                if (ckEditor.LEOS.isTrackChangesEnabled) {
+                    ckEditor.fire("handleTcIndent", { data: listItems[idx],  previousNumber: previousNumber } );
+                }
                 newIdx++;
             }
         }
