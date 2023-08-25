@@ -582,16 +582,17 @@ public class DocumentServiceImpl implements DocumentService {
 
     public long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
+        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true");
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         } else {
             queryBuild.append(String.format(" "));
         }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
-
-        Long count = (Long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
-        count += milestoneDocumentService.countMilestonesUsingFilter(packageName, categories, queryFilter);
+        Long count = (Long)entityManager.createQuery(queryBuild.toString()).getSingleResult();
+        if (!packageName.equals("%")) {
+            count += milestoneDocumentService.countMilestonesUsingFilter(packageName, categories, queryFilter);
+        }
         return count;
     }
 
