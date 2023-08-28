@@ -1324,33 +1324,7 @@ export const restoreMovedItemOrSetNumber = (
   newPosition: TableOfContentItemVO,
   position: string,
 ) => {
-  const siblings =
-    position === 'as_children'
-      ? newPosition.childItems
-      : findNodeById(tocTree, newPosition.parentItem)?.childItems;
-
-  const droppedItemIndex = siblings.indexOf(droppedItem);
-  const previousSibling =
-    droppedItemIndex > 0 ? siblings.at(droppedItemIndex - 1) : null;
-  const nextSibling =
-    droppedItemIndex < siblings.length - 1
-      ? siblings.at(droppedItemIndex + 1)
-      : null;
-
-  if (isPlaceholderForDroppedItem(tocTree, newPosition, droppedItem)) {
-    // restoreOriginal(droppedItem, newPosition, tocTree);
-    if (newPosition.parentItem) {
-      // removeNode(tocTree, newPosition);
-    }
-  } else if (
-    isPlaceholderForDroppedItem(tocTree, previousSibling, droppedItem)
-  ) {
-    // restoreOriginal(droppedItem, previousSibling, tocTree);
-    // if (newPosition.getParentItem() != null) {
-    //     TableOfContentHelper.removeChildItem(newPosition.getParentItem(), previousSibling);
-  } else {
-    setNumber(tocTree, droppedItem, newPosition);
-  }
+  setNumber(tocTree, droppedItem, newPosition);
 };
 
 const isPlaceholderForDroppedItem = (

@@ -445,6 +445,7 @@
   "toc.edit.window.drop.error.indentation.message": "[FR] <b>{{0}}</b> cannot be dropped on <b>{{1}}</b>. Max indentation has been reached",
   "toc.edit.window.drop.error.message": "[FR] <b>{{0}}</b> cannot be dropped on <b>{{1}}</b>",
   "toc.edit.window.drop.success.message": "[FR] <b>{{0}}</b> has been added successfully!",
+  "toc.edit.window.drop.unexpected.error": "[FR] An unexpected error occured while editing Table Of Content",
   "arabic.num.config.validation.error.message": "[FR] Only Arabic Numbers (1, 2, 3...) are allowed",
   "roman.num.config.validation.error.message": "[FR] Only Capitalised Roman Numbers (I, II, III...) are allowed",
   "subdivision.num.config.validation.error.message": "[FR] Only capitalized Roman or Arabic numbers with or without following alphabets are allowed (3a, IIIa, 3 , III)",
