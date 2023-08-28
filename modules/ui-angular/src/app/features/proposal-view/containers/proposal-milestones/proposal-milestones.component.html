@@ -18,7 +18,7 @@
 <table euiTable euiTableResponsive [rows]="dataSource">
   <ng-template euiTemplate="header">
     <tr>
-      <th aria-hidden="true"></th>
+      <th aria-hidden="true" style="width: 0"></th>
       <th>{{ 'page.collection.milestones.table.title' | translate }}</th>
       <th>{{ 'page.collection.milestones.table.date' | translate }}</th>
       <th>{{ 'page.collection.milestones.table.status' | translate }}</th>
@@ -135,6 +135,7 @@
       <tr euiTableExpandableRow *ngIf="row.opened">
         <td></td>
         <td
+          class="eui-u-pl-l"
           [attr.data-col-label]="
             'page.collection.milestones.table.title' | translate
           "

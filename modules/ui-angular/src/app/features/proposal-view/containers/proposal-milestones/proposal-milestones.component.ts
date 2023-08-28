@@ -5,7 +5,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
 import { MilestoneAnnotationWarningModalComponent } from '@/features/proposal-view/components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
-import { Milestone } from '@/features/proposal-view/models/milestone.model';
+import {
+  Milestone,
+  MilestoneStatus,
+} from '@/features/proposal-view/models/milestone.model';
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
 import { Document, Permission } from '@/shared';
 import {
@@ -15,12 +18,7 @@ import {
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
 
-enum MilestoneStatus {
-  Ready = 'FILE_READY',
-  ContributionSent = 'CONTRIBUTION_SENT',
-  InPreparation = 'IN_PREPARATION',
-  Error = 'FILE_ERROR',
-}
+const MILESTONE_RELOAD_INTERVAL = 10000;
 
 @Component({
   selector: 'app-proposal-milestones',
@@ -46,9 +44,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
-  milestoneCheckTimer = null;
 
-  destroy$: Subject<any> = new Subject();
+  private milestonesCheckTimer: ReturnType<typeof setTimeout>;
+  private milestonesStatus = {
+    inPreparation: 0,
+    error: 0,
+    ready: 0,
+  };
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     protected proposalDetailsService: ProposalDetailsService,
@@ -57,11 +60,16 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    let firstLoad = true;
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (milestones) => {
-          this.dataSource = this.initMilestonesDataSource(milestones, false);
+          this.dataSource = this.initMilestonesDataSource(
+            milestones,
+            !firstLoad,
+          );
+          firstLoad = false;
         },
         error: (error) => {
           this.uxAppService.growl({
@@ -83,7 +91,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearTimeout(this.milestoneCheckTimer);
+    clearTimeout(this.milestonesCheckTimer);
     this.destroy$.next(null);
     this.destroy$.unsubscribe();
   }
@@ -160,62 +168,55 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     milestones: Milestone[],
     showGrowl: boolean,
   ): Milestone[] {
-    let atLeastOneMilestoneInPreparation = false;
+    const countByStatus = (s: MilestoneStatus) =>
+      milestones.filter((m) => m.status === s).length;
 
-    milestones.forEach((milestone) => {
-      if (!atLeastOneMilestoneInPreparation) {
-        atLeastOneMilestoneInPreparation =
-          milestone.status === MilestoneStatus.InPreparation;
-      }
+    const milestonesStatus = {
+      inPreparation: countByStatus(MilestoneStatus.InPreparation),
+      error: countByStatus(MilestoneStatus.Error),
+      ready: countByStatus(MilestoneStatus.Ready),
+    };
+    const lessInPreparation =
+      milestonesStatus.inPreparation < this.milestonesStatus.inPreparation;
+    const notMoreErrors = milestonesStatus.error <= this.milestonesStatus.error;
 
-      if (milestone.status === MilestoneStatus.Error) {
-        clearTimeout(this.milestoneCheckTimer);
-        return;
-      }
+    clearTimeout(this.milestonesCheckTimer);
 
-      if (milestone.status === MilestoneStatus.Ready) {
-        if (showGrowl)
-          this.uxAppService.growl({
-            severity: 'success',
-            summary: this.translateService.instant(
-              'global.notifications.title.success',
-            ),
-            detail: this.translateService.instant(
-              'page.collection.milestons.check-for-milestone-status-change.success',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        clearTimeout(this.milestoneCheckTimer);
-        return;
-      }
-
-      if (milestone.clonedMilestones !== null) {
-        milestone.opened = true;
-        milestone.clonedMilestones = milestone.clonedMilestones.map(
-          (clonedMilestone) =>
-            this.formatClonedMilestoneUpdatedDate(clonedMilestone),
-        );
-      }
-    });
-
-    if (atLeastOneMilestoneInPreparation) {
-      this.milestoneCheckTimer = setTimeout(
-        () => this.milestoneStatusChangeRoutine(),
-        10000,
+    if (milestonesStatus.inPreparation) {
+      this.milestonesCheckTimer = setTimeout(
+        () => this.proposalDetailsService.reloadMilestones(),
+        MILESTONE_RELOAD_INTERVAL,
       );
-    } else {
-      clearTimeout(this.milestoneCheckTimer);
     }
 
-    return milestones;
-  }
+    const assumeMilestoneTurnedReady = lessInPreparation && notMoreErrors;
+    if (assumeMilestoneTurnedReady && showGrowl) {
+      this.uxAppService.growl({
+        severity: 'success',
+        summary: this.translateService.instant(
+          'global.notifications.title.success',
+        ),
+        detail: this.translateService.instant(
+          'page.collection.milestones.check-for-milestone-status-change.success',
+        ),
+        life: 3000,
+        isGrowlSticky: false,
+        position: 'bottom-right',
+      });
+    }
 
-  private milestoneStatusChangeRoutine() {
-    if (this.proposalRef)
-      this.proposalDetailsService.setProposalRef(this.proposalRef, false);
-    this.checkForMilestoneStatusChange();
+    milestones
+      .filter((m) => m.clonedMilestones !== null)
+      .forEach((milestone) => {
+        milestone.opened = true;
+        milestone.clonedMilestones.forEach(
+          this.formatClonedMilestoneUpdatedDate,
+        );
+      });
+
+    this.milestonesStatus = milestonesStatus;
+
+    return milestones;
   }
 
   private formatClonedMilestoneUpdatedDate(
@@ -229,9 +230,5 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     ).getTime();
 
     return clonedMilestone;
-  }
-
-  private checkForMilestoneStatusChange() {
-    this.dataSource = this.initMilestonesDataSource(this.dataSource, true);
   }
 }

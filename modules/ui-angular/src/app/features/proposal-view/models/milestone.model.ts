@@ -4,9 +4,11 @@ export interface Milestone {
   contributionChanged: boolean;
   createdBy: string;
   createdDate: string;
+  documentTitle: string;
   legDocumentName: string;
+  legFileId: string;
   proposalRef: string;
-  status: string;
+  status: MilestoneStatus | string;
   title: string;
   updatedDate: number;
   opened?: boolean;
@@ -26,4 +28,11 @@ export interface MilestoneViewItem {
   version: string;
   xmlContent: string;
   tocData: string;
+}
+
+export enum MilestoneStatus {
+  Ready = 'FILE_READY',
+  ContributionSent = 'CONTRIBUTION_SENT',
+  InPreparation = 'IN_PREPARATION',
+  Error = 'FILE_ERROR',
 }
