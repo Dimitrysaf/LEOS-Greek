@@ -10,6 +10,7 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
+  Renderer2,
   SimpleChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,6 +33,7 @@ export class AnnexDocumentComponent
   @Input() xml: string;
   @Input() reloadTrigger: number;
   @Input() readonly = true;
+  @Input() isDoubleCompare = false;
   currentXml: string;
 
   private bookmarkMutationObserver?: MutationObserver;
@@ -45,6 +47,8 @@ export class AnnexDocumentComponent
     private documentService: DocumentService,
     private coEditionWSService: CoEditionServiceWS,
     private translate: TranslateService,
+    private elementRef: ElementRef,
+    private renderer: Renderer2,
   ) {}
 
   ngOnDestroy(): void {
@@ -60,16 +64,20 @@ export class AnnexDocumentComponent
   ngOnChanges(changes: SimpleChanges): void {
     if ('xml' in changes && changes.xml.currentValue !== undefined) {
       const rootEl = this.rootElementRef.nativeElement;
-      rootEl.innerHTML = '';
-      rootEl.classList.add('leos');
       this.xml = changes.xml.currentValue;
-      const leosDocumentView = this.document.createElement('div');
-      leosDocumentView.classList.add('leos-document-view');
-      const leosDocumentContent = this.document.createElement('div');
-      leosDocumentContent.classList.add('leos-doc-content');
-      leosDocumentContent.innerHTML = this.xml;
-      leosDocumentView.appendChild(leosDocumentContent);
-      rootEl.appendChild(leosDocumentView);
+      const leosDocContentDiv =
+        this.elementRef.nativeElement.querySelector('.leos-doc-content');
+      this.renderer.setProperty(
+        leosDocContentDiv,
+        'innerHTML',
+        changes.xml.currentValue,
+      );
+      if (this.isDoubleCompare) {
+        this.renderer.addClass(
+          leosDocContentDiv,
+          'leos-double-comparison-content',
+        );
+      }
       this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (
