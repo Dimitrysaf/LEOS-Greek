@@ -278,16 +278,28 @@ export class ProposalDetailsService implements OnDestroy {
     );
   }
 
-  loadProposalMilestones() {
-    this.loadingService.setLoading(true);
+  loadProposalMilestones(loader = true) {
+    if (loader) {
+      this.loadingService.setLoading(true);
+    }
     return this.http
       .get<Milestone[]>(
         `${apiBaseUrl}/secured/proposals/${this.proposalRef}/milestones`,
+      )
+      .pipe(
+        tap({
+          next: () => loader && this.loadingService.setLoading(false),
+          error: () => loader && this.loadingService.setLoading(false),
+        }),
       )
       .subscribe((miles) => {
         this.milestonesBS.next(miles);
         this.loadingService.setLoading(false);
       });
+  }
+
+  reloadMilestones() {
+    this.loadProposalMilestones(false);
   }
 
   createMilestone(milestoneComment: string, isClonedProposal = false) {
