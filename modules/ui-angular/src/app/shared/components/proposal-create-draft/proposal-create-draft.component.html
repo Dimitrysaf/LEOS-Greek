@@ -11,8 +11,9 @@
   #createWizardDialog
   [title]="'page.workspace.create-title.draft' | translate"
   [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
   (close)="closeDialog()"
+  (escape)="closeDialog()"
+  (dismiss)="closeDialog()"
 >
   <ux-wizard-steps
     *ngIf="!fromProposal"

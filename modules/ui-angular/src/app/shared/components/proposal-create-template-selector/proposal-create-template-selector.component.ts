@@ -74,6 +74,7 @@ export class ProposalCreateTemplateSelectorComponent
     this.selectedLanguage = '';
     this.languages = [];
     this.treeComponent.onExpandAll(this.event);
+    this.treeComponent.resetSelection();
     this.cd.detectChanges();
   }
 
