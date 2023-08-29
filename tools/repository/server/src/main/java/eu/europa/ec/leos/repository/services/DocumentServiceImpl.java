@@ -411,7 +411,7 @@ public class DocumentServiceImpl implements DocumentService {
         doc.setLiveDiffingRequired(metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()) == null ? false :
                 (Boolean) metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()));
         doc.setBaseRevisionId(metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) != null ?
-                new BigDecimal(Long.parseLong((String) metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()))) : doc.getBaseRevisionId());
+                (String) metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) : doc.getBaseRevisionId());
         if (metadata.get(PropertiesMetadata.CLONED_PROPOSAL.getLeosName()) != null) {
             doc.setOriginRef(metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) != null ?
                     (String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) : doc.getOriginRef());

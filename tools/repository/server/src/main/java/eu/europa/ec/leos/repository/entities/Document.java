@@ -73,8 +73,8 @@ public class Document implements Serializable {
     private String contributionStatus;
     @Column(name = "ORIGIN_REF", length = 30)
     private String originRef;
-    @Column(name = "BASE_REVISION_ID", precision = 22, scale = 0)
-    private BigDecimal baseRevisionId;
+    @Column(name = "BASE_REVISION_ID", length = 400)
+    private String baseRevisionId;
     @Column(name = "LIVE_DIFFING_REQUIRED")
     private Boolean liveDiffingRequired;
     @Column(name = "REF", nullable = false, length = 400)
@@ -183,11 +183,11 @@ public class Document implements Serializable {
         this.originRef = originalRef;
     }
 
-    public BigDecimal getBaseRevisionId() {
+    public String getBaseRevisionId() {
         return baseRevisionId;
     }
 
-    public void setBaseRevisionId(BigDecimal baseRevisionId) {
+    public void setBaseRevisionId(String baseRevisionId) {
         this.baseRevisionId = baseRevisionId;
     }
 
