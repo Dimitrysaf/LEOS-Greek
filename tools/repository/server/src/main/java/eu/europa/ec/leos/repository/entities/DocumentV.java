@@ -100,7 +100,7 @@ public class DocumentV implements Serializable {
     @Column(name = "ORIGIN_REF", updatable = false)
     private String originRef;
     @Column(name = "BASE_REVISION_ID", updatable = false)
-    private BigDecimal baseRevisionId;
+    private String baseRevisionId;
     @Column(name = "LIVE_DIFFING_REQUIRED", updatable = false)
     private Boolean liveDiffingRequired;
     @Column(name = "REF", updatable = false)
@@ -269,11 +269,11 @@ public class DocumentV implements Serializable {
         this.originRef = originRef;
     }
 
-    public BigDecimal getBaseRevisionId() {
+    public String getBaseRevisionId() {
         return baseRevisionId;
     }
 
-    public void setBaseRevisionId(BigDecimal baseRevisionId) {
+    public void setBaseRevisionId(String baseRevisionId) {
         this.baseRevisionId = baseRevisionId;
     }
 
