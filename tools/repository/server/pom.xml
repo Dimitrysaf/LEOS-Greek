@@ -21,7 +21,7 @@
     <parent>
         <groupId>eu.europa.ec.leos</groupId>
         <artifactId>repository</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>eu.europa.ec.leos.repository</groupId>

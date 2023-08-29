@@ -30,7 +30,6 @@ public class Application extends SpringBootServletInitializer implements WebAppl
         return application
                 .properties("spring.config.name:repository")
                 .sources(Application.class);
-
     }
 
     public static void main(String[] args) throws Exception {
