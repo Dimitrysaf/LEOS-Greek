@@ -217,10 +217,17 @@ define(function leosUtilsModule(require) {
                     usersUid.push(userUid);
                 }
             });
+            $("[" + uidAttr.replace("leos:", "leos\\:") + "-number" + "]").each(function() {
+                var userUid = $(this).attr(uidAttr + "-number"); // Retrieve user and add it to users array if not exists
+                if (userUid && $.inArray(userUid, usersUid) === -1) {
+                    usersUid.push(userUid);
+                }
+            });
             var tcStyle = "";
             for (var i = 0; usersUid.length > i; i++) {
                 var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
-                tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { color: " + userColors[0] + "; &:hover, span." +
+                tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
+                    "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
                     (isDocTcStyle ? "math" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } }\n";
                 tcStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
             }
