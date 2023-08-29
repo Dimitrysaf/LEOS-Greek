@@ -13,11 +13,11 @@
  */
 package eu.europa.ec.leos.repository;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.WebApplicationInitializer;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
@@ -27,11 +27,17 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
+        return application
+                .properties("spring.config.name:repository")
+                .sources(Application.class);
+
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(Application.class, args);
+        new SpringApplicationBuilder()
+                .properties("spring.config.name:repository")
+                .sources(Application.class)
+                .run(args);
     }
 
 }
