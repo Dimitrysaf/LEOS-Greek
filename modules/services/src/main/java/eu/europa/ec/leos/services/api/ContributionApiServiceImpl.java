@@ -253,8 +253,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             byte[] xmlClonedContent = contribution.getXmlContent();
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
-            xmlContent = this.numberService.renumberArticles(xmlContent, true);
-            xmlContent = this.numberService.renumberRecitals(xmlContent);
+            xmlContent = this.numberService.renumberArticles(xmlContent, true, document.isTrackChangesEnabled());
+            xmlContent = this.numberService.renumberRecitals(xmlContent, document.isTrackChangesEnabled());
             xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
             document = this.leosRepository.updateDocument(
                     document.getId(),

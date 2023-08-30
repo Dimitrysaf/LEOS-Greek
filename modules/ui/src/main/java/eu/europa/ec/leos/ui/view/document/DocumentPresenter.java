@@ -1354,8 +1354,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, bill, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, bill, tocItemList, intRefMap);
-        xmlContent = numberService.renumberArticles(xmlContent, true);
-        xmlContent = numberService.renumberRecitals(xmlContent);
+        xmlContent = numberService.renumberArticles(xmlContent, true, bill.isTrackChangesEnabled());
+        xmlContent = numberService.renumberRecitals(xmlContent, bill.isTrackChangesEnabled());
         xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
         bill = billService.updateBill(bill, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"));
         if (bill != null) {

@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.numbering.processor;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
@@ -20,8 +21,8 @@ public class NumberProcessorDepthBasedDefault extends NumberProcessorAbstract im
 	
 	private static final Logger LOG = LoggerFactory.getLogger(NumberProcessorDepthBasedDefault.class);
 
-    public NumberProcessorDepthBasedDefault(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
-        super(messageHelper, numberProcessorHandler);
+    public NumberProcessorDepthBasedDefault(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext) {
+        super(messageHelper, numberProcessorHandler, securityContext);
     }
 
     @Override
@@ -29,26 +30,26 @@ public class NumberProcessorDepthBasedDefault extends NumberProcessorAbstract im
         return DIVISION.equals(node.getNodeName());
     }
 
-    public void renumberDepthBased(ParentChildNode numberNode, NumberConfig numberConfig, String elementName, int depth) {
+    public void renumberDepthBased(ParentChildNode numberNode, NumberConfig numberConfig, String elementName, int depth, boolean isTrackChangesEnabled) {
         final Node node = numberNode.getNode();
         final String parentPrefix = numberNode.getParentPrefix();
         if (skipAutoRenumbering(node)) {
         	numberProcessorHandler.incrementValue(numberConfig);
         	LOG.trace("Skipping SoftChanged {} '{}', number '{}'", elementName, getId(node), getNodeNum(node));
         } else {
-        	renumber(node, numberConfig, parentPrefix);
+        	renumber(node, numberConfig, parentPrefix, isTrackChangesEnabled);
         }
-        renumberChildren(numberNode, elementName, depth);
-        renumberChildrenOfDifferentType(node, true); // Points
+        renumberChildren(numberNode, elementName, depth, isTrackChangesEnabled);
+        renumberChildrenOfDifferentType(node, true, isTrackChangesEnabled); // Points
     }
 
-    private void renumberChildren(ParentChildNode numberNode, String elementName, int depth) {
+    private void renumberChildren(ParentChildNode numberNode, String elementName, int depth, boolean isTrackChangesEnabled) {
         if (numberNode.getChildren().size() > 0) {
-            numberProcessorHandler.renumberDepthBased(numberNode.getChildren(), elementName, ++depth);
+            numberProcessorHandler.renumberDepthBased(numberNode.getChildren(), elementName, ++depth, isTrackChangesEnabled);
         }
     }
 
-    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren) {
+    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren, boolean isTrackChangesEnabled) {
 
     }
 }

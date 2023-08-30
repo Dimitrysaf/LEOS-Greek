@@ -14,7 +14,8 @@ public interface NumberProcessorDepthBased {
      * @param numberConfig   ConfigNumber to be used for numbering
      * @param elementName    Element name to number
      * @param depth          depth in the tree structure (parent-child relationship)
+     * @param isTrackChangesEnabled true, if track changes attributes should be added
      */
-    void renumberDepthBased(ParentChildNode node, NumberConfig numberConfig, String elementName, int depth);
+    void renumberDepthBased(ParentChildNode node, NumberConfig numberConfig, String elementName, int depth, boolean isTrackChangesEnabled);
 
 }

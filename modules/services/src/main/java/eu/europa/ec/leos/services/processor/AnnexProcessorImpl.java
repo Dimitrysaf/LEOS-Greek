@@ -79,7 +79,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(elementId, "Element id is required.");
         
         byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName, false);
-        return updateAnnexContent(elementId, tagName, xmlContent);
+        return updateAnnexContent(elementId, tagName, xmlContent, document.isTrackChangesEnabled());
     }
     
     @Override
@@ -98,13 +98,13 @@ class AnnexProcessorImpl implements AnnexProcessor {
                 template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertDepthAttribute(updatedContent, tagName, elementId);
-                updatedContent = numberService.renumberLevel(updatedContent);
+                updatedContent = numberService.renumberLevel(updatedContent, document.isTrackChangesEnabled());
                 break;
             case ARTICLE:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, "Article heading...", messageHelper);
                 template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
-                updatedContent = numberService.renumberArticles(updatedContent);
+                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
                 break;
             case PARAGRAPH:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), messageHelper);
@@ -131,8 +131,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
                 template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
-                updatedContent = numberService.renumberLevel(updatedContent);
-                updatedContent = numberService.renumberParagraph(updatedContent);
+                updatedContent = numberService.renumberLevel(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberParagraph(updatedContent, document.isTrackChangesEnabled());
                 break;
             case CONTENT:
             case SUBPOINT:
@@ -160,11 +160,11 @@ class AnnexProcessorImpl implements AnnexProcessor {
             case LEVEL:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertDepthAttribute(updatedContent, tagName, elementId);
-                updatedContent = numberService.renumberLevel(updatedContent);
+                updatedContent = numberService.renumberLevel(updatedContent, document.isTrackChangesEnabled());
                 break;
             case ARTICLE:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before, document.isTrackChangesEnabled());
-                updatedContent = numberService.renumberArticles(updatedContent);
+                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
                 break;
             case PARAGRAPH:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before, document.isTrackChangesEnabled());
@@ -185,8 +185,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
             case INDENT:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
-                updatedContent = numberService.renumberLevel(updatedContent);
-                updatedContent = numberService.renumberParagraph(updatedContent);
+                updatedContent = numberService.renumberLevel(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberParagraph(updatedContent, document.isTrackChangesEnabled());
                 break;
             case CONTENT:
             case SUBPOINT:
@@ -232,7 +232,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         } else {
             updatedContent = elementProcessor.updateElement(annex, elementFragment, tagName, elementId, false);
         }
-        return updateAnnexContent(elementId, tagName, updatedContent);
+        return updateAnnexContent(elementId, tagName, updatedContent, annex.isTrackChangesEnabled());
     }
 
     public byte[] renumberDocument(Annex document, AnnexStructureType structureType) {
@@ -241,18 +241,18 @@ class AnnexProcessorImpl implements AnnexProcessor {
         updatedContent = xmlContentProcessor.prepareForRenumber(updatedContent);
         switch(structureType) {
             case ARTICLE:
-                updatedContent = numberService.renumberArticles(updatedContent, true);
+                updatedContent = numberService.renumberArticles(updatedContent, true, document.isTrackChangesEnabled());
                 break;
             case LEVEL:
-                updatedContent = numberService.renumberLevel(updatedContent);
-                updatedContent = numberService.renumberParagraph(updatedContent);
+                updatedContent = numberService.renumberLevel(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberParagraph(updatedContent, document.isTrackChangesEnabled());
                 break;
         }
         updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         return updatedContent;
     }
 
-    private byte[] updateAnnexContent(String elementId, String tagName, byte[] xmlContent) {
+    private byte[] updateAnnexContent(String elementId, String tagName, byte[] xmlContent, boolean isTrackChangesEnabled) {
         if (tagName.equals(NUM)) {
             tagName = xmlContentProcessor.getParentTagNameById(xmlContent, elementId);
             elementId = xmlContentProcessor.getParentIdById(xmlContent, elementId);
@@ -267,14 +267,14 @@ class AnnexProcessorImpl implements AnnexProcessor {
             case POINT:
             case INDENT:
             case SUBPOINT:
-                xmlContent = numberService.renumberParagraph(xmlContent);
-                xmlContent = numberService.renumberLevel(xmlContent);
+                xmlContent = numberService.renumberParagraph(xmlContent, isTrackChangesEnabled);
+                xmlContent = numberService.renumberLevel(xmlContent, isTrackChangesEnabled);
                 break;
             case ARTICLE:
-                xmlContent = numberService.renumberArticles(xmlContent);
+                xmlContent = numberService.renumberArticles(xmlContent, isTrackChangesEnabled);
                 break;
             case LEVEL:
-                xmlContent = numberService.renumberLevel(xmlContent);
+                xmlContent = numberService.renumberLevel(xmlContent, isTrackChangesEnabled);
                 break;
         }
         return xmlContentProcessor.doXMLPostProcessing(xmlContent);

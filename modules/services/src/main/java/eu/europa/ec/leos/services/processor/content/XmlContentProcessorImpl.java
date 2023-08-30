@@ -2060,7 +2060,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected abstract Pair<byte[], Element> buildSplittedElementPair(byte[] xmlContent, Element splitElement);
 
     @Override
-    public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent) {
+    public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent, boolean isTrackChangesEnabled) {
         return new Pair(null, null);
     }
 

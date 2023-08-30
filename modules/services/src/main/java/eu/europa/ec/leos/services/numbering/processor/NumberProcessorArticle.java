@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.numbering.processor;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,8 +14,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 public class NumberProcessorArticle extends NumberProcessorDefault {
 
     @Autowired
-    public NumberProcessorArticle(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
-        super(messageHelper, numberProcessorHandler);
+    public NumberProcessorArticle(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext) {
+        super(messageHelper, numberProcessorHandler, securityContext);
     }
 
     @Override
@@ -22,9 +23,9 @@ public class NumberProcessorArticle extends NumberProcessorDefault {
         return ARTICLE.equals(node.getNodeName());
     }
 
-    protected void renumberChildren(Node node, boolean numberChildren) {
+    protected void renumberChildren(Node node, boolean numberChildren, boolean isTrackChangesEnabled) {
         if (numberChildren) {
-            numberProcessorHandler.renumberElement(node, PARAGRAPH, numberChildren);
+            numberProcessorHandler.renumberElement(node, PARAGRAPH, numberChildren, isTrackChangesEnabled);
         }
     }
 

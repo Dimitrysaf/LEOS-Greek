@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.numbering.processor;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -24,8 +25,8 @@ public class NumberProcessorLevel extends NumberProcessorDepthBasedDefault {
     private static final Logger LOG = LoggerFactory.getLogger(NumberProcessorLevel.class);
 
     @Autowired
-    public NumberProcessorLevel(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
-        super(messageHelper, numberProcessorHandler);
+    public NumberProcessorLevel(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext) {
+        super(messageHelper, numberProcessorHandler, securityContext);
     }
 
     @Override
@@ -34,12 +35,12 @@ public class NumberProcessorLevel extends NumberProcessorDepthBasedDefault {
     }
 
     @Override
-    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren) {
+    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren, boolean isTrackChangesEnabled) {
         List<Node> listNodes = XercesUtils.getChildren(node, LIST);
         for (int i = 0; i < listNodes.size(); i++) {
             Node listNode = listNodes.get(i);
             String elementType = XercesUtils.checkFirstChildType(listNode, INDENT) ? INDENT : POINT;
-            numberProcessorHandler.renumberElement(node, elementType, numberChildren);
+            numberProcessorHandler.renumberElement(node, elementType, numberChildren, isTrackChangesEnabled);
         }
     }
 

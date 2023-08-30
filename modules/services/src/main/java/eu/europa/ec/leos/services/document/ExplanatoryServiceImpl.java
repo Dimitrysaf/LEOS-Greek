@@ -219,10 +219,10 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
 
         newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(explanatory), user, explanatory.isTrackChangesEnabled());
         if (explanatoryStructureType != null && LEVEL.equals(explanatoryStructureType.getType())) {
-            newXmlContent = numberService.renumberLevel(newXmlContent);
+            newXmlContent = numberService.renumberLevel(newXmlContent, explanatory.isTrackChangesEnabled());
         }
-        newXmlContent = numberService.renumberParagraph(newXmlContent);
-        newXmlContent = numberService.renumberDivisions(newXmlContent);
+        newXmlContent = numberService.renumberParagraph(newXmlContent, explanatory.isTrackChangesEnabled());
+        newXmlContent = numberService.renumberDivisions(newXmlContent, explanatory.isTrackChangesEnabled());
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateExplanatory(explanatory, newXmlContent, VersionType.MINOR, actionMsg);

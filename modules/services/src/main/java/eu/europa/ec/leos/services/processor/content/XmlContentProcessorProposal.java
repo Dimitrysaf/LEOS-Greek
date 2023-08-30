@@ -338,7 +338,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     @Override
-    public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent) {
+    public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent, boolean isTrackChangesEnabled) {
         Pair<byte[], String> result = new Pair<>(xmlContent, new String()); //default result
         Document fragment = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
         NodeList softMovedNodes = XercesUtils.getElementsByXPath(fragment, String.format("//*[@%s]", LEOS_SOFT_MOVE_FROM));
@@ -352,12 +352,12 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 String xPath = "//*[@xml:id = '" + updatedIdAttrVal + "']";
                 NodeList sourceNodes = XercesUtils.getElementsByXPath(fragment, xPath);
                 if (sourceNodes != null && sourceNodes.getLength() > 0) { //If moved within article
-                    insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document);
+                    insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document, isTrackChangesEnabled);
                     result = new Pair<>(nodeToByteArray(document), nodeToString(fragment.getFirstChild().getFirstChild()));
                 } else { //If moved between articles
                     sourceNodes = XercesUtils.getElementsByXPath(document, xPath);
                     if (sourceNodes != null && sourceNodes.getLength() > 0) {
-                        insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document);
+                        insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document, isTrackChangesEnabled);
                         result = new Pair<>(nodeToByteArray(document), new String());
                     }
                 }
@@ -366,7 +366,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         return result;
     }
 
-    private void insertSoftMovedAttributesAndRenumber(String idAttrVal, Node sourceNode, Node document) {
+    private void insertSoftMovedAttributesAndRenumber(String idAttrVal, Node sourceNode, Node document, boolean isTrackChangesEnabled) {
         Validate.notNull(idAttrVal, "Id attribute should not be null");
         Validate.notNull(sourceNode, "source node should not be null");
 
@@ -388,7 +388,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         try {
             if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
-                numberProcessorHandler.renumberElement(parentNode, tagName, true);
+                numberProcessorHandler.renumberElement(parentNode, tagName, true, isTrackChangesEnabled);
             }
         } catch (Exception e) {
             LOG.error("Unable to renumber element", e);
