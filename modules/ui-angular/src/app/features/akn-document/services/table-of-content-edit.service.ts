@@ -110,6 +110,8 @@ export abstract class TableOfContentEditService {
     if (indexOfOriginalNode !== -1) {
       originalParent.childItems.splice(indexOfOriginalNode, 0, nodeToAdd);
     }
+    //remove children from original node, this
+    nodeToAdd.childItems = [];
     //handle not found, edge case senario the previous code won't be able to reach here
   }
 
