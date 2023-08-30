@@ -9,8 +9,12 @@ import eu.europa.ec.leos.repository.repositories.ConfigContentRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +24,8 @@ import java.util.Optional;
 
 @Service
 public class ConfigServiceImpl implements ConfigService {
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceImpl.class);
+
     @Autowired
     private ConfigRepository configRepository;
     @Autowired
@@ -27,7 +33,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ConfigContentRepository configContentRepository;
 
-    @Cacheable(cacheNames = "findConfigByName")
+    @Cacheable("findConfigByName")
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
         Optional<Config> hasDoc = configRepository.findConfigByNameAndRepositoryId(name);
         if (hasDoc.isPresent()) {
@@ -45,7 +51,7 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    @Cacheable(cacheNames = "findConfigById")
+    @Cacheable("findConfigById")
     public LeosDocument findConfigById(final String id) throws RepositoryException {
         try {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(new BigDecimal(Long.parseLong(id)));
@@ -65,7 +71,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     }
 
-    @Cacheable(cacheNames = "findConfigByVersionId")
+    @Cacheable("findConfigByVersionId")
     public LeosDocument findConfigByVersionId(final String id) throws RepositoryException {
         try {
             ConfigVersion version = this.configVersionRepository.findLastConfigVersionByVersionId(new BigDecimal(Long.parseLong(id)));
@@ -85,5 +91,17 @@ public class ConfigServiceImpl implements ConfigService {
         } catch (Exception var5) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
         }
+    }
+
+    @CacheEvict(value = "findConfigByName", allEntries = true)
+    @Scheduled(fixedRateString = "${caching.spring.configTTL}")
+    public void emptyConfigByNameCache() {
+        LOG.info("emptying config by name cache");
+    }
+
+    @CacheEvict(value = "findConfigById", allEntries = true)
+    @Scheduled(fixedRateString = "${caching.spring.configTTL}")
+    public void emptyConfigByIdCache() {
+        LOG.info("emptying config by id cache");
     }
 }

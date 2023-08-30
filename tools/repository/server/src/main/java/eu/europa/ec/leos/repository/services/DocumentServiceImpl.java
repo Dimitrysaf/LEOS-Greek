@@ -45,11 +45,12 @@ import org.apache.tika.io.TikaInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -551,7 +552,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
 
-    @Cacheable(cacheNames = "findTemplateByName")
+    @Cacheable("findTemplateByName")
     public LeosDocument findTemplateByName(String name) throws RepositoryException {
         List<LeosDocument> docs = configService.findConfigByName(name);
         if (docs.isEmpty()) {
@@ -807,5 +808,11 @@ public class DocumentServiceImpl implements DocumentService {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.PARA_NOT_FOUND, prop.name().toLowerCase());
             }
         }
+    }
+
+    @CacheEvict(value = "findTemplateByName", allEntries = true)
+    @Scheduled(fixedRateString = "${caching.spring.configTTL}")
+    public void emptyTemplateByNameCache() {
+        LOG.info("emptying template by name cache");
     }
 }
