@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2022 European Commission
+    Copyright 2023 European Commission
 
     Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
     You may not use this work except in compliance with the Licence.
@@ -26,10 +26,23 @@
 
     <groupId>eu.europa.ec.leos.repository</groupId>
     <artifactId>config</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>Repository Config</name>
+    <name>Config</name>
     <description>LEOS Repository config</description>
+
+    <dependencies>
+        <!--Logging frameworks -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- Security framework -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
@@ -63,15 +76,6 @@
                 <artifactId>maven-clean-plugin</artifactId>
             </plugin>
             <plugin>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-install</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
@@ -84,13 +88,13 @@
                         <configuration>
                             <outputDirectory>target/generated-config</outputDirectory>
                             <filters>
-                                <filter>src/main/filters/${build.env}.properties</filter>
+                                <filter>src/etc/config/filters/${build.env}.properties</filter>
                             </filters>
                             <resources>
                                 <resource>
                                     <!-- Filtered resource files. -->
                                     <filtering>true</filtering>
-                                    <directory>src/main/resources</directory>
+                                    <directory>src/etc/config/resources</directory>
                                     <includes>
                                         <include>**/*.properties</include>
                                         <include>**/*.wsdl</include>
