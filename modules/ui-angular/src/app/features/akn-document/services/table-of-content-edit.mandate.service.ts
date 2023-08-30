@@ -226,9 +226,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
           !this.hasTocItemSoftAction(moveFromItem, ADD) &&
           !this.hasTocItemSoftAction(moveFromItem, DELETE)))
     ) {
-      //skips the copyMovingItemFinal since it only does replace the temp from the id not necessary here
       const moveTemp = this.copyMovingItemToTemp(moveFromItem, true, tocTree);
-      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
 
       // Handles specific case while moving unnumbered paragraph together with numbered paragraphs
       if (
@@ -246,6 +244,9 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
           }
         }
       }
+
+      this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
+
       moveFromItem.originNumAttr = CN;
       moveFromItem.softActionRoot = true;
 
@@ -279,10 +280,8 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
       moveToItem.softActionRoot = isSoftActionRoot;
       moveToItem.softUserAttr = null;
       moveToItem.softDateAttr = null;
-    } else {
-      moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
-      moveToItem.softActionAttr = MOVE_TO;
-      moveToItem.softActionRoot = isSoftActionRoot;
+      moveToItem.numSoftActionAttr = originalItem.numSoftActionAttr;
+      moveToItem.content = originalItem.content;
 
       originalItem.childItems.forEach((child) => {
         if (
@@ -302,6 +301,13 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
           this.setAffectedAttribute(child, tocTree);
         }
       });
+    } else {
+      moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + moveToItem.id;
+      moveToItem.softActionAttr = MOVE_TO;
+      moveToItem.softActionRoot = isSoftActionRoot;
+      moveToItem.originNumAttr = EC;
+      moveToItem.softUserAttr = null;
+      moveToItem.softDateAttr = null;
     }
     moveToItem.softMoveTo = originalItem.id;
     moveToItem.itemDepth = originalItem.itemDepth;

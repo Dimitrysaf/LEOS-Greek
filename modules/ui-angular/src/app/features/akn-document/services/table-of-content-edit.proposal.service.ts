@@ -5,6 +5,7 @@ import {
   ADD,
   DELETE,
   EC,
+  LEOS_TC_DELETE_ACTION,
   LS,
   MOVE_FROM,
   MOVE_TO,
@@ -82,7 +83,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     tocTree: TableOfContentItemVO[],
   ) {
     if (
-      moveFromItem.originAttr === EC &&
+      moveFromItem.originAttr.toLowerCase() === EC &&
       (moveFromItem.softActionAttr == null ||
         (!this.hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
           !this.hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
@@ -115,11 +116,19 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     isSoftActionRoot: boolean,
     tocTree: TableOfContentItemVO[],
   ) {
+    //create a clone of the original item to a item with moved attributes
     const moveToItem = cloneDeep(originalItem);
     moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
     moveToItem.originNumAttr = EC;
     moveToItem.softUserAttr = null;
     moveToItem.softDateAttr = null;
+    moveToItem.trackChangeAction = LEOS_TC_DELETE_ACTION;
+    moveToItem.softActionRoot = isSoftActionRoot;
+    moveToItem.itemDepth = originalItem.itemDepth;
+    moveToItem.softMoveTo = originalItem.id;
+    moveToItem.softActionAttr = MOVE_TO;
+
+    //set values on original item
     originalItem.softActionAttr = MOVE_FROM;
     originalItem.softActionRoot = isSoftActionRoot;
     originalItem.softMoveFrom =
