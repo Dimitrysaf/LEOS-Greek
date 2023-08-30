@@ -778,10 +778,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
-        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
+        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent,
-                new String(elementFragment, UTF_8));
+                new String(elementFragment, UTF_8), false);
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_updated_moved_element_expected.xml");
@@ -797,9 +797,9 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
-        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
+        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
-        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
+        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8), false);
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_updated_moved_element_within_article_expected.xml");
@@ -815,9 +815,9 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
-        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
+        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
-        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
+        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8), false);
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_moved_article_fragment_with_moved_point_in_same_article_expected.xml");
@@ -833,9 +833,9 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
-        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
+        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
-        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
+        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8), false);
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_moved_article_point_different_article_expected.xml");
@@ -851,9 +851,9 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
-        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
+        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
-        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
+        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8), false);
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_moved_article_fragment_with_moved_paragraph_in_same_article_expected.xml");
@@ -869,9 +869,9 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
-        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
+        NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
-        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
+        Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8), false);
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_moved_article_paragraph_different_article_expected.xml");

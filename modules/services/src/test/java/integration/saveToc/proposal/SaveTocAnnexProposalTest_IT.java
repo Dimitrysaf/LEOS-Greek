@@ -24,8 +24,8 @@ public abstract class SaveTocAnnexProposalTest_IT extends SaveTocProposalTest_IT
 
     protected byte[] processSaveTocAnnex(byte[] xmlInput, List<TableOfContentItemVO> toc) {
         byte[] xmlResult = xmlContentProcessor.createDocumentContentWithNewTocList(toc, xmlInput, getJaneTestUser(), false);
-        xmlResult = numberService.renumberLevel(xmlResult);
-        xmlResult = numberService.renumberParagraph(xmlResult);
+        xmlResult = numberService.renumberLevel(xmlResult, false);
+        xmlResult = numberService.renumberParagraph(xmlResult, false);
         return xmlResult;
     }
 }

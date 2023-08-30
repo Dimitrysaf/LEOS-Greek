@@ -2,12 +2,11 @@ package eu.europa.ec.leos.services.numbering.processor;
 
 import static eu.europa.ec.leos.services.numbering.NumberProcessorHandler.skipAutoRenumbering;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.buildNumElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.isSoftChanged;
+import static eu.europa.ec.leos.services.support.XercesUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
+import eu.europa.ec.leos.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -24,41 +23,43 @@ public class NumberProcessorAbstract {
 
     final protected MessageHelper messageHelper;
     final protected NumberProcessorHandler numberProcessorHandler;
+    final protected SecurityContext securityContext;
 
-    public NumberProcessorAbstract(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
+    public NumberProcessorAbstract(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext) {
         this.messageHelper = messageHelper;
         this.numberProcessorHandler = numberProcessorHandler;
+        this.securityContext = securityContext;
     }
 
-    protected void renumber(Node node, NumberConfig numberConfig, String parentPrefix) {
+    protected void renumber(Node node, NumberConfig numberConfig, String parentPrefix, boolean isTrackChangesEnabled) {
         final String elementName = node.getNodeName();
         final String elementId = getId(node);
         if (isNumberedElement(node)) {
             if (numberConfig.isComplex()) {
                 // COMPLEX numbering: CN runningInstance, mixed EC with CN elements
-                complexNumbering(node, numberConfig, elementName, elementId, parentPrefix);
+                complexNumbering(node, numberConfig, elementName, elementId, parentPrefix, isTrackChangesEnabled);
             } else {
                 // SIMPLE numbering: EC runningInstance, EC or LS elements; CN runningInstance, all presents are CN elements
-                simpleNumbering(node, numberConfig, elementName, elementId, parentPrefix, 0);
+                simpleNumbering(node, numberConfig, elementName, elementId, parentPrefix, 0, isTrackChangesEnabled);
             }
         }
     }
 
     // Numbers like: 1, 2, 3, etc
-    private void simpleNumbering(Node node, NumberConfig numberConfig, String elementName, String elementId, String parentPrefix, int depth) {
+    private void simpleNumbering(Node node, NumberConfig numberConfig, String elementName, String elementId, String parentPrefix, int depth, boolean isTrackChangesEnabled) {
         String elementNum = numberConfig.getPrefix() + parentPrefix + numberConfig.getNextNumberToShow() + numberConfig.getSuffix();
         if (skipAutoRenumbering(node)) {
             String insertedNum = XercesUtils.getContentByTagName(node, NUM);
             LOG.trace("{} (depth {}) '{}', skipping calculated number '{}', keeping manual insertion '{}'", node.getNodeName(), depth, getId(node), elementNum, insertedNum);
         } else {
             elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
-            buildNumElement(node, elementNum);
+            buildNumElement(node, elementNum, securityContext, isTrackChangesEnabled);
             LOG.trace("{} (depth {}) '{}' numbered to '{}'", elementName, depth, elementId, elementNum);
         }
     }
 
     // Numbers like: 1a, 1b, 1c, etc
-    private void complexNumbering(Node node, NumberConfig numberConfig, String elementName, String elementId, String parentPrefix) {
+    private void complexNumbering(Node node, NumberConfig numberConfig, String elementName, String elementId, String parentPrefix, boolean isTrackChangesEnabled) {
         // COMPLEX numbering: CN runningInstance, mixed EC with CN elements
         /*
          * To better understand this if, it would be this in else:
@@ -74,7 +75,7 @@ public class NumberProcessorAbstract {
             String actualNumberToShow = numberConfig.getActualNumberToShow();
             String elementNum = numberConfig.getPrefix() + parentPrefix + actualNumberToShow + numberConfig.getSuffix();
             elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
-            buildNumElement(node, elementNum);
+            buildNumElement(node, elementNum, securityContext, isTrackChangesEnabled);
             LOG.trace("CN {} '{}', numbered to '{}'", elementName, elementId, elementNum);
         } else {
             // Found an EC element.
@@ -85,7 +86,7 @@ public class NumberProcessorAbstract {
                 String num = readActualNumberForRenumber(numberConfig, elementName, elementId);
                 String elementNum = numberConfig.getPrefix() + parentPrefix + num + numberConfig.getSuffix();
                 elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
-                buildNumElement(node, elementNum);
+                buildNumElement(node, elementNum, securityContext, isTrackChangesEnabled);
             } else {
                 readActualNumber(numberConfig, node, elementName, elementId);
             }

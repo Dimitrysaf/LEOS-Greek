@@ -1348,11 +1348,11 @@ class AnnexPresenter extends AbstractLeosPresenter {
         AnnexStructureType annexStructureType = getStructureType();
         switch (annexStructureType) {
             case ARTICLE:
-                xmlContent = numberService.renumberArticles(xmlContent);
+                xmlContent = numberService.renumberArticles(xmlContent, annex.isTrackChangesEnabled());
                 break;
             case LEVEL:
-                xmlContent = numberService.renumberLevel(xmlContent);
-                xmlContent = numberService.renumberParagraph(xmlContent);
+                xmlContent = numberService.renumberLevel(xmlContent, annex.isTrackChangesEnabled());
+                xmlContent = numberService.renumberParagraph(xmlContent, annex.isTrackChangesEnabled());
                 break;
         }
         xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);

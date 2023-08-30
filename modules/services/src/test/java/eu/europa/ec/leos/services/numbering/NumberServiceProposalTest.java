@@ -31,11 +31,13 @@ public abstract class NumberServiceProposalTest extends NumberServiceTest {
     protected NumberConfigFactory numberConfigFactory = Mockito.spy(new NumberConfigFactory());
     @InjectMocks
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler);
-    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
-    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler);
-    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler);
-    private NumberProcessorDepthBased numberProcessorLevel = new eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel(messageHelper, numberProcessorHandler);
+    @Mock
+    private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext);
+    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext);
+    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext);
+    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext);
+    private NumberProcessorDepthBased numberProcessorLevel = new eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel(messageHelper, numberProcessorHandler, leosSecurityContext);
 
     @InjectMocks
     protected List<NumberProcessor> numberProcessors = Mockito.spy(Stream.of(numberProcessorArticle,

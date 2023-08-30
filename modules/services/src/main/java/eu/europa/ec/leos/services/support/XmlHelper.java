@@ -613,7 +613,7 @@ public class XmlHelper {
         if (numberStr != null) {
             if (isNumWithType) {
                 return (numberStr.contains(WHITESPACE)) ?
-                        numberStr.substring(numberStr.indexOf(WHITESPACE) + 1, numberStr.length()) : numberStr;
+                        numberStr.substring(numberStr.lastIndexOf(WHITESPACE) + 1, numberStr.length()) : numberStr;
             } else {
                 return numberStr;
             }
