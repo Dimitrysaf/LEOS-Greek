@@ -310,9 +310,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       newTree,
       item,
     );
-
     if (item) {
       if (item.softActionAttr === DELETE) {
+        this.tocEditService.setTreeHistory(this.treeControl.dataNodes);
         this.tocEditService.undeleteItem(newTree, item);
       } else {
         if (this.coEditionService.checkForCoEdition('EDIT_TOC')) {
@@ -818,6 +818,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch (e) {
       this.tocEditService.popTreeHistory();
       this.clearDragInfo(true);
+      this.populateValidationMessage({
+        success: false,
+        sourceItem: nodeDragged,
+        targetItem: nodeTarget,
+        messageKey: 'toc.edit.window.drop.unexpected.error',
+      } as NodeValidation);
       return;
     }
   }

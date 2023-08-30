@@ -159,6 +159,15 @@ define(function aknArticlePluginModule(require) {
             }, {
                 akn : "xml:id",
                 html : "data-akn-num-id"
+            }, {
+                akn : "leos:action",
+                html : "data-akn-action"
+            }, {
+                akn : "leos:uid",
+                html : "data-akn-uid"
+            }, {
+                akn : "leos:title",
+                html : "title"
             } ],
             sub : {
                 akn : "text",

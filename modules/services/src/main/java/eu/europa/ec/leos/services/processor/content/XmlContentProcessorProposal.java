@@ -73,6 +73,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_TO_ORIGIN_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
@@ -206,7 +207,11 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 if (numNode != null && tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_ACTION)) {
                     nodeToAddOrRemoveAttribute = numNode;
                 }
-                addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, tocVo.getTrackChangeAction());
+                String action = tocVo.getTrackChangeAction();
+                if (action.equals(LEOS_TC_MOVE_ACTION)) {
+                    action = LEOS_TC_INSERT_ACTION;
+                }
+                addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, action);
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_UID, securityContext.getUser().getLogin());
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_TITLE,
                         securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));

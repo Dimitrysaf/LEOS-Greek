@@ -89,7 +89,7 @@ public class XmlDocumentMetadata {
         this.contributionStatus = doc.getContributionStatus();
         this.isLiveDiffingRequired = doc.getLiveDiffingRequired();
         this.originRef = doc.getOriginRef() != null ? doc.getOriginRef() : null;
-        this.baseRevisionId = doc.getBaseRevisionId() != null ? doc.getBaseRevisionId().toString() : null;
+        this.baseRevisionId = doc.getBaseRevisionId() != null ? doc.getBaseRevisionId() : null;
         this.setCollaborators(collaborators);
     }
 

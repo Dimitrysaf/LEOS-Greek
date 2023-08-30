@@ -129,7 +129,9 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
             if(result.left() != null && result.left().length > 0) {
                 contentBytes = result.left();
             }
-            if(result.right() != null && result.right().getBytes().length > 0) {
+            // TODO:
+            // Trackchanges: Comparison removed because of trackchanges. Remove this line when we clean up after finish track changes
+            /*if(result.right() != null && result.right().getBytes().length > 0) {
                 elementContent = result.right();
             }
             byte[] originalContentBytes = documentContentService.getOriginalContentToCompare(document);
@@ -140,7 +142,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
                 elementContent = compareService.compareDeletedElements(new ContentComparatorContext.Builder(originalContent, elementContent)
                         .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
                         .build());
-            }
+            }*/
         }
         contentBytes = xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId);
         return contentBytes;

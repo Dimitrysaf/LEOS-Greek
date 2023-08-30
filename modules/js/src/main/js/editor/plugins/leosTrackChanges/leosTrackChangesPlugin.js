@@ -18,6 +18,7 @@ define(function leosTrackChangesPluginModule(require) {
     // load module dependencies
     var log = require("logger");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var trackChanges = require("./leosTrackChanges"), trackChangesStyle = require("./leosTrackChangesStyle"),
         trackChangesTable = require("./leosTrackChangesTable");
     var UTILS = require("core/leosUtils");
@@ -163,6 +164,25 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
             }
+
+            editor.on("handleTcIndent", function (event) {
+                var element = event.data.data;
+                var previousNumber = event.data.previousNumber;
+                if (!element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                    if (element.getAttribute(leosPluginUtils.ID) === null) {
+                        element.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, "NEW");
+                    } else {
+                        element.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber);
+                    }
+                }
+                if (element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== previousNumber) {
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
+                    } else {
+                        core.removeTrackChangesAttributesForNumbering(element);
+                    }
+                }
+            });
 
             // Update toggle display state when editor has focus
             editor.on("focus", function () {
