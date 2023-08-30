@@ -46,7 +46,6 @@ public class LeosXercesUtils {
                 if(!isTrackChangesEnabled) {
                     numNode.setTextContent(numLabel);
                 } else {
-
                     if(hasAttributeWithValue(node, "leos:action", "insert") || hasAttributeWithValue(numNode, "leos:action", "move")) {
                         // Skip track changes for num node as the parent node is already being tracked.
                         // Skip track change for num node as it is moved from somewhere else.
@@ -62,7 +61,7 @@ public class LeosXercesUtils {
                                 addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                             }
                         } else {
-                            if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel)) {
+                            if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
                                 numNode.setTextContent(numLabel);
                             } else {
                                 String oldNumLabel = numNode.getTextContent();
