@@ -1018,7 +1018,13 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     ) as HTMLElement;
     const isLabelTextTruncated =
       labelEl && labelEl.offsetWidth < labelEl.scrollWidth;
-    return isLabelTextTruncated ? this.truncateLabelText(node.label) : '';
+    const labelWithoutSpans = node.label.replace(
+      /<span[^>]*>([^<]+)<\/span>/g,
+      '',
+    );
+    return isLabelTextTruncated
+      ? this.truncateLabelText(labelWithoutSpans)
+      : '';
   }
 
   private truncateLabelText(label: string): string {
