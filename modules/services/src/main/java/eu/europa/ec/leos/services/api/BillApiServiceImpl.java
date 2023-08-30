@@ -182,8 +182,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         User user = securityContext.getUser();
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(bill));
-        this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        this.populateCloneProposalMetadata(bill);
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc, messageHelper.getMessage("operation.toc.updated"), user);
         documentViewService.updateProposalAsync(bill);
         return billService.getTableOfContent(updatedBill, TocMode.SIMPLIFIED);
@@ -417,6 +416,8 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public String getElement(String documentRef, String elementName, String elementId) {
         Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(bill);
         return this.elementProcessor.getElement(bill, elementName, elementId);
     }
 
@@ -424,6 +425,7 @@ public class BillApiServiceImpl implements BillApiService {
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(bill);
         final byte[] newXmlContent = billProcessor.deleteElement(bill, elementId, elementName, null);
 
         final String updatedLabel = generateLabel(elementId, bill);
@@ -440,7 +442,7 @@ public class BillApiServiceImpl implements BillApiService {
         final Bill bill = this.billService.findBillByRef(documentRef);
 
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-
+        this.populateCloneProposalMetadata(bill);
         final byte[] newXmlContent = billProcessor.renumberDocument(bill);
         final String title = messageHelper.getMessage("operation.element.document_renumbered");
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
@@ -463,8 +465,7 @@ public class BillApiServiceImpl implements BillApiService {
     public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
-        populateCloneProposalMetadata(proposal);
+        this.populateCloneProposalMetadata(bill);
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
@@ -481,13 +482,13 @@ public class BillApiServiceImpl implements BillApiService {
     public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(bill);
         byte[] updatedXmlContent = this.billProcessor.insertNewElement(bill, elementId, position.equals(Position.BEFORE), elementName);
         final String title = messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
         final String elementLabel = "";
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.INSERTED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-
         bill = billService.updateBill(bill, updatedXmlContent, checkinCommentJson);
         // TODO : to be added  DocumentUpdatedByCoEditorEvent
         return this.documentViewService.updateDocumentView(bill);
@@ -553,8 +554,8 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
 
-    private byte[] getContent(Bill bill) {
-        final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
+    private byte[] getContent(XmlDocument document) {
+        final Content content = document.getContent().getOrError(() -> "Bill content is required!");
         return content.getSource().getBytes();
     }
 
@@ -579,12 +580,9 @@ public class BillApiServiceImpl implements BillApiService {
         return cloneContext != null && cloneContext.get().isClonedProposal();
     }
 
-    protected void populateCloneProposalMetadata(Proposal proposal) {
-        if (proposal != null && proposal.isClonedProposal()) {
-            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
-            cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
-        }
+    protected void populateCloneProposalMetadata(XmlDocument document) {
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(document));
+        this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 
     private String getVersionInfoAsString(XmlDocument document) {
