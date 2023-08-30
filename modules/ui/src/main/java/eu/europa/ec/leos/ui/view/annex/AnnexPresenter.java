@@ -86,7 +86,9 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.VersionsUtil;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -217,6 +219,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
@@ -1396,9 +1399,11 @@ class AnnexPresenter extends AbstractLeosPresenter {
     @Subscribe
     void showCleanVersion(ShowCleanVersionRequestEvent event) {
         final Annex annex = getDocument();
-        final String versionContent = documentContentService.getCleanDocumentAsHtml(annex,
+        String versionContent = documentContentService.getCleanDocumentAsHtml(annex,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
                 securityContext.getPermissions(annex));
+        Document doc = XercesUtils.createXercesDocument(versionContent.getBytes(StandardCharsets.UTF_8));
+        versionContent = new String(LeosXercesUtils.removeHighlights(doc), StandardCharsets.UTF_8);
         final String versionInfo = getVersionInfoAsString(annex);
         annexScreen.showCleanVersion(versionContent, versionInfo);
     }

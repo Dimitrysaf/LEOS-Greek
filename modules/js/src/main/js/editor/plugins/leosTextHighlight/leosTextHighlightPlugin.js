@@ -22,11 +22,26 @@ define(function leosTextHighlightPluginModule(require) {
     var pluginDefinition = {
         init: function init(editor) {
             _enableHighlightButton(editor);
+            editor.on("saveSnapshot", _resolveOverlappedSpans);
+        }
+    }
+
+    function _resolveOverlappedSpans(evt) {
+        var editedElement = evt.editor.element.getChildren().toArray().find((element) => element.getAttribute('data-akn-name') === evt.editor.LEOS.elementType);
+        var highlightedSpans = editedElement && $(editedElement.$).find('span[data-akn-style]').toArray();
+        if (highlightedSpans) {
+            for (let i = 0; i < highlightedSpans.length; i++) {
+                var childSpans = $(highlightedSpans[i]).find('span[style]');
+                if (childSpans.length > 0) {
+                    childSpans.insertAfter($(highlightedSpans[i]));
+                    $(highlightedSpans[i]).remove();
+                }
+            }
         }
     }
 
     function _enableHighlightButton(editor) {
-        if (!editor.LEOS.isTextHighlightEnabled) {
+        if (!editor.LEOS.isTrackChangesEnabled) {
             if(editor.config.removeButtons === "") {
                 editor.config.removeButtons = 'BGColor';
             } else {
@@ -48,7 +63,8 @@ define(function leosTextHighlightPluginModule(require) {
             html : "style"
 
         },{
-            html : "data-akn-action=bgcolor"
+            akn: "name=bgcolor",
+            html : "data-akn-style=bgcolor"
         }],
         sub : {
             akn : "text",

@@ -230,4 +230,14 @@ public class LeosXercesUtils {
             }
         }
     }
+
+    public static byte[] removeHighlights(Document document) {
+        NodeList highlightNodes = XercesUtils.getElementsByXPath(document,"//*[@name='bgcolor']");
+        for (int i = 0; i < highlightNodes.getLength(); i++) {
+            Node node = highlightNodes.item(i);
+            String text = node.getTextContent();
+            XercesUtils.replaceElement(node, text);
+        }
+        return XercesUtils.nodeToByteArray(document);
+    }
 }
