@@ -55,6 +55,13 @@
                     <inline name="language" refersTo="~_FRBRlanguage">EN</inline>
                 </p>
             </container>
+            <longTitle xml:id="_coverpage__longtitle" refersTo="#_council_explanatory">
+                <p xml:id="_coverpage__longtitle__p">
+                    <docStage xml:id="_coverpage__longtitle__p__docstage">Council/GSC</docStage>
+                    <docType refersTo="~_DEC" xml:id="_coverpage__longtitle__p__doctype">draft</docType>
+                    <docPurpose xml:id="_coverpage__longtitle__p__docpurpose"  leos:editable="true" leos:deletable="false">on ...</docPurpose>
+                </p>
+            </longTitle>
         </coverPage>
         <collectionBody/>
     </documentCollection>
