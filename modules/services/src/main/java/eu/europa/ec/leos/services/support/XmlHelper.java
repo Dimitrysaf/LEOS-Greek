@@ -155,6 +155,7 @@ public class XmlHelper {
     public static final String LEOS_SOFT_MOVED_LABEL_ATTR = "leos:softmove_label";
     public static final String LEOS_SOFT_USER_ATTR = "leos:softuser";
     public static final String LEOS_SOFT_DATE_ATTR = "leos:softdate";
+    public static final String LEOS_SOFT_ACTION_DELETE = "del";
     public static final String MOVE_TO = "move_to";
     public static final String MOVE_FROM = "move_from";
     public static final String LEOS_SOFT_MOVE_TO = "leos:softmove_to";

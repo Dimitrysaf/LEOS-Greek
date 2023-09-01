@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_MERGE_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVED_LABEL_ATTR;
@@ -228,11 +229,14 @@ public class MergeContributionHelper {
         byte[] updatedXmlContent = mergeActionVO.getContributionVO().getXmlContent();
         boolean isMovedElement = checkForMovedElement(updatedXmlContent, mergeActionVO.getElementTagName(),
                 mergeActionVO.getElementId());
+        boolean isDeletedElement = checkForDeletedElement(updatedXmlContent, mergeActionVO.getElementTagName(),
+                SOFT_DELETE_PLACEHOLDER_ID_PREFIX.concat(mergeActionVO.getElementId()));
         if (MergeAction.ACCEPT.equals(mergeActionVO.getAction())) {
             mergeActionMsg = "contribution.merge.accept.action.value";
             mergeActionNotificationKey = "contribution.merge.action.accepted.notification";
+            String elementId = isDeletedElement ? SOFT_DELETE_PLACEHOLDER_ID_PREFIX.concat(mergeActionVO.getElementId()) : mergeActionVO.getElementId();
             updatedXmlContent = xmlContentProcessor.insertAttributeToElement(updatedXmlContent,
-                    mergeActionVO.getElementTagName(), mergeActionVO.getElementId(),
+                    mergeActionVO.getElementTagName(), elementId,
                     LEOS_MERGE_ACTION_ATTR, messageHelper.getMessage(mergeActionMsg));
             
             if (ElementState.MOVE.equals(mergeActionVO.getElementState())) {
@@ -254,8 +258,9 @@ public class MergeContributionHelper {
                             LEOS_MERGE_ACTION_ATTR, messageHelper.getMessage(mergeActionMsg));
                 }
             }
+            String elementId = isDeletedElement ? SOFT_DELETE_PLACEHOLDER_ID_PREFIX.concat(mergeActionVO.getElementId()) : mergeActionVO.getElementId();
             updatedXmlContent = xmlContentProcessor.insertAttributeToElement(updatedXmlContent,
-                    mergeActionVO.getElementTagName(), mergeActionVO.getElementId(),
+                    mergeActionVO.getElementTagName(), elementId,
                     LEOS_MERGE_ACTION_ATTR, messageHelper.getMessage(mergeActionMsg));
             //notification event
 
@@ -270,8 +275,8 @@ public class MergeContributionHelper {
                             SOFT_MOVE_PLACEHOLDER_ID_PREFIX.concat(mergeActionVO.getElementId()), LEOS_MERGE_ACTION_ATTR);
                 }
             }
-            updatedXmlContent = xmlContentProcessor.removeAttributeFromElement(updatedXmlContent,
-                    mergeActionVO.getElementId(), LEOS_MERGE_ACTION_ATTR);
+            String elementId = isDeletedElement ? SOFT_DELETE_PLACEHOLDER_ID_PREFIX.concat(mergeActionVO.getElementId()) : mergeActionVO.getElementId();
+            updatedXmlContent = xmlContentProcessor.removeAttributeFromElement(updatedXmlContent, elementId, LEOS_MERGE_ACTION_ATTR);
         }
         contributionService.updateContributionMergeActions(mergeActionVO.getContributionVO().
                         getDocumentId(), mergeActionVO.getContributionVO().getLegFileName(), mergeActionVO.getContributionVO().getDocumentName(),
@@ -285,6 +290,12 @@ public class MergeContributionHelper {
         String attrVal = xmlContentProcessor.getElementAttributeValueByNameAndId(xmlContent, LEOS_SOFT_ACTION_ATTR,
                 elementName, elementId);
         return (MOVE_TO.equalsIgnoreCase(attrVal) || MOVE_FROM.equalsIgnoreCase(attrVal));
+    }
+
+    private boolean checkForDeletedElement(byte[] xmlContent, String elementName, String elementId) {
+        String attrVal = xmlContentProcessor.getElementAttributeValueByNameAndId(xmlContent, LEOS_SOFT_ACTION_ATTR,
+                elementName, elementId);
+        return (LEOS_SOFT_ACTION_DELETE.equalsIgnoreCase(attrVal) );
     }
 
     private String cleanAcceptedFragment(String contributionFragment, List<TocItem> tocItemList) {
