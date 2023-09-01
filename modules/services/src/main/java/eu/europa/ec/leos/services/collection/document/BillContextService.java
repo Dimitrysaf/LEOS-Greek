@@ -603,14 +603,16 @@ public class BillContextService {
 
     public void executeCreateMilestone() {
         Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
-        List<String> milestoneComments = billByPackagePath.getMilestoneComments();
-        milestoneComments.add(milestoneComment);
-        if (billByPackagePath.getVersionType().equals(VersionType.MAJOR)) {
-            billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath.getId(), milestoneComments);
-            LOG.info("Major version {} already present. Updated only milestoneComment for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
-        } else {
-            billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath, milestoneComments, VersionType.MAJOR, versionComment);
-            LOG.info("Created major version {} for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
+        if (billByPackagePath != null) {
+            List<String> milestoneComments = billByPackagePath.getMilestoneComments();
+            milestoneComments.add(milestoneComment);
+            if (billByPackagePath.getVersionType().equals(VersionType.MAJOR)) {
+                billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath.getId(), milestoneComments);
+                LOG.info("Major version {} already present. Updated only milestoneComment for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
+            } else {
+                billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath, milestoneComments, VersionType.MAJOR, versionComment);
+                LOG.info("Created major version {} for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
+            }
         }
 
         final List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
