@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -23,6 +23,10 @@ import { CoEditionServiceWS } from './shared/services/coEdition.websocket.servic
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  // Add `leos` class on the root element. It is required for some style
+  // selectors. It used to reside on the VAADIN .v-app root element.
+  @HostBinding('class') class = 'leos';
+
   headerTitleHtml = '';
   headerLogoUrl = document.baseURI;
   headerLogoImgUrl =

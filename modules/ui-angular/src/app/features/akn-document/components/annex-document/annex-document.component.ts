@@ -1,5 +1,4 @@
-import { DOCUMENT, formatDate } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { DOCUMENT, formatDate, NgClass } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -10,8 +9,8 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  Renderer2,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -30,10 +29,14 @@ import { DocumentService } from '@/shared/services/document.service';
 export class AnnexDocumentComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
+  @Input() containerId: string;
+  @Input() containerClass: NgClass['ngClass'] = '';
   @Input() xml: string;
   @Input() reloadTrigger: number;
   @Input() readonly = true;
-  @Input() isDoubleCompare = false;
+  @ViewChild('container', { static: true })
+  containerElRef: ElementRef<HTMLDivElement>;
+
   currentXml: string;
 
   private bookmarkMutationObserver?: MutationObserver;
@@ -42,13 +45,9 @@ export class AnnexDocumentComponent
   constructor(
     private ckeditorService: CKEditorService,
     @Inject(DOCUMENT) private document: Document,
-    private rootElementRef: ElementRef<HTMLElement>,
-    private http: HttpClient,
     private documentService: DocumentService,
     private coEditionWSService: CoEditionServiceWS,
     private translate: TranslateService,
-    private elementRef: ElementRef,
-    private renderer: Renderer2,
   ) {}
 
   ngOnDestroy(): void {
@@ -63,29 +62,15 @@ export class AnnexDocumentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('xml' in changes && changes.xml.currentValue !== undefined) {
-      const rootEl = this.rootElementRef.nativeElement;
       this.xml = changes.xml.currentValue;
-      const leosDocContentDiv =
-        this.elementRef.nativeElement.querySelector('.leos-doc-content');
-      this.renderer.setProperty(
-        leosDocContentDiv,
-        'innerHTML',
-        changes.xml.currentValue,
-      );
-      if (this.isDoubleCompare) {
-        this.renderer.addClass(
-          leosDocContentDiv,
-          'leos-double-comparison-content',
-        );
-      }
+      this.containerElRef.nativeElement.innerHTML = this.xml;
       this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (
       'reloadTrigger' in changes &&
       changes.reloadTrigger.currentValue !== 0
     ) {
-      const rootEl = this.rootElementRef.nativeElement;
-      rootEl.innerHTML = this.xml;
+      this.containerElRef.nativeElement.innerHTML = this.xml;
     }
   }
 
@@ -193,7 +178,7 @@ export class AnnexDocumentComponent
     };
 
     this.bookmarkMutationObserver = new MutationObserver(callback);
-    this.bookmarkMutationObserver.observe(this.rootElementRef.nativeElement, {
+    this.bookmarkMutationObserver.observe(this.containerElRef.nativeElement, {
       childList: true,
       subtree: true,
     });
