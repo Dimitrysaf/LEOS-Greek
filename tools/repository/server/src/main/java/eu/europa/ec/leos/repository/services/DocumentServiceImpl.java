@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
+import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
@@ -567,9 +568,8 @@ public class DocumentServiceImpl implements DocumentService {
         StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
-        } else {
-            queryBuild.append(String.format(" "));
         }
+
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
 
         List<DocumentV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
@@ -585,8 +585,6 @@ public class DocumentServiceImpl implements DocumentService {
         StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true");
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
-        } else {
-            queryBuild.append(String.format(" "));
         }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
         Long count = (Long)entityManager.createQuery(queryBuild.toString()).getSingleResult();

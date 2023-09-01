@@ -14,6 +14,9 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,7 +54,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         // Sort them by names
         Map<String, List<MilestoneV>> sortedByNames =
                 milestones.stream().collect(Collectors.groupingBy(MilestoneV::getName));
-        for (Map.Entry<String,List<MilestoneV>> entry : sortedByNames.entrySet()) {
+        for (Map.Entry<String, List<MilestoneV>> entry : sortedByNames.entrySet()) {
             legDocuments.add(ConversionUtils.buildLegDocument(entry.getValue().get(0), documentMilestoneListRepository, documentCategoriesRepository));
         }
         return legDocuments;
@@ -97,7 +100,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             DocumentMilestone docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(milestoneId))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentMilestone.class.getName()));
             docMilestone.setAuditLastMBy(userId);
             docMilestone.setAuditLastMDate(LocalDateTime.now());
-            if (metadata.get("milestoneComments")  != null) {
+            if (metadata.get("milestoneComments") != null) {
                 try {
                     List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
                     if (milestoneCommentsList.isEmpty()) {
@@ -111,7 +114,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                             "'milestoneComments'");
                 }
             }
-            if (metadata.get("comments")  != null) {
+            if (metadata.get("comments") != null) {
                 try {
                     List<String> milestoneCommentsList = (List<String>) metadata.get("comments");
                     if (milestoneCommentsList.isEmpty()) {
@@ -135,7 +138,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 docMilestone.setExportDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                         , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
             }
-            if (metadata.get("jobId")  != null) {
+            if (metadata.get("jobId") != null) {
                 docMilestone.setJobId((String) metadata.get("jobId"));
             }
             docMilestone = documentMilestoneRepository.save(docMilestone);
@@ -158,7 +161,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             docMilestone.setAuditLastMBy(userId);
             docMilestone.setAuditLastMDate(LocalDateTime.now());
             docMilestone.setContent(content);
-            if (metadata.get("milestoneComments")  != null) {
+            if (metadata.get("milestoneComments") != null) {
                 try {
                     List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
                     if (milestoneCommentsList.isEmpty()) {
@@ -172,7 +175,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                             "'milestoneComments'");
                 }
             }
-            if (metadata.get("comments")  != null) {
+            if (metadata.get("comments") != null) {
                 try {
                     List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
                     if (milestoneCommentsList.isEmpty()) {
@@ -196,7 +199,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 docMilestone.setExportDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                         , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
             }
-            if (metadata.get("jobId")  != null) {
+            if (metadata.get("jobId") != null) {
                 docMilestone.setJobId((String) metadata.get("jobId"));
             }
             docMilestone = documentMilestoneRepository.save(docMilestone);
@@ -214,7 +217,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         docMilestone.setAuditLastMBy(updatedBy);
         docMilestone.setAuditLastMDate(LocalDateTime.now());
         docMilestone.setDocument(doc);
-        if (metadata.get("milestoneComments")  != null) {
+        if (metadata.get("milestoneComments") != null) {
             try {
                 List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
                 if (milestoneCommentsList.isEmpty()) {
@@ -228,7 +231,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                         "'milestoneComments'");
             }
         }
-        if (metadata.get("comments")  != null) {
+        if (metadata.get("comments") != null) {
             try {
                 List<String> milestoneCommentsList = (List<String>) metadata.get("comments");
                 if (milestoneCommentsList.isEmpty()) {
@@ -245,22 +248,22 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
 
         docMilestone.setContent(content);
 
-        if (metadata.get("status")  == null) {
+        if (metadata.get("status") == null) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Missing parameter 'status'");
         }
         docMilestone.setStatus((String) metadata.get("status"));
-        if (metadata.get("jobDate")  != null) {
+        if (metadata.get("jobDate") != null) {
             docMilestone.setJobDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("jobDate")
                     , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
         }
-        if (metadata.get("jobId")  != null) {
+        if (metadata.get("jobId") != null) {
             docMilestone.setJobId((String) metadata.get("jobId"));
         }
-        if (metadata.get("exportDate")  != null) {
+        if (metadata.get("exportDate") != null) {
             docMilestone.setJobDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                     , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
         }
-        if (metadata.get("exportStatus")  != null) {
+        if (metadata.get("exportStatus") != null) {
             docMilestone.setExportStatus((String) metadata.get("exportStatus"));
         }
 
@@ -296,9 +299,8 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 String.format("SELECT m FROM MilestoneV m WHERE ", packageName));
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
-        } else {
-            queryBuild.append(String.format(" "));
         }
+
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
         List<MilestoneV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
@@ -315,8 +317,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 String.format("SELECT COUNT(m) FROM MilestoneV m WHERE", packageName));
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
-        } else {
-            queryBuild.append(String.format(" "));
         }
         buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
 
@@ -328,13 +328,14 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             String categoryStr = categories.stream()
                     .map(a -> "'" + a + "'")
                     .collect(Collectors.joining(","));
-
-            queryBuild.append(String.format("m.categoryId IN (SELECT c.id FROM DocumentCategories c WHERE c.categoryCode IN (%s))",
+            queryBuild.append(String.format(" m.categoryId IN (SELECT c.id FROM DocumentCategories c WHERE c.categoryCode IN (%s))",
                     categoryStr));
         }
         String whereFiltersClause = getWhereClauseFromQueryFilter(queryFilter, MilestoneV.class);
-        if(!whereFiltersClause.isEmpty()){
-            queryBuild.append(" AND ");
+        if (!StringUtils.isBlank(whereFiltersClause)) {
+            if (!categories.isEmpty()) {
+                queryBuild.append(" AND ");
+            }
             Optional<QueryFilter.Filter> docsFilter = queryFilter.getFilters().stream().filter(f -> f.key.equals("containedDocuments")).findFirst();
             if (docsFilter.isPresent()) {
                 StringBuilder value = new StringBuilder("'");
