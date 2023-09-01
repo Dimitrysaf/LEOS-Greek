@@ -343,15 +343,18 @@
           </div>
           <!-- Document with editor -->
           <app-annex-document
-            [id]="containerId"
+            [containerId]="containerId"
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
             [readonly]="
               environmentService.isCouncil() &&
               documentService.documentType === 'memorandum'
             "
-            class="leos-doc-content sync-scroll"
-            [ngClass]="{ 'toc-edit-mode': isEditMode }"
+            [containerClass]="{
+              'leos-doc-content': true,
+              'sync-scroll': true,
+              'toc-edit-mode': isEditMode
+            }"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
@@ -403,9 +406,13 @@
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
           <app-annex-document
-            id="versionContainer"
+            containerId="versionContainer"
             [xml]="versionForView"
-            class="leos-doc-content sync-scroll"
+            [containerClass]="{
+              'leos-double-comparison-content': isCNInstance,
+              'leos-marked-content': !isCNInstance,
+              'sync-scroll': true
+            }"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
@@ -578,10 +585,16 @@
           style="position: relative; overflow: auto"
         >
           <app-annex-document
-            id="versionComparisonContainer"
+            containerId="versionComparisonContainer"
             [xml]="versionsComparisonForView"
-            [isDoubleCompare]="true"
-            class="sync-scroll"
+            [containerClass]="{
+              'leos-double-comparison-content': isCNInstance,
+              'leos-marked-content': !isCNInstance,
+              'sync-scroll': true,
+              'leos-simple-comparison-content':
+                isCNInstance &&
+                (documentService.versionCompareIds$ | async)?.length === 2
+            }"
           ></app-annex-document>
         </eui-page-column-body>
       </eui-page-column>
@@ -824,10 +837,13 @@
         >
           <app-annex-document
             #contributionViewContainer
-            id="contributionViewContainer"
+            containerId="contributionViewContainer"
             [xml]="contributionForView"
-            class="sync-scroll"
-            [ngClass]="{ 'contribution-disabled-mode': processed }"
+            [containerClass]="{
+              'leos-revision-content': true,
+              'sync-scroll': true,
+              'contribution-disabled-mode': processed
+            }"
           >
           </app-annex-document>
         </eui-page-column-body>

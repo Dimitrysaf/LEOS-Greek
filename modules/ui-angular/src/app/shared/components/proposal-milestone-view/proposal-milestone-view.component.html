@@ -76,7 +76,8 @@
                     class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
                   >
                     <app-akn-document
-                      [id]="containerId + '_' + doc.ref"
+                      [containerId]="containerId + '_' + doc.ref"
+                      containerClass="leos-doc-content"
                       [documentType]="doc.type"
                       [xml]="doc.xml"
                     ></app-akn-document>

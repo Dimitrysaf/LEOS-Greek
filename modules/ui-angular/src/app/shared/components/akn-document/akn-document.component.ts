@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -8,8 +9,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -27,21 +26,18 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   @Input() documentType: string;
   @Input() xml: string;
   @Input() containerId: string;
+  @Input() containerClass: NgClass['ngClass'] = '';
 
-  id: string;
-  @ViewChild('xmlView', { static: false }) xmlView: ElementRef<HTMLElement>;
+  @ViewChild('container', { static: true })
+  containerElRef: ElementRef<HTMLDivElement>;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
 
   constructor(
-    private documentService: DocumentService,
     private domService: DomService,
     public doc: DocumentService,
-    private route: ActivatedRoute,
-    private translate: TranslateService,
     private config: AppConfigService,
-    private rootElementRef: ElementRef<HTMLElement>,
   ) {}
 
   ngOnInit(): void {
@@ -59,8 +55,10 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   }
 
   private loadDocument(xml: string) {
-    const rootEl = this.rootElementRef.nativeElement;
-    rootEl.innerHTML = this.cleanupAndSerializeXML(xml);
+    const rootEl = this.containerElRef.nativeElement;
+    const akomantosoEl = this.cleanupXML(xml);
+    rootEl.innerHTML = '';
+    rootEl.appendChild(akomantosoEl);
   }
 
   private loadStyleSheet() {
@@ -76,11 +74,9 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
     });
   }
 
-  private cleanupAndSerializeXML(xml: string) {
+  private cleanupXML(xml: string) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/html');
-    return new XMLSerializer().serializeToString(
-      xmlDoc.querySelector('akomantoso'),
-    );
+    return xmlDoc.querySelector('akomantoso');
   }
 }

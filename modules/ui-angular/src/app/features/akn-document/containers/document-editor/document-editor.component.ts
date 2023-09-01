@@ -198,6 +198,7 @@ export class DocumentEditorComponent
     private domSatinizer: DomSanitizer,
     private loadingService: LoadingService,
     private tocEditService: TableOfContentEditService,
+    private hostElRef: ElementRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -1255,24 +1256,39 @@ export class DocumentEditorComponent
       // FIXME: import stylesheets to ngui?
       const stylesName = DOCUMENT_STYLES[category] ?? category;
       const cssUrl = `${config.mappingUrl}/assets/css/${stylesName}.css`;
-      this.unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
+      const unloadStyleSheet = this.domService.setDynamicStyle(cssUrl);
+      this.unloadStyleSheet = () => {
+        unloadStyleSheet();
+        document
+          .querySelector('.leos-document-view')
+          ?.classList.remove('leos-document-view');
+      };
     });
+
+    // Add `leos-document-view` class on closest parent `div` (important!)
+    // element. It is required for some style selectors. It used to reside on
+    // the VAADIN `div.v-customcomponent.v-widget` element, surrounding the
+    // editor page content.
+    this.hostElRef.nativeElement
+      .closest('div')
+      .classList.add('leos-document-view');
   }
 
   private cleanupAndSerializeXML(xml: string, akomantosoId?: string) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/html');
+    const akomantosoEl = xmlDoc.querySelector('akomantoso');
 
     if (this.documentType !== 'coverPage') {
-      xmlDoc.querySelectorAll('meta, coverPage').forEach((el) => el.remove());
+      akomantosoEl
+        .querySelectorAll('meta, coverPage')
+        .forEach((el) => el.remove());
     }
 
     if (akomantosoId) {
-      xmlDoc.querySelector('akomantoso').id = akomantosoId;
+      akomantosoEl.id = akomantosoId;
     }
-    return new XMLSerializer().serializeToString(
-      xmlDoc.querySelector('akomantoso'),
-    );
+    return akomantosoEl.outerHTML;
   }
 
   private setPageSubTitle(versionInfo: VersionInfoVO) {

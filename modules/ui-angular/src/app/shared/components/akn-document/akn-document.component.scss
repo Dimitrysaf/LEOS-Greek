@@ -2,6 +2,15 @@
 @import 'node_modules/@eui/styles/src/styles/02-base/mixins/eui-scrollbars';
 
 :host {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  width: 100%;
+}
+
+:host > div:first-child {
   display: flex;
   flex: 1 1 0; // take all available space but use scrollbars when necessary
   overflow: auto;
