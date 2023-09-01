@@ -58,8 +58,10 @@ export abstract class TableOfContentEditService {
     this.treeHistory.push(oldTree);
   }
 
-  resetTreeHistory() {
+  resetTreeHistory(): TableOfContentItemVO[] {
+    const tempInitialTreeBeforeEdit = this.treeHistory.shift();
     this.treeHistory = [];
+    return tempInitialTreeBeforeEdit;
   }
 
   setDocumentConfig(documentConfig: DocumentConfig) {
@@ -89,14 +91,7 @@ export abstract class TableOfContentEditService {
     tocTree: TableOfContentItemVO[],
     tableOfContentItemVO: TableOfContentItemVO,
   ) => {
-    const tempDeletedItem =
-      copyDeletedItemToTempForUndelete(tableOfContentItemVO);
-    this.dropItemAtOriginalPosition(
-      tempDeletedItem,
-      tableOfContentItemVO,
-      tocTree,
-    );
-    this.removeNode(tocTree, tableOfContentItemVO);
+    copyDeletedItemToTempForUndelete(tableOfContentItemVO);
     this.setTree(tocTree);
   };
 

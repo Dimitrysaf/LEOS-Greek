@@ -734,30 +734,37 @@ export const softDeleteItem = (
 export const copyDeletedItemToTempForUndelete = (
   originalItem: TableOfContentItemVO,
 ) => {
-  const tempDeletedItem = cloneDeep(originalItem);
   if (originalItem.softActionAttr === DELETE) {
-    tempDeletedItem.id = originalItem.id.replace(
+    originalItem.id = originalItem.id.replace(
       SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
       '',
     );
-    tempDeletedItem.originNumAttr = EC;
-    tempDeletedItem.softActionAttr = UNDELETE;
-    tempDeletedItem.softActionRoot = null;
-    tempDeletedItem.softUserAttr = null;
-    tempDeletedItem.softDateAttr = null;
-    tempDeletedItem.softMoveFrom = null;
-    tempDeletedItem.softMoveTo = null;
-    tempDeletedItem.softTransFrom = null;
-    tempDeletedItem.undeleted = true;
-    tempDeletedItem.numSoftActionAttr = originalItem.numSoftActionAttr;
+    originalItem.originNumAttr = EC;
+    originalItem.softActionAttr = UNDELETE;
+    originalItem.softActionRoot = null;
+    originalItem.softUserAttr = null;
+    originalItem.softDateAttr = null;
+    originalItem.softMoveFrom = null;
+    originalItem.softMoveTo = null;
+    originalItem.softTransFrom = null;
+    originalItem.undeleted = true;
+    originalItem.numSoftActionAttr = originalItem.numSoftActionAttr;
   } else {
-    tempDeletedItem.id = originalItem.id;
-    tempDeletedItem.trackChangeAction = LEOS_TC_DELETE_ACTION;
+    originalItem.id = originalItem.id;
+    originalItem.trackChangeAction = LEOS_TC_DELETE_ACTION;
   }
-  tempDeletedItem.childItems = originalItem.childItems.map((child) =>
-    copyDeletedItemToTempForUndelete(originalItem),
-  );
-  return tempDeletedItem;
+  originalItem.content = originalItem.content;
+  originalItem.itemDepth = originalItem.itemDepth;
+  originalItem.originalDepthLevel = originalItem.originalDepthLevel;
+  originalItem.childItems = originalItem.childItems.map((child) => {
+    const newChild = copyDeletedItemToTempForUndelete(child);
+    newChild.parentItem = newChild.parentItem.replace(
+      SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
+      '',
+    );
+    return newChild;
+  });
+  return originalItem;
 };
 
 export const softDeleteMovedRootItems = (

@@ -24,6 +24,7 @@ import {
   distinctUntilChanged,
   filter,
   Subject,
+  take,
   takeUntil,
 } from 'rxjs';
 
@@ -296,9 +297,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
     item.trackChangeAction = LEOS_TC_DELETE_ACTION;
-    this.tocEditService.deleteItem(newTree, item);
-
     this.tocEditService.setTreeHistory(this.treeControl.dataNodes);
+    this.tocEditService.deleteItem(newTree, item);
     this.tocEditService.setTree(newTree);
     this.selectedNodeToMove = null;
   }
@@ -353,8 +353,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {
     if (checkIfConfirmDeletion(newTree, item)) {
       this.onTocDeleteWithChildren();
-      this.deleteDialog.deleteDialog.accept.subscribe(() => {
-        console.log('deleting');
+      this.deleteDialog.deleteDialog.accept.pipe(take(1)).subscribe(() => {
         this.deleteItem(newTree, item);
       });
     } else {
@@ -560,7 +559,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.clearSelectedNode();
     this.isDropValid = false;
     this.selectedNodeToMove = null;
-    this.tocEditService.resetTreeHistory();
+    const initialTreeBeforeEdit = this.tocEditService.resetTreeHistory();
+    if (initialTreeBeforeEdit) {
+      this.tocService.setToc(initialTreeBeforeEdit);
+    }
     this.isToCDraft = false;
     this.invalidNodes?.clear();
   }
