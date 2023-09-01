@@ -114,7 +114,7 @@
             ></app-document-toc>
           </eui-fieldset>
           <!-- versions -->
-          <hr/>
+          <hr />
           <eui-fieldset
             class="eui-u-mt-s"
             label="{{ 'page.editor.versions-pane.label' | translate }}"
@@ -180,7 +180,7 @@
                     <div class="row g-0">
                       <div class="col-md-3">
                         {{
-                        'page.editor.versions.search.form.type' | translate
+                          'page.editor.versions.search.form.type' | translate
                         }}:
                       </div>
                       <div class="col-md-3 no-g">
@@ -221,14 +221,14 @@
                     <div class="row g-0">
                       <div class="col-md-4 version-search-form-author-label">
                         <label for="author"
-                        >{{
-                          'page.editor.versions.search.form.author'
-                            | translate
+                          >{{
+                            'page.editor.versions.search.form.author'
+                              | translate
                           }}:</label
                         >
                       </div>
                       <div class="col-md-8">
-                        <input id="author" formControlName="author"/>
+                        <input id="author" formControlName="author" />
                       </div>
                     </div>
                   </form>
@@ -240,7 +240,7 @@
             ></app-versions-pane>
           </eui-fieldset>
           <!-- contributions -->
-          <hr *ngIf="showContributionsPane"/>
+          <hr *ngIf="showContributionsPane" />
           <eui-fieldset
             class="eui-u-mt-s"
             label="{{ 'page.editor.contribution-pane.label' | translate }}"
@@ -741,8 +741,8 @@
               *ngIf="(documentService.contributionSelections$ | async) === 0"
             >
               {{
-              'page.editor.contribution.view.text.select-revisions'
-                | translate
+                'page.editor.contribution.view.text.select-revisions'
+                  | translate
               }}
             </h4>
             <h4
@@ -750,13 +750,13 @@
               *ngIf="(documentService.contributionSelections$ | async) > 0"
             >
               {{
-              'page.editor.contribution.view.text.revisions-selected'
-                | translate
-                : {
-                  selected:
-                    documentService.contributionSelections$ | async,
-                  all: (contributionChanges$ | async).length
-                }
+                'page.editor.contribution.view.text.revisions-selected'
+                  | translate
+                    : {
+                        selected:
+                          documentService.contributionSelections$ | async,
+                        all: (contributionChanges$ | async).length
+                      }
               }}
             </h4>
             <div
@@ -774,14 +774,14 @@
               >
                 <option value="accept_selected" selected>
                   {{
-                  'page.editor.contribution.view.actions.accept.selected'
-                    | translate
+                    'page.editor.contribution.view.actions.accept.selected'
+                      | translate
                   }}
                 </option>
                 <option value="accept_proposed_version">
                   {{
-                  'page.editor.contribution.view.actions.accept.proposed.version'
-                    | translate
+                    'page.editor.contribution.view.actions.accept.proposed.version'
+                      | translate
                   }}
                 </option>
               </select>
@@ -805,7 +805,7 @@
               </button>
               <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
                 'page.editor.contribution.view.actions.processed' | translate
-                }}</span>
+              }}</span>
               <eui-slide-toggle
                 (changed)="onChangeProcessedToggle($event)"
                 [isChecked]="processed"
@@ -922,8 +922,8 @@
 >
   <p class="eui-u-mb-s">
     {{
-    'page.editor.contribution.view.mark-contribution-as-processed.modal-text'
-      | translate
+      'page.editor.contribution.view.mark-contribution-as-processed.modal-text'
+        | translate
     }}
   </p>
 </eui-dialog>
@@ -946,8 +946,8 @@
 >
   <p class="eui-u-mb-s">
     {{
-    'page.editor.contribution.view.merge-contributions.accept-all.modal-text'
-      | translate
+      'page.editor.contribution.view.merge-contributions.accept-all.modal-text'
+        | translate
     }}
   </p>
 </eui-dialog>
