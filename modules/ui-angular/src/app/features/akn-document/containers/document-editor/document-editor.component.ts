@@ -637,6 +637,7 @@ export class DocumentEditorComponent
       .subscribe({
         next: (res) => {
           this.documentTocComponent.isToCDraft = false;
+          this.documentTocComponent.clearSelectedNode();
           this.tocEditService.resetTreeHistory();
           this.documentService.reloadDocument();
           this.tableOfContentService.reload();

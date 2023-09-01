@@ -567,16 +567,16 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.invalidNodes?.clear();
   }
 
+  clearSelectedNode() {
+    this.selectedNode = null;
+  }
+
   private scrollNodeIntoView(node: TableOfContentItemVO) {
     if (node) {
       document
         .querySelector(`[data-id="${node.id}"]`)
         ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }
-
-  private clearSelectedNode() {
-    this.selectedNode = null;
   }
 
   private populateValidationMessage(validationResult: NodeValidation) {
