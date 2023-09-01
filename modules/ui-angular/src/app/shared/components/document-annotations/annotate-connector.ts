@@ -1,4 +1,4 @@
-import { Observable, shareReplay } from 'rxjs';
+import { delay, Observable, shareReplay } from 'rxjs';
 
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
@@ -63,7 +63,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       .pipe(shareReplay());
     this.clearRequestCache('requestDocumentMetadataCache$');
 
-    this.requestDocumentMetadataCache$.subscribe((metadata) => {
+    this.requestDocumentMetadataCache$.pipe(delay(0)).subscribe((metadata) => {
       this.receiveDocumentMetadata(JSON.stringify(metadata));
     });
   }
@@ -76,7 +76,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       : this.annotateService.getUserPermissions().pipe(shareReplay());
     this.clearRequestCache('requestUserPermissionsCache$');
 
-    this.requestUserPermissionsCache$.subscribe((perms) => {
+    this.requestUserPermissionsCache$.pipe(delay(0)).subscribe((perms) => {
       this.receiveUserPermissions(...perms);
     });
   }
@@ -143,7 +143,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       .pipe(shareReplay());
     this.clearRequestCache('requestSearchMetadataCache$');
 
-    this.requestSearchMetadataCache$.subscribe((res) => {
+    this.requestSearchMetadataCache$.pipe(delay(0)).subscribe((res) => {
       this.receiveSearchMetadata?.(JSON.stringify([{ status: res[0].status }]));
     });
   }
@@ -155,7 +155,7 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
       .pipe(shareReplay());
     this.clearRequestCache('requestSecurityTokenCache$');
 
-    this.requestSecurityTokenCache$.subscribe((token) => {
+    this.requestSecurityTokenCache$.pipe(delay(0)).subscribe((token) => {
       this.receiveSecurityToken?.(token);
     });
   }
