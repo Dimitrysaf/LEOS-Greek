@@ -1262,21 +1262,20 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private void compareAndShowRevision(ContributionVO contributionVO) {
-        final Bill contributionVersion = billService.findBillVersion(contributionVO.getDocumentId());
-        //Get clean document cleaning soft, origin and other irrelevant attributes.
-        String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion,
-                urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(contributionVersion));
+        final Bill revision = billService.findBill(contributionVO.getDocumentId(), false);
+        final String revisionContent = documentContentService.getDocumentForContributionAsHtml(
+                contributionVO.getXmlContent(), urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
+                securityContext.getPermissions(revision));
 
         //Get the original version submitted to LS from the metadata of the document
-        final Bill originalVersion = billService.findFirstVersion(contributionVersion.getMetadata().get().getRef());
+        final Bill originalVersion = billService.findFirstVersion(revision.getMetadata().get().getRef());
         final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
                 securityContext.getPermissions(originalVersion));
 
         //Get the compared content
-        final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, contributionHtml);
-        populateVersionAndContributionData(contributionVersion);
+        final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, revisionContent);
+        populateVersionAndContributionData(revision);
         //Get the merge view xml with wrappers generated using the css and freemarker
 
         cloneContext.setContribution(Boolean.TRUE);
@@ -1284,8 +1283,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Bill bill = getDocument();
         List<TocItem> tocItemList = getTocITems(bill);
 
-        final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
-        documentScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId);
+        //final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
+        documentScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, null);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {

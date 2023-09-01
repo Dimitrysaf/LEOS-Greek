@@ -199,8 +199,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         LeosPackage leosPackage = this.leosRepository.findPackageByDocumentId(originalVersion.getId());
         Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
 
-        String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion, contextPath,
+        String contributionHtml = documentContentService.getDocumentForContributionAsHtml(
+                contributionVersion.getContent().get().getSource().getBytes(), contextPath,
                 securityContext.getPermissions(contributionVersion));
+
         String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion, contextPath,
                 securityContext.getPermissions(originalVersion));
 
