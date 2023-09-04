@@ -7,7 +7,6 @@ import { UxAllModule } from '@eui/components/legacy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
-import { DraggableSplitterComponent } from '@/features/akn-document/containers/draggable-splitter/draggable-splitter.component';
 import { ConfirmReloadDialogComponent } from '@/shared/components/confirm-reload-dialog/confirm-reload-dialog.component';
 
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
@@ -20,6 +19,7 @@ import { ProposalCreateDraftComponent } from './components/proposal-create-draft
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
+import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
@@ -48,7 +48,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
     MilestoneTocComponent,
-    DraggableSplitterComponent,
+    ResizeHandleComponent,
     ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
@@ -73,7 +73,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmDeleteDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
-    DraggableSplitterComponent,
+    ResizeHandleComponent,
     ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,

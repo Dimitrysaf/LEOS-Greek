@@ -7,9 +7,11 @@ import {
   HostListener,
   Inject,
   Input,
+  OnChanges,
   OnDestroy,
   Optional,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
   combineLatest,
@@ -33,7 +35,9 @@ import { AnnotateManager } from './annotate-manager';
   templateUrl: './document-annotations.component.html',
   styleUrls: ['./document-annotations.component.scss'],
 })
-export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
+export class DocumentAnnotationsComponent
+  implements OnDestroy, AfterViewInit, OnChanges
+{
   @Input() documentId: string;
   @Input() connectedEntity?: string;
   @Input() containerId = 'docContainer';
@@ -46,6 +50,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   @Input() temporaryDataId?: string;
   @Input() temporaryDataDocument?: string;
   @Input() canvasClass?: string;
+  @Input() collapsed = false;
   @Output() sidebarShown = new EventEmitter<void>();
 
   private annotate: AnnotateManager;
@@ -53,6 +58,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
   private canvasMutationObserver?: MutationObserver;
   private canvasEl?: HTMLCanvasElement;
   private iframeEl?: HTMLIFrameElement;
+  private toggleBtnEl?: HTMLButtonElement;
 
   private destroy$ = new Subject<void>();
 
@@ -119,6 +125,13 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
     this.canvasEl?.remove();
     this.canvasEl = null;
     this.iframeEl = null;
+    this.toggleBtnEl = null;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.collapsed && changes.collapsed.previousValue !== undefined) {
+      this.toggleBtnEl?.click();
+    }
   }
 
   @HostListener('window:message', ['$event'])
@@ -141,8 +154,12 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
         .find(isAnnotatorFrameWrapper);
       if (frameWrapperEl) {
         observer.disconnect();
+        frameWrapperEl.classList.toggle('annotator-collapsed', this.collapsed);
         this.elementRef.nativeElement.appendChild(frameWrapperEl);
         this.iframeEl = frameWrapperEl.querySelector('iframe');
+        this.toggleBtnEl = this.elementRef.nativeElement.querySelector(
+          'button.annotator-frame-button--sidebar_toggle',
+        );
       }
     };
 
@@ -163,7 +180,7 @@ export class DocumentAnnotationsComponent implements OnDestroy, AfterViewInit {
         this.canvasEl = canvasEl;
         document.body.appendChild(canvasEl);
         if (this.canvasClass) {
-          canvasEl.classList.add('leos-guideline-canvas--above-modals');
+          canvasEl.classList.add(this.canvasClass);
         }
       }
     };
