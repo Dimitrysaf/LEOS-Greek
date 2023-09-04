@@ -1283,7 +1283,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Bill bill = getDocument();
         List<TocItem> tocItemList = getTocITems(bill);
 
-        //final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
+        final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
         documentScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, null);
     }
 
