@@ -17,7 +17,7 @@ import {
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep, debounce } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import {
   BehaviorSubject,
   debounceTime,
@@ -125,6 +125,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   private resizeObserver: ResizeObserver;
   private cancelPendingPersistTreeHeight: () => void;
   private destroy$: Subject<any> = new Subject();
+  private zoneOnStable$ = this.zone.onStable.pipe(
+    takeUntil(this.destroy$),
+    debounceTime(100),
+    take(1),
+  );
 
   constructor(
     private documentService: DocumentService,
@@ -544,6 +549,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       if (this.selectedNode) this.handleNodeSelect(this.selectedNode, false);
       this.highlightInvalidNodes();
+    });
+    this.zoneOnStable$.subscribe(() => {
       this.updateNodeTooltips();
     });
   }
@@ -1050,18 +1057,13 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Wait until angular zone has no more tasks in queue - ie tree has
     // finished rendering - before restoring height
-    const callback = debounce(() => {
+    const sub = this.zoneOnStable$.subscribe(() => {
       this.cancelPendingPersistTreeHeight?.();
       treeEl.style.minHeight = '';
-    }, 100);
-
-    const sub = this.zone.onStable
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(callback);
+    });
 
     this.cancelPendingPersistTreeHeight = () => {
       sub.unsubscribe();
-      callback.cancel();
       this.cancelPendingPersistTreeHeight = undefined;
     };
   }
