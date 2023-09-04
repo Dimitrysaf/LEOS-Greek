@@ -341,7 +341,6 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
     public void test_searchDocumentWithFilter() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();
@@ -357,7 +356,48 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+    public void test_searchDocumentWithFilterInPackage() throws RepositoryException {
+        LeosDocument doc = docCreation();
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
+                , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
+                , "SJ-023"));
+        Set<String> categories = Sets.set("PROPOSAL");
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("package_leos", categories, filter, 0, 5, false);
+        assertEquals(docs.size(), 1);
+        assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
+        assertEquals(docs.get(0).getCategory(), "PROPOSAL");
+    }
+
+    @Test
+    public void test_countDocumentWithFilter() throws RepositoryException {
+        LeosDocument doc = docCreation();
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
+                , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
+                , "SJ-023"));
+        Set<String> categories = Sets.set("PROPOSAL");
+        long count = documentService.countDocumentsUsingFilter("%", categories, filter);
+        assertEquals(count, 1);
+    }
+
+    @Test
+    public void test_countDocumentWithFilterInPackage() throws RepositoryException {
+        LeosDocument doc = docCreation();
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
+                , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-019"
+                , "SJ-023"));
+        Set<String> categories = Sets.set("PROPOSAL");
+        long count = documentService.countDocumentsUsingFilter("package_leos", categories, filter);
+
+        assertEquals(count, 1);
+    }
+
+    @Test
     public void test_searchDocumentWithFilterRole() throws RepositoryException {
         LeosDocument doc = docCreation();
         QueryFilter filter = new QueryFilter();

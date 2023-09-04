@@ -301,7 +301,12 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         }
 
-        buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
+        StringBuilder queryFilterBuild = new StringBuilder();
+        buildQueryWithFilterQuery(queryFilterBuild, categories, queryFilter);
+        if (queryFilterBuild.length() > 0 && !packageName.equals("%")) {
+            queryBuild.append(" AND ");
+        }
+        queryBuild.append(queryFilterBuild);
 
         List<MilestoneV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
         List<LeosDocument> xmlDocs = new ArrayList<>();
@@ -318,7 +323,12 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         }
-        buildQueryWithFilterQuery(queryBuild, categories, queryFilter);
+        StringBuilder queryFilterBuild = new StringBuilder();
+        buildQueryWithFilterQuery(queryFilterBuild, categories, queryFilter);
+        if (queryFilterBuild.length() > 0 && !packageName.equals("%")) {
+            queryBuild.append(" AND ");
+        }
+        queryBuild.append(queryFilterBuild);
 
         return (long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
     }
