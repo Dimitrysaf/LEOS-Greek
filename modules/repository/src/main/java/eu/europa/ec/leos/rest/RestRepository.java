@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
@@ -280,8 +279,7 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    @Cacheable(value = "restRepositoryFolderCache", key = "#name")
-    public String findPackageIdByName(String name) {
+    public String findPackageIdByName(String name) throws IllegalStateException {
         return findPackageByName(name).getId();
     }
 

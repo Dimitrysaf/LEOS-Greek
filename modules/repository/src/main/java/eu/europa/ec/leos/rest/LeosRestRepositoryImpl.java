@@ -39,12 +39,16 @@ import eu.europa.ec.leos.rest.extensions.LeosPackageExtensions;
 import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.rest.support.util.ConversionUtils;
+import eu.europa.ec.leos.rest.utils.RestUtils;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
@@ -136,25 +140,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     }
 
     private String extractRefFromId(String id) {
-        String[] ids = id.split(";");
-        if (ids.length > 0) {
-            return ids[0];
-        } else {
-            return null;
-        }
+        return RestUtils.extractRefOrVersionFromId(id, false);
     }
 
     private String extractVersionIdFromId(String id) {
-        String[] ids = id.split(";");
-        if (ids.length > 1) {
-            return ids[1];
-        } else {
-            return null;
-        }
+        return RestUtils.extractRefOrVersionFromId(id, true);
     }
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true) })
     public <D extends LeosDocument, M extends LeosMetadata> D createDocument(String templateId, String path, String name,
                                                                               M metadata, Class<? extends D> type) {
         logger.trace("Creating document... [template=" + templateId + ", path=" + path + ", name=" + name + ']');
@@ -177,6 +176,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true) })
     public <D extends LeosDocument, M extends LeosMetadata> D createDocumentFromContent(String path, String name, M metadata, Class<? extends D> type, String leosCategory, byte[] contentBytes) {
         logger.trace("Creating document From Content... [path=" + path + ", name=" + name + ']');
 
@@ -192,6 +196,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true) })
     public <D extends LeosDocument, M extends LeosMetadata> D createClonedDocumentFromContent(String path, String name,
                                                                                         M metadata,
                                                                                         CloneProposalMetadataVO cloneProposalMetadataVO,
@@ -235,6 +244,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true) })
     public LegDocument createLegDocumentFromContent(String path, String name, String jobId, List<String> milestoneComments, byte[] contentBytes, LeosLegStatus status,
                                                     List<String> containedDocuments) {
         logger.trace("Creating leg document from content... [path=" + path + ", name=" + name + ']');
@@ -259,6 +273,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public LegDocument updateLegDocument(String id, LeosLegStatus status) {
         logger.trace("Updating Leg document status... [id=" + id + ", status=" + status.name() + ']');
         Map<String, Object> properties = new HashMap<>();
@@ -273,6 +292,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public LegDocument updateLegDocument(String id, List<String> containedDocuments) {
         logger.trace("Updating Leg document contained files... [id=" + id + "]");
 
@@ -288,6 +312,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public LegDocument updateLegDocument(String id, LeosLegStatus status, byte[] contentBytes, VersionType versionType, String comment) {
         logger.debug("Updating Leg document status and content... [id=" + id + ", status=" + status.name() + ", content size=" + contentBytes.length + ", versionType=" + versionType + ", comment=" + comment + ']');
         Map<String, Object> properties = new HashMap<>();
@@ -301,6 +330,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
@@ -314,6 +348,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
@@ -326,6 +365,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateDocument(String id, byte[] content, VersionType versionType, String comment,
                                                      Class<? extends D> type) {
         logger.trace("Updating document content... [id=" + id + ", comment=" + comment + ']');
@@ -340,6 +384,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D archiveDocument(String id, Class<? extends D> type) {
         logger.trace("Moving document ... [id=" + id + ']');
 
@@ -351,6 +400,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateDocument(String id, byte[] content, Map<String, Object> properties,
                                                      VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document content and properties... [id=" + id + ", comment=" + comment + ']');
@@ -363,6 +417,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateDocument(String id, Map<String, Object> properties, Class<? extends D> type, boolean latest) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
 
@@ -375,6 +434,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateDocument(String id, List<Collaborator> collaborators, Class<? extends D> type) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
         Map<String, Object> properties = new HashMap<>(updateMilestoneCommentsProperties(null, emptyList()));
@@ -395,6 +459,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
@@ -409,6 +478,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateMilestoneComments(String id, List<String> milestoneComments, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
@@ -422,6 +496,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator" )
     public <D extends LeosDocument> D findDocumentById(String id, Class<? extends D> type, boolean latest) {
         logger.trace("Finding document by ID... [id=" + id + ", latest=" + latest + ']');
 
@@ -448,6 +523,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "documentByNameCache", key="#name")
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
@@ -488,6 +564,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public void deleteDocumentById(String id) {
         logger.trace("Deleting Document... [id=" + id + ']');
         repository.deleteDocumentByRef(extractRefFromId(id));
@@ -495,6 +576,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @CacheEvict(value = "restRepositoryFolderCache", key = "#name")
     public LeosPackage createPackage(String path, String name) {
         logger.trace("Creating package... [path=" + path + ", name=" + name + ']');
 
@@ -508,6 +590,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true),
+            @CacheEvict(value = "restRepositoryFolderCache", key = "#path") })
     public void deletePackage(String path) {
         logger.trace("Deleting package... [path=" + path + ']');
         repository.deletePackage(extractPackageNameFromPath(path));
@@ -515,6 +603,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value="restRepositoryFolderCache", key="#documentId")
     public LeosPackage findPackageByDocumentId(String documentId) {
         Package pkg =  repository.findPackageByDocumentRef(extractRefFromId(documentId));
         if (pkg != null) {
@@ -525,6 +614,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value="restRepositoryFolderCache", key="#documentRef")
     public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
         Package pkg =  repository.findPackageByDocumentRef(documentRef);
         if (pkg != null) {
@@ -601,6 +691,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator" )
     public <D extends LeosDocument> D findDocumentByRef(String ref, Class<? extends D> type) {
         logger.trace("Finding document with ref... [ref=" + ref + ']');
 
@@ -673,6 +764,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "documentFirstVersionCache", key = "#documentRef")
     public <D extends LeosDocument> D findFirstVersion(Class<? extends D> type, String documentRef) {
         logger.trace("Finding document with ref... [ref=" + documentRef + ']');
 
@@ -683,6 +775,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "documentByVersionCache", key = "{#documentRef, #versionLabel}")
     public <D extends LeosDocument> D findDocumentByVersion(Class<? extends D> type, String documentRef, String versionLabel) {
         logger.trace("Finding document with ref... [ref=" + documentRef + ']');
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByVersion(documentRef, versionLabel);
@@ -713,6 +806,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public ExportDocument updateExportDocument(String id, LeosExportStatus status, byte[] contentBytes, VersionType versionType, String comment) {
         logger.debug("Updating export document status and content... [id=" + id + ", status=" + status.name() + ", content size=" + contentBytes.length + ", versionType=" + versionType + ", comment=" + comment + ']');
 
@@ -728,6 +826,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public ExportDocument updateExportDocument(String id, LeosExportStatus status) {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + status.name() + ']');
 
@@ -742,6 +845,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public ExportDocument updateExportDocument(String id, List<String> comments) {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + comments + ']');
 
@@ -756,12 +864,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @CacheEvict(value = "restRepositoryFolderCache", key = "#name")
     public Object createFolder(String path, String name) {
         return repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
     }
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "restRepositoryFolderCache", key = "#path")
     public Object findFolderByPath(String path) {
         return repository.findPackageByName(extractPackageNameFromPath(path));
     }
