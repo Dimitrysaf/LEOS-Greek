@@ -4,20 +4,14 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
-import { isEqual } from 'lodash-es';
 import {
   BehaviorSubject,
-  combineLatest,
   combineLatestWith,
-  concat,
   distinctUntilChanged,
   filter,
-  finalize,
-  map,
   mergeMap,
   Observable,
   of,
-  share,
   shareReplay,
   skip,
   Subject,
@@ -26,7 +20,6 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { combineLatestInit } from 'rxjs/internal/observable/combineLatest';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
@@ -51,7 +44,6 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
-import { LoadingService } from './loading.service';
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -82,6 +74,7 @@ export type DocumentRefAndCategory = { ref: string; category: string };
 @Injectable()
 export class DocumentService implements OnDestroy {
   compareModeEnabled$: Observable<boolean>;
+  contributionModeEnabled$: Observable<boolean>;
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
   versionView$: Observable<DocumentViewResponse | null>;
@@ -106,7 +99,6 @@ export class DocumentService implements OnDestroy {
   navigationPaneCollapse$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
-  collapseExpandAnnotation$: Observable<boolean>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
   currentIndex: number;
@@ -128,9 +120,8 @@ export class DocumentService implements OnDestroy {
   private contributionViewAndMergeBS = new BehaviorSubject<
     [DocumentViewResponse, ContributionVO]
   >(null);
-  private collapseExpandAnnotationSubj = new Subject<boolean>();
   private compareModeEnabledBS = new BehaviorSubject(false);
-  private documentIdBS = new BehaviorSubject<string | null>(null);
+  private contributionModeEnabledBS = new BehaviorSubject(false);
   private contributionsBS = new BehaviorSubject<ContributionVO[]>([]);
   private searchPaneOpenBS = new BehaviorSubject(false);
   private searchParamsBS = new BehaviorSubject({
@@ -169,7 +160,6 @@ export class DocumentService implements OnDestroy {
   private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
     false,
   );
-  private latestMilestoneVersion: string | null = null;
   private contributionDocumentRefBS = new BehaviorSubject<string | null>(null);
   private getAnnotations?: () => Promise<string>;
 
@@ -182,7 +172,6 @@ export class DocumentService implements OnDestroy {
     private appShell: UxAppShellService,
     private translate: TranslateService,
     private coEditionService: CoEditionServiceWS,
-    private loadingService: LoadingService,
   ) {
     this.contributionDocumentRef$ =
       this.contributionDocumentRefBS.asObservable();
@@ -203,6 +192,8 @@ export class DocumentService implements OnDestroy {
     this.contributions$ = this.contributionsBS.asObservable();
 
     this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
+    this.contributionModeEnabled$ =
+      this.contributionModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
@@ -327,8 +318,6 @@ export class DocumentService implements OnDestroy {
         this.onVersionSearchParamChange(searchParams, versions, recentChanges),
       );
     this.versionSearchResults$ = this.versionSearchResultsBS$.asObservable();
-    this.collapseExpandAnnotation$ =
-      this.collapseExpandAnnotationSubj.asObservable();
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
     this.processed$ = this.processedBS.asObservable();
     this.contributionViewAndMerge$ = this.contributionViewAndMergeBS.pipe(
@@ -740,10 +729,6 @@ export class DocumentService implements OnDestroy {
     this.documentRefAndCategoryBS.next({ ref, category });
   }
 
-  setCollapseExpandAnnotation(value: boolean) {
-    this.collapseExpandAnnotationSubj.next(value);
-  }
-
   setSearchParams(values: Partial<DocumentSearchParams>) {
     if (values.searchText === '') {
       this.currentSearchResults = [];
@@ -800,6 +785,10 @@ export class DocumentService implements OnDestroy {
 
   toggleVersionsSearchPane(open?: boolean) {
     this.toggleSubject(this.versionSearchOpenBS, open);
+  }
+
+  toggleContributionMode(enabled?: boolean) {
+    this.toggleSubject(this.contributionModeEnabledBS, enabled);
   }
 
   handleContributionSelectCount(selected: boolean, reset?: boolean) {
@@ -1090,6 +1079,7 @@ export class DocumentService implements OnDestroy {
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
+    this.contributionModeEnabledBS.next(true);
     this.handleContributionSelectCount(false, true);
     const contributionVersionRef = contribution.versionedReference;
     const documentRef = this.documentRef;

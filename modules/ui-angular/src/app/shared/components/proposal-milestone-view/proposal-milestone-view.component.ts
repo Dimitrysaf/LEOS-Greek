@@ -66,8 +66,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
-  hideTocSplitter: boolean;
-  hideAnnotationsSplitter: boolean;
 
   private destroy$: Subject<any> = new Subject();
 
@@ -110,24 +108,12 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
     this.isTocPaneCollapsed = isTocPaneCollapsed;
-    if (!this.isTocPaneCollapsed) this.onHideTocSplitter(false);
-  }
-
-  onHideTocSplitter(hideTocSplitter = !this.hideTocSplitter) {
-    this.hideTocSplitter = hideTocSplitter;
   }
 
   onToggleAnnotationsPaneCollapsed(
     isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
   ) {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
-    if (!this.isAnnotationsPaneCollapsed) this.onHideAnnotationsSplitter(false);
-  }
-
-  onHideAnnotationsSplitter(
-    hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
-  ) {
-    this.hideAnnotationsSplitter = hideAnnotationsSplitter;
   }
 
   private loadConfig() {

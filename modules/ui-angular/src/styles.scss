@@ -502,6 +502,7 @@ body {
 // Overriding application fonts (end)
 
 //create temporary ui rule for merged contributions
+// TODO: move this to document-editor.component.scss
 .contribution-view-merge-pane .contribution-wrapper-after-merge {
   background-color: rgb(166 166 166 / 80%);
   border: #8c8c8c thin solid;

@@ -56,13 +56,19 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
-import { LoadingService } from '@/shared/services/loading.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+
+enum PageMode {
+  Normal,
+  ViewVersion,
+  CompareVersions,
+  Contribution,
+}
 
 @Component({
   selector: 'app-document-editor',
@@ -92,13 +98,11 @@ export class DocumentEditorComponent
   documentConfig: DocumentConfig;
   contributionForView: string;
 
-  isVersionForViewOpen = false;
   isTocPaneCollapsed = true;
   isNavigationPaneExpanded = true;
   isAnnotationsPaneCollapsed = true;
   isContributionAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
-  isContributionForViewOpen = false;
   isViewContributionPaneCollapsed = true;
   reloadTrigger: number;
   applyActionDisabled$: Observable<boolean>;
@@ -111,7 +115,6 @@ export class DocumentEditorComponent
   compareIndex = 0;
   isAsyncScrollEnabled = false;
   arrowClicked = false;
-  eventFunc;
   isScrollFromButton: boolean;
   tooltipsDelay = 1000;
 
@@ -122,18 +125,13 @@ export class DocumentEditorComponent
 
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
 
-  folder_id$: Observable<string>;
-
   id: string;
-  hideTocSplitter: boolean;
-  hideAnnotationsSplitter: boolean;
 
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
   isContributionsPaneExpanded = false;
   contributionActionSelected = 'accept_selected';
   processed = false;
-  acceptedSelectedEnabled = false;
   contributions: ContributionVO[] = [];
   contribution: ContributionVO;
   contributionChanges$: Observable<NodeListOf<HTMLElement>>;
@@ -152,6 +150,8 @@ export class DocumentEditorComponent
   @ViewChild('milestoneViewDialog')
   protected milestoneViewDialog: ProposalMilestoneViewComponent;
   protected milestoneViewData: MilestoneDescriptor = null;
+  protected PageMode = PageMode;
+  protected pageMode = PageMode.Normal;
 
   @ViewChild('eConsiliumModal')
   eConsiliumModal: DownloadEconsiliumModalComponent;
@@ -171,6 +171,8 @@ export class DocumentEditorComponent
   contributionViewPaneElement: ElementRef;
   @ViewChild('contributionViewContainer', { read: ElementRef })
   contributionViewContainerElement: ElementRef;
+  @ViewChild('contributionAnnotationsPane', { read: ElementRef })
+  contributionAnnotationsPaneElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -196,7 +198,6 @@ export class DocumentEditorComponent
     public environmentService: EnvironmentService,
     private tableOfContentService: TableOfContentService,
     private domSatinizer: DomSanitizer,
-    private loadingService: LoadingService,
     private tocEditService: TableOfContentEditService,
     private hostElRef: ElementRef,
     @Inject(DOCUMENT) private document: Document,
@@ -267,13 +268,25 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((versionView) => {
         if (versionView !== null) {
+          this.setPageMode(PageMode.ViewVersion);
           this.versionForView = this.cleanupAndSerializeXML(
             versionView.editableXml,
             `doubleCompare-${this.documentRef}`,
           );
           this.setVersionForViewHeader(versionView.versionInfoVO);
-          this.isVersionForViewOpen = true;
         }
+      });
+
+    this.documentService.compareModeEnabled$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((enabled) => {
+        this.setPageMode(enabled ? PageMode.CompareVersions : PageMode.Normal);
+      });
+
+    this.documentService.contributionModeEnabled$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((enabled) => {
+        this.setPageMode(enabled ? PageMode.Contribution : PageMode.Normal);
       });
 
     this.documentService.contributionViewAndMerge$
@@ -319,14 +332,6 @@ export class DocumentEditorComponent
         }
       });
 
-    this.documentService.collapseExpandAnnotation$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value) => {
-        if (value && this.isAnnotationsPaneCollapsed) {
-          this.onToggleAnnotationsPaneCollapsed();
-        }
-      });
-
     this.documentService.contributions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((contributions) => {
@@ -348,9 +353,6 @@ export class DocumentEditorComponent
           this.contribution = contribution;
         }
       });
-
-    this.hideTocSplitter = this.isTocPaneCollapsed;
-    this.hideAnnotationsSplitter = this.isAnnotationsPaneCollapsed;
   }
 
   ngAfterViewInit(): void {
@@ -474,45 +476,25 @@ export class DocumentEditorComponent
 
   onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
     this.isTocPaneCollapsed = isTocPaneCollapsed;
-    if (!this.isTocPaneCollapsed) this.onHideTocSplitter(false);
     this.documentService.seeNavigation();
   }
 
-  onHideTocSplitter(hideTocSplitter = !this.hideTocSplitter) {
-    this.hideTocSplitter = hideTocSplitter;
-  }
-
   onToggleAnnotationsPaneCollapsed(
-    isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
+    collapsed = !this.isAnnotationsPaneCollapsed,
   ) {
-    (
-      document.querySelector(
-        'button.annotator-frame-button--sidebar_toggle',
-      ) as HTMLButtonElement
-    )?.click();
-    this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
-    if (!this.isAnnotationsPaneCollapsed) this.onHideAnnotationsSplitter(false);
+    this.isAnnotationsPaneCollapsed = collapsed;
+    if (!collapsed) {
+      this.onToggleContributionAnnotationsPaneCollapsed(true);
+    }
   }
 
   onToggleContributionAnnotationsPaneCollapsed(
-    isContributionAnnotationsPaneCollapsed = !this
-      .isContributionAnnotationsPaneCollapsed,
+    collapsed = !this.isContributionAnnotationsPaneCollapsed,
   ) {
-    (
-      document.querySelector(
-        'button.annotator-frame-button--sidebar_toggle',
-      ) as HTMLButtonElement
-    )?.click();
-    this.isContributionAnnotationsPaneCollapsed =
-      isContributionAnnotationsPaneCollapsed;
-    if (!this.isContributionAnnotationsPaneCollapsed)
-      this.onHideAnnotationsSplitter(false);
-  }
-
-  onHideAnnotationsSplitter(
-    hideAnnotationsSplitter = !this.hideAnnotationsSplitter,
-  ) {
-    this.hideAnnotationsSplitter = hideAnnotationsSplitter;
+    this.isContributionAnnotationsPaneCollapsed = collapsed;
+    if (!collapsed) {
+      this.onToggleAnnotationsPaneCollapsed(true);
+    }
   }
 
   handleEdit() {
@@ -605,6 +587,8 @@ export class DocumentEditorComponent
   }
 
   handleAsyncScroll() {
+    // TODO: rename to toggleAsyncScroll
+    // FIXME: this functionality should get re-applied after pageMode change
     this.isAsyncScrollEnabled = !this.isAsyncScrollEnabled;
     if (this.isAsyncScrollEnabled) {
       this.document
@@ -711,16 +695,16 @@ export class DocumentEditorComponent
     this.documentTocComponent.expandAll();
   }
 
-  closeVersionView() {
-    this.isVersionForViewOpen = false;
+  closeVersionView(setMode = true) {
+    if (setMode) this.setPageMode(PageMode.Normal);
   }
 
   toggleVersionComparisonView() {
-    this.closeVersionView();
     this.documentService.toggleCompareMode();
   }
 
-  closeVersionComparisonView() {
+  closeVersionComparisonView(setMode = true) {
+    if (setMode) this.setPageMode(PageMode.Normal);
     this.clearVersionComparisonView();
     this.documentService.toggleCompareMode(false);
   }
@@ -764,7 +748,13 @@ export class DocumentEditorComponent
 
   onSidebarShown() {
     if (this.isAnnotationsPaneCollapsed) {
-      this.onToggleAnnotationsPaneCollapsed();
+      this.onToggleAnnotationsPaneCollapsed(false);
+    }
+  }
+
+  onContributionAnnotationsSidebarShown() {
+    if (this.isContributionAnnotationsPaneCollapsed) {
+      this.onToggleContributionAnnotationsPaneCollapsed(false);
     }
   }
 
@@ -798,8 +788,8 @@ export class DocumentEditorComponent
     }
   }
 
-  closeContributionsView() {
-    this.isContributionForViewOpen = false;
+  closeContributionsView(setMode = true) {
+    if (setMode) this.setPageMode(PageMode.Normal);
     if (
       this.contribution &&
       this.contribution.contributionStatus ===
@@ -936,10 +926,15 @@ export class DocumentEditorComponent
     contribution: ContributionVO,
   ) {
     if (contributionView) {
-      this.contributionForView = this.cleanupAndSerializeXML(
-        contributionView.editableXml,
+      const html = this.cleanupAndSerializeXML(contributionView.editableXml);
+      html.replace(
+        /\s(id|leos:softmove_to|leos:softmove_from)="/gi,
+        (match) => `${match}revision-`,
       );
-      this.isContributionForViewOpen = true;
+      this.contributionForView = html.replace(
+        /\s(id|leos:softmove_to|leos:softmove_from)="/gi,
+        (match) => `${match}revision-`,
+      );
       this.isViewContributionPaneCollapsed = false;
       this.documentService.setContributionViewAndMergeCollapsed(false);
       this.documentService.setIsContributionDeclinedOrProcessed(
@@ -1410,5 +1405,24 @@ export class DocumentEditorComponent
       return versions[2];
     }
     return null;
+  }
+
+  private setPageMode(mode: PageMode) {
+    if (this.pageMode === PageMode.ViewVersion) {
+      this.closeVersionView(false);
+    }
+    if (this.pageMode === PageMode.CompareVersions) {
+      this.closeVersionComparisonView(false);
+    }
+    if (this.pageMode === PageMode.Contribution) {
+      this.closeContributionsView(false);
+    }
+    this.pageMode = mode;
+
+    window.requestAnimationFrame(() => {
+      const documentPanes =
+        this.hostElRef?.nativeElement.querySelectorAll('.document-pane') ?? [];
+      [...documentPanes].forEach((el) => (el.style.flexBasis = ''));
+    });
   }
 }

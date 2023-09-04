@@ -20,3 +20,8 @@
     display: none;
   }
 }
+
+::ng-deep .leos-guideline-canvas {
+  // keep above `.eui-page-column--active .eui-page-column__body--interactive-scrollbars`
+  z-index: calc(var(--eui-base-z-index-highlighted) + 1);
+}

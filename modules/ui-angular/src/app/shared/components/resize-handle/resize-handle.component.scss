@@ -1,0 +1,22 @@
+:host {
+  --width: 2px;
+
+  background-color: var(--eui-base-color-grey-15); // same as eui-column borders
+  cursor: ew-resize;
+  cursor: col-resize;
+  flex: 0 0 var(--width);
+  height: 100%;
+  position: relative;
+  user-select: none;
+  width: var(--width);
+
+  &::after {
+    bottom: 0;
+    content: '';
+    left: -4px;
+    position: absolute;
+    right: -4px;
+    top: 0;
+    z-index: 100;
+  }
+}

@@ -57,14 +57,11 @@
                   </eui-page-column-body>
                 </eui-page-column>
 
-                <app-draggable-splitter
-                  *ngIf="!hideTocSplitter"
-                  [isLeftAreaCollapsed]="isTocPaneCollapsed"
-                  [leftArea]="tocPaneElement"
-                  [rightArea]="documentPaneElement"
-                  [isRightAreaCollapsed]="false"
-                  (hideSplitter)="onHideTocSplitter($event)"
-                ></app-draggable-splitter>
+                <app-resize-handle
+                  [leftEl]="tocPaneElement?.nativeElement"
+                  [rightEl]="documentPaneElement?.nativeElement"
+                  *ngIf="!isTocPaneCollapsed"
+                ></app-resize-handle>
 
                 <!-- Document -->
                 <eui-page-column
@@ -84,14 +81,11 @@
                   </eui-page-column-body>
                 </eui-page-column>
 
-                <app-draggable-splitter
-                  *ngIf="!hideAnnotationsSplitter"
-                  [isLeftAreaCollapsed]="false"
-                  [leftArea]="documentPaneElement"
-                  [rightArea]="annotationsPaneElement"
-                  [isRightAreaCollapsed]="isAnnotationsPaneCollapsed"
-                  (hideSplitter)="onHideAnnotationsSplitter($event)"
-                ></app-draggable-splitter>
+                <app-resize-handle
+                  [leftEl]="documentPaneElement?.nativeElement"
+                  [rightEl]="annotationsPaneElement?.nativeElement"
+                  *ngIf="!isAnnotationsPaneCollapsed"
+                ></app-resize-handle>
 
                 <!-- Annotations -->
                 <eui-page-column
