@@ -49,7 +49,7 @@ public class ProposalAKN4EUServiceImpl implements AKN4EUService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(uri, requestEntity, String.class);
+            ResponseEntity<Object> response = restTemplate.postForEntity(uri, requestEntity, Object.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return;
