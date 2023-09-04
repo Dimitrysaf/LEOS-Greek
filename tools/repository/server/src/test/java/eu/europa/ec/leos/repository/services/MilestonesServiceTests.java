@@ -144,7 +144,7 @@ public class MilestonesServiceTests {
     }
 
     @Test
-    @Transactional
+    @Transactional(readOnly = true)
     public void test_searchMilestonesWithFilter() {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
@@ -153,6 +153,39 @@ public class MilestonesServiceTests {
         List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5, false);
         assertEquals(docs.size(), 1);
         assertEquals(docs.get(0).getCategory(), "LEG");
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_searchMilestonesWithFilterInPackage() {
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
+                "-en.xml"));
+        Set<String> categories = Sets.set("LEG");
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("package-test", categories, filter, 0, 5, false);
+        assertEquals(docs.size(), 0);
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_countMilestonesWithFilterInPackage() {
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
+                "-en.xml"));
+        Set<String> categories = Sets.set("LEG");
+        long count = documentService.countDocumentsUsingFilter("package-test", categories, filter);
+        assertEquals(count, 0L);
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_countMilestonesWithFilter() {
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("containedDocuments", "IN", false, "ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z" +
+                "-en.xml"));
+        Set<String> categories = Sets.set("LEG");
+        long count = documentService.countDocumentsUsingFilter("%", categories, filter);
+        assertEquals(count, 1L);
     }
 
     @Test

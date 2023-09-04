@@ -589,9 +589,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
         Long count = (Long)entityManager.createQuery(queryBuild.toString()).getSingleResult();
-        if (!packageName.equals("%")) {
-            count += milestoneDocumentService.countMilestonesUsingFilter(packageName, categories, queryFilter);
-        }
+        count += milestoneDocumentService.countMilestonesUsingFilter(packageName, categories, queryFilter);
         return count;
     }
 
