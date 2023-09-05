@@ -2,7 +2,9 @@ package eu.europa.ec.leos.services.numbering.processor;
 
 import static eu.europa.ec.leos.services.numbering.NumberProcessorHandler.skipAutoRenumbering;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.buildNumElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.*;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XercesUtils.isSoftChanged;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
