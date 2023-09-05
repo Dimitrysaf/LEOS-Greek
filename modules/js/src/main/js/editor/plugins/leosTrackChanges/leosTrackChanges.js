@@ -167,7 +167,7 @@ define(function leosTrackChangesModule(require) {
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
-            if (core.isTrackChangeElement(selectedElement, core.DELETE_ACTION)) {
+            if (core.isTrackChangeElement(selectedElement)) {
                 tcElement.insertAfter(selectedElement);
                 tcElement.mergeSiblings();
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
@@ -315,6 +315,16 @@ define(function leosTrackChangesModule(require) {
     };
 
     var actions = {
+
+        handleEnterInTrackChanges: function (event) {
+            var selection = event.editor.getSelection();
+            var ranges = selection && selection.getRanges();
+            var range = ranges && ranges[0];
+            var el = range.startContainer;
+            if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && el.getText().trim() === '') {
+                el.remove();
+            }
+        },
 
         preventInsertInDelete: function(editor) {
             // Prevent typing within delete element. Check if next, last or current
