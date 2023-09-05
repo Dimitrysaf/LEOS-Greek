@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.DocumentProperties;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
+import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,8 +25,15 @@ import java.util.Optional;
 
 
 public interface DocumentPropertyValuesRepository extends JpaRepository<DocumentPropertyValues, BigDecimal> {
-    Optional<DocumentPropertyValues> findDocumentPropertyValuesByDocumentIdAndPropertyId(BigDecimal documentId, DocumentProperties propertyId);
+    List<DocumentPropertyValues> findDocumentPropertyValuesByDocumentIdAndVersionAndPropertyId(BigDecimal documentId,
+                                                                                                     DocumentVersion version, DocumentProperties propertyId);
 
     @Query(value = "SELECT * FROM DOCUMENT_PROPERTY_VALUES d WHERE d.DOCUMENT_ID = ?1", nativeQuery = true)
     List<DocumentPropertyValues> findDocumentPropertiesByDocumentId(BigDecimal id);
+
+    @Query(value = "SELECT * FROM DOCUMENT_PROPERTY_VALUES d WHERE d.DOCUMENT_ID = ?1 AND d.VERSION_ID = (SELECT MAX(VERSION_ID) FROM DOCUMENT_PROPERTY_VALUES WHERE DOCUMENT_ID = ?1)", nativeQuery = true)
+    List<DocumentPropertyValues> findDocumentPropertiesFromPreviousVersion(BigDecimal id);
+
+    @Query(value = "SELECT * FROM DOCUMENT_PROPERTY_VALUES d WHERE d.VERSION_ID = ?1", nativeQuery = true)
+    List<DocumentPropertyValues> findDocumentPropertiesByVersionId(BigDecimal versionId);
 }

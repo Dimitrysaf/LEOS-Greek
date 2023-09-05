@@ -160,7 +160,8 @@ public class PackageServiceImpl implements PackageService {
 
         List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
         List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
-        List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs, false);
+        List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs
+                , fetchContent);
         for (MilestoneV m : milestones) {
             xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
         }
@@ -181,7 +182,8 @@ public class PackageServiceImpl implements PackageService {
 
         List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
         List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
-        List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs, false);
+        List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs
+                , fetchContent);
         for (MilestoneV m : milestones) {
             xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
         }

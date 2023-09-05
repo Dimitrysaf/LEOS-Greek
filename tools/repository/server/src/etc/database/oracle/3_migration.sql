@@ -121,7 +121,7 @@ select  package_id, category_id,
 from (
          select
              row_number() OVER (PARTITION BY ora_cn_pkg.id, CMIS_NAME ORDER BY to_timestamp(cmis_creationdate,'YYYY-MM-DD"T"HH24:MI:SS.FF3"Z"') desc) rn,
-             src.object_id,
+                 src.object_id,
              ora_cn_pkg.id package_id, doccat.id category_id,
              cmis_name, leos_revisionStatus, leos_contributionStatus, leos_originRef, leos_baseRevisionId,
              decode(lower(leos_liveDiffingRequired),'true',1,0) livediffingrequired,
@@ -152,7 +152,7 @@ select  package_id, category_id, 1,
 from (
          select
              row_number() OVER (PARTITION BY ora_cn_pkg.id, CMIS_NAME ORDER BY to_timestamp(cmis_creationdate,'YYYY-MM-DD"T"HH24:MI:SS.FF3"Z"') desc) rn,
-             src.object_id,
+                 src.object_id,
              ora_cn_pkg.id package_id, doccat.id category_id,
              cmis_name, leos_revisionStatus, leos_contributionStatus, leos_originRef, leos_baseRevisionId,
              decode(lower(leos_liveDiffingRequired),'true',1,0) livediffingrequired,
@@ -389,7 +389,8 @@ select property_name, id, 'LEOS_CMIS', to_timestamp('14-APR-23 10:00:05.00000000
                                                                                                                        select 'clonedProposal' property_name, id from leos_repository_cn.document_categories where CATEGORY_CODE in ('PROPOSAL') UNION
                                                                                                                        select 'clonedMilestoneId' property_name, id from leos_repository_cn.document_categories where CATEGORY_CODE in ('PROPOSAL') UNION
                                                                                                                        select 'trackChangesEnabled' property_name, id from leos_repository_cn.document_categories where CATEGORY_CODE not in ('EXPORT','LEG') UNION
-                                                                                                                       select 'callbackAddress' property_name, id from leos_repository_cn.document_categories where CATEGORY_CODE not in ('EXPORT','LEG')
+                                                                                                                       select 'callbackAddress' property_name, id from leos_repository_cn.document_categories where CATEGORY_CODE not in ('EXPORT','LEG') UNION
+                                                                                                                       select 'milestoneComments' property_name, id from leos_repository_cn.document_categories where CATEGORY_CODE not in ('EXPORT','LEG')
                                                                                                                    );
 
 --12. DOCUMENT_PROPERTY_VALUES
@@ -459,5 +460,29 @@ from (
 ) src, leos_repository_cn.document_version ver
    ,(select id property_id from leos_repository_cn.document_properties where property_name = 'clonedProposal') docprop
 where src.object_id = ver.object_id;
+
+--12.7. milestoneComments
+INSERT INTO LEOS_REPOSITORY_CN.DOCUMENT_PROPERTY_VALUES
+(DOCUMENT_ID,VERSION_ID,PROPERTY_ID,PROPERTY_VALUE,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE);
+select
+    ver.document_id, ver.id, docprop.property_id, comsrc.value,  audit_c_by, audit_c_date, AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE
+from (
+         select objt.repository_id, objt.cmis_id obj_type, objt.local_namespace, objt.display_name obj_display_name, prop.id, prop.object_id, prop.object_type_property_id, objtyp.cmis_id, objtyp.display_name, objtyp.description, prop.value
+         from property prop, object_type_property objtyp, object obj, object_type objt
+         where prop.object_type_property_id = objtyp.id
+           AND prop.object_id = obj.id
+           AND obj.object_type_id = objt.id
+     ) comsrc, leos_repository_cn.document_version ver, leos_repository_cn.document_v docv,
+     (select pro.id property_id, cat.category_code
+      from leos_repository_cn.document_properties pro, leos_repository_cn.document_categories cat
+      where pro.doc_category_id = cat.id
+        and pro.property_name = 'milestoneComments') docprop
+WHERE CMIS_ID = 'leos:milestoneComments'
+  AND comsrc.REPOSITORY_ID IN (SELECT ID FROM REPOSITORY WHERE CMIS_Id = 'leos_dev_cn')
+  and comsrc.object_id = ver.object_id
+  and ver.id = docv.version_id
+  AND docv.category_code = docprop.category_code
+order by 1, 2
+;
 
 commit;
