@@ -81,7 +81,7 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertDepthAttribute(updatedContent, tagName, elementId);
-                updatedContent = numberService.renumberLevel(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberLevel(updatedContent);
                 break;
             case PARAGRAPH:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), messageHelper);
@@ -107,7 +107,7 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
         Validate.notNull(elementId, "Element id is required.");
 
         byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName, false);
-        return updateExplanatoryContent(elementId, tagName, xmlContent, document.isTrackChangesEnabled());
+        return updateExplanatoryContent(elementId, tagName, xmlContent);
     }
 
     @Override
@@ -149,10 +149,10 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
         } else {
             updatedContent = elementProcessor.updateElement(document, elementFragment, tagName, elementId, false);
         }
-        return updateExplanatoryContent(elementId, tagName, updatedContent, document.isTrackChangesEnabled());
+        return updateExplanatoryContent(elementId, tagName, updatedContent);
     }
 
-    private byte[] updateExplanatoryContent(String elementId, String tagName, byte[] xmlContent, boolean isTrackChangesEnabled) {
+    private byte[] updateExplanatoryContent(String elementId, String tagName, byte[] xmlContent) {
         if (tagName.equals(NUM)) {
             tagName = xmlContentProcessor.getParentTagNameById(xmlContent, elementId);
             elementId = xmlContentProcessor.getParentIdById(xmlContent, elementId);
@@ -164,15 +164,15 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
 
         if (hasDepth(tagName)) {
             xmlContent = xmlContentProcessor.insertDepthAttribute(xmlContent, tagName, elementId);
-            xmlContent = numberService.renumberLevel(xmlContent, isTrackChangesEnabled);
-            xmlContent = numberService.renumberDivisions(xmlContent, isTrackChangesEnabled);
+            xmlContent = numberService.renumberLevel(xmlContent);
+            xmlContent = numberService.renumberDivisions(xmlContent);
         } else if (Arrays.asList(PARAGRAPH, SUBPARAGRAPH, POINT, INDENT, SUBPOINT).contains(tagName)) {
-            xmlContent = numberService.renumberParagraph(xmlContent, isTrackChangesEnabled);
+            xmlContent = numberService.renumberParagraph(xmlContent);
             if (Arrays.asList(POINT, INDENT, SUBPOINT, SUBPARAGRAPH).contains(tagName)) {
-                xmlContent = numberService.renumberLevel(xmlContent, isTrackChangesEnabled);
+                xmlContent = numberService.renumberLevel(xmlContent);
             }
         } else if (tagName.equals(ARTICLE)) {
-            xmlContent = numberService.renumberArticles(xmlContent, isTrackChangesEnabled);
+            xmlContent = numberService.renumberArticles(xmlContent);
         }
         return xmlContentProcessor.doXMLPostProcessing(xmlContent);
     }

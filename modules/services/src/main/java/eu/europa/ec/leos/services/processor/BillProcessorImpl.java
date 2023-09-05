@@ -93,20 +93,20 @@ public class BillProcessorImpl implements BillProcessor {
             case RECITAL:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, RECITAL), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
                 updatedContent = insertNewElement(document, elementId, before, tagName, template);
-                updatedContent = numberService.renumberRecitals(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberRecitals(updatedContent);
                 break;
             case ARTICLE:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, "Article heading...", messageHelper);
                 String updatedTemplate = insertListIdAttr(template, items);
                 updatedContent = insertNewElement(document, elementId, before, tagName, updatedTemplate);
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case PARAGRAPH:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, PARAGRAPH), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
                 if (isNumberedParagraph(document, elementId)) {
                     updatedContent = insertNewElement(document, elementId, before, tagName, template);
                     updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
-                    updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                    updatedContent = numberService.renumberArticles(updatedContent);
                 } else {
                     updatedContent = insertNewElement(document, elementId, before, tagName, template.replaceAll("<num.*?</num>", ""));
                 }
@@ -129,7 +129,7 @@ public class BillProcessorImpl implements BillProcessor {
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
                 updatedContent = insertNewElement(document, elementId, before, tagName, template);
                 updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case SUBPOINT:
                 parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
@@ -153,8 +153,8 @@ public class BillProcessorImpl implements BillProcessor {
         Validate.notNull(document, "Document is required.");
         byte[] updatedContent = getContent(document);
         updatedContent = xmlContentProcessor.prepareForRenumber(updatedContent);
-        updatedContent = numberService.renumberRecitals(updatedContent, document.isTrackChangesEnabled());
-        updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+        updatedContent = numberService.renumberRecitals(updatedContent);
+        updatedContent = numberService.renumberArticles(updatedContent);
         updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         return updatedContent;
     }
@@ -175,17 +175,17 @@ public class BillProcessorImpl implements BillProcessor {
                 break;
             case RECITAL:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
-                updatedContent = numberService.renumberRecitals(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberRecitals(updatedContent);
                 break;
             case ARTICLE:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case PARAGRAPH:
                 if (isNumberedParagraph(document, elementId)) {
                     updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                     updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
-                    updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                    updatedContent = numberService.renumberArticles(updatedContent);
                 } else {
                     updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 }
@@ -206,7 +206,7 @@ public class BillProcessorImpl implements BillProcessor {
             case INDENT:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case SUBPOINT:
                 parentElement = xmlContentProcessor.getParentElement(getContent(document), elementId);
@@ -234,19 +234,19 @@ public class BillProcessorImpl implements BillProcessor {
                 break;
             case RECITAL:
                 updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
-                updatedContent = numberService.renumberRecitals(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberRecitals(updatedContent);
                 break;
             case ARTICLE:
             case PARAGRAPH:
                 updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case SUBPARAGRAPH:
             case POINT:
             case SUBPOINT:
             case INDENT:
                 updatedContent = elementProcessor.deleteElement(document, elementId, tagName, false);
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
@@ -298,8 +298,8 @@ public class BillProcessorImpl implements BillProcessor {
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, contentBytes, TocMode.RAW);
             updatedContent = xmlContentProcessor.indentElement(contentBytes, elementName, elementId, elementContent, toc);
             if (updatedContent != null) {
-                updatedContent = numberService.renumberRecitals(updatedContent, document.isTrackChangesEnabled());
-                updatedContent = numberService.renumberArticles(updatedContent, document.isTrackChangesEnabled());
+                updatedContent = numberService.renumberRecitals(updatedContent);
+                updatedContent = numberService.renumberArticles(updatedContent);
                 updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
             }
         } else {

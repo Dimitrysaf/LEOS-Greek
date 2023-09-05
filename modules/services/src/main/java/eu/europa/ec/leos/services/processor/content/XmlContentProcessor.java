@@ -79,7 +79,7 @@ public interface XmlContentProcessor {
 
     byte[] updateReferences(byte[] xmlContent) throws Exception;
 
-    Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent, boolean isTrackChangesEnabled);
+    Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent);
 
     /**
      * Finds the first element with the id,if there are others, XML is incorrect
