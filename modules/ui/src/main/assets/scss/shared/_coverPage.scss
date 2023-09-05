@@ -100,7 +100,7 @@
             display: block;
             margin-left: 8.99cm;
             margin-bottom: 24pt;
-
+            margin-top: 10pt;
             & > p {
                 & > docketNumber {
                     display: inline;
@@ -118,10 +118,11 @@
         }
 		
 		container[name=associatedReferences] {
+            display: block;
+            text-align: center;
+            margin-top: 10pt;
 			& > * {
-				text-align: center;
 				text-decoration: none;
-				display: block;
 				font-weight: normal;
 			}
 		}

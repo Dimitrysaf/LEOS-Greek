@@ -90,7 +90,7 @@
       display: block;
       margin-left: 8.99cm;
       margin-bottom: 24pt;
-
+      margin-top: 10pt;
       & > p {
         & > docketNumber {
           display: inline;
@@ -106,7 +106,15 @@
         @extend %paddedText;
       }
     }
-
+    container[name=associatedReferences] {
+        display: block;
+        text-align: center;
+        margin-top: 10pt;
+      & > * {
+        text-decoration: none;
+        font-weight: normal;
+      }
+    }
     @extend %xmlLongTitle;
   }
 
