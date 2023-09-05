@@ -21,6 +21,13 @@ import org.w3c.dom.NodeList;
 import java.util.Arrays;
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
+import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
+import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
@@ -29,10 +36,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static java.util.Arrays.asList;
 
 /**
@@ -218,6 +221,14 @@ public abstract class NumberProcessorHandler {
             for (int i = 0; i < nodeList.size(); i++) {
                 final Node node = nodeList.get(i);
                 if (skipAutoRenumbering(node)) {
+                    if(hasAttributeWithValue(node, "leos:action", "delete")) {
+                        // Remove track changes for num node as the parent node is already deleted.
+                        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                        if(getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
+                            numNode.setTextContent(getFirstChild(numNode, "del").getTextContent());
+                        }
+                    }
+
                     boolean leosRenumberedForNode = XercesUtils.getAttributeValueAsSimpleBoolean(node, LEOS_RENUMBERED);
                     if (!leosRenumberedForNode) {
                         incrementValue(numberConfig);

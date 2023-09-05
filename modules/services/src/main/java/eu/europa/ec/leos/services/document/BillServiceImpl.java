@@ -268,7 +268,7 @@ public abstract class BillServiceImpl implements BillService {
 
         byte[] newXmlContent;
         newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(bill), user, bill.isTrackChangesEnabled());
-        
+
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);

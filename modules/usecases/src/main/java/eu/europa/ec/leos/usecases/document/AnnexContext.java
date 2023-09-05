@@ -188,7 +188,7 @@ public class AnnexContext {
         annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         if (cloneProposal) {
             Map<String, Object> annexProperties = new HashMap<>();
-            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
+            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), false);
             annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
         }
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));

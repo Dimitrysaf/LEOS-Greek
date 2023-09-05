@@ -1,10 +1,12 @@
 package eu.europa.ec.leos.services.numbering.processor;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
 
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,8 +22,8 @@ public class NumberProcessorDepthBasedDefault extends NumberProcessorAbstract im
 	
 	private static final Logger LOG = LoggerFactory.getLogger(NumberProcessorDepthBasedDefault.class);
 
-    public NumberProcessorDepthBasedDefault(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
-        super(messageHelper, numberProcessorHandler);
+    public NumberProcessorDepthBasedDefault(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext, TrackChangesContext trackChangesContext) {
+        super(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     }
 
     @Override

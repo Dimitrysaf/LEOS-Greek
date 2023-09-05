@@ -31,6 +31,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -75,6 +76,10 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     protected LanguageHelper languageHelper;
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
+    @Mock
+    private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
+
+    private TrackChangesContext trackChangesContext = new TrackChangesContext();
 
     protected MessageHelper getMessageHelper() {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("test-servicesContext.xml");
@@ -109,11 +114,11 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     protected NumberConfigFactory numberConfigFactory = Mockito.spy(new NumberConfigFactory());
     @InjectMocks
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler);
-    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler);
-    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler);
-    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler);
-    private NumberProcessorDepthBased numberProcessorLevel = new NumberProcessorLevel(messageHelper, numberProcessorHandler);
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessorDepthBased numberProcessorLevel = new NumberProcessorLevel(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     @InjectMocks
     protected List<NumberProcessor> numberProcessors = Mockito.spy(Stream.of(numberProcessorArticle,
             numberProcessorPoint,
@@ -150,6 +155,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
         when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
+        when(leosSecurityContext.getUserName()).thenReturn("jane");
     }
     
     @Test

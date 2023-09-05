@@ -1,9 +1,11 @@
 package eu.europa.ec.leos.services.numbering.processor;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,8 @@ public class NumberProcessorLevel extends NumberProcessorDepthBasedDefault {
     private static final Logger LOG = LoggerFactory.getLogger(NumberProcessorLevel.class);
 
     @Autowired
-    public NumberProcessorLevel(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
-        super(messageHelper, numberProcessorHandler);
+    public NumberProcessorLevel(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext, TrackChangesContext trackChangesContext) {
+        super(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     }
 
     @Override

@@ -423,7 +423,7 @@ public class XmlContentProcessorHelper {
             String newNum = createNumContent(tocVo);
             numNode = XercesUtils.getFirstChild(node, XercesUtils.getNumTag(getTagValueFromTocItemVo(tocVo)));
             if (numNode != null) {
-                if (!newNum.equals(numNode.getTextContent())) {
+                if (getFirstChild(numNode, "del") == null && getFirstChild(numNode, "ins") == null && !newNum.equals(numNode.getTextContent())) {
                     numNode.setTextContent(newNum);
                 }
                 if (tocVo.isUndeleted()) {

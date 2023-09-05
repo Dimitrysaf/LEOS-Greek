@@ -3,12 +3,15 @@ package eu.europa.ec.leos.services.support;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_1;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_2;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_3;
+import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsFirstChildOfNode;
+import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsSimpleBoolean;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.BOLD;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIV;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
@@ -19,7 +22,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ITALICS;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
 import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
 
+import eu.europa.ec.leos.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -30,19 +36,57 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 public class LeosXercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosXercesUtils.class);
 
-    public static Node buildNumElement(Node node, String numLabel) {
+    public static Node buildNumElement(Node node, String numLabel, SecurityContext securityContext, boolean isTrackChangesEnabled) {
         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
         if (numNode != null) {
             if (node.getNodeName().equals(DIVISION)) {
                 buildNumElementForDivision(node, numLabel, numNode);
             } else {
-                numNode.setTextContent(numLabel);
+                if(!isTrackChangesEnabled) {
+                    numNode.setTextContent(numLabel);
+                } else {
+                    if(hasAttributeWithValue(node, "leos:action", "insert") || hasAttributeWithValue(numNode, "leos:action", "move")) {
+                        // Skip track changes for num node as the parent node is already being tracked.
+                        // Skip track change for num node as it is moved from somewhere else.
+                        numNode.setTextContent(numLabel);
+                    } else {
+                        if (getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
+                            if (getFirstChild(numNode, "del").getTextContent().equals(numLabel)) {
+                                numNode.setTextContent(numLabel);
+                            } else {
+                                Node insertedNum = getFirstChild(numNode, "ins");
+                                insertedNum.setTextContent(numLabel);
+                                addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                                addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                            }
+                        } else {
+                            if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
+                                numNode.setTextContent(numLabel);
+                            } else {
+                                String oldNumLabel = numNode.getTextContent();
+
+                                numNode.setTextContent(null);
+
+                                Node deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", oldNumLabel);
+                                addAttribute(deletedNum, LEOS_UID, securityContext.getUser().getLogin());
+                                addAttribute(deletedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
+                                Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
+                                addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                                addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                            }
+                        }
+                    }
+                }
             }
         } else {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), numLabel);

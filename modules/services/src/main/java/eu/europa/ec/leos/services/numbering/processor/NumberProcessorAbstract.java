@@ -8,6 +8,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.isSoftChanged;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 
+import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -24,10 +26,14 @@ public class NumberProcessorAbstract {
 
     final protected MessageHelper messageHelper;
     final protected NumberProcessorHandler numberProcessorHandler;
+    final protected SecurityContext securityContext;
+    final protected TrackChangesContext trackChangesContext;
 
-    public NumberProcessorAbstract(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler) {
+    public NumberProcessorAbstract(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext, TrackChangesContext trackChangesContext) {
         this.messageHelper = messageHelper;
         this.numberProcessorHandler = numberProcessorHandler;
+        this.securityContext = securityContext;
+        this.trackChangesContext = trackChangesContext;
     }
 
     protected void renumber(Node node, NumberConfig numberConfig, String parentPrefix) {
@@ -52,7 +58,7 @@ public class NumberProcessorAbstract {
             LOG.trace("{} (depth {}) '{}', skipping calculated number '{}', keeping manual insertion '{}'", node.getNodeName(), depth, getId(node), elementNum, insertedNum);
         } else {
             elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
-            buildNumElement(node, elementNum);
+            buildNumElement(node, elementNum, securityContext, trackChangesContext.isTrackChangesEnabled());
             LOG.trace("{} (depth {}) '{}' numbered to '{}'", elementName, depth, elementId, elementNum);
         }
     }
@@ -74,7 +80,7 @@ public class NumberProcessorAbstract {
             String actualNumberToShow = numberConfig.getActualNumberToShow();
             String elementNum = numberConfig.getPrefix() + parentPrefix + actualNumberToShow + numberConfig.getSuffix();
             elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
-            buildNumElement(node, elementNum);
+            buildNumElement(node, elementNum, securityContext, trackChangesContext.isTrackChangesEnabled());
             LOG.trace("CN {} '{}', numbered to '{}'", elementName, elementId, elementNum);
         } else {
             // Found an EC element.
@@ -85,7 +91,7 @@ public class NumberProcessorAbstract {
                 String num = readActualNumberForRenumber(numberConfig, elementName, elementId);
                 String elementNum = numberConfig.getPrefix() + parentPrefix + num + numberConfig.getSuffix();
                 elementNum = messageHelper.getMessage("numbering.label." + elementName, elementNum);
-                buildNumElement(node, elementNum);
+                buildNumElement(node, elementNum, securityContext, trackChangesContext.isTrackChangesEnabled());
             } else {
                 readActualNumber(numberConfig, node, elementName, elementId);
             }
