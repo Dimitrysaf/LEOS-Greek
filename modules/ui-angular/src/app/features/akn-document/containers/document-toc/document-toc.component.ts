@@ -122,6 +122,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: ConfirmDeleteDialogComponent;
 
   private tooltips = new Map<TableOfContentItemVO, string>();
+  private tooltipTimers = new Set<number>();
   private resizeObserver: ResizeObserver;
   private cancelPendingPersistTreeHeight: () => void;
   private destroy$: Subject<any> = new Subject();
@@ -157,6 +158,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.resizeObserver.disconnect();
+    this.clearNodeTooltips();
     this.destroy$.next(null);
     this.destroy$.complete();
   }
@@ -183,6 +185,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getNodeTooltip(node: TableOfContentItemVO): string {
+    if (!this.tooltips.has(node)) {
+      this.tooltips.set(node, ''); // to avoid multiple requests for the same node
+      this.updateNodeTooltip(node);
+    }
     return this.tooltips.get(node) ?? '';
   }
 
@@ -542,6 +548,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.prepareTreeForDisplay(toc);
     this.dataSource.data = toc;
     this.treeControl.dataNodes = toc;
+    this.clearNodeTooltips();
 
     this.checkForDraft();
     this.restoreExpanded(toc);
@@ -549,9 +556,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       if (this.selectedNode) this.handleNodeSelect(this.selectedNode, false);
       this.highlightInvalidNodes();
-    });
-    this.zoneOnStable$.subscribe(() => {
-      this.updateNodeTooltips();
     });
   }
 
@@ -1008,17 +1012,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
     widthBS
       .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(() => this.updateNodeTooltips());
+      .subscribe(() => this.clearNodeTooltips());
     this.resizeObserver.observe(this.treeContainer.nativeElement);
   }
 
-  private updateNodeTooltips() {
+  private clearNodeTooltips() {
+    this.tooltipTimers.forEach((t) => window.clearTimeout(t));
     this.tooltips.clear();
-    const updateTooltip = (node: TableOfContentItemVO) => {
+  }
+
+  private updateNodeTooltip(node: TableOfContentItemVO) {
+    const timer = window.requestAnimationFrame(() => {
       this.tooltips.set(node, this.createNodeTooltip(node));
-      node.childItems?.forEach(updateTooltip);
-    };
-    this.dataSource?.data?.forEach(updateTooltip);
+      this.tooltipTimers.delete(timer);
+    });
+    this.tooltipTimers.add(timer);
   }
 
   private createNodeTooltip(node: TableOfContentItemVO) {
