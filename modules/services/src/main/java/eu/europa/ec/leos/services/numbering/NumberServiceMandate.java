@@ -63,7 +63,7 @@ public class NumberServiceMandate implements NumberService {
     }
 
     @Override
-    public String renumberImportedArticle(String xmlContent, String language) {
+    public String renumberImportedArticle(String xmlContent, String language, boolean isTrackChangesEnabled) {
 //        String updatedElements;
 //        elementNumberingHelper.setImportArticleDefaultProperties();
 //        try {
@@ -78,7 +78,7 @@ public class NumberServiceMandate implements NumberService {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, ARTICLE)) {
             Document document = createXercesDocument(xmlContent.getBytes(UTF_8));
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, true, isTrackChangesEnabled);
             return nodeToString(document);
         }
         return xmlContent;
@@ -91,34 +91,34 @@ public class NumberServiceMandate implements NumberService {
     }
 
     @Override
-    public byte[] renumberArticles(byte[] xmlContent) {
+    public byte[] renumberArticles(byte[] xmlContent, boolean isTrackChangesEnabled) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, ARTICLE)) {
             Document document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, true, isTrackChangesEnabled);
             return nodeToByteArray(document);
         }
         return xmlContent;
     }
 
     @Override
-    public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElement) {
-        return renumberArticles(xmlContent);
+    public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElement, boolean isTrackChangesEnabled) {
+        return renumberArticles(xmlContent, isTrackChangesEnabled);
     }
 
     @Override
-    public byte[] renumberRecitals(byte[] xmlContent) {
+    public byte[] renumberRecitals(byte[] xmlContent, boolean isTrackChangesEnabled) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, RECITAL)) {
             Document document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, RECITAL, true);
+            numberProcessorHandler.renumberDocument(document, RECITAL, true, isTrackChangesEnabled);
             return nodeToByteArray(document);
         }
         return xmlContent;
     }
 
     @Override
-    public byte[] renumberLevel(byte[] xmlContent) {
+    public byte[] renumberLevel(byte[] xmlContent, boolean isTrackChangesEnabled) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, LEVEL)) {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -126,7 +126,7 @@ public class NumberServiceMandate implements NumberService {
             NodeList nodeList = document.getElementsByTagName(LEVEL);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(nodeList, true);
             LOG.trace("renumberLevel - Found {} '{}'s element in the document, and grouped them in {} top elements", nodeList.getLength(), LEVEL, parentChildList.size());
-            numberProcessorHandler.renumberDepthBased(parentChildList, LEVEL, 1);
+            numberProcessorHandler.renumberDepthBased(parentChildList, LEVEL, 1, isTrackChangesEnabled);
             LOG.debug("Renumbered {} '{}' in {} milliseconds ({} sec)", nodeList.getLength(), LEVEL, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
             return nodeToByteArray(document);
         }
@@ -134,18 +134,18 @@ public class NumberServiceMandate implements NumberService {
     }
 
     @Override
-    public byte[] renumberParagraph(byte[] xmlContent) {
+    public byte[] renumberParagraph(byte[] xmlContent, boolean isTrackChangesEnabled) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, PARAGRAPH)) {
             Document document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, PARAGRAPH, true);
+            numberProcessorHandler.renumberDocument(document, PARAGRAPH, true, isTrackChangesEnabled);
             return nodeToByteArray(document);
         }
         return xmlContent;
     }
 
     @Override
-    public byte[] renumberDivisions(byte[] xmlContent) {
+    public byte[] renumberDivisions(byte[] xmlContent, boolean isTrackChangesEnabled) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, DIVISION)) {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -153,7 +153,7 @@ public class NumberServiceMandate implements NumberService {
             NodeList nodeList = document.getElementsByTagName(DIVISION);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(nodeList, false);
             LOG.trace("renumberDivisions - Found {} '{}'s element in the document, and grouped them in {} top elements", nodeList.getLength(), DIVISION, parentChildList.size());
-            numberProcessorHandler.renumberDepthBased(parentChildList, DIVISION, 1);
+            numberProcessorHandler.renumberDepthBased(parentChildList, DIVISION, 1, isTrackChangesEnabled);
             LOG.debug("Renumbered {} '{}' in {} milliseconds ({} sec)", nodeList.getLength(), DIVISION, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
             return nodeToByteArray(document);
         }

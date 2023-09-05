@@ -89,7 +89,7 @@ public class ImportServiceImpl implements ImportService {
             // Do pre-processing on the selected elements
             String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(element.getElementFragment(), elementType);
             if (elementType.equalsIgnoreCase(ARTICLE)) {
-                updatedElement = this.numberService.renumberImportedArticle(updatedElement, language);
+                updatedElement = this.numberService.renumberImportedArticle(updatedElement, language, bill.isTrackChangesEnabled());
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
             }
@@ -110,8 +110,8 @@ public class ImportServiceImpl implements ImportService {
         startTime = System.currentTimeMillis();
 
         // Renumber
-        documentContent = this.numberService.renumberRecitals(documentContent);
-        documentContent = this.numberService.renumberArticles(documentContent);
+        documentContent = this.numberService.renumberRecitals(documentContent, bill.isTrackChangesEnabled());
+        documentContent = this.numberService.renumberArticles(documentContent, bill.isTrackChangesEnabled());
         endTime = System.currentTimeMillis();
         long numberingTime = endTime - startTime;
         startTime = System.currentTimeMillis();

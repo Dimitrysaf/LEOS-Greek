@@ -15,20 +15,20 @@ package eu.europa.ec.leos.services.numbering;
 
 public interface NumberService {
 
-    byte[] renumberArticles(byte[] xmlContent);
+    byte[] renumberArticles(byte[] xmlContent, boolean isTrackChangesEnabled);
 
-    byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElements);
+    byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElements, boolean isTrackChangesEnabled);
 
-    String renumberImportedArticle(String content, String language);
+    String renumberImportedArticle(String content, String language, boolean isTrackChangesEnabled);
 
-    byte[] renumberRecitals(byte[] xmlContent);
+    byte[] renumberRecitals(byte[] xmlContent, boolean isTrackChangesEnabled);
 
     String renumberImportedRecital(String content);
 
-    byte[] renumberLevel(byte[] xmlContent);
+    byte[] renumberLevel(byte[] xmlContent, boolean isTrackChangesEnabled);
 
-    byte[] renumberParagraph(byte[] xmlContent);
+    byte[] renumberParagraph(byte[] xmlContent, boolean isTrackChangesEnabled);
 
-    byte[] renumberDivisions(byte[] xmlContent);
+    byte[] renumberDivisions(byte[] xmlContent, boolean isTrackChangesEnabled);
 
 }

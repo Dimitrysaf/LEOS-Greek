@@ -305,10 +305,10 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         Validate.notNull(tocList, "Table of content list is required");
         byte[] newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user, financialStatement.isTrackChangesEnabled());
         if (financialStatementStructureType != null && LEVEL.equals(financialStatementStructureType.getType())) {
-            newXmlContent = numberService.renumberLevel(newXmlContent);
+            newXmlContent = numberService.renumberLevel(newXmlContent, financialStatement.isTrackChangesEnabled());
         }
-        newXmlContent = numberService.renumberParagraph(newXmlContent);
-        newXmlContent = numberService.renumberDivisions(newXmlContent);
+        newXmlContent = numberService.renumberParagraph(newXmlContent, financialStatement.isTrackChangesEnabled());
+        newXmlContent = numberService.renumberDivisions(newXmlContent, financialStatement.isTrackChangesEnabled());
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateFinancialStatement(financialStatement, newXmlContent, VersionType.MINOR, actionMsg);
