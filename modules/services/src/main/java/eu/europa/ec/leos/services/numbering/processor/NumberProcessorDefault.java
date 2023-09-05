@@ -4,6 +4,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
@@ -14,8 +15,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 @Component
 public class NumberProcessorDefault extends NumberProcessorAbstract implements NumberProcessor {
 
-    public NumberProcessorDefault(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext) {
-        super(messageHelper, numberProcessorHandler, securityContext);
+    public NumberProcessorDefault(MessageHelper messageHelper, NumberProcessorHandler numberProcessorHandler, SecurityContext securityContext, TrackChangesContext trackChangesContext) {
+        super(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
     }
 
     /**
@@ -29,12 +30,12 @@ public class NumberProcessorDefault extends NumberProcessorAbstract implements N
     }
 
     @Override
-    public void renumber(Node node, NumberConfig numberConfig, boolean numberChildren, boolean isTrackChangesEnabled) {
-        renumber(node, numberConfig, "", isTrackChangesEnabled);
-        renumberChildren(node, numberChildren, isTrackChangesEnabled);
+    public void renumber(Node node, NumberConfig numberConfig, boolean numberChildren) {
+        renumber(node, numberConfig, "");
+        renumberChildren(node, numberChildren);
     }
 
-    protected void renumberChildren(Node node, boolean numberChildren, boolean isTrackChangesEnabled) {
+    protected void renumberChildren(Node node, boolean numberChildren) {
         // no propagation for the default implementation
     }
 

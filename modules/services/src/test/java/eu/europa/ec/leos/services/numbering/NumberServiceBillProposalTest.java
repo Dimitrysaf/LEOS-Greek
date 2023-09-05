@@ -13,7 +13,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_recitals() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_recitals.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_recitals_expected.xml");
-        byte[] result = numberService.renumberRecitals(xmlInput, false);
+        byte[] result = numberService.renumberRecitals(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -23,7 +23,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
 
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_recitals_clonedProposal.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_recitals_clonedProposal_expected.xml");
-        byte[] result = numberService.renumberRecitals(xmlInput, false);
+        byte[] result = numberService.renumberRecitals(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -31,7 +31,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_articles() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_articles.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_articles_expected.xml");
-        byte[] result = numberService.renumberArticles(xmlInput, false);
+        byte[] result = numberService.renumberArticles(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -39,7 +39,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_defArticle() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_defArticle.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_defArticle_expected.xml");
-        byte[] result = numberService.renumberArticles(xmlInput, true,false);
+        byte[] result = numberService.renumberArticles(xmlInput, true);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -47,7 +47,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_articles_with_soft_attributes() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_articles_with_soft_attr.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_articles_with_soft_attr_expected.xml");
-        byte[] result = numberService.renumberArticles(xmlInput, false);
+        byte[] result = numberService.renumberArticles(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -55,7 +55,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_articles_with_soft_attributes_with_1st_element() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_articles_with_soft_attr_1st_element.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_articles_with_soft_attr_1st_element_expected.xml");
-        byte[] result = numberService.renumberArticles(xmlInput, false);
+        byte[] result = numberService.renumberArticles(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -63,7 +63,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_article_importFromOJ_ec() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_importFromOJ_ec.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_importFromOJ_ec_expected.xml");
-        String result = numberService.renumberImportedArticle(new String(xmlInput), null, false);
+        String result = numberService.renumberImportedArticle(new String(xmlInput), null);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(result));
     }
 
@@ -71,7 +71,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_article_definition_importFromOJ_ec() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_definition_importFromOJ_ec.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_definition_importFromOJ_ec_expected.xml");
-        String result = numberService.renumberImportedArticle(new String(xmlInput), null, false);
+        String result = numberService.renumberImportedArticle(new String(xmlInput), null);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(result));
     }
 }

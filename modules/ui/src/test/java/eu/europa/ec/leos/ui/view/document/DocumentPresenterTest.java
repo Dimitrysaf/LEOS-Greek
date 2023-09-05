@@ -47,6 +47,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.test.support.web.presenter.LeosPresenterTest;
 import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
@@ -164,6 +165,9 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
     @Mock
     private DocumentContentService documentContentService;
+
+    @Mock
+    private TrackChangesContext trackChangesContext;
     
     @InjectMocks
     private DocumentPresenter documentPresenter ;

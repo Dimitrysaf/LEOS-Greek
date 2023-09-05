@@ -76,11 +76,11 @@ public abstract class NumberProcessorHandler {
      * - renumberElement  -> Number children of the first level to node of type  "elementName"
      * - renumberDocument -> Number all elements present in the document of type  "elementName"  (no matter what the level inside the dom is)
      */
-    public void renumberDocument(Document document, String elementName, boolean renumberChildren, boolean isTrackChangesEnabled) {
+    public void renumberDocument(Document document, String elementName, boolean renumberChildren) {
         NodeList elements = document.getElementsByTagName(elementName);
         List<Node> nodeList = XercesUtils.getNodesAsList(elements);
         LOG.trace("renumberElementsAndChildren - Found {} '{}'s to number inside nodeName '{}', nodeId '{}'", nodeList.size(), elementName, document.getNodeName(), getId(document));
-        renumber(nodeList, renumberChildren, isTrackChangesEnabled);
+        renumber(nodeList, renumberChildren);
     }
 
     /**
@@ -113,20 +113,19 @@ public abstract class NumberProcessorHandler {
      * @param node             Document or initial Node where the numbering will start
      * @param elementName      elements name to number inside the node
      * @param renumberChildren true, if numbering should be propagated to the children
-     * @param isTrackChangesEnabled true, if track changes attributes should be added
      */
-    public void renumberElement(Node node, String elementName, boolean renumberChildren, boolean isTrackChangesEnabled) {
+    public void renumberElement(Node node, String elementName, boolean renumberChildren) {
         if (Arrays.asList(POINT, INDENT).contains(elementName)) {
             List<Node> LISTs = XercesUtils.getChildren(node, LIST);
             LOG.trace("getChildren. Found {} LISTs inside nodeName {}, nodeId {}", LISTs.size(), node.getNodeName(), getId(node));
             for (int i = 0; i < LISTs.size(); i++) {
                 Node list = LISTs.get(i);
                 List<Node> nodeList = XercesUtils.getChildren(list, elementName);
-                renumber(nodeList, renumberChildren, isTrackChangesEnabled);
+                renumber(nodeList, renumberChildren);
             }
         } else {
             List<Node> nodeList = XercesUtils.getChildren(node, elementName);
-            renumber(nodeList, renumberChildren, isTrackChangesEnabled);
+            renumber(nodeList, renumberChildren);
         }
     }
 
@@ -181,9 +180,8 @@ public abstract class NumberProcessorHandler {
      * @param nodeList         List with all Nodes to be numbered
      * @param elementName      elements name to number inside the list
      * @param depth            depth in the tree structure (parent-child relationship)
-     * @param isTrackChangesEnabled true, if track changes attributes should be added
      */
-    public void renumberDepthBased(List<ParentChildNode> nodeList, String elementName, int depth, boolean isTrackChangesEnabled) {
+    public void renumberDepthBased(List<ParentChildNode> nodeList, String elementName, int depth) {
         if (nodeList.size() > 0) {
             final Node firstElement = nodeList.get(0).getNode();
             final NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, depth, firstElement);
@@ -196,14 +194,14 @@ public abstract class NumberProcessorHandler {
                     numberProcessorsDepthBased.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .ifPresent(val -> val.renumberDepthBased(parentChildNode, numberConfig, elementName, depth, isTrackChangesEnabled));
+                            .ifPresent(val -> val.renumberDepthBased(parentChildNode, numberConfig, elementName, depth));
                     removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
                 }
             }
         }
     }
 
-    private void renumber(List<Node> nodeList, boolean renumberChildren, boolean isTrackChangesEnabled) {
+    private void renumber(List<Node> nodeList, boolean renumberChildren) {
         if (nodeList.size() > 0) {
             final Node firstElement = nodeList.get(0);
             final int elementDepth = XercesUtils.getPointDepth(firstElement);
@@ -235,7 +233,7 @@ public abstract class NumberProcessorHandler {
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren, isTrackChangesEnabled));
+                            .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren));
                 }
                 removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
             }

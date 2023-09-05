@@ -126,8 +126,8 @@ public class BillServiceImpTest {
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);
         when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean())).thenReturn(byteContent);
-        when(numberService.renumberArticles(any(), eq(true), eq(false))).thenReturn(byteContent);
-        when(numberService.renumberRecitals(any(), eq(false))).thenReturn(byteContent);
+        when(numberService.renumberArticles(any(), eq(true))).thenReturn(byteContent);
+        when(numberService.renumberRecitals(any())).thenReturn(byteContent);
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenReturn(byteContent);
 
         //When
@@ -135,8 +135,8 @@ public class BillServiceImpTest {
 
         // Then
         verify(xmlContentProcessor, times(1)).createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean());
-        verify(numberService, times(1)).renumberArticles(any(), eq(true), eq(false));
-        verify(numberService, times(1)).renumberRecitals(any(), eq(false));
+        verify(numberService, times(1)).renumberArticles(any(), eq(true));
+        verify(numberService, times(1)).renumberRecitals(any());
         verify(xmlContentProcessor, times(1)).doXMLPostProcessing(any());
 
         verifyNoMoreInteractions(xmlContentProcessor, numberService);

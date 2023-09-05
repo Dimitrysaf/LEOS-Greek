@@ -88,6 +88,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
@@ -297,6 +298,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private final AnnotateService annotateService;
     private final List<String> openElementEditors;
 
+    private TrackChangesContext trackChangesContext;
+
     @Autowired
     DocumentPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                       DocumentScreen documentScreen, BillService billService,
@@ -313,7 +316,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
                       ProposalService proposalService, ContributionService contributionService, SearchService searchService, ExportPackageService exportPackageService,
                       NotificationService notificationService, CloneContext cloneContext, InstanceTypeResolver instanceTypeResolver, XmlContentProcessor xmlContentProcessor,
                       NumberService numberService, MergeContributionHelper mergeContributionHelper, AttachmentProcessor attachmentProcessor,
-                      ConfigurationHelper cfgHelper, AnnotateService annotateService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                      ConfigurationHelper cfgHelper, AnnotateService annotateService, RepositoryPropertiesMapper repositoryPropertiesMapper,
+                      TrackChangesContext trackChangesContext) {
 
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.contributionService = contributionService;
@@ -353,6 +357,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         this.annotateService = annotateService;
         this.openElementEditors = new ArrayList<>();
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.trackChangesContext = trackChangesContext;
     }
 
     private byte[] getContent(Bill bill) {
@@ -966,6 +971,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         documentId = bill.getId();
         structureContextProvider.get().useDocumentTemplate(bill.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        populateTrackChangesContext(bill);
     }
 
     private String getDocumentRef() {
@@ -990,6 +996,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         documentScreen.setPermissions(billVO, isClonedProposal());
         documentScreen.initAnnotations(billVO, proposalRef, connectedEntity);
         documentScreen.initTrackChanges(proposalRef);
+        populateTrackChangesContext(bill);
         return bill;
     }
 
@@ -997,7 +1004,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
     public void enableTrackChanges(EnableTrackChangesEvent event) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
-        billService.updateBill(documentId, properties, false);
+        Bill bill = billService.updateBill(documentId, properties, false);
+        populateTrackChangesContext(bill);
     }
 
     @Subscribe
@@ -1353,8 +1361,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, bill, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, bill, tocItemList, intRefMap);
-        xmlContent = numberService.renumberArticles(xmlContent, true, bill.isTrackChangesEnabled());
-        xmlContent = numberService.renumberRecitals(xmlContent, bill.isTrackChangesEnabled());
+        xmlContent = numberService.renumberArticles(xmlContent, true);
+        xmlContent = numberService.renumberRecitals(xmlContent);
         xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);
         bill = billService.updateBill(bill, xmlContent, messageHelper.getMessage("contribution.merge.operation.message"));
         if (bill != null) {
@@ -1925,5 +1933,9 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private boolean isClonedProposal() {
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    private void populateTrackChangesContext(Bill bill) {
+        this.trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
     }
 }

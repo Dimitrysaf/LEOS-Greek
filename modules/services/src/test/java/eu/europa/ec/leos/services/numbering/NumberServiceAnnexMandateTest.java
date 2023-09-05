@@ -10,6 +10,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBasedD
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAndPoint;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,11 +41,13 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerMandate();
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
-    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext);
-    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext);
-    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext);
-    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext);
-    private NumberProcessorDepthBased numberProcessorLevel = new eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel(messageHelper, numberProcessorHandler, leosSecurityContext);
+
+    private TrackChangesContext trackChangesContext = new TrackChangesContext();
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessorDepthBased numberProcessorLevel = new eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     @InjectMocks
     protected List<NumberProcessor> numberProcessors = Mockito.spy(Stream.of(numberProcessorArticle,
             numberProcessorPoint,
@@ -74,7 +77,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_numbering_level_cn_withNegatives() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withNegatives.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withNegatives_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -82,7 +85,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_numbering_level_cn_withPointsAndLevels() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withPointsAndLevels.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withPointsAndLevels_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -90,7 +93,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_numbering_level_cn_withPoints() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withPoints.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withPoints_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -98,7 +101,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_numbering_level_cn_withHigherElements() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withHigherElements.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withHigherElements_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -106,7 +109,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_renumbering_level_cn_deeperElementAfterSoftDeleted() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_level_cn_deeperElementAfterSoftDeleted.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_level_cn_deeperElementAfterSoftDeleted_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -114,7 +117,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_numbering_levels_with_deep_numbering_in_annex_cn() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_levels_with_deep_numbering_in_annex_cn.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_levels_with_deep_numbering_in_annex_cn_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -122,7 +125,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     public void test_renumbering_level_with_soft_attributes() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_level_with_soft_attr.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_level_with_soft_attr_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -131,7 +134,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_auto_numbering_level_cn_withNegatives.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_auto_numbering_level_cn_withNegatives_expected.xml");
         byte[] result = xmlContentProcessor.prepareForRenumber(xmlInput);
-        result = numberService.renumberLevel(result, false);
+        result = numberService.renumberLevel(result);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -140,7 +143,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_auto_numbering_level_cn_with_soft_attributes.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_auto_numbering_level_cn_with_soft_attributes_expected.xml");
         byte[] result = xmlContentProcessor.prepareForRenumber(xmlInput);
-        result = numberService.renumberLevel(result, false);
+        result = numberService.renumberLevel(result);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 

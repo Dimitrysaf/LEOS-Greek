@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.label.ref.LabelHandler;
 import eu.europa.ec.leos.services.label.ref.LabelHigherOrderElementsOnly;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -79,6 +80,8 @@ public abstract class SaveTocTest_IT extends LeosTest {
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
     @Mock
     protected CloneContext cloneContext;
+
+    protected TrackChangesContext trackChangesContext = new TrackChangesContext();
 
     protected AkomantosoXsdValidator akomantosoXsdValidator = new AkomantosoXsdValidator();
 

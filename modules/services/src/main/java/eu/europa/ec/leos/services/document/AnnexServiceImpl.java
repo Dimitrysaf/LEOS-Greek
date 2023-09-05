@@ -211,11 +211,11 @@ public abstract class AnnexServiceImpl implements AnnexService {
         newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(annex), user, annex.isTrackChangesEnabled());
         switch(structureType) {
             case ARTICLE:
-                newXmlContent = numberService.renumberArticles(newXmlContent, true, annex.isTrackChangesEnabled());
+                newXmlContent = numberService.renumberArticles(newXmlContent, true);
                 break;
             case LEVEL:
-                newXmlContent = numberService.renumberLevel(newXmlContent, annex.isTrackChangesEnabled());
-                newXmlContent = numberService.renumberParagraph(newXmlContent, annex.isTrackChangesEnabled());
+                newXmlContent = numberService.renumberLevel(newXmlContent);
+                newXmlContent = numberService.renumberParagraph(newXmlContent);
                 break;
         }
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);

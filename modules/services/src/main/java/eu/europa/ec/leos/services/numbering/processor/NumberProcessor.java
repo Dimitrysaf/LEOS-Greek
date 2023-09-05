@@ -13,8 +13,7 @@ public interface NumberProcessor {
      * @param node           Node to be numbered
      * @param numberConfig   ConfigNumber to be used for numbering
      * @param numberChildren true, if numbering should be propagated to the children
-     * @param isTrackChangesEnabled true, if track changes attributes should be added
      */
-    void renumber(Node node, NumberConfig numberConfig, boolean numberChildren, boolean isTrackChangesEnabled);
+    void renumber(Node node, NumberConfig numberConfig, boolean numberChildren);
 
 }

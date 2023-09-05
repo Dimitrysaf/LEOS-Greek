@@ -33,7 +33,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
     public void test_renumbering_new_level_added_as_sibling() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_new_level_added_as_sibling.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_new_level_added_as_sibling_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -41,7 +41,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
     public void test_renumbering_new_level_added_as_child() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_new_level_added_as_child.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_new_level_added_as_child_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -49,7 +49,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
     public void test_renumbering_new_level_added_at_multiple_sublevel() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_new_level_added_at_multiple_sublevel.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_renumbering_new_level_added_at_multiple_sublevel_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -57,7 +57,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
     public void test_numbering_level_ec_withHigherElements() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_cn_withHigherElements.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_ec_withHigherElements_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -65,7 +65,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
     public void test_numbering_level_wrongDepthStructure() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_wrongDepthStructure.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_wrongDepthStructure_expected.xml");
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
@@ -74,7 +74,7 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_ec_stressTest.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_ec_stressTest_expected.xml");
         long start = System.currentTimeMillis();
-        byte[] result = numberService.renumberLevel(xmlInput, false);
+        byte[] result = numberService.renumberLevel(xmlInput);
         long end = System.currentTimeMillis();
         LOG.debug("Numbering done in {} ms ({} secs) ", end - start, (end - start) / 1000);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));

@@ -125,7 +125,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         // merge the updated content with the actual document and return updated document
         byte[] contentBytes = getContent(document);
         if (isClonedProposal()) {
-            Pair<byte[], String> result = xmlContentProcessor.updateSoftMovedElement(contentBytes, elementContent, document.isTrackChangesEnabled());
+            Pair<byte[], String> result = xmlContentProcessor.updateSoftMovedElement(contentBytes, elementContent);
             if(result.left() != null && result.left().length > 0) {
                 contentBytes = result.left();
             }

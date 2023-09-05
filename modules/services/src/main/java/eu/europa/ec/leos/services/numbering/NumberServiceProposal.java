@@ -70,35 +70,35 @@ public class NumberServiceProposal implements NumberService {
     }
 
     @Override
-    public byte[] renumberArticles(byte[] xmlContent, boolean isTrackChangesEnabled) {
-        return renumberDocument(xmlContent, ARTICLE, true, false, isTrackChangesEnabled);
+    public byte[] renumberArticles(byte[] xmlContent) {
+        return renumberDocument(xmlContent, ARTICLE, true, false);
     }
 
     @Override
-    public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildren, boolean isTrackChangesEnabled) {
-        return renumberDocument(xmlContent, ARTICLE, true, renumberChildren, isTrackChangesEnabled);
+    public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildren) {
+        return renumberDocument(xmlContent, ARTICLE, true, renumberChildren);
     }
 
     @Override
-    public byte[] renumberRecitals(byte[] xmlContent, boolean isTrackChangesEnabled) {
-        return renumberDocument(xmlContent, RECITAL, true, false, isTrackChangesEnabled);
+    public byte[] renumberRecitals(byte[] xmlContent) {
+        return renumberDocument(xmlContent, RECITAL, true, false);
     }
 
     @Override
-    public String renumberImportedArticle(String xmlContentAsString, String language, boolean isTrackChangesEnabled) {
+    public String renumberImportedArticle(String xmlContentAsString, String language) {
         byte[] initialContent = xmlContentAsString.getBytes(UTF_8);
-        byte[] renumberedContent = renumberDocument(initialContent, ARTICLE, false, true, isTrackChangesEnabled);
+        byte[] renumberedContent = renumberDocument(initialContent, ARTICLE, false, true);
         if (!Arrays.equals(initialContent, renumberedContent)) {
             return new String(renumberedContent);
         }
         return xmlContentAsString;
     }
 
-    private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren, boolean isTrackChangesEnabled) {
+    private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren) {
         tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, elementName)) {
             Document document = createXercesDocument(xmlContent, namespaceEnabled);
-            numberProcessorHandler.renumberDocument(document, elementName, renumberChildren, isTrackChangesEnabled);
+            numberProcessorHandler.renumberDocument(document, elementName, renumberChildren);
             return nodeToByteArray(document);
         }
         return xmlContent;
@@ -110,17 +110,17 @@ public class NumberServiceProposal implements NumberService {
     }
 
     @Override
-    public byte[] renumberParagraph(byte[] xmlContent, boolean isTrackChangesEnabled) {
+    public byte[] renumberParagraph(byte[] xmlContent) {
         return xmlContent;
     }
 
     @Override
-    public byte[] renumberDivisions(byte[] xmlContent, boolean isTrackChangesEnabled) {
+    public byte[] renumberDivisions(byte[] xmlContent) {
         return xmlContent;
     }
 
     @Override
-    public byte[] renumberLevel(byte[] xmlContent, boolean isTrackChangesEnabled) {
+    public byte[] renumberLevel(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, LEVEL)) {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -128,7 +128,7 @@ public class NumberServiceProposal implements NumberService {
             NodeList nodeList = document.getElementsByTagName(LEVEL);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(nodeList, true);
             LOG.trace("renumberLevel - Found {} '{}'s element in the document, and grouped them in {} top elements", nodeList.getLength(), LEVEL, parentChildList.size());
-            numberProcessorHandler.renumberDepthBased(parentChildList, LEVEL, 1, isTrackChangesEnabled);
+            numberProcessorHandler.renumberDepthBased(parentChildList, LEVEL, 1);
             LOG.debug("Renumbered {} '{}' in {} milliseconds ({} sec)", nodeList.getLength(), LEVEL, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
             return nodeToByteArray(document);
         }

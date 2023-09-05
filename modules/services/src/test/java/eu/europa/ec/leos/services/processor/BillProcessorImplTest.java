@@ -51,7 +51,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -134,7 +133,7 @@ public class BillProcessorImplTest extends LeosTest {
         when(xmlContentProcessor.insertElementByTagNameAndId(argThat(is(originalByteContent)), argThat(is(any(String.class))), argThat(is(articleTag)),
                 argThat(is(articleId)), eq(before), eq(false))).thenReturn(
                 updatedByteContent);
-        when(numberService.renumberArticles(updatedByteContent, false)).thenReturn(renumberdContent);
+        when(numberService.renumberArticles(updatedByteContent)).thenReturn(renumberdContent);
         when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);
         when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);
         when(messageHelper.getMessage("toc.item.template.article.content.text")).thenReturn("Text...");
@@ -169,7 +168,7 @@ public class BillProcessorImplTest extends LeosTest {
         when(elementProcessor.deleteElement(originalDocument, articleId,
                 articleTag, false)).thenReturn(updatedByteContent);
         when(xmlContentProcessor.insertAffectedAttributeIntoParentElements(argThat(is(updatedByteContent)), argThat(is(articleId)))).thenReturn(updatedByteContent);
-        when(numberService.renumberArticles(argThat(is(updatedByteContent)), anyBoolean())).thenReturn(renumberdContent);
+        when(numberService.renumberArticles(argThat(is(updatedByteContent)))).thenReturn(renumberdContent);
         when(xmlContentProcessor.doXMLPostProcessing(argThat(is(renumberdContent)))).thenReturn(renumberdContent);
 
         // DO THE ACTUAL CALL
