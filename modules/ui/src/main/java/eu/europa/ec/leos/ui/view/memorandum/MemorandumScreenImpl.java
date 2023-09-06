@@ -43,6 +43,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.toc.StructureContext;
@@ -58,11 +59,7 @@ import eu.europa.ec.leos.ui.event.search.ReplaceMatchResponseEvent;
 import eu.europa.ec.leos.ui.event.search.SearchTextResponseEvent;
 import eu.europa.ec.leos.ui.event.security.SecurityTokenRequest;
 import eu.europa.ec.leos.ui.event.security.SecurityTokenResponse;
-import eu.europa.ec.leos.ui.extension.AnnotateExtension;
-import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
-import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
-import eu.europa.ec.leos.ui.extension.UserCoEditionExtension;
-import eu.europa.ec.leos.ui.extension.UserGuidanceExtension;
+import eu.europa.ec.leos.ui.extension.*;
 import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
@@ -73,6 +70,8 @@ import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
+import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.AddTrackChangesMenuEvent;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
 import eu.europa.ec.leos.web.event.view.document.CreateEventParameter;
@@ -168,6 +167,8 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
 
     protected String connectedEntity;
 
+    protected TrackChangesExtension<LeosDisplayField, String> trackChangesExtension;
+
     @Value("${leos.coedition.sip.enabled}")
     private boolean coEditionSipEnabled;
 
@@ -182,6 +183,9 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
 
     @Autowired
     LeosPermissionAuthorityMapHelper authorityMapHelper;
+
+    @Autowired
+    private CloneContext cloneContext;
 
     MemorandumScreenImpl(SecurityContext securityContext, EventBus eventBus, MessageHelper messageHelper, ConfigurationHelper cfgHelper,
                          UserHelper userHelper, TocEditor tocEditor, InstanceTypeResolver instanceTypeResolver, VersionsTab<Memorandum> versionsTab,
@@ -239,8 +243,16 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
         memorandumTitle.setValue(title);
     }
 
+    private boolean isClonedProposal() {
+        return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
     @Override
-    public void setContent(String content) {
+    public void setContent(String content, boolean trackChangesEnabled) {
+        if(isClonedProposal()) {
+            eventBus.post(new AddChangeDetailsMenuEvent());
+            eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));
+        }
         memorandumContent.setValue(addTimestamp(content));
         refreshNoteButton.setVisible(false);
     }

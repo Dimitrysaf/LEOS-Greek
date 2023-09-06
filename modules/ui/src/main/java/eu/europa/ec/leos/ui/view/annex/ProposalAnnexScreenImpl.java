@@ -37,6 +37,7 @@ import eu.europa.ec.leos.ui.event.view.AddStructureChangeMenuEvent;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
+import eu.europa.ec.leos.ui.extension.TrackChangesExtension;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.NotificationEvent;
@@ -311,4 +312,10 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
         toggleLiveDiffingButton.setIcon(LeosTheme.LEOS_TOGGLE_OFF_32);
     }
 
+    @Override
+    public void initTrackChanges(String proposalRef) {
+        if (trackChangesExtension == null) {
+            trackChangesExtension = new TrackChangesExtension<>(annexContent, securityContext, proposalRef, eventBus);
+        }
+    }
 }

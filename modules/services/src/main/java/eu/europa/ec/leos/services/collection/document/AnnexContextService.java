@@ -224,7 +224,7 @@ public class AnnexContextService {
         if (cloneProposal) {
             Map<String, Object> annexProperties = new HashMap<>();
             annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), annexDocument.getId());
-            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), false);
+            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
         }
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

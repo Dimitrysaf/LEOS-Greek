@@ -472,7 +472,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             if (financialStatementMetadata.isDefined()) {
                 financialStatementScreen.setTitle(financialStatementMetadata.get().getTitle());
             }
-            financialStatementScreen.setContent(getEditableXml(financialStatement));
+            financialStatementScreen.setContent(getEditableXml(financialStatement), financialStatement.isTrackChangesEnabled());
             financialStatementScreen.setToc(getTableOfContent(financialStatement, mode));
             DocumentVO financialStatementVO = createFinancialStatementVO(financialStatement);
             financialStatementScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(financialStatement.getVersionSeriesId()), id);
@@ -481,6 +481,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             financialStatementScreen.initDatepickerExtension();
             if(isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
+                financialStatementScreen.initTrackChanges((proposalRef));
             }
         }
         catch (Exception ex) {
@@ -905,7 +906,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 event.getSearchMatchVOs());
         FinancialStatement financialStatementUpdated = copyIntoNew(financialStatement, updatedContent);
         httpSession.setAttribute("financialStatement#" + getDocumentRef(), financialStatementUpdated);
-        financialStatementScreen.setContent(getEditableXml(financialStatementUpdated));
+        financialStatementScreen.setContent(getEditableXml(financialStatementUpdated), financialStatementUpdated.isTrackChangesEnabled());
         eventBus.post(new ReplaceAllMatchResponseEvent(true));
     }
 
@@ -989,7 +990,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                     Arrays.asList(event.getSearchMatchVO()));
             FinancialStatement financialStatementUpdated = copyIntoNew(financialStatementFromSession, updatedContent);
             httpSession.setAttribute("financialStatement#" + getDocumentRef(), financialStatementUpdated);
-            financialStatementScreen.setContent(getEditableXml(financialStatementUpdated));
+            financialStatementScreen.setContent(getEditableXml(financialStatementUpdated), financialStatementUpdated.isTrackChangesEnabled());
             financialStatementScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), true);
         } else {
             financialStatementScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), false);

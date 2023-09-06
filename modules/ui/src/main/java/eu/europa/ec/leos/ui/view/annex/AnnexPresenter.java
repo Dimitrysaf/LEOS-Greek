@@ -456,7 +456,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             if (annexMetadata.isDefined()) {
                 annexScreen.setTitle(annexMetadata.get().getTitle(), annexMetadata.get().getNumber());
             }
-            annexScreen.setContent(getEditableXml(annex));
+            annexScreen.setContent(getEditableXml(annex), annex.isTrackChangesEnabled());
             annexScreen.setToc(getTableOfContent(annex, mode));
             annexScreen.setStructureChangeMenuItem();
             DocumentVO annexVO = createAnnexVO(annex);
@@ -467,6 +467,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexScreen.initAnnotations(annexVO, proposalRef, connectedEntity);
             if (isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
+                annexScreen.initTrackChanges((proposalRef));
             }
         } catch (Exception ex) {
             LOG.error("Error while processing document", ex);
@@ -1104,7 +1105,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         //load content from session if exists
         Annex annexFromSession = getAnnexFromSession();
         if (annexFromSession != null) {
-            annexScreen.setContent(getEditableXml(annexFromSession));
+            annexScreen.setContent(getEditableXml(annexFromSession), annexFromSession.isTrackChangesEnabled());
             annexScreen.setLiveDiffingRequired(annexFromSession.isLiveDiffingRequired());
         } else {
             eventBus.post(new RefreshDocumentEvent());
@@ -1798,7 +1799,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         Annex annexUpdated = copyIntoNew(annexFromSession, updatedContent);
         httpSession.setAttribute("annex#" + getDocumentRef(), annexUpdated);
-        annexScreen.setContent(getEditableXml(annexUpdated));
+        annexScreen.setContent(getEditableXml(annexUpdated), annexUpdated.isTrackChangesEnabled());
         annexScreen.setLiveDiffingRequired(annexUpdated.isLiveDiffingRequired());
         eventBus.post(new ReplaceAllMatchResponseEvent(true));
     }
@@ -1872,7 +1873,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
             Annex annexUpdated = copyIntoNew(annexFromSession, updatedContent);
             httpSession.setAttribute("annex#" + getDocumentRef(), annexUpdated);
-            annexScreen.setContent(getEditableXml(annexUpdated));
+            annexScreen.setContent(getEditableXml(annexUpdated), annexUpdated.isTrackChangesEnabled());
             annexScreen.setLiveDiffingRequired(annexUpdated.isLiveDiffingRequired());
             annexScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), true);
         } else {
@@ -1899,7 +1900,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         VersionInfoVO versionInfoVO = getVersionInfo(updatedAnnex);
         versionInfoVO.setRevisedBaseVersion(versionLabel);
         versionInfoVO.setBaseVersionTitle(event.getBaseVersionTitle());
-        annexScreen.setContent(getEditableXml(updatedAnnex));
+        annexScreen.setContent(getEditableXml(updatedAnnex), updatedAnnex.isTrackChangesEnabled());
         annexScreen.setLiveDiffingRequired(updatedAnnex.isLiveDiffingRequired());
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.info",
                 versionLabel));
@@ -1927,7 +1928,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         }
 
         annexScreen.setLiveDiffingRequired(updatedAnnex.isLiveDiffingRequired());
-        annexScreen.setContent(getEditableXml(updatedAnnex));
+        annexScreen.setContent(getEditableXml(updatedAnnex), updatedAnnex.isTrackChangesEnabled());
         eventBus.post(notification);
 
     }

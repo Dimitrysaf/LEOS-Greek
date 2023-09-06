@@ -194,4 +194,7 @@ class MandateMemorandumScreenImpl extends MemorandumScreenImpl {
     public boolean isCoverPageVisible() {
         return false;
     }
+
+    @Override
+    public void initTrackChanges(String proposalRef) {}
 }

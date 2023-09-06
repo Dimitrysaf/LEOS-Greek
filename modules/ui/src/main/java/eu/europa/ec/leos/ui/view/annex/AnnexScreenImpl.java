@@ -55,6 +55,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -76,14 +77,7 @@ import eu.europa.ec.leos.ui.event.security.SecurityTokenResponse;
 import eu.europa.ec.leos.ui.event.toc.DisableEditTocEvent;
 import eu.europa.ec.leos.ui.event.toc.ExpandTocSliderPanel;
 import eu.europa.ec.leos.ui.event.toc.InlineTocCloseRequestEvent;
-import eu.europa.ec.leos.ui.extension.ActionManagerExtension;
-import eu.europa.ec.leos.ui.extension.AnnotateExtension;
-import eu.europa.ec.leos.ui.extension.ChangeDetailsExtension;
-import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
-import eu.europa.ec.leos.ui.extension.MathJaxExtension;
-import eu.europa.ec.leos.ui.extension.RefToLinkExtension;
-import eu.europa.ec.leos.ui.extension.UserCoEditionExtension;
-import eu.europa.ec.leos.ui.extension.UserGuidanceExtension;
+import eu.europa.ec.leos.ui.extension.*;
 import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
@@ -96,6 +90,8 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.component.ComparisonResponseEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
+import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.AddTrackChangesMenuEvent;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
@@ -202,6 +198,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     protected ActionManagerExtension<LeosDisplayField> actionManagerExtension;
     protected UserCoEditionExtension<LeosDisplayField, String> userCoEditionExtension;
     private AnnotateExtension<LeosDisplayField, String> annotateExtension;
+    protected TrackChangesExtension<LeosDisplayField, String> trackChangesExtension;
 
     protected Provider<StructureContext> structureContextProvider;
 
@@ -222,6 +219,9 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
 
     @Autowired
     LeosPermissionAuthorityMapHelper authorityMapHelper;
+
+    @Autowired
+    private CloneContext cloneContext;
 
     @Autowired
     AnnexScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
@@ -270,9 +270,17 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
         annexTitle.setValue(StringEscapeUtils.escapeHtml4(combinedTitle.toString()));
         annexTitle.setWidth("100%");
     }
-    
+
+    private boolean isClonedProposal() {
+        return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
     @Override
-    public void setContent(String content) {
+    public void setContent(String content, boolean trackChangesEnabled) {
+        if(isClonedProposal()) {
+            eventBus.post(new AddChangeDetailsMenuEvent());
+            eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));
+        }
         annexContent.setValue(addTimestamp(content));
         refreshNoteButton.setVisible(false);
     }

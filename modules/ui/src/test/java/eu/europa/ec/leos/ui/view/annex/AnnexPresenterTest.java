@@ -287,7 +287,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isRevisionAnnex(any());
 
         verify(annexScreen).isCoverPageVisible();
-        verify(annexScreen).setContent(displayableContent);
+        verify(annexScreen).setContent(displayableContent, false);
         verify(annexScreen).setTitle(docTitle, docNumber);
         verify(annexScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
         verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(false), anyBoolean());
@@ -375,7 +375,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(documentContentService).isRevisionAnnex(any());
 
         verify(annexScreen).isCoverPageVisible();
-        verify(annexScreen).setContent(displayableContent);
+        verify(annexScreen).setContent(displayableContent, false);
         verify(annexScreen).setTitle(docTitle, docNumber);
         verify(annexScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
         verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(true), anyBoolean());
@@ -387,7 +387,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(annexService).getAllVersions(docId, docRef);
         verify(cloneContext, Mockito.times(8)).setCloneProposalMetadataVO(any());
         verify(annexScreen).setDocumentVersionInfo(any());
-        verify(annexScreen).setContent(any());
+        verify(annexScreen).initTrackChanges(any());
         verify(annexScreen).setLiveDiffingRequired(anyBoolean());
         verifyNoMoreInteractions(userHelper, annexService, documentContentService, annexScreen);
     }
@@ -480,7 +480,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
 
         verify(annexScreen).isCoverPageVisible();
         verify(annexScreen).setDocumentVersionInfo(any());
-        verify(annexScreen).setContent(displayableContent);
+        verify(annexScreen).setContent(displayableContent, false);
         verify(annexScreen).setTitle(docTitle, docNumber);
         verify(annexScreen).setToc(argThat(sameInstance(tableOfContentItemVoList)));
         verify(annexScreen).setPermissions(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), eq(false), anyBoolean());

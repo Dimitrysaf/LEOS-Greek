@@ -253,4 +253,7 @@ public class MandateFinancialStatementScreenImpl extends FinancialStatementScree
     public void initDatepickerExtension() {
     }
 
+    @Override
+    public void initTrackChanges(String proposalRef) {}
+
 }
