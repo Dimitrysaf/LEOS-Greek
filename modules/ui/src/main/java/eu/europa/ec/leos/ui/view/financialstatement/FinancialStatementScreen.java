@@ -44,7 +44,7 @@ public interface FinancialStatementScreen {
 
     void setTitle(String title);
 
-    void setContent(String content);
+    void setContent(String content, boolean trackChangesEnabled);
 
     void showElementEditor(String elementId, String elementTagName, String element, LevelItemVO levelItemVO, List<LeosPermission> permissions);
 
@@ -148,4 +148,6 @@ public interface FinancialStatementScreen {
     boolean isCleanVersionShowed();
 
     void initDatepickerExtension();
+
+    void initTrackChanges(String proposalRef);
 }

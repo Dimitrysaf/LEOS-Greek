@@ -38,6 +38,7 @@ import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.DatePickerExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
+import eu.europa.ec.leos.ui.extension.TrackChangesExtension;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.NotificationEvent;
@@ -304,5 +305,12 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
 
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    @Override
+    public void initTrackChanges(String proposalRef) {
+        if (trackChangesExtension == null) {
+            trackChangesExtension = new TrackChangesExtension<>(financialStatementContent, securityContext, proposalRef, eventBus);
+        }
     }
 }

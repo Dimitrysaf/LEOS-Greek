@@ -282,4 +282,7 @@ public class MandateAnnexScreenImpl extends AnnexScreenImpl {
         });
     }
 
+    @Override
+    public void initTrackChanges(String proposalRef) {}
+
 }

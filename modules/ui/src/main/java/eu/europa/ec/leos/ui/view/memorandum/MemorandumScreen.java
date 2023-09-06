@@ -42,7 +42,7 @@ interface MemorandumScreen {
 
     void setTitle(String title);
 
-    void setContent(String content);
+    void setContent(String content, boolean trackChangesEnabled);
 
     void refreshElementEditor(String elementId, String elementTagName, String elementContent);
 
@@ -131,4 +131,6 @@ interface MemorandumScreen {
     boolean isCoverPageVisible();
 
     Optional<ContributionVO> findContributionAndShowTab(String revisionVersion);
+
+    void initTrackChanges(String proposalRef);
 }

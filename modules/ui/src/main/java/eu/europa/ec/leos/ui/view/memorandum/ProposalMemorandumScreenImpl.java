@@ -35,6 +35,7 @@ import eu.europa.ec.leos.ui.extension.ActionManagerExtension;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.LeosEditorExtension;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
+import eu.europa.ec.leos.ui.extension.TrackChangesExtension;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
@@ -281,5 +282,12 @@ class ProposalMemorandumScreenImpl extends MemorandumScreenImpl {
 
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    @Override
+    public void initTrackChanges(String proposalRef) {
+        if (trackChangesExtension == null) {
+            trackChangesExtension = new TrackChangesExtension<>(memorandumContent, securityContext, proposalRef, eventBus);
+        }
     }
 }

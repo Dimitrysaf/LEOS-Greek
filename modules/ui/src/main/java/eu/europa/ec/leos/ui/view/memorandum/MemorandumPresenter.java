@@ -381,7 +381,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
             memorandumScreen.setTitle(memorandum.getTitle());
             memorandumScreen.setDocumentVersionInfo(getVersionInfo(memorandum));
             String content = getEditableXml(memorandum);
-            memorandumScreen.setContent(content);
+            memorandumScreen.setContent(content, memorandum.isTrackChangesEnabled());
             memorandumScreen.setToc(getTableOfContent(memorandum));
             DocumentVO memorandumVO = createMemorandumVO(memorandum);
             memorandumScreen.setPermissions(memorandumVO, isClonedProposal());
@@ -389,6 +389,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
             memorandumScreen.updateUserCoEditionInfo(coEditionHelper.getCurrentEditInfo(memorandum.getVersionSeriesId()), id);
             if(isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
+                memorandumScreen.initTrackChanges(proposalRef);
             }
         }
         catch (Exception ex) {
@@ -572,7 +573,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         //load content from session if exists
         Memorandum memorandumFromSession = getMemorandumFromSession();
         if(memorandumFromSession != null) {
-            memorandumScreen.setContent(getEditableXml(memorandumFromSession));
+            memorandumScreen.setContent(getEditableXml(memorandumFromSession), memorandumFromSession.isTrackChangesEnabled());
         }else{
             eventBus.post(new RefreshDocumentEvent());
         }
@@ -1208,7 +1209,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
 
         Memorandum memorandumUpdated = copyIntoNew(memorandumFromSession, updatedContent);
         httpSession.setAttribute("memorandum#" + getDocumentRef(), memorandumUpdated);
-        memorandumScreen.setContent(getEditableXml(memorandumUpdated));
+        memorandumScreen.setContent(getEditableXml(memorandumUpdated), memorandumUpdated.isTrackChangesEnabled());
         eventBus.post(new ReplaceAllMatchResponseEvent(true));
     }
 
@@ -1296,7 +1297,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
 
             Memorandum memorandumUpdated = copyIntoNew(memorandumFromSession, updatedContent);
             httpSession.setAttribute("memorandum#" + getDocumentRef(), memorandumUpdated);
-            memorandumScreen.setContent(getEditableXml(memorandumUpdated));
+            memorandumScreen.setContent(getEditableXml(memorandumUpdated), memorandumUpdated.isTrackChangesEnabled());
             memorandumScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), true);
         } else {
             memorandumScreen.refineSearch(event.getSearchId(), event.getMatchIndex(), false);

@@ -192,7 +192,7 @@ public class FinancialStatementContextService {
         financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
         if (cloneProposal) {
             Map<String, Object> financialStatementProperties = new HashMap<>();
-            financialStatementProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), false);
+            financialStatementProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             financialStatementService.updateFinancialStatement(financialStatement.getId(), financialStatementProperties, true);
         }
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
@@ -225,7 +225,7 @@ public class FinancialStatementContextService {
         if (cloneProposal) {
             Map<String, Object> fsProperties = new HashMap<>();
             fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), financialStatementDocument.getId());
-            fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), false);
+            fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             financialStatementService.updateFinancialStatement(updatedFinancialStatement.getId(), fsProperties, true);
         }
         return financialStatementService.createVersion(updatedFinancialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

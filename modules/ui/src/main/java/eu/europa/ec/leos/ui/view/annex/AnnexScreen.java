@@ -44,7 +44,7 @@ interface AnnexScreen {
 
     void setTitle(String title, String number);
 
-    void setContent(String content);
+    void setContent(String content, boolean trackChangesEnabled);
 
     void refreshElementEditor(String elementId, String elementTagName, String elementContent);
 
@@ -155,4 +155,5 @@ interface AnnexScreen {
 
     void setLiveDiffingRequired(boolean liveDiffingRequired);
 
+    void initTrackChanges(String proposalRef);
 }

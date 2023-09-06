@@ -204,7 +204,7 @@ public class MemorandumContextService {
         if (cloneProposal) {
             Map<String, Object> memoProperties = new HashMap<>();
             memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), memoDocument.getId());
-            memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), false);
+            memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
             memorandumService.updateMemorandum(memorandumCreated.getId(), memoProperties, true);
         }
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
