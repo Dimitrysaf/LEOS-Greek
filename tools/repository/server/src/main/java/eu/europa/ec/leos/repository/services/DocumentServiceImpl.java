@@ -74,6 +74,7 @@ import static eu.europa.ec.leos.repository.controllers.requests.QueryFilter.getW
 @Service
 public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger( DocumentServiceImpl.class);
+    private static final int MAX_RESULT_DEFAULT = 100;
 
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
@@ -487,7 +488,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     public List<LeosDocument> findAllMinorsForIntermediate(final String docRef, String currIntVersion, final int startIndex, final int maxResults) {
         PageRequest pageRequest =
-                PageRequest.of(startIndex, maxResults, Sort.Direction.DESC, "updatedOn");
+                PageRequest.of(startIndex, maxResults < 1 ? MAX_RESULT_DEFAULT : maxResults , Sort.Direction.DESC, "updatedOn");
         Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
         String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
 
@@ -511,9 +512,9 @@ public class DocumentServiceImpl implements DocumentService {
         return documentVRepository.getRecentMinorVersionsCount(docRef, currIntVersion);
     }
 
-    public List<LeosDocument> findAllMajors(final String docRef, final int startIndex, final int maxResult)  {
+    public List<LeosDocument> findAllMajors(final String docRef, final int startIndex, final int maxResults)  {
         PageRequest pageRequest =
-                PageRequest.of(startIndex, maxResult, Sort.Direction.DESC, "updatedOn");
+                PageRequest.of(startIndex, maxResults < 1 ? MAX_RESULT_DEFAULT : maxResults, Sort.Direction.DESC, "updatedOn");
         Page<DocumentV> docViews = documentVRepository.findAllMajors(docRef, pageRequest);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docViews.toList(), false);
     }
@@ -521,7 +522,7 @@ public class DocumentServiceImpl implements DocumentService {
     public List<LeosDocument> findRecentMinorVersions(final String docRef, String lastMajorVersion, final int startIndex, final int maxResults) {
         lastMajorVersion = buildMinorVersionsGreaterThanMajorRegularExp(lastMajorVersion, true);
         PageRequest pageRequest =
-                PageRequest.of(startIndex, maxResults, Sort.Direction.DESC, "updatedOn");
+                PageRequest.of(startIndex, maxResults < 1 ? MAX_RESULT_DEFAULT : maxResults, Sort.Direction.DESC, "updatedOn");
         Page<DocumentV> docs = documentVRepository.findRecentMinorVersions(docRef, lastMajorVersion, pageRequest);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs.toList(), false);
     }
