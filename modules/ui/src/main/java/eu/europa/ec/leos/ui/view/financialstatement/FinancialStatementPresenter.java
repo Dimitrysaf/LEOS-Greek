@@ -481,7 +481,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             financialStatementScreen.initDatepickerExtension();
             if(isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
-                financialStatementScreen.initTrackChanges((proposalRef));
+                financialStatementScreen.initTrackChanges(proposalRef);
             }
         }
         catch (Exception ex) {

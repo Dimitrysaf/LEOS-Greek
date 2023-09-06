@@ -467,7 +467,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
             annexScreen.initAnnotations(annexVO, proposalRef, connectedEntity);
             if (isClonedProposal()) {
                 eventBus.post(new AddChangeDetailsMenuEvent());
-                annexScreen.initTrackChanges((proposalRef));
+                annexScreen.initTrackChanges(proposalRef);
             }
         } catch (Exception ex) {
             LOG.error("Error while processing document", ex);
